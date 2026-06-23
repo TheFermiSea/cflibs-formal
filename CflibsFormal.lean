@@ -17,4 +17,5 @@ import CflibsFormal.Saha
 import CflibsFormal.SahaInverse
 import CflibsFormal.SelfAbsorption
 import CflibsFormal.SelfAbsorptionInverse
+import CflibsFormal.SpatialForward
 import CflibsFormal.StarkBroadening

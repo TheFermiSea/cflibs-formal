@@ -29,11 +29,11 @@ two-diagnostic cross-check.
   map.
 * `starkFWHM_strictMono` / `starkFWHM_injective` — the width strictly increases
   with `n_e`, so `n_e` is identifiable from the measured width.
-* `starkFWHM_additive` / `starkFWHM_homogeneous` — the Griem linearity: the Stark
-  width is additive and positively homogeneous in `n_e` (full ℝ-linearity). NB:
-  these are algebraic identities; at the unphysical edge `n_ref = 0` both sides
-  collapse to `0` (Lean's `x/0 = 0`) and the identities hold vacuously — they
-  carry physical meaning only for `n_ref ≠ 0`.
+* `starkFWHM_isLinear` — the Griem linearity, bundled: `starkFWHM w nRef` is an
+  `ℝ`-**linear map** in `n_e` (`IsLinearMap`). The linear dependence of the Stark
+  width on the electron density is the defining feature of the electron-impact
+  (Lorentzian) mechanism; stating it as `IsLinearMap` (rather than separate
+  distributivity identities) makes that the single, meaningful claim.
 * `mcWhirterBound` / `lteValid` — the McWhirter lower bound
   `n_e ≥ 1.6·10¹²·√T·(ΔE)³` and the LTE-admissibility predicate.
 * `mcWhirterBound_mono_T` / `mcWhirterBound_mono_dE` — a hotter plasma or a larger
@@ -135,20 +135,15 @@ theorem starkFWHM_injective {w nRef : ℝ} (hw : 0 < w) (hnRef : 0 < nRef) :
     Function.Injective (starkFWHM w nRef) :=
   (starkFWHM_strictMono hw hnRef).injective
 
-/-- **Additivity of the Stark width in `n_e` (Griem linearity).** The
-electron-impact width is additive in the electron density — the defining
-linearity of the electron-impact (Lorentzian) mechanism. Holds unconditionally
-(at the unphysical edge `n_ref = 0` both sides are `0`). -/
-theorem starkFWHM_additive (w nRef a b : ℝ) :
-    starkFWHM w nRef (a + b) = starkFWHM w nRef a + starkFWHM w nRef b := by
-  unfold starkFWHM; ring
-
-/-- **Positive homogeneity of the Stark width in `n_e` (Griem linearity).** The
-Stark width scales linearly in the electron density: doubling `n_e` doubles the
-width. With additivity this is full ℝ-linearity in `n_e`. Unconditional. -/
-theorem starkFWHM_homogeneous (w nRef c ne : ℝ) :
-    starkFWHM w nRef (c * ne) = c * starkFWHM w nRef ne := by
-  unfold starkFWHM; ring
+/-- **Griem linearity, bundled (`IsLinearMap`).** For fixed `w`, `n_ref`, the Stark
+width `starkFWHM w nRef : ℝ → ℝ` is an `ℝ`-linear map in the electron density — the
+defining linear dependence of the electron-impact (Lorentzian) mechanism. Folds the
+additivity and homogeneity facts into the single meaningful structural claim. (As a
+linear map it is, in particular, additive and homogeneous; at the unphysical edge
+`n_ref = 0` it degenerates to the zero map, still linear.) -/
+theorem starkFWHM_isLinear (w nRef : ℝ) : IsLinearMap ℝ (starkFWHM w nRef) where
+  map_add a b := by simp only [starkFWHM]; ring
+  map_smul c ne := by simp only [starkFWHM, smul_eq_mul]; ring
 
 /-- **McWhirter bound increases with temperature.** A hotter plasma demands a
 higher electron density for LTE (the bound scales as `√T`). Only `hdE : 0 ≤ dE`
