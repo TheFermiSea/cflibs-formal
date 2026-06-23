@@ -23,4 +23,11 @@ jobs:
       # home-rolled axioms — including through imports — which grep cannot). Tool vendored in tools/.
       - name: Axiom-cleanliness gate
         run: lake exe axiom-audit --root CflibsFormal
+      # Regression-oracle self-check: the committed fixtures must match the generator (no drift),
+      # and the reference checker must pass (fixtures internally consistent with the spec formulas).
+      - name: Regression-oracle self-check
+        run: |
+          lake exe oracle-fixtures > /tmp/fixtures.json
+          diff -u oracle/fixtures.json /tmp/fixtures.json
+          python3 oracle/check_fixtures.py
       - uses: leanprover-community/docgen-action@v1

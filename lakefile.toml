@@ -29,3 +29,12 @@ name = "axiom-audit"
 srcDir = "tools"
 root = "Main"
 supportInterpreter = true
+
+# Numerical regression-oracle generator: a computable Float MIRROR of the verified forward
+# map + classic inversion (NOT part of the verified spec; see oracle/README.md). Emits
+# fixtures instantiating the proven theorems. `lake exe oracle-fixtures > oracle/fixtures.json`.
+[[lean_exe]]
+name = "oracle-fixtures"
+srcDir = "oracle"
+root = "Generate"
+supportInterpreter = true
