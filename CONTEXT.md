@@ -37,7 +37,9 @@ defined once and reused verbatim.
 - **Shared core** (`namespace CflibsFormal`): `Boltzmann`, `Saha`, `Closure`, `ForwardMap`,
   `Identifiability`, `MultiSpecies`, `SelfAbsorption`, `Robustness`, `Inverse`
   (algorithm-agnostic estimator framework), `CompositionRobustness`,
-  `CompositionIdentifiability`, `SelfAbsorptionInverse`, `SahaInverse`, `CurveOfGrowth`.
+  `CompositionIdentifiability`, `SelfAbsorptionInverse`, `SahaInverse`, `CurveOfGrowth`,
+  `StarkBroadening` (independent electron-density diagnostic + McWhirter LTE bound),
+  `SpatialForward` (discrete onion-peeling Abel inversion — relaxes single-zone homogeneity).
 - **Classic algorithm** (`namespace CflibsFormal.Classic`): `Classic` — the textbook
   calibration-free algorithm, `classic_sound` (composition leg given `T`).
 - **Alternative estimators** (`namespace CflibsFormal.Alt`): `Alt/CSigma` (single
@@ -79,10 +81,13 @@ the peer-reviewed primary sources.
    worthless; statements are audited, not just compiled.
 
 5. **Modeling scope.** Baseline assumptions are LTE, a single-zone homogeneous plasma, and
-   optically-thin emission. These are explicit. Self-absorption is modeled separately
-   (`SelfAbsorption`, `SelfAbsorptionInverse`, `CurveOfGrowth`), and the precise boundary
-   where it defeats vs. permits recovery is characterized. Spatial inhomogeneity (Abel
-   inversion) is not yet modeled.
+   optically-thin emission — all explicit, and progressively relaxed: self-absorption is
+   modeled separately (`SelfAbsorption`, `SelfAbsorptionInverse`, `CurveOfGrowth`, with the
+   precise recover/defeat boundary characterized); spatial inhomogeneity is modeled via the
+   **discrete onion-peeling Abel inversion** (`SpatialForward`, single-zone = the N=1 case;
+   the continuous Abel integral inverse is explicitly out of scope); and the LTE assumption
+   itself gets an independent electron-density check (`StarkBroadening`: Stark width vs. Saha
+   nₑ, McWhirter bound).
 
 ## Verification discipline
 
@@ -94,6 +99,8 @@ Three gates, all required before trusting a result:
 
 ## Status
 
-18 modules, 95 axiom-clean theorems. Adversarially validated (verdict:
-sound-with-minor-fixes, zero blockers; all findings fixed). The corpus is a verified
-foundation for adding further physics layers (Stark broadening, spatial resolution, …).
+20 modules, ~105 axiom-clean theorems (axiom-cleanliness CI-enforced via `tools/`).
+Adversarially validated (verdict: sound-with-minor-fixes, zero blockers; all findings fixed).
+A numerical regression oracle (`oracle/`) bridges the verified spec to the numerical pipeline
+(CF-LIBS-improved) — multi-element + the alternative estimators (OLS, self-absorption, Saha
+nₑ), each fixture instantiating a proven theorem.
