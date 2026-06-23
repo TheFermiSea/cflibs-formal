@@ -16,3 +16,16 @@ rev = "v4.31.0"
 
 [[lean_lib]]
 name = "CflibsFormal"
+
+# Axiom-cleanliness gate (vendored from leanprover-community/axiom-audit, Apache-2.0; see
+# tools/README.md). `lake exe axiom-audit --root CflibsFormal` fails if any declaration
+# depends on an axiom outside {propext, Classical.choice, Quot.sound}. Dependency-free.
+[[lean_lib]]
+name = "AxiomAudit"
+srcDir = "tools"
+
+[[lean_exe]]
+name = "axiom-audit"
+srcDir = "tools"
+root = "Main"
+supportInterpreter = true

@@ -18,4 +18,9 @@ jobs:
     steps:
       - uses: actions/checkout@v5
       - uses: leanprover/lean-action@v1
+      # Axiom-cleanliness gate: fail CI if any declaration in CflibsFormal depends on an axiom
+      # outside {propext, Classical.choice, Quot.sound} (catches sorry/admit, native_decide, and
+      # home-rolled axioms — including through imports — which grep cannot). Tool vendored in tools/.
+      - name: Axiom-cleanliness gate
+        run: lake exe axiom-audit --root CflibsFormal
       - uses: leanprover-community/docgen-action@v1
