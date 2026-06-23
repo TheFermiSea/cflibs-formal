@@ -112,6 +112,9 @@ Three gates, all required before trusting a result:
 
 22 modules, ~128 axiom-clean theorems (axiom-cleanliness CI-enforced via `tools/`).
 Adversarially validated (verdict: sound-with-minor-fixes, zero blockers; all findings fixed).
+A whole-corpus **literature-validity audit** (`reviews/literature-validity-audit.md`) classified all
+186 defs+theorems against the peer-reviewed CF-LIBS literature: 69 faithful / 33 reduced / 5 idealized
+/ 78 pure-math, **0 divergent, 0 unverified citations, 1 minor docstring over-reach (fixed)**.
 A numerical regression oracle (`oracle/`) bridges the verified spec to the numerical pipeline
 (CF-LIBS-improved) — multi-element + the alternative estimators (OLS, self-absorption, Saha
 nₑ) + the derived error-budget thresholds, each fixture instantiating a proven theorem.

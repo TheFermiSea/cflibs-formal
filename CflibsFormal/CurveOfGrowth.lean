@@ -218,8 +218,9 @@ theorem cogRatio_deriv_num_neg {w₁ w₂ : ℝ} (hw : w₂ < w₁) (hw₂ : 0 <
 
 /-- **Multi-line, unknown-scale identifiability (monotonicity).** For two same-species
 lines with distinct known opacities `w₁ > w₂ > 0` sharing the column density `n`, the
-source-free ratio `n ↦ cogRatio w₁ w₂ n` is strictly *antitone* on `(0, ∞)`: it decreases
-monotonically from the `n → 0⁺` limit `w₁/w₂` toward `1` as `n → ∞`. Strict monotonicity
+source-free ratio `n ↦ cogRatio w₁ w₂ n` is strictly *antitone* on `(0, ∞)` (its thin/thick
+limit values `w₁/w₂` as `n → 0⁺` and `1` as `n → ∞` are descriptive curve-of-growth context,
+not proved by this theorem). Strict monotonicity
 (either direction) gives injectivity, so the column density is recovered from the ratio
 even with the common source scale `S` unknown — the curve-of-growth break of the
 single-line self-absorption degeneracy (Bulajic et al. 2002; Cristoforetti–Tognoni 2013). -/

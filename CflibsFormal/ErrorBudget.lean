@@ -114,11 +114,12 @@ theorem olsSlope_sub_eq [Nonempty ι] (E y yHat : ι → ℝ) :
   refine Finset.sum_congr rfl (fun k _ => ?_)
   ring
 
-/-- **N-line slope sensitivity (ℓ¹, sharp worst case).** If every ordinate is perturbed by at
+/-- **N-line slope sensitivity (ℓ¹ worst-case bound).** If every ordinate is perturbed by at
 most `ε` then the OLS slope changes by at most `ε·(∑ₖ |Eₖ − Ē|)/SS_E`. This is the multi-line
-generalization of `Robustness.twoLineBeta_stable`; the worst case (all ordinate errors aligned
-in sign with `Eₖ − Ē`) attains it. `hvar : 0 < SS_E` (at least two distinct energies) is
-load-bearing for the nonzero denominator. -/
+generalization of `Robustness.twoLineBeta_stable`; the bound's worst case — all ordinate errors
+aligned in sign with `Eₖ − Ē` — saturates it (the attainment is not separately formalized here,
+unlike `Robustness.twoLineBeta_stable_sharp`). `hvar : 0 < SS_E` (at least two distinct energies)
+is load-bearing for the nonzero denominator. -/
 theorem olsSlope_stable_l1 [Nonempty ι] {E y yHat : ι → ℝ} {eps : ℝ}
     (hvar : 0 < ∑ k, (E k - mean E) ^ 2)
     (hδ : ∀ k, |yHat k - y k| ≤ eps) :
@@ -169,7 +170,9 @@ theorem olsSlope_stable_l2_sq [Nonempty ι] {E y yHat : ι → ℝ} {eps : ℝ}
   nlinarith [hnum]
 
 /-- **N-line slope sensitivity (ℓ², root form).** `|Δβ| ≤ ε·√(card ι)/√SS_E`, the square root
-of `olsSlope_stable_l2_sq` — the form quoted in textbook LIBS error budgets. -/
+of `olsSlope_stable_l2_sq` — the root form of the deterministic worst-case bound. (The textbook
+`σ_β = σ_y/√SS_E` is the *statistical* Gauss–Markov law; this is the deterministic `ε·√N/√SS_E`
+worst case — see the module docstring on the deterministic-vs-statistical distinction.) -/
 theorem olsSlope_stable_l2 [Nonempty ι] {E y yHat : ι → ℝ} {eps : ℝ}
     (hvar : 0 < ∑ k, (E k - mean E) ^ 2)
     (hδ : ∀ k, |yHat k - y k| ≤ eps) :
