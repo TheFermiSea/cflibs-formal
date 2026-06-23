@@ -7,29 +7,27 @@ Authors: Brian Squires
 /-!
 # CF-LIBS numerical regression-oracle generator
 
-A computable **`Float` mirror** of the verified `CflibsFormal` forward map and classic
-inversion, used to emit numerical regression fixtures for the companion numerical pipeline
-(CF-LIBS-improved). It is NOT part of the verified spec: the verified definitions in
-`CflibsFormal/` are `noncomputable` and ℝ-valued (so they cannot be `#eval`'d). Here we
-re-implement the SAME formulas over `Float`; each def mirrors its ℝ counterpart verbatim.
+A computable **`Float` mirror** of the verified `CflibsFormal` forward map, classic
+inversion, and the alternative estimators, used to emit numerical regression fixtures for the
+companion numerical pipeline (CF-LIBS-improved). It is NOT part of the verified spec: the
+verified definitions in `CflibsFormal/` are `noncomputable` and ℝ-valued (so they cannot be
+`#eval`'d). Here we re-implement the SAME formulas over `Float`; each def mirrors its ℝ
+counterpart verbatim in formula.
 
-The fixtures exercise the **multi-element** CF-LIBS problem that is the whole point of the
-method: a sample of several **chemically distinct** elements, each with its OWN atomic data
-`(g, E, A)` and hence its OWN partition function `U_s(T)`, tied together only by the closure
-`Σ C_s = 1`. (A single shared atomic-data family would be trivial.) The verified
-`Classic.classicComposition` takes per-species `g E A : κ → ι → ℝ`, so this is exactly the
-generality the spec proves sound.
+The fixtures exercise the **multi-element** CF-LIBS problem (the whole point of the method) and
+the alternative estimators the spec proves equivalent/sound. Two scenarios:
 
-Each check instantiates a **proven theorem** (see `oracle/README.md` for the map):
-* `forward`          — `lineIntensity` per element with its own `(g,E,A)`;
-* `round_trip`       — `classicDensity(lineIntensity N) = N`  ⇐ `Classic.classic_sound`;
-* `temperature`      — slope of a 2-line Boltzmann plot recovers `T`  ⇐ `classic_temperature_correct`;
-* `closure`          — `Σ_s composition = 1` and equals the true mole fractions  ⇐ `composition_sum_one`;
-* `calibration_free` — scaling `Fcal` leaves composition fixed  ⇐ `classic_calibration_free`.
+* a **ternary alloy** — 3 chemically distinct elements, each with its OWN atomic data and
+  partition function `U_s`, 4 lines each — checked with the classic inversion, the multi-line
+  **OLS** Boltzmann-plot estimator, per-element **temperature** recovery, and the
+  **self-absorption** correction (optically-thick input + known `τ`);
+* a **two-stage Saha–Boltzmann** element (neutral + ion) — recover `T` and the electron
+  density `n_e` from the two stages.
 
-`Float ≠ ℝ`, so the *formula structure* and the *invariants* are what is verified; numerical
-eval is IEEE-754 and checks are tolerance-based (~1e-6). Dimensionless inputs (`E` in units of
-`kB·T`, so `kB = T = 1`), kept O(1) so the 9-decimal formatter is lossless.
+Each check instantiates a **proven theorem** (see `oracle/README.md` for the map). `Float ≠ ℝ`,
+so the *formula structure* and *invariants* are verified; numerical eval is IEEE-754 and checks
+are tolerance-based (~1e-6). Dimensionless inputs, kept O(1)–O(30) so the 9-decimal formatter
+is lossless.
 
 Regenerate with:  `lake exe oracle-fixtures > oracle/fixtures.json`
 -/
@@ -38,11 +36,12 @@ namespace Oracle
 
 abbrev Vec := Array Float
 
+/-! ## Float mirror of the verified definitions -/
+
 /-- Mirror of `CflibsFormal.boltzmannFactor`: `exp(-E / (kB · T))`. -/
 def boltzmannFactor (kB T E : Float) : Float := Float.exp (-E / (kB * T))
 
-/-- Mirror of `CflibsFormal.partitionFunction`: `Σ_k g_k · exp(-E_k / (kB · T))`. (Per element:
-distinct `(g, E)` give distinct `U_s` — the crux of the multi-element problem.) -/
+/-- Mirror of `CflibsFormal.partitionFunction`: `Σ_k g_k · exp(-E_k / (kB · T))`. -/
 def partitionFunction (kB T : Float) (g E : Vec) : Float :=
   (g.zip E).foldl (fun acc ge => acc + ge.1 * boltzmannFactor kB T ge.2) 0.0
 
@@ -54,8 +53,7 @@ def population (kB T N : Float) (g E : Vec) (k : Nat) : Float :=
 def lineIntensity (kB T N Fcal : Float) (g E A : Vec) (k : Nat) : Float :=
   Fcal * A[k]! * population kB T N g E k
 
-/-- Mirror of `CflibsFormal.Classic.classicDensity`: `I · U / (Fcal · A_u · g_u · bf_u)`.
-Uses the element's OWN `(g, E, A)` and `U`. -/
+/-- Mirror of `CflibsFormal.Classic.classicDensity`: `I · U / (Fcal · A_u · g_u · bf_u)`. -/
 def classicDensity (kB T Fcal : Float) (g E A : Vec) (u : Nat) (I : Float) : Float :=
   I * partitionFunction kB T g E / (Fcal * A[u]! * g[u]! * boltzmannFactor kB T E[u]!)
 
@@ -63,20 +61,69 @@ def classicDensity (kB T Fcal : Float) (g E A : Vec) (u : Nat) (I : Float) : Flo
 def composition (n : Vec) (s : Nat) : Float := n[s]! / n.foldl (· + ·) 0.0
 
 /-- Two-line Boltzmann-plot temperature recovery (mirror of `Classic.classic_temperature_correct`):
-from `y_k = log(I_k/(g_k A_k)) = log(Fcal·N/U) − E_k/(kB·T)`, the slope `(y_j−y_i)/(E_i−E_j) =
-1/(kB·T)`, so `T = (E_i − E_j) / (kB · (y_j − y_i))`. Needs two distinct-energy lines `i ≠ j`. -/
+`T = (E_i − E_j) / (kB · (y_j − y_i))`, `y_k = log(I_k/(g_k A_k))`. -/
 def recoverT (kB : Float) (g E A : Vec) (i j : Nat) (Ii Ij : Float) : Float :=
   let yi := Float.log (Ii / (g[i]! * A[i]!))
   let yj := Float.log (Ij / (g[j]! * A[j]!))
   (E[i]! - E[j]!) / (kB * (yj - yi))
 
-/-! ## Minimal JSON emission -/
+-- ### Multi-line OLS Boltzmann plot (mirror of `Alt/LeastSquares.lean`)
 
-/-- Fixed-point rendering with 9 decimal places via a scaled integer. Lean's `Float.toString`
-is hard-wired to 6 decimals (and underflows small magnitudes to `0.000000`), so we roll our
-own. Assumes `|x|` is O(1) (all oracle values are dimensionless and `≤ ~10`), keeping
-`|x|·1e9` inside the exact-integer range of `Float`. ~9 significant figures — ample for a
-formula-correctness regression oracle (tolerance ~1e-6). -/
+/-- Mirror of `Alt.mean`: arithmetic mean over the lines. -/
+def mean (f : Vec) : Float := f.foldl (· + ·) 0.0 / f.size.toFloat
+
+/-- Mirror of `Alt.olsSlope`: covariance/variance of the Boltzmann-plot points. -/
+def olsSlope (E y : Vec) : Float :=
+  let eb := mean E
+  let yb := mean y
+  let num := (E.zip y).foldl (fun acc p => acc + (p.1 - eb) * (p.2 - yb)) 0.0
+  let den := E.foldl (fun acc ek => acc + (ek - eb) * (ek - eb)) 0.0
+  num / den
+
+/-- Mirror of `Alt.olsIntercept`: `ȳ − slope · Ē`. -/
+def olsIntercept (E y : Vec) : Float := mean y - olsSlope E y * mean E
+
+/-- Mirror of `Alt.olsDensity`: density read off the OLS intercept of ALL lines' ordinates. -/
+def olsDensity (kB T Fcal : Float) (g E A I : Vec) : Float :=
+  let y := (Array.range I.size).map (fun k => Float.log (I[k]! / (g[k]! * A[k]!)))
+  Float.exp (olsIntercept E y) * partitionFunction kB T g E / Fcal
+
+-- ### Self-absorption correction (mirror of `SelfAbsorption.lean` / `Alt/SelfAbsorbed.lean`)
+
+/-- Mirror of `CflibsFormal.selfAbsorptionFactor`: `(1 − exp(−τ))/τ` (`1` at `τ = 0`), in `(0,1]`. -/
+def selfAbsorptionFactor (tau : Float) : Float :=
+  if tau == 0.0 then 1.0 else (1.0 - Float.exp (-tau)) / tau
+
+/-- Mirror of `Alt.selfAbsorbedComposition`'s per-line step: correct the thick intensity by
+`SA(τ)`, then invert with classicDensity. -/
+def selfAbsorbedDensity (kB T Fcal : Float) (g E A : Vec) (u : Nat) (tau Imeas : Float) : Float :=
+  classicDensity kB T Fcal g E A u (Imeas / selfAbsorptionFactor tau)
+
+-- ### Saha factor (mirror of `Saha.lean`)
+
+def piF : Float := 3.141592653589793
+
+/-- `x^p` for `x > 0` via `exp(p·log x)` (Float has no rpow). -/
+def rpow (x p : Float) : Float := Float.exp (p * Float.log x)
+
+/-- Mirror of `CflibsFormal.thermalBracket`: `(2π · me · kB · T) / h²`. -/
+def thermalBracket (kB T me h : Float) : Float := 2.0 * piF * me * kB * T / (h * h)
+
+/-- Mirror of `CflibsFormal.sahaFactor`:
+`2 · (U_{z+1}/U_z) · thermalBracket^(3/2) · exp(−χ/(kB·T))`. -/
+def sahaFactor (kB T me h chi : Float) (gZ EZ gZ1 EZ1 : Vec) : Float :=
+  2.0 * (partitionFunction kB T gZ1 EZ1 / partitionFunction kB T gZ EZ)
+    * rpow (thermalBracket kB T me h) 1.5
+    * Float.exp (-chi / (kB * T))
+
+/-- Mirror of `CflibsFormal.electronDensityFromRatio`: `n_e = S(T) / R`, `R = n_{z+1}/n_z`. -/
+def electronDensityFromRatio (kB T me h chi : Float) (gZ EZ gZ1 EZ1 : Vec) (R : Float) : Float :=
+  sahaFactor kB T me h chi gZ EZ gZ1 EZ1 / R
+
+/-! ## JSON emission -/
+
+/-- 9-decimal fixed-point rendering via a scaled integer (Lean's `Float.toString` is lossy
+`%.6f`). Assumes `|x|` is O(1)–O(few·10), keeping `|x|·1e9` in the exact-integer range. -/
 def jNum (x : Float) : String :=
   let neg := x < 0.0
   let a := if neg then -x else x
@@ -91,11 +138,10 @@ def jField (k : String) (v : String) : String := "\"" ++ k ++ "\": " ++ v
 def jStr (s : String) : String := "\"" ++ s ++ "\""
 def jArrayOf (xs : Array String) : String := "[" ++ String.intercalate ", " xs.toList ++ "]"
 
-/-! ## Multi-element scenario -/
+/-! ## Scenario 1 — ternary alloy -/
 
-/-- One chemical element: its OWN atomic-data family `(g, E, A)`, true number density `N`, and
-designated emitting line `u`. Distinct elements have distinct `(g, E, A)` and hence distinct
-partition functions. -/
+/-- One chemical element with its OWN atomic-data family, true density, designated line, and
+(for the self-absorption check) the optical depth `tau` of its designated line. -/
 structure Element where
   sym : String
   g : Vec
@@ -103,44 +149,50 @@ structure Element where
   A : Vec
   N : Float
   u : Nat
+  tau : Float
   deriving Inhabited
 
--- DIMENSIONLESS constants (the spec is dimensionless — see CONTEXT.md). `E` is in units of
--- `kB·T`, so `kB = T = 1`; `Fcal = 1`. Feed the pipeline THESE exact inputs.
+-- DIMENSIONLESS constants (the spec is dimensionless — see CONTEXT.md). Feed the pipeline these.
 def kB : Float := 1.0
 def T  : Float := 1.0
 def Fcal : Float := 1.0
 
-/-- A ternary "alloy": three chemically-distinct elements with DISTINCT atomic data (so
-distinct `U_s`), four lines each. True densities 5/3/2 ⇒ true composition [0.5, 0.3, 0.2].
-(Synthetic dimensionless atomic data — the oracle tests the FORMULAS and INVARIANTS, not the
-atomic data; swap in NIST values + your unit convention.) -/
+/-- Ternary "alloy": 3 chemically-distinct elements, distinct atomic data + `U_s`, 4 lines each,
+distinct optical depths. True densities 5/3/2 ⇒ composition [0.5, 0.3, 0.2]. (Synthetic
+dimensionless atomic data; swap in NIST values.) -/
 def alloy : Array Element :=
   #[{ sym := "El-A", g := #[2.0, 4.0, 6.0, 8.0], E := #[0.0, 1.2, 2.5, 3.8],
-      A := #[1.0, 0.7, 0.5, 0.3], N := 5.0, u := 0 },
+      A := #[1.0, 0.7, 0.5, 0.3], N := 5.0, u := 0, tau := 0.5 },
     { sym := "El-B", g := #[1.0, 3.0, 5.0, 7.0], E := #[0.0, 0.9, 2.1, 3.3],
-      A := #[0.9, 0.6, 0.4, 0.2], N := 3.0, u := 1 },
+      A := #[0.9, 0.6, 0.4, 0.2], N := 3.0, u := 1, tau := 1.0 },
     { sym := "El-C", g := #[3.0, 5.0, 7.0, 9.0], E := #[0.0, 1.5, 2.8, 4.0],
-      A := #[0.8, 0.5, 0.35, 0.25], N := 2.0, u := 2 }]
+      A := #[0.8, 0.5, 0.35, 0.25], N := 2.0, u := 2, tau := 1.5 }]
 
-/-- All line intensities of an element (its own atomic data). -/
 def forwardLines (el : Element) : Vec :=
   (Array.range el.g.size).map (fun k => lineIntensity kB T el.N Fcal el.g el.E el.A k)
 
-/-- Classic-recovered density for an element from its designated-line intensity at calibration `fc`. -/
 def recoveredDensityOf (el : Element) (fc : Float) : Float :=
   classicDensity kB T fc el.g el.E el.A el.u (lineIntensity kB T el.N fc el.g el.E el.A el.u)
 
-/-- Recovered composition over the alloy (each element inverted with its OWN atomic data, then closed). -/
-def recoveredComposition (fc : Float) : Vec :=
-  let dens : Vec := alloy.map (fun el => recoveredDensityOf el fc)
+/-- OLS-recovered density: regress over ALL the element's lines (not just one). -/
+def olsDensityOf (el : Element) : Float :=
+  olsDensity kB T Fcal el.g el.E el.A (forwardLines el)
+
+/-- Self-absorption-corrected density: optically-thick measured intensity = thin · SA(τ),
+then correct + invert. Recovers the true `N` (the SA factor cancels). -/
+def selfAbsorbedDensityOf (el : Element) : Float :=
+  let thin := lineIntensity kB T el.N Fcal el.g el.E el.A el.u
+  let thick := thin * selfAbsorptionFactor el.tau
+  selfAbsorbedDensity kB T Fcal el.g el.E el.A el.u el.tau thick
+
+def recoveredComposition (densFn : Element → Float) : Vec :=
+  let dens : Vec := alloy.map densFn
   (Array.range alloy.size).map (fun i => composition dens i)
 
 def trueComposition : Vec :=
   let N : Vec := alloy.map (·.N)
   (Array.range N.size).map (fun i => composition N i)
 
-/-- Temperature recovered from lines 0 and 1 (distinct energies) of an element. -/
 def recoveredTOf (el : Element) : Float :=
   recoverT kB el.g el.E el.A 0 1
     (lineIntensity kB T el.N Fcal el.g el.E el.A 0)
@@ -150,48 +202,129 @@ def jElement (el : Element) : String :=
   "{" ++ jField "sym" (jStr el.sym) ++ ", " ++ jField "g" (jVec el.g) ++ ", "
     ++ jField "E" (jVec el.E) ++ ", " ++ jField "A" (jVec el.A) ++ ", "
     ++ jField "N" (jNum el.N) ++ ", " ++ jField "u" (toString el.u) ++ ", "
+    ++ jField "tau" (jNum el.tau) ++ ", "
     ++ jField "partitionFunction" (jNum (partitionFunction kB T el.g el.E)) ++ ", "
     ++ jField "intensities" (jVec (forwardLines el)) ++ "}"
 
-/-- Emit the fixtures as a JSON document. -/
-def render : String :=
-  let header := jField "_about" (jStr ("Multi-element CF-LIBS regression fixtures for " ++
-    "CF-LIBS-improved, generated by the Float mirror of the verified CflibsFormal spec " ++
-    "(oracle/Generate.lean). Each check instantiates a PROVEN theorem; see oracle/README.md. " ++
-    "Dimensionless inputs; tolerance ~1e-6."))
-  let glob := "{" ++ jField "kB" (jNum kB) ++ ", " ++ jField "T" (jNum T) ++ ", "
-    ++ jField "Fcal" (jNum Fcal) ++ "}"
+def alloyScenario : String :=
   let elems := jArrayOf (alloy.map jElement)
   let trueDen := jVec (alloy.map (·.N))
   let recDen := jVec (alloy.map (fun el => recoveredDensityOf el Fcal))
   let trueT := jVec (alloy.map (fun _ => T))
   let recT := jVec (alloy.map recoveredTOf)
-  let comp := jVec (recoveredComposition Fcal)
-  let compScaled := jVec (recoveredComposition (1000.0 * Fcal))
+  let comp := jVec (recoveredComposition (fun el => recoveredDensityOf el Fcal))
+  let compScaled := jVec (recoveredComposition (fun el => recoveredDensityOf el (1000.0 * Fcal)))
+  let olsDen := jVec (alloy.map olsDensityOf)
+  let olsComp := jVec (recoveredComposition olsDensityOf)
+  let saComp := jVec (recoveredComposition selfAbsorbedDensityOf)
   let fwd := "{" ++ jField "theorem" (jStr "ForwardMap.lineIntensity / boltzmann_plot_intensity")
-    ++ ", " ++ jField "must" (jStr "recompute lineIntensity(element.g,E,A, element.N, k) == element.intensities[k] (per-element atomic data)") ++ "}"
+    ++ ", " ++ jField "must" (jStr "lineIntensity(element.g,E,A, N, k) == element.intensities[k]") ++ "}"
   let rt := "{" ++ jField "theorem" (jStr "Classic.classicDensity_recovers / classic_sound")
     ++ ", " ++ jField "true_densities" trueDen ++ ", " ++ jField "recovered_densities" recDen
-    ++ ", " ++ jField "must" (jStr "classicDensity(lineIntensity(N)) == N per element (each with its own U_s)") ++ "}"
+    ++ ", " ++ jField "must" (jStr "classicDensity(lineIntensity(N)) == N per element (own U_s)") ++ "}"
   let tmp := "{" ++ jField "theorem" (jStr "Classic.classic_temperature_correct")
     ++ ", " ++ jField "true_T" trueT ++ ", " ++ jField "recovered_T" recT
-    ++ ", " ++ jField "must" (jStr "2-line Boltzmann-plot slope recovers T per element == global T") ++ "}"
+    ++ ", " ++ jField "must" (jStr "2-line Boltzmann slope recovers T per element") ++ "}"
+  let ols := "{" ++ jField "theorem" (jStr "Alt.olsDensity_recovers / leastSquares_sound / leastSquares_agrees_classic")
+    ++ ", " ++ jField "ols_densities" olsDen ++ ", " ++ jField "ols_composition" olsComp
+    ++ ", " ++ jField "must" (jStr "OLS over ALL lines recovers N per element AND ols_composition == true composition (agrees with classic)") ++ "}"
+  let sa := "{" ++ jField "theorem" (jStr "Alt.selfAbsorbed_sound")
+    ++ ", " ++ jField "self_absorbed_composition" saComp
+    ++ ", " ++ jField "must" (jStr "from optically-thick intensities (thin*SA(tau)) + known tau, the corrected estimator recovers the true composition") ++ "}"
   let cl := "{" ++ jField "theorem" (jStr "Closure.composition_sum_one / classic_sound")
     ++ ", " ++ jField "true_composition" (jVec trueComposition) ++ ", " ++ jField "recovered_composition" comp
-    ++ ", " ++ jField "must" (jStr "recovered == true mole fractions AND sum(recovered) == 1 (heterogeneous elements)") ++ "}"
+    ++ ", " ++ jField "must" (jStr "recovered == true mole fractions AND sum == 1 (heterogeneous elements)") ++ "}"
   let cf := "{" ++ jField "theorem" (jStr "Classic.classic_calibration_free")
     ++ ", " ++ jField "Fcal_scale" (jNum 1000.0) ++ ", " ++ jField "composition_base" comp
     ++ ", " ++ jField "composition_scaled" compScaled
     ++ ", " ++ jField "must" (jStr "composition_scaled == composition_base (Fcal cancels)") ++ "}"
   let checks := "{" ++ jField "forward" fwd ++ ", " ++ jField "round_trip" rt ++ ", "
-    ++ jField "temperature" tmp ++ ", " ++ jField "closure" cl ++ ", "
+    ++ jField "temperature" tmp ++ ", " ++ jField "ols" ols ++ ", "
+    ++ jField "self_absorbed" sa ++ ", " ++ jField "closure" cl ++ ", "
     ++ jField "calibration_free" cf ++ "}"
-  let scenario := "{" ++ jField "name" (jStr ("ternary alloy — 3 chemically-distinct elements, " ++
-    "distinct atomic data + partition functions, 4 lines each"))
+  "{" ++ jField "name" (jStr ("ternary alloy — 3 chemically-distinct elements, distinct atomic "
+    ++ "data + partition functions, 4 lines each; classic + OLS + self-absorbed estimators"))
+    ++ ", " ++ jField "kind" (jStr "multi-element-composition")
     ++ ", " ++ jField "true_composition" (jVec trueComposition)
     ++ ", " ++ jField "elements" elems ++ ", " ++ jField "checks" checks ++ "}"
+
+/-! ## Scenario 2 — two-stage Saha–Boltzmann (electron density) -/
+
+/-- A single element in two adjacent ionization stages (neutral `z`, ion `z+1`), each with its
+own atomic data. `Nz1` is fixed by the Saha law `Nz1·ne/Nz = S(T)` (so the recovery is genuine,
+not assumed). Shared physical constants `me = h = 1`. -/
+structure TwoStage where
+  gZ : Vec      -- neutral stage statistical weights
+  EZ : Vec
+  AZ : Vec
+  gZ1 : Vec     -- ion stage
+  EZ1 : Vec
+  AZ1 : Vec
+  Nz : Float    -- true neutral density
+  ne : Float    -- true electron density
+  chi : Float   -- ionization energy
+  uz : Nat      -- designated neutral line
+  uz1 : Nat     -- designated ion line
+  deriving Inhabited
+
+def me : Float := 1.0
+def hPlanck : Float := 1.0
+
+def twoStage : TwoStage :=
+  { gZ := #[2.0, 4.0, 6.0], EZ := #[0.0, 1.0, 2.0], AZ := #[1.0, 0.7, 0.4]
+    gZ1 := #[1.0, 3.0, 5.0], EZ1 := #[0.0, 1.5, 3.0], AZ1 := #[0.8, 0.5, 0.3]
+    Nz := 5.0, ne := 4.0, chi := 2.0, uz := 0, uz1 := 0 }
+
+/-- Saha factor `S(T)` for the two-stage element. -/
+def twoStageS (ts : TwoStage) : Float :=
+  sahaFactor kB T me hPlanck ts.chi ts.gZ ts.EZ ts.gZ1 ts.EZ1
+
+/-- True ion density fixed by the Saha law: `Nz1 = S(T) · Nz / ne`. -/
+def twoStageNz1 (ts : TwoStage) : Float := twoStageS ts * ts.Nz / ts.ne
+
+def twoStageScenario : String :=
+  let ts := twoStage
+  let S := twoStageS ts
+  let Nz1 := twoStageNz1 ts
+  -- forward intensities for both stages
+  let neutLines := (Array.range ts.gZ.size).map (fun k => lineIntensity kB T ts.Nz Fcal ts.gZ ts.EZ ts.AZ k)
+  let ionLines := (Array.range ts.gZ1.size).map (fun k => lineIntensity kB T Nz1 Fcal ts.gZ1 ts.EZ1 ts.AZ1 k)
+  -- recovery: T from neutral slope; Nz, Nz1 from designated lines; R; ne = S/R
+  let Trec := recoverT kB ts.gZ ts.EZ ts.AZ 0 1 (neutLines[0]!) (neutLines[1]!)
+  let NzRec := classicDensity kB T Fcal ts.gZ ts.EZ ts.AZ ts.uz (neutLines[ts.uz]!)
+  let Nz1Rec := classicDensity kB T Fcal ts.gZ1 ts.EZ1 ts.AZ1 ts.uz1 (ionLines[ts.uz1]!)
+  let Rrec := Nz1Rec / NzRec
+  let neRec := electronDensityFromRatio kB T me hPlanck ts.chi ts.gZ ts.EZ ts.gZ1 ts.EZ1 Rrec
+  let neutral := "{" ++ jField "g" (jVec ts.gZ) ++ ", " ++ jField "E" (jVec ts.EZ) ++ ", "
+    ++ jField "A" (jVec ts.AZ) ++ ", " ++ jField "N" (jNum ts.Nz) ++ ", " ++ jField "u" (toString ts.uz)
+    ++ ", " ++ jField "intensities" (jVec neutLines) ++ "}"
+  let ion := "{" ++ jField "g" (jVec ts.gZ1) ++ ", " ++ jField "E" (jVec ts.EZ1) ++ ", "
+    ++ jField "A" (jVec ts.AZ1) ++ ", " ++ jField "N" (jNum Nz1) ++ ", " ++ jField "u" (toString ts.uz1)
+    ++ ", " ++ jField "intensities" (jVec ionLines) ++ "}"
+  let temp := "{" ++ jField "theorem" (jStr "Classic.classic_temperature_correct")
+    ++ ", " ++ jField "true_T" (jNum T) ++ ", " ++ jField "recovered_T" (jNum Trec)
+    ++ ", " ++ jField "must" (jStr "neutral 2-line slope recovers T") ++ "}"
+  let sahaC := "{" ++ jField "theorem" (jStr "Saha.electronDensityFromRatio / saha_relation / electronDensity_antitone / SahaInverse.saha_joint_identifiability")
+    ++ ", " ++ jField "true_ne" (jNum ts.ne) ++ ", " ++ jField "recovered_ne" (jNum neRec)
+    ++ ", " ++ jField "sahaFactor" (jNum S) ++ ", " ++ jField "stage_ratio" (jNum Rrec)
+    ++ ", " ++ jField "must" (jStr "recover Nz and Nz1 from forward intensities; R = Nz1/Nz; ne = S(T)/R == true ne; and R*ne == S(T) (Saha law)") ++ "}"
+  "{" ++ jField "name" (jStr "two-stage Saha–Boltzmann — neutral + ion stages, recover T and electron density n_e")
+    ++ ", " ++ jField "kind" (jStr "saha-boltzmann")
+    ++ ", " ++ jField "constants" ("{" ++ jField "me" (jNum me) ++ ", " ++ jField "h" (jNum hPlanck)
+      ++ ", " ++ jField "chi" (jNum ts.chi) ++ "}")
+    ++ ", " ++ jField "neutral" neutral ++ ", " ++ jField "ion" ion
+    ++ ", " ++ jField "checks" ("{" ++ jField "temperature" temp ++ ", " ++ jField "saha" sahaC ++ "}") ++ "}"
+
+/-- Emit the fixtures as a JSON document. -/
+def render : String :=
+  let header := jField "_about" (jStr ("Multi-element + alternative-estimator CF-LIBS regression "
+    ++ "fixtures for CF-LIBS-improved, generated by the Float mirror of the verified CflibsFormal "
+    ++ "spec (oracle/Generate.lean). Each check instantiates a PROVEN theorem; see "
+    ++ "oracle/README.md. Dimensionless inputs; tolerance ~1e-6."))
+  let glob := "{" ++ jField "kB" (jNum kB) ++ ", " ++ jField "T" (jNum T) ++ ", "
+    ++ jField "Fcal" (jNum Fcal) ++ "}"
   "{\n  " ++ header ++ ",\n  " ++ jField "global" glob ++ ",\n  "
-    ++ jField "scenarios" (jArrayOf #[scenario]) ++ "\n}"
+    ++ jField "scenarios" (jArrayOf #[alloyScenario, twoStageScenario]) ++ "\n}"
 
 def main : IO Unit := IO.println render
 
