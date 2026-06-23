@@ -39,7 +39,11 @@ defined once and reused verbatim.
   (algorithm-agnostic estimator framework), `CompositionRobustness`,
   `CompositionIdentifiability`, `SelfAbsorptionInverse`, `SahaInverse`, `CurveOfGrowth`,
   `StarkBroadening` (independent electron-density diagnostic + McWhirter LTE bound),
-  `SpatialForward` (discrete onion-peeling Abel inversion — relaxes single-zone homogeneity).
+  `SpatialForward` (discrete onion-peeling Abel inversion — relaxes single-zone homogeneity),
+  `ErrorBudget` (the deterministic error-propagation chain — ε → OLS slope → temperature →
+  composition — that turns the pipeline's empirical reliability thresholds, `min_energy_spread`
+  and `min_snr`, into proven *sufficient-condition* corollaries; imports `Alt/LeastSquares` for
+  the OLS slope, honest that the line-count law is statistical, not deterministic).
 - **Classic algorithm** (`namespace CflibsFormal.Classic`): `Classic` — the textbook
   calibration-free algorithm, `classic_sound` (composition leg given `T`).
 - **Alternative estimators** (`namespace CflibsFormal.Alt`): `Alt/CSigma` (single
@@ -99,8 +103,8 @@ Three gates, all required before trusting a result:
 
 ## Status
 
-20 modules, ~105 axiom-clean theorems (axiom-cleanliness CI-enforced via `tools/`).
+21 modules, ~123 axiom-clean theorems (axiom-cleanliness CI-enforced via `tools/`).
 Adversarially validated (verdict: sound-with-minor-fixes, zero blockers; all findings fixed).
 A numerical regression oracle (`oracle/`) bridges the verified spec to the numerical pipeline
 (CF-LIBS-improved) — multi-element + the alternative estimators (OLS, self-absorption, Saha
-nₑ), each fixture instantiating a proven theorem.
+nₑ) + the derived error-budget thresholds, each fixture instantiating a proven theorem.

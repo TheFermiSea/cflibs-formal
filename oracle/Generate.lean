@@ -120,6 +120,41 @@ def sahaFactor (kB T me h chi : Float) (gZ EZ gZ1 EZ1 : Vec) : Float :=
 def electronDensityFromRatio (kB T me h chi : Float) (gZ EZ gZ1 EZ1 : Vec) (R : Float) : Float :=
   sahaFactor kB T me h chi gZ EZ gZ1 EZ1 / R
 
+-- ### Error-budget thresholds (mirror of `ErrorBudget.lean`)
+
+/-- Mirror of the ℓ² slope-sensitivity bound (`ErrorBudget.olsSlope_stable_l2`):
+`|Δβ| ≤ snr · √n / √ssE` — the worst-case inverse-temperature (slope) error from a per-line
+ordinate error `snr` over `n` lines of energy spread `ssE = Σ(Eₖ − Ē)²`. -/
+def slopeErrorBound (snr n ssE : Float) : Float := snr * Float.sqrt n / Float.sqrt ssE
+
+/-- Mirror of `ErrorBudget.requiredEnergySpread_sufficient`: the energy spread that GUARANTEES a
+target slope error `tauBeta` at per-line error `snr` over `n` lines: `ssE ≥ snr²·n / tauBeta²`.
+The DERIVED `min_energy_spread` (was a tuned magic number). -/
+def requiredEnergySpread (tauBeta snr n : Float) : Float := snr * snr * n / (tauBeta * tauBeta)
+
+/-- Mirror of `ErrorBudget.maxPerLineError_sufficient`: the largest per-line ordinate error
+(smallest SNR) tolerable for a target slope error `tauBeta` at spread `ssE` over `n` lines:
+`snr ≤ tauBeta · √(ssE / n)`. The DERIVED `min_snr`. -/
+def maxPerLineError (tauBeta n ssE : Float) : Float := tauBeta * Float.sqrt (ssE / n)
+
+/-- Mirror of the OLS slope NOISE GAIN (`ErrorBudget.olsSlope_noise_gain`): `∑ wₖ² = 1/ssE`.
+Under independent ordinate noise of variance `snr²` the Gauss–Markov slope variance is
+`snr²/ssE`; with `ssE = n·vPerLine` (per-line energy variance) the STATISTICAL `min_lines` for a
+target slope std `tauBeta` is `n ≥ snr²/(vPerLine·tauBeta²)`. (Statistical route — see the
+ErrorBudget module docstring on why the deterministic worst case does not give a line-count law.) -/
+def requiredMinLinesStat (tauBeta snr vPerLine : Float) : Float :=
+  snr * snr / (vPerLine * tauBeta * tauBeta)
+
+/-- Mirror of the EXACT identity `ErrorBudget.temp_rel_error_eq` (`|ΔT|/T = kB·T·|Δβ|`): the
+slope accuracy `tauBeta` required to hit a target RELATIVE temperature error `relTtarget` is
+`tauBeta = relTtarget / (kB·T)`. -/
+def slopeTargetFromTempRel (relTtarget kB T : Float) : Float := relTtarget / (kB * T)
+
+/-- Mirror of `ErrorBudget.composition_target_sufficient`: the per-species absolute density-error
+budget that GUARANTEES a target composition accuracy `tauC` for `card` species at total recovered
+density `Shat`: `delta ≤ tauC·Shat / (card + 1)`. -/
+def densityBudgetFromComposition (tauC Shat card : Float) : Float := tauC * Shat / (card + 1.0)
+
 /-! ## JSON emission -/
 
 /-- 9-decimal fixed-point rendering via a scaled integer (Lean's `Float.toString` is lossy
@@ -315,6 +350,69 @@ def twoStageScenario : String :=
     ++ ", " ++ jField "neutral" neutral ++ ", " ++ jField "ion" ion
     ++ ", " ++ jField "checks" ("{" ++ jField "temperature" temp ++ ", " ++ jField "saha" sahaC ++ "}") ++ "}"
 
+/-! ## Scenario 3 — error-budget thresholds (DERIVED reliability knobs) -/
+
+/-- A concrete dimensionless instance of the derived thresholds, with self-consistency invariants
+that each instantiate a proven `ErrorBudget` theorem. The two "tight" checks witness that
+`requiredEnergySpread` / `maxPerLineError` are exactly the values at which the slope-sensitivity
+bound EQUALS the target — i.e. the sufficient thresholds are not loose. -/
+def errorBudgetScenario : String :=
+  let tauBeta : Float := 0.05    -- target inverse-temperature (slope) error
+  let snr : Float := 0.02        -- per-line Boltzmann-plot ordinate error
+  let n : Float := 6.0           -- number of lines
+  let ssE : Float := 8.0         -- energy spread Σ(Eₖ − Ē)²
+  let relTtarget : Float := 0.03 -- target relative temperature error
+  let tauC : Float := 0.01       -- target composition accuracy
+  let Shat : Float := 10.0       -- recovered total density
+  let card : Float := 3.0        -- number of species
+  let vPerLine : Float := 1.5    -- per-line energy variance (for the statistical line count)
+  let reqSpread := requiredEnergySpread tauBeta snr n
+  let maxErr := maxPerLineError tauBeta n ssE
+  let reqLines := requiredMinLinesStat tauBeta snr vPerLine
+  let slopeTgt := slopeTargetFromTempRel relTtarget kB T
+  let densBudget := densityBudgetFromComposition tauC Shat card
+  let noiseGain : Float := 1.0 / ssE
+  let boundAtReqSpread := slopeErrorBound snr n reqSpread   -- == tauBeta (energy-spread tight)
+  let boundAtMaxErr := slopeErrorBound maxErr n ssE         -- == tauBeta (SNR tight)
+  let inputs := "{" ++ jField "tauBeta" (jNum tauBeta) ++ ", " ++ jField "snr" (jNum snr)
+    ++ ", " ++ jField "n" (jNum n) ++ ", " ++ jField "ssE" (jNum ssE) ++ ", "
+    ++ jField "kB" (jNum kB) ++ ", " ++ jField "T" (jNum T) ++ ", "
+    ++ jField "relTtarget" (jNum relTtarget) ++ ", " ++ jField "tauC" (jNum tauC) ++ ", "
+    ++ jField "Shat" (jNum Shat) ++ ", " ++ jField "card" (jNum card) ++ ", "
+    ++ jField "vPerLine" (jNum vPerLine) ++ "}"
+  let thresholds := "{" ++ jField "requiredEnergySpread" (jNum reqSpread) ++ ", "
+    ++ jField "maxPerLineError" (jNum maxErr) ++ ", "
+    ++ jField "requiredMinLinesStat" (jNum reqLines) ++ ", "
+    ++ jField "slopeTargetFromTempRel" (jNum slopeTgt) ++ ", "
+    ++ jField "densityBudgetFromComposition" (jNum densBudget) ++ ", "
+    ++ jField "noiseGain" (jNum noiseGain) ++ "}"
+  let cEnergy := "{" ++ jField "theorem" (jStr "ErrorBudget.requiredEnergySpread_sufficient")
+    ++ ", " ++ jField "bound_at_threshold" (jNum boundAtReqSpread) ++ ", "
+    ++ jField "tauBeta" (jNum tauBeta) ++ ", "
+    ++ jField "must" (jStr "slopeErrorBound(snr, n, requiredEnergySpread(tauBeta,snr,n)) == tauBeta (threshold is tight)") ++ "}"
+  let cSnr := "{" ++ jField "theorem" (jStr "ErrorBudget.maxPerLineError_sufficient")
+    ++ ", " ++ jField "bound_at_threshold" (jNum boundAtMaxErr) ++ ", "
+    ++ jField "tauBeta" (jNum tauBeta) ++ ", "
+    ++ jField "must" (jStr "slopeErrorBound(maxPerLineError(tauBeta,n,ssE), n, ssE) == tauBeta (threshold is tight)") ++ "}"
+  let cNoise := "{" ++ jField "theorem" (jStr "ErrorBudget.olsSlope_noise_gain")
+    ++ ", " ++ jField "noiseGain" (jNum noiseGain) ++ ", " ++ jField "ssE" (jNum ssE) ++ ", "
+    ++ jField "must" (jStr "noiseGain == 1/ssE (Gauss-Markov slope-variance multiplier)") ++ "}"
+  let cTemp := "{" ++ jField "theorem" (jStr "ErrorBudget.temp_rel_error_eq")
+    ++ ", " ++ jField "slopeTarget" (jNum slopeTgt) ++ ", " ++ jField "relTtarget" (jNum relTtarget)
+    ++ ", " ++ jField "must" (jStr "slopeTargetFromTempRel(relTtarget,kB,T) * (kB*T) == relTtarget (exact)") ++ "}"
+  let cComp := "{" ++ jField "theorem" (jStr "ErrorBudget.composition_target_sufficient")
+    ++ ", " ++ jField "densityBudget" (jNum densBudget) ++ ", " ++ jField "tauC" (jNum tauC)
+    ++ ", " ++ jField "Shat" (jNum Shat) ++ ", " ++ jField "card" (jNum card) ++ ", "
+    ++ jField "must" (jStr "(card+1)*densityBudgetFromComposition(tauC,Shat,card) == tauC*Shat (budget saturates the target)") ++ "}"
+  let checks := "{" ++ jField "energy_spread_tight" cEnergy ++ ", " ++ jField "snr_tight" cSnr
+    ++ ", " ++ jField "noise_gain" cNoise ++ ", " ++ jField "temp_rel" cTemp ++ ", "
+    ++ jField "composition_budget" cComp ++ "}"
+  "{" ++ jField "name" (jStr ("error-budget thresholds — min energy spread, min SNR, and the "
+    ++ "temperature / composition budgets DERIVED from the proven error-propagation chain"))
+    ++ ", " ++ jField "kind" (jStr "error-budget")
+    ++ ", " ++ jField "inputs" inputs ++ ", " ++ jField "thresholds" thresholds
+    ++ ", " ++ jField "checks" checks ++ "}"
+
 /-- Emit the fixtures as a JSON document. -/
 def render : String :=
   let header := jField "_about" (jStr ("Multi-element + alternative-estimator CF-LIBS regression "
@@ -324,7 +422,8 @@ def render : String :=
   let glob := "{" ++ jField "kB" (jNum kB) ++ ", " ++ jField "T" (jNum T) ++ ", "
     ++ jField "Fcal" (jNum Fcal) ++ "}"
   "{\n  " ++ header ++ ",\n  " ++ jField "global" glob ++ ",\n  "
-    ++ jField "scenarios" (jArrayOf #[alloyScenario, twoStageScenario]) ++ "\n}"
+    ++ jField "scenarios" (jArrayOf #[alloyScenario, twoStageScenario, errorBudgetScenario])
+    ++ "\n}"
 
 def main : IO Unit := IO.println render
 

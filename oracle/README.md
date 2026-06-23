@@ -7,7 +7,7 @@ implementation must reproduce, where **each check instantiates a proven theorem.
 The fixtures exercise the **multi-element** problem that is the whole point of CF-LIBS (several
 chemically distinct elements, each with its own atomic data and partition function `U_s`, tied
 together by the closure), across the classic algorithm **and the alternative estimators** the
-spec proves sound/equivalent. Two scenarios:
+spec proves sound/equivalent. Three scenarios:
 
 1. **ternary alloy** — 3 chemically-distinct elements, 4 lines each, distinct optical depths:
    checked with the classic inversion, the multi-line **OLS** Boltzmann-plot estimator, the
@@ -15,6 +15,9 @@ spec proves sound/equivalent. Two scenarios:
    recovery, closure, and calibration-free invariance.
 2. **two-stage Saha–Boltzmann** — one element in its neutral + ion stages: recover `T` and the
    **electron density `n_e`** from the two stages.
+3. **error-budget thresholds** — the empirical `min_energy_spread` / `min_snr` knobs (and the
+   temperature/composition budgets) **derived** from the proven error-propagation chain
+   (`ErrorBudget.lean`), with self-consistency invariants that witness the derived thresholds.
 
 ## Files
 
@@ -66,6 +69,24 @@ NIST values (and your unit convention) freely.
 | --- | --- | --- |
 | `temperature` | neutral 2-line slope recovers `T` | `Classic.classic_temperature_correct` |
 | `saha` | recover `N_z`, `N_{z+1}` from the two stages; `R = N_{z+1}/N_z`; `n_e = S(T)/R == ` true `n_e`; and `R·n_e == S(T)` | `Saha.electronDensityFromRatio` / `saha_relation` / `electronDensity_antitone` / `SahaInverse.saha_joint_identifiability` |
+
+**Scenario 3 — error-budget thresholds:**
+
+The `thresholds` are the DERIVED magic numbers (Float mirrors of the `ErrorBudget.lean` formulas);
+each `checks` entry is a self-consistency invariant of a proven theorem.
+
+| check | asserts | proven by |
+| --- | --- | --- |
+| `energy_spread_tight` | `slopeErrorBound(snr, n, requiredEnergySpread(τ_β,snr,n)) == τ_β` — the derived `min_energy_spread` is exactly tight | `ErrorBudget.requiredEnergySpread_sufficient` (+ `olsSlope_stable_l2`) |
+| `snr_tight` | `slopeErrorBound(maxPerLineError(τ_β,n,ssE), n, ssE) == τ_β` — the derived `min_snr` is exactly tight | `ErrorBudget.maxPerLineError_sufficient` (+ `olsSlope_stable_l2`) |
+| `noise_gain` | `noiseGain == 1/ssE` — the Gauss–Markov slope-variance multiplier (kernel of the statistical line-count law) | `ErrorBudget.olsSlope_noise_gain` |
+| `temp_rel` | `slopeTargetFromTempRel(relTtarget,kB,T)·(kB·T) == relTtarget` — exact `σ_T/T` ↔ `σ_β` conversion | `ErrorBudget.temp_rel_error_eq` |
+| `composition_budget` | `(card+1)·densityBudgetFromComposition(τ_C,Ŝ,card) == τ_C·Ŝ` — composition target ↦ per-species density budget | `ErrorBudget.composition_target_sufficient` (+ `composition_abs_sub_le`) |
+
+Note `requiredMinLinesStat` is the **statistical** (Gauss–Markov) line-count law: the deterministic
+worst-case bounds (`olsSlope_stable_l1`/`_l2`) show energy spread and SNR dominate, but do not give
+a line-count threshold — only `olsSlope_noise_gain` (the `1/ssE` kernel under independent noise)
+does. See the `ErrorBudget.lean` module docstring.
 
 ## Why multi-element (and why a single family is insufficient)
 
