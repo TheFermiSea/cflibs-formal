@@ -4,7 +4,6 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Brian Squires
 -/
 import Mathlib
-import CflibsFormal.Robustness
 import CflibsFormal.CompositionRobustness
 import CflibsFormal.Alt.LeastSquares
 
@@ -227,7 +226,6 @@ gives `|Δβ| ≤ 2·ε/|E₀ − E₁|` — the exact form of `Robustness.twoLi
 theorem olsSlope_stable_two {E y yHat : Fin 2 → ℝ} {eps : ℝ}
     (hE : E 0 ≠ E 1) (hδ : ∀ k, |yHat k - y k| ≤ eps) :
     |olsSlope E yHat - olsSlope E y| ≤ 2 * eps / |E 0 - E 1| := by
-  have hne : E 0 - E 1 ≠ 0 := sub_ne_zero.mpr hE
   have hmean : mean E = (E 0 + E 1) / 2 := by
     unfold mean; rw [show (Fintype.card (Fin 2) : ℝ) = 2 by simp, Fin.sum_univ_two]
   have hden : (∑ k, (E k - mean E) ^ 2) = (E 0 - E 1) ^ 2 / 2 := by

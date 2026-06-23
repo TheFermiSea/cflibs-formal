@@ -266,31 +266,28 @@ def main():
             el = sc["element"]
             g, E, A, lam, Nd = el["g"], el["E"], el["A"], el["lambda"], el["N"]
             nlines = len(g)
+            Ien = [line_intensity_energy(hc, fourPi, kB, T, Nd, Fgeo, g, E, A, lam, k)
+                   for k in range(nlines)]
 
             print(f"forward  ({ch['forward']['theorem']})")
             for k in range(nlines):
-                got = line_intensity_energy(hc, fourPi, kB, T, Nd, Fgeo, g, E, A, lam, k)
-                check(f"energy intensity[{k}]", approx(got, el["intensities"][k]),
-                      f"got {got} vs {el['intensities'][k]}")
+                check(f"energy intensity[{k}]", approx(Ien[k], el["intensities"][k]),
+                      f"got {Ien[k]} vs {el['intensities'][k]}")
 
             print(f"reduction  ({ch['reduction']['theorem']})")
             for k in range(nlines):
-                en = line_intensity_energy(hc, fourPi, kB, T, Nd, Fgeo, g, E, A, lam, k)
                 red = line_intensity(kB, T, Nd, hc * Fgeo / (fourPi * lam[k]), g, E, A, k)
-                check(f"energy[{k}] == lineIntensity(per-line Fcal)", approx(en, red),
-                      f"{en} vs {red}")
+                check(f"energy[{k}] == lineIntensity(per-line Fcal)", approx(Ien[k], red),
+                      f"{Ien[k]} vs {red}")
 
             print(f"mul_lam  ({ch['mul_lam']['theorem']})")
-            red0 = [line_intensity(kB, T, Nd, hc * Fgeo / fourPi, g, E, A, k) for k in range(nlines)]
             for k in range(nlines):
-                en = line_intensity_energy(hc, fourPi, kB, T, Nd, Fgeo, g, E, A, lam, k)
+                red0 = line_intensity(kB, T, Nd, hc * Fgeo / fourPi, g, E, A, k)
                 check(f"energy[{k}]*lambda == lineIntensity(lambda-free Fcal)",
-                      approx(en * lam[k], red0[k]), f"{en * lam[k]} vs {red0[k]}")
+                      approx(Ien[k] * lam[k], red0), f"{Ien[k] * lam[k]} vs {red0}")
 
             print(f"temperature  ({ch['temperature']['theorem']})")
             # wavelength ordinate y_k = ln(I*lambda/(g*A)); 2-line slope recovers T
-            Ien = [line_intensity_energy(hc, fourPi, kB, T, Nd, Fgeo, g, E, A, lam, k)
-                   for k in range(nlines)]
             y = [math.log(Ien[k] * lam[k] / (g[k] * A[k])) for k in range(nlines)]
             Trec = (E[0] - E[1]) / (kB * (y[1] - y[0]))
             check("wavelength-ordinate 2-line slope recovers T",
