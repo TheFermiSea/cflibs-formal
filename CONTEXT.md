@@ -1,0 +1,99 @@
+# CONTEXT — cflibs-formal
+
+A machine-checked **specification** of calibration-free Laser-Induced Breakdown
+Spectroscopy (CF-LIBS) in Lean 4 + mathlib: the forward model (LTE plasma line
+emission), the inverse problem (composition recovery), and the identifiability /
+reliability theorems that say *when and why* the inversion is well-posed.
+
+The goal is **rigor, not numerical accuracy.** This is a verified companion to a numerical
+CF-LIBS pipeline: it establishes which guarantees hold under explicit hypotheses. Real-data
+accuracy is limited by atomic data and plasma modeling, not by this spec — so we invest in
+provable structure (soundness, identifiability, error bounds), not curve-fitting.
+
+## Domain language
+
+- **LTE plasma** — local thermodynamic equilibrium; level populations follow a Boltzmann
+  distribution at a single temperature `T`, ionization follows Saha.
+- **Boltzmann factor / partition function** — `boltzmannFactor kB T E = exp(-E/(kB·T))`;
+  `partitionFunction = Σ_k g_k · boltzmannFactor` (a finite sum over levels).
+- **Saha factor** — the ionization-equilibrium ratio `n_{z+1}·n_e/n_z = S(T)` with the
+  3/2 thermal-de-Broglie power and `exp(-χ/(kB·T))`.
+- **Forward map (`lineIntensity`)** — optically-thin emission `I = Fcal · A_k · population`,
+  with a **per-line** Einstein coefficient `A : ι → ℝ`.
+- **Boltzmann plot** — `log(I/(g_k A_k)) = log(Fcal·N/U) − E_k/(kB·T)`; slope → `T`,
+  intercept → species concentration. The workhorse identity everything rests on.
+- **Composition / closure** — `C_s = N_s / Σ_t N_t`; `Σ C_s = 1`; the vector lies in the
+  probability simplex. Closure fixes the absolute scale (the *calibration-free* property).
+- **Self-absorption / optical depth / curve of growth** — `I_meas = I_thin · SA(τ)`,
+  `SA(τ) = (1−e^{−τ})/τ ∈ (0,1]`; derived from a radiative-transfer slab `S·(1−e^{−τ})`.
+- **Identifiability** — injectivity of the forward map: equal observations (under explicit
+  nondegeneracy) force equal `(T, n_e, composition)`.
+
+## Architecture — two tracks over a shared core
+
+Import DAG is **acyclic with `Boltzmann` as the sole root**; every core definition is
+defined once and reused verbatim.
+
+- **Shared core** (`namespace CflibsFormal`): `Boltzmann`, `Saha`, `Closure`, `ForwardMap`,
+  `Identifiability`, `MultiSpecies`, `SelfAbsorption`, `Robustness`, `Inverse`
+  (algorithm-agnostic estimator framework), `CompositionRobustness`,
+  `CompositionIdentifiability`, `SelfAbsorptionInverse`, `SahaInverse`, `CurveOfGrowth`.
+- **Classic algorithm** (`namespace CflibsFormal.Classic`): `Classic` — the textbook
+  calibration-free algorithm, `classic_sound` (composition leg given `T`).
+- **Alternative estimators** (`namespace CflibsFormal.Alt`): `Alt/CSigma` (single
+  master-line normalization plot), `Alt/SelfAbsorbed` (self-absorption-corrected),
+  `Alt/LeastSquares` (multi-line OLS Boltzmann plot). Each is proven sound and related back
+  to the classic estimator.
+
+New alternative methods go under `CflibsFormal.Alt`; shared physics/inverse machinery in
+`CflibsFormal`. Literature-facing modules carry a `## Literature` docstring paragraph citing
+the peer-reviewed primary sources.
+
+## Design decisions
+
+1. **Dimensionless (bare `ℝ`).** Energies, temperatures, densities, intensities are all
+   `ℝ`. Dimensional consistency is maintained by *human discipline*, not enforced by the
+   type system. Rationale: the inverse-problem theorems (soundness, identifiability, error
+   bounds) are dimensionally trivial and a unit-carrying type would obstruct `field_simp` /
+   `ring` / `log`/`exp` reasoning for no diagnostic gain. (Trade-off accepted; see #2.)
+
+2. **mathlib-only; no `physlib` dependency (decided 2026-06-23).** A scout of
+   `leanprover-community/physlib` (the renamed PhysLean) recommended staying independent:
+   physlib pins Lean/mathlib **v4.30.0** (we are v4.31.0), and adopting its measure-theoretic
+   unit-aware `CanonicalEnsemble`/`Units` would require rewriting our Boltzmann/Saha/ForwardMap
+   core for no CF-LIBS benefit. physlib also has **no Saha/ionization** — our Saha–Boltzmann /
+   spectroscopy / inverse-problem layer is genuinely novel. **Watch-item:** when physlib
+   reaches 4.31+, consider upstreaming a *Saha-only* PR. Until then: minimal-dependency,
+   self-contained.
+
+3. **Axiom-cleanliness is a hard invariant.** Every declaration must depend only on
+   `{propext, Classical.choice, Quot.sound}`. Enforced automatically by `tools/` (vendored
+   `leanprover-community/axiom-audit`): `lake exe axiom-audit --root CflibsFormal`, wired into
+   CI. This catches `sorry`/`admit` (`sorryAx`), `native_decide`, and home-rolled axioms
+   reaching in through imports — which `grep` cannot.
+
+4. **Honest scoping.** A docstring must not claim more than its theorem proves. (An
+   adversarial validation pass found and fixed several over-claims — e.g. a "cross-method
+   agreement" that was really a shared-soundness corollary, a soundness theorem branded
+   "end-to-end" when temperature was assumed.) A green proof of the wrong statement is
+   worthless; statements are audited, not just compiled.
+
+5. **Modeling scope.** Baseline assumptions are LTE, a single-zone homogeneous plasma, and
+   optically-thin emission. These are explicit. Self-absorption is modeled separately
+   (`SelfAbsorption`, `SelfAbsorptionInverse`, `CurveOfGrowth`), and the precise boundary
+   where it defeats vs. permits recovery is characterized. Spatial inhomogeneity (Abel
+   inversion) is not yet modeled.
+
+## Verification discipline
+
+Three gates, all required before trusting a result:
+1. **Green build** — `lake build` (clean re-elaboration from source).
+2. **Axiom-clean** — `lake exe axiom-audit --root CflibsFormal` (exit 0).
+3. **Statement audit** — adversarial review that the *statement* faithfully encodes the
+   intended physics (non-vacuous, non-trivial, non-tautological, honestly scoped).
+
+## Status
+
+18 modules, 95 axiom-clean theorems. Adversarially validated (verdict:
+sound-with-minor-fixes, zero blockers; all findings fixed). The corpus is a verified
+foundation for adding further physics layers (Stark broadening, spatial resolution, …).
