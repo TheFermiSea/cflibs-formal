@@ -10,6 +10,7 @@ import CflibsFormal.CompositionRobustness
 import CflibsFormal.CurveOfGrowth
 import CflibsFormal.ErrorBudget
 import CflibsFormal.ForwardMap
+import CflibsFormal.ForwardMapEnergy
 import CflibsFormal.Identifiability
 import CflibsFormal.Inverse
 import CflibsFormal.MultiSpecies

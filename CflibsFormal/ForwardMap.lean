@@ -17,8 +17,17 @@ line intensity is
 
 where `n_k = population kB T N g E k` is the LTE upper-level number density (reused
 verbatim from `Boltzmann.lean`), `A_{ki}` is the Einstein spontaneous-emission
-coefficient, and `Fcal` is the instrument/geometry constant (absorbing
-`h c / 4π λ_{ki}`).
+coefficient, and `Fcal` is a **scalar** instrument/geometry calibration constant. This is the
+**photon-rate (calibration-absorbed) convention** (Ciucci et al. 1999; Tognoni et al. 2010):
+the *line-independent* prefactors (collection efficiency, plasma volume, `h c / 4π`) are lumped
+into `Fcal`, and the ordinate is `log(I/(g_k A_k))` with no explicit `λ`. The **per-line**
+photon-energy factor `h c / 4π λ_{ki}` is NOT carried by the scalar `Fcal`; it is made explicit
+in the energy-intensity sibling `ForwardMapEnergy.lineIntensityEnergy`, which
+`lineIntensityEnergy_eq_lineIntensity` proves reduces to this map (with the per-line
+`Fcal := h c · Fgeo /(4π λ_k)`). The per-line `λ_{ki}` cancels in the two-line slope only when it
+is constant across the fitted line set or the intensity is genuinely photon-rate; see
+`ForwardMapEnergy` for the wavelength form `log(I·λ/(g A))` and the proof both conventions yield
+the same slope `-1/(k_B T)`.
 
 We prove the key CF-LIBS identities that *lift* the population-level Boltzmann plot
 to **observable** intensities:
@@ -49,8 +58,11 @@ transition with **upper level** `k`:
 where `n_k = population kB T N g E k = N · g_k · exp(-E_k/(k_B T)) / U(T)` is the LTE
 upper-level number density (reused verbatim from `Boltzmann.lean`), `A k = A_{ki}` is the
 **per-line** Einstein spontaneous-emission coefficient (each transition has its own
-`A`, hence `A : ι → ℝ`), and `Fcal` is the instrument/geometry constant (absorbing
-`h c / 4π λ_{ki}`). Expanding `population`,
+`A`, hence `A : ι → ℝ`), and `Fcal` is a **scalar** instrument/geometry calibration constant
+lumping the *line-independent* prefactors (the photon-rate / calibration-absorbed convention of
+Ciucci et al. 1999; the per-line `h c / 4π λ_{ki}` is made explicit in
+`ForwardMapEnergy.lineIntensityEnergy`, proven to reduce here by
+`lineIntensityEnergy_eq_lineIntensity`). Expanding `population`,
   `I_{ki} = Fcal · (g_k · A_k / U(T)) · N · exp(-E_k/(k_B T))`,
 the CF-LIBS forward line-emission model. -/
 noncomputable def lineIntensity (kB T N Fcal : ℝ) (g E A : ι → ℝ) (k : ι) : ℝ :=

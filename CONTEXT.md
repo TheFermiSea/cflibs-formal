@@ -21,7 +21,12 @@ provable structure (soundness, identifiability, error bounds), not curve-fitting
 - **Forward map (`lineIntensity`)** — optically-thin emission `I = Fcal · A_k · population`,
   with a **per-line** Einstein coefficient `A : ι → ℝ`.
 - **Boltzmann plot** — `log(I/(g_k A_k)) = log(Fcal·N/U) − E_k/(kB·T)`; slope → `T`,
-  intercept → species concentration. The workhorse identity everything rests on.
+  intercept → species concentration. The workhorse identity everything rests on. Two equivalent
+  conventions are formalized and proven to share the slope `−1/(kB·T)`: the photon-rate /
+  `Fcal`-absorbed ordinate `log(I/(gA))` (Ciucci 1999; canonical `ForwardMap`) and the
+  energy/wavelength ordinate `log(I·λ/(gA))` (Khelladi 2023; `ForwardMapEnergy`), where the
+  per-line `hc/4πλ_k` is made explicit (closes a literature-review false-positive that the
+  reduced ordinate "omits λ").
 - **Composition / closure** — `C_s = N_s / Σ_t N_t`; `Σ C_s = 1`; the vector lies in the
   probability simplex. Closure fixes the absolute scale (the *calibration-free* property).
 - **Self-absorption / optical depth / curve of growth** — `I_meas = I_thin · SA(τ)`,
@@ -35,6 +40,8 @@ Import DAG is **acyclic with `Boltzmann` as the sole root**; every core definiti
 defined once and reused verbatim.
 
 - **Shared core** (`namespace CflibsFormal`): `Boltzmann`, `Saha`, `Closure`, `ForwardMap`,
+  `ForwardMapEnergy` (energy/wavelength forward sibling: explicit `hc/4πλ`, proven to reduce to
+  the photon-rate `ForwardMap` and to share the Boltzmann-plot slope),
   `Identifiability`, `MultiSpecies`, `SelfAbsorption`, `Robustness`, `Inverse`
   (algorithm-agnostic estimator framework), `CompositionRobustness`,
   `CompositionIdentifiability`, `SelfAbsorptionInverse`, `SahaInverse`, `CurveOfGrowth`,
@@ -103,7 +110,7 @@ Three gates, all required before trusting a result:
 
 ## Status
 
-21 modules, ~123 axiom-clean theorems (axiom-cleanliness CI-enforced via `tools/`).
+22 modules, ~128 axiom-clean theorems (axiom-cleanliness CI-enforced via `tools/`).
 Adversarially validated (verdict: sound-with-minor-fixes, zero blockers; all findings fixed).
 A numerical regression oracle (`oracle/`) bridges the verified spec to the numerical pipeline
 (CF-LIBS-improved) — multi-element + the alternative estimators (OLS, self-absorption, Saha

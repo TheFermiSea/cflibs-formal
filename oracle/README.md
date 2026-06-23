@@ -7,7 +7,7 @@ implementation must reproduce, where **each check instantiates a proven theorem.
 The fixtures exercise the **multi-element** problem that is the whole point of CF-LIBS (several
 chemically distinct elements, each with its own atomic data and partition function `U_s`, tied
 together by the closure), across the classic algorithm **and the alternative estimators** the
-spec proves sound/equivalent. Three scenarios:
+spec proves sound/equivalent. Four scenarios:
 
 1. **ternary alloy** — 3 chemically-distinct elements, 4 lines each, distinct optical depths:
    checked with the classic inversion, the multi-line **OLS** Boltzmann-plot estimator, the
@@ -18,6 +18,10 @@ spec proves sound/equivalent. Three scenarios:
 3. **error-budget thresholds** — the empirical `min_energy_spread` / `min_snr` knobs (and the
    temperature/composition budgets) **derived** from the proven error-propagation chain
    (`ErrorBudget.lean`), with self-consistency invariants that witness the derived thresholds.
+4. **energy/wavelength ordinate** — one element through the energy forward map
+   `lineIntensityEnergy` with **distinct, `E_k`-correlated per-line `λ`** (never `λ=1`): proves
+   the wavelength ordinate `ln(I·λ/(gA))` (the companion pipeline's standard form) and the
+   photon-rate ordinate `ln(I/(gA))` are the **same** Boltzmann plot (`ForwardMapEnergy.lean`).
 
 ## Files
 
@@ -87,6 +91,24 @@ Note `requiredMinLinesStat` is the **statistical** (Gauss–Markov) line-count l
 worst-case bounds (`olsSlope_stable_l1`/`_l2`) show energy spread and SNR dominate, but do not give
 a line-count threshold — only `olsSlope_noise_gain` (the `1/ssE` kernel under independent noise)
 does. See the `ErrorBudget.lean` module docstring.
+
+**Scenario 4 — energy/wavelength ordinate:**
+
+One element fed through `lineIntensityEnergy` with **distinct, `E_k`-correlated per-line `λ`**
+(`element.lambda`, never `λ=1`). Demonstrates that the wavelength ordinate `ln(I·λ/(gA))` and the
+photon-rate ordinate `ln(I/(gA))` are the same Boltzmann plot.
+
+| check | asserts | proven by |
+| --- | --- | --- |
+| `forward` | `lineIntensityEnergy(hc,4π,N,Fgeo, g,E,A,λ, k) == element.intensities[k]` | `ForwardMapEnergy.lineIntensityEnergy` |
+| `reduction` | `lineIntensityEnergy[k] == lineIntensity` with the **per-line** `Fcal = hc·Fgeo/(4π·λ_k)` | `ForwardMapEnergy.lineIntensityEnergy_eq_lineIntensity` |
+| `mul_lam` | `lineIntensityEnergy[k]·λ_k == lineIntensity` with the **λ-free** `Fcal = hc·Fgeo/(4π)` (λ cancels the `1/λ` photon-energy factor) | `ForwardMapEnergy.lineIntensityEnergy_mul_lam` |
+| `temperature` | the 2-line slope of `ln(I·λ/(gA))` vs `E` recovers `T` exactly (λ cancels; distinct per-line λ) | `ForwardMapEnergy.temperature_from_two_lines_wavelength` |
+
+Why **distinct** per-line λ matters: a `λ=1` fixture is blind to every λ-bug (they cancel
+uniformly). A λ-drop bug (pipeline omits the `1/λ` factor) **tilts the slope** because λ
+correlates with `E_k` → wrong `T`. The negative test (drop `1/λ` in `line_intensity_energy`)
+fails 13 checks including the temperature recovery (`T → 0.893` vs `1.0`).
 
 ## Why multi-element (and why a single family is insufficient)
 

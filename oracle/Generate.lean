@@ -53,6 +53,11 @@ def population (kB T N : Float) (g E : Vec) (k : Nat) : Float :=
 def lineIntensity (kB T N Fcal : Float) (g E A : Vec) (k : Nat) : Float :=
   Fcal * A[k]! * population kB T N g E k
 
+/-- Mirror of `ForwardMapEnergy.lineIntensityEnergy`: the energy/wavelength forward map
+`(hc/(4π·λ_k)) · A_k · population · Fgeo`, with the per-line wavelength `λ` explicit. -/
+def lineIntensityEnergy (hc fourPi kB T N Fgeo : Float) (g E A lam : Vec) (k : Nat) : Float :=
+  (hc / (fourPi * lam[k]!)) * A[k]! * population kB T N g E k * Fgeo
+
 /-- Mirror of `CflibsFormal.Classic.classicDensity`: `I · U / (Fcal · A_u · g_u · bf_u)`. -/
 def classicDensity (kB T Fcal : Float) (g E A : Vec) (u : Nat) (I : Float) : Float :=
   I * partitionFunction kB T g E / (Fcal * A[u]! * g[u]! * boltzmannFactor kB T E[u]!)
@@ -413,6 +418,48 @@ def errorBudgetScenario : String :=
     ++ ", " ++ jField "inputs" inputs ++ ", " ++ jField "thresholds" thresholds
     ++ ", " ++ jField "checks" checks ++ "}"
 
+/-! ## Scenario 4 — energy/wavelength ordinate (convention equivalence, distinct per-line λ) -/
+
+/-- One element fed through the ENERGY forward map `lineIntensityEnergy` with DISTINCT,
+`E_k`-correlated per-line wavelengths `λ` (never `λ = 1` — uniform λ is blind to every λ-bug).
+The checks instantiate `ForwardMapEnergy` theorems: the energy map reduces to the photon-rate
+`lineIntensity` (per-line `Fcal`), `I·λ` recovers the λ-free reduced map, and the wavelength-form
+ordinate `ln(I·λ/(g·A))` recovers the same temperature `T`. This is the proven λ-form bridge the
+companion pipeline (`y = ln(I·λ/(g·A))`) regression-tests against. -/
+def energyOrdinateScenario : String :=
+  let g : Vec := #[2.0, 4.0, 6.0, 8.0]
+  let E : Vec := #[0.0, 1.2, 2.5, 3.8]
+  let A : Vec := #[1.0, 0.7, 0.5, 0.3]
+  let lam : Vec := #[3.0, 2.6, 2.1, 1.7]   -- distinct, decreasing as E increases (E_k-correlated)
+  let Nd : Float := 5.0
+  let hc : Float := 2.0
+  let fourPi : Float := 4.0
+  let Fgeo : Float := 1.5
+  let nlines := g.size
+  let Ien := (Array.range nlines).map (fun k => lineIntensityEnergy hc fourPi kB T Nd Fgeo g E A lam k)
+  let constants := "{" ++ jField "hc" (jNum hc) ++ ", " ++ jField "fourPi" (jNum fourPi)
+    ++ ", " ++ jField "Fgeo" (jNum Fgeo) ++ "}"
+  let elem := "{" ++ jField "g" (jVec g) ++ ", " ++ jField "E" (jVec E) ++ ", "
+    ++ jField "A" (jVec A) ++ ", " ++ jField "lambda" (jVec lam) ++ ", "
+    ++ jField "N" (jNum Nd) ++ ", " ++ jField "intensities" (jVec Ien) ++ "}"
+  let fwd := "{" ++ jField "theorem" (jStr "ForwardMapEnergy.lineIntensityEnergy")
+    ++ ", " ++ jField "must" (jStr "lineIntensityEnergy(hc,4pi,N,Fgeo, g,E,A,lambda, k) == element.intensities[k]") ++ "}"
+  let red := "{" ++ jField "theorem" (jStr "ForwardMapEnergy.lineIntensityEnergy_eq_lineIntensity")
+    ++ ", " ++ jField "must" (jStr "lineIntensityEnergy[k] == lineIntensity(Fcal = hc*Fgeo/(4pi*lambda[k]))[k] (per-line Fcal reduction)") ++ "}"
+  let mulLam := "{" ++ jField "theorem" (jStr "ForwardMapEnergy.lineIntensityEnergy_mul_lam")
+    ++ ", " ++ jField "must" (jStr "lineIntensityEnergy[k] * lambda[k] == lineIntensity(Fcal = hc*Fgeo/(4pi))[k] (lambda cancels the 1/lambda photon-energy factor)") ++ "}"
+  let tmp := "{" ++ jField "theorem" (jStr "ForwardMapEnergy.temperature_from_two_lines_wavelength")
+    ++ ", " ++ jField "true_T" (jNum T)
+    ++ ", " ++ jField "must" (jStr "2-line slope of the wavelength ordinate ln(I*lambda/(g*A)) recovers T (distinct per-line lambda; lambda cancels)") ++ "}"
+  let checks := "{" ++ jField "forward" fwd ++ ", " ++ jField "reduction" red ++ ", "
+    ++ jField "mul_lam" mulLam ++ ", " ++ jField "temperature" tmp ++ "}"
+  "{" ++ jField "name" (jStr ("energy/wavelength ordinate — one element through the energy forward "
+    ++ "map with DISTINCT per-line lambda; proves the wavelength (ln(I*lambda/gA)) and photon-rate "
+    ++ "(ln(I/gA)) conventions agree"))
+    ++ ", " ++ jField "kind" (jStr "energy-ordinate")
+    ++ ", " ++ jField "constants" constants ++ ", " ++ jField "element" elem
+    ++ ", " ++ jField "checks" checks ++ "}"
+
 /-- Emit the fixtures as a JSON document. -/
 def render : String :=
   let header := jField "_about" (jStr ("Multi-element + alternative-estimator CF-LIBS regression "
@@ -422,7 +469,8 @@ def render : String :=
   let glob := "{" ++ jField "kB" (jNum kB) ++ ", " ++ jField "T" (jNum T) ++ ", "
     ++ jField "Fcal" (jNum Fcal) ++ "}"
   "{\n  " ++ header ++ ",\n  " ++ jField "global" glob ++ ",\n  "
-    ++ jField "scenarios" (jArrayOf #[alloyScenario, twoStageScenario, errorBudgetScenario])
+    ++ jField "scenarios"
+        (jArrayOf #[alloyScenario, twoStageScenario, errorBudgetScenario, energyOrdinateScenario])
     ++ "\n}"
 
 def main : IO Unit := IO.println render
