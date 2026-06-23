@@ -6,7 +6,6 @@ Authors: Brian Squires
 import Mathlib
 import CflibsFormal.Inverse
 import CflibsFormal.Identifiability
-import CflibsFormal.MultiSpecies
 import CflibsFormal.ForwardMap
 import CflibsFormal.Closure
 

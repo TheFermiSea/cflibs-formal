@@ -54,7 +54,8 @@ lemma totalDensity_pos [Nonempty κ] {n : κ → ℝ}
   exact Finset.sum_pos (fun s _ => hpos s) Finset.univ_nonempty
 
 /-- **Normalization identity.** The number fractions sum to one: `∑ₛ C s = 1`,
-whenever the total density is nonzero. This is an affine normalization identity;
+whenever the total density is positive (the hypothesis `0 < totalDensity n`; the proof in
+fact only needs it nonzero). This is an affine normalization identity;
 combined with nonnegativity it gives genuine probability-simplex membership
 (`composition_mem_stdSimplex`), the full CF-LIBS closure constraint. -/
 theorem composition_sum_one {n : κ → ℝ}

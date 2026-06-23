@@ -127,4 +127,28 @@ theorem twoLineBeta_continuous (Ei Ej : ℝ) :
   unfold twoLineBeta
   exact (continuous_snd.sub continuous_fst).div_const _
 
+/-- **Sharpness of the temperature bound.** The Lipschitz constant `2/|Eᵢ−Eⱼ|` of
+`twoLineBeta_stable` is attained: with the opposite-sign perturbations `yi ↦ yi − ε`,
+`yj ↦ yj + ε` (each of size `ε`), the slope estimate changes by EXACTLY `2·ε/|Eᵢ−Eⱼ|`. So
+the bound cannot be improved — the worst case is real, not a loose over-estimate. -/
+theorem twoLineBeta_stable_sharp {yi yj Ei Ej eps : ℝ} (_hEi : Ei ≠ Ej) (heps : 0 ≤ eps) :
+    |twoLineBeta (yi - eps) (yj + eps) Ei Ej - twoLineBeta yi yj Ei Ej|
+      = 2 * eps / |Ei - Ej| := by
+  have hcombine : twoLineBeta (yi - eps) (yj + eps) Ei Ej - twoLineBeta yi yj Ei Ej
+      = (2 * eps) / (Ei - Ej) := by
+    unfold twoLineBeta
+    rw [div_sub_div_same]
+    congr 1
+    ring
+  rw [hcombine, abs_div, abs_of_nonneg (mul_nonneg (by norm_num) heps)]
+
+/-- **Sharpness of the composition/ratio bound.** The constant `2` of
+`logRatioIntercept_stable` is attained: with opposite-sign intercept perturbations
+`bs ↦ bs + ε`, `bt ↦ bt − ε`, the recovered log-ratio changes by EXACTLY `2·ε`. -/
+theorem logRatioIntercept_stable_sharp {bs bt eps : ℝ} (heps : 0 ≤ eps) :
+    |logRatioIntercept (bs + eps) (bt - eps) - logRatioIntercept bs bt| = 2 * eps := by
+  unfold logRatioIntercept
+  have hc : (bs + eps) - (bt - eps) - (bs - bt) = 2 * eps := by ring
+  rw [hc, abs_of_nonneg (mul_nonneg (by norm_num) heps)]
+
 end CflibsFormal

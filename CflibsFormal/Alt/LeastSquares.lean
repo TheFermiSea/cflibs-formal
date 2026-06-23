@@ -8,7 +8,6 @@ import CflibsFormal.Boltzmann
 import CflibsFormal.ForwardMap
 import CflibsFormal.Closure
 import CflibsFormal.Classic
-import CflibsFormal.Inverse
 
 /-!
 # CF-LIBS formalization — the multi-line ordinary-least-squares Boltzmann-plot estimator
@@ -43,12 +42,12 @@ We prove:
 * `leastSquares_sound` — **MAIN soundness:** run on the genuine multi-line forward-model
   spectrum (full per-species line vector, no `N` input), the OLS estimator returns the
   TRUE composition `C_s = N_s / ∑ N`.
-* `leastSquares_agrees_classic` — **GENUINE same-spectrum cross-method agreement:** fed the
-  SAME underlying forward spectrum (the OLS side consumes the full per-species line vector,
-  the classic side reads the single chosen line `u t` of that very same spectrum), the OLS
-  estimator and the classic two-line estimator return the SAME composition. The procedures
-  genuinely differ (regression intercept over `n` lines vs a two-point slope), yet coincide
-  because BOTH are sound on that spectrum.
+* `leastSquares_agrees_classic` — **same-spectrum agreement on the noise-free forward
+  fixpoint:** fed the SAME underlying forward spectrum (OLS reads the full per-species line
+  vector, classic reads the single chosen line `u t` of that very same spectrum), the two
+  genuinely different procedures return the SAME composition — a corollary of joint soundness
+  (both land on `composition N`). NOT claimed off the fixpoint: on noisy data the two
+  disagree, and that robustness is the point of the OLS variant.
 
 Two index types appear: `κ` (species/stages, from `Closure.lean`) and `ι` (energy levels,
 from `Boltzmann.lean` / `ForwardMap.lean`). This is the ALTERNATIVE method
@@ -228,17 +227,20 @@ theorem leastSquares_sound [Nonempty ι] [Nonempty κ] {kB T Fcal : ℝ}
     funext (fun t => olsDensity_recovers (hg t) (hN t) hFcal (hA t) (hvar t))
   rw [hrec]
 
-/-- **GENUINE same-spectrum cross-method agreement.** Fed the SAME underlying forward
-spectrum, the OLS estimator and the classic two-line estimator return the SAME composition.
-The classic input `fun t => lineIntensity … (u t)` is literally the `u t`-slice of the OLS
-input `fun t k => lineIntensity … k` — ONE underlying forward spectrum (classic reads a
-single line, OLS reads the full vector). The procedures genuinely differ: OLS performs a
-regression intercept over `n` lines (`olsDensity`), the classic method inverts a single line
-via a two-point slope (`classicDensity`). They coincide because BOTH are sound on that
-spectrum (`leastSquares_sound` and `Classic.classic_sound` both land on `composition N`).
-This is a real different-procedure agreement, NOT an OLS-by-reduction-to-classic and NOT
-asymmetric fabricated inputs: neither side ingests `N` or `composition N`. (`hNtot` is
-forwarded to `classic_sound`, whose total-density hypothesis is unused.) -/
+/-- **Same-spectrum agreement on the noise-free forward fixpoint.** Fed the SAME underlying
+forward spectrum (the classic input `fun t => lineIntensity … (u t)` is literally the
+`u t`-slice of the OLS input `fun t k => lineIntensity … k`), the OLS estimator and the
+classic two-line estimator return the SAME composition. Neither side ingests `N` or
+`composition N`, and the two procedures are genuinely different (OLS = regression intercept
+over `n` lines via `olsDensity`; classic = single-line inversion via `classicDensity`).
+
+Honest content: this is a COROLLARY OF JOINT SOUNDNESS — the proof rewrites both sides to
+`composition N` (`leastSquares_sound` and `Classic.classic_sound`), so it holds precisely
+because both are exact ON the noise-free forward fixpoint. It is NOT an observation-level
+identity and is NOT claimed off the fixpoint: on noisy/perturbed intensities the two
+estimators genuinely DISAGREE — OLS averages all lines while classic uses one — and that
+robustness-to-noise is the entire reason to prefer the OLS variant. (`hNtot` is forwarded to
+`classic_sound`, whose total-density hypothesis is unused.) -/
 theorem leastSquares_agrees_classic [Nonempty ι] [Nonempty κ] {kB T Fcal : ℝ}
     {N : κ → ℝ} {g E A : κ → ι → ℝ} {u : κ → ι}
     (hg : ∀ s k, 0 < g s k) (hN : ∀ s, 0 < N s) (hFcal : 0 < Fcal)

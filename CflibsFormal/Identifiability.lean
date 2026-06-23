@@ -67,11 +67,11 @@ temperature uniquely. If two parameter sets (possibly differing in calibration
 `I_j / I_i` on this line pair, and both temperatures are positive, then `T₁ = T₂`.
 
 Inside one parameter set the ratio is
-`I_j/I_i = (g_j/g_i) · exp((E_i − E_j)/(k_B T))` — the common positive prefactor
-`g_j/g_i` (shared across both sides because `g`, `E`, `A`, the species, are the
-same) cancels *across* the two sides, after which `Real.exp` injectivity plus
-`E i ≠ E j` and `k_B > 0` force `T₁ = T₂`. The Einstein coefficient `A`, `Fcal`,
-`N`, and the partition function `U` all cancel.
+`I_j/I_i = ((g_j·A_j)/(g_i·A_i)) · exp((E_i − E_j)/(k_B T))` — the common positive
+prefactor `(g_j·A_j)/(g_i·A_i)` (shared across both sides because `g`, `E`, `A`, the
+species, are the same) cancels *across* the two sides, after which `Real.exp` injectivity
+plus `E i ≠ E j` and `k_B > 0` force `T₁ = T₂`. `Fcal`, `N`, and the partition function
+`U` all cancel.
 
 Non-vacuous: e.g. `ι = Fin 2`, `kB = 1`, `g = A = fun _ => 1`, `E = ![0,1]`
 (so `E 0 ≠ E 1`), `N = Fcal = 1`, any `T₁, T₂ > 0`. Then the ratio is

@@ -67,8 +67,14 @@ By construction, applying this to the forward `lineIntensity` returns `N` exactl
 measured intensities at known `T` and atomic data. Here `U_s = partitionFunction kB T g E`
 reuses `Boltzmann.partitionFunction`. **Single-family scope:** all species share one
 `(g, E, A)` atomic-data family and one partition-function value; per-species partition
-functions are deferred (see module docstring). -/
-noncomputable def deNormalizedDensity (kB T Fcal : ℝ) (g E A : ι → ℝ) (I : ℝ) (s : ι) : ℝ :=
+functions are deferred (see module docstring).
+
+**Same inverse as `Classic.classicDensity`.** This is definitionally the identical
+density-from-intensity inverse used by the classic estimator (`Classic.classicDensity`);
+the argument order `(s : ι) (I : ℝ)` here is deliberately the SAME as `classicDensity`'s
+`(u : ι) (I : ℝ)`. They are kept as separate named aliases only because the two modules do
+not import each other; `MultiSpecies` uses it in species language. -/
+noncomputable def deNormalizedDensity (kB T Fcal : ℝ) (g E A : ι → ℝ) (s : ι) (I : ℝ) : ℝ :=
   I * partitionFunction kB T g E / (Fcal * A s * g s * boltzmannFactor kB T (E s))
 
 /-- **Multi-species closure.** The number fractions sum to one: `∑_s C s = 1`, the
@@ -94,7 +100,7 @@ species number density `N` exactly. This is the per-species half of the
 density-from-intensity bridge and the lemma the ratio theorem rests on. -/
 theorem deNormalized_lineIntensity [Nonempty ι] {kB T N Fcal : ℝ} {g E A : ι → ℝ}
     (hg : ∀ k, 0 < g k) (hN : 0 < N) (hFcal : 0 < Fcal) (hA : ∀ k, 0 < A k) (s : ι) :
-    deNormalizedDensity kB T Fcal g E A (lineIntensity kB T N Fcal g E A s) s = N := by
+    deNormalizedDensity kB T Fcal g E A s (lineIntensity kB T N Fcal g E A s) = N := by
   have hU : partitionFunction kB T g E ≠ 0 := (partitionFunction_pos hg).ne'
   have hgs := (hg s).ne'
   have hAs := (hA s).ne'
@@ -112,8 +118,8 @@ same plasma conditions and (single-family) atomic data. -/
 theorem density_ratio_from_intensities [Nonempty ι] {kB T Ns Nt Fcal : ℝ} {g E A : ι → ℝ}
     (hg : ∀ k, 0 < g k) (hNs : 0 < Ns) (hNt : 0 < Nt) (hFcal : 0 < Fcal) (hA : ∀ k, 0 < A k)
     (s t : ι) :
-    deNormalizedDensity kB T Fcal g E A (lineIntensity kB T Ns Fcal g E A s) s
-        / deNormalizedDensity kB T Fcal g E A (lineIntensity kB T Nt Fcal g E A t) t
+    deNormalizedDensity kB T Fcal g E A s (lineIntensity kB T Ns Fcal g E A s)
+        / deNormalizedDensity kB T Fcal g E A t (lineIntensity kB T Nt Fcal g E A t)
       = Ns / Nt := by
   rw [deNormalized_lineIntensity hg hNs hFcal hA s,
     deNormalized_lineIntensity hg hNt hFcal hA t]

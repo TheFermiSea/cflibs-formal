@@ -130,8 +130,17 @@ density from self-absorption — the measurement constrains only the product `N 
 Concrete, IVT-free witness: `tau₁ = 0`, `tau₂ = 1`, `N₁ = (1 - exp(-1)) · N`, `N₂ = N`.
 Then `SA(0) = 1`, `SA(1) = 1 - exp(-1)`, and both measured intensities equal
 `(1 - exp(-1)) · lineIntensity(… N …)` by `N`-linearity. `N₁ ≠ N₂` since `exp(-1) ≠ 0`.
-The smaller `N₁ < N₂` is the classic self-absorption density bias. This precisely
-characterizes when self-absorption destroys composition identifiability. -/
+The smaller `N₁ < N₂` is the classic self-absorption density bias.
+
+Scope (honest): this is a concrete instance of *single-line density* aliasing — the
+measurement constrains only `N · SA(τ)`, so density and self-absorption are not separable
+from one line. It is NOT a composition-level non-identifiability theorem (no `PlasmaParams`
+/ `thickObserve` / `trueComposition` appears): since `trueComposition` is scale-invariant, a
+common `τ` scaling all species cancels in the closure, so density aliasing does not by
+itself defeat *composition* identifiability. Only the PRESERVED side
+(`thick_composition_identifiability`) operates at the composition level; a genuine
+composition-level LOST theorem (different `trueComposition` from equal `thickObserve` via
+per-species `τ`) is left as follow-up. -/
 theorem selfAbsorption_breaks_identifiability {ι : Type*} [Fintype ι] [Nonempty ι]
     (kB T Fcal : ℝ) (g E A : ι → ℝ) (u : ι) (N : ℝ) (hN : 0 < N) :
     ∃ (N₁ N₂ tau₁ tau₂ : ℝ), 0 ≤ tau₁ ∧ 0 ≤ tau₂ ∧ N₁ ≠ N₂ ∧

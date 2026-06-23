@@ -154,9 +154,12 @@ atomic data (`hgeq`, `hEeq`, `hAeq`), then they have **equal temperature** and
 assumed two-line Boltzmann ratio on a distinct-energy pair — **not** by `hObs`. The
 one-line-per-species observation map `observe` constrains only the emitting lines
 `emit s`; the distinct-energy pair `(i,j)` that pins `T` need not be observed. The
-composition equality *is* extracted from `hObs`: equal per-species line intensities
-with matched calibration and atomic data force equal `N s` for every species (via the
-proven `density_identifiability`), hence equal closure composition.
+composition equality is then extracted from `hObs` **once the temperatures are matched**:
+the proof first uses `hT` (derived from `hTratio`) to bring the two per-species line
+intensities to a common temperature, and only then does `density_identifiability` force
+equal `N s` for every species (hence equal closure composition). So composition rests on
+`hObs` PLUS the matched temperature (from `hTratio`), matched calibration, and atomic
+data — not on `hObs` alone.
 
 Assembled strictly from the already-proven `temperature_identifiability` and
 `density_identifiability` (neither reproven), plus `Closure.composition`.

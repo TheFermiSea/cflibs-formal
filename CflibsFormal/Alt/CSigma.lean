@@ -13,9 +13,21 @@ import CflibsFormal.Classic
 /-!
 # CF-LIBS formalization — the C-sigma (Cσ) single-line method (alternative estimator)
 
-The **C-sigma graph** method of Aguilera & Aragón (2007) is an *alternative* CF-LIBS
-composition estimator. Instead of one Boltzmann plot per species, it plots a
-*normalized* ordinate for ALL lines of ALL species on a SINGLE master line.
+This module formalizes the **multi-element single-master-line normalization plot**: an
+*alternative* CF-LIBS composition estimator that, instead of one Boltzmann plot per
+species, plots a *normalized* ordinate for ALL lines of ALL species on a SINGLE master
+line. This is the multi-element **Boltzmann** master-line construction of Aguilera &
+Aragón, "Multi-element Saha–Boltzmann and Boltzmann plots in laser-induced plasmas,"
+*Spectrochimica Acta Part B* **62** (2007) 378.
+
+**Attribution note (important).** The true **Cσ (C-sigma) graph** is a DIFFERENT, stronger
+construction introduced by Aragón & Aguilera, *J. Quant. Spectrosc. Radiat. Transfer* **149**
+(2014) 90: it additionally collapses lines of different ionization STAGES onto a common line
+via a Saha ionization-energy abscissa shift. That Saha-coupled stage collapse is NOT modeled
+here — the per-species offset below uses only `E/(k_B T)` with no Saha / ionization-energy /
+`n_e` term (`Saha.lean` is not used). The symbols are named `csigma_*` for historical
+reasons, but the formalized object is the optically-thin, single-stage Boltzmann master plot,
+not the Saha-coupled Cσ cross-section graph.
 
 For line `k` (upper level `k`) of a species with data `(N, g, E, A)`, define the
 C-sigma ordinate
@@ -41,10 +53,14 @@ We prove:
   (measured intensities, never `N`), the C-sigma composition returns the TRUE composition
   `C_s = N_s / ∑ N`.
 * `sound_agree` / `csigma_agrees_of_sound` — abstract agreement-via-shared-soundness.
-* `csigma_agrees_classic` — **the literal cross-method agreement**: fed the SAME measured
-  intensities, `csigmaComposition` equals the classic per-species-Boltzmann-plot estimator
-  `classicComposition` (from `Classic.lean`) — same observed spectrum, genuinely different
-  procedures, coinciding because both are sound.
+* `csigmaDensity_offset_eq_classicDensity` / `csigmaComposition_eq_classicComposition` —
+  **the honest content**: the C-sigma offset-inversion is the SAME algebraic left-inverse as
+  `Classic.classicDensity`, so `csigmaComposition = classicComposition` as functions of ALL
+  positive intensities — an unconditional identity, the two methods are the same inverse in
+  `log/exp` vs direct-division packaging.
+* `csigma_agrees_classic` — the forward-data instance of that identity (same measured
+  spectrum ⇒ same composition); structural, NOT two independent procedures that happen to
+  coincide.
 
 Two index types appear: `κ` (species/stages, from `Closure.lean`) and `ι` (energy
 levels, from `Boltzmann.lean` / `ForwardMap.lean`). This is the ALTERNATIVE method
@@ -210,27 +226,71 @@ theorem csigma_agrees_of_sound [Nonempty ι] [Nonempty κ] {kB T Fcal : ℝ}
       = classicEst s :=
   sound_agree (fun s => csigma_sound hg hN hFcal hA s) hclassic s
 
-/-- **CROSS-METHOD AGREEMENT (literal, same observed spectrum).** Fed the SAME measured
-line intensities `I_t = lineIntensity …`, the C-sigma single-line estimator
-`csigmaComposition` and the classic per-species-Boltzmann-plot estimator
-`CflibsFormal.Classic.classicComposition` return the SAME composition. The two consume
-identical observations but run genuinely different procedures — C-sigma reads each offset
-off the single master-line normalization (`csigmaOffsetOfIntensity`) and inverts it
-(`csigmaDensity`), while `classicComposition` inverts each species' line directly
-(`classicDensity`) — yet they coincide because BOTH are sound on that spectrum
-(`csigma_sound` and `CflibsFormal.Classic.classic_sound` both land on `composition N`).
-This is the rigorous statement that the alternative method agrees with the classic one on
-real data, not by construction. -/
+/-- **The C-sigma and classic density inverses are the SAME function (pointwise).** On any
+positive measured intensity `I`, reading the offset off the master line and inverting it
+(`csigmaDensity ∘ csigmaOffsetOfIntensity`) returns exactly `Classic.classicDensity I`. The
+two are the identical algebraic left-inverse of the forward line emission, written two ways:
+the C-sigma form `exp(log(I/(g·A)) + E/(kT))·U/Fcal` and the classic form
+`I·U/(Fcal·A·g·exp(-E/(kT)))`. The `log`/`exp` cancels (`Real.exp_log`, needs `I>0`), the
+Boltzmann factor inverts (`exp(-E/kT) = (exp(E/kT))⁻¹`), and the two collapse to the same
+expression. This is the honest content behind the "agreement": it is structural, holding for
+ALL positive intensities, not a coincidence on forward-model data. -/
+theorem csigmaDensity_offset_eq_classicDensity {kB T Fcal : ℝ} {g E A : ι → ℝ} {u : ι} {I : ℝ}
+    (hg : 0 < g u) (hA : 0 < A u) (hI : 0 < I) (hFcal : 0 < Fcal) :
+    csigmaDensity kB T Fcal g E (csigmaOffsetOfIntensity kB T g E A u I)
+      = Classic.classicDensity kB T Fcal g E A u I := by
+  have hpos : 0 < I / (g u * A u) := div_pos hI (mul_pos hg hA)
+  have hbf : boltzmannFactor kB T (E u) = (Real.exp (E u / (kB * T)))⁻¹ := by
+    unfold boltzmannFactor; rw [← Real.exp_neg]; congr 1; ring
+  have hgu := hg.ne'
+  have hAu := hA.ne'
+  have hFne := hFcal.ne'
+  have hexp := (Real.exp_pos (E u / (kB * T))).ne'
+  unfold csigmaDensity csigmaOffsetOfIntensity Classic.classicDensity
+  rw [hbf, Real.exp_add, Real.exp_log hpos]
+  field_simp
+
+/-- **The two estimators are the SAME function of the observations.** For any positive
+intensity vector `I`, `csigmaComposition I = Classic.classicComposition I` pointwise — an
+UNCONDITIONAL identity (no forward-model / soundness assumption), because the per-species
+density inverses coincide (`csigmaDensity_offset_eq_classicDensity`). So the C-sigma
+single-master-line estimator and the classic per-species estimator are the same algebraic
+left-inverse in two packagings; their "agreement" is structural, not a coincidence. -/
+theorem csigmaComposition_eq_classicComposition {kB T Fcal : ℝ}
+    {g E A : κ → ι → ℝ} {u : κ → ι} {I : κ → ℝ}
+    (hg : ∀ t, 0 < g t (u t)) (hA : ∀ t, 0 < A t (u t)) (hI : ∀ t, 0 < I t)
+    (hFcal : 0 < Fcal) (s : κ) :
+    csigmaComposition kB T Fcal g E A u I s
+      = Classic.classicComposition kB T Fcal g E A u I s := by
+  unfold csigmaComposition Classic.classicComposition
+  congr 1
+  funext t
+  exact csigmaDensity_offset_eq_classicDensity (hg t) (hA t) (hI t) hFcal
+
+/-- **Cross-method agreement on a measured spectrum (forward-data instance).** Fed the SAME
+measured line intensities `I_t = lineIntensity …`, `csigmaComposition` and
+`Classic.classicComposition` return the SAME composition. Honest framing: this is NOT two
+independent procedures coinciding "because both are sound" — by
+`csigmaComposition_eq_classicComposition` they are the IDENTICAL function on all positive
+intensities (the C-sigma offset-inversion is the classic density inverse in `log/exp`
+packaging). This theorem is just that unconditional identity applied to the (positive)
+forward spectrum. The genuine same-spectrum agreement between *structurally different*
+estimators is the OLS-vs-classic one (`Alt.leastSquares_agrees_classic`), where the two
+differ off the noise-free fixpoint. -/
 theorem csigma_agrees_classic [Nonempty ι] [Nonempty κ] {kB T Fcal : ℝ}
     {N : κ → ℝ} {g E A : κ → ι → ℝ} {u : κ → ι}
     (hg : ∀ s k, 0 < g s k) (hN : ∀ s, 0 < N s) (hFcal : 0 < Fcal)
-    (hA : ∀ s, 0 < A s (u s)) (hNtot : 0 < totalDensity N) (s : κ) :
+    (hA : ∀ s, 0 < A s (u s)) (s : κ) :
     csigmaComposition kB T Fcal g E A u
         (fun t => lineIntensity kB T (N t) Fcal (g t) (E t) (A t) (u t)) s
       = Classic.classicComposition kB T Fcal g E A u
-          (fun t => lineIntensity kB T (N t) Fcal (g t) (E t) (A t) (u t)) s :=
-  sound_agree (fun s => csigma_sound hg hN hFcal hA s)
-    (fun s => Classic.classic_sound hg hFcal hA hNtot s) s
+          (fun t => lineIntensity kB T (N t) Fcal (g t) (E t) (A t) (u t)) s := by
+  refine csigmaComposition_eq_classicComposition (fun t => hg t (u t)) hA (fun t => ?_) hFcal s
+  show 0 < lineIntensity kB T (N t) Fcal (g t) (E t) (A t) (u t)
+  unfold lineIntensity population
+  exact mul_pos (mul_pos hFcal (hA t))
+    (div_pos (mul_pos (mul_pos (hN t) (hg t (u t))) (boltzmannFactor_pos _ _ _))
+      (partitionFunction_pos (hg t)))
 
 end CflibsFormal.Alt
 
