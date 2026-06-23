@@ -1,6 +1,12 @@
+import CflibsFormal.Alt.CSigma
 import CflibsFormal.Basic
 import CflibsFormal.Boltzmann
+import CflibsFormal.Classic
 import CflibsFormal.Closure
 import CflibsFormal.ForwardMap
 import CflibsFormal.Identifiability
+import CflibsFormal.Inverse
+import CflibsFormal.MultiSpecies
+import CflibsFormal.Robustness
 import CflibsFormal.Saha
+import CflibsFormal.SelfAbsorption
