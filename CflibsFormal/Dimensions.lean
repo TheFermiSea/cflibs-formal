@@ -141,6 +141,46 @@ theorem sahaLaw_homogeneous :
     div (mul numberDensity numberDensity) numberDensity = numberDensity := by
   unfold div mul inv numberDensity; ext <;> norm_num
 
+/-! ## C. SI ↔ Gaussian-CGS unit conversions
+
+For the base dimensions CF-LIBS uses, SI (m, kg, s, K) and Gaussian-CGS (cm, g, s, K) differ only
+in the *size* of the length and mass units (`1 m = 100 cm`, `1 kg = 1000 g`); time and temperature
+coincide. So a quantity's numeric value scales from SI to CGS by `100^(length exponent) ·
+1000^(mass exponent)`. CF-LIBS literature constants (e.g. the McWhirter `1.6e12`, Stark/Saha
+forms) are quoted in CGS; this lets the dimensionless spec be grounded against either system. -/
+
+/-- SI→CGS numeric-value conversion factor for a quantity of dimension `d`:
+`100^(d.length) · 1000^(d.mass)` (time and temperature base units coincide). -/
+noncomputable def siToCgs (d : Dimension) : ℝ :=
+  (100 : ℝ) ^ (d.length : ℝ) * (1000 : ℝ) ^ (d.mass : ℝ)
+
+/-- A dimensionless quantity has conversion factor `1`. -/
+@[simp] theorem siToCgs_one : siToCgs one = 1 := by
+  simp [siToCgs, one]
+
+/-- The conversion factor is **multiplicative**: `siToCgs (a·b) = siToCgs a · siToCgs b` (it is a
+group homomorphism `Dimension → ℝˣ`). -/
+theorem siToCgs_mul (a b : Dimension) : siToCgs (mul a b) = siToCgs a * siToCgs b := by
+  unfold siToCgs mul
+  rw [show ((a.length + b.length : ℚ) : ℝ) = (a.length : ℝ) + (b.length : ℝ) by push_cast; ring,
+      show ((a.mass + b.mass : ℚ) : ℝ) = (a.mass : ℝ) + (b.mass : ℝ) by push_cast; ring,
+      Real.rpow_add (by norm_num), Real.rpow_add (by norm_num)]
+  ring
+
+/-- Energy converts J → erg by `10⁷`. -/
+theorem siToCgs_energy : siToCgs energy = 1e7 := by
+  unfold siToCgs energy
+  rw [show ((2 : ℚ) : ℝ) = ((2 : ℕ) : ℝ) by norm_num,
+      show ((1 : ℚ) : ℝ) = ((1 : ℕ) : ℝ) by norm_num, Real.rpow_natCast, Real.rpow_natCast]
+  norm_num
+
+/-- Number density converts m⁻³ → cm⁻³ by `10⁻⁶`. -/
+theorem siToCgs_numberDensity : siToCgs numberDensity = 1e-6 := by
+  unfold siToCgs numberDensity
+  rw [show ((-3 : ℚ) : ℝ) = ((-3 : ℤ) : ℝ) by norm_num,
+      show ((0 : ℚ) : ℝ) = ((0 : ℕ) : ℝ) by norm_num, Real.rpow_intCast, Real.rpow_natCast]
+  norm_num
+
 end Dimension
 
 end CflibsFormal
