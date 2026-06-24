@@ -55,6 +55,8 @@ definition is defined once and reused verbatim, and every module imports only `M
   honest sign-conditional monotonicity and the n_e-cancelling shift/width ratio),
   `PartialLTE` (relaxes LTE: the McWhirter density bound inverted to the thermalization-limit energy
   `E*`, with `mcWhirter ⟺ thermalized` — which levels are collisionally thermalized),
+  `Continuum` (the free-free + free-bound background: emissivity scaling, exact baseline-subtraction
+  recovery, and the line-to-continuum thermometer — monotone only in the `E_k ≥ hc/λ` regime),
   `Dimensions` (additive dimensional-analysis layer: machine-checks homogeneity of the forward
   relations; does not touch the dimensionless core),
   `ErrorBudget` (the deterministic error-propagation chain — ε → OLS slope → temperature →
@@ -119,10 +121,12 @@ the peer-reviewed primary sources.
    itself gets an independent electron-density check (`StarkBroadening`: Stark width vs. Saha
    nₑ, McWhirter bound) and a principled relaxation (`PartialLTE`: the McWhirter density bound
    inverted to the thermalization-limit energy `E*` — which levels collisionally thermalize);
-   and the point-line / known-width idealization is relaxed toward real
+   the point-line / known-width idealization is relaxed toward real
    **line profiles** (`LineBroadening`: thermal Doppler width + the exact Gaussian-quadrature
    width budget and deconvolution that exposes the Stark Lorentzian — the full Voigt convolution
-   stays out of scope).
+   stays out of scope); and the optically-thin *line-only* forward model is extended with the
+   **continuum background** (`Continuum`: free-free + free-bound emissivity scaling, exact
+   baseline-subtraction recovery, and the line-to-continuum thermometer).
 
 ## Verification discipline
 
@@ -141,7 +145,7 @@ Gates 1–4 are automated in CI (`.github/workflows/lean_action_ci.yml`).
 
 ## Status
 
-26 modules, 163 axiom-clean named results (theorem/lemma) + 74 defs (counts via `scripts/stats.sh`).
+27 modules, 169 axiom-clean named results (theorem/lemma) + 79 defs (counts via `scripts/stats.sh`).
 Three automated CI gates: axiom-cleanliness (`tools/`), style/structure lint (`runLinter`), and the
 import-hygiene check (`scripts/stats.sh`).
 Adversarially validated (verdict: sound-with-minor-fixes, zero blockers; all findings fixed).
