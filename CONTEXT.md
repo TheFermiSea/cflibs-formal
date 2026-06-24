@@ -113,15 +113,23 @@ the peer-reviewed primary sources.
 
 ## Verification discipline
 
-Three gates, all required before trusting a result:
+Gates, all required before trusting a result:
 1. **Green build** — `lake build` (clean re-elaboration from source).
 2. **Axiom-clean** — `lake exe axiom-audit --root CflibsFormal` (exit 0).
-3. **Statement audit** — adversarial review that the *statement* faithfully encodes the
+3. **Style/structure lint** — `lake exe runLinter CflibsFormal` (mathlib/batteries env linters:
+   docBlame, simpNF, unusedArguments, …) — catches missing docstrings, unused hypotheses, etc.
+4. **Import-DAG-root invariant** — `scripts/stats.sh` (the root `Boltzmann` imports no CflibsFormal
+   module; acyclicity is guaranteed by the build). Also prints derived declaration counts.
+5. **Statement audit** — adversarial review that the *statement* faithfully encodes the
    intended physics (non-vacuous, non-trivial, non-tautological, honestly scoped).
+
+Gates 1–4 are automated in CI (`.github/workflows/lean_action_ci.yml`).
 
 ## Status
 
-23 modules, ~135 axiom-clean theorems (axiom-cleanliness CI-enforced via `tools/`).
+23 modules, 138 axiom-clean named results (theorem/lemma) + 65 defs (counts via `scripts/stats.sh`).
+Three automated CI gates: axiom-cleanliness (`tools/`), style/structure lint (`runLinter`), and the
+import-DAG-root invariant (`scripts/stats.sh`).
 Adversarially validated (verdict: sound-with-minor-fixes, zero blockers; all findings fixed).
 A whole-corpus **literature-validity audit** (`reviews/literature-validity-audit.md`) classified all
 186 defs+theorems against the peer-reviewed CF-LIBS literature: 69 faithful / 33 reduced / 5 idealized

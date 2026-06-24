@@ -28,6 +28,11 @@ jobs:
       # hypotheses, non-simp-normal-form lemmas, etc. that build + axiom-audit do not.
       - name: Lint gate
         run: lake exe runLinter CflibsFormal
+      # Project stats (declaration counts — derived, not hand-estimated) + import-DAG-root
+      # invariant: the root `Boltzmann` must import no CflibsFormal module (acyclicity itself is
+      # guaranteed by the Lean build). Fails CI only if the root invariant is violated.
+      - name: Stats + import-graph check
+        run: ./scripts/stats.sh
       # Regression-oracle self-check: the committed fixtures must match the generator (no drift),
       # and the reference checker must pass (fixtures internally consistent with the spec formulas).
       - name: Regression-oracle self-check
