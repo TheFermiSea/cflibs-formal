@@ -23,16 +23,23 @@ jobs:
       # home-rolled axioms — including through imports — which grep cannot). Tool vendored in tools/.
       - name: Axiom-cleanliness gate
         run: lake exe axiom-audit --root CflibsFormal
+      # Upstream-seed gate: the SahaUpstream lib (the self-contained physlib seed) is not in
+      # defaultTargets, so build + axiom-audit it explicitly to keep the "axiom-audited separately"
+      # claim in lakefile.toml true.
+      - name: Upstream-seed gate
+        run: |
+          lake build SahaUpstream
+          lake exe axiom-audit --root SahaUpstream
+      # Import hygiene + stats (pure grep, cheapest — runs before the linter so a trivial import
+      # violation fails fast): every module imports only Mathlib/CflibsFormal (acyclicity is
+      # guaranteed by the build); also prints derived declaration counts.
+      - name: Import-hygiene + stats
+        run: ./scripts/stats.sh
       # Style/structure-lint gate: mathlib/batteries environment linters (docBlame, simpNF,
       # unusedArguments, ...) on the CflibsFormal library — catches missing docstrings, unused
       # hypotheses, non-simp-normal-form lemmas, etc. that build + axiom-audit do not.
       - name: Lint gate
         run: lake exe runLinter CflibsFormal
-      # Project stats (declaration counts — derived, not hand-estimated) + import-DAG-root
-      # invariant: the root `Boltzmann` must import no CflibsFormal module (acyclicity itself is
-      # guaranteed by the Lean build). Fails CI only if the root invariant is violated.
-      - name: Stats + import-graph check
-        run: ./scripts/stats.sh
       # Regression-oracle self-check: the committed fixtures must match the generator (no drift),
       # and the reference checker must pass (fixtures internally consistent with the spec formulas).
       - name: Regression-oracle self-check

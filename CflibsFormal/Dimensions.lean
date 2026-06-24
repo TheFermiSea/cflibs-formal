@@ -90,8 +90,6 @@ def numberDensity : Dimension := ⟨-3, 0, 0, 0⟩
 def boltzmannConstant : Dimension := ⟨2, 1, -2, -1⟩
 /-- Planck constant `h` (action) = energy · time = `M L² time⁻¹`. -/
 def planckConstant : Dimension := ⟨2, 1, -1, 0⟩
-/-- Einstein spontaneous-emission coefficient `A` (a rate) = `time⁻¹`. -/
-def einsteinA : Dimension := ⟨0, 0, -1, 0⟩
 
 /-! ## A.2. Sanity checks on the derived dimensions -/
 
@@ -150,7 +148,9 @@ coincide. So a quantity's numeric value scales from SI to CGS by `100^(length ex
 forms) are quoted in CGS; this lets the dimensionless spec be grounded against either system. -/
 
 /-- SI→CGS numeric-value conversion factor for a quantity of dimension `d`:
-`100^(d.length) · 1000^(d.mass)` (time and temperature base units coincide). -/
+`100^(d.length) · 1000^(d.mass)`. The time and temperature exponents are dropped because the
+second and the kelvin coincide between SI and Gaussian-CGS; this would need revisiting for
+electromagnetic (EMU/Gaussian) units, where the two systems genuinely diverge. -/
 noncomputable def siToCgs (d : Dimension) : ℝ :=
   (100 : ℝ) ^ (d.length : ℝ) * (1000 : ℝ) ^ (d.mass : ℝ)
 
@@ -169,17 +169,11 @@ theorem siToCgs_mul (a b : Dimension) : siToCgs (mul a b) = siToCgs a * siToCgs 
 
 /-- Energy converts J → erg by `10⁷`. -/
 theorem siToCgs_energy : siToCgs energy = 1e7 := by
-  unfold siToCgs energy
-  rw [show ((2 : ℚ) : ℝ) = ((2 : ℕ) : ℝ) by norm_num,
-      show ((1 : ℚ) : ℝ) = ((1 : ℕ) : ℝ) by norm_num, Real.rpow_natCast, Real.rpow_natCast]
-  norm_num
+  unfold siToCgs energy; norm_num [Real.rpow_natCast]
 
 /-- Number density converts m⁻³ → cm⁻³ by `10⁻⁶`. -/
 theorem siToCgs_numberDensity : siToCgs numberDensity = 1e-6 := by
-  unfold siToCgs numberDensity
-  rw [show ((-3 : ℚ) : ℝ) = ((-3 : ℤ) : ℝ) by norm_num,
-      show ((0 : ℚ) : ℝ) = ((0 : ℕ) : ℝ) by norm_num, Real.rpow_intCast, Real.rpow_natCast]
-  norm_num
+  unfold siToCgs numberDensity; norm_num [Real.rpow_intCast]
 
 end Dimension
 

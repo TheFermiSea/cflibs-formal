@@ -36,8 +36,10 @@ provable structure (soundness, identifiability, error bounds), not curve-fitting
 
 ## Architecture — two tracks over a shared core
 
-Import DAG is **acyclic with `Boltzmann` as the sole root**; every core definition is
-defined once and reused verbatim.
+Import DAG is **acyclic** (Lean-guaranteed); `Boltzmann` is the base of the forward/inverse chain,
+with `SpatialForward` and `Dimensions` as independent `Mathlib`-only modules. Every core
+definition is defined once and reused verbatim, and every module imports only `Mathlib` /
+`CflibsFormal` (checked by `scripts/stats.sh`).
 
 - **Shared core** (`namespace CflibsFormal`): `Boltzmann`, `Saha`, `Closure`, `ForwardMap`,
   `ForwardMapEnergy` (energy/wavelength forward sibling: explicit `hc/4πλ`, proven to reduce to
@@ -118,8 +120,9 @@ Gates, all required before trusting a result:
 2. **Axiom-clean** — `lake exe axiom-audit --root CflibsFormal` (exit 0).
 3. **Style/structure lint** — `lake exe runLinter CflibsFormal` (mathlib/batteries env linters:
    docBlame, simpNF, unusedArguments, …) — catches missing docstrings, unused hypotheses, etc.
-4. **Import-DAG-root invariant** — `scripts/stats.sh` (the root `Boltzmann` imports no CflibsFormal
-   module; acyclicity is guaranteed by the build). Also prints derived declaration counts.
+4. **Import hygiene** — `scripts/stats.sh` (every module imports only `Mathlib` / `CflibsFormal`,
+   no surprise external deps; acyclicity is guaranteed by the build). Also prints the base modules
+   and derived declaration counts.
 5. **Statement audit** — adversarial review that the *statement* faithfully encodes the
    intended physics (non-vacuous, non-trivial, non-tautological, honestly scoped).
 
@@ -127,9 +130,9 @@ Gates 1–4 are automated in CI (`.github/workflows/lean_action_ci.yml`).
 
 ## Status
 
-23 modules, 138 axiom-clean named results (theorem/lemma) + 65 defs (counts via `scripts/stats.sh`).
+23 modules, 140 axiom-clean named results (theorem/lemma) + 64 defs (counts via `scripts/stats.sh`).
 Three automated CI gates: axiom-cleanliness (`tools/`), style/structure lint (`runLinter`), and the
-import-DAG-root invariant (`scripts/stats.sh`).
+import-hygiene check (`scripts/stats.sh`).
 Adversarially validated (verdict: sound-with-minor-fixes, zero blockers; all findings fixed).
 A whole-corpus **literature-validity audit** (`reviews/literature-validity-audit.md`) classified all
 186 defs+theorems against the peer-reviewed CF-LIBS literature: 69 faithful / 33 reduced / 5 idealized
