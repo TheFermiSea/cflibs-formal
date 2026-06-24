@@ -51,6 +51,10 @@ definition is defined once and reused verbatim, and every module imports only `M
   `SpatialForward` (discrete onion-peeling Abel inversion — relaxes single-zone homogeneity),
   `LineBroadening` (toward real line profiles: thermal Doppler width + the Gaussian-quadrature
   width budget / deconvolution that feeds the Stark diagnostic),
+  `VoigtWidth` (the Olivero–Longbothum Voigt FWHM combination of the Gaussian and Lorentzian widths
+  — the piece LineBroadening left out; honest exact-Gaussian-limit vs approximate-Lorentzian-limit),
+  `SelfReversal` (the two-zone hot-core/cool-shell model and the central-dip mechanism — the
+  non-isothermal effect single-zone `SelfAbsorption` cannot produce),
   `StarkShift` (the Stark line-SHIFT density diagnostic — signed companion to the Stark width, with
   honest sign-conditional monotonicity and the n_e-cancelling shift/width ratio),
   `PartialLTE` (relaxes LTE: the McWhirter density bound inverted to the thermalization-limit energy
@@ -115,7 +119,8 @@ the peer-reviewed primary sources.
 5. **Modeling scope.** Baseline assumptions are LTE, a single-zone homogeneous plasma, and
    optically-thin emission — all explicit, and progressively relaxed: self-absorption is
    modeled separately (`SelfAbsorption`, `SelfAbsorptionInverse`, `CurveOfGrowth`, with the
-   precise recover/defeat boundary characterized); spatial inhomogeneity is modeled via the
+   precise recover/defeat boundary characterized, plus the non-isothermal two-zone **self-reversal**
+   dip in `SelfReversal`); spatial inhomogeneity is modeled via the
    **discrete onion-peeling Abel inversion** (`SpatialForward`, single-zone = the N=1 case;
    the continuous Abel integral inverse is explicitly out of scope); the LTE assumption
    itself gets an independent electron-density check (`StarkBroadening`: Stark width vs. Saha
@@ -123,8 +128,10 @@ the peer-reviewed primary sources.
    inverted to the thermalization-limit energy `E*` — which levels collisionally thermalize);
    the point-line / known-width idealization is relaxed toward real
    **line profiles** (`LineBroadening`: thermal Doppler width + the exact Gaussian-quadrature
-   width budget and deconvolution that exposes the Stark Lorentzian — the full Voigt convolution
-   stays out of scope); and the optically-thin *line-only* forward model is extended with the
+   width budget and deconvolution that exposes the Stark Lorentzian; `VoigtWidth`: the
+   Olivero–Longbothum Voigt FWHM combination of those Gaussian and Lorentzian widths — the full
+   Voigt convolution *profile* stays out of scope); and the optically-thin *line-only* forward
+   model is extended with the
    **continuum background** (`Continuum`: free-free + free-bound emissivity scaling, exact
    baseline-subtraction recovery, and the line-to-continuum thermometer).
 
@@ -145,7 +152,7 @@ Gates 1–4 are automated in CI (`.github/workflows/lean_action_ci.yml`).
 
 ## Status
 
-27 modules, 169 axiom-clean named results (theorem/lemma) + 79 defs (counts via `scripts/stats.sh`).
+29 modules, 181 axiom-clean named results (theorem/lemma) + 81 defs (counts via `scripts/stats.sh`).
 Three automated CI gates: axiom-cleanliness (`tools/`), style/structure lint (`runLinter`), and the
 import-hygiene check (`scripts/stats.sh`).
 Adversarially validated (verdict: sound-with-minor-fixes, zero blockers; all findings fixed).
