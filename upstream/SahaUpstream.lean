@@ -49,6 +49,8 @@ open scoped BigOperators
 variable {ι : Type*} [Fintype ι]
 variable {κ : Type*} [Fintype κ]
 
+/-! # A. The discrete partition function and the de-Broglie bracket -/
+
 /-- Minimal discrete (degeneracy-weighted) partition function `U(T) = ∑ₖ gₖ·exp(−Eₖ/(k_B T))`.
 Inlined here so the seed is mathlib-only; in physlib this is replaced by
 `StatisticalMechanics/CanonicalEnsemble/Finite`'s `Z = ∑ exp(−βEᵢ)`. -/
@@ -76,6 +78,8 @@ lemma thermalBracket_pos {kB T me h : ℝ}
     mul_pos (mul_pos (mul_pos (mul_pos (by norm_num) Real.pi_pos) hme) hkB) hT
   exact div_pos hnum (pow_pos hh 2)
 
+/-! # B. The Saha factor and the electron-density diagnostic -/
+
 /-- **Saha factor** `S(T)`: the full right-hand side of the Saha equation *excluding* the electron
 density `n_e` and the stage population ratio. With `U_z = partitionFunction kB T gZ EZ`,
 `U_{z+1} = partitionFunction kB T gZ1 EZ1`:
@@ -94,10 +98,12 @@ noncomputable def electronDensityFromRatio (kB T me h chi : ℝ) (gZ EZ : ι →
     (gZ1 EZ1 : κ → ℝ) (R : ℝ) : ℝ :=
   sahaFactor kB T me h chi gZ EZ gZ1 EZ1 / R
 
+/-! # C. The Saha law: positivity, the density inversion, and the Saha-plot identity -/
+
 /-- **Positivity of the Saha factor.** Given positive physical constants and temperature, and
 positive statistical weights for both stages, `S(T) > 0`. The ionization energy `χ` is
 unconstrained: `exp(−χ/(k_B T))` is positive for any sign of `χ`. -/
-theorem sahaFactor_pos [Nonempty ι] [Nonempty κ] {kB T me h chi : ℝ}
+lemma sahaFactor_pos [Nonempty ι] [Nonempty κ] {kB T me h chi : ℝ}
     {gZ EZ : ι → ℝ} {gZ1 EZ1 : κ → ℝ}
     (hkB : 0 < kB) (hT : 0 < T) (hme : 0 < me) (hh : 0 < h)
     (hgZ : ∀ k, 0 < gZ k) (hgZ1 : ∀ k, 0 < gZ1 k) :
@@ -123,7 +129,7 @@ theorem saha_relation {kB T me h chi : ℝ} {gZ EZ : ι → ℝ} {gZ1 EZ1 : κ �
 /-- **Density diagnostic is injective.** The map `R ↦ n_e = S(T)/R` is strictly antitone on the
 positive reals: a larger measured stage ratio yields a strictly smaller inferred electron density,
 so a measured ratio determines `n_e` uniquely. Relies on `S(T) > 0`. -/
-theorem electronDensity_antitone [Nonempty ι] [Nonempty κ] {kB T me h chi : ℝ}
+lemma electronDensity_antitone [Nonempty ι] [Nonempty κ] {kB T me h chi : ℝ}
     {gZ EZ : ι → ℝ} {gZ1 EZ1 : κ → ℝ}
     (hkB : 0 < kB) (hT : 0 < T) (hme : 0 < me) (hh : 0 < h)
     (hgZ : ∀ k, 0 < gZ k) (hgZ1 : ∀ k, 0 < gZ1 k) :
@@ -137,7 +143,7 @@ theorem electronDensity_antitone [Nonempty ι] [Nonempty κ] {kB T me h chi : �
 /-- **Saha-plot log identity.** `log S(T)` is affine in `1/(k_B T)` with slope `−χ`, plus a
 `(3/2)·log(bracket)` term, plus `log 2` and the partition-function difference — the ionization
 analogue of the Boltzmann plot, underlying linearized Saha-plot fitting. -/
-theorem log_sahaFactor [Nonempty ι] [Nonempty κ] {kB T me h chi : ℝ}
+lemma log_sahaFactor [Nonempty ι] [Nonempty κ] {kB T me h chi : ℝ}
     {gZ EZ : ι → ℝ} {gZ1 EZ1 : κ → ℝ}
     (hkB : 0 < kB) (hT : 0 < T) (hme : 0 < me) (hh : 0 < h)
     (hgZ : ∀ k, 0 < gZ k) (hgZ1 : ∀ k, 0 < gZ1 k) :
