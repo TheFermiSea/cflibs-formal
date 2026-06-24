@@ -53,6 +53,8 @@ definition is defined once and reused verbatim, and every module imports only `M
   width budget / deconvolution that feeds the Stark diagnostic),
   `StarkShift` (the Stark line-SHIFT density diagnostic — signed companion to the Stark width, with
   honest sign-conditional monotonicity and the n_e-cancelling shift/width ratio),
+  `PartialLTE` (relaxes LTE: the McWhirter density bound inverted to the thermalization-limit energy
+  `E*`, with `mcWhirter ⟺ thermalized` — which levels are collisionally thermalized),
   `Dimensions` (additive dimensional-analysis layer: machine-checks homogeneity of the forward
   relations; does not touch the dimensionless core),
   `ErrorBudget` (the deterministic error-propagation chain — ε → OLS slope → temperature →
@@ -115,7 +117,9 @@ the peer-reviewed primary sources.
    **discrete onion-peeling Abel inversion** (`SpatialForward`, single-zone = the N=1 case;
    the continuous Abel integral inverse is explicitly out of scope); the LTE assumption
    itself gets an independent electron-density check (`StarkBroadening`: Stark width vs. Saha
-   nₑ, McWhirter bound); and the point-line / known-width idealization is relaxed toward real
+   nₑ, McWhirter bound) and a principled relaxation (`PartialLTE`: the McWhirter density bound
+   inverted to the thermalization-limit energy `E*` — which levels collisionally thermalize);
+   and the point-line / known-width idealization is relaxed toward real
    **line profiles** (`LineBroadening`: thermal Doppler width + the exact Gaussian-quadrature
    width budget and deconvolution that exposes the Stark Lorentzian — the full Voigt convolution
    stays out of scope).
@@ -137,7 +141,7 @@ Gates 1–4 are automated in CI (`.github/workflows/lean_action_ci.yml`).
 
 ## Status
 
-25 modules, 157 axiom-clean named results (theorem/lemma) + 72 defs (counts via `scripts/stats.sh`).
+26 modules, 163 axiom-clean named results (theorem/lemma) + 74 defs (counts via `scripts/stats.sh`).
 Three automated CI gates: axiom-cleanliness (`tools/`), style/structure lint (`runLinter`), and the
 import-hygiene check (`scripts/stats.sh`).
 Adversarially validated (verdict: sound-with-minor-fixes, zero blockers; all findings fixed).

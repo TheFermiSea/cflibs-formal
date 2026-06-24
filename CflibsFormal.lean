@@ -15,6 +15,7 @@ import CflibsFormal.Identifiability
 import CflibsFormal.Inverse
 import CflibsFormal.LineBroadening
 import CflibsFormal.MultiSpecies
+import CflibsFormal.PartialLTE
 import CflibsFormal.Robustness
 import CflibsFormal.Saha
 import CflibsFormal.SahaInverse
