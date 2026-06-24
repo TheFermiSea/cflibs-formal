@@ -51,6 +51,8 @@ definition is defined once and reused verbatim, and every module imports only `M
   `SpatialForward` (discrete onion-peeling Abel inversion — relaxes single-zone homogeneity),
   `LineBroadening` (toward real line profiles: thermal Doppler width + the Gaussian-quadrature
   width budget / deconvolution that feeds the Stark diagnostic),
+  `StarkShift` (the Stark line-SHIFT density diagnostic — signed companion to the Stark width, with
+  honest sign-conditional monotonicity and the n_e-cancelling shift/width ratio),
   `Dimensions` (additive dimensional-analysis layer: machine-checks homogeneity of the forward
   relations; does not touch the dimensionless core),
   `ErrorBudget` (the deterministic error-propagation chain — ε → OLS slope → temperature →
@@ -135,7 +137,7 @@ Gates 1–4 are automated in CI (`.github/workflows/lean_action_ci.yml`).
 
 ## Status
 
-24 modules, 146 axiom-clean named results (theorem/lemma) + 69 defs (counts via `scripts/stats.sh`).
+25 modules, 157 axiom-clean named results (theorem/lemma) + 72 defs (counts via `scripts/stats.sh`).
 Three automated CI gates: axiom-cleanliness (`tools/`), style/structure lint (`runLinter`), and the
 import-hygiene check (`scripts/stats.sh`).
 Adversarially validated (verdict: sound-with-minor-fixes, zero blockers; all findings fixed).

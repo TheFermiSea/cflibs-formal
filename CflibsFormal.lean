@@ -22,3 +22,4 @@ import CflibsFormal.SelfAbsorption
 import CflibsFormal.SelfAbsorptionInverse
 import CflibsFormal.SpatialForward
 import CflibsFormal.StarkBroadening
+import CflibsFormal.StarkShift

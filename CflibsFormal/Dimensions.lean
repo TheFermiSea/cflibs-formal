@@ -148,6 +148,18 @@ line-emission forward map `I = Fcal · A · n` (and the ordinate `ln(I/(g·A))`)
 theorem einsteinA_photonEnergy_dim : mul einsteinA energy = div energy timeDim := by
   unfold div mul inv einsteinA energy timeDim; ext <;> norm_num
 
+/-- **The Stark-shift law is dimensionally homogeneous.** In `d = d_ref·(n_e/n_ref)` the density
+ratio `n_e/n_ref` is dimensionless, so a shift `d` carries the dimension of `d_ref` — a length (a
+wavelength displacement). Matches `StarkShift.starkShift`. -/
+theorem starkShift_homogeneous : mul lengthDim (div numberDensity numberDensity) = lengthDim := by
+  unfold div mul inv lengthDim numberDensity; ext <;> norm_num
+
+/-- **The shift-to-width ratio is dimensionless.** A Stark shift and a Stark width are both lengths,
+so `d/w` is a pure number (length/length) — confirming `StarkShift.shiftWidthRatio` is an
+`n_e`-free atomic constant. -/
+theorem shiftWidthRatio_dimensionless : div lengthDim lengthDim = one := by
+  unfold div mul inv lengthDim one; ext <;> norm_num
+
 /-! ## C. SI ↔ Gaussian-CGS unit conversions
 
 For the base dimensions CF-LIBS uses, SI (m, kg, s, K) and Gaussian-CGS (cm, g, s, K) differ only
