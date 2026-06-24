@@ -7,7 +7,7 @@ implementation must reproduce, where **each check instantiates a proven theorem.
 The fixtures exercise the **multi-element** problem that is the whole point of CF-LIBS (several
 chemically distinct elements, each with its own atomic data and partition function `U_s`, tied
 together by the closure), across the classic algorithm **and the alternative estimators** the
-spec proves sound/equivalent. Four scenarios:
+spec proves sound/equivalent. Five scenarios:
 
 1. **ternary alloy** — 3 chemically-distinct elements, 4 lines each, distinct optical depths:
    checked with the classic inversion, the multi-line **OLS** Boltzmann-plot estimator, the
@@ -22,6 +22,10 @@ spec proves sound/equivalent. Four scenarios:
    `lineIntensityEnergy` with **distinct, `E_k`-correlated per-line `λ`** (never `λ=1`): proves
    the wavelength ordinate `ln(I·λ/(gA))` (the companion pipeline's standard form) and the
    photon-rate ordinate `ln(I/(gA))` are the **same** Boltzmann plot (`ForwardMapEnergy.lean`).
+5. **Stark broadening + McWhirter** — the Griem linear-width electron-density inverse
+   `n_e = nRef·width/(2w)` (`StarkBroadening.starkDensity_recovers`), its forward round trip, and
+   the `√T·ΔE³` McWhirter LTE-bound shape (`mcWhirterBound`). Kept dimensionless so the physical
+   `REF_NE`/`1.6e12` constants stay out of the lossless formatter; the Python checker applies them.
 
 ## Files
 

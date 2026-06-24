@@ -160,6 +160,20 @@ budget that GUARANTEES a target composition accuracy `tauC` for `card` species a
 density `Shat`: `delta ≤ tauC·Shat / (card + 1)`. -/
 def densityBudgetFromComposition (tauC Shat card : Float) : Float := tauC * Shat / (card + 1.0)
 
+-- ### Stark broadening / McWhirter (mirror of `StarkBroadening.lean`)
+
+/-- Mirror of `StarkBroadening.starkFWHM`: the Griem electron-impact linear width
+`Δλ = 2·w·(ne/nRef)`. -/
+def starkFWHM (w nRef ne : Float) : Float := 2.0 * w * (ne / nRef)
+
+/-- Mirror of `StarkBroadening.starkDensity` (the inverse): `n_e = nRef·width/(2·w)`. -/
+def starkDensity (w nRef width : Float) : Float := nRef * width / (2.0 * w)
+
+/-- Mirror of the DIMENSIONLESS shape of `StarkBroadening.mcWhirterBound` (`1.6e12·√T·ΔE³`): the
+`√T·ΔE³` part. The full bound is `mcWhirterConst · mcWhirterShape` with `mcWhirterConst = 1.6e12`;
+the constant is kept out of the fixture so values stay in the lossless formatter range. -/
+def mcWhirterShape (T dE : Float) : Float := Float.sqrt T * dE ^ 3
+
 /-! ## JSON emission -/
 
 /-- 9-decimal fixed-point rendering via a scaled integer (Lean's `Float.toString` is lossy
@@ -460,6 +474,41 @@ def energyOrdinateScenario : String :=
     ++ ", " ++ jField "constants" constants ++ ", " ++ jField "element" elem
     ++ ", " ++ jField "checks" checks ++ "}"
 
+/-! ## Scenario 5 — Stark broadening n_e diagnostic + McWhirter LTE bound -/
+
+/-- The Griem linear Stark-width inverse (`n_e = nRef·width/(2w)`) and the `√T·ΔE³` McWhirter shape,
+all DIMENSIONLESS (so the `1.6e12` / `REF_NE` physical constants stay out of the lossless
+formatter; the Python checker applies them). Pins `StarkBroadening.starkDensity_recovers` and
+`mcWhirterBound`. -/
+def starkScenario : String :=
+  let w : Float := 0.05    -- HWHM Stark coefficient (dimensionless)
+  let nRef : Float := 1.0  -- reference density (dimensionless; pipeline uses REF_NE)
+  let width : Float := 0.3 -- measured FWHM (dimensionless)
+  let ne := starkDensity w nRef width      -- = 3.0 (Griem linear inverse)
+  let widthRT := starkFWHM w nRef ne       -- = width (forward/inverse round trip)
+  let tMc : Float := 4.0
+  let dE : Float := 2.0
+  let mcShape := mcWhirterShape tMc dE     -- = 16.0; full bound = 1.6e12 * shape
+  let consts := "{" ++ jField "w" (jNum w) ++ ", " ++ jField "nRef" (jNum nRef) ++ ", "
+    ++ jField "width" (jNum width) ++ ", " ++ jField "T" (jNum tMc) ++ ", " ++ jField "dE" (jNum dE)
+    ++ "}"
+  let cDensity := "{" ++ jField "theorem" (jStr "StarkBroadening.starkDensity_recovers")
+    ++ ", " ++ jField "ne" (jNum ne) ++ ", "
+    ++ jField "must" (jStr ("starkDensity(w,nRef,width) == nRef*width/(2w) == ne (Griem linear n_e "
+      ++ "diagnostic); pipeline estimate_ne_from_stark(width, REF_T_K, stark_w_ref=2w) == REF_NE*ne/nRef")) ++ "}"
+  let cRoundtrip := "{" ++ jField "theorem" (jStr "StarkBroadening.starkFWHM / starkDensity_recovers")
+    ++ ", " ++ jField "width_roundtrip" (jNum widthRT) ++ ", "
+    ++ jField "must" (jStr "starkFWHM(w,nRef, starkDensity(w,nRef,width)) == width (forward/inverse round trip)") ++ "}"
+  let cMc := "{" ++ jField "theorem" (jStr "StarkBroadening.mcWhirterBound")
+    ++ ", " ++ jField "shape" (jNum mcShape) ++ ", "
+    ++ jField "must" (jStr "mcWhirterShape(T,dE) == sqrt(T)*dE^3 == shape; full McWhirter LTE bound = 1.6e12 * shape (pipeline MCWHIRTER_CONST)") ++ "}"
+  let checks := "{" ++ jField "stark_density" cDensity ++ ", " ++ jField "stark_roundtrip" cRoundtrip
+    ++ ", " ++ jField "mcwhirter" cMc ++ "}"
+  "{" ++ jField "name" (jStr ("Stark broadening n_e diagnostic + McWhirter LTE bound -- dimensionless "
+    ++ "Griem linear width inverse (n_e = nRef*width/(2w)) and the sqrt(T)*dE^3 McWhirter shape"))
+    ++ ", " ++ jField "kind" (jStr "stark")
+    ++ ", " ++ jField "constants" consts ++ ", " ++ jField "checks" checks ++ "}"
+
 /-- Emit the fixtures as a JSON document. -/
 def render : String :=
   let header := jField "_about" (jStr ("Multi-element + alternative-estimator CF-LIBS regression "
@@ -470,7 +519,8 @@ def render : String :=
     ++ jField "Fcal" (jNum Fcal) ++ "}"
   "{\n  " ++ header ++ ",\n  " ++ jField "global" glob ++ ",\n  "
     ++ jField "scenarios"
-        (jArrayOf #[alloyScenario, twoStageScenario, errorBudgetScenario, energyOrdinateScenario])
+        (jArrayOf #[alloyScenario, twoStageScenario, errorBudgetScenario, energyOrdinateScenario,
+          starkScenario])
     ++ "\n}"
 
 def main : IO Unit := IO.println render

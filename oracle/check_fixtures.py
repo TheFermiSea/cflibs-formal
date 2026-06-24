@@ -107,6 +107,16 @@ def slope_target_from_temp_rel(rel_t_target, kB, T):
 
 def density_budget_from_composition(tau_c, Shat, card):
     return tau_c * Shat / (card + 1.0)
+
+# --- Stark broadening / McWhirter (StarkBroadening.lean) ---
+def stark_fwhm(w, n_ref, ne):
+    return 2.0 * w * (ne / n_ref)
+
+def stark_density(w, n_ref, width):
+    return n_ref * width / (2.0 * w)
+
+def mcwhirter_shape(T, dE):
+    return math.sqrt(T) * dE**3
 # ===================================================================================
 
 
@@ -293,6 +303,27 @@ def main():
             check("wavelength-ordinate 2-line slope recovers T",
                   approx(Trec, ch["temperature"]["true_T"]),
                   f"got {Trec} vs {ch['temperature']['true_T']}")
+
+        elif sc["kind"] == "stark":
+            c = sc["constants"]
+            w, n_ref, width = c["w"], c["nRef"], c["width"]
+            tmc, de = c["T"], c["dE"]
+            ch = sc["checks"]
+
+            print(f"stark_density  ({ch['stark_density']['theorem']})")
+            ne = stark_density(w, n_ref, width)
+            check("starkDensity == nRef*width/(2w)", approx(ne, ch["stark_density"]["ne"]),
+                  f"{ne} vs {ch['stark_density']['ne']}")
+
+            print(f"stark_roundtrip  ({ch['stark_roundtrip']['theorem']})")
+            check("starkFWHM(starkDensity) == width",
+                  approx(stark_fwhm(w, n_ref, ne), ch["stark_roundtrip"]["width_roundtrip"]),
+                  f"{stark_fwhm(w, n_ref, ne)} vs {ch['stark_roundtrip']['width_roundtrip']}")
+
+            print(f"mcwhirter  ({ch['mcwhirter']['theorem']})")
+            check("mcWhirterShape == sqrt(T)*dE^3",
+                  approx(mcwhirter_shape(tmc, de), ch["mcwhirter"]["shape"]),
+                  f"{mcwhirter_shape(tmc, de)} vs {ch['mcwhirter']['shape']}")
 
         else:
             check(f"unknown scenario kind '{sc['kind']}'", False)
