@@ -17,6 +17,14 @@ rev = "v4.31.0"
 [[lean_lib]]
 name = "CflibsFormal"
 
+# Upstream-PR seed: a self-contained (mathlib-only), CF-LIBS-free extract of the forward Saha
+# physics, staged for an eventual contribution to leanprover-community/physlib (see
+# docs/upstream-physlib-plan.md). NOT part of the verified `CflibsFormal` spec; built + axiom-
+# audited separately (`lake build SahaUpstream`; `lake exe axiom-audit --root SahaUpstream`).
+[[lean_lib]]
+name = "SahaUpstream"
+srcDir = "upstream"
+
 # Axiom-cleanliness gate (vendored from leanprover-community/axiom-audit, Apache-2.0; see
 # tools/README.md). `lake exe axiom-audit --root CflibsFormal` fails if any declaration
 # depends on an axiom outside {propext, Classical.choice, Quot.sound}. Dependency-free.
