@@ -90,6 +90,8 @@ def numberDensity : Dimension := ⟨-3, 0, 0, 0⟩
 def boltzmannConstant : Dimension := ⟨2, 1, -2, -1⟩
 /-- Planck constant `h` (action) = energy · time = `M L² time⁻¹`. -/
 def planckConstant : Dimension := ⟨2, 1, -1, 0⟩
+/-- Einstein spontaneous-emission coefficient `A_ki` (a transition rate) = `time⁻¹`. -/
+def einsteinA : Dimension := ⟨0, 0, -1, 0⟩
 
 /-! ## A.2. Sanity checks on the derived dimensions -/
 
@@ -138,6 +140,13 @@ dimension of number density: the left side is `(L⁻³·L⁻³)/L⁻³ = L⁻³`
 theorem sahaLaw_homogeneous :
     div (mul numberDensity numberDensity) numberDensity = numberDensity := by
   unfold div mul inv numberDensity; ext <;> norm_num
+
+/-- **Line-emission power is dimensionally consistent.** The radiated power of a transition per
+atom is `A_ki · (photon energy)`; with `A_ki` a rate (`time⁻¹`) and the photon energy `hc/λ` an
+energy, this has dimension `energy / time` (= power) — the dimensional backbone of the
+line-emission forward map `I = Fcal · A · n` (and the ordinate `ln(I/(g·A))`). -/
+theorem einsteinA_photonEnergy_dim : mul einsteinA energy = div energy timeDim := by
+  unfold div mul inv einsteinA energy timeDim; ext <;> norm_num
 
 /-! ## C. SI ↔ Gaussian-CGS unit conversions
 
