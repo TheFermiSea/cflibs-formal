@@ -70,14 +70,18 @@ the peer-reviewed primary sources.
    bounds) are dimensionally trivial and a unit-carrying type would obstruct `field_simp` /
    `ring` / `log`/`exp` reasoning for no diagnostic gain. (Trade-off accepted; see #2.)
 
-2. **mathlib-only; no `physlib` dependency (decided 2026-06-23).** A scout of
-   `leanprover-community/physlib` (the renamed PhysLean) recommended staying independent:
-   physlib pins Lean/mathlib **v4.30.0** (we are v4.31.0), and adopting its measure-theoretic
-   unit-aware `CanonicalEnsemble`/`Units` would require rewriting our Boltzmann/Saha/ForwardMap
-   core for no CF-LIBS benefit. physlib also has **no Saha/ionization** — our Saha–Boltzmann /
-   spectroscopy / inverse-problem layer is genuinely novel. **Watch-item:** when physlib
-   reaches 4.31+, consider upstreaming a *Saha-only* PR. Until then: minimal-dependency,
-   self-contained.
+2. **mathlib-only; physlib is an upstream target, not a dependency (re-confirmed 2026-06-23).**
+   Current `gh`-verified state of `leanprover-community/physlib` (renamed PhysLean + Lean-QuantumInfo):
+   actively maintained but pinned to Lean **v4.30.0** (we are v4.31.0 — depending forces a
+   downgrade); its statistical mechanics is **measure-theoretic and unit-aware** (even
+   `CanonicalEnsemble/Finite` carries `MeasurableSpace` + a `Temperature` units type), heavier than
+   our needs for the dimensionally-trivial inverse-problem layer; and it has `StatisticalMechanics` /
+   `Thermodynamics` / `Units` / `translational` physics **but still no Saha/ionization** (0 code
+   hits). The relationship is therefore *inverted*: physlib has Boltzmann/canonical-ensemble but no
+   ionization equilibrium, so our Saha–Boltzmann layer is a clean *additive* contribution to
+   upstream — **eventually, not now**. The deliberate plan (scope, form, governance under physlib's
+   AI policy, triggers, steps) is `docs/upstream-physlib-plan.md`. Units/dimensional rigor is the one
+   genuine *cue* to take from physlib/Lean4PHYS, separately and without the dependency.
 
 3. **Axiom-cleanliness is a hard invariant.** Every declaration must depend only on
    `{propext, Classical.choice, Quot.sound}`. Enforced automatically by `tools/` (vendored
