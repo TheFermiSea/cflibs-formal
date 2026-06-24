@@ -23,6 +23,11 @@ jobs:
       # home-rolled axioms — including through imports — which grep cannot). Tool vendored in tools/.
       - name: Axiom-cleanliness gate
         run: lake exe axiom-audit --root CflibsFormal
+      # Style/structure-lint gate: mathlib/batteries environment linters (docBlame, simpNF,
+      # unusedArguments, ...) on the CflibsFormal library — catches missing docstrings, unused
+      # hypotheses, non-simp-normal-form lemmas, etc. that build + axiom-audit do not.
+      - name: Lint gate
+        run: lake exe runLinter CflibsFormal
       # Regression-oracle self-check: the committed fixtures must match the generator (no drift),
       # and the reference checker must pass (fixtures internally consistent with the spec formulas).
       - name: Regression-oracle self-check

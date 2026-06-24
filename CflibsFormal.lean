@@ -1,7 +1,6 @@
 import CflibsFormal.Alt.CSigma
 import CflibsFormal.Alt.LeastSquares
 import CflibsFormal.Alt.SelfAbsorbed
-import CflibsFormal.Basic
 import CflibsFormal.Boltzmann
 import CflibsFormal.Classic
 import CflibsFormal.Closure

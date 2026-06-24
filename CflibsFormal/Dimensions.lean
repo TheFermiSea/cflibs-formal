@@ -39,11 +39,15 @@ mass `M`, time, temperature `Θ`. Rational exponents so half-integer powers (the
 only `L, M, time, Θ`.) -/
 @[ext]
 structure Dimension where
+  /-- Exponent of length `L`. -/
   length : ℚ
+  /-- Exponent of mass `M`. -/
   mass : ℚ
+  /-- Exponent of time. -/
   time : ℚ
+  /-- Exponent of temperature `Θ`. -/
   temperature : ℚ
-  deriving DecidableEq, Repr
+  deriving DecidableEq
 
 namespace Dimension
 
