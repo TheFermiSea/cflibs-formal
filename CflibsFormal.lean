@@ -13,6 +13,7 @@ import CflibsFormal.ForwardMap
 import CflibsFormal.ForwardMapEnergy
 import CflibsFormal.Identifiability
 import CflibsFormal.Inverse
+import CflibsFormal.LineBroadening
 import CflibsFormal.MultiSpecies
 import CflibsFormal.Robustness
 import CflibsFormal.Saha

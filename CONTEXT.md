@@ -49,6 +49,8 @@ definition is defined once and reused verbatim, and every module imports only `M
   `CompositionIdentifiability`, `SelfAbsorptionInverse`, `SahaInverse`, `CurveOfGrowth`,
   `StarkBroadening` (independent electron-density diagnostic + McWhirter LTE bound),
   `SpatialForward` (discrete onion-peeling Abel inversion — relaxes single-zone homogeneity),
+  `LineBroadening` (toward real line profiles: thermal Doppler width + the Gaussian-quadrature
+  width budget / deconvolution that feeds the Stark diagnostic),
   `Dimensions` (additive dimensional-analysis layer: machine-checks homogeneity of the forward
   relations; does not touch the dimensionless core),
   `ErrorBudget` (the deterministic error-propagation chain — ε → OLS slope → temperature →
@@ -109,9 +111,12 @@ the peer-reviewed primary sources.
    modeled separately (`SelfAbsorption`, `SelfAbsorptionInverse`, `CurveOfGrowth`, with the
    precise recover/defeat boundary characterized); spatial inhomogeneity is modeled via the
    **discrete onion-peeling Abel inversion** (`SpatialForward`, single-zone = the N=1 case;
-   the continuous Abel integral inverse is explicitly out of scope); and the LTE assumption
+   the continuous Abel integral inverse is explicitly out of scope); the LTE assumption
    itself gets an independent electron-density check (`StarkBroadening`: Stark width vs. Saha
-   nₑ, McWhirter bound).
+   nₑ, McWhirter bound); and the point-line / known-width idealization is relaxed toward real
+   **line profiles** (`LineBroadening`: thermal Doppler width + the exact Gaussian-quadrature
+   width budget and deconvolution that exposes the Stark Lorentzian — the full Voigt convolution
+   stays out of scope).
 
 ## Verification discipline
 
@@ -130,7 +135,7 @@ Gates 1–4 are automated in CI (`.github/workflows/lean_action_ci.yml`).
 
 ## Status
 
-23 modules, 141 axiom-clean named results (theorem/lemma) + 65 defs (counts via `scripts/stats.sh`).
+24 modules, 146 axiom-clean named results (theorem/lemma) + 69 defs (counts via `scripts/stats.sh`).
 Three automated CI gates: axiom-cleanliness (`tools/`), style/structure lint (`runLinter`), and the
 import-hygiene check (`scripts/stats.sh`).
 Adversarially validated (verdict: sound-with-minor-fixes, zero blockers; all findings fixed).
