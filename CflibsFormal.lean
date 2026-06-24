@@ -8,6 +8,7 @@ import CflibsFormal.Closure
 import CflibsFormal.CompositionIdentifiability
 import CflibsFormal.CompositionRobustness
 import CflibsFormal.CurveOfGrowth
+import CflibsFormal.Dimensions
 import CflibsFormal.ErrorBudget
 import CflibsFormal.ForwardMap
 import CflibsFormal.ForwardMapEnergy

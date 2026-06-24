@@ -47,6 +47,8 @@ defined once and reused verbatim.
   `CompositionIdentifiability`, `SelfAbsorptionInverse`, `SahaInverse`, `CurveOfGrowth`,
   `StarkBroadening` (independent electron-density diagnostic + McWhirter LTE bound),
   `SpatialForward` (discrete onion-peeling Abel inversion — relaxes single-zone homogeneity),
+  `Dimensions` (additive dimensional-analysis layer: machine-checks homogeneity of the forward
+  relations; does not touch the dimensionless core),
   `ErrorBudget` (the deterministic error-propagation chain — ε → OLS slope → temperature →
   composition — that turns the pipeline's empirical reliability thresholds, `min_energy_spread`
   and `min_snr`, into proven *sufficient-condition* corollaries; imports `Alt/LeastSquares` for
@@ -64,11 +66,15 @@ the peer-reviewed primary sources.
 
 ## Design decisions
 
-1. **Dimensionless (bare `ℝ`).** Energies, temperatures, densities, intensities are all
-   `ℝ`. Dimensional consistency is maintained by *human discipline*, not enforced by the
-   type system. Rationale: the inverse-problem theorems (soundness, identifiability, error
-   bounds) are dimensionally trivial and a unit-carrying type would obstruct `field_simp` /
-   `ring` / `log`/`exp` reasoning for no diagnostic gain. (Trade-off accepted; see #2.)
+1. **Dimensionless (bare `ℝ`) core + an additive dimensional layer.** Energies, temperatures,
+   densities, intensities are all `ℝ`; dimensional consistency in the inverse-problem core is
+   *human discipline*, not type-enforced, because those theorems are dimensionally trivial and a
+   unit-carrying type would obstruct `field_simp`/`ring`/`log`/`exp` for no diagnostic gain. To
+   close the discipline gap *without* paying that cost, `Dimensions.lean` adds an **additive**
+   dimensional-analysis layer (a `Dimension` exponent-vector group over `ℚ`) that machine-checks
+   the **homogeneity** of the forward relations — `E/(k_B T)` dimensionless, the thermal bracket
+   `L⁻²`, the Saha factor `L⁻³` = number density, the Saha law homogeneous — leaving the
+   dimensionless core untouched. (Cued by physlib's `Units`/`Dimension` and Lean4PHYS; see #2.)
 
 2. **mathlib-only; physlib is an upstream target, not a dependency (re-confirmed 2026-06-23).**
    Current `gh`-verified state of `leanprover-community/physlib` (renamed PhysLean + Lean-QuantumInfo):
@@ -80,8 +86,9 @@ the peer-reviewed primary sources.
    hits). The relationship is therefore *inverted*: physlib has Boltzmann/canonical-ensemble but no
    ionization equilibrium, so our Saha–Boltzmann layer is a clean *additive* contribution to
    upstream — **eventually, not now**. The deliberate plan (scope, form, governance under physlib's
-   AI policy, triggers, steps) is `docs/upstream-physlib-plan.md`. Units/dimensional rigor is the one
-   genuine *cue* to take from physlib/Lean4PHYS, separately and without the dependency.
+   AI policy, triggers, steps) is `docs/upstream-physlib-plan.md`. The one genuine *cue* taken from
+   physlib/Lean4PHYS — units/dimensional rigor — is implemented as the additive `Dimensions.lean`
+   layer (see #1), without the dependency.
 
 3. **Axiom-cleanliness is a hard invariant.** Every declaration must depend only on
    `{propext, Classical.choice, Quot.sound}`. Enforced automatically by `tools/` (vendored
@@ -114,7 +121,7 @@ Three gates, all required before trusting a result:
 
 ## Status
 
-22 modules, ~128 axiom-clean theorems (axiom-cleanliness CI-enforced via `tools/`).
+23 modules, ~135 axiom-clean theorems (axiom-cleanliness CI-enforced via `tools/`).
 Adversarially validated (verdict: sound-with-minor-fixes, zero blockers; all findings fixed).
 A whole-corpus **literature-validity audit** (`reviews/literature-validity-audit.md`) classified all
 186 defs+theorems against the peer-reviewed CF-LIBS literature: 69 faithful / 33 reduced / 5 idealized
