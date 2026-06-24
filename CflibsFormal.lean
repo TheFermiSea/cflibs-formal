@@ -12,6 +12,7 @@ import CflibsFormal.Dimensions
 import CflibsFormal.ErrorBudget
 import CflibsFormal.ForwardMap
 import CflibsFormal.ForwardMapEnergy
+import CflibsFormal.HydrogenStark
 import CflibsFormal.Identifiability
 import CflibsFormal.Inverse
 import CflibsFormal.LineBroadening

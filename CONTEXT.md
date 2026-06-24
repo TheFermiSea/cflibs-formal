@@ -57,6 +57,9 @@ definition is defined once and reused verbatim, and every module imports only `M
   non-isothermal effect single-zone `SelfAbsorption` cannot produce),
   `StarkShift` (the Stark line-SHIFT density diagnostic — signed companion to the Stark width, with
   honest sign-conditional monotonicity and the n_e-cancelling shift/width ratio),
+  `HydrogenStark` (the hydrogen Balmer-line n_e diagnostic — the *most common* LIBS technique:
+  linear Stark effect, `Δλ ∝ n_e^(2/3)` / `n_e ∝ Δλ^(3/2)`, distinct from the non-hydrogenic
+  *linear-in-n_e* `StarkBroadening`),
   `PartialLTE` (relaxes LTE: the McWhirter density bound inverted to the thermalization-limit energy
   `E*`, with `mcWhirter ⟺ thermalized` — which levels are collisionally thermalized),
   `Continuum` (the free-free + free-bound background: emissivity scaling, exact baseline-subtraction
@@ -123,8 +126,9 @@ the peer-reviewed primary sources.
    dip in `SelfReversal`); spatial inhomogeneity is modeled via the
    **discrete onion-peeling Abel inversion** (`SpatialForward`, single-zone = the N=1 case;
    the continuous Abel integral inverse is explicitly out of scope); the LTE assumption
-   itself gets an independent electron-density check (`StarkBroadening`: Stark width vs. Saha
-   nₑ, McWhirter bound) and a principled relaxation (`PartialLTE`: the McWhirter density bound
+   itself gets independent electron-density checks (`StarkBroadening`: non-hydrogenic Stark width,
+   linear in nₑ, vs. Saha nₑ, McWhirter bound; `HydrogenStark`: the common hydrogen Balmer-line
+   diagnostic, nₑ ∝ Δλ^(3/2)) and a principled relaxation (`PartialLTE`: the McWhirter density bound
    inverted to the thermalization-limit energy `E*` — which levels collisionally thermalize);
    the point-line / known-width idealization is relaxed toward real
    **line profiles** (`LineBroadening`: thermal Doppler width + the exact Gaussian-quadrature
@@ -152,7 +156,7 @@ Gates 1–4 are automated in CI (`.github/workflows/lean_action_ci.yml`).
 
 ## Status
 
-29 modules, 181 axiom-clean named results (theorem/lemma) + 81 defs (counts via `scripts/stats.sh`).
+30 modules, 186 axiom-clean named results (theorem/lemma) + 83 defs (counts via `scripts/stats.sh`).
 Three automated CI gates: axiom-cleanliness (`tools/`), style/structure lint (`runLinter`), and the
 import-hygiene check (`scripts/stats.sh`).
 Adversarially validated (verdict: sound-with-minor-fixes, zero blockers; all findings fixed).

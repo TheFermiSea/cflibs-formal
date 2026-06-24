@@ -167,6 +167,15 @@ wavelength: `√(length²) = length`. The additive layer models the power algebr
 theorem rootSumSquare_length_dim : qpow (qpow lengthDim 2) (1 / 2) = lengthDim := by
   unfold qpow lengthDim; ext <;> norm_num
 
+/-- **The hydrogen-line Stark width law is dimensionally homogeneous.** In
+`Δλ = w·(n_e/n_ref)^(2/3)` the density ratio raised to the `2/3` power is still dimensionless, so
+`Δλ` carries the dimension of
+`w` — a length (a wavelength width). Matches `HydrogenStark.hydrogenStarkFWHM`; note a *rational*
+power of a dimensionless quantity stays dimensionless. -/
+theorem hydrogenStark_homogeneous :
+    mul lengthDim (qpow (div numberDensity numberDensity) (2 / 3)) = lengthDim := by
+  unfold div qpow mul inv numberDensity lengthDim; ext <;> norm_num
+
 /-! ## C. SI ↔ Gaussian-CGS unit conversions
 
 For the base dimensions CF-LIBS uses, SI (m, kg, s, K) and Gaussian-CGS (cm, g, s, K) differ only
