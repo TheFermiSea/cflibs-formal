@@ -85,7 +85,8 @@ theorem twoLineBeta_stable {yi yj yiHat yjHat Ei Ej eps : ℝ}
       = ((yjHat - yj) - (yiHat - yi)) / (Ei - Ej) := by
     unfold twoLineBeta
     rw [div_sub_div_same]
-    ring_nf
+    congr 1
+    ring
   rw [hcombine, abs_div]
   have hnum : |(yjHat - yj) - (yiHat - yi)| ≤ 2 * eps := by
     calc |(yjHat - yj) - (yiHat - yi)|

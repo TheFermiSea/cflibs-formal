@@ -204,7 +204,7 @@ theorem csigma_sound [Nonempty ι] [Nonempty κ] {kB T Fcal : ℝ}
 omit [Fintype κ] in
 /-- **Abstract agreement bridge.** Any two functions that both equal a common
 reference `d` agree with each other. Hoists the trivial transitivity used in
-`csigma_agrees_of_sound`; intended to migrate to `Inverse.lean`. -/
+`csigma_agrees_of_sound`. -/
 theorem sound_agree {f c d : κ → ℝ} (hf : ∀ s, f s = d s) (hg : ∀ s, c s = d s)
     (s : κ) : f s = c s := by
   rw [hf s, hg s]

@@ -178,7 +178,7 @@ theorem olsSlope_stable_l2 [Nonempty ι] {E y yHat : ι → ℝ} {eps : ℝ}
     (hδ : ∀ k, |yHat k - y k| ≤ eps) :
     |olsSlope E yHat - olsSlope E y|
       ≤ eps * Real.sqrt (Fintype.card ι) / Real.sqrt (∑ k, (E k - mean E) ^ 2) := by
-  have heps0 : 0 ≤ eps := le_trans (abs_nonneg _) (hδ (Classical.arbitrary ι))
+  have heps0 : 0 ≤ eps := (abs_nonneg _).trans (hδ (Classical.arbitrary ι))
   have hsq := olsSlope_stable_l2_sq hvar hδ
   calc |olsSlope E yHat - olsSlope E y|
       = Real.sqrt ((olsSlope E yHat - olsSlope E y) ^ 2) := (Real.sqrt_sq_eq_abs _).symm

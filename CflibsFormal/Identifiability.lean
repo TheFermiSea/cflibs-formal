@@ -153,7 +153,7 @@ theorem density_identifiability [Nonempty ι]
     rw [hcdef]
     exact mul_pos (mul_pos hFcal hA)
       (div_pos (mul_pos (hg u) (boltzmannFactor_pos _ _ _)) hU)
-  have hI' : c * N₁ = c * N₂ := by rw [hcdef]; ring_nf; ring_nf at hI; linarith
+  have hI' : c * N₁ = c * N₂ := by rw [hcdef]; linear_combination hI
   exact mul_left_cancel₀ hc.ne' hI'
 
 /-- **Target 3 — electron-density / stage-ratio identifiability via Saha.**

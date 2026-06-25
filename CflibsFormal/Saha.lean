@@ -162,9 +162,7 @@ theorem log_sahaFactor [Nonempty ι] [Nonempty κ] {kB T me h chi : ℝ}
 electron density equals the once-ionized density. -/
 theorem chargeNeutrality_two_stage {nZ nZ1 ne : ℝ} :
     chargeNeutrality (σ := Fin 2) ![0, 1] ![nZ, nZ1] ne ↔ ne = nZ1 := by
-  unfold chargeNeutrality
-  rw [Fin.sum_univ_two]
-  simp
+  simp [chargeNeutrality, Fin.sum_univ_two]
 
 end CflibsFormal
 

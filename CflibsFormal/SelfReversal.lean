@@ -66,10 +66,10 @@ lemma emergentIntensity_nonneg {Score Sshell τc τs : ℝ}
     0 ≤ emergentIntensity Score Sshell τc τs := by
   unfold emergentIntensity
   have h1 : 0 ≤ 1 - Real.exp (-τc) := by
-    have : Real.exp (-τc) ≤ 1 := by rw [← Real.exp_zero]; exact Real.exp_le_exp.mpr (by linarith)
+    have : Real.exp (-τc) ≤ 1 := Real.exp_le_one_iff.mpr (by linarith)
     linarith
   have h2 : 0 ≤ 1 - Real.exp (-τs) := by
-    have : Real.exp (-τs) ≤ 1 := by rw [← Real.exp_zero]; exact Real.exp_le_exp.mpr (by linarith)
+    have : Real.exp (-τs) ≤ 1 := Real.exp_le_one_iff.mpr (by linarith)
     linarith
   have h3 : 0 ≤ Real.exp (-τs) := (Real.exp_pos _).le
   exact add_nonneg (mul_nonneg (mul_nonneg hScore h1) h3) (mul_nonneg hSshell h2)
