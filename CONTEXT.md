@@ -80,9 +80,12 @@ definition is defined once and reused verbatim, and every module imports only `M
   independent noise model) it proves OLS-slope unbiasedness `𝔼[β̂]=β` and the Gauss–Markov variance
   law `Var(β̂)=σ²/SS_E` (`olsSlope_variance_eq`, via `ErrorBudget.olsSlope_noise_gain`), hence the
   `card`-free "more lines / more spread ⇒ less variance" statement (`olsSlope_variance_antitone`)
-  the deterministic worst case could not give. Honest scope: independence is a reduction from the
-  classical uncorrelatedness hypothesis (mathlib's `IndepFun.variance_sum`), and BLUE/optimality is
-  not claimed.
+  the deterministic worst case could not give. `Alt/GaussMarkov` then proves the **optimality**
+  layer — OLS is the Best Linear Unbiased Estimator of the slope (`ols_is_blue : Var(β̂) ≤ Var(Tₐ)`
+  for any linear unbiased `Tₐ`), via the unbiasedness `iff` (`linEstimator_unbiased_iff`) and the
+  deterministic Pythagorean core `∑wₖ² ≤ ∑aₖ²` (`weight_sq_ge_noiseGain`). Honest scope: independence
+  is a reduction from the classical uncorrelatedness hypothesis (mathlib's `IndepFun.variance_sum`),
+  and optimality is "minimum-variance among linear unbiased estimators" only (not Cramér–Rao).
 
 New alternative methods go under `CflibsFormal.Alt`; shared physics/inverse machinery in
 `CflibsFormal`. Literature-facing modules carry a `## Literature` docstring paragraph citing
@@ -163,7 +166,7 @@ Gates 1–4 are automated in CI (`.github/workflows/lean_action_ci.yml`).
 
 ## Status
 
-31 modules, 199 axiom-clean named results (theorem/lemma) + 90 defs (counts via `scripts/stats.sh`).
+32 modules, 206 axiom-clean named results (theorem/lemma) + 91 defs (counts via `scripts/stats.sh`).
 Three automated CI gates: axiom-cleanliness (`tools/`), style/structure lint (`runLinter`), and the
 import-hygiene check (`scripts/stats.sh`).
 Adversarially validated (verdict: sound-with-minor-fixes, zero blockers; all findings fixed).

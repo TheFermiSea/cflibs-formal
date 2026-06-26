@@ -42,9 +42,9 @@ variable `betaHat ω = olsSlope E (y(·,ω))`. We prove:
   *stronger* than the classical statement requires. (A future strengthening to genuine
   uncorrelatedness would route through `ProbabilityTheory.variance_sum'`, the double-covariance
   form; that is out of scope here.)
-* **Optimality / BLUE is NOT claimed.** We prove the variance *value* and unbiasedness only — NOT
-  that OLS is the minimum-variance estimator among linear unbiased estimators (the full
-  Gauss–Markov/Aitken optimality theorem).
+* **Optimality / BLUE.** This module proves the variance *value* and unbiasedness; the optimality
+  layer — OLS is the minimum-variance estimator among linear unbiased estimators (the full
+  Gauss–Markov/Aitken theorem) — is formalized in the sibling `Alt.GaussMarkov` (`ols_is_blue`).
 * **Consistency with `ErrorBudget`.** `olsSlope_variance_eq` is literally
   `olsSlope_variance_noiseGain` composed with `ErrorBudget.olsSlope_noise_gain`; both route through
   the single identity `∑ wₖ² = 1/SS_E`, so the two modules cannot disagree on `σ²/SS_E`.
