@@ -1,0 +1,11 @@
+id: no-unsound-tactics
+language: lean
+severity: error
+rule:
+  kind: identifier
+  regex: ^(admit|native_decide|sorryAx)$
+message: Unsound/axiom-introducing tactic (`admit` / `native_decide` / `sorryAx`).
+note: |
+  These introduce axioms (sorryAx / ofReduceBool) and break axiom-cleanliness. Matched as
+  identifier nodes (real code, not comments). `native_decide` is the dangerous one — `decide`
+  (kernel) is fine and intentionally NOT matched. Authoritative gate: `lake exe axiom-audit`.

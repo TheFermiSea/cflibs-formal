@@ -1,0 +1,11 @@
+id: no-axiom-declaration
+language: lean
+severity: error
+rule:
+  kind: axiom
+message: Home-rolled `axiom` declaration — the spec must stay axiom-clean.
+note: |
+  cflibs-formal must depend only on {propext, Classical.choice, Quot.sound}. A structural match on
+  the `axiom` node (not the word "axiom" in a docstring/comment — which ripgrep would false-positive
+  on) is a fast local pre-check; `lake exe axiom-audit` is the authoritative gate (it also catches
+  axioms reached through imports and sorryAx/native_decide).

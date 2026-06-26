@@ -1,0 +1,10 @@
+id: no-sorry-term
+language: lean
+severity: error
+rule:
+  kind: sorry
+message: A `sorry` placeholder — proofs must be complete.
+note: |
+  Structural match on the `sorry` term node, so it cannot false-positive on the word "sorry" in a
+  comment/docstring (unlike a `rg sorry`). The build + axiom-audit (sorryAx) are the authoritative
+  gates; this is fast local feedback.

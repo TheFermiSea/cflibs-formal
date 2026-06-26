@@ -1,0 +1,17 @@
+# ast-grep configuration for cflibs-formal.
+# Registers a custom Lean 4 language (tree-sitter-lean, ABI 14 — compatible with ast-grep 0.41)
+# so `ast-grep` can do STRUCTURAL queries/rules over the .lean sources (beyond ripgrep's regex).
+#
+# The parser library .ast-grep/parser/lean.so is a build artifact (gitignored); rebuild it with
+#   ./.ast-grep/build-parser.sh
+# Usage:
+#   ast-grep run --lang lean -p '<pattern>' CflibsFormal     # ad-hoc structural search
+#   ast-grep scan                                            # run the rule-set in .ast-grep/rules
+ruleDirs:
+  - .ast-grep/rules
+customLanguages:
+  lean:
+    libraryPath: .ast-grep/parser/lean.so
+    extensions:
+      - lean
+    expandoChar: µ
