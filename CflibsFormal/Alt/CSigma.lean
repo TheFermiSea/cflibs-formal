@@ -9,6 +9,7 @@ import CflibsFormal.ForwardMap
 import CflibsFormal.Closure
 import CflibsFormal.Saha
 import CflibsFormal.Classic
+import CflibsFormal.Alt.LeastSquares
 
 /-!
 # CF-LIBS formalization — the C-sigma (Cσ) single-line method (alternative estimator)
@@ -386,6 +387,47 @@ theorem csigma_cross_stage_collapse [Nonempty ι] [Nonempty κ]
       = csigmaSahaOrdinate kB T me h ne NI NII Fcal gI EI gII EII AII k := by
   rw [csigma_master_line hgI hNI hFcal hAI i,
       csigma_saha_master_line hkB hT hme hh hne hgI hNI hFcal hgII hNII hAII hsaha k, hshift]
+
+/-! ## Temperature from the Cσ master line (the multi-line regression payoff) -/
+
+/-- **Multi-line temperature from the Cσ master line.** The ordinary-least-squares slope of a
+species' Cσ master-line points `(E_k, Y_k)` is exactly `−1/(k_B T)` — so the plasma temperature is
+recovered from the *single regression* over all of the species' lines (`Alt.olsSlope`,
+`Alt.ols_recovers_line`), not from a hand-picked pair. The master-line ordinate is exactly affine in
+`E_k` (`csigma_master_line`), so the noise-free OLS slope is exact. (Pooling lines of *different*
+stages into one regression is the cross-stage analogue — see `csigma_temperature_cross_stage` for
+the two-line cross-stage case.) -/
+theorem csigma_master_olsSlope [Nonempty ι] {kB T N Fcal : ℝ} {g E A : ι → ℝ}
+    (hg : ∀ k, 0 < g k) (hN : 0 < N) (hFcal : 0 < Fcal) (hA : ∀ k, 0 < A k)
+    (hvar : 0 < ∑ k, (E k - mean E) ^ 2) :
+    olsSlope E (fun k => csigmaOrdinate kB T N Fcal g E A k) = -1 / (kB * T) := by
+  have hcol : ∀ k, csigmaOrdinate kB T N Fcal g E A k = -1 / (kB * T) * E k + 0 := by
+    intro k; rw [csigma_master_line hg hN hFcal hA k]; ring
+  exact (ols_recovers_line hcol hvar).1
+
+/-- **Cross-stage two-line temperature (the Saha–Boltzmann diagnostic).** A *neutral* line `i` and
+an *ionic* line `k` together yield the temperature: the slope of the Cσ master line through the
+neutral point `(E_I i, ·)` and the ionization-shifted ionic point `(E_II k + χ, ·)` is exactly
+`−1/(k_B T)`. This is the practical value of the Saha-coupled collapse — a single-species Boltzmann
+plot **cannot** combine an atomic and an ionic line, but the Saha–Boltzmann / Cσ graph can. Reduces
+to
+`csigma_master_line` (neutral) and `csigma_saha_master_line` (ionic). -/
+theorem csigma_temperature_cross_stage [Nonempty ι] [Nonempty κ]
+    {kB T me h chi ne NI NII Fcal : ℝ} {gI EI AI : ι → ℝ} {gII EII AII : κ → ℝ}
+    (hkB : 0 < kB) (hT : 0 < T) (hme : 0 < me) (hh : 0 < h) (hne : 0 < ne)
+    (hgI : ∀ j, 0 < gI j) (hNI : 0 < NI) (hFcal : 0 < Fcal) (hAI : ∀ j, 0 < AI j)
+    (hgII : ∀ j, 0 < gII j) (hNII : 0 < NII) (hAII : ∀ j, 0 < AII j)
+    (hsaha : NII * ne = NI * sahaFactor kB T me h chi gI EI gII EII)
+    (i : ι) (k : κ) (hx : EI i ≠ EII k + chi) :
+    (csigmaOrdinate kB T NI Fcal gI EI AI i
+        - csigmaSahaOrdinate kB T me h ne NI NII Fcal gI EI gII EII AII k)
+      / (EI i - (EII k + chi)) = -1 / (kB * T) := by
+  have hkBT : kB * T ≠ 0 := (mul_pos hkB hT).ne'
+  have hxne : EI i - (EII k + chi) ≠ 0 := sub_ne_zero.mpr hx
+  rw [csigma_master_line hgI hNI hFcal hAI i,
+      csigma_saha_master_line hkB hT hme hh hne hgI hNI hFcal hgII hNII hAII hsaha k]
+  field_simp
+  ring
 
 end CflibsFormal.Alt
 
