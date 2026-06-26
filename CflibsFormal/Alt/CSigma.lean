@@ -429,5 +429,84 @@ theorem csigma_temperature_cross_stage [Nonempty ι] [Nonempty κ]
   field_simp
   ring
 
+/-! ## The Cσ universal line (all ELEMENTS on one line)
+
+The master line above subtracts the *full* per-species offset `q_s = ln(F·N_s/U_s)`, so every
+species collapses to `Y = −E/(k_B T)` (intercept `0`). The full **Cσ graph** (Aragón & Aguilera,
+2014) instead subtracts only the **concentration/partition** part `ln(N_s/U_s)`, leaving the *common
+instrumental intercept* `ln F` — so all lines of all ELEMENTS (and, with the Saha correction, all
+STAGES) fall on ONE universal line of slope `−1/(k_B T)` and intercept `ln F`, independent of each
+element's concentration and partition function. (Verified against the CF-LIBS literature.) -/
+
+/-- The **concentration/partition normalization** `ln(N_s/U_s(T))` — subtracted from a Boltzmann
+ordinate to remove a species' concentration-and-partition dependence, leaving the common `ln F`. -/
+noncomputable def csigmaConcentrationLog (kB T N : ℝ) (g E : ι → ℝ) : ℝ :=
+  Real.log (N / partitionFunction kB T g E)
+
+/-- **Universal Cσ ordinate (neutral stage).** `ln(I/(g_k A_k)) − ln(N_s/U_s)` — the
+concentration-normalized ordinate. Unlike `csigmaOrdinate` (which subtracts the *full* offset
+`ln(F·N_s/U_s)`, intercept `0`), this keeps the instrumental intercept `ln F`. -/
+noncomputable def csigmaUniversalOrdinate (kB T N Fcal : ℝ) (g E A : ι → ℝ) (k : ι) : ℝ :=
+  Real.log (lineIntensity kB T N Fcal g E A k / (g k * A k))
+    - csigmaConcentrationLog kB T N g E
+
+/-- **The Cσ universal line.** The concentration-normalized ordinate of *every* line of *every*
+species is `ln F − E_k/(k_B T)` — ONE universal line (slope `−1/(k_B T)`, intercept `ln F`),
+independent of the species concentration `N_s` and partition function `U_s`. This is the full Cσ
+collapse across elements: the concentration normalization `ln(N_s/U_s)` cancels everything but the
+instrumental factor `F`. -/
+theorem csigma_universal_line [Nonempty ι] {kB T N Fcal : ℝ} {g E A : ι → ℝ}
+    (hg : ∀ k, 0 < g k) (hN : 0 < N) (hFcal : 0 < Fcal) (hA : ∀ k, 0 < A k) (k : ι) :
+    csigmaUniversalOrdinate kB T N Fcal g E A k = Real.log Fcal - E k / (kB * T) := by
+  have hU : 0 < partitionFunction kB T g E := partitionFunction_pos hg
+  unfold csigmaUniversalOrdinate csigmaConcentrationLog
+  rw [boltzmann_plot_intensity hg hN hFcal hA k,
+      Real.log_div (mul_pos hFcal hN).ne' hU.ne', Real.log_mul hFcal.ne' hN.ne',
+      Real.log_div hN.ne' hU.ne']
+  ring
+
+/-- **Universal-line element independence.** Two genuinely different species (any concentrations,
+partition functions, degeneracies) whose line `k` shares the upper-level energy produce the SAME
+universal ordinate `ln F − E_k/(k_B T)` — all elements collapse onto one line. -/
+theorem csigma_universal_indep_species [Nonempty ι] {kB T Fcal : ℝ}
+    {N₁ N₂ : ℝ} {g₁ E₁ A₁ g₂ E₂ A₂ : ι → ℝ}
+    (hg₁ : ∀ k, 0 < g₁ k) (hN₁ : 0 < N₁) (hg₂ : ∀ k, 0 < g₂ k) (hN₂ : 0 < N₂)
+    (hFcal : 0 < Fcal) (hA₁ : ∀ k, 0 < A₁ k) (hA₂ : ∀ k, 0 < A₂ k)
+    (k : ι) (hEk : E₁ k = E₂ k) :
+    csigmaUniversalOrdinate kB T N₁ Fcal g₁ E₁ A₁ k
+      = csigmaUniversalOrdinate kB T N₂ Fcal g₂ E₂ A₂ k := by
+  rw [csigma_universal_line hg₁ hN₁ hFcal hA₁ k, csigma_universal_line hg₂ hN₂ hFcal hA₂ k, hEk]
+
+/-- **Universal Cσ ordinate (ionic stage).** The Saha-corrected ionic ordinate with the *neutral*
+concentration normalization — so ionic lines join the SAME universal line as the neutral ones. -/
+noncomputable def csigmaSahaUniversalOrdinate (kB T me h ne NI NII Fcal : ℝ)
+    (gI EI : ι → ℝ) (gII EII AII : κ → ℝ) (k : κ) : ℝ :=
+  Real.log (lineIntensity kB T NII Fcal gII EII AII k / (gII k * AII k))
+    - sahaBracketLog kB T me h ne
+    - csigmaConcentrationLog kB T NI gI EI
+
+/-- **The universal line spans both stages.** An ionic (stage `Z+1`) line in Saha equilibrium with
+the neutral stage has universal ordinate `ln F − (E_k + χ)/(k_B T)` — the SAME universal line
+(slope `−1/(k_B T)`, intercept `ln F`) as the neutral lines, at the ionization-shifted abscissa. So
+ALL lines of ALL elements and BOTH stages collapse onto one line. (`csigmaSahaUniversalOrdinate`
+differs from `csigmaSahaOrdinate` by exactly `ln F`, the offset minus the concentration norm.) -/
+theorem csigma_saha_universal_line [Nonempty ι] [Nonempty κ]
+    {kB T me h chi ne NI NII Fcal : ℝ} {gI EI : ι → ℝ} {gII EII AII : κ → ℝ}
+    (hkB : 0 < kB) (hT : 0 < T) (hme : 0 < me) (hh : 0 < h) (hne : 0 < ne)
+    (hgI : ∀ j, 0 < gI j) (hNI : 0 < NI) (hFcal : 0 < Fcal)
+    (hgII : ∀ j, 0 < gII j) (hNII : 0 < NII) (hAII : ∀ j, 0 < AII j)
+    (hsaha : NII * ne = NI * sahaFactor kB T me h chi gI EI gII EII) (k : κ) :
+    csigmaSahaUniversalOrdinate kB T me h ne NI NII Fcal gI EI gII EII AII k
+      = Real.log Fcal - (EII k + chi) / (kB * T) := by
+  have hU : 0 < partitionFunction kB T gI EI := partitionFunction_pos hgI
+  have key : csigmaSahaUniversalOrdinate kB T me h ne NI NII Fcal gI EI gII EII AII k
+      = csigmaSahaOrdinate kB T me h ne NI NII Fcal gI EI gII EII AII k + Real.log Fcal := by
+    unfold csigmaSahaUniversalOrdinate csigmaSahaOrdinate csigmaOffset csigmaConcentrationLog
+    rw [Real.log_div (mul_pos hFcal hNI).ne' hU.ne', Real.log_mul hFcal.ne' hNI.ne',
+        Real.log_div hNI.ne' hU.ne']
+    ring
+  rw [key, csigma_saha_master_line hkB hT hme hh hne hgI hNI hFcal hgII hNII hAII hsaha k]
+  ring
+
 end CflibsFormal.Alt
 
