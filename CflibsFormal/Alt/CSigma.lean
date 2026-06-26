@@ -20,14 +20,18 @@ line. This is the multi-element **Boltzmann** master-line construction of Aguile
 Aragón, "Multi-element Saha–Boltzmann and Boltzmann plots in laser-induced plasmas,"
 *Spectrochimica Acta Part B* **62** (2007) 378.
 
-**Attribution note (important).** The true **Cσ (C-sigma) graph** is a DIFFERENT, stronger
-construction introduced by Aragón & Aguilera, *J. Quant. Spectrosc. Radiat. Transfer* **149**
-(2014) 90: it additionally collapses lines of different ionization STAGES onto a common line
-via a Saha ionization-energy abscissa shift. That Saha-coupled stage collapse is NOT modeled
-here — the per-species offset below uses only `E/(k_B T)` with no Saha / ionization-energy /
-`n_e` term (`Saha.lean` is not used). The symbols are named `csigma_*` for historical
-reasons, but the formalized object is the optically-thin, single-stage Boltzmann master plot,
-not the Saha-coupled Cσ cross-section graph.
+**Two sections.** The FIRST section formalizes the single-stage multi-element **Boltzmann** master
+plot (Aguilera & Aragón, *Spectrochim. Acta B* **62** (2007) 378): after subtracting the per-species
+offset, all lines of all species collapse onto `Y = −E/(k_B T)` using only `E/(k_B T)`. The SECOND
+section adds the defining feature of the **Saha–Boltzmann / Cσ graph** (Aragón & Aguilera,
+*J. Quant. Spectrosc. Radiat. Transfer* **149** (2014) 90): the **Saha-coupled cross-stage
+collapse**, where
+*ionic* (stage `Z+1`) lines also fall on the SAME master line via a Saha ionization-energy abscissa
+shift `+χ` and a Saha-bracket ordinate correction (`csigma_saha_master_line`,
+`csigma_cross_stage_collapse`) — this genuinely uses `Saha.lean` (`sahaFactor`, `log_sahaFactor`),
+and its exact construction was verified against the CF-LIBS literature. The remaining piece of the
+full Cσ graph — the σ (cross-section) / concentration normalization that collapses *all elements*
+onto ONE universal line of intercept `ln F` — is the multi-element extension (a natural follow-on).
 
 For line `k` (upper level `k`) of a species with data `(N, g, E, A)`, define the
 C-sigma ordinate
@@ -291,6 +295,97 @@ theorem csigma_agrees_classic [Nonempty ι] [Nonempty κ] {kB T Fcal : ℝ}
   exact mul_pos (mul_pos hFcal (hA t))
     (div_pos (mul_pos (mul_pos (hN t) (hg t (u t))) (boltzmannFactor_pos _ _ _))
       (partitionFunction_pos (hg t)))
+
+/-! ## Saha-coupled cross-stage collapse (the genuine Cσ feature)
+
+The single-stage master line above is the optically-thin **Boltzmann** master plot. The defining
+feature of the real **Saha–Boltzmann / Cσ graph** (Aguilera & Aragón 2007; Aragón & Aguilera 2014)
+is that lines of *different ionization stages* also collapse onto ONE line, via the **Saha**
+equation: an ionic (stage `Z+1`) line, with its abscissa shifted by the ionization energy `χ` and
+its ordinate corrected by the Saha bracket, lands on the SAME master line as the neutral (stage `Z`)
+lines. This is the part that genuinely uses `Saha.lean` (`sahaFactor`, `log_sahaFactor`) and that
+distinguishes Cσ from a relabelled per-species Boltzmann plot. The exact construction (abscissa
+shift `+χ`, ordinate `−` the Saha bracket) is that of the Saha–Boltzmann plot, verified against
+the CF-LIBS literature. -/
+
+/-- Log of the **Saha bracket** `2·(2π m_e k_B T / h²)^{3/2} / n_e`. Subtracting this from an
+ionic-stage Boltzmann ordinate is exactly the correction that lands it on the neutral master line
+(the Saha–Boltzmann plot of Aguilera & Aragón 2007). -/
+noncomputable def sahaBracketLog (kB T me h ne : ℝ) : ℝ :=
+  Real.log (2 * (thermalBracket kB T me h) ^ (3 / 2 : ℝ) / ne)
+
+/-- **Saha-corrected ionic-stage ordinate.** The ordinate of an ionic (stage `Z+1`) line `k`,
+corrected for Saha ionization equilibrium and referenced to the **neutral** stage's offset
+`q_I = csigmaOffset` (so both stages share one intercept):
+`ln(I/(g_k A_k)) − ln[2·(2π m_e k_B T/h²)^{3/2}/n_e] − q_I`. With the abscissa shifted to `E_k + χ`,
+this lies on the SAME master line `Y = −E*/(k_B T)` as the neutral lines — see
+`csigma_saha_master_line`. -/
+noncomputable def csigmaSahaOrdinate (kB T me h ne NI NII Fcal : ℝ)
+    (gI EI : ι → ℝ) (gII EII AII : κ → ℝ) (k : κ) : ℝ :=
+  Real.log (lineIntensity kB T NII Fcal gII EII AII k / (gII k * AII k))
+    - sahaBracketLog kB T me h ne
+    - csigmaOffset kB T Fcal NI gI EI
+
+/-- **Cσ cross-stage master line (the Saha-coupled collapse).** An ionic (stage `Z+1`) line whose
+density satisfies Saha ionization equilibrium with the neutral stage
+(`hsaha : N_II·n_e = N_I · S(T)`, i.e. `n_{z+1} n_e / n_z = sahaFactor`, the `Saha.saha_relation`)
+has Saha-corrected ordinate exactly `−(E_k + χ)/(k_B T)` — the neutral master line
+`Y = −E*/(k_B T)` evaluated at the **ionization-shifted** abscissa `E* = E_k + χ`. So neutral and
+ionic lines of an element fall on ONE straight line of slope `−1/(k_B T)` and common intercept
+`q_I = ln(F·N_I/U_I)`. Reduces the ionic Boltzmann plot (`boltzmann_plot_intensity`) through the
+Saha log-identity (`log_sahaFactor`); the partition functions, `n_e`, the `log 2` and the
+`(3/2)·log` bracket all cancel, leaving only the ionization shift `χ`. -/
+theorem csigma_saha_master_line [Nonempty ι] [Nonempty κ]
+    {kB T me h chi ne NI NII Fcal : ℝ} {gI EI : ι → ℝ} {gII EII AII : κ → ℝ}
+    (hkB : 0 < kB) (hT : 0 < T) (hme : 0 < me) (hh : 0 < h) (hne : 0 < ne)
+    (hgI : ∀ j, 0 < gI j) (hNI : 0 < NI) (hFcal : 0 < Fcal)
+    (hgII : ∀ j, 0 < gII j) (hNII : 0 < NII) (hAII : ∀ j, 0 < AII j)
+    (hsaha : NII * ne = NI * sahaFactor kB T me h chi gI EI gII EII) (k : κ) :
+    csigmaSahaOrdinate kB T me h ne NI NII Fcal gI EI gII EII AII k
+      = -(EII k + chi) / (kB * T) := by
+  have hUI : 0 < partitionFunction kB T gI EI := partitionFunction_pos hgI
+  have hUII : 0 < partitionFunction kB T gII EII := partitionFunction_pos hgII
+  have hbr : 0 < thermalBracket kB T me h := thermalBracket_pos hkB hT hme hh
+  have hsf : 0 < sahaFactor kB T me h chi gI EI gII EII := sahaFactor_pos hkB hT hme hh hgI hgII
+  have hrpow : 0 < (thermalBracket kB T me h) ^ (3 / 2 : ℝ) := Real.rpow_pos_of_pos hbr _
+  have hlogNII : Real.log NII
+      = Real.log NI + Real.log (sahaFactor kB T me h chi gI EI gII EII) - Real.log ne := by
+    have h := congrArg Real.log hsaha
+    rw [Real.log_mul hNII.ne' hne.ne', Real.log_mul hNI.ne' hsf.ne'] at h
+    linarith
+  have hlogsf := log_sahaFactor (chi := chi) (EZ := EI) (EZ1 := EII) hkB hT hme hh hgI hgII
+  have e1 : Real.log (Fcal * NII / partitionFunction kB T gII EII)
+      = Real.log Fcal + Real.log NII - Real.log (partitionFunction kB T gII EII) := by
+    rw [Real.log_div (mul_pos hFcal hNII).ne' hUII.ne', Real.log_mul hFcal.ne' hNII.ne']
+  have e2 : sahaBracketLog kB T me h ne
+      = Real.log 2 + (3 / 2 : ℝ) * Real.log (thermalBracket kB T me h) - Real.log ne := by
+    unfold sahaBracketLog
+    rw [Real.log_div (mul_pos (by norm_num) hrpow).ne' hne.ne',
+        Real.log_mul (by norm_num) hrpow.ne', Real.log_rpow hbr]
+  have e3 : csigmaOffset kB T Fcal NI gI EI
+      = Real.log Fcal + Real.log NI - Real.log (partitionFunction kB T gI EI) := by
+    unfold csigmaOffset
+    rw [Real.log_div (mul_pos hFcal hNI).ne' hUI.ne', Real.log_mul hFcal.ne' hNI.ne']
+  unfold csigmaSahaOrdinate
+  rw [boltzmann_plot_intensity hgII hNII hFcal hAII k, e1, e2, e3, hlogNII, hlogsf]
+  ring
+
+/-- **Neutral and ionic lines share one line.** A neutral line `i` and an ionic line `k` with the
+same ionization-shifted abscissa (`E_I i = E_II k + χ`) produce the SAME Cσ ordinate: the neutral
+master ordinate (`csigma_master_line`) and the ionic Saha-corrected ordinate
+(`csigma_saha_master_line`) coincide. The cross-stage analogue of
+`csigma_master_line_indep_species` — "all points, both stages, collapse onto one line." -/
+theorem csigma_cross_stage_collapse [Nonempty ι] [Nonempty κ]
+    {kB T me h chi ne NI NII Fcal : ℝ} {gI EI AI : ι → ℝ} {gII EII AII : κ → ℝ}
+    (hkB : 0 < kB) (hT : 0 < T) (hme : 0 < me) (hh : 0 < h) (hne : 0 < ne)
+    (hgI : ∀ j, 0 < gI j) (hNI : 0 < NI) (hFcal : 0 < Fcal) (hAI : ∀ j, 0 < AI j)
+    (hgII : ∀ j, 0 < gII j) (hNII : 0 < NII) (hAII : ∀ j, 0 < AII j)
+    (hsaha : NII * ne = NI * sahaFactor kB T me h chi gI EI gII EII)
+    (i : ι) (k : κ) (hshift : EI i = EII k + chi) :
+    csigmaOrdinate kB T NI Fcal gI EI AI i
+      = csigmaSahaOrdinate kB T me h ne NI NII Fcal gI EI gII EII AII k := by
+  rw [csigma_master_line hgI hNI hFcal hAI i,
+      csigma_saha_master_line hkB hT hme hh hne hgI hNI hFcal hgII hNII hAII hsaha k, hshift]
 
 end CflibsFormal.Alt
 
