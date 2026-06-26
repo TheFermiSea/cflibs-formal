@@ -1,4 +1,5 @@
 import CflibsFormal.Alt.CSigma
+import CflibsFormal.Alt.CSigmaCurveOfGrowth
 import CflibsFormal.Alt.GaussMarkov
 import CflibsFormal.Alt.LeastSquares
 import CflibsFormal.Alt.OLSVariance
@@ -30,4 +31,5 @@ import CflibsFormal.SelfReversal
 import CflibsFormal.SpatialForward
 import CflibsFormal.StarkBroadening
 import CflibsFormal.StarkShift
+import CflibsFormal.TemporalEvolution
 import CflibsFormal.VoigtWidth

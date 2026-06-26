@@ -75,11 +75,21 @@ definition is defined once and reused verbatim, and every module imports only `M
   `matrix_invariant`, Aitchison coherence) while absolute fractions inflate by `1/(1−m)` ≥ 1
   (`composition_le_recoveredComposition`); plus an intensity bridge from the forward map and the
   Saha ionization-suppression channel (`sahaIonDensity_antitone`); honest that this is the
-  completeness/ablation channels with `n`/`T` fixed, NOT unconditional matrix-independence).
+  completeness/ablation channels with `n`/`T` fixed, NOT unconditional matrix-independence),
+  `TemporalEvolution` (time-resolved / gate-delayed recovery: the plasma state `(T(t), n_e(t), ρ(t))`
+  drifts between gates, yet the recovery is SOUND at each gate — `gateSahaTotalDensity_eq` shows the
+  electron density `n_e(t)` cancels via the two-stage Saha sum, and the shared dilution `ρ(t)` cancels
+  in closure; honest that the cross-gate invariance is a thin corollary of the stoichiometric-ablation
+  `hDilute`, a COMPLEMENTARY temporal analogue of — not stronger than — `classic_calibration_free`,
+  with a compiling non-vacuity witness and the McWhirter LTE window as the applicability bound).
 - **Classic algorithm** (`namespace CflibsFormal.Classic`): `Classic` — the textbook
   calibration-free algorithm, `classic_sound` (composition leg given `T`).
 - **Alternative estimators** (`namespace CflibsFormal.Alt`): `Alt/CSigma` (single
-  master-line normalization plot), `Alt/SelfAbsorbed` (self-absorption-corrected),
+  master-line normalization plot), `Alt/CSigmaCurveOfGrowth` (the self-absorption DROOP on the
+  Cσ graph: optically-thick lines sit below the universal line by `ln SA(τ)`, strictly monotone
+  in the optical depth `τ = N·σ_ℓ·ℓ` — the cross-section `σ` weighting; the genuinely-new analytic
+  piece is `selfAbsorptionFactor_strictAntiOn`; honest REDUCED flat-profile/escape-factor scope, the
+  profile-integrated slope-½ wing out), `Alt/SelfAbsorbed` (self-absorption-corrected),
   `Alt/LeastSquares` (multi-line OLS Boltzmann plot). Each is proven sound and related back
   to the classic estimator. `Alt/OLSVariance` closes the **statistical** layer the deterministic
   `ErrorBudget` chain deferred: on `Mathlib`'s probability stack (a zero-mean, homoscedastic,
@@ -172,7 +182,7 @@ Gates 1–4 are automated in CI (`.github/workflows/lean_action_ci.yml`).
 
 ## Status
 
-33 modules, 223 axiom-clean named results (theorem/lemma) + 98 defs (counts via `scripts/stats.sh`).
+35 modules, 240 axiom-clean named results (theorem/lemma) + 107 defs (counts via `scripts/stats.sh`).
 Three automated CI gates: axiom-cleanliness (`tools/`), style/structure lint (`runLinter`), and the
 import-hygiene check (`scripts/stats.sh`).
 Adversarially validated (verdict: sound-with-minor-fixes, zero blockers; all findings fixed).
