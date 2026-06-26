@@ -69,7 +69,13 @@ definition is defined once and reused verbatim, and every module imports only `M
   `ErrorBudget` (the deterministic error-propagation chain — ε → OLS slope → temperature →
   composition — that turns the pipeline's empirical reliability thresholds, `min_energy_spread`
   and `min_snr`, into proven *sufficient-condition* corollaries; imports `Alt/LeastSquares` for
-  the OLS slope, honest that the line-count law is statistical, not deterministic).
+  the OLS slope, honest that the line-count law is statistical, not deterministic),
+  `MatrixEffects` (matrix effects as explicit parameters: the recovered SUBcomposition — pairwise
+  ratios among the detected species `D` — is matrix-INDEPENDENT (`recoveredComposition_ratio_`
+  `matrix_invariant`, Aitchison coherence) while absolute fractions inflate by `1/(1−m)` ≥ 1
+  (`composition_le_recoveredComposition`); plus an intensity bridge from the forward map and the
+  Saha ionization-suppression channel (`sahaIonDensity_antitone`); honest that this is the
+  completeness/ablation channels with `n`/`T` fixed, NOT unconditional matrix-independence).
 - **Classic algorithm** (`namespace CflibsFormal.Classic`): `Classic` — the textbook
   calibration-free algorithm, `classic_sound` (composition leg given `T`).
 - **Alternative estimators** (`namespace CflibsFormal.Alt`): `Alt/CSigma` (single
@@ -166,7 +172,7 @@ Gates 1–4 are automated in CI (`.github/workflows/lean_action_ci.yml`).
 
 ## Status
 
-32 modules, 206 axiom-clean named results (theorem/lemma) + 91 defs (counts via `scripts/stats.sh`).
+33 modules, 223 axiom-clean named results (theorem/lemma) + 98 defs (counts via `scripts/stats.sh`).
 Three automated CI gates: axiom-cleanliness (`tools/`), style/structure lint (`runLinter`), and the
 import-hygiene check (`scripts/stats.sh`).
 Adversarially validated (verdict: sound-with-minor-fixes, zero blockers; all findings fixed).

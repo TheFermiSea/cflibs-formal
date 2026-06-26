@@ -18,6 +18,7 @@ import CflibsFormal.HydrogenStark
 import CflibsFormal.Identifiability
 import CflibsFormal.Inverse
 import CflibsFormal.LineBroadening
+import CflibsFormal.MatrixEffects
 import CflibsFormal.MultiSpecies
 import CflibsFormal.PartialLTE
 import CflibsFormal.Robustness
