@@ -1,5 +1,6 @@
 import CflibsFormal.Alt.CSigma
 import CflibsFormal.Alt.LeastSquares
+import CflibsFormal.Alt.OLSVariance
 import CflibsFormal.Alt.SelfAbsorbed
 import CflibsFormal.Boltzmann
 import CflibsFormal.Classic

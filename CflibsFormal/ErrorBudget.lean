@@ -49,9 +49,10 @@ worst case (`olsSlope_stable_l2_sq` has `card ι` in the numerator). The familia
 better" rule is a **statistical** statement: under independent zero-mean noise of variance
 `σ²` the slope variance is `σ²·(∑ wₖ²) = σ²/SS_E` (Gauss–Markov). Its deterministic kernel —
 the OLS slope's noise gain `∑ wₖ² = 1/SS_E` — is proven here as `olsSlope_noise_gain`; the
-probabilistic `Var` layer is deliberately out of scope (it needs `Mathlib`'s probability
-stack), and we do **not** claim a deterministic min-line-count bound the worst case cannot
-support. See `oracle/Generate.lean` for the Float mirrors the numerical pipeline consumes.
+probabilistic `Var` layer is now formalized in `Alt.OLSVariance`
+(`olsSlope_variance_eq : Var(β̂) = σ²/SS_E`, on `Mathlib`'s probability stack), and we still do
+**not** claim a deterministic min-line-count bound the worst case cannot support.
+See `oracle/Generate.lean` for the Float mirrors the numerical pipeline consumes.
 
 Modeling assumptions (all explicit, inherited from the forward map): LTE single-temperature
 populations, optically-thin emission (`lineIntensity`), a shared calibration `Fcal`, and known
@@ -191,7 +192,8 @@ theorem olsSlope_stable_l2 [Nonempty ι] {E y yHat : ι → ℝ} {eps : ℝ}
 the deterministic kernel of the Gauss–Markov variance law `Var(β̂) = σ²·∑ wₖ² = σ²/SS_E`: under
 independent ordinate noise of variance `σ²` the slope variance is `σ²/SS_E`, which (with
 `SS_E ≈ N·Var(E)`) is the principled origin of the "more lines ⇒ better" rule. The probabilistic
-`Var` layer is out of scope; this identity is the part that is purely algebraic. -/
+`Var` layer is formalized in `Alt.OLSVariance` (`olsSlope_variance_eq`); this identity is its
+purely-algebraic kernel. -/
 theorem olsSlope_noise_gain (E : ι → ℝ) (hvar : 0 < ∑ k, (E k - mean E) ^ 2) :
     ∑ k, ((E k - mean E) / (∑ j, (E j - mean E) ^ 2)) ^ 2
       = 1 / (∑ k, (E k - mean E) ^ 2) := by

@@ -75,7 +75,14 @@ definition is defined once and reused verbatim, and every module imports only `M
 - **Alternative estimators** (`namespace CflibsFormal.Alt`): `Alt/CSigma` (single
   master-line normalization plot), `Alt/SelfAbsorbed` (self-absorption-corrected),
   `Alt/LeastSquares` (multi-line OLS Boltzmann plot). Each is proven sound and related back
-  to the classic estimator.
+  to the classic estimator. `Alt/OLSVariance` closes the **statistical** layer the deterministic
+  `ErrorBudget` chain deferred: on `Mathlib`'s probability stack (a zero-mean, homoscedastic,
+  independent noise model) it proves OLS-slope unbiasedness `𝔼[β̂]=β` and the Gauss–Markov variance
+  law `Var(β̂)=σ²/SS_E` (`olsSlope_variance_eq`, via `ErrorBudget.olsSlope_noise_gain`), hence the
+  `card`-free "more lines / more spread ⇒ less variance" statement (`olsSlope_variance_antitone`)
+  the deterministic worst case could not give. Honest scope: independence is a reduction from the
+  classical uncorrelatedness hypothesis (mathlib's `IndepFun.variance_sum`), and BLUE/optimality is
+  not claimed.
 
 New alternative methods go under `CflibsFormal.Alt`; shared physics/inverse machinery in
 `CflibsFormal`. Literature-facing modules carry a `## Literature` docstring paragraph citing
@@ -156,7 +163,7 @@ Gates 1–4 are automated in CI (`.github/workflows/lean_action_ci.yml`).
 
 ## Status
 
-30 modules, 193 axiom-clean named results (theorem/lemma) + 88 defs (counts via `scripts/stats.sh`).
+31 modules, 199 axiom-clean named results (theorem/lemma) + 90 defs (counts via `scripts/stats.sh`).
 Three automated CI gates: axiom-cleanliness (`tools/`), style/structure lint (`runLinter`), and the
 import-hygiene check (`scripts/stats.sh`).
 Adversarially validated (verdict: sound-with-minor-fixes, zero blockers; all findings fixed).
