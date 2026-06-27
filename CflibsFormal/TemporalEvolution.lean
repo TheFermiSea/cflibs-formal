@@ -327,9 +327,9 @@ Concrete data with `σ = Fin 1`, `ι = Fin 2`, `κ = Fin 1`, scalar constants
 `ρ 0 = 1 ≠ 3 = ρ 1`, and the neutral/ion split chosen as
 `nI = ρ·N0/(1+S)`, `nII = ρ·N0·S/(1+S)` (`S = gateSahaFactor`). The `example`
 below discharges the Saha and dilution hypotheses at both gates and evaluates the
-recovered composition to `1` at each, certifying the hypotheses of the headline
-theorem are jointly satisfiable with differing `T` and dilution — the implication
-is substantive, not vacuous. -/
+recovered composition to `1` at each, certifying that the headline theorem's
+hypotheses are jointly satisfiable with differing `T` and dilution — so the
+implication is substantive, not vacuous. -/
 
 private noncomputable def tT : ℝ → ℝ := fun t => 1 + t
 private noncomputable def tρ : ℝ → ℝ := fun t => 1 + 2 * t
