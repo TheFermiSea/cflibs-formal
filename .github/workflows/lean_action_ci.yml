@@ -47,4 +47,12 @@ jobs:
           lake exe oracle-fixtures > /tmp/fixtures.json
           diff -u oracle/fixtures.json /tmp/fixtures.json
           python3 oracle/check_fixtures.py
+      # Docs-sync gate: the auto-generated module reference + theorem catalog must match the source
+      # (no drift). Regenerate in place and fail if the committed copies differ — same regenerate-
+      # and-diff discipline as the oracle self-check. Keeps docs/{module-reference,theorem-catalog}.md
+      # in lockstep with the spec, so a new/removed result cannot land undocumented.
+      - name: Docs-sync gate
+        run: |
+          ./scripts/gen-docs.sh
+          git diff --exit-code -- docs/module-reference.md docs/theorem-catalog.md
       - uses: leanprover-community/docgen-action@v1
