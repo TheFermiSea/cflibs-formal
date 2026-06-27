@@ -62,7 +62,7 @@ lemma thermalBracket_pos {kB T me h : ℝ}
 
 The full Saha law then reads `(n_{z+1} · n_e)/n_z = S(T)`, equivalently
 `n_e = S(T) / (n_{z+1}/n_z)`.  The leading `2` is the free-electron spin
-statistical weight `2·g_e` with `g_e = 1`; the exponent sign `−χ/(k_B T)`
+degeneracy `g_e = 2` (the two `m_s = ±1/2` states); the exponent sign `−χ/(k_B T)`
 reflects that ionization *costs* energy `χ > 0`; the `(3/2)` power (via
 `Real.rpow`) is the thermal-de-Broglie volume scaling. -/
 noncomputable def sahaFactor (kB T me h chi : ℝ) (gZ EZ : ι → ℝ) (gZ1 EZ1 : κ → ℝ) : ℝ :=

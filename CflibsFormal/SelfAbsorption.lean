@@ -86,6 +86,49 @@ theorem selfAbsorptionFactor_le_one {tau : ℝ} (htau : 0 ≤ tau) :
     have := Real.one_sub_le_exp_neg tau
     linarith
 
+/-- **Strict monotonicity of the escape factor.** `SA(τ) = (1 − exp(−τ))/τ` is STRICTLY
+DECREASING in the optical depth `τ > 0`: a more optically-thick line escapes a strictly smaller
+fraction of its photons (`SA` runs monotonically from `1` at `τ → 0⁺` down toward `0`). Proof:
+`strictAntiOn_of_deriv_neg` on the clean branch `(1 − exp(−x))/x`, whose derivative numerator
+`exp(−x)·(x + 1) − 1 < 0` (from `Real.add_one_lt_exp`, `x + 1 < exp x`, scaled by `exp(−x) > 0`),
+transferred across the `if` of `selfAbsorptionFactor` by `StrictAntiOn.congr`. -/
+theorem selfAbsorptionFactor_strictAntiOn :
+    StrictAntiOn selfAbsorptionFactor (Set.Ioi 0) := by
+  have hclean : StrictAntiOn (fun t : ℝ => (1 - Real.exp (-t)) / t) (Set.Ioi 0) := by
+    apply strictAntiOn_of_deriv_neg (convex_Ioi 0)
+    · -- continuity on `Ioi 0`: numerator and denominator continuous, denominator ≠ 0
+      apply ContinuousOn.div
+      · exact continuousOn_const.sub (Real.continuous_exp.comp continuous_neg).continuousOn
+      · exact continuousOn_id
+      · intro t ht
+        exact (Set.mem_Ioi.mp ht).ne'
+    · intro x hx
+      rw [interior_Ioi] at hx
+      have hxpos : 0 < x := hx
+      have hxne : x ≠ 0 := hxpos.ne'
+      have he : HasDerivAt (fun t : ℝ => Real.exp (-t)) (Real.exp (-x) * -1) x :=
+        (Real.hasDerivAt_exp (-x)).comp x ((hasDerivAt_id x).neg)
+      have hd : HasDerivAt (fun t : ℝ => (1 - Real.exp (-t)) / t)
+          ((Real.exp (-x) * x - (1 - Real.exp (-x)) * 1) / x ^ 2) x := by
+        have hnum : HasDerivAt (fun t : ℝ => 1 - Real.exp (-t)) (Real.exp (-x)) x := by
+          simpa using he.const_sub 1
+        have hden : HasDerivAt (fun t : ℝ => t) (1 : ℝ) x := hasDerivAt_id x
+        exact hnum.div hden hxne
+      rw [hd.deriv]
+      apply div_neg_of_neg_of_pos
+      · have hkey : Real.exp (-x) * (x + 1) < 1 := by
+          have h1 : x + 1 < Real.exp x := Real.add_one_lt_exp hxne
+          have h2 : Real.exp (-x) * (x + 1) < Real.exp (-x) * Real.exp x :=
+            mul_lt_mul_of_pos_left h1 (Real.exp_pos _)
+          rwa [← Real.exp_add, neg_add_cancel, Real.exp_zero] at h2
+        nlinarith [hkey]
+      · exact pow_pos hxpos 2
+  have heqon : Set.EqOn (fun t : ℝ => (1 - Real.exp (-t)) / t) selfAbsorptionFactor
+      (Set.Ioi 0) := by
+    intro t ht
+    rw [selfAbsorptionFactor, if_neg (Set.mem_Ioi.mp ht).ne']
+  exact hclean.congr heqon
+
 /-- **Thin limit.** `SA(τ) → 1` as `τ → 0⁺`: the self-absorption-aware forward model
 continuously reduces to the optically-thin `ForwardMap` as `τ → 0`. The thick model is a
 strict generalization, not a different model, so all thin-limit CF-LIBS identities remain

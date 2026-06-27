@@ -17,7 +17,7 @@ the scalar `Fcal`, and the Boltzmann-plot ordinate is `log(I/(g_k A_k))`, with n
 
 A real spectrometer integrates an **energy/radiance** quantity, for which the standard CF-LIBS
 ordinate carries the wavelength explicitly: `log(I·λ_k/(g_k A_k))` (Aragón & Aguilera 2008;
-Khelladi et al. 2023). The two differ by the **per-line** photon-energy factor `h c / 4π λ_{ki}`,
+Thouin et al. 2023). The two differ by the **per-line** photon-energy factor `h c / 4π λ_{ki}`,
 which a *scalar* `Fcal` cannot literally carry. This module makes that factor explicit in a thin
 **energy-intensity sibling** and machine-proves the two conventions yield the **same
 Boltzmann-plot slope** `-1/(k_B T)` (hence the same recovered temperature) — closing a
@@ -49,9 +49,11 @@ All quantities are real.
 The wavelength (energy) ordinate `ln(I·λ/(g A))` vs `E` with slope `−1/(k_B T)` is the
 literature-standard Saha–Boltzmann form: Aragón, C.; Aguilera, J. A. "Characterization of
 laser induced plasmas by optical emission spectroscopy: A review of experiments and methods."
-*Spectrochim. Acta B* **63** (2008) 893–916; and Khelladi, M. et al., *EPJ Appl. Phys.* **101**
-(2023) ap230072, which prints `ln(J_tot·λ/(A g)) = ln(hc/(4π n Z)) − E/(kT)` with the `λ`
-multiplying `J` precisely to cancel the `1/λ` photon-energy factor. The photon-rate /
+*Spectrochim. Acta B* **63** (2008) 893–916; and Thouin, J.; Benmouffok, M.; Freton, P.;
+Gonzalez, J.-J. "Interpretation of temperature measurements by the Boltzmann plot method on
+spatially integrated plasma oxygen spectral lines." *EPJ Appl. Phys.* **98** (2023) 65 (art.
+ap230072), which uses the wavelength Boltzmann ordinate `ln(J·λ/(A g)) = const − E/(kT)` with the
+`λ` multiplying `J` precisely to cancel the `1/λ` photon-energy factor. The photon-rate /
 calibration-absorbed form `ln(I/(g A))` (λ folded into the lumped factor `F`) is the original
 Ciucci, A. et al. "New Procedure for Quantitative Elemental Analysis by Laser-Induced Plasma
 Spectroscopy." *Appl. Spectrosc.* **53** (1999) 960–964, and the review Tognoni, E. et al.

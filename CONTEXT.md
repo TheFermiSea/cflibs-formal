@@ -24,7 +24,7 @@ provable structure (soundness, identifiability, error bounds), not curve-fitting
   intercept → species concentration. The workhorse identity everything rests on. Two equivalent
   conventions are formalized and proven to share the slope `−1/(kB·T)`: the photon-rate /
   `Fcal`-absorbed ordinate `log(I/(gA))` (Ciucci 1999; canonical `ForwardMap`) and the
-  energy/wavelength ordinate `log(I·λ/(gA))` (Khelladi 2023; `ForwardMapEnergy`), where the
+  energy/wavelength ordinate `log(I·λ/(gA))` (Thouin et al. 2023; `ForwardMapEnergy`), where the
   per-line `hc/4πλ_k` is made explicit (closes a literature-review false-positive that the
   reduced ordinate "omits λ").
 - **Composition / closure** — `C_s = N_s / Σ_t N_t`; `Σ C_s = 1`; the vector lies in the
@@ -182,7 +182,7 @@ Gates 1–4 are automated in CI (`.github/workflows/lean_action_ci.yml`).
 
 ## Status
 
-35 modules, 240 axiom-clean named results (theorem/lemma) + 107 defs (counts via `scripts/stats.sh`).
+35 modules, 242 axiom-clean named results (theorem/lemma) + 107 defs (counts via `scripts/stats.sh`).
 Three automated CI gates: axiom-cleanliness (`tools/`), style/structure lint (`runLinter`), and the
 import-hygiene check (`scripts/stats.sh`).
 Adversarially validated (verdict: sound-with-minor-fixes, zero blockers; all findings fixed).

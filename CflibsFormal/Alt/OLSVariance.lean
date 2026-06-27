@@ -51,7 +51,7 @@ variable `betaHat ω = olsSlope E (y(·,ω))`. We prove:
 * **The statistical "more lines help".** Unlike the *deterministic* worst-case bound
   `ErrorBudget.olsSlope_stable_l2_sq` (which carries `Fintype.card ι` in the numerator and does
   *not* improve with redundant lines), the variance law has *no* `card ι`: `Var(β̂) = σ²/SS_E`
-  strictly decreases as `SS_E` grows (`olsSlope_variance_antitone`). This is the principled
+  decreases (non-strictly) as `SS_E` grows (`olsSlope_variance_antitone`). This is the principled
   statistical content the deterministic chain could not supply.
 * **Physics is in prose only.** For the Boltzmann plot `yₖ = log(Iₖ/(gₖAₖ))` the slope is
   `β = −1/(k_B T)`, so `Var(β̂) = σ²/SS_E` propagates (via `ErrorBudget.temp_rel_error_eq`) to the
@@ -216,7 +216,9 @@ theorem olsSlope_variance_eq [Nonempty ι] (E : ι → ℝ) (α β σ : ℝ) (ε
 /-- **Monotonicity — more energy spread ⇒ less slope variance.** With the same noise law,
 `SS_E ≤ SS_E'` gives `Var(β̂_{E'}) ≤ Var(β̂_E)`. The `card`-free statistical content that the
 deterministic worst-case chain (`ErrorBudget.olsSlope_stable_l2_sq`, `card ι` in the numerator)
-could not supply: redundant lines at NEW energies help, by enlarging `SS_E`. -/
+could not supply: more energy spread (at fixed line count `ι`) lowers the variance, via a larger
+`SS_E`. (The statement varies the energies `E ↦ E'` with `card ι` fixed; it is not an "add a
+line" theorem.) -/
 theorem olsSlope_variance_antitone [Nonempty ι] (E E' : ι → ℝ) (α β σ : ℝ) (ε : ι → Ω → ℝ)
     (hvar : 0 < ∑ k, (E k - mean E) ^ 2) (hvar' : 0 < ∑ k, (E' k - mean E') ^ 2)
     (hSS : ∑ k, (E k - mean E) ^ 2 ≤ ∑ k, (E' k - mean E') ^ 2)
