@@ -131,7 +131,7 @@ theorem csigma_curve_of_growth_thin [Nonempty ι] {kB T N Fcal : ℝ} {g E A : �
     (hg : ∀ k, 0 < g k) (hN : 0 < N) (hFcal : 0 < Fcal) (hA : ∀ k, 0 < A k) (k : ι) :
     csigmaSelfAbsorbedUniversalOrdinate kB T N Fcal g E A k 0
       = Real.log Fcal - E k / (kB * T) := by
-  rw [csigma_curve_of_growth_droop hg hN hFcal hA k (le_refl 0)]
+  rw [csigma_curve_of_growth_droop hg hN hFcal hA k le_rfl]
   simp [selfAbsorptionFactor]
 
 /-- **The droop is downward (non-strict).** For any `τ ≥ 0` the concentration-normalized
@@ -255,8 +255,7 @@ theorem csigma_curve_of_growth_strictAntiOn [Nonempty ι] {kB T N Fcal : ℝ} {g
     StrictAntiOn (fun tau => csigmaSelfAbsorbedUniversalOrdinate kB T N Fcal g E A k tau)
       (Set.Ioi 0) := by
   intro a ha b hb hab
-  change csigmaSelfAbsorbedUniversalOrdinate kB T N Fcal g E A k b
-      < csigmaSelfAbsorbedUniversalOrdinate kB T N Fcal g E A k a
+  beta_reduce
   rw [csigma_curve_of_growth_droop hg hN hFcal hA k (Set.mem_Ioi.mp hb).le,
       csigma_curve_of_growth_droop hg hN hFcal hA k (Set.mem_Ioi.mp ha).le]
   have hSAb : 0 < selfAbsorptionFactor b := selfAbsorptionFactor_pos (Set.mem_Ioi.mp hb).le
@@ -294,8 +293,7 @@ theorem csigma_curve_of_growth_density_droop [Nonempty ι] {kB T Fcal sigmaL ell
   have hτab : csigmaOpticalDepth sigmaL ell Na < csigmaOpticalDepth sigmaL ell Nb := by
     unfold csigmaOpticalDepth
     exact mul_lt_mul_of_pos_left hab (mul_pos hsig hell)
-  change csigmaSelfAbsorbedUniversalOrdinate kB T Nb Fcal g E A k (csigmaOpticalDepth sigmaL ell Nb)
-      < csigmaSelfAbsorbedUniversalOrdinate kB T Na Fcal g E A k (csigmaOpticalDepth sigmaL ell Na)
+  beta_reduce
   rw [csigma_curve_of_growth_droop hg hNb0 hFcal hA k hτb.le,
       csigma_curve_of_growth_droop hg hNa0 hFcal hA k hτa.le]
   have hSAb : 0 < selfAbsorptionFactor (csigmaOpticalDepth sigmaL ell Nb) :=

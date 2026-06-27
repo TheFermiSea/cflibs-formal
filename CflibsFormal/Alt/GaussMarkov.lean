@@ -108,14 +108,8 @@ theorem linEstimator_expectation (a E : ι → ℝ) (α β : ℝ) (ε : ι → �
     (hL2 : ∀ k, MemLp (ε k) 2 μ)
     (hmean0 : ∀ k, μ[ε k] = 0) :
     μ[linEstimator a E α β ε] = α * (∑ k, a k) + β * (∑ k, a k * E k) := by
-  have hint : ∀ k, Integrable (fun ω => a k * ε k ω) μ :=
-    fun k => ((hL2 k).const_mul (a k)).integrable (by norm_num)
-  have hSint : Integrable (fun ω => ∑ k, a k * ε k ω) μ :=
-    (memLp_finsetSum Finset.univ (fun k _ => (hL2 k).const_mul (a k))).integrable (by norm_num)
   simp_rw [linEstimator_eq a E α β ε]
-  rw [integral_add (integrable_const _) hSint,
-    integral_finsetSum Finset.univ (fun k _ => hint k)]
-  simp [integral_const_mul, hmean0]
+  exact expectation_const_add_weightedNoise a (α * (∑ k, a k) + β * (∑ k, a k * E k)) ε hL2 hmean0
 
 /-- **Unbiasedness characterization (an `iff`).** A linear estimator `Tₐ` is unbiased for the slope
 `β` *for every* intercept `α` and slope `β` **iff** `∑ₖaₖ = 0 ∧ ∑ₖaₖEₖ = 1`. Forward: evaluate at
@@ -148,24 +142,9 @@ theorem linEstimator_variance (a E : ι → ℝ) (α β σ : ℝ) (ε : ι → �
     (hindep : iIndepFun ε μ)
     (hhom : ∀ k, variance (ε k) μ = σ ^ 2) :
     variance (linEstimator a E α β ε) μ = σ ^ 2 * ∑ k, (a k) ^ 2 := by
-  have hpt : linEstimator a E α β ε
-      = fun ω => (α * (∑ k, a k) + β * (∑ k, a k * E k)) + ∑ k, a k * ε k ω :=
-    funext (linEstimator_eq a E α β ε)
-  rw [hpt]
-  have hmeas : AEStronglyMeasurable (fun ω => ∑ k, a k * ε k ω) μ :=
-    (memLp_finsetSum Finset.univ (fun k _ => (hL2 k).const_mul (a k))).aestronglyMeasurable
-  rw [variance_const_add hmeas _]
-  have hfun : (fun ω => ∑ k, a k * ε k ω) = ∑ k, (fun ω => a k * ε k ω) := by
-    funext ω; simp [Finset.sum_apply]
-  rw [hfun, IndepFun.variance_sum
-    (fun i _ => (hL2 i).const_mul (a i))
-    (fun i _ j _ hij =>
-      (hindep.indepFun hij).comp
-        (measurable_id.const_mul (a i))
-        (measurable_id.const_mul (a j)))]
-  simp_rw [variance_const_mul, hhom]
-  rw [← Finset.sum_mul]
-  ring
+  rw [funext (linEstimator_eq a E α β ε)]
+  exact variance_const_add_weightedNoise a (α * (∑ k, a k) + β * (∑ k, a k * E k)) σ ε
+    hL2 hindep hhom
 
 /-- **The deterministic algebraic core of Gauss–Markov optimality** `∑ₖwₖ² ≤ ∑ₖaₖ²`, with
 `wₖ = olsWeight E k`, for ANY unbiased weights (`∑ₖaₖ = 0`, `∑ₖaₖEₖ = 1`). Pythagorean argument:
