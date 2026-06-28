@@ -322,66 +322,73 @@ theorem mcwhirter_requirement_antitone {ΔE : ℝ} {T : ℝ → ℝ} {t₁ t₂ 
 
 /-! ### Non-vacuity witness
 
-Concrete data with `σ = Fin 1`, `ι = Fin 2`, `κ = Fin 1`, scalar constants
-`kB = me = h = Fcal = 1`, GENUINELY DIFFERING gate states `T 0 = 1 ≠ 2 = T 1` and
-`ρ 0 = 1 ≠ 3 = ρ 1`, and the neutral/ion split chosen as
+Concrete data with `σ = Fin 2` (TWO elements), `ι = Fin 2`, `κ = Fin 1`, scalar
+constants `kB = me = h = Fcal = 1`, GENUINELY DIFFERING gate states
+`T 0 = 1 ≠ 2 = T 1` and `ρ 0 = 1 ≠ 3 = ρ 1`, DISTINCT initial densities
+`N0 = ![1, 3]`, and the neutral/ion split chosen as
 `nI = ρ·N0/(1+S)`, `nII = ρ·N0·S/(1+S)` (`S = gateSahaFactor`). The `example`
 below discharges the Saha and dilution hypotheses at both gates and evaluates the
-recovered composition to `1` at each, certifying that the headline theorem's
-hypotheses are jointly satisfiable with differing `T` and dilution — so the
-implication is substantive, not vacuous. -/
+recovered composition of element `0` to the genuine non-trivial fraction
+`1/(1+3) = 1/4` at each, certifying that the headline theorem's hypotheses are
+jointly satisfiable with differing `T` and dilution AND that the
+stoichiometric-dilution factor `ρ` cancels in a real composition RATIO across two
+elements (gate-independent despite `ρ 0 = 1 ≠ 3 = ρ 1`) — so the implication is
+substantive, not vacuous. -/
 
 private noncomputable def tT : ℝ → ℝ := fun t => 1 + t
 private noncomputable def tρ : ℝ → ℝ := fun t => 1 + 2 * t
 private noncomputable def tne : ℝ → ℝ := fun _ => 1
-private noncomputable def tN0 : Fin 1 → ℝ := fun _ => 1
-private noncomputable def tchi : Fin 1 → ℝ := fun _ => 1
-private noncomputable def tgI : Fin 1 → Fin 2 → ℝ := fun _ _ => 1
-private noncomputable def tEI : Fin 1 → Fin 2 → ℝ := fun _ _ => 0
-private noncomputable def tAI : Fin 1 → Fin 2 → ℝ := fun _ _ => 1
-private noncomputable def tuI : Fin 1 → Fin 2 := fun _ => 0
-private noncomputable def tgII : Fin 1 → Fin 1 → ℝ := fun _ _ => 1
-private noncomputable def tEII : Fin 1 → Fin 1 → ℝ := fun _ _ => 0
+private noncomputable def tN0 : Fin 2 → ℝ := ![1, 3]
+private noncomputable def tchi : Fin 2 → ℝ := fun _ => 1
+private noncomputable def tgI : Fin 2 → Fin 2 → ℝ := fun _ _ => 1
+private noncomputable def tEI : Fin 2 → Fin 2 → ℝ := fun _ _ => 0
+private noncomputable def tAI : Fin 2 → Fin 2 → ℝ := fun _ _ => 1
+private noncomputable def tuI : Fin 2 → Fin 2 := fun _ => 0
+private noncomputable def tgII : Fin 2 → Fin 1 → ℝ := fun _ _ => 1
+private noncomputable def tEII : Fin 2 → Fin 1 → ℝ := fun _ _ => 0
 
-private noncomputable def tnI : Fin 1 → ℝ → ℝ :=
+private noncomputable def tnI : Fin 2 → ℝ → ℝ :=
   fun s t => tρ t * tN0 s / (1 + gateSahaFactor 1 1 1 tT tchi tgI tEI tgII tEII t s)
 
-private noncomputable def tnII : Fin 1 → ℝ → ℝ :=
+private noncomputable def tnII : Fin 2 → ℝ → ℝ :=
   fun s t => tρ t * tN0 s * gateSahaFactor 1 1 1 tT tchi tgI tEI tgII tEII t s
     / (1 + gateSahaFactor 1 1 1 tT tchi tgI tEI tgII tEII t s)
 
-/-- Non-vacuity / non-tautology witness for the time-resolved Saha recovery: the
-Saha (`hSaha`) and stoichiometric-dilution (`hDilute`) hypotheses are jointly
+/-- Non-vacuity / non-tautology witness for the time-resolved Saha recovery: with
+TWO elements (`σ = Fin 2`) and DISTINCT initial densities `N0 = ![1, 3]`, the Saha
+(`hSaha`) and stoichiometric-dilution (`hDilute`) hypotheses are jointly
 satisfiable at two gates with genuinely different temperature (`T 0 ≠ T 1`) and
-dilution (`ρ 0 ≠ ρ 1`), and the recovered composition is gate-independent and
-equals `1` at each gate. -/
+dilution (`ρ 0 ≠ ρ 1`), and the recovered composition of element `0` is
+gate-independent and equals the genuine non-trivial ratio `1/(1+3) = 1/4` at each
+gate — non-trivially witnessing that the dilution factor `ρ` cancels in a real
+composition ratio across elements. -/
 example :
     tT 0 ≠ tT 1
       ∧ tρ 0 ≠ tρ 1
-      ∧ (∀ s : Fin 1, tnII s 0 * tne 0
+      ∧ (∀ s : Fin 2, tnII s 0 * tne 0
           = tnI s 0 * gateSahaFactor 1 1 1 tT tchi tgI tEI tgII tEII 0 s)
-      ∧ (∀ s : Fin 1, tnI s 0 + tnII s 0 = tρ 0 * tN0 s)
-      ∧ (∀ s : Fin 1, tnII s 1 * tne 1
+      ∧ (∀ s : Fin 2, tnI s 0 + tnII s 0 = tρ 0 * tN0 s)
+      ∧ (∀ s : Fin 2, tnII s 1 * tne 1
           = tnI s 1 * gateSahaFactor 1 1 1 tT tchi tgI tEI tgII tEII 1 s)
-      ∧ (∀ s : Fin 1, tnI s 1 + tnII s 1 = tρ 1 * tN0 s)
+      ∧ (∀ s : Fin 2, tnI s 1 + tnII s 1 = tρ 1 * tN0 s)
       ∧ gateSahaComposition 1 1 1 1 tT tne tchi tnI tgI tEI tAI tuI tgII tEII 0 0
           = gateSahaComposition 1 1 1 1 tT tne tchi tnI tgI tEI tAI tuI tgII tEII 1 0
-      ∧ gateSahaComposition 1 1 1 1 tT tne tchi tnI tgI tEI tAI tuI tgII tEII 0 0 = 1 := by
-  have hgI : ∀ (s : Fin 1) (k : Fin 2), 0 < tgI s k := fun s k => by norm_num [tgI]
+      ∧ gateSahaComposition 1 1 1 1 tT tne tchi tnI tgI tEI tAI tuI tgII tEII 0 0 = 1/4 := by
+  have hgI : ∀ (s : Fin 2) (k : Fin 2), 0 < tgI s k := fun s k => by norm_num [tgI]
   have hFcal : (0 : ℝ) < 1 := one_pos
-  have hAI : ∀ s : Fin 1, 0 < tAI s (tuI s) := fun s => by norm_num [tAI]
-  have hG : ∀ (s : Fin 1) (t : ℝ), 0 < tT t →
+  have hAI : ∀ s : Fin 2, 0 < tAI s (tuI s) := fun s => by norm_num [tAI]
+  have hG : ∀ (s : Fin 2) (t : ℝ), 0 < tT t →
       0 < gateSahaFactor 1 1 1 tT tchi tgI tEI tgII tEII t s := by
     intro s t ht
     unfold gateSahaFactor
     exact sahaFactor_pos one_pos ht one_pos one_pos
       (fun k => by norm_num [tgI]) (fun k => by norm_num [tgII])
-  have hSaha : ∀ (t : ℝ) (s : Fin 1), tnII s t * tne t
+  have hSaha : ∀ (t : ℝ) (s : Fin 2), tnII s t * tne t
       = tnI s t * gateSahaFactor 1 1 1 tT tchi tgI tEI tgII tEII t s := by
     intro t s
     simp only [tnI, tnII, tne]
     ring
-  have hDilute : ∀ (t : ℝ), 0 < tT t → ∀ s : Fin 1,
+  have hDilute : ∀ (t : ℝ), 0 < tT t → ∀ s : Fin 2,
       tnI s t + tnII s t = tρ t * tN0 s := by
     intro t ht s
     have hden : (1 : ℝ) + gateSahaFactor 1 1 1 tT tchi tgI tEI tgII tEII t s ≠ 0 :=
@@ -390,8 +397,10 @@ example :
     field_simp
   have hT0 : (0 : ℝ) < tT 0 := by norm_num [tT]
   have hT1 : (0 : ℝ) < tT 1 := by norm_num [tT]
-  have hcomp : composition tN0 (0 : Fin 1) = 1 := by
-    simp [composition, totalDensity, tN0]
+  have hcomp : composition tN0 (0 : Fin 2) = 1/4 := by
+    simp only [composition, totalDensity, tN0, Fin.sum_univ_two,
+      Matrix.cons_val_zero, Matrix.cons_val_one]
+    norm_num
   have key0 : gateSahaComposition 1 1 1 1 tT tne tchi tnI tgI tEI tAI tuI tgII tEII 0 0
       = composition tN0 0 :=
     temporal_saha_composition_invariant hgI hFcal hAI 0 (by norm_num [tne])
