@@ -5,11 +5,12 @@ on:
   pull_request:
   workflow_dispatch:
 
-# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
+# API-docs publishing is intentionally DISABLED (this is a private spec; GitHub Pages on a private
+# repo is public by default, so auto-deploy would expose it). Only read access is granted — the
+# `pages: write` / `id-token: write` tokens are removed so nothing in CI can deploy to Pages. See
+# the disabled docgen step at the end of the job to re-enable after a deliberate visibility choice.
 permissions:
   contents: read # Read access to repository contents
-  pages: write # Write access to GitHub Pages
-  id-token: write # Write access to ID tokens
 
 jobs:
   build:
@@ -55,4 +56,9 @@ jobs:
         run: |
           ./scripts/gen-docs.sh
           git diff --exit-code -- docs/module-reference.md docs/theorem-catalog.md
-      - uses: leanprover-community/docgen-action@v1
+      # API-docs publishing (doc-gen4 HTML -> GitHub Pages) is DISABLED on purpose: this is a
+      # PRIVATE spec, and Pages on a private repo is public by default, so this step would expose
+      # it. The HTML reference can still be built on demand (doc-gen4, see leanprover/doc-gen4). To
+      # publish later, restore the `pages: write` / `id-token: write` permissions above and
+      # re-enable this step — as an access-controlled artifact or a deliberate Pages deploy.
+      # - uses: leanprover-community/docgen-action@v1
