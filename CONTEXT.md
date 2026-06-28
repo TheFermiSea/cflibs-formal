@@ -44,6 +44,9 @@ definition is defined once and reused verbatim, and every module imports only `M
 - **Shared core** (`namespace CflibsFormal`): `Boltzmann`, `Saha`, `Closure`, `ForwardMap`,
   `ForwardMapEnergy` (energy/wavelength forward sibling: explicit `hc/4πλ`, proven to reduce to
   the photon-rate `ForwardMap` and to share the Boltzmann-plot slope),
+  `OLS` (the pure-algebra ordinary-least-squares foundation — `mean`, `olsSlope`, the centering
+  identities, and the noise gain `∑wₖ²=1/SS_E` — the single core home reused by `Alt/LeastSquares`,
+  `ErrorBudget`, and `Alt/OLSVariance`/`Alt/GaussMarkov`; a `Mathlib`-only base module),
   `Identifiability`, `MultiSpecies`, `SelfAbsorption`, `Robustness`, `Inverse`
   (algorithm-agnostic estimator framework), `CompositionRobustness`,
   `CompositionIdentifiability`, `SelfAbsorptionInverse`, `SahaInverse`, `CurveOfGrowth`,
@@ -68,8 +71,8 @@ definition is defined once and reused verbatim, and every module imports only `M
   relations; does not touch the dimensionless core),
   `ErrorBudget` (the deterministic error-propagation chain — ε → OLS slope → temperature →
   composition — that turns the pipeline's empirical reliability thresholds, `min_energy_spread`
-  and `min_snr`, into proven *sufficient-condition* corollaries; imports `Alt/LeastSquares` for
-  the OLS slope, honest that the line-count law is statistical, not deterministic),
+  and `min_snr`, into proven *sufficient-condition* corollaries; builds on the core `OLS`
+  foundation, honest that the line-count law is statistical, not deterministic),
   `MatrixEffects` (matrix effects as explicit parameters: the recovered SUBcomposition — pairwise
   ratios among the detected species `D` — is matrix-INDEPENDENT (`recoveredComposition_ratio_`
   `matrix_invariant`, Aitchison coherence) while absolute fractions inflate by `1/(1−m)` ≥ 1
@@ -94,7 +97,7 @@ definition is defined once and reused verbatim, and every module imports only `M
   to the classic estimator. `Alt/OLSVariance` closes the **statistical** layer the deterministic
   `ErrorBudget` chain deferred: on `Mathlib`'s probability stack (a zero-mean, homoscedastic,
   independent noise model) it proves OLS-slope unbiasedness `𝔼[β̂]=β` and the Gauss–Markov variance
-  law `Var(β̂)=σ²/SS_E` (`olsSlope_variance_eq`, via `ErrorBudget.olsSlope_noise_gain`), hence the
+  law `Var(β̂)=σ²/SS_E` (`olsSlope_variance_eq`, via `OLS.olsSlope_noise_gain`), hence the
   `card`-free "more lines / more spread ⇒ less variance" statement (`olsSlope_variance_antitone`)
   the deterministic worst case could not give. `Alt/GaussMarkov` then proves the **optimality**
   layer — OLS is the Best Linear Unbiased Estimator of the slope (`ols_is_blue : Var(β̂) ≤ Var(Tₐ)`

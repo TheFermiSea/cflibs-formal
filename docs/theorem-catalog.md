@@ -75,16 +75,11 @@
 *the multi-line ordinary-least-squares Boltzmann-plot estimator*
 
 **Definitions**
-- `mean` — Arithmetic mean of `f` over the `Fintype` of lines: `(∑ k, f k) / card ι`.
-- `olsSlope` — Ordinary-least-squares slope of the Boltzmann-plot points `(E k, y k)`: covariance over variance, `(∑_k (E k − mean E)(y k − mean y)) / (∑_k (E k − mean E)²)`.
-- `olsIntercept` — Ordinary-least-squares intercept `b = ybar − m·Ebar`.
 - `olsBoltzmannOrdinate` — The Boltzmann-plot ordinate `y_k = log (I_k / (g_k A_k))` built from a (measured / forward-model) line intensity.
 - `olsDensity` — Per-species density read off the OLS intercept: `N_s = exp(b_s) · U_s(T) / Fcal`, where `b_s = olsIntercept` of the observed ordinates `y_k = log (I_k / (g_k…
 - `leastSquaresComposition` — Full OLS CF-LIBS composition estimator.
 
 **Results**
-- `mean_affine` — Mean of an affine transform.
-- `ols_recovers_line` — THE CRUX.
 - `olsIntercept_of_forward` — Links OLS recovery to the physics.
 - `olsDensity_recovers` — Per-species soundness core.
 - `leastSquares_sound` — MAIN soundness.
@@ -94,11 +89,9 @@
 *the Gauss–Markov variance law for the OLS Boltzmann-plot slope*
 
 **Definitions**
-- `olsWeight` — Gauss–Markov weight `wₖ = (Eₖ − Ē)/SS_E` with `SS_E = ∑ⱼ (Eⱼ − Ē)²`.
 - `betaHat` — The OLS-slope estimator as a random variable.
 
 **Results**
-- `centered_mul_self` — Centered–energy identity `∑ₖ (Eₖ − Ē)·Eₖ = ∑ₖ (Eₖ − Ē)² = SS_E`.
 - `olsSlope_estimator_eq` — Estimator = truth + weighted noise (pure pointwise algebra, no probability).
 - `expectation_const_add_weightedNoise` — Expectation of a constant plus independent weighted noise `𝔼[c + ∑ₖ wₖ·εₖ] = c`, for zero-mean L² noise.
 - `variance_const_add_weightedNoise` — Variance of a constant plus independent weighted noise `Var(c + ∑ₖ wₖ·εₖ) = σ²·∑ₖ wₖ²`, for independent, homoscedastic L² noise.
@@ -267,13 +260,9 @@
 *the error-propagation chain and DERIVED reliability thresholds*
 
 **Results**
-- `centered_sum_zero` — The centered energies sum to zero: `∑ₖ (Eₖ − Ē) = 0`.
-- `olsSlope_eq_centered` — OLS slope is centered-linear in the ordinates.
-- `olsSlope_sub_eq` — Slope perturbation is linear in the ordinate perturbation.
 - `olsSlope_stable_l1` — N-line slope sensitivity (ℓ¹ worst-case bound).
 - `olsSlope_stable_l2_sq` — N-line slope sensitivity (ℓ², squared form).
 - `olsSlope_stable_l2` — N-line slope sensitivity (ℓ², root form).
-- `olsSlope_noise_gain` — OLS slope noise gain.
 - `olsSlope_l1_const_two` — N = 2 reduces to the classic two-line constant.
 - `olsSlope_stable_two` — N = 2 bound matches `twoLineBeta_stable`.
 - `temp_rel_error_eq` — Exact temperature relative error.
@@ -406,6 +395,24 @@
 - `speciesComposition_mem_stdSimplex` — Multi-species closure as simplex membership.
 - `deNormalized_lineIntensity` — Inversion identity.
 - `density_ratio_from_intensities` — Density-from-intensity bridge.
+
+## `OLS.lean`  (CflibsFormal)
+*the ordinary-least-squares algebraic foundation*
+
+**Definitions**
+- `mean` — Arithmetic mean of `f` over the `Fintype` of lines: `(∑ k, f k) / card ι`.
+- `olsSlope` — Ordinary-least-squares slope of the Boltzmann-plot points `(E k, y k)`: covariance over variance, `(∑_k (E k − mean E)(y k − mean y)) / (∑_k (E k − mean E)²)`.
+- `olsIntercept` — Ordinary-least-squares intercept `b = ybar − m·Ebar`.
+- `olsWeight` — Gauss–Markov weight `wₖ = (Eₖ − Ē)/SS_E` with `SS_E = ∑ⱼ (Eⱼ − Ē)²`.
+
+**Results**
+- `centered_sum_zero` — The centered energies sum to zero: `∑ₖ (Eₖ − Ē) = 0`.
+- `mean_affine` — Mean of an affine transform.
+- `olsSlope_eq_centered` — OLS slope is centered-linear in the ordinates.
+- `olsSlope_sub_eq` — Slope perturbation is linear in the ordinate perturbation.
+- `centered_mul_self` — Centered–energy identity `∑ₖ (Eₖ − Ē)·Eₖ = ∑ₖ (Eₖ − Ē)² = SS_E`.
+- `olsSlope_noise_gain` — OLS slope noise gain.
+- `ols_recovers_line` — THE CRUX.
 
 ## `PartialLTE.lean`  (CflibsFormal)
 *the partial-LTE thermalization limit*

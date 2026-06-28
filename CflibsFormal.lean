@@ -21,6 +21,7 @@ import CflibsFormal.Inverse
 import CflibsFormal.LineBroadening
 import CflibsFormal.MatrixEffects
 import CflibsFormal.MultiSpecies
+import CflibsFormal.OLS
 import CflibsFormal.PartialLTE
 import CflibsFormal.Robustness
 import CflibsFormal.Saha

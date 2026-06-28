@@ -74,10 +74,10 @@ def recoverT (kB : Float) (g E A : Vec) (i j : Nat) (Ii Ij : Float) : Float :=
 
 -- ### Multi-line OLS Boltzmann plot (mirror of `Alt/LeastSquares.lean`)
 
-/-- Mirror of `Alt.mean`: arithmetic mean over the lines. -/
+/-- Mirror of `mean`: arithmetic mean over the lines. -/
 def mean (f : Vec) : Float := f.foldl (· + ·) 0.0 / f.size.toFloat
 
-/-- Mirror of `Alt.olsSlope`: covariance/variance of the Boltzmann-plot points. -/
+/-- Mirror of `olsSlope`: covariance/variance of the Boltzmann-plot points. -/
 def olsSlope (E y : Vec) : Float :=
   let eb := mean E
   let yb := mean y
@@ -85,7 +85,7 @@ def olsSlope (E y : Vec) : Float :=
   let den := E.foldl (fun acc ek => acc + (ek - eb) * (ek - eb)) 0.0
   num / den
 
-/-- Mirror of `Alt.olsIntercept`: `ȳ − slope · Ē`. -/
+/-- Mirror of `olsIntercept`: `ȳ − slope · Ē`. -/
 def olsIntercept (E y : Vec) : Float := mean y - olsSlope E y * mean E
 
 /-- Mirror of `Alt.olsDensity`: density read off the OLS intercept of ALL lines' ordinates. -/

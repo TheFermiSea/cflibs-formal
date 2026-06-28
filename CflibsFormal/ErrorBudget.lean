@@ -5,7 +5,7 @@ Authors: Brian Squires
 -/
 import Mathlib
 import CflibsFormal.CompositionRobustness
-import CflibsFormal.Alt.LeastSquares
+import CflibsFormal.OLS
 
 /-!
 # CF-LIBS formalization — the error-propagation chain and DERIVED reliability thresholds
@@ -16,7 +16,7 @@ This module turns those thresholds into **proven corollaries of a single determi
 error-propagation chain**, so they follow *from a target accuracy* rather than being tuned.
 
 The chain is the multi-line generalization of `Robustness.twoLineBeta_stable` (which bounds the
-TWO-line slope) to the full ordinary-least-squares Boltzmann-plot slope `Alt.olsSlope` over
+TWO-line slope) to the full ordinary-least-squares Boltzmann-plot slope `olsSlope` over
 `N` lines, then forward through temperature and composition:
 
 ```
@@ -48,7 +48,7 @@ the **per-line error** `ε` — and adding more lines at the SAME energies does 
 worst case (`olsSlope_stable_l2_sq` has `card ι` in the numerator). The familiar "more lines ⇒
 better" rule is a **statistical** statement: under independent zero-mean noise of variance
 `σ²` the slope variance is `σ²·(∑ wₖ²) = σ²/SS_E` (Gauss–Markov). Its deterministic kernel —
-the OLS slope's noise gain `∑ wₖ² = 1/SS_E` — is proven here as `olsSlope_noise_gain`; the
+the OLS slope's noise gain `∑ wₖ² = 1/SS_E` — is proven in `OLS` as `olsSlope_noise_gain`; the
 probabilistic `Var` layer is now formalized in `Alt.OLSVariance`
 (`olsSlope_variance_eq : Var(β̂) = σ²/SS_E`, on `Mathlib`'s probability stack), and we still do
 **not** claim a deterministic min-line-count bound the worst case cannot support.
@@ -56,7 +56,7 @@ See `oracle/Generate.lean` for the Float mirrors the numerical pipeline consumes
 
 Modeling assumptions (all explicit, inherited from the forward map): LTE single-temperature
 populations, optically-thin emission (`lineIntensity`), a shared calibration `Fcal`, and known
-partition functions `U_s(T)`. `mean` / `olsSlope` are reused verbatim from `Alt.LeastSquares`.
+partition functions `U_s(T)`. `mean` / `olsSlope` are reused verbatim from `OLS`.
 
 Scope of the chain: the temperature channel (Tasks 1–2) and the density/concentration channel
 (Task 3) are bounded **independently** — the latter (`relDensity_le`) treats `U` and `Fcal` as
@@ -69,51 +69,11 @@ namespace CflibsFormal
 
 open Finset Real
 open scoped BigOperators
-open CflibsFormal.Alt
 
 variable {ι : Type*} [Fintype ι]
 variable {κ : Type*} [Fintype κ]
 
 /-! ## Task 1 — N-line least-squares slope sensitivity (generalizes `twoLineBeta_stable`) -/
-
-/-- The centered energies sum to zero: `∑ₖ (Eₖ − Ē) = 0`. The lever that makes the OLS slope a
-*centered-linear* functional of the ordinates (the `mean y` term drops out). Needs at least one
-line (`[Nonempty ι]`, so `card ι ≠ 0`). -/
-theorem centered_sum_zero [Nonempty ι] (E : ι → ℝ) :
-    ∑ k, (E k - mean E) = 0 := by
-  have hcard : (Fintype.card ι : ℝ) ≠ 0 := Nat.cast_ne_zero.mpr Fintype.card_ne_zero
-  unfold mean
-  rw [Finset.sum_sub_distrib, Finset.sum_const, Finset.card_univ, nsmul_eq_mul]
-  field_simp
-  ring
-
-/-- **OLS slope is centered-linear in the ordinates.** `olsSlope E y =
-(∑ₖ (Eₖ − Ē)·yₖ) / SS_E`: centering kills the `mean y` term because `∑ (Eₖ − Ē) = 0`. This is
-the representation `β̂(y) = ∑ₖ wₖ yₖ` with weights `wₖ = (Eₖ − Ē)/SS_E` on which every
-sensitivity bound below rests. -/
-theorem olsSlope_eq_centered [Nonempty ι] (E y : ι → ℝ) :
-    olsSlope E y = (∑ k, (E k - mean E) * y k) / (∑ k, (E k - mean E) ^ 2) := by
-  unfold olsSlope
-  congr 1
-  have h0 : ∑ k, (E k - mean E) = 0 := centered_sum_zero E
-  calc ∑ k, (E k - mean E) * (y k - mean y)
-      = ∑ k, ((E k - mean E) * y k - (E k - mean E) * mean y) := by
-        refine Finset.sum_congr rfl (fun k _ => ?_); ring
-    _ = (∑ k, (E k - mean E) * y k) - (∑ k, (E k - mean E)) * mean y := by
-        rw [Finset.sum_sub_distrib, ← Finset.sum_mul]
-    _ = ∑ k, (E k - mean E) * y k := by rw [h0]; ring
-
-/-- **Slope perturbation is linear in the ordinate perturbation.**
-`olsSlope E ŷ − olsSlope E y = (∑ₖ (Eₖ − Ē)(ŷₖ − yₖ)) / SS_E`. The bridge for the Lipschitz
-bounds: the slope error is the centered-energy-weighted sum of the per-line ordinate errors. -/
-theorem olsSlope_sub_eq [Nonempty ι] (E y yHat : ι → ℝ) :
-    olsSlope E yHat - olsSlope E y
-      = (∑ k, (E k - mean E) * (yHat k - y k)) / (∑ k, (E k - mean E) ^ 2) := by
-  rw [olsSlope_eq_centered E yHat, olsSlope_eq_centered E y, div_sub_div_same]
-  congr 1
-  rw [← Finset.sum_sub_distrib]
-  refine Finset.sum_congr rfl (fun k _ => ?_)
-  ring
 
 /-- **N-line slope sensitivity (ℓ¹ worst-case bound).** If every ordinate is perturbed by at
 most `ε` then the OLS slope changes by at most `ε·(∑ₖ |Eₖ − Ē|)/SS_E`. This is the multi-line
@@ -187,22 +147,6 @@ theorem olsSlope_stable_l2 [Nonempty ι] {E y yHat : ι → ℝ} {eps : ℝ}
         Real.sqrt_le_sqrt hsq
     _ = eps * Real.sqrt (Fintype.card ι) / Real.sqrt (∑ k, (E k - mean E) ^ 2) := by
         rw [Real.sqrt_div (by positivity), Real.sqrt_mul (by positivity), Real.sqrt_sq heps0]
-
-/-- **OLS slope noise gain.** `∑ₖ wₖ² = 1/SS_E` for the weights `wₖ = (Eₖ − Ē)/SS_E`. This is
-the deterministic kernel of the Gauss–Markov variance law `Var(β̂) = σ²·∑ wₖ² = σ²/SS_E`: under
-independent ordinate noise of variance `σ²` the slope variance is `σ²/SS_E`, which (with
-`SS_E ≈ N·Var(E)`) is the principled origin of the "more lines ⇒ better" rule. The probabilistic
-`Var` layer is formalized in `Alt.OLSVariance` (`olsSlope_variance_eq`); this identity is its
-purely-algebraic kernel. -/
-theorem olsSlope_noise_gain (E : ι → ℝ) (hvar : 0 < ∑ k, (E k - mean E) ^ 2) :
-    ∑ k, ((E k - mean E) / (∑ j, (E j - mean E) ^ 2)) ^ 2
-      = 1 / (∑ k, (E k - mean E) ^ 2) := by
-  have hS : (∑ k, (E k - mean E) ^ 2) ≠ 0 := hvar.ne'
-  calc ∑ k, ((E k - mean E) / (∑ j, (E j - mean E) ^ 2)) ^ 2
-      = ∑ k, (E k - mean E) ^ 2 / (∑ j, (E j - mean E) ^ 2) ^ 2 := by
-        refine Finset.sum_congr rfl (fun k _ => ?_); rw [div_pow]
-    _ = (∑ k, (E k - mean E) ^ 2) / (∑ j, (E j - mean E) ^ 2) ^ 2 := by rw [← Finset.sum_div]
-    _ = 1 / (∑ k, (E k - mean E) ^ 2) := by rw [sq]; field_simp
 
 /-- **N = 2 reduces to the classic two-line constant.** For exactly two lines the ℓ¹
 slope-sensitivity constant `(∑ₖ |Eₖ − Ē|)/SS_E` equals `2/|E₀ − E₁|` — exactly the Lipschitz

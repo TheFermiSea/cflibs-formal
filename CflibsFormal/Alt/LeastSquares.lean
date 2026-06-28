@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Brian Squires
 -/
 import Mathlib
+import CflibsFormal.OLS
 import CflibsFormal.Boltzmann
 import CflibsFormal.ForwardMap
 import CflibsFormal.Closure
@@ -79,24 +80,6 @@ open scoped BigOperators
 variable {ι : Type*} [Fintype ι]
 variable {κ : Type*} [Fintype κ]
 
-/-- Arithmetic mean of `f` over the `Fintype` of lines: `(∑ k, f k) / card ι`. A plain
-algebraic helper (no specific citation); `Ebar = mean E`, `ybar = mean y`. The division by
-`card ι` is genuine (not `0/0`) under `[Nonempty ι]`. -/
-noncomputable def mean (f : ι → ℝ) : ℝ := (∑ k, f k) / (Fintype.card ι)
-
-/-- Ordinary-least-squares slope of the Boltzmann-plot points `(E k, y k)`: covariance over
-variance,
-  `(∑_k (E k − mean E)(y k − mean y)) / (∑_k (E k − mean E)²)`.
-The least-squares fit over all lines of a species (Tognoni et al. 2010). -/
-noncomputable def olsSlope (E y : ι → ℝ) : ℝ :=
-  (∑ k, (E k - mean E) * (y k - mean y)) / (∑ k, (E k - mean E) ^ 2)
-
-/-- Ordinary-least-squares intercept `b = ybar − m·Ebar`. By the Boltzmann-plot identity
-this intercept carries the species concentration via `b = log (Fcal·N/U)` (Ciucci et al.
-1999). -/
-noncomputable def olsIntercept (E y : ι → ℝ) : ℝ :=
-  mean y - olsSlope E y * mean E
-
 /-- The Boltzmann-plot ordinate `y_k = log (I_k / (g_k A_k))` built from a (measured /
 forward-model) line intensity. By `ForwardMap.boltzmann_plot_intensity` it equals
 `log (Fcal·N/U) − E_k/(k_B T)`, i.e. affine in `E k`; this is the per-line observation fed
@@ -123,54 +106,6 @@ vector built from the same forward spectrum. -/
 noncomputable def leastSquaresComposition (kB T Fcal : ℝ) (g E A : κ → ι → ℝ)
     (I : κ → ι → ℝ) (s : κ) : ℝ :=
   composition (fun t => olsDensity kB T Fcal (g t) (E t) (A t) (I t)) s
-
-/-- **Mean of an affine transform.** `mean (m0·E + b0) = m0·mean E + b0`. Isolates the only
-Finset-sum content of the intercept recovery so the variance/covariance identity stays
-readable. -/
-theorem mean_affine [Nonempty ι] (E : ι → ℝ) (m0 b0 : ℝ) :
-    mean (fun k => m0 * E k + b0) = m0 * mean E + b0 := by
-  have hcard : (Fintype.card ι : ℝ) ≠ 0 := Nat.cast_ne_zero.mpr Fintype.card_ne_zero
-  unfold mean
-  rw [Finset.sum_add_distrib, ← Finset.mul_sum, Finset.sum_const, Finset.card_univ,
-    nsmul_eq_mul]
-  field_simp
-
-/-- **THE CRUX.** In the noise-free forward-model case the Boltzmann-plot points are exactly
-collinear (`y_k = m0·E_k + b0`); when the energies are not all equal
-(`∑ (E_k − mean E)² > 0`, i.e. at least two distinct `E_k`) ordinary least squares recovers
-the exact slope `m0` AND intercept `b0`. This is the genuine Finset covariance/variance
-identity that justifies fitting ALL lines (Tognoni et al. 2010), generalizing the two-point
-slope of the classic method (Ciucci et al. 1999). The `hvar` hypothesis is satisfiable
-(distinct energies) AND necessary (with all `E_k` equal the denominator vanishes and the
-slope is undefined). -/
-theorem ols_recovers_line [Nonempty ι] {E y : ι → ℝ} {m0 b0 : ℝ}
-    (hcol : ∀ k, y k = m0 * E k + b0)
-    (hvar : 0 < ∑ k, (E k - mean E) ^ 2) :
-    olsSlope E y = m0 ∧ olsIntercept E y = b0 := by
-  -- Center the ordinates: `y k − mean y = m0 · (E k − mean E)`.
-  have hyk : ∀ k, y k - mean y = m0 * (E k - mean E) := by
-    intro k
-    have hmean : mean y = m0 * mean E + b0 := by
-      have : y = (fun k => m0 * E k + b0) := funext hcol
-      rw [this, mean_affine E m0 b0]
-    rw [hcol k, hmean]; ring
-  -- Slope leg.
-  have hslope : olsSlope E y = m0 := by
-    unfold olsSlope
-    have hnum : (∑ k, (E k - mean E) * (y k - mean y))
-        = m0 * ∑ k, (E k - mean E) ^ 2 := by
-      rw [Finset.mul_sum]
-      refine Finset.sum_congr rfl (fun k _ => ?_)
-      rw [hyk k]; ring
-    rw [hnum, mul_div_assoc, div_self hvar.ne', mul_one]
-  -- Intercept leg.
-  refine ⟨hslope, ?_⟩
-  unfold olsIntercept
-  rw [hslope]
-  have hmean : mean y = m0 * mean E + b0 := by
-    have : y = (fun k => m0 * E k + b0) := funext hcol
-    rw [this, mean_affine E m0 b0]
-  rw [hmean]; ring
 
 /-- **Links OLS recovery to the physics.** The OLS intercept of the FORWARD-MODEL
 Boltzmann-plot ordinates equals the composition-bearing offset `q_s = log (Fcal·N/U)` —

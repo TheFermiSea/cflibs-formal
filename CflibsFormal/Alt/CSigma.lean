@@ -392,7 +392,7 @@ theorem csigma_cross_stage_collapse [Nonempty ι] [Nonempty κ]
 
 /-- **Multi-line temperature from the Cσ master line.** The ordinary-least-squares slope of a
 species' Cσ master-line points `(E_k, Y_k)` is exactly `−1/(k_B T)` — so the plasma temperature is
-recovered from the *single regression* over all of the species' lines (`Alt.olsSlope`,
+recovered from the *single regression* over all of the species' lines (`olsSlope`,
 `Alt.ols_recovers_line`), not from a hand-picked pair. The master-line ordinate is exactly affine in
 `E_k` (`csigma_master_line`), so the noise-free OLS slope is exact. (Pooling lines of *different*
 stages into one regression is the cross-stage analogue — see `csigma_temperature_cross_stage` for
