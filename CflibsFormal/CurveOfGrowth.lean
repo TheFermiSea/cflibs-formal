@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Brian Squires
 -/
 import Mathlib
+import CflibsFormal.Analysis
 import CflibsFormal.SelfAbsorption
 import CflibsFormal.ForwardMap
 import CflibsFormal.Boltzmann
@@ -153,30 +154,19 @@ opacity (larger `x = w·n`) has the smaller normalized slope. Proved by
 `exp_mul_one_sub_lt_one`. -/
 theorem cogSlope_strictAntiOn :
     StrictAntiOn (fun x => x / (Real.exp x - 1)) (Set.Ioi 0) := by
-  have hden : ∀ x ∈ Set.Ioi (0 : ℝ), Real.exp x - 1 ≠ 0 := by
-    intro x hx
-    have : (1 : ℝ) < Real.exp x := Real.one_lt_exp_iff.mpr hx
-    linarith
-  apply strictAntiOn_of_deriv_neg (convex_Ioi 0)
-  · -- continuity on Ioi 0
-    apply ContinuousOn.div continuousOn_id
-    · exact (Real.continuous_exp.continuousOn.sub continuousOn_const)
-    · exact hden
+  apply strictAntiOn_div_of_deriv_num_neg
+    (f := fun x => x) (g := fun x => Real.exp x - 1)
+    (f' := fun _ => 1) (g' := fun x => Real.exp x)
   · intro x hx
-    rw [interior_Ioi] at hx
-    have hxpos : 0 < x := hx
-    have hd : HasDerivAt (fun y => y / (Real.exp y - 1))
-        ((1 * (Real.exp x - 1) - x * Real.exp x) / (Real.exp x - 1) ^ 2) x := by
-      have hnum : HasDerivAt (fun y : ℝ => y) 1 x := hasDerivAt_id x
-      have hden' : HasDerivAt (fun y : ℝ => Real.exp y - 1) (Real.exp x) x := by
-        simpa using (Real.hasDerivAt_exp x).sub_const 1
-      exact hnum.div hden' (hden x hx)
-    rw [hd.deriv]
-    apply div_neg_of_neg_of_pos
-    · have hkey : Real.exp x * (1 - x) < 1 := exp_mul_one_sub_lt_one hxpos
-      nlinarith [hkey]
-    · have : (1 : ℝ) < Real.exp x := Real.one_lt_exp_iff.mpr hxpos
-      positivity
+    have : (1 : ℝ) < Real.exp x := Real.one_lt_exp_iff.mpr (Set.mem_Ioi.mp hx)
+    linarith
+  · intro x _
+    exact hasDerivAt_id x
+  · intro x _
+    simpa using (Real.hasDerivAt_exp x).sub_const 1
+  · intro x hx
+    have hkey : Real.exp x * (1 - x) < 1 := exp_mul_one_sub_lt_one (Set.mem_Ioi.mp hx)
+    nlinarith [hkey]
 
 /-- The curve-of-growth ratio derivative numerator is negative on `(0, ∞)` for
 `w₁ > w₂ > 0`: `w₁ · exp(-(w₁·n)) · (1 - exp(-(w₂·n))) < (1 - exp(-(w₁·n))) · w₂ ·
@@ -227,42 +217,33 @@ single-line self-absorption degeneracy (Bulajic et al. 2002; Cristoforetti–Tog
 theorem cogRatio_strictAntiOn {w₁ w₂ : ℝ} (hw : w₂ < w₁) (hw₂ : 0 < w₂) :
     StrictAntiOn (fun n => cogRatio w₁ w₂ n) (Set.Ioi 0) := by
   have hw₁ : 0 < w₁ := lt_trans hw₂ hw
-  apply strictAntiOn_of_deriv_neg (convex_Ioi 0)
-  · -- continuity on Ioi 0: numerator and denominator continuous, denom ≠ 0
-    apply ContinuousOn.div
-    · exact (continuousOn_const.sub
-        ((Real.continuous_exp.comp (by fun_prop)).continuousOn))
-    · exact (continuousOn_const.sub
-        ((Real.continuous_exp.comp (by fun_prop)).continuousOn))
-    · intro n hn
-      exact (cog_denom_pos hw₂ (Set.mem_Ioi.mp hn)).ne'
+  -- HasDerivAt of `n ↦ 1 - exp(-(w·n))` (numerator/denominator share this shape)
+  have hderiv : ∀ w : ℝ, ∀ n : ℝ, HasDerivAt (fun n => 1 - Real.exp (-(w * n)))
+      (w * Real.exp (-(w * n))) n := by
+    intro w n
+    have h0 : HasDerivAt (fun n : ℝ => -(w * n)) (-w) n := by
+      have hm : HasDerivAt (fun n : ℝ => -(w * n)) (-(w * 1)) n :=
+        ((hasDerivAt_id n).const_mul w).fun_neg
+      simpa using hm
+    have h1 : HasDerivAt (fun n => Real.exp (-(w * n)))
+        (Real.exp (-(w * n)) * -w) n := h0.exp
+    have h2 := (h1.const_sub 1)
+    have heq : w * Real.exp (-(w * n)) = -(Real.exp (-(w * n)) * -w) := by ring
+    rw [heq]
+    exact h2
+  unfold cogRatio
+  apply strictAntiOn_div_of_deriv_num_neg
+    (f := fun n => 1 - Real.exp (-(w₁ * n))) (g := fun n => 1 - Real.exp (-(w₂ * n)))
+    (f' := fun n => w₁ * Real.exp (-(w₁ * n))) (g' := fun n => w₂ * Real.exp (-(w₂ * n)))
   · intro n hn
-    rw [interior_Ioi] at hn
-    have hnpos : 0 < n := hn
-    have hdenpos : 0 < 1 - Real.exp (-(w₂ * n)) := cog_denom_pos hw₂ hnpos
-    -- HasDerivAt of numerator and denominator
-    have hderiv : ∀ w : ℝ, HasDerivAt (fun n => 1 - Real.exp (-(w * n)))
-        (w * Real.exp (-(w * n))) n := by
-      intro w
-      have h0 : HasDerivAt (fun n : ℝ => -(w * n)) (-w) n := by
-        have hm : HasDerivAt (fun n : ℝ => -(w * n)) (-(w * 1)) n :=
-          ((hasDerivAt_id n).const_mul w).fun_neg
-        simpa using hm
-      have h1 : HasDerivAt (fun n => Real.exp (-(w * n)))
-          (Real.exp (-(w * n)) * -w) n := h0.exp
-      have h2 := (h1.const_sub 1)
-      have heq : w * Real.exp (-(w * n)) = -(Real.exp (-(w * n)) * -w) := by ring
-      rw [heq]
-      exact h2
-    have hfn := hderiv w₁
-    have hgn := hderiv w₂
-    have hd := hfn.fun_div hgn hdenpos.ne'
-    change deriv (fun n => (1 - Real.exp (-(w₁ * n))) / (1 - Real.exp (-(w₂ * n)))) n < 0
-    rw [hd.deriv]
-    apply div_neg_of_neg_of_pos
-    · have := cogRatio_deriv_num_neg hw hw₂ hnpos
-      nlinarith [this]
-    · positivity
+    exact cog_denom_pos hw₂ (Set.mem_Ioi.mp hn)
+  · intro n _
+    exact hderiv w₁ n
+  · intro n _
+    exact hderiv w₂ n
+  · intro n hn
+    have := cogRatio_deriv_num_neg hw hw₂ (Set.mem_Ioi.mp hn)
+    nlinarith [this]
 
 /-- **Multi-line, unknown-scale identifiability (injectivity).** The source-free ratio is
 injective on `(0, ∞)`: distinct positive column densities give distinct ratios, so `n`

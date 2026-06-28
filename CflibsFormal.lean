@@ -4,6 +4,7 @@ import CflibsFormal.Alt.GaussMarkov
 import CflibsFormal.Alt.LeastSquares
 import CflibsFormal.Alt.OLSVariance
 import CflibsFormal.Alt.SelfAbsorbed
+import CflibsFormal.Analysis
 import CflibsFormal.Boltzmann
 import CflibsFormal.Classic
 import CflibsFormal.Closure

@@ -5,7 +5,7 @@
 > (the integrity spine) + citation from `docs/scope-tags.tsv`; the docs-sync CI gate fails if
 > any result is untagged, so a new theorem cannot land without declaring its epistemic status.
 
-**Scope-tag mix** (241 results): **EXACT** 75 · **REDUCED** 43 · **APPROXIMATION** 9 · **PURE-MATH** 114
+**Scope-tag mix** (242 results): **EXACT** 75 · **REDUCED** 43 · **APPROXIMATION** 9 · **PURE-MATH** 115
 
 `EXACT` = exact identity faithfully encoding the cited physics · `REDUCED` = valid dimensionless/lumped-factor form · `APPROXIMATION` = documented idealization / limiting case · `PURE-MATH` = infrastructure lemma, no physical claim. Classification cross-checked against `reviews/literature-validity-audit.md`.
 
@@ -115,6 +115,12 @@
 - `EXACT` · `selfAbsorbed_corrects_bias` — Bias-direction value theorem for the NAIVE classic estimator.  _[Bulajic 2002]_
 - `REDUCED` · `selfAbsorbed_eq_classic_corrected` — Relationship to classic — structural identity.  _[Bulajic 2002]_
 - `REDUCED` · `selfAbsorbed_eq_classic_thin` — Reduction to classic in the optically-thin limit.  _[Bulajic 2002]_
+
+## `Analysis.lean`  (CflibsFormal)
+*Shared analysis scaffolding*
+
+**Results**
+- `PURE-MATH` · `strictAntiOn_div_of_deriv_num_neg` — Quotient strictly antitone from a negative derivative numerator.
 
 ## `Boltzmann.lean`  (CflibsFormal)
 *Part 1: the Boltzmann distribution*

@@ -240,3 +240,4 @@ TemporalEvolution.lean	temporal_saha_composition_invariant	EXACT	Ciucci 1999
 TemporalEvolution.lean	temporal_saha_composition_gate_independent	REDUCED	Tognoni 2010
 TemporalEvolution.lean	mem_lteWindow_thermalized	REDUCED	Cristoforetti 2010
 TemporalEvolution.lean	mcwhirter_requirement_antitone	PURE-MATH	—
+Analysis.lean	strictAntiOn_div_of_deriv_num_neg	PURE-MATH	—
