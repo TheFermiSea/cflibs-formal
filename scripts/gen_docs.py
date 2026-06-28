@@ -134,10 +134,34 @@ def parse_module(path: pathlib.Path):
     }
 
 
+SCOPE_TAGS = ("EXACT", "REDUCED", "APPROXIMATION", "PURE-MATH")
+
+
+def load_scope_tags() -> dict:
+    """Curated authoritative scope classification: (module_rel, name) -> (tag, citation)."""
+    path = ROOT / "docs" / "scope-tags.tsv"
+    out = {}
+    for line in path.read_text(encoding="utf-8").splitlines():
+        if not line.strip() or line.startswith("#"):
+            continue
+        parts = line.split("\t")
+        if len(parts) != 4:
+            continue
+        module, name, tag, cite = parts
+        out[(module, name)] = (tag, cite)
+    return out
+
+
 def main() -> int:
     paths = sorted(p for p in SRC.rglob("*.lean"))
     mods = [parse_module(p) for p in paths]
     mods.sort(key=lambda m: m["rel"])
+
+    scope = load_scope_tags()
+    result_keys = {(m["rel"], name) for m in mods for (_k, name, _s) in m["results"]}
+    untagged = sorted(k for k in result_keys if k not in scope)
+    stale = sorted(k for k in scope if k not in result_keys)
+    bad_tag = sorted(k for k, (t, _c) in scope.items() if t not in SCOPE_TAGS)
 
     # ---- module-reference.md ----
     mr = ["# Module reference", "",
@@ -158,12 +182,22 @@ def main() -> int:
     (ROOT / "docs" / "module-reference.md").write_text("\n".join(mr) + "\n", encoding="utf-8")
 
     # ---- theorem-catalog.md ----
+    from collections import Counter
+    mix = Counter(scope.get((m["rel"], name), ("?", ""))[0]
+                  for m in mods for (_k, name, _s) in m["results"])
     tc = ["# Theorem catalog", "",
-          "> **AUTO-GENERATED** by `scripts/gen-docs.sh`. Every named result and definition, grouped",
-          "> by module, with a one-line summary lifted from its docstring. Scope tags",
-          "> (EXACT / REDUCED / APPROXIMATION / PURE-MATH) and per-result citations are being layered",
-          "> in on top of this index — see `reviews/literature-validity-audit.md` for the current",
-          "> faithful/reduced/idealized/pure-math classification of the established corpus.", ""]
+          "> **AUTO-GENERATED** by `scripts/gen-docs.sh`. Every named result and definition, grouped by",
+          "> module, with a one-line docstring summary. Each **result** carries a curated **scope tag**",
+          "> (the integrity spine) + citation from `docs/scope-tags.tsv`; the docs-sync CI gate fails if",
+          "> any result is untagged, so a new theorem cannot land without declaring its epistemic status.",
+          "",
+          "**Scope-tag mix** (" + str(sum(mix.values())) + " results): "
+          + " · ".join(f"**{t}** {mix.get(t, 0)}" for t in SCOPE_TAGS),
+          "",
+          "`EXACT` = exact identity faithfully encoding the cited physics · `REDUCED` = valid "
+          "dimensionless/lumped-factor form · `APPROXIMATION` = documented idealization / limiting case "
+          "· `PURE-MATH` = infrastructure lemma, no physical claim. Classification cross-checked against "
+          "`reviews/literature-validity-audit.md`.", ""]
     for m in mods:
         if not m["decls"]:
             continue
@@ -181,12 +215,26 @@ def main() -> int:
         if results:
             tc.append("**Results**")
             for _k, name, summ in results:
-                tc.append(f"- `{name}` — {summ}")
+                tag, cite = scope.get((m["rel"], name), ("UNTAGGED", "—"))
+                citestr = f"  _[{cite}]_" if cite and cite != "—" else ""
+                tc.append(f"- `{tag}` · `{name}` — {summ}{citestr}")
             tc.append("")
     (ROOT / "docs" / "theorem-catalog.md").write_text("\n".join(tc) + "\n", encoding="utf-8")
 
+    if untagged or stale or bad_tag:
+        for k in untagged:
+            print(f"gen-docs: UNTAGGED result — add to docs/scope-tags.tsv: {k[0]} :: {k[1]}")
+        for k in stale:
+            print(f"gen-docs: STALE scope-tag (no such result): {k[0]} :: {k[1]}")
+        for k in bad_tag:
+            print(f"gen-docs: BAD scope-tag value (not in {SCOPE_TAGS}): {k[0]} :: {k[1]}")
+        print(f"gen-docs: scope-tag completeness FAILED "
+              f"({len(untagged)} untagged, {len(stale)} stale, {len(bad_tag)} bad)")
+        return 1
+
     print(f"gen-docs: {len(mods)} modules, {tot_r} results, {tot_d} defs "
-          f"-> docs/module-reference.md, docs/theorem-catalog.md")
+          f"-> docs/module-reference.md, docs/theorem-catalog.md; all {len(result_keys)} results scope-tagged "
+          f"({' '.join(f'{t}={mix.get(t,0)}' for t in SCOPE_TAGS)})")
     return 0
 
 

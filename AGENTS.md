@@ -66,9 +66,10 @@ tool output.
 |---|---|
 | `CONTEXT.md` | The narrative root: architecture, domain glossary, design decisions, modeling scope, verification discipline |
 | `docs/module-reference.md` | **Auto-generated** module index: namespace, role, #results/#defs, base?, citation, imports |
-| `docs/theorem-catalog.md` | **Auto-generated** catalog of every named result with its module + one-line summary (scope tags + citations are being layered in — the integrity spine) |
+| `docs/theorem-catalog.md` | **Auto-generated** catalog of every result with its **scope tag** (EXACT/REDUCED/APPROXIMATION/PURE-MATH) + citation + one-line summary — the integrity spine |
+| `docs/scope-tags.tsv` | Curated authoritative scope classification (one row per result). The docs-sync CI gate **fails if any result is untagged** — a new theorem must declare its epistemic status here |
 | `docs/dependency-graph.md` | The internal import DAG (reading guide) |
-| `scripts/gen-docs.sh` | Regenerates the two auto docs from source (run after adding/removing results) |
+| `scripts/gen-docs.sh` | Regenerates the two auto docs from source + checks scope-tag completeness (run after adding/removing results) |
 | `CflibsFormal/` | The spec. Core (`namespace CflibsFormal`) + `Alt/` (alternative estimators, `namespace CflibsFormal.Alt`) |
 | `oracle/` | Float-mirror regression oracle bridging the spec to the Python pipeline |
 | `tools/` | Vendored `axiom-audit` |
@@ -90,4 +91,5 @@ tool output.
 
 green build · axiom-clean (`#print axioms`) · no `sorry` · runLinter clean · import-hygiene clean ·
 oracle un-drifted · **and the statement is audited for non-vacuity + faithful physics + honest
-scope** · the auto docs regenerated (`./scripts/gen-docs.sh`).
+scope** · classified in `docs/scope-tags.tsv` (EXACT/REDUCED/APPROXIMATION/PURE-MATH + citation) ·
+the auto docs regenerated (`./scripts/gen-docs.sh`).

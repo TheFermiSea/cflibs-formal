@@ -48,10 +48,11 @@ jobs:
           lake exe oracle-fixtures > /tmp/fixtures.json
           diff -u oracle/fixtures.json /tmp/fixtures.json
           python3 oracle/check_fixtures.py
-      # Docs-sync gate: the auto-generated module reference + theorem catalog must match the source
-      # (no drift). Regenerate in place and fail if the committed copies differ — same regenerate-
-      # and-diff discipline as the oracle self-check. Keeps docs/{module-reference,theorem-catalog}.md
-      # in lockstep with the spec, so a new/removed result cannot land undocumented.
+      # Docs-sync + scope-tag-completeness gate: regenerate the auto docs and (a) fail if any result
+      # is missing a curated scope tag in docs/scope-tags.tsv (gen-docs.sh exits non-zero), and
+      # (b) fail if the committed module-reference / theorem-catalog drift from source. Same
+      # regenerate-and-diff discipline as the oracle self-check; this is the integrity-spine gate —
+      # a new theorem cannot land undocumented OR without an EXACT/REDUCED/APPROXIMATION/PURE-MATH tag.
       - name: Docs-sync gate
         run: |
           ./scripts/gen-docs.sh
