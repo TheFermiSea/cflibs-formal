@@ -167,4 +167,13 @@ theorem ols_recovers_line [Nonempty ι] {E y : ι → ℝ} {m0 b0 : ℝ}
   unfold olsIntercept
   rw [hslope, hmean]; ring
 
+/-- **Non-vacuity witness for `ols_recovers_line`.** Two lines at energies `E = (0, 1)`
+(so `∑ₖ (Eₖ − Ē)² = 1/2 > 0`, satisfying `hvar`) with collinear ordinates `y = 2·E + 3`:
+OLS recovers the exact slope `2` and intercept `3` — a genuine non-degenerate line (slope `≠ 0`),
+so the hypotheses are jointly satisfiable and the recovery is non-trivial. -/
+example : olsSlope ![0, 1] ![3, 5] = 2 ∧ olsIntercept ![0, 1] ![3, 5] = 3 := by
+  refine ols_recovers_line (m0 := 2) (b0 := 3) (fun k => ?_) ?_
+  · fin_cases k <;> norm_num
+  · simp [mean, Fin.sum_univ_two]; norm_num
+
 end CflibsFormal

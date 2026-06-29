@@ -179,4 +179,27 @@ theorem classic_calibration_free [Nonempty ι] [Nonempty κ] {kB T Fcal c : ℝ}
   rw [hscale]
   exact composition_smul_invariant (one_div_ne_zero hc) s
 
+/-! ### Non-vacuity witness
+
+Two species with DISTINCT densities `N = (1, 3)`, one line each (`kB = T = Fcal = 1`, `g = A = 1`,
+`E = 0`): the classic estimator on the forward-model spectrum recovers the genuine non-trivial
+composition `C₀ = 1/4` — not the degenerate single-species `= 1`. So `classic_sound`'s hypotheses
+are jointly satisfiable and its conclusion is non-vacuous. -/
+
+private def wN : Fin 2 → ℝ := ![1, 3]
+private def wg : Fin 2 → Fin 1 → ℝ := fun _ _ => 1
+private def wE : Fin 2 → Fin 1 → ℝ := fun _ _ => 0
+private def wA : Fin 2 → Fin 1 → ℝ := fun _ _ => 1
+private def wu : Fin 2 → Fin 1 := fun _ => 0
+
+example :
+    classicComposition 1 1 1 wg wE wA wu
+        (fun t => lineIntensity 1 1 (wN t) 1 (wg t) (wE t) (wA t) (wu t)) 0 = 1 / 4 := by
+  have h := classic_sound (kB := 1) (T := 1) (Fcal := 1)
+    (N := wN) (g := wg) (E := wE) (A := wA) (u := wu)
+    (fun _ _ => one_pos) one_pos (fun _ => one_pos)
+    (by norm_num [totalDensity, wN, Fin.sum_univ_two]) (0 : Fin 2)
+  rw [h]
+  norm_num [composition, totalDensity, wN, Fin.sum_univ_two]
+
 end CflibsFormal.Classic

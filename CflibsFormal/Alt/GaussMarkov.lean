@@ -203,4 +203,24 @@ theorem ols_is_blue [Nonempty ι] (a E : ι → ℝ) (α β σ : ℝ) (ε : ι �
       linEstimator_variance a E α β σ ε hL2 huncorr hhom]
   exact mul_le_mul_of_nonneg_left (weight_sq_ge_noiseGain a E hvar ha0 ha1) (sq_nonneg σ)
 
+/-- **Non-vacuity witness for Gauss–Markov optimality.** With three lines at energies `E = (0,1,2)`
+the unbiasedness constraints `∑aₖ = 0`, `∑aₖEₖ = 1` admit estimators OTHER than OLS — e.g.
+`a = (−1, 1, 0)` — and OLS has STRICTLY smaller noise gain (`∑wₖ² = 1/2 < 2 = ∑aₖ²`). So the
+competitor set of `weight_sq_ge_noiseGain` / `ols_is_blue` is non-empty AND the optimality bound is
+strict for a genuine competitor: the BLUE statement is neither vacuous nor trivially an equality.
+(With only two lines the constraints force `a = olsWeight E` uniquely, so three lines are needed to
+exhibit a non-OLS competitor — itself a small fact about why redundancy enables optimality.) -/
+example : ∃ E a : Fin 3 → ℝ,
+    (0 < ∑ k, (E k - mean E) ^ 2) ∧ (∑ k, a k = 0) ∧ (∑ k, a k * E k = 1)
+      ∧ a ≠ olsWeight E ∧ (∑ k, (olsWeight E k) ^ 2 < ∑ k, (a k) ^ 2) := by
+  refine ⟨![0, 1, 2], ![-1, 1, 0], ?_, ?_, ?_, ?_, ?_⟩
+  · simp [mean, Fin.sum_univ_three]; norm_num
+  · simp [Fin.sum_univ_three]
+  · simp [Fin.sum_univ_three]
+  · intro h
+    have h0 := congrFun h 0
+    simp [olsWeight, mean, Fin.sum_univ_three] at h0
+    norm_num at h0
+  · simp [olsWeight, mean, Fin.sum_univ_three]; norm_num
+
 end CflibsFormal.Alt
