@@ -246,3 +246,4 @@ EquivalentWidth.lean	equivWidth_nonneg	PURE-MATH	—
 EquivalentWidth.lean	equivWidth_le_thin	EXACT	Gornushkin 1999
 EquivalentWidth.lean	equivWidth_mono	EXACT	Gornushkin 1999
 EquivalentWidth.lean	equivWidth_rectangular	EXACT	Gornushkin 1999
+EquivalentWidth.lean	equivWidth_weakLine	EXACT	Gornushkin 1999

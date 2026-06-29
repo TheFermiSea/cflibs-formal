@@ -25,6 +25,9 @@ We prove the **weak-line / saturation** structure of the curve of growth, profil
   never exceeds the optically-thin value `τ·∫φ` (the slope-1 line on the curve of growth). The line
   *saturates* — the curve bends below the linear asymptote — because `1 - exp(-y) ≤ y`.
 * `equivWidth_mono` — `W` is increasing in `τ`: more column density ⇒ larger equivalent width.
+* `equivWidth_weakLine` — **the linear regime is exact at small `τ`:** `W(τ)/τ → ∫φ` as `τ → 0⁺`, so
+  the curve of growth is asymptotically tangent to the slope-1 line `τ·∫φ` at the origin and (with
+  `equivWidth_le_thin`) bends strictly below it as `τ` grows.
 * `equivWidth_rectangular` — for a **flat (rectangular) profile** of unit area the equivalent width
   is exactly the slab deficit `W(τ) = 1 - exp(-τ)`, tying the integrated curve of growth back to the
   `SelfAbsorption.slabIntensity` / escape-factor kernel and witnessing the results are non-vacuous.
@@ -37,9 +40,10 @@ We prove the **weak-line / saturation** structure of the curve of growth, profil
 * **Only the LINEAR regime and saturation onset — the slope-½ damping wing is OUT OF SCOPE.** The
   curve of growth has three regimes: linear (`W ∝ τ`, slope 1), flat/Doppler saturation
   (`W ∝ √(ln τ)`), and the square-root damping wing (`W ∝ √τ`, slope ½, from the Lorentzian wings).
-  We prove the slope-1 *upper bound* and that the curve lies below it (saturation), but NOT the
-  saturated asymptotics: the slope-½ Lorentz-wing growth needs a profile-specific improper-integral
-  asymptotic (Ladenburg–Reiche / Bessel-function form) beyond the profile-agnostic results here.
+  We prove the slope-1 *upper bound* (`equivWidth_le_thin`), the exact slope-1 *tangency* at small
+  `τ` (`equivWidth_weakLine`), and monotonicity — but NOT the saturated asymptotics: the slope-½
+  Lorentz-wing growth needs a profile-specific improper-integral asymptotic (Ladenburg–Reiche /
+  Bessel-function form) beyond the profile-agnostic results here.
 * **Profile-agnostic.** No specific profile (Gaussian/Doppler, Lorentzian, Voigt) is assumed; the
   results hold for any nonnegative integrable `φ`. The rectangular witness is the one concrete
   instance, chosen because it closes in elementary form and recovers the audited slab kernel.
@@ -134,5 +138,49 @@ theorem equivWidth_rectangular (τ : ℝ) :
   rw [equivWidth, hrw, integral_indicator_const _ measurableSet_Icc, measureReal_def,
     Real.volume_Icc]
   simp
+
+/-- **The weak-line (linear) limit of the curve of growth.** `W(τ)/τ → ∫φ` as `τ → 0⁺`: at small
+optical depth the equivalent width is asymptotically the optically-thin value `τ·∫φ` (slope 1 on the
+log–log curve of growth). With `equivWidth_le_thin` (`W ≤ τ·∫φ`) this *pins the linear regime*: the
+curve starts tangent to the slope-1 line and bends strictly below it as `τ` grows — the onset of
+saturation. Dominated convergence with the integrable bound `φ`; the pointwise quotient
+`(1 - exp(-τφ))/τ → φ` is the derivative of `τ ↦ 1 - exp(-τφ)` at `0`
+(`HasDerivAt.tendsto_slope_zero_right`). -/
+theorem equivWidth_weakLine {φ : ℝ → ℝ} (hφnn : 0 ≤ φ) (hφ : Integrable φ) :
+    Filter.Tendsto (fun τ => equivWidth φ τ / τ)
+      (nhdsWithin 0 (Set.Ioi 0)) (nhds (∫ x, φ x)) := by
+  have hEq : (fun τ : ℝ => equivWidth φ τ / τ)
+      = (fun τ : ℝ => ∫ x, (1 - Real.exp (-(τ * φ x))) / τ) := by
+    funext τ; rw [equivWidth, integral_div]
+  rw [hEq]
+  apply tendsto_integral_filter_of_dominated_convergence φ
+  · -- each `F τ` is a.e.-strongly measurable
+    filter_upwards [self_mem_nhdsWithin] with τ _
+    exact (continuous_id.div_const τ).comp_aestronglyMeasurable
+      (aestronglyMeasurable_const.sub
+        (Real.continuous_exp.comp_aestronglyMeasurable
+          ((hφ.aestronglyMeasurable.const_mul τ).neg)))
+  · -- domination `‖(1 - exp(-τφ))/τ‖ ≤ φ` for `τ > 0`
+    filter_upwards [self_mem_nhdsWithin] with τ (hτ : (0:ℝ) < τ)
+    filter_upwards with x
+    have hx : 0 ≤ τ * φ x := mul_nonneg hτ.le (hφnn x)
+    have hnn : 0 ≤ 1 - Real.exp (-(τ * φ x)) := by
+      have : Real.exp (-(τ * φ x)) ≤ 1 := Real.exp_le_one_iff.mpr (by linarith)
+      linarith
+    rw [Real.norm_eq_abs, abs_of_nonneg (div_nonneg hnn hτ.le), div_le_iff₀ hτ]
+    nlinarith [Real.one_sub_le_exp_neg (τ * φ x)]
+  · exact hφ
+  · -- pointwise limit: the slope of `τ ↦ 1 - exp(-τφ x)` at `0` is `φ x`
+    refine ae_of_all _ (fun x => ?_)
+    have hmul : HasDerivAt (fun τ : ℝ => τ * φ x) (φ x) 0 := by
+      simpa using (hasDerivAt_id (0:ℝ)).mul_const (φ x)
+    have hexp : HasDerivAt (fun τ : ℝ => Real.exp (-(τ * φ x))) (-(φ x)) 0 := by
+      simpa using hmul.neg.exp
+    have hd : HasDerivAt (fun τ : ℝ => 1 - Real.exp (-(τ * φ x))) (φ x) 0 := by
+      simpa using hexp.const_sub 1
+    refine hd.tendsto_slope_zero_right.congr' ?_
+    filter_upwards [self_mem_nhdsWithin] with t _
+    simp only [zero_add, smul_eq_mul, zero_mul, neg_zero, Real.exp_zero]
+    ring
 
 end CflibsFormal

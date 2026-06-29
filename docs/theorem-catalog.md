@@ -5,7 +5,7 @@
 > (the integrity spine) + citation from `docs/scope-tags.tsv`; the docs-sync CI gate fails if
 > any result is untagged, so a new theorem cannot land without declaring its epistemic status.
 
-**Scope-tag mix** (247 results): **EXACT** 83 · **REDUCED** 38 · **APPROXIMATION** 9 · **PURE-MATH** 117
+**Scope-tag mix** (248 results): **EXACT** 84 · **REDUCED** 38 · **APPROXIMATION** 9 · **PURE-MATH** 117
 
 `EXACT` = exact identity faithfully encoding the cited physics · `REDUCED` = valid dimensionless/lumped-factor form · `APPROXIMATION` = documented idealization / limiting case · `PURE-MATH` = infrastructure lemma, no physical claim. Classification cross-checked against `reviews/literature-validity-audit.md`.
 
@@ -277,6 +277,7 @@
 - `EXACT` · `equivWidth_le_thin` — The linear-regime upper bound (saturation).  _[Gornushkin 1999]_
 - `EXACT` · `equivWidth_mono` — The curve of growth is increasing.  _[Gornushkin 1999]_
 - `EXACT` · `equivWidth_rectangular` — The flat-profile curve of growth recovers the slab deficit.  _[Gornushkin 1999]_
+- `EXACT` · `equivWidth_weakLine` — The weak-line (linear) limit of the curve of growth.  _[Gornushkin 1999]_
 
 ## `ErrorBudget.lean`  (CflibsFormal)
 *the error-propagation chain and DERIVED reliability thresholds*
