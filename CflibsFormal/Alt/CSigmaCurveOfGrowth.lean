@@ -227,8 +227,9 @@ concentration-normalized measured ordinate is STRICTLY ANTITONE on `(0, ∞)`. T
 to the physics: the universal-line value `ln F − E_k/(k_B T)` is `N`-independent (the
 concentration normalization cancels), so the ONLY `N`-dependence left is the self-absorption
 droop, and increasing the density `N` strictly deepens it through `τ = N σ_ℓ ℓ`. Here `σ_ℓ`
-is the genuine line cross-section of the Aragón–Aguilera Cσ graph. Reduces to
-`csigma_curve_of_growth_strictAntiOn` via strict monotonicity of `N ↦ σ_ℓ ℓ N` on `(0, ∞)`.
+is the genuine line cross-section of the Aragón–Aguilera Cσ graph. Proved by the same mechanism
+as `csigma_curve_of_growth_strictAntiOn` — the droop identity cancels the direct `N`-dependence,
+leaving the escape-factor descent — composed with `τ = σ_ℓ ℓ N` strictly increasing in `N`.
 
 REDUCED: this is the flat-profile (escape-factor) reduction of the Aragón–Aguilera Cσ curve
 of growth; the profile-integrated slope-½ Lorentz wing is out of scope. -/

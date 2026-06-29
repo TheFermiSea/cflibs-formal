@@ -147,12 +147,11 @@ theorem ols_recovers_line [Nonempty ι] {E y : ι → ℝ} {m0 b0 : ℝ}
     (hcol : ∀ k, y k = m0 * E k + b0)
     (hvar : 0 < ∑ k, (E k - mean E) ^ 2) :
     olsSlope E y = m0 ∧ olsIntercept E y = b0 := by
+  have hmean : mean y = m0 * mean E + b0 := by
+    have hy : y = (fun k => m0 * E k + b0) := funext hcol
+    rw [hy, mean_affine E m0 b0]
   -- Center the ordinates: `y k − mean y = m0 · (E k − mean E)`.
-  have hyk : ∀ k, y k - mean y = m0 * (E k - mean E) := by
-    intro k
-    have hmean : mean y = m0 * mean E + b0 := by
-      have : y = (fun k => m0 * E k + b0) := funext hcol
-      rw [this, mean_affine E m0 b0]
+  have hyk : ∀ k, y k - mean y = m0 * (E k - mean E) := fun k => by
     rw [hcol k, hmean]; ring
   -- Slope leg.
   have hslope : olsSlope E y = m0 := by
@@ -166,10 +165,6 @@ theorem ols_recovers_line [Nonempty ι] {E y : ι → ℝ} {m0 b0 : ℝ}
   -- Intercept leg.
   refine ⟨hslope, ?_⟩
   unfold olsIntercept
-  rw [hslope]
-  have hmean : mean y = m0 * mean E + b0 := by
-    have : y = (fun k => m0 * E k + b0) := funext hcol
-    rw [this, mean_affine E m0 b0]
-  rw [hmean]; ring
+  rw [hslope, hmean]; ring
 
 end CflibsFormal

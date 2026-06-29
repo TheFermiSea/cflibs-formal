@@ -15,6 +15,7 @@ from __future__ import annotations
 import pathlib
 import re
 import sys
+from collections import Counter
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 SRC = ROOT / "CflibsFormal"
@@ -22,8 +23,10 @@ SRC = ROOT / "CflibsFormal"
 # Mirror scripts/stats.sh's counting EXACTLY: declarations at column 0; results = theorem/lemma
 # with an optional `@[attr]` prefix; defs = `def` with an optional `noncomputable`. `private`,
 # `protected`, `abbrev`, and `example` are NOT counted (they start with a different token).
-RESULT_RE = re.compile(r"^(?:@\[[^\]]*\]\s*)?(theorem|lemma) ([A-Za-z_][A-Za-z0-9_'.]*)")
-DEF_RE = re.compile(r"^(?:noncomputable )?def ([A-Za-z_][A-Za-z0-9_'.]*)")
+# Whitespace runs (`\s+`) match the awk `[ \t]+` so any decl stats.sh counts is also recognized
+# here — keeping the scope-tag completeness gate fail-CLOSED (no decl can dodge the tag check).
+RESULT_RE = re.compile(r"^(?:@\[[^\]]*\]\s*)?(theorem|lemma)\s+([A-Za-z_][A-Za-z0-9_'.]*)")
+DEF_RE = re.compile(r"^(?:noncomputable\s+)?def\s+([A-Za-z_][A-Za-z0-9_'.]*)")
 NS_RE = re.compile(r"^namespace\s+(\S+)")
 IMPORT_RE = re.compile(r"^import\s+(CflibsFormal\S*)")
 HEADING_RE = re.compile(r"^#\s+(.*\S)\s*$")
@@ -130,7 +133,7 @@ def parse_module(path: pathlib.Path):
     return {
         "dotted": dotted, "rel": str(rel) + ".lean", "namespace": namespace or "—",
         "imports": sorted(imports), "is_base": is_base, "has_lit": has_lit,
-        "role": role, "results": results, "defs": defs, "decls": decls,
+        "role": role, "results": results, "defs": defs,
     }
 
 
@@ -153,8 +156,7 @@ def load_scope_tags() -> dict:
 
 
 def main() -> int:
-    paths = sorted(p for p in SRC.rglob("*.lean"))
-    mods = [parse_module(p) for p in paths]
+    mods = [parse_module(p) for p in SRC.rglob("*.lean")]
     mods.sort(key=lambda m: m["rel"])
 
     scope = load_scope_tags()
@@ -182,7 +184,6 @@ def main() -> int:
     (ROOT / "docs" / "module-reference.md").write_text("\n".join(mr) + "\n", encoding="utf-8")
 
     # ---- theorem-catalog.md ----
-    from collections import Counter
     mix = Counter(scope.get((m["rel"], name), ("?", ""))[0]
                   for m in mods for (_k, name, _s) in m["results"])
     tc = ["# Theorem catalog", "",
@@ -199,14 +200,13 @@ def main() -> int:
           "· `PURE-MATH` = infrastructure lemma, no physical claim. Classification cross-checked against "
           "`reviews/literature-validity-audit.md`.", ""]
     for m in mods:
-        if not m["decls"]:
+        defs, results = m["defs"], m["results"]
+        if not defs and not results:
             continue
         tc.append(f"## `{m['rel']}`  ({m['namespace']})")
         if m["role"] and m["role"] != "—":
             tc.append(f"*{m['role']}*")
         tc.append("")
-        defs = [d for d in m["decls"] if d[0] == "def"]
-        results = [d for d in m["decls"] if d[0] in ("theorem", "lemma")]
         if defs:
             tc.append("**Definitions**")
             for _k, name, summ in defs:

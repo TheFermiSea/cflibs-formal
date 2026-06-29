@@ -23,19 +23,16 @@ with intercept `b = log (Fcal · N / U(T))` — exactly `ForwardMap.boltzmann_pl
 The intercept carries the species concentration (Ciucci et al. 1999). The classic method
 uses TWO lines for the slope; this alternative fits ALL `n` lines of a species by OLS.
 
-Given a `Fintype` `ι` of lines and points `(E_k, y_k)`, define
+Given a `Fintype` `ι` of lines and points `(E_k, y_k)`, the core `OLS` module defines
   `Ebar = (∑ E_k) / card`,   `ybar = (∑ y_k) / card`,
   `olsSlope     = (∑_k (E_k − Ebar)(y_k − ybar)) / (∑_k (E_k − Ebar)²)`,
   `olsIntercept = ybar − olsSlope · Ebar`.
 
-We prove:
+The OLS algebra — `mean`, `olsSlope`, `olsIntercept`, and the crux `OLS.ols_recovers_line`
+(noise-free collinear points ⇒ OLS recovers the exact slope `m0` and intercept `b0`, a genuine
+Finset covariance/variance identity) — lives in the core `OLS` module and is reused here
+verbatim. On top of it we prove the *physics*:
 
-* `mean_affine` — the mean of an affine transform of `E` is the affine transform of the
-  mean (the Finset-sum content of the intercept recovery).
-* `ols_recovers_line` — **THE CRUX.** In the noise-free forward-model case the points are
-  EXACTLY collinear (`y_k = m0·E_k + b0`); when the energies are not all equal
-  (`∑ (E_k − Ebar)² > 0`, i.e. at least two distinct energies), OLS recovers the exact
-  slope `m0` AND intercept `b0`. A genuine Finset covariance/variance identity.
 * `olsIntercept_of_forward` — the OLS intercept of the FORWARD-MODEL Boltzmann-plot
   ordinates equals the composition-bearing offset `q_s = log (Fcal·N/U)`.
 * `olsDensity_recovers` — feeding a species' FULL forward-model spectrum through the OLS
@@ -64,8 +61,8 @@ Spectroscopy." *Applied Spectroscopy* **53** (1999) 960–964. The use of least-
 regression over MANY lines of a species to improve the intercept (and slope) estimate is
 reviewed in Tognoni, E.; Cristoforetti, G.; Legnaioli, S.; Palleschi, V. "Calibration-Free
 Laser-Induced Breakdown Spectroscopy: State of the art." *Spectrochimica Acta Part B*
-**65** (2010) 1–14. The mean / covariance / variance helpers (`mean`, `olsSlope`) are plain
-arithmetic and carry no specific citation; the physics content lives in
+**65** (2010) 1–14. The mean / covariance / variance helpers (`mean`, `olsSlope`, now in the
+core `OLS` module) are plain arithmetic and carry no specific citation; the physics content lives in
 `olsIntercept_of_forward` and `leastSquares_sound`, which match the intercept-borne
 concentration of Ciucci et al. (1999) recovered by the multi-line regression of Tognoni et
 al. (2010).
