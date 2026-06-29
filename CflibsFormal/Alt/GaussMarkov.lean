@@ -25,7 +25,7 @@ under the same linear model `yₖ(ω) = α + β·Eₖ + εₖ(ω)` as `Alt.OLSVa
 * `linEstimator_expectation` — **`𝔼[Tₐ] = α·(∑ₖaₖ) + β·(∑ₖaₖEₖ)`** (linearity + zero-mean noise).
 * `linEstimator_unbiased_iff` — **the unbiasedness characterization is an `iff`:** `Tₐ` is unbiased
   for `β` *for every* `α, β` **iff** `∑ₖaₖ = 0 ∧ ∑ₖaₖEₖ = 1`. The OLS weights satisfy both.
-* `linEstimator_variance` — **`Var(Tₐ) = σ²·∑ₖaₖ²`** (independent-sum variance + scaling), the
+* `linEstimator_variance` — **`Var(Tₐ) = σ²·∑ₖaₖ²`** (uncorrelated-sum variance + scaling), the
   arbitrary-weight generalization of `Alt.OLSVariance.olsSlope_variance_noiseGain`.
 * `weight_sq_ge_noiseGain` — **the deterministic algebraic core** `∑ₖwₖ² ≤ ∑ₖaₖ²` for any unbiased
   `a` (`wₖ = olsWeight E k`); the Pythagorean step `∑aₖ² = ∑wₖ² + ∑(aₖ−wₖ)²` after the cross term
@@ -40,10 +40,11 @@ under the same linear model `yₖ(ω) = α + β·Eₖ + εₖ(ω)` as `Alt.OLSVa
 * **Unbiasedness is an `iff`, quantified over `α, β`.** `linEstimator_unbiased_iff` characterizes
   unbiasedness for *all* intercepts/slopes; "unbiased for one fixed `β`" is strictly weaker and is
   NOT what BLUE optimality requires. `ols_is_blue` takes the two constraints as hypotheses.
-* **Independence is a REDUCTION — inherited from `Alt.OLSVariance`.** The variance comparison routes
-  through `linEstimator_variance`, which (like `olsSlope_variance_noiseGain`) consumes the strong
-  `iIndepFun ε μ`; the classical Gauss–Markov theorem needs only pairwise-uncorrelated errors. Same
-  flag, same future-strengthening path (`ProbabilityTheory.variance_sum'`) as `Alt.OLSVariance`.
+* **The classical Gauss–Markov hypothesis — pairwise uncorrelatedness, inherited from
+  `Alt.OLSVariance`.** The variance comparison routes through `linEstimator_variance`, which (like
+  `olsSlope_variance_noiseGain`) needs only `cov(εᵢ, εⱼ) = 0` for `i ≠ j` — NOT independence. So
+  `ols_is_blue` is the genuine Gauss–Markov theorem: minimum variance among linear unbiased
+  estimators under exactly the textbook (uncorrelated, homoscedastic, zero-mean) error model.
 * **Consistency with `Alt.OLSVariance`.** `ols_is_blue` rewrites `Var(β̂)` via
   `olsSlope_variance_noiseGain` to `σ²·∑wₖ²` and `Var(Tₐ)` via `linEstimator_variance` to `σ²·∑aₖ²`,
   then closes with `weight_sq_ge_noiseGain` and `0 ≤ σ²`; the OLS case `a = w` attains equality,
@@ -132,19 +133,20 @@ theorem linEstimator_unbiased_iff (a E : ι → ℝ) (ε : ι → Ω → ℝ)
     rw [linEstimator_expectation a E α β ε hL2 hmean0, ha0, ha1]; ring
 
 /-- **Variance of a general linear estimator** `Var(Tₐ) = σ²·∑ₖaₖ²`. Strip the constant
-deterministic part (`variance_const_add`), split the independent weighted noise sum
-(`IndepFun.variance_sum`), pull each weight out as `aₖ²` (`variance_const_mul`), insert
-homoscedasticity. This is the arbitrary-weight generalization of
+deterministic part (`variance_const_add`), expand the weighted-noise sum's variance into its
+double-covariance form (`variance_sum`), pull each weight out (`covariance_const_mul`), and read
+the diagonal `aₖ²σ²` after uncorrelatedness annihilates the off-diagonal. The arbitrary-weight
+generalization of
 `Alt.OLSVariance.olsSlope_variance_noiseGain` (which is the case `a = olsWeight E`), and the
 right-hand factor `∑ₖaₖ²` is exactly what `weight_sq_ge_noiseGain` minimizes over unbiased `a`. -/
 theorem linEstimator_variance (a E : ι → ℝ) (α β σ : ℝ) (ε : ι → Ω → ℝ)
     (hL2 : ∀ k, MemLp (ε k) 2 μ)
-    (hindep : iIndepFun ε μ)
+    (huncorr : ∀ i j, i ≠ j → covariance (ε i) (ε j) μ = 0)
     (hhom : ∀ k, variance (ε k) μ = σ ^ 2) :
     variance (linEstimator a E α β ε) μ = σ ^ 2 * ∑ k, (a k) ^ 2 := by
   rw [funext (linEstimator_eq a E α β ε)]
   exact variance_const_add_weightedNoise a (α * (∑ k, a k) + β * (∑ k, a k * E k)) σ ε
-    hL2 hindep hhom
+    hL2 huncorr hhom
 
 /-- **The deterministic algebraic core of Gauss–Markov optimality** `∑ₖwₖ² ≤ ∑ₖaₖ²`, with
 `wₖ = olsWeight E k`, for ANY unbiased weights (`∑ₖaₖ = 0`, `∑ₖaₖEₖ = 1`). Pythagorean argument:
@@ -185,20 +187,20 @@ theorem weight_sq_ge_noiseGain [Nonempty ι] (a E : ι → ℝ)
 
 /-- **THE headline — OLS is the Best Linear Unbiased Estimator (BLUE) of the slope.** For ANY
 linear estimator `Tₐ` that is unbiased (`∑ₖaₖ = 0`, `∑ₖaₖEₖ = 1`), `Var(β̂) ≤ Var(Tₐ)` under the
-independent, homoscedastic, square-integrable noise model. Combines `olsSlope_variance_noiseGain`
+uncorrelated, homoscedastic, square-integrable noise model. Combines `olsSlope_variance_noiseGain`
 (`Var(β̂) = σ²·∑wₖ²`), `linEstimator_variance` (`Var(Tₐ) = σ²·∑aₖ²`), the algebraic core
 `weight_sq_ge_noiseGain` (`∑wₖ² ≤ ∑aₖ²`), and `0 ≤ σ²`. Equality at `a = olsWeight E`, so the
 bound is sharp. This is the Gauss–Markov/Aitken optimality theorem deferred by `Alt.OLSVariance`. -/
 theorem ols_is_blue [Nonempty ι] (a E : ι → ℝ) (α β σ : ℝ) (ε : ι → Ω → ℝ)
     (hvar : 0 < ∑ k, (E k - mean E) ^ 2)
     (hL2 : ∀ k, MemLp (ε k) 2 μ)
-    (hindep : iIndepFun ε μ)
+    (huncorr : ∀ i j, i ≠ j → covariance (ε i) (ε j) μ = 0)
     (hhom : ∀ k, variance (ε k) μ = σ ^ 2)
     (ha0 : ∑ k, a k = 0)
     (ha1 : ∑ k, a k * E k = 1) :
     variance (betaHat E α β ε) μ ≤ variance (linEstimator a E α β ε) μ := by
-  rw [olsSlope_variance_noiseGain E α β σ ε hvar hL2 hindep hhom,
-      linEstimator_variance a E α β σ ε hL2 hindep hhom]
+  rw [olsSlope_variance_noiseGain E α β σ ε hvar hL2 huncorr hhom,
+      linEstimator_variance a E α β σ ε hL2 huncorr hhom]
   exact mul_le_mul_of_nonneg_left (weight_sq_ge_noiseGain a E hvar ha0 ha1) (sq_nonneg σ)
 
 end CflibsFormal.Alt

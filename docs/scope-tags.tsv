@@ -205,16 +205,16 @@ Alt/OLSVariance.lean	olsSlope_estimator_eq	PURE-MATH	—
 Alt/OLSVariance.lean	expectation_const_add_weightedNoise	PURE-MATH	—
 Alt/OLSVariance.lean	variance_const_add_weightedNoise	PURE-MATH	—
 Alt/OLSVariance.lean	olsSlope_unbiased	REDUCED	Aitken 1935
-Alt/OLSVariance.lean	olsSlope_variance_noiseGain	REDUCED	Aitken 1935
-Alt/OLSVariance.lean	olsSlope_variance_eq	REDUCED	Aitken 1935
-Alt/OLSVariance.lean	olsSlope_variance_antitone	REDUCED	Aitken 1935
+Alt/OLSVariance.lean	olsSlope_variance_noiseGain	EXACT	Aitken 1935
+Alt/OLSVariance.lean	olsSlope_variance_eq	EXACT	Aitken 1935
+Alt/OLSVariance.lean	olsSlope_variance_antitone	EXACT	Aitken 1935
 Alt/GaussMarkov.lean	linEstimator_eq	PURE-MATH	—
 Alt/GaussMarkov.lean	linEstimator_eq_unbiased	PURE-MATH	—
 Alt/GaussMarkov.lean	linEstimator_expectation	PURE-MATH	—
 Alt/GaussMarkov.lean	linEstimator_unbiased_iff	PURE-MATH	—
-Alt/GaussMarkov.lean	linEstimator_variance	REDUCED	Aitken 1935
+Alt/GaussMarkov.lean	linEstimator_variance	EXACT	Aitken 1935
 Alt/GaussMarkov.lean	weight_sq_ge_noiseGain	PURE-MATH	—
-Alt/GaussMarkov.lean	ols_is_blue	REDUCED	Aitken 1935
+Alt/GaussMarkov.lean	ols_is_blue	EXACT	Aitken 1935
 MatrixEffects.lean	recoveredComposition_sum_one	PURE-MATH	—
 MatrixEffects.lean	recoveredComposition_ratio	EXACT	Aitchison 1986
 MatrixEffects.lean	recoveredComposition_ratio_matrix_invariant	EXACT	Aitchison 1986

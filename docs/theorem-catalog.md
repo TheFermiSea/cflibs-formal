@@ -5,7 +5,7 @@
 > (the integrity spine) + citation from `docs/scope-tags.tsv`; the docs-sync CI gate fails if
 > any result is untagged, so a new theorem cannot land without declaring its epistemic status.
 
-**Scope-tag mix** (242 results): **EXACT** 75 · **REDUCED** 43 · **APPROXIMATION** 9 · **PURE-MATH** 115
+**Scope-tag mix** (242 results): **EXACT** 80 · **REDUCED** 38 · **APPROXIMATION** 9 · **PURE-MATH** 115
 
 `EXACT` = exact identity faithfully encoding the cited physics · `REDUCED` = valid dimensionless/lumped-factor form · `APPROXIMATION` = documented idealization / limiting case · `PURE-MATH` = infrastructure lemma, no physical claim. Classification cross-checked against `reviews/literature-validity-audit.md`.
 
@@ -70,9 +70,9 @@
 - `PURE-MATH` · `linEstimator_eq_unbiased` — Under the unbiasedness constraints the deterministic part collapses to `β`.
 - `PURE-MATH` · `linEstimator_expectation` — Expectation of a general linear estimator `𝔼[Tₐ] = α·(∑ₖaₖ) + β·(∑ₖaₖEₖ)`.
 - `PURE-MATH` · `linEstimator_unbiased_iff` — Unbiasedness characterization (an `iff`).
-- `REDUCED` · `linEstimator_variance` — Variance of a general linear estimator `Var(Tₐ) = σ²·∑ₖaₖ²`.  _[Aitken 1935]_
+- `EXACT` · `linEstimator_variance` — Variance of a general linear estimator `Var(Tₐ) = σ²·∑ₖaₖ²`.  _[Aitken 1935]_
 - `PURE-MATH` · `weight_sq_ge_noiseGain` — The deterministic algebraic core of Gauss–Markov optimality `∑ₖwₖ² ≤ ∑ₖaₖ²`, with `wₖ = olsWeight E k`, for ANY unbiased weights (`∑ₖaₖ = 0`, `∑ₖaₖEₖ = 1`).
-- `REDUCED` · `ols_is_blue` — THE headline — OLS is the Best Linear Unbiased Estimator (BLUE) of the slope.  _[Aitken 1935]_
+- `EXACT` · `ols_is_blue` — THE headline — OLS is the Best Linear Unbiased Estimator (BLUE) of the slope.  _[Aitken 1935]_
 
 ## `Alt/LeastSquares.lean`  (CflibsFormal.Alt)
 *the multi-line ordinary-least-squares Boltzmann-plot estimator*
@@ -97,11 +97,11 @@
 **Results**
 - `PURE-MATH` · `olsSlope_estimator_eq` — Estimator = truth + weighted noise (pure pointwise algebra, no probability).
 - `PURE-MATH` · `expectation_const_add_weightedNoise` — Expectation of a constant plus independent weighted noise `𝔼[c + ∑ₖ wₖ·εₖ] = c`, for zero-mean L² noise.
-- `PURE-MATH` · `variance_const_add_weightedNoise` — Variance of a constant plus independent weighted noise `Var(c + ∑ₖ wₖ·εₖ) = σ²·∑ₖ wₖ²`, for independent, homoscedastic L² noise.
+- `PURE-MATH` · `variance_const_add_weightedNoise` — Variance of a constant plus UNCORRELATED weighted noise `Var(c + ∑ₖ wₖ·εₖ) = σ²·∑ₖ wₖ²`, for pairwise-uncorrelated, homoscedastic L² noise.
 - `REDUCED` · `olsSlope_unbiased` — Unbiasedness `𝔼[β̂] = β`.  _[Aitken 1935]_
-- `REDUCED` · `olsSlope_variance_noiseGain` — Slope variance as the noise gain `Var(β̂) = σ²·∑ₖ wₖ²`.  _[Aitken 1935]_
-- `REDUCED` · `olsSlope_variance_eq` — THE headline — the Gauss–Markov slope-variance law `Var(β̂) = σ²/SS_E`.  _[Aitken 1935]_
-- `REDUCED` · `olsSlope_variance_antitone` — Monotonicity — more energy spread ⇒ less slope variance.  _[Aitken 1935]_
+- `EXACT` · `olsSlope_variance_noiseGain` — Slope variance as the noise gain `Var(β̂) = σ²·∑ₖ wₖ²`.  _[Aitken 1935]_
+- `EXACT` · `olsSlope_variance_eq` — THE headline — the Gauss–Markov slope-variance law `Var(β̂) = σ²/SS_E`.  _[Aitken 1935]_
+- `EXACT` · `olsSlope_variance_antitone` — Monotonicity — more energy spread ⇒ less slope variance.  _[Aitken 1935]_
 
 ## `Alt/SelfAbsorbed.lean`  (CflibsFormal.Alt)
 *the self-absorption-corrected composition estimator (alternative)*

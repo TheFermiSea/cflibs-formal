@@ -18,7 +18,8 @@ layer** — "it needs `Mathlib`'s probability stack" — and names the target la
 We put a probability measure `μ` on the sample space and model the Boltzmann-plot ordinates as a
 *linear model with random noise*:
 `yₖ(ω) = α + β·Eₖ + εₖ(ω)`, with `εₖ` zero-mean, homoscedastic (common variance `σ²`),
-mutually independent, and square-integrable. The OLS slope of the realized points becomes a random
+pairwise uncorrelated, and square-integrable — exactly the classical Gauss–Markov hypotheses. The
+OLS slope of the realized points becomes a random
 variable `betaHat ω = olsSlope E (y(·,ω))`. We prove:
 
 * `olsSlope_estimator_eq` — **pure pointwise algebra (no probability):** `β̂(ω) = β + ∑ₖ wₖ·εₖ(ω)`.
@@ -26,7 +27,7 @@ variable `betaHat ω = olsSlope E (y(·,ω))`. We prove:
   (`∑ wₖ Eₖ = 1`); only the noise survives. Reuses `OLS.olsSlope_eq_centered`.
 * `olsSlope_unbiased` — **`𝔼[β̂] = β`** (linearity of expectation + zero-mean noise; needs neither
   independence nor homoscedasticity).
-* `olsSlope_variance_noiseGain` — **`Var(β̂) = σ²·∑ₖ wₖ²`** (independent-sum variance + scaling).
+* `olsSlope_variance_noiseGain` — **`Var(β̂) = σ²·∑ₖ wₖ²`** (uncorrelated-sum variance + scaling).
 * `olsSlope_variance_eq` — **THE headline: `Var(β̂) = σ²/SS_E`** (combine with
   `OLS.olsSlope_noise_gain`).
 * `olsSlope_variance_antitone` — more energy spread ⇒ less slope variance (`SS_E ≤ SS_E'`).
@@ -35,13 +36,12 @@ variable `betaHat ω = olsSlope E (y(·,ω))`. We prove:
 
 * **EXACT, not approximate.** `olsSlope_estimator_eq` is a pointwise identity; the unbiasedness and
   variance results are exact identities under the stated model (no linearization).
-* **Independence is a REDUCTION — flagged.** The classical Gauss–Markov theorem needs only
-  *pairwise-uncorrelated* (zero-covariance), homoscedastic, zero-mean errors. `Mathlib`'s
-  `IndepFun.variance_sum` consumes pairwise *independence*, and we supply it from the (stronger)
-  mutual independence `iIndepFun ε μ`. So the variance theorems are proved under a hypothesis
-  *stronger* than the classical statement requires. (A future strengthening to genuine
-  uncorrelatedness would route through `ProbabilityTheory.variance_sum'`, the double-covariance
-  form; that is out of scope here.)
+* **The classical Gauss–Markov hypothesis — pairwise uncorrelatedness, NOT independence.** The
+  variance theorems assume only `cov(εᵢ, εⱼ) = 0` for `i ≠ j` (with homoscedasticity and zero
+  mean) — exactly what the classical Gauss–Markov theorem requires, and strictly weaker than the
+  mutual independence `iIndepFun`. The proof routes through `ProbabilityTheory.variance_sum` (the
+  double-covariance form `Var[∑ₖ εₖ] = ∑ᵢ∑ⱼ cov(εᵢ, εⱼ)`) and annihilates the off-diagonal by
+  uncorrelatedness, so no independence enters any hypothesis or proof.
 * **Optimality / BLUE.** This module proves the variance *value* and unbiasedness; the optimality
   layer — OLS is the minimum-variance estimator among linear unbiased estimators (the full
   Gauss–Markov/Aitken theorem) — is formalized in the sibling `Alt.GaussMarkov` (`ols_is_blue`).
@@ -134,29 +134,43 @@ theorem expectation_const_add_weightedNoise (w : ι → ℝ) (c : ℝ) (ε : ι 
     integral_finsetSum Finset.univ (fun k _ => hint k)]
   simp [integral_const_mul, hmean0]
 
-/-- **Variance of a constant plus independent weighted noise** `Var(c + ∑ₖ wₖ·εₖ) = σ²·∑ₖ wₖ²`,
-for independent, homoscedastic L² noise. The weight-agnostic independent-sum-variance kernel
-shared by `olsSlope_variance_noiseGain` and `Alt.GaussMarkov.linEstimator_variance`: strip the
-constant (`variance_const_add`), split the independent sum (`IndepFun.variance_sum`), pull each
-weight out (`variance_const_mul`), insert homoscedasticity. -/
+/-- **Variance of a constant plus UNCORRELATED weighted noise** `Var(c + ∑ₖ wₖ·εₖ) = σ²·∑ₖ wₖ²`,
+for pairwise-uncorrelated, homoscedastic L² noise. This is the *classical Gauss–Markov hypothesis*
+— only pairwise zero-covariance `cov(εᵢ, εⱼ) = 0` for `i ≠ j`, **not** independence. The
+weight-agnostic uncorrelated-sum-variance kernel shared by `olsSlope_variance_noiseGain` and
+`Alt.GaussMarkov.linEstimator_variance`: strip the constant (`variance_const_add`), expand the
+variance of the sum into the full double-covariance sum (`variance_sum`,
+`Var[∑ Xᵢ] = ∑ᵢ∑ⱼ cov(Xᵢ, Xⱼ)`, needing no independence), pull each weight out of the covariance
+(`covariance_const_mul`), kill every off-diagonal term by uncorrelatedness, and read the diagonal
+`cov(εₖ, εₖ) = Var(εₖ) = σ²` (`covariance_self`, homoscedasticity). -/
 theorem variance_const_add_weightedNoise (w : ι → ℝ) (c σ : ℝ) (ε : ι → Ω → ℝ)
-    (hL2 : ∀ k, MemLp (ε k) 2 μ) (hindep : iIndepFun ε μ)
+    (hL2 : ∀ k, MemLp (ε k) 2 μ)
+    (huncorr : ∀ i j, i ≠ j → covariance (ε i) (ε j) μ = 0)
     (hhom : ∀ k, variance (ε k) μ = σ ^ 2) :
     variance (fun ω => c + ∑ k, w k * ε k ω) μ = σ ^ 2 * ∑ k, (w k) ^ 2 := by
+  have hX : ∀ k, MemLp (fun ω => w k * ε k ω) 2 μ := fun k => (hL2 k).const_mul (w k)
   have hmeas : AEStronglyMeasurable (fun ω => ∑ k, w k * ε k ω) μ :=
-    (memLp_finsetSum Finset.univ (fun k _ => (hL2 k).const_mul (w k))).aestronglyMeasurable
+    (memLp_finsetSum Finset.univ (fun k _ => hX k)).aestronglyMeasurable
   rw [variance_const_add hmeas c]
   have hfun : (fun ω => ∑ k, w k * ε k ω) = ∑ k, (fun ω => w k * ε k ω) := by
     funext ω; simp [Finset.sum_apply]
-  rw [hfun, IndepFun.variance_sum
-    (fun i _ => (hL2 i).const_mul (w i))
-    (fun i _ j _ hij =>
-      (hindep.indepFun hij).comp
-        (measurable_id.const_mul (w i))
-        (measurable_id.const_mul (w j)))]
-  simp_rw [variance_const_mul, hhom]
-  rw [← Finset.sum_mul]
-  ring
+  rw [hfun, variance_sum hX]
+  -- Pull both weights out of each covariance: `cov(wᵢεᵢ, wⱼεⱼ) = wᵢ wⱼ · cov(εᵢ, εⱼ)`.
+  have hcov : ∀ i j, covariance (fun ω => w i * ε i ω) (fun ω => w j * ε j ω) μ
+      = w i * w j * covariance (ε i) (ε j) μ := fun i j => by
+    rw [covariance_const_mul_left, covariance_const_mul_right]; ring
+  -- Off-diagonal vanishes (uncorrelated); diagonal is `wᵢ²·Var(εᵢ) = wᵢ²σ²`.
+  have hdiag : ∀ i, ∑ j, covariance (fun ω => w i * ε i ω) (fun ω => w j * ε j ω) μ
+      = w i ^ 2 * σ ^ 2 := by
+    intro i
+    rw [Finset.sum_eq_single i
+      (fun j _ hji => by rw [hcov i j, huncorr i j (Ne.symm hji), mul_zero])
+      (fun hi => absurd (Finset.mem_univ i) hi),
+      hcov i i, covariance_self (hL2 i).aestronglyMeasurable.aemeasurable, hhom i]
+    ring
+  calc ∑ i, ∑ j, covariance (fun ω => w i * ε i ω) (fun ω => w j * ε j ω) μ
+      = ∑ i, w i ^ 2 * σ ^ 2 := Finset.sum_congr rfl (fun i _ => hdiag i)
+    _ = σ ^ 2 * ∑ k, (w k) ^ 2 := by rw [← Finset.sum_mul]; ring
 
 /-- **Unbiasedness** `𝔼[β̂] = β`. Linearity of expectation over the finite weighted noise sum plus
 zero-mean noise. Needs neither independence nor homoscedasticity. -/
@@ -175,11 +189,11 @@ in contrast to the deterministic ℓ² worst case `ErrorBudget.olsSlope_stable_l
 theorem olsSlope_variance_noiseGain [Nonempty ι] (E : ι → ℝ) (α β σ : ℝ) (ε : ι → Ω → ℝ)
     (hvar : 0 < ∑ k, (E k - mean E) ^ 2)
     (hL2 : ∀ k, MemLp (ε k) 2 μ)
-    (hindep : iIndepFun ε μ)
+    (huncorr : ∀ i j, i ≠ j → covariance (ε i) (ε j) μ = 0)
     (hhom : ∀ k, variance (ε k) μ = σ ^ 2) :
     variance (betaHat E α β ε) μ = σ ^ 2 * ∑ k, (olsWeight E k) ^ 2 := by
   rw [funext (olsSlope_estimator_eq E α β ε hvar)]
-  exact variance_const_add_weightedNoise (olsWeight E) β σ ε hL2 hindep hhom
+  exact variance_const_add_weightedNoise (olsWeight E) β σ ε hL2 huncorr hhom
 
 /-- **THE headline — the Gauss–Markov slope-variance law** `Var(β̂) = σ²/SS_E`. Combines
 `olsSlope_variance_noiseGain` with `OLS.olsSlope_noise_gain` (`∑ₖ wₖ² = 1/SS_E`). This
@@ -189,10 +203,10 @@ inverse-temperature variance — the principled origin of the energy-spread thre
 theorem olsSlope_variance_eq [Nonempty ι] (E : ι → ℝ) (α β σ : ℝ) (ε : ι → Ω → ℝ)
     (hvar : 0 < ∑ k, (E k - mean E) ^ 2)
     (hL2 : ∀ k, MemLp (ε k) 2 μ)
-    (hindep : iIndepFun ε μ)
+    (huncorr : ∀ i j, i ≠ j → covariance (ε i) (ε j) μ = 0)
     (hhom : ∀ k, variance (ε k) μ = σ ^ 2) :
     variance (betaHat E α β ε) μ = σ ^ 2 / (∑ k, (E k - mean E) ^ 2) := by
-  rw [olsSlope_variance_noiseGain E α β σ ε hvar hL2 hindep hhom]
+  rw [olsSlope_variance_noiseGain E α β σ ε hvar hL2 huncorr hhom]
   simp only [olsWeight]
   rw [olsSlope_noise_gain E hvar, mul_one_div]
 
@@ -205,11 +219,12 @@ line" theorem.) -/
 theorem olsSlope_variance_antitone [Nonempty ι] (E E' : ι → ℝ) (α β σ : ℝ) (ε : ι → Ω → ℝ)
     (hvar : 0 < ∑ k, (E k - mean E) ^ 2) (hvar' : 0 < ∑ k, (E' k - mean E') ^ 2)
     (hSS : ∑ k, (E k - mean E) ^ 2 ≤ ∑ k, (E' k - mean E') ^ 2)
-    (hL2 : ∀ k, MemLp (ε k) 2 μ) (hindep : iIndepFun ε μ)
+    (hL2 : ∀ k, MemLp (ε k) 2 μ)
+    (huncorr : ∀ i j, i ≠ j → covariance (ε i) (ε j) μ = 0)
     (hhom : ∀ k, variance (ε k) μ = σ ^ 2) :
     variance (betaHat E' α β ε) μ ≤ variance (betaHat E α β ε) μ := by
-  rw [olsSlope_variance_eq E α β σ ε hvar hL2 hindep hhom,
-      olsSlope_variance_eq E' α β σ ε hvar' hL2 hindep hhom]
+  rw [olsSlope_variance_eq E α β σ ε hvar hL2 huncorr hhom,
+      olsSlope_variance_eq E' α β σ ε hvar' hL2 huncorr hhom]
   gcongr
 
 end CflibsFormal.Alt
