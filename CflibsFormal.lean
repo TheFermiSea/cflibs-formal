@@ -13,6 +13,7 @@ import CflibsFormal.CompositionRobustness
 import CflibsFormal.Continuum
 import CflibsFormal.CurveOfGrowth
 import CflibsFormal.Dimensions
+import CflibsFormal.EquivalentWidth
 import CflibsFormal.ErrorBudget
 import CflibsFormal.ForwardMap
 import CflibsFormal.ForwardMapEnergy

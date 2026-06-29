@@ -50,6 +50,9 @@ definition is defined once and reused verbatim, and every module imports only `M
   `Identifiability`, `MultiSpecies`, `SelfAbsorption`, `Robustness`, `Inverse`
   (algorithm-agnostic estimator framework), `CompositionRobustness`,
   `CompositionIdentifiability`, `SelfAbsorptionInverse`, `SahaInverse`, `CurveOfGrowth`,
+  `EquivalentWidth` (the *integrated* curve of growth — equivalent width `W(τ)=∫(1−e^{−τφ})`:
+  the slope-1 saturation bound `W ≤ τ·∫φ`, monotonicity, and the flat-profile slab identity
+  `W = 1−e^{−τ}`; the slope-½ damping wing is honestly out of scope),
   `StarkBroadening` (independent electron-density diagnostic + McWhirter LTE bound),
   `SpatialForward` (discrete onion-peeling Abel inversion — relaxes single-zone homogeneity),
   `LineBroadening` (toward real line profiles: thermal Doppler width + the Gaussian-quadrature

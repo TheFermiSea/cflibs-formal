@@ -241,3 +241,8 @@ TemporalEvolution.lean	temporal_saha_composition_gate_independent	REDUCED	Tognon
 TemporalEvolution.lean	mem_lteWindow_thermalized	REDUCED	Cristoforetti 2010
 TemporalEvolution.lean	mcwhirter_requirement_antitone	PURE-MATH	—
 Analysis.lean	strictAntiOn_div_of_deriv_num_neg	PURE-MATH	—
+EquivalentWidth.lean	equivWidth_integrand_integrable	PURE-MATH	—
+EquivalentWidth.lean	equivWidth_nonneg	PURE-MATH	—
+EquivalentWidth.lean	equivWidth_le_thin	EXACT	Gornushkin 1999
+EquivalentWidth.lean	equivWidth_mono	EXACT	Gornushkin 1999
+EquivalentWidth.lean	equivWidth_rectangular	EXACT	Gornushkin 1999

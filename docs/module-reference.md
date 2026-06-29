@@ -23,6 +23,7 @@ One row per module under `CflibsFormal/`. *Base* = imports no `CflibsFormal` mod
 | `Continuum.lean` | `CflibsFormal` | 6 | 5 | ✓ | ✓ | the continuum background |
 | `CurveOfGrowth.lean` | `CflibsFormal` | 10 | 2 | – | ✓ | the curve of growth and multi-line self-absorption |
 | `Dimensions.lean` | `CflibsFormal` | 16 | 15 | ✓ | – | a dimensional-analysis layer |
+| `EquivalentWidth.lean` | `CflibsFormal` | 5 | 1 | ✓ | ✓ | the equivalent-width curve of growth |
 | `ErrorBudget.lean` | `CflibsFormal` | 14 | 0 | – | – | the error-propagation chain and DERIVED reliability thresholds |
 | `ForwardMap.lean` | `CflibsFormal` | 3 | 1 | – | – | Part 4: the optically-thin forward map |
 | `ForwardMapEnergy.lean` | `CflibsFormal` | 5 | 1 | – | ✓ | the energy-intensity forward map and convention equivalence |
@@ -45,5 +46,5 @@ One row per module under `CflibsFormal/`. *Base* = imports no `CflibsFormal` mod
 | `StarkShift.lean` | `CflibsFormal` | 9 | 3 | ✓ | ✓ | the Stark line-shift electron-density diagnostic |
 | `TemporalEvolution.lean` | `CflibsFormal` | 8 | 7 | – | ✓ | time-resolved (gate-delayed) recovery |
 | `VoigtWidth.lean` | `CflibsFormal` | 7 | 1 | ✓ | ✓ | the Voigt FWHM combination (Olivero–Longbothum) |
-| **37 modules** | | **242** | **107** | | | |
+| **38 modules** | | **247** | **108** | | | |
 

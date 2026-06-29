@@ -5,7 +5,7 @@
 > (the integrity spine) + citation from `docs/scope-tags.tsv`; the docs-sync CI gate fails if
 > any result is untagged, so a new theorem cannot land without declaring its epistemic status.
 
-**Scope-tag mix** (242 results): **EXACT** 80 · **REDUCED** 38 · **APPROXIMATION** 9 · **PURE-MATH** 115
+**Scope-tag mix** (247 results): **EXACT** 83 · **REDUCED** 38 · **APPROXIMATION** 9 · **PURE-MATH** 117
 
 `EXACT` = exact identity faithfully encoding the cited physics · `REDUCED` = valid dimensionless/lumped-factor form · `APPROXIMATION` = documented idealization / limiting case · `PURE-MATH` = infrastructure lemma, no physical claim. Classification cross-checked against `reviews/literature-validity-audit.md`.
 
@@ -264,6 +264,19 @@
 - `PURE-MATH` · `siToCgs_mul` — The conversion factor is multiplicative: `siToCgs (a·b) = siToCgs a · siToCgs b` (it is a group homomorphism `Dimension → ℝˣ`).
 - `PURE-MATH` · `siToCgs_energy` — Energy converts J → erg by `10⁷`.
 - `PURE-MATH` · `siToCgs_numberDensity` — Number density converts m⁻³ → cm⁻³ by `10⁻⁶`.
+
+## `EquivalentWidth.lean`  (CflibsFormal)
+*the equivalent-width curve of growth*
+
+**Definitions**
+- `equivWidth` — Equivalent width (curve of growth).
+
+**Results**
+- `PURE-MATH` · `equivWidth_integrand_integrable` — The equivalent-width integrand `1 - exp(-(τφ))` is integrable: it is sandwiched `0 ≤ 1 - exp(-(τφ)) ≤ τφ` (from `1 - exp(-y) ≤ y`) by the integrable dominati…
+- `PURE-MATH` · `equivWidth_nonneg` — A line only removes flux: the equivalent width is nonnegative for `τ ≥ 0`, `φ ≥ 0`.
+- `EXACT` · `equivWidth_le_thin` — The linear-regime upper bound (saturation).  _[Gornushkin 1999]_
+- `EXACT` · `equivWidth_mono` — The curve of growth is increasing.  _[Gornushkin 1999]_
+- `EXACT` · `equivWidth_rectangular` — The flat-profile curve of growth recovers the slab deficit.  _[Gornushkin 1999]_
 
 ## `ErrorBudget.lean`  (CflibsFormal)
 *the error-propagation chain and DERIVED reliability thresholds*

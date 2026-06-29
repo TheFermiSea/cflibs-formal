@@ -55,8 +55,8 @@ kernel is introduced and the optically-thin limit recovers `ForwardMap`.
 
 The curve-of-growth diagnostic and its use to correct/exploit self-absorption in
 calibration-free LIBS are formalized here following:
-Gornushkin, Stevenson, Smith, Omenetto, Winefordner, "Curve of growth methodology applied
-to laser-induced plasma emission", *Spectrochimica Acta Part B* **54** (1999) 491 — which
+Gornushkin, Anzano, King, Smith, Omenetto, Winefordner, "Curve of growth methodology applied
+to laser-induced plasma emission analysis", *Spectrochimica Acta Part B* **54** (1999) 491 — which
 establishes the curve-of-growth relation `I = S·(1 - exp(-τ))` for laser-induced plasma
 line emission (the `cogIntensity` definition here);
 Bulajic, Corsi, Cristoforetti, Legnaioli, Palleschi, Salvetti, Tognoni, "A procedure for
