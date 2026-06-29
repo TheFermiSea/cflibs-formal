@@ -155,4 +155,32 @@ theorem selfAbsorbed_eq_classic_thin (kB T Fcal : ℝ) (g E A : κ → ι → �
   have h0 : selfAbsorptionFactor (0 : ℝ) = 1 := if_pos rfl
   simp only [h0, div_one]
 
+/-! ### Non-vacuity witness for `selfAbsorbed_sound`
+
+Two species with DISTINCT densities `N = (1, 3)`, one line each, genuinely OPTICALLY-THICK
+(`tau = 1 > 0`), with `kB = T = Fcal = g = A = 1`, `E = 0`: the self-absorption-corrected estimator,
+run on the genuine thick forward-model spectrum (`Imeas = selfAbsorbedIntensity … (tau)`, not `N`),
+recovers the non-trivial composition `C₀ = 1/4` — not the degenerate `= 1` — through the
+curve-of-growth correction. So `selfAbsorbed_sound`'s hypotheses (including a strictly positive
+optical depth) are jointly satisfiable and its conclusion is non-vacuous. -/
+
+private def nvsaN : Fin 2 → ℝ := ![1, 3]
+private def nvsag : Fin 2 → Fin 1 → ℝ := fun _ _ => 1
+private def nvsaE : Fin 2 → Fin 1 → ℝ := fun _ _ => 0
+private def nvsaA : Fin 2 → Fin 1 → ℝ := fun _ _ => 1
+private def nvsau : Fin 2 → Fin 1 := fun _ => 0
+private def nvsaTau : Fin 2 → ℝ := fun _ => 1
+
+example :
+    selfAbsorbedComposition 1 1 1 nvsag nvsaE nvsaA nvsau nvsaTau
+        (fun t => selfAbsorbedIntensity 1 1 (nvsaN t) 1 (nvsag t) (nvsaE t) (nvsaA t)
+          (nvsau t) (nvsaTau t)) 0
+      = 1 / 4 := by
+  have h := selfAbsorbed_sound (kB := 1) (T := 1) (Fcal := 1)
+    (N := nvsaN) (g := nvsag) (E := nvsaE) (A := nvsaA) (u := nvsau) (tau := nvsaTau)
+    (fun _ _ => one_pos) one_pos (fun _ => one_pos)
+    (fun _ => zero_le_one) (0 : Fin 2)
+  rw [h]
+  norm_num [composition, totalDensity, nvsaN, Fin.sum_univ_two]
+
 end CflibsFormal.Alt

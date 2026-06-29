@@ -508,5 +508,30 @@ theorem csigma_saha_universal_line [Nonempty ι] [Nonempty κ]
   rw [key, csigma_saha_master_line hkB hT hme hh hne hgI hNI hFcal hgII hNII hAII hsaha k]
   ring
 
+/-! ### Non-vacuity witness for `csigma_sound`
+
+Two species with DISTINCT densities `N = (1, 3)`, one line each (`kB = T = Fcal = 1`, `g = A = 1`,
+`E = 0`): the Cσ single-master-line estimator, run on the forward-model spectrum (measured
+intensities only, never `N`), recovers the genuine non-trivial composition `C₀ = 1/4` — not the
+degenerate single-species `= 1`. So `csigma_sound`'s hypotheses are jointly satisfiable and its
+conclusion is non-vacuous. -/
+
+private def nvcsN : Fin 2 → ℝ := ![1, 3]
+private def nvcsg : Fin 2 → Fin 1 → ℝ := fun _ _ => 1
+private def nvcsE : Fin 2 → Fin 1 → ℝ := fun _ _ => 0
+private def nvcsA : Fin 2 → Fin 1 → ℝ := fun _ _ => 1
+private def nvcsu : Fin 2 → Fin 1 := fun _ => 0
+
+example :
+    csigmaComposition 1 1 1 nvcsg nvcsE nvcsA nvcsu
+        (fun t => lineIntensity 1 1 (nvcsN t) 1 (nvcsg t) (nvcsE t) (nvcsA t) (nvcsu t)) 0
+      = 1 / 4 := by
+  have h := csigma_sound (kB := 1) (T := 1) (Fcal := 1)
+    (N := nvcsN) (g := nvcsg) (E := nvcsE) (A := nvcsA) (u := nvcsu)
+    (fun _ _ => one_pos) (by intro s; fin_cases s <;> norm_num [nvcsN]) one_pos
+    (fun _ => one_pos) (0 : Fin 2)
+  rw [h]
+  norm_num [composition, totalDensity, nvcsN, Fin.sum_univ_two]
+
 end CflibsFormal.Alt
 

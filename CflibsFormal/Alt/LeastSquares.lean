@@ -185,5 +185,32 @@ theorem leastSquares_agrees_classic [Nonempty ι] [Nonempty κ] {kB T Fcal : ℝ
   rw [leastSquares_sound hg hN hFcal hA hvar s,
     Classic.classic_sound hg hFcal (fun t => hA t (u t)) hNtot s]
 
+/-! ### Non-vacuity witness for `leastSquares_sound`
+
+Two species with DISTINCT densities `N = (1, 3)`, TWO lines each at DISTINCT energies `E = (0, 1)`
+(so the energy spread `∑ₖ (Eₖ − Ē)² = 1/2 > 0` satisfies `hvar`), `kB = T = Fcal = g = A = 1`: the
+multi-line OLS estimator, run on the genuine forward-model spectrum (full per-species line vector,
+never `N`), recovers the non-trivial composition `C₀ = 1/4` — not the degenerate `= 1`. So
+`leastSquares_sound`'s hypotheses — including the load-bearing nonzero-energy-spread `hvar` — are
+jointly satisfiable and its conclusion is non-vacuous. -/
+
+private def nvlsN : Fin 2 → ℝ := ![1, 3]
+private def nvlsg : Fin 2 → Fin 2 → ℝ := fun _ _ => 1
+private def nvlsE : Fin 2 → Fin 2 → ℝ := fun _ => ![0, 1]
+private def nvlsA : Fin 2 → Fin 2 → ℝ := fun _ _ => 1
+
+example :
+    leastSquaresComposition 1 1 1 nvlsg nvlsE nvlsA
+        (fun t k => lineIntensity 1 1 (nvlsN t) 1 (nvlsg t) (nvlsE t) (nvlsA t) k) 0
+      = 1 / 4 := by
+  have h := leastSquares_sound (kB := 1) (T := 1) (Fcal := 1)
+    (N := nvlsN) (g := nvlsg) (E := nvlsE) (A := nvlsA)
+    (fun _ _ => one_pos) (by intro s; fin_cases s <;> norm_num [nvlsN]) one_pos
+    (fun _ _ => one_pos)
+    (by intro s; fin_cases s <;> simp [nvlsE, mean, Fin.sum_univ_two] <;> norm_num)
+    (0 : Fin 2)
+  rw [h]
+  norm_num [composition, totalDensity, nvlsN, Fin.sum_univ_two]
+
 end CflibsFormal.Alt
 

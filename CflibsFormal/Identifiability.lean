@@ -190,5 +190,36 @@ theorem electron_density_identifiability [Nonempty ι] [Nonempty κ]
       (Set.Ioi 0) := electronDensity_antitone hkB hT hme hh hgZ hgZ1
   exact hanti.injOn (Set.mem_Ioi.mpr hR₁) (Set.mem_Ioi.mpr hR₂) hne
 
+/-! ### Non-vacuity witness for `density_identifiability`
+
+`density_identifiability` is the injectivity statement `obs N₁ = obs N₂ → N₁ = N₂` for the forward
+observation `obs N = lineIntensity …`. Its non-vacuity rests on the forward map being a GENUINELY
+NON-DEGENERATE function of `N` (not a constant). With `ι = Fin 1`, `kB = T = Fcal = g = A = 1`,
+`E = 0`, `u = 0`, the forward observation is exactly `obs N = N`:
+
+* The observation is non-degenerate / non-constant — distinct densities give distinct intensities
+  (first `example`), so injectivity has real content.
+* The antecedent is achievable and the identified quantity is a SPECIFIC non-trivial value: a
+  measured intensity equal to `obs 4` pins the density to exactly `N = 4` (second `example`). -/
+
+private def nvIdg : Fin 1 → ℝ := fun _ => 1
+private def nvIdE : Fin 1 → ℝ := fun _ => 0
+private def nvIdA : Fin 1 → ℝ := fun _ => 1
+
+/-- The forward observation is non-degenerate: distinct densities `3 ≠ 5` yield distinct
+intensities, so `density_identifiability` is NOT about a constant map. -/
+example :
+    lineIntensity 1 1 3 1 nvIdg nvIdE nvIdA 0 ≠ lineIntensity 1 1 5 1 nvIdg nvIdE nvIdA 0 := by
+  norm_num [lineIntensity, population, partitionFunction, boltzmannFactor, nvIdg, nvIdE, nvIdA,
+    Fin.sum_univ_one]
+
+/-- The antecedent is achievable and the identified density is a specific non-trivial value:
+a measured intensity matching `obs 4` forces `N = 4`. -/
+example {N : ℝ}
+    (hI : lineIntensity 1 1 N 1 nvIdg nvIdE nvIdA 0 = lineIntensity 1 1 4 1 nvIdg nvIdE nvIdA 0) :
+    N = 4 :=
+  density_identifiability (kB := 1) (T := 1) (Fcal := 1) (g := nvIdg) (E := nvIdE) (A := nvIdA)
+    (fun _ => one_pos) one_pos (0 : Fin 1) one_pos hI
+
 end CflibsFormal
 
