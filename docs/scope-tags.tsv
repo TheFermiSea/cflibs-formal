@@ -22,6 +22,16 @@ SahaEquilibrium.lean	sahaEquilibrium_selfConsistent	REDUCED	Saha–Eggert (Griem
 SahaEquilibrium.lean	selfConsistentState_unique	REDUCED	Saha–Eggert (Griem)
 SahaEquilibrium.lean	sahaEquilibrium_unique_state	REDUCED	Saha–Eggert (Griem)
 SahaEquilibrium.lean	sahaEquilibriumNe_strictMono_S	REDUCED	Saha–Eggert (Griem)
+SahaEquilibrium.lean	multiElementIonized_strictAntiOn	PURE-MATH	—
+SahaEquilibrium.lean	multiElement_exists_pos_fixedPoint	REDUCED	Saha–Eggert (Griem)
+SahaEquilibrium.lean	multiElement_pos_fixedPoint_unique	REDUCED	Saha–Eggert (Griem)
+SahaEquilibrium.lean	multiElement_single_eq_sahaEquilibriumNe	REDUCED	Saha–Eggert (Griem)
+PartitionLipschitz.lean	partitionFunction_two_point_bound	REDUCED	Tognoni 2010
+PartitionLipschitz.lean	partitionFunction_lipschitz_temp	REDUCED	Tognoni 2010
+PartitionLipschitz.lean	partitionFunction_relative_error_temp	REDUCED	Tognoni 2010
+NonlinearLeastSquares.lean	nlObjective_continuousOn	PURE-MATH	—
+NonlinearLeastSquares.lean	nlObjective_exists_min	REDUCED	Tognoni 2010
+NonlinearLeastSquares.lean	nlObjective_onManifold_min	EXACT	Tognoni 2010
 Closure.lean	totalDensity_pos	PURE-MATH	—
 Closure.lean	composition_sum_one	EXACT	Ciucci 1999
 Closure.lean	composition_nonneg	PURE-MATH	—
@@ -91,6 +101,8 @@ OLS.lean	olsSlope_sub_eq	PURE-MATH	—
 OLS.lean	centered_mul_self	PURE-MATH	—
 OLS.lean	olsSlope_noise_gain	PURE-MATH	—
 OLS.lean	ols_recovers_line	PURE-MATH	—
+OLS.lean	det_designNormalMatrix	PURE-MATH	—
+OLS.lean	designNormalMatrix_det_ne_zero_iff	REDUCED	Tognoni 2010
 LeastSquaresFit.lean	residual_sum_zero	PURE-MATH	—
 LeastSquaresFit.lean	residual_centered_dot_zero	PURE-MATH	—
 LeastSquaresFit.lean	residual_dot_energy_zero	PURE-MATH	—
@@ -299,3 +311,8 @@ EquivalentWidth.lean	equivWidth_weakLine	EXACT	Gornushkin 1999
 EquivalentWidth.lean	slabCurve_forward_lipschitz	EXACT	Gornushkin 1999
 EquivalentWidth.lean	slabCurve_inverse_lipschitz	EXACT	Gornushkin 1999
 EquivalentWidth.lean	slabCurve_roundTrip_lipschitz	EXACT	Gornushkin 1999
+EquivalentWidth.lean	lorentzian_pos	PURE-MATH	—
+EquivalentWidth.lean	lorentzian_integrable	PURE-MATH	—
+EquivalentWidth.lean	lorentzian_integral	PURE-MATH	—
+EquivalentWidth.lean	equivWidth_lorentzian_sqrt_lower	EXACT	Gornushkin 1999
+EquivalentWidth.lean	nvLz_sqrt_lower_at_threshold	EXACT	Gornushkin 1999

@@ -176,4 +176,82 @@ example : olsSlope ![0, 1] ![3, 5] = 2 ∧ olsIntercept ![0, 1] ![3, 5] = 3 := b
   · fin_cases k <;> norm_num
   · simp [mean, Fin.sum_univ_two]; norm_num
 
+/-- **Design-matrix normal matrix of the Boltzmann-plot fit.** Least squares against the
+two-column design `[E | 1]` (energies and a constant) has the `2×2` normal matrix
+`M = XᵀX = ![![∑ Eₖ², ∑ Eₖ], ![∑ Eₖ, n]]` with `n = card ι`. Its nonsingularity is the exact
+rank/condition gate the runtime fit must pass before inverting the normal equations. Pure
+linear algebra of the two-column Boltzmann-plot design (no physics content in the definition
+itself). -/
+noncomputable def designNormalMatrix (E : ι → ℝ) : Matrix (Fin 2) (Fin 2) ℝ :=
+  ![![∑ k, E k ^ 2, ∑ k, E k], ![∑ k, E k, (Fintype.card ι : ℝ)]]
+
+/-- **THE determinant identity (Lagrange / variance identity).** The determinant of the
+Boltzmann-plot normal matrix equals `n · SS_E`, i.e.
+`det M = n · ∑ₖ (Eₖ − Ē)²`, where `n = card ι` and `Ē = mean E`. Via `Matrix.det_fin_two`
+this reduces to `n · ∑ Eₖ² − (∑ Eₖ)²`, which is exactly `n · ∑ (Eₖ − Ē)²` after expanding
+`∑ (Eₖ − Ē)² = ∑ Eₖ² − 2 Ē ∑ Eₖ + n Ē²` with `Ē = (∑ Eₖ)/n`. Needs at least one line
+(`[Nonempty ι]`, so `n ≠ 0`). Pure algebra — no physics. -/
+theorem det_designNormalMatrix [Nonempty ι] (E : ι → ℝ) :
+    (designNormalMatrix E).det = (Fintype.card ι : ℝ) * ∑ k, (E k - mean E) ^ 2 := by
+  have hcard : (Fintype.card ι : ℝ) ≠ 0 := Nat.cast_ne_zero.mpr Fintype.card_ne_zero
+  have hexp : ∑ k, (E k - mean E) ^ 2
+      = (∑ k, E k ^ 2) - 2 * mean E * (∑ k, E k)
+        + (Fintype.card ι : ℝ) * mean E ^ 2 := by
+    rw [show (∑ k, (E k - mean E) ^ 2)
+        = ∑ k, (E k ^ 2 - 2 * mean E * E k + mean E ^ 2) from
+        Finset.sum_congr rfl (fun k _ => by ring)]
+    rw [Finset.sum_add_distrib, Finset.sum_sub_distrib, ← Finset.mul_sum,
+      Finset.sum_const, Finset.card_univ, nsmul_eq_mul]
+  unfold designNormalMatrix
+  rw [Matrix.det_fin_two]
+  simp only [Matrix.cons_val_zero, Matrix.cons_val_one]
+  rw [hexp]
+  unfold mean
+  field_simp
+  ring
+
+/-- **Nonsingularity ⇔ positive energy spread (the runtime rank gate).** Under `[Nonempty ι]`
+the Boltzmann-plot normal matrix is nonsingular exactly when the energies have positive spread:
+`det M ≠ 0 ↔ 0 < ∑ₖ (Eₖ − Ē)²`. Because `det M = n · SS_E` with `n = card ι > 0` and
+`SS_E = ∑ (Eₖ − Ē)² ≥ 0` always, `det M ≠ 0 ⇔ SS_E ≠ 0 ⇔ SS_E > 0`. This grounds the runtime
+rank gate: the `hvar` hypothesis of `ols_recovers_line` (and of `olsSlope_noise_gain`) *is*
+design-matrix nonsingularity, so "at least two distinct energies" is the exact rank condition
+for the multi-line Boltzmann-plot fit (Tognoni et al. 2010). -/
+theorem designNormalMatrix_det_ne_zero_iff [Nonempty ι] (E : ι → ℝ) :
+    (designNormalMatrix E).det ≠ 0 ↔ 0 < ∑ k, (E k - mean E) ^ 2 := by
+  rw [det_designNormalMatrix]
+  have hcard : (0 : ℝ) < (Fintype.card ι : ℝ) := by exact_mod_cast Fintype.card_pos
+  have hnn : 0 ≤ ∑ k, (E k - mean E) ^ 2 := Finset.sum_nonneg (fun k _ => sq_nonneg _)
+  constructor
+  · intro h
+    apply lt_of_le_of_ne hnn
+    intro heq
+    exact h (by rw [← heq, mul_zero])
+  · intro h
+    exact (mul_pos hcard h).ne'
+
+/-- **Non-vacuity witness (nonsingular case).** Two lines at distinct energies `E = (0, 1)`:
+the normal matrix `![![1, 1], ![1, 2]]` has determinant `1·2 − 1·1 = 1 ≠ 0`, matching
+`det = n · SS_E = 2 · (1/2) = 1`. So `designNormalMatrix_det_ne_zero_iff` is non-trivially
+satisfiable. -/
+private def nvDmE01 : Fin 2 → ℝ := ![0, 1]
+
+/-- **Non-vacuity witness (degenerate case).** Two lines at *equal* energies `E = (1, 1)`:
+the normal matrix `![![2, 2], ![2, 2]]` is singular (`det = 2·2 − 2·2 = 0`), matching
+`det = n · SS_E = 2 · 0 = 0`. So the rank gate genuinely rejects the "all energies equal"
+design. -/
+private def nvDmE11 : Fin 2 → ℝ := ![1, 1]
+
+example : (designNormalMatrix nvDmE01).det = 1 := by
+  unfold designNormalMatrix nvDmE01
+  rw [Matrix.det_fin_two]
+  simp only [Matrix.cons_val_zero, Matrix.cons_val_one, Fin.sum_univ_two, Fintype.card_fin]
+  norm_num
+
+example : (designNormalMatrix nvDmE11).det = 0 := by
+  unfold designNormalMatrix nvDmE11
+  rw [Matrix.det_fin_two]
+  simp only [Matrix.cons_val_zero, Matrix.cons_val_one, Fin.sum_univ_two, Fintype.card_fin]
+  norm_num
+
 end CflibsFormal

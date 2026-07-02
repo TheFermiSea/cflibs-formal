@@ -5,7 +5,7 @@
 > (the integrity spine) + citation from `docs/scope-tags.tsv`; the docs-sync CI gate fails if
 > any result is untagged, so a new theorem cannot land without declaring its epistemic status.
 
-**Scope-tag mix** (300 results): **EXACT** 105 · **REDUCED** 52 · **APPROXIMATION** 9 · **PURE-MATH** 134
+**Scope-tag mix** (317 results): **EXACT** 108 · **REDUCED** 60 · **APPROXIMATION** 9 · **PURE-MATH** 140
 
 `EXACT` = exact identity faithfully encoding the cited physics · `REDUCED` = valid dimensionless/lumped-factor form · `APPROXIMATION` = documented idealization / limiting case · `PURE-MATH` = infrastructure lemma, no physical claim. Classification cross-checked against `reviews/literature-validity-audit.md`.
 
@@ -285,6 +285,7 @@
 
 **Definitions**
 - `equivWidth` — Equivalent width (curve of growth).
+- `lorentzian` — The (normalized) Lorentzian profile `L(x) = (1/π)·1/(1+x²)` — the natural / pressure- broadening line shape, a unit-area probability density (`∫L = 1`, `lore…
 
 **Results**
 - `PURE-MATH` · `equivWidth_integrand_integrable` — The equivalent-width integrand `1 - exp(-(τφ))` is integrable: it is sandwiched `0 ≤ 1 - exp(-(τφ)) ≤ τφ` (from `1 - exp(-y) ≤ y`) by the integrable dominati…
@@ -296,6 +297,11 @@
 - `EXACT` · `slabCurve_forward_lipschitz` — Saturation kills forward sensitivity (EXACT).  _[Gornushkin 1999]_
 - `EXACT` · `slabCurve_inverse_lipschitz` — Inverse ill-conditioning — the condition number of the equivalent-width inversion (EXACT).  _[Gornushkin 1999]_
 - `EXACT` · `slabCurve_roundTrip_lipschitz` — Round-trip inverse-Lipschitz bound in τ (EXACT).  _[Gornushkin 1999]_
+- `PURE-MATH` · `lorentzian_pos` — The Lorentzian profile is strictly positive.
+- `PURE-MATH` · `lorentzian_integrable` — The Lorentzian profile is integrable: `(1 + x²)⁻¹` is (`integrable_inv_one_add_sq`) and `L` is a constant multiple of it.
+- `PURE-MATH` · `lorentzian_integral` — The Lorentzian is a unit-area profile: `∫ L = 1` (since `∫ (1 + x²)⁻¹ = π`).
+- `EXACT` · `equivWidth_lorentzian_sqrt_lower` — The √τ damping-wing lower bound (EXACT, within the model).  _[Gornushkin 1999]_
+- `EXACT` · `nvLz_sqrt_lower_at_threshold` — Non-vacuity: the √τ lower bound fires at the threshold `τ = 8π` (hypothesis `8π ≤ 8π`), so the constant `c = (1 - e⁻¹)/(2√(2π))` gives a genuine lower bound…  _[Gornushkin 1999]_
 
 ## `ErrorBudget.lean`  (CflibsFormal)
 *the error-propagation chain and DERIVED reliability thresholds*
@@ -487,6 +493,17 @@
 - `PURE-MATH` · `speciesComposition_ratio` — Composition ratio equals density ratio.
 - `EXACT` · `speciesComposition_ratio_from_intensities_perU` — Relative composition from intensities (per-species `U`).  _[Ciucci 1999]_
 
+## `NonlinearLeastSquares.lean`  (CflibsFormal)
+*the nonlinear joint `(T, N)` least-squares inverse (existence leg)*
+
+**Definitions**
+- `nlObjective` — Nonlinear least-squares objective for the joint `(T, N)` fit: `nlObjective kB Fcal g E A obs (T, N) = ∑ₖ (I_k(T,N) − obs_k)²`, where `I_k(T,N) = lineIntensit…
+
+**Results**
+- `PURE-MATH` · `nlObjective_continuousOn` — Continuity on the physical box.
+- `REDUCED` · `nlObjective_exists_min` — Existence of the joint minimizer (headline).  _[Tognoni 2010]_
+- `EXACT` · `nlObjective_onManifold_min` — On-manifold anchor.  _[Tognoni 2010]_
+
 ## `OLS.lean`  (CflibsFormal)
 *the ordinary-least-squares algebraic foundation*
 
@@ -495,6 +512,7 @@
 - `olsSlope` — Ordinary-least-squares slope of the Boltzmann-plot points `(E k, y k)`: covariance over variance, `(∑_k (E k − mean E)(y k − mean y)) / (∑_k (E k − mean E)²)`.
 - `olsIntercept` — Ordinary-least-squares intercept `b = ybar − m·Ebar`.
 - `olsWeight` — Gauss–Markov weight `wₖ = (Eₖ − Ē)/SS_E` with `SS_E = ∑ⱼ (Eⱼ − Ē)²`.
+- `designNormalMatrix` — Design-matrix normal matrix of the Boltzmann-plot fit.
 
 **Results**
 - `PURE-MATH` · `centered_sum_zero` — The centered energies sum to zero: `∑ₖ (Eₖ − Ē) = 0`.
@@ -504,6 +522,8 @@
 - `PURE-MATH` · `centered_mul_self` — Centered–energy identity `∑ₖ (Eₖ − Ē)·Eₖ = ∑ₖ (Eₖ − Ē)² = SS_E`.
 - `PURE-MATH` · `olsSlope_noise_gain` — OLS slope noise gain.
 - `PURE-MATH` · `ols_recovers_line` — THE CRUX.
+- `PURE-MATH` · `det_designNormalMatrix` — THE determinant identity (Lagrange / variance identity).
+- `REDUCED` · `designNormalMatrix_det_ne_zero_iff` — Nonsingularity ⇔ positive energy spread (the runtime rank gate).  _[Tognoni 2010]_
 
 ## `PartialLTE.lean`  (CflibsFormal)
 *the partial-LTE thermalization limit*
@@ -519,6 +539,14 @@
 - `PURE-MATH` · `thermalizationLimit_mono_ne` — A denser plasma thermalizes more levels.
 - `PURE-MATH` · `thermalizationLimit_antitone_T` — A hotter plasma thermalizes fewer levels.
 - `REDUCED` · `thermalized_recovers_gap` — Round-trip: the thermalization limit saturates the McWhirter bound.  _[McWhirter 1965]_
+
+## `PartitionLipschitz.lean`  (CflibsFormal)
+*the `U_s(T)` partition-function Lipschitz leg (gap #5)*
+
+**Results**
+- `REDUCED` · `partitionFunction_two_point_bound` — Two-point partition-function bound — the `U_s(T)` sensitivity leg (`REDUCED`, Tognoni 2010).  _[Tognoni 2010]_
+- `REDUCED` · `partitionFunction_lipschitz_temp` — Lipschitz-in-`T` partition-function bound (`REDUCED`, Tognoni 2010).  _[Tognoni 2010]_
+- `REDUCED` · `partitionFunction_relative_error_temp` — Relative partition-function error from a temperature error (`REDUCED`, Tognoni 2010).  _[Tognoni 2010]_
 
 ## `Robustness.lean`  (CflibsFormal)
 *Robustness / error-propagation bounds*
@@ -556,6 +584,7 @@
 
 **Definitions**
 - `sahaEquilibriumNe` — Self-consistent electron density of the reduced single-element, two-stage, fixed-`T` Saha core: the unique positive root of `n_e² = S · (Ntot − n_e)`,  `n_e…
+- `multiElementIonized` — Multi-element ionized-density closure map `G`.
 
 **Results**
 - `PURE-MATH` · `sahaEquilibriumNe_pos` — Positivity of the self-consistent density.
@@ -566,6 +595,10 @@
 - `REDUCED` · `selfConsistentState_unique` — Uniqueness of the self-consistent state.  _[Saha–Eggert (Griem)]_
 - `REDUCED` · `sahaEquilibrium_unique_state` — Unique existence of the coupled self-consistent state.  _[Saha–Eggert (Griem)]_
 - `REDUCED` · `sahaEquilibriumNe_strictMono_S` — Monotonicity in the Saha factor.  _[Saha–Eggert (Griem)]_
+- `PURE-MATH` · `multiElementIonized_strictAntiOn` — The ionized-density map is strictly antitone in the electron density on `x ≥ 0`.
+- `REDUCED` · `multiElement_exists_pos_fixedPoint` — Existence of the coupled electron density.  _[Saha–Eggert (Griem)]_
+- `REDUCED` · `multiElement_pos_fixedPoint_unique` — Uniqueness of the coupled electron density.  _[Saha–Eggert (Griem)]_
+- `REDUCED` · `multiElement_single_eq_sahaEquilibriumNe` — Single-species consistency.  _[Saha–Eggert (Griem)]_
 
 ## `SahaInverse.lean`  (CflibsFormal)
 *Part 6: coupling Saha into the inverse problem*

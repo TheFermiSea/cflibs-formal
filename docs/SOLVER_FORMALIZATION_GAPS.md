@@ -3,7 +3,7 @@
 Generated 2026-06-30 from the formal-leverage review that mapped the CF-LIBS
 no-fallback ("strict mode") solver work onto this verified spec.
 
-**Verification status (authoritative):** `cflibs-formal` is **axiom-clean** — 851
+**Verification status (authoritative):** `cflibs-formal` is **axiom-clean** — 910
 declarations, `lake env axiom-audit` exit 0, foundation-audit 0/0/0. The only axioms
 are the three standard mathlib foundations (`propext`, `Classical.choice`, `Quot.sound`).
 The "2 sorry / 2 admit / 11 axiom" sometimes quoted are **phantom textual counts**
@@ -36,10 +36,13 @@ strict solver would step outside the verified envelope.
      which is *why* `leastSquares_sound` holds on the fixpoint (`Sound` discharged
      on-manifold; off-manifold there is no ground-truth `(T,N)` to be `Sound` against).
 
-   **Residual (still open):** the *fully nonlinear joint* least-squares inverse over the
-   coupled multi-species forward map (fit `(T, n_e, composition)` simultaneously from raw
-   intensities, not the per-species log-linearized line) — this overlaps gaps #6 and #8 and
-   is a separate, larger effort.
+   **Residual:** ✅ existence leg closed (2026-07-02) — `NonlinearLeastSquares.lean`:
+   `nlObjective_exists_min` (a minimizer of the nonlinear joint `(T, N)` objective exists on
+   any compact physical box, for ANY off-manifold observation, via the extreme value theorem)
+   + `nlObjective_onManifold_min` (the true parameters are a zero-residual global optimum in
+   the noise-free case). Still open: uniqueness/characterization of the nonlinear minimizer
+   (the objective is non-convex in `T`) and the fully-coupled multi-species
+   `(T, n_e, composition)` fit.
 
 2. **Atomic-data perturbation channel.** ✅ **Addressed** in `AtomicDataPerturbation.lean`
    (2026-07-02). `classicDensity_aliasing` (EXACT): inverting the true spectrum with wrong
@@ -58,8 +61,11 @@ strict solver would step outside the verified envelope.
    one-to-one to relative n_e error) and `electronDensity_lipschitz` (the explicit
    sensitivity constant `S/R₀²` on `R ≥ R₀`). **Residual:** the T-channel (`∂n_e/∂T`) is
    honestly open — `dS/dT` mixes the thermal bracket, `exp(−χ/kT)`, and the
-   partition-ratio `U_{z+1}/U_z`, whose sign is not definite without extra hypotheses; and
-   the multi-element design-matrix rank/condition theorem remains open.
+   partition-ratio `U_{z+1}/U_z`, whose sign is not definite without extra hypotheses. The
+   design-matrix leg is ✅ closed (2026-07-02) — `OLS.lean`: `det_designNormalMatrix`
+   (`det = n·SS_E`, the Lagrange/variance identity) and `designNormalMatrix_det_ne_zero_iff`
+   (nonsingular ⟺ positive energy spread), so the OLS `hvar` hypothesis IS the exact rank
+   condition. Still open: a quantitative condition-number (not just rank) analysis.
 
 4. **Degeneracy converse.** ✅ **Addressed (exact-degenerate case)** in
    `Identifiability.lean` (2026-07-02). `lineIntensity_ratio_closed_form` names the shared
@@ -85,10 +91,13 @@ strict solver would step outside the verified envelope.
    `olsSlope_stable_hetero` (per-line heteroscedastic budgets `ε_k` — exploits noiseless
    lines no global-ε bound can), `olsSlope_stable_l1_of_hetero` (recovers the global bound
    as the constant special case), `temp_rel_error_hetero` (composed per-line noise ⇒
-   relative temperature error). **Residual:** the `U_s(T)` Lipschitz leg and the final
-   δ→ΔC cross-channel coupling (recovered-T error through `U_s(T̂)` into the density
-   channel) — recorded in-file; the temperature and composition budgets remain independent
-   until then.
+   relative temperature error). **Residual:** the `U_s(T)` Lipschitz leg is ✅ closed
+   (2026-07-02) — `PartitionLipschitz.lean`: `partitionFunction_two_point_bound`
+   (`|U(T₁)−U(T₂)| ≤ (∑g·E)·|Δ(1/k_BT)|`), `partitionFunction_lipschitz_temp` (explicit
+   constant `(∑g·E)/(k_B·Tmin²)`), `partitionFunction_relative_error_temp` (the `δ_U` a
+   density bound consumes). Still open: the literal Lean composition into the density
+   channel — it needs a T-split aliasing identity (`classicDensity` inverting at `T̂ ≠ T`)
+   that `AtomicDataPerturbation` does not yet expose — and hence the final δ→ΔC coupling.
 
 6. **Coupled Saha–closure–charge fixed point.** ✅ **Addressed (reduced core)** in
    `SahaEquilibrium.lean` (2026-07-02): the single-element, two-stage, fixed-T system
@@ -96,10 +105,13 @@ strict solver would step outside the verified envelope.
    closure `N₀+N₁ = Ntot`) reduces to `n_e² = S(Ntot − n_e)` with closed form
    `sahaEquilibriumNe`; existence (`0 < n_e < Ntot`, self-consistency), uniqueness of the
    positive root, the bundled `∃!` for the full `(n_e, N₀, N₁)` state
-   (`sahaEquilibrium_unique_state`), and strict monotonicity in S. **Residual:** the
-   multi-element loop coupled through shared n_e, the outer T-iteration, and — crucially —
-   *convergence of the iterative map* (the fixed point exists and is unique; the solver's
-   convergence flag is licensed for the reduced core's *target*, not yet its iteration).
+   (`sahaEquilibrium_unique_state`), and strict monotonicity in S. **Residual:** the multi-element loop is
+   ✅ closed (2026-07-02) — same module: `multiElement_exists_pos_fixedPoint` /
+   `multiElement_pos_fixedPoint_unique` (the shared-n_e charge-neutrality fixed point
+   `x = ∑_s Ntot_s·S_s/(x+S_s)` exists and is unique, via IVT + strict antitonicity) +
+   `multiElement_single_eq_sahaEquilibriumNe` (single-element consistency). Still open: the
+   outer T-iteration and *convergence of the iterative map* (the fixed point exists and is
+   unique; the solver's convergence flag is licensed for the target, not yet its iteration).
 
 7. **Multi-species per-U generalization.** ✅ **Addressed** in `MultiSpecies.lean`
    (2026-07-02): `deNormalizedDensityPerU` / `lineIntensityPerU` with genuinely
@@ -133,8 +145,12 @@ strict solver would step outside the verified envelope.
     response decays like `e^{−τ}`), `slabCurve_inverse_lipschitz` (the COG-inverse
     condition number `1/(1−Wmax)` blowing up at saturation — the explicit bound licensing
     the runtime saturation gate), `slabCurve_roundTrip_lipschitz` (the same blow-up as
-    `e^{τmax}` phrased in τ). **Residual:** the thick-regime √τ (Ladenburg–Reiche /
-    damping-wing) asymptotic stays honestly OUT of scope — it needs Voigt wings.
+    `e^{τmax}` phrased in τ). **Residual:** the √τ *scaling* is ✅ closed as a lower
+    bound (2026-07-02) — `equivWidth_lorentzian_sqrt_lower`: for the Lorentzian profile and
+    `τ ≥ 8π`, `(1−e⁻¹)/(2√(2π))·√τ ≤ W(τ)` (with `lorentzian_integral : ∫φ = 1`), so the
+    damping-wing growth is rigorously √τ-fast — in stark contrast to the slab's `W ≤ 1`.
+    Still open: the Ladenburg–Reiche asymptotic EQUALITY (sharp constant + matching upper
+    bound).
 11. **Matrix-effect invariance under per-shot (T, n_e) variation.** ✅ **Partially
     addressed** in `MatrixEffects.lean` (2026-07-02): `homologousPair_ratio_closed_form` +
     `homologousPair_ratio_temperature_invariant` — energy-matched (homologous) cross-species

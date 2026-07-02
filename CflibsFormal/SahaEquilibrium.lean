@@ -42,15 +42,31 @@ We prove existence (`0 < n_e < Ntot`, self-consistency), uniqueness (any positiv
 solution equals the closed form), and bundle them into the unique existence of the
 full self-consistent state `(n_e, N₀, N₁)`.
 
+## Multi-element coupling (appended below)
+
+The multi-element leg (gap #6) couples one two-stage Saha balance per species `s`
+through a *shared* electron density `x`.  With Saha factor `S s > 0` and elemental
+density `Ntot s > 0`, per-element closure gives the ionized density
+`N₁ s = Ntot s · S s / (x + S s)`, and charge neutrality closes the loop as the
+scalar fixed-point equation
+
+`x = ∑ s, Ntot s · S s / (x + S s)  =:  multiElementIonized S Ntot x`.
+
+We prove this coupled fixed point **exists** (a positive `x`, via the intermediate
+value theorem on `[0, ∑ Ntot]`) and is **unique** (the right-hand side is strictly
+antitone in `x`, so `x ↦ x − G(x)` is strictly monotone), and that for a single
+species it reproduces `sahaEquilibriumNe`.
+
 ## Honest scope
 
 This is the **REDUCED** core, not the full CF-LIBS self-consistency loop.  We fix
 `T` (hence a scalar Saha factor `S`), restrict to a *single* element resolved into
-*two* stages, and impose exact LTE.  What remains open: the multi-element loop
-(each species with its own Saha balance coupled through a shared `n_e`), the outer
-temperature iteration, and — crucially — the *convergence of the fixed-point
-iteration itself*.  We prove existence and uniqueness of the fixed point, **not**
-that the CF-LIBS iterative map converges to it.
+*two* stages, and impose exact LTE.  The multi-element section relaxes the
+single-element restriction — existence and uniqueness of the coupled fixed point
+are proven at fixed `T` — but what remains open is the outer temperature iteration
+and — crucially — the *convergence of the fixed-point iteration itself*.  We prove
+existence and uniqueness of the fixed point, **not** that the CF-LIBS iterative map
+converges to it.
 
 ## Literature
 
@@ -253,5 +269,168 @@ example : SelfConsistentState nvSeqS nvSeqNtot 1 (nvSeqNtot - 1) 1 := by
     rw [hsqrt]
     norm_num [nvSeqS]
   rwa [he] at h
+
+/-! ## Multi-element coupled self-consistency
+
+The multi-element leg of gap #6: one two-stage Saha balance per species, coupled
+through a shared electron density `x`.  See the module header for the physics and the
+reduction taken. -/
+
+/-- **Multi-element ionized-density closure map** `G`.  Summing one two-stage Saha
+balance per species, coupled through the shared electron density `x`: species `s`
+(Saha factor `S s`, elemental density `Ntot s`) contributes ionized density
+`Ntot s · S s / (x + S s)`.  Charge neutrality `x = G(x)` closes the loop.  This is
+the multi-element generalization of the single-element core above. -/
+noncomputable def multiElementIonized {ι : Type*} [Fintype ι] (S Ntot : ι → ℝ)
+    (x : ℝ) : ℝ :=
+  ∑ s, Ntot s * S s / (x + S s)
+
+/-- **The ionized-density map is strictly antitone** in the electron density on
+`x ≥ 0`.  Each term `Ntot s · S s / (x + S s)` strictly decreases as `x` grows (the
+denominator increases, numerator fixed positive); a nonempty finite sum of strictly
+decreasing terms is strictly decreasing.  Physically: raising `n_e` shifts every
+species toward recombination.  (`PURE-MATH`: bare monotonicity of the closure map.) -/
+theorem multiElementIonized_strictAntiOn {ι : Type*} [Fintype ι] [Nonempty ι]
+    (S Ntot : ι → ℝ) (hS : ∀ s, 0 < S s) (hN : ∀ s, 0 < Ntot s) :
+    StrictAntiOn (multiElementIonized S Ntot) (Set.Ici 0) := by
+  intro a ha b hb hab
+  rw [Set.mem_Ici] at ha hb
+  change (∑ s, Ntot s * S s / (b + S s)) < (∑ s, Ntot s * S s / (a + S s))
+  refine Finset.sum_lt_sum_of_nonempty Finset.univ_nonempty (fun s _ => ?_)
+  rw [div_lt_div_iff₀ (by linarith [hS s]) (by linarith [hS s])]
+  nlinarith [mul_pos (mul_pos (hN s) (hS s)) (sub_pos.mpr hab)]
+
+/-- **Existence of the coupled electron density.**  For a nonempty finite family of
+species with positive Saha factors `S s` and positive elemental densities `Ntot s`,
+there is a strictly positive electron density `x` solving the coupled
+charge-neutrality fixed point `x = ∑ s, Ntot s · S s / (x + S s)`.  Proof: with
+`M = ∑ Ntot`, the map `f(x) = x − G(x)` is continuous on `[0, M]`, `f(0) = −M < 0`
+and `f(M) = M − G(M) ≥ 0` (each term `Ntot s · S s / (M + S s) ≤ Ntot s`), so the
+intermediate value theorem yields a root, positive since `f(0) < 0`.
+REDUCED: fixed `T`, two stages per element, exact LTE; the iterative map's
+convergence is not addressed. -/
+theorem multiElement_exists_pos_fixedPoint {ι : Type*} [Fintype ι] [Nonempty ι]
+    (S Ntot : ι → ℝ) (hS : ∀ s, 0 < S s) (hN : ∀ s, 0 < Ntot s) :
+    ∃ x, 0 < x ∧ x = multiElementIonized S Ntot x := by
+  set M : ℝ := ∑ s, Ntot s with hMdef
+  have hMpos : 0 < M := by
+    rw [hMdef]; exact Finset.sum_pos (fun i _ => hN i) Finset.univ_nonempty
+  have hGcont : ContinuousOn (multiElementIonized S Ntot) (Set.Icc (0 : ℝ) M) := by
+    change ContinuousOn (fun x => ∑ s, Ntot s * S s / (x + S s)) (Set.Icc (0 : ℝ) M)
+    refine continuousOn_finsetSum Finset.univ (fun s _ => ?_)
+    refine ContinuousOn.div continuousOn_const
+      ((continuousOn_id' _).add continuousOn_const) ?_
+    intro x hx
+    have hpos : (0 : ℝ) < x + S s := by have hx0 := hx.1; linarith [hS s]
+    exact hpos.ne'
+  have hcont : ContinuousOn (fun x => x - multiElementIonized S Ntot x)
+      (Set.Icc (0 : ℝ) M) := (continuousOn_id' _).sub hGcont
+  have hG0 : multiElementIonized S Ntot 0 = M := by
+    change (∑ s, Ntot s * S s / ((0 : ℝ) + S s)) = M
+    rw [hMdef]
+    refine Finset.sum_congr rfl (fun s _ => ?_)
+    rw [zero_add, mul_div_assoc, div_self (hS s).ne', mul_one]
+  have hGM : multiElementIonized S Ntot M ≤ M := by
+    change (∑ s, Ntot s * S s / (M + S s)) ≤ M
+    conv_rhs => rw [hMdef]
+    refine Finset.sum_le_sum (fun s _ => ?_)
+    rw [div_le_iff₀ (by linarith [hMpos, hS s])]
+    nlinarith [mul_pos (hN s) hMpos, hS s]
+  have h0 : (fun x => x - multiElementIonized S Ntot x) 0 ≤ 0 := by
+    change (0 : ℝ) - multiElementIonized S Ntot 0 ≤ 0
+    rw [hG0]; linarith
+  have hMle : 0 ≤ (fun x => x - multiElementIonized S Ntot x) M := by
+    change (0 : ℝ) ≤ M - multiElementIonized S Ntot M
+    linarith [hGM]
+  obtain ⟨x, hx, hfx⟩ :=
+    intermediate_value_Icc hMpos.le hcont (Set.mem_Icc.mpr ⟨h0, hMle⟩)
+  change x - multiElementIonized S Ntot x = 0 at hfx
+  have hxeq : x = multiElementIonized S Ntot x := sub_eq_zero.mp hfx
+  refine ⟨x, ?_, hxeq⟩
+  rcases eq_or_lt_of_le hx.1 with h | h
+  · exfalso
+    rw [← h, hG0] at hxeq
+    linarith [hMpos]
+  · exact h
+
+/-- **Uniqueness of the coupled electron density.**  Any two strictly positive
+solutions of the coupled fixed point `x = ∑ s, Ntot s · S s / (x + S s)` coincide.
+Since `G` is strictly antitone (`multiElementIonized_strictAntiOn`), `x < y` forces
+`x = G(x) > G(y) = y`, a contradiction; likewise `y < x`.  REDUCED: same reductions
+as the existence theorem. -/
+theorem multiElement_pos_fixedPoint_unique {ι : Type*} [Fintype ι] [Nonempty ι]
+    (S Ntot : ι → ℝ) (hS : ∀ s, 0 < S s) (hN : ∀ s, 0 < Ntot s)
+    {x y : ℝ} (hx : 0 < x) (hy : 0 < y)
+    (hxeq : x = multiElementIonized S Ntot x)
+    (hyeq : y = multiElementIonized S Ntot y) : x = y := by
+  rcases lt_trichotomy x y with h | h | h
+  · exfalso
+    have hlt := multiElementIonized_strictAntiOn S Ntot hS hN
+      (Set.mem_Ici.mpr hx.le) (Set.mem_Ici.mpr hy.le) h
+    rw [← hxeq, ← hyeq] at hlt
+    linarith
+  · exact h
+  · exfalso
+    have hlt := multiElementIonized_strictAntiOn S Ntot hS hN
+      (Set.mem_Ici.mpr hy.le) (Set.mem_Ici.mpr hx.le) h
+    rw [← hxeq, ← hyeq] at hlt
+    linarith
+
+/-- **Single-species consistency.**  For one species (`ι = PUnit`) the coupled
+multi-element fixed point reduces to the single-element core: any positive solution
+of `x = multiElementIonized (fun _ => S₀) (fun _ => Ntot₀) x` equals
+`sahaEquilibriumNe S₀ Ntot₀`.  The one-term closure `x = Ntot₀ · S₀ / (x + S₀)`
+rearranges to `x² = S₀ · (Ntot₀ − x)`, whose unique positive root is the closed form
+(`selfConsistent_unique`).  REDUCED: single element, two stages, fixed `T`. -/
+theorem multiElement_single_eq_sahaEquilibriumNe {S0 Ntot0 : ℝ}
+    (hS : 0 < S0) (hN : 0 < Ntot0) {x : ℝ} (hx : 0 < x)
+    (hxeq : x = multiElementIonized (fun _ : PUnit => S0) (fun _ : PUnit => Ntot0) x) :
+    x = sahaEquilibriumNe S0 Ntot0 := by
+  have hsum : multiElementIonized (fun _ : PUnit => S0) (fun _ : PUnit => Ntot0) x
+      = Ntot0 * S0 / (x + S0) := by
+    change (∑ _s : PUnit, Ntot0 * S0 / (x + S0)) = Ntot0 * S0 / (x + S0)
+    rw [Finset.univ_unique, Finset.sum_singleton]
+  rw [hsum] at hxeq
+  have hden : (0 : ℝ) < x + S0 := by linarith
+  rw [eq_div_iff hden.ne'] at hxeq
+  have hself : x ^ 2 = S0 * (Ntot0 - x) := by linear_combination hxeq
+  exact selfConsistent_unique hS hN hx hself
+
+/-! ### Non-vacuity witnesses (multi-element)
+
+Two species with `S = ![1, 1]`, `Ntot = ![1, 1]`: the closure is `G(x) = 2/(x + 1)`,
+so `x = G(x)` is `x² + x − 2 = 0`, with positive root `x = 1` (indeed
+`1 = 2 · (1 · 1 / (1 + 1)) = 1`).  This certifies that the existence and uniqueness
+theorems above are not vacuous. -/
+
+private def nvMseS : Fin 2 → ℝ := ![1, 1]
+private def nvMseNtot : Fin 2 → ℝ := ![1, 1]
+
+private theorem nvMseS_pos : ∀ s, 0 < nvMseS s := by
+  intro s
+  fin_cases s <;> norm_num [nvMseS]
+
+private theorem nvMseNtot_pos : ∀ s, 0 < nvMseNtot s := by
+  intro s
+  fin_cases s <;> norm_num [nvMseNtot]
+
+example : (1 : ℝ) = multiElementIonized nvMseS nvMseNtot 1 := by
+  change (1 : ℝ) = ∑ s, nvMseNtot s * nvMseS s / (1 + nvMseS s)
+  simp only [nvMseS, nvMseNtot, Fin.sum_univ_two, Matrix.cons_val_zero,
+    Matrix.cons_val_one]
+  norm_num
+
+example : ∃ x : ℝ, 0 < x ∧ x = multiElementIonized nvMseS nvMseNtot x :=
+  multiElement_exists_pos_fixedPoint nvMseS nvMseNtot nvMseS_pos nvMseNtot_pos
+
+example {x : ℝ} (hx : 0 < x) (hxeq : x = multiElementIonized nvMseS nvMseNtot x) :
+    x = 1 := by
+  have h1 : (1 : ℝ) = multiElementIonized nvMseS nvMseNtot 1 := by
+    change (1 : ℝ) = ∑ s, nvMseNtot s * nvMseS s / (1 + nvMseS s)
+    simp only [nvMseS, nvMseNtot, Fin.sum_univ_two, Matrix.cons_val_zero,
+      Matrix.cons_val_one]
+    norm_num
+  exact multiElement_pos_fixedPoint_unique nvMseS nvMseNtot nvMseS_pos nvMseNtot_pos
+    hx one_pos hxeq h1
 
 end CflibsFormal

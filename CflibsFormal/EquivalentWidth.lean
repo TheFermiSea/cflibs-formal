@@ -327,4 +327,134 @@ example : |Real.log (1 - (0:ℝ)) - Real.log (1 - (1/2:ℝ))| ≤ |(0:ℝ) - 1/2
 example : |(1:ℝ) - 2| ≤ |(1 - Real.exp (-(1:ℝ))) - (1 - Real.exp (-(2:ℝ)))| * Real.exp 2 :=
   slabCurve_roundTrip_lipschitz (by norm_num) (by norm_num) (by norm_num) (by norm_num)
 
+/-! ## The Lorentzian damping wing — bringing the √τ scaling into scope as a lower bound -/
+
+/-- **The (normalized) Lorentzian profile** `L(x) = (1/π)·1/(1+x²)` — the natural / pressure-
+broadening line shape, a unit-area probability density (`∫L = 1`, `lorentzian_integral`) with
+heavy `∼1/x²` wings. The slow wing decay is exactly what makes the equivalent-width curve of growth
+grow without bound (the √τ damping-wing regime), in contrast to the rectangular / slab profile whose
+equivalent width saturates at `1` (`equivWidth_rectangular`). -/
+noncomputable def lorentzian (x : ℝ) : ℝ := (1 / Real.pi) * (1 / (1 + x ^ 2))
+
+/-- The Lorentzian profile is strictly positive. -/
+theorem lorentzian_pos (x : ℝ) : 0 < lorentzian x := by
+  unfold lorentzian
+  exact mul_pos (div_pos one_pos Real.pi_pos) (div_pos one_pos (by positivity))
+
+/-- The Lorentzian profile is integrable: `(1 + x²)⁻¹` is (`integrable_inv_one_add_sq`) and `L` is a
+constant multiple of it. -/
+theorem lorentzian_integrable : Integrable lorentzian := by
+  have h : lorentzian = fun x => (Real.pi)⁻¹ * (1 + x ^ 2)⁻¹ := by
+    funext x; unfold lorentzian; simp only [one_div]
+  rw [h]
+  exact integrable_inv_one_add_sq.const_mul _
+
+/-- **The Lorentzian is a unit-area profile:** `∫ L = 1` (since `∫ (1 + x²)⁻¹ = π`). Hence
+`equivWidth_le_thin` reads `W(τ) ≤ τ` for `L`, and the √τ lower bound below sits genuinely under
+the slope-1 line for large `τ` — the curve of growth grows like `√τ`, strictly slower than `τ`. -/
+theorem lorentzian_integral : ∫ x, lorentzian x = 1 := by
+  have h : ∀ x, lorentzian x = (Real.pi)⁻¹ * (1 + x ^ 2)⁻¹ := by
+    intro x; unfold lorentzian; simp only [one_div]
+  simp only [h]
+  rw [integral_const_mul, integral_univ_inv_one_add_sq, inv_mul_cancel₀ Real.pi_ne_zero]
+
+/-- On the core plateau `1 ≤ x ≤ √(τ/2π)` the Lorentzian optical depth exceeds one: `1 ≤ τ·L(x)`.
+From `1 + x² ≤ 2x²` (`x ≥ 1`, so `x² ≥ 1`) and `x² ≤ τ/2π` (`x ≤ √(τ/2π)`) we get
+`π(1+x²) ≤ 2πx² ≤ τ`, whence `τ·L = τ/(π(1+x²)) ≥ 1`. -/
+private theorem lorentzian_tau_ge_one {τ x : ℝ} (hτ : 0 ≤ τ)
+    (hx1 : 1 ≤ x) (hx2 : x ≤ Real.sqrt (τ / (2 * Real.pi))) :
+    1 ≤ τ * lorentzian x := by
+  have hpi := Real.pi_pos
+  have hx0 : (0:ℝ) ≤ x := le_trans zero_le_one hx1
+  have hs_nn : (0:ℝ) ≤ τ / (2 * Real.pi) := by positivity
+  have hx2sq : x ^ 2 ≤ τ / (2 * Real.pi) := (Real.le_sqrt hx0 hs_nn).mp hx2
+  have h2pi : (0:ℝ) < 2 * Real.pi := by positivity
+  have h2 : x ^ 2 * (2 * Real.pi) ≤ τ := (le_div_iff₀ h2pi).mp hx2sq
+  have hxsq1 : (1:ℝ) ≤ x ^ 2 := by nlinarith [hx1, hx0]
+  have hden_pos : (0:ℝ) < Real.pi * (1 + x ^ 2) := by positivity
+  have hle : Real.pi * (1 + x ^ 2) ≤ τ := by nlinarith [h2, hxsq1, hpi]
+  have heq : τ * lorentzian x = τ / (Real.pi * (1 + x ^ 2)) := by
+    unfold lorentzian
+    rw [div_mul_div_comm, mul_one, mul_one_div]
+  rw [heq, one_le_div₀ hden_pos]
+  exact hle
+
+/-- **The √τ damping-wing lower bound (EXACT, within the model).** For the Lorentzian profile the
+equivalent width grows at least like `√τ`: with the explicit positive constant
+`c = (1 - e⁻¹)/(2√(2π))`, for every `τ ≥ 8π`,
+
+  `c · √τ ≤ W(τ) = equivWidth lorentzian τ`.
+
+**Contrast with the slab / rectangular profile.** There the equivalent width *saturates* —
+`W = 1 - e^{-τ} ≤ 1` (`equivWidth_rectangular`), so an optically-thick slab line carries no more
+integrated information than a fully black one; the inversion also becomes ill-conditioned
+(`slabCurve_inverse_lipschitz`). The Lorentzian curve of growth instead *keeps growing*: its heavy
+`∼1/x²` wings never go fully black, so `W → ∞` as `√τ`. This is exactly why the optically-thick
+regime remains informative but must be modelled with the Lorentz-wing profile rather than the
+saturating slab kernel.
+
+**Scope.** This is a genuine **lower bound**, NOT the Ladenburg–Reiche asymptotic *equality* (the
+slope-½ `W ∼ 2√(τ·⟨width⟩)` curve-of-growth function): the sharp constant and matching upper bound
+need the profile-specific improper-integral asymptotics that stay OUT of scope (module honest-scope
+note). Construction: on `A = [1, √(τ/2π)]` the integrand `1 - e^{-τL} ≥ 1 - e⁻¹` (since `τ·L ≥ 1`
+there, `lorentzian_tau_ge_one`); lower-bounding `W` by the constant `1 - e⁻¹` on `A` via
+`integral_mono` against its indicator (mirroring `equivWidth_rectangular`) gives
+`W ≥ (1 - e⁻¹)(√(τ/2π) - 1) ≥ (1 - e⁻¹)·½√(τ/2π) = c·√τ`, using `τ ≥ 8π ⇒ √(τ/2π) ≥ 2`. Only the
+right half-line `x ≥ 1` is used; the mirror `x ≤ -1` would double `c` but is unnecessary. -/
+theorem equivWidth_lorentzian_sqrt_lower {τ : ℝ} (hτ : 8 * Real.pi ≤ τ) :
+    (1 - Real.exp (-1)) / (2 * Real.sqrt (2 * Real.pi)) * Real.sqrt τ
+      ≤ equivWidth lorentzian τ := by
+  have hpi := Real.pi_pos
+  have hτ0 : (0:ℝ) ≤ τ := le_trans (by positivity) hτ
+  set s := Real.sqrt (τ / (2 * Real.pi)) with hs
+  have hs_nn : (0:ℝ) ≤ τ / (2 * Real.pi) := by positivity
+  have hfrac4 : (4:ℝ) ≤ τ / (2 * Real.pi) := by
+    rw [le_div_iff₀ (by positivity : (0:ℝ) < 2 * Real.pi)]; nlinarith [hτ]
+  have hs2 : (2:ℝ) ≤ s := by
+    rw [hs, Real.le_sqrt (by norm_num) hs_nn]; nlinarith [hfrac4]
+  have hexp1 : (0:ℝ) < 1 - Real.exp (-1) := by
+    have : Real.exp (-1) < 1 := Real.exp_lt_one_iff.mpr (by norm_num)
+    linarith
+  have hp_pos : (0:ℝ) < Real.sqrt (2 * Real.pi) := Real.sqrt_pos.mpr (by positivity)
+  have hpne : Real.sqrt (2 * Real.pi) ≠ 0 := hp_pos.ne'
+  have hsdiv : s = Real.sqrt τ / Real.sqrt (2 * Real.pi) := by
+    rw [hs, Real.sqrt_div' τ (by positivity)]
+  have hlor_nn : (0 : ℝ → ℝ) ≤ lorentzian := fun x => (lorentzian_pos x).le
+  have hintegrand_int :=
+    equivWidth_integrand_integrable hτ0 hlor_nn lorentzian_integrable
+  have hAfin : volume (Set.Icc (1:ℝ) s) < ⊤ := measure_Icc_lt_top
+  have hind_int : Integrable ((Set.Icc (1:ℝ) s).indicator (fun _ => 1 - Real.exp (-1))) :=
+    (integrableOn_const (hs := hAfin.ne)).integrable_indicator measurableSet_Icc
+  have hpt : ∀ x, (Set.Icc (1:ℝ) s).indicator (fun _ => 1 - Real.exp (-1)) x
+      ≤ 1 - Real.exp (-(τ * lorentzian x)) := by
+    intro x
+    by_cases hx : x ∈ Set.Icc (1:ℝ) s
+    · rw [Set.indicator_of_mem hx]
+      have h1 : 1 ≤ τ * lorentzian x := lorentzian_tau_ge_one hτ0 hx.1 (hs ▸ hx.2)
+      have hexp : Real.exp (-(τ * lorentzian x)) ≤ Real.exp (-1) :=
+        Real.exp_le_exp.mpr (by linarith)
+      linarith
+    · rw [Set.indicator_of_notMem hx]
+      have hnn : 0 ≤ τ * lorentzian x := mul_nonneg hτ0 (lorentzian_pos x).le
+      have : Real.exp (-(τ * lorentzian x)) ≤ 1 := Real.exp_le_one_iff.mpr (by linarith)
+      linarith
+  have hval : ∫ x, (Set.Icc (1:ℝ) s).indicator (fun _ => 1 - Real.exp (-1)) x
+      = (s - 1) * (1 - Real.exp (-1)) := by
+    rw [integral_indicator_const _ measurableSet_Icc, measureReal_def, Real.volume_Icc,
+      ENNReal.toReal_ofReal (by linarith [hs2] : (0:ℝ) ≤ s - 1), smul_eq_mul]
+  calc (1 - Real.exp (-1)) / (2 * Real.sqrt (2 * Real.pi)) * Real.sqrt τ
+      = s / 2 * (1 - Real.exp (-1)) := by rw [hsdiv]; field_simp
+    _ ≤ (s - 1) * (1 - Real.exp (-1)) :=
+        mul_le_mul_of_nonneg_right (by linarith [hs2]) hexp1.le
+    _ = ∫ x, (Set.Icc (1:ℝ) s).indicator (fun _ => 1 - Real.exp (-1)) x := hval.symm
+    _ ≤ equivWidth lorentzian τ := by
+        rw [equivWidth]; exact integral_mono hind_int hintegrand_int hpt
+
+/-- Non-vacuity: the √τ lower bound fires at the threshold `τ = 8π` (hypothesis `8π ≤ 8π`), so the
+constant `c = (1 - e⁻¹)/(2√(2π))` gives a genuine lower bound on the Lorentzian equivalent width. -/
+theorem nvLz_sqrt_lower_at_threshold :
+    (1 - Real.exp (-1)) / (2 * Real.sqrt (2 * Real.pi)) * Real.sqrt (8 * Real.pi)
+      ≤ equivWidth lorentzian (8 * Real.pi) :=
+  equivWidth_lorentzian_sqrt_lower le_rfl
+
 end CflibsFormal

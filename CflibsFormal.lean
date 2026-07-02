@@ -26,8 +26,10 @@ import CflibsFormal.LeastSquaresFit
 import CflibsFormal.LineBroadening
 import CflibsFormal.MatrixEffects
 import CflibsFormal.MultiSpecies
+import CflibsFormal.NonlinearLeastSquares
 import CflibsFormal.OLS
 import CflibsFormal.PartialLTE
+import CflibsFormal.PartitionLipschitz
 import CflibsFormal.Robustness
 import CflibsFormal.Saha
 import CflibsFormal.SahaEquilibrium
