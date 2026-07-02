@@ -15,6 +15,7 @@ One row per module under `CflibsFormal/`. *Base* = imports no `CflibsFormal` mod
 | `Alt/OLSVariance.lean` | `CflibsFormal.Alt` | 7 | 1 | – | ✓ | the Gauss–Markov variance law for the OLS Boltzmann-plot slope |
 | `Alt/SelfAbsorbed.lean` | `CflibsFormal.Alt` | 5 | 1 | – | – | the self-absorption-corrected composition estimator (alternative) |
 | `Analysis.lean` | `CflibsFormal` | 1 | 0 | ✓ | – | Shared analysis scaffolding |
+| `AtomicDataPerturbation.lean` | `CflibsFormal` | 4 | 2 | – | ✓ | the atomic-data perturbation channel |
 | `Boltzmann.lean` | `CflibsFormal` | 5 | 3 | ✓ | – | Part 1: the Boltzmann distribution |
 | `Classic.lean` | `CflibsFormal.Classic` | 5 | 2 | – | – | the classic calibration-free algorithm, assembled and sound |
 | `Closure.lean` | `CflibsFormal` | 6 | 2 | – | – | Closure of species composition |
@@ -23,29 +24,32 @@ One row per module under `CflibsFormal/`. *Base* = imports no `CflibsFormal` mod
 | `Continuum.lean` | `CflibsFormal` | 6 | 5 | ✓ | ✓ | the continuum background |
 | `CurveOfGrowth.lean` | `CflibsFormal` | 10 | 2 | – | ✓ | the curve of growth and multi-line self-absorption |
 | `Dimensions.lean` | `CflibsFormal` | 16 | 15 | ✓ | – | a dimensional-analysis layer |
-| `EquivalentWidth.lean` | `CflibsFormal` | 6 | 1 | ✓ | ✓ | the equivalent-width curve of growth |
-| `ErrorBudget.lean` | `CflibsFormal` | 14 | 0 | – | – | the error-propagation chain and DERIVED reliability thresholds |
+| `EquivalentWidth.lean` | `CflibsFormal` | 9 | 1 | ✓ | ✓ | the equivalent-width curve of growth |
+| `ErrorBudget.lean` | `CflibsFormal` | 17 | 0 | – | – | the error-propagation chain and DERIVED reliability thresholds |
 | `ForwardMap.lean` | `CflibsFormal` | 3 | 1 | – | – | Part 4: the optically-thin forward map |
 | `ForwardMapEnergy.lean` | `CflibsFormal` | 5 | 1 | – | ✓ | the energy-intensity forward map and convention equivalence |
 | `HydrogenStark.lean` | `CflibsFormal` | 4 | 2 | ✓ | ✓ | the hydrogen-line (Balmer) Stark electron-density diagnostic |
-| `Identifiability.lean` | `CflibsFormal` | 6 | 0 | – | – | Part 5: identifiability of the inverse problem |
+| `Identifiability.lean` | `CflibsFormal` | 7 | 0 | – | – | Part 5: identifiability of the inverse problem |
 | `Inverse.lean` | `CflibsFormal` | 3 | 6 | – | – | Part 6: the algorithm-agnostic inverse-problem framework |
+| `JointIdentifiability.lean` | `CflibsFormal` | 1 | 1 | – | – | Part 7: joint (temperature, composition) identifiability |
 | `LeastSquaresFit.lean` | `CflibsFormal` | 9 | 3 | – | – | the ordinary-least-squares projection / feasibility inverse |
 | `LineBroadening.lean` | `CflibsFormal` | 5 | 4 | ✓ | ✓ | line broadening (Doppler width + the Voigt Gaussian budget) |
-| `MatrixEffects.lean` | `CflibsFormal` | 17 | 7 | – | ✓ | matrix effects (completeness, ablation, ionization suppression) |
-| `MultiSpecies.lean` | `CflibsFormal` | 4 | 2 | – | – | Multi-species / multi-stage composition glue |
+| `MatrixEffects.lean` | `CflibsFormal` | 22 | 7 | – | ✓ | matrix effects (completeness, ablation, ionization suppression) |
+| `MultiSpecies.lean` | `CflibsFormal` | 12 | 4 | – | – | Multi-species / multi-stage composition glue |
 | `OLS.lean` | `CflibsFormal` | 7 | 4 | ✓ | – | the ordinary-least-squares algebraic foundation |
 | `PartialLTE.lean` | `CflibsFormal` | 6 | 2 | – | ✓ | the partial-LTE thermalization limit |
 | `Robustness.lean` | `CflibsFormal` | 5 | 2 | – | – | Robustness / error-propagation bounds |
 | `Saha.lean` | `CflibsFormal` | 6 | 4 | – | – | Part 2: the Saha ionization equilibrium |
+| `SahaEquilibrium.lean` | `CflibsFormal` | 8 | 1 | – | ✓ | Coupled Saha–closure–charge self-consistency (reduced core) |
 | `SahaInverse.lean` | `CflibsFormal` | 3 | 2 | – | ✓ | Part 6: coupling Saha into the inverse problem |
+| `SahaStability.lean` | `CflibsFormal` | 4 | 0 | – | ✓ | Part 2b: stability of the `n_e` diagnostic |
 | `SelfAbsorption.lean` | `CflibsFormal` | 10 | 3 | – | – | self-absorption / optical-thickness-aware forward map |
-| `SelfAbsorptionInverse.lean` | `CflibsFormal` | 4 | 1 | – | – | Self-absorption coupled into the inverse problem — identifiability preserved vs. lost |
+| `SelfAbsorptionInverse.lean` | `CflibsFormal` | 5 | 1 | – | – | Self-absorption coupled into the inverse problem — identifiability preserved vs. lost |
 | `SelfReversal.lean` | `CflibsFormal` | 4 | 1 | ✓ | ✓ | self-reversal (the two-zone line dip) |
 | `SpatialForward.lean` | `CflibsFormal` | 4 | 1 | ✓ | ✓ | spatially-resolved (discrete Abel / onion-peeling) forward model |
 | `StarkBroadening.lean` | `CflibsFormal` | 7 | 4 | – | ✓ | Stark broadening + the McWhirter LTE criterion |
 | `StarkShift.lean` | `CflibsFormal` | 9 | 3 | ✓ | ✓ | the Stark line-shift electron-density diagnostic |
 | `TemporalEvolution.lean` | `CflibsFormal` | 8 | 7 | – | ✓ | time-resolved (gate-delayed) recovery |
 | `VoigtWidth.lean` | `CflibsFormal` | 7 | 1 | ✓ | ✓ | the Voigt FWHM combination (Olivero–Longbothum) |
-| **39 modules** | | **262** | **111** | | | |
+| **43 modules** | | **300** | **117** | | | |
 

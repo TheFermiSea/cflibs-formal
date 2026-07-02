@@ -5,6 +5,7 @@ import CflibsFormal.Alt.LeastSquares
 import CflibsFormal.Alt.OLSVariance
 import CflibsFormal.Alt.SelfAbsorbed
 import CflibsFormal.Analysis
+import CflibsFormal.AtomicDataPerturbation
 import CflibsFormal.Boltzmann
 import CflibsFormal.Classic
 import CflibsFormal.Closure
@@ -20,6 +21,7 @@ import CflibsFormal.ForwardMapEnergy
 import CflibsFormal.HydrogenStark
 import CflibsFormal.Identifiability
 import CflibsFormal.Inverse
+import CflibsFormal.JointIdentifiability
 import CflibsFormal.LeastSquaresFit
 import CflibsFormal.LineBroadening
 import CflibsFormal.MatrixEffects
@@ -28,7 +30,9 @@ import CflibsFormal.OLS
 import CflibsFormal.PartialLTE
 import CflibsFormal.Robustness
 import CflibsFormal.Saha
+import CflibsFormal.SahaEquilibrium
 import CflibsFormal.SahaInverse
+import CflibsFormal.SahaStability
 import CflibsFormal.SelfAbsorption
 import CflibsFormal.SelfAbsorptionInverse
 import CflibsFormal.SelfReversal

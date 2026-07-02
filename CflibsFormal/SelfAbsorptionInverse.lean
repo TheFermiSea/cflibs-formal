@@ -161,4 +161,60 @@ theorem selfAbsorption_breaks_identifiability {ι : Type*} [Fintype ι] [Nonempt
       div_one, lineIntensity_smul_left]
     ring
 
+/-- **LOST at the COMPOSITION level (unknown per-species `τ`) — self-absorption breaks
+closure identifiability.** With per-species (per-line) optical depths — the physically generic
+situation, where each species' line saturates at its own optical thickness — there exist two
+plasma parameter sets whose **measured** thick spectra are IDENTICAL yet whose closure
+compositions DIFFER. So self-absorption defeats *composition* recovery, not merely the per-line
+density recovery of `selfAbsorption_breaks_identifiability`.
+
+Two species (`Fin 2`), one shared emitting level (`Fin 1`), arbitrary fixed atomic data
+`g E A` and `T`. Species `0` reuses the module's per-line aliasing
+(`selfAbsorption_breaks_identifiability`, invoked verbatim — the aliasing mechanism is NOT
+re-derived): densities `N₀ ≠ N₀'` at optical depths `τ₀`, `τ₀'` give equal
+`selfAbsorbedIntensity`. Species `1` is IDENTICAL in both sets (same density `1`, same optical
+depth `0`). The full thick observation vectors then coincide — species `0` by the aliasing
+equality, species `1` by reflexivity — while the closure fraction of species `1` differs,
+`1 / (N₀ + 1)` vs `1 / (N₀' + 1)`, because `N₀ ≠ N₀'` (`inv_inj`). Both optical-depth vectors
+are certified nonnegative, so they are genuine (physical) optical depths.
+
+This is the DOMINANT self-absorption failure mode for concentrated / high-entropy alloys,
+whose strong lines saturate at species-specific optical depths: it justifies
+**refuse-to-report** whenever the per-species `τ` are unknown, since the composition is then
+formally non-identifiable from the thick spectrum alone. Contrast the PRESERVED result
+`thick_composition_identifiability`: when the optical depths are matched/known — in particular
+a single COMMON `τ` scaling all species, which cancels in the scale-invariant closure (see the
+scope note on `selfAbsorption_breaks_identifiability`) — composition SURVIVES. The gap between
+the two theorems is exactly *per-species / unknown* vs. *common / known* `τ`.
+
+Self-witnessing: an explicit two-species construction (no abstract existence witness). -/
+theorem selfAbsorption_breaks_composition_identifiability (kB T Fcal : ℝ) (g E A : Fin 1 → ℝ) :
+    ∃ (tau₁ tau₂ : Fin 2 → ℝ) (p₁ p₂ : PlasmaParams (Fin 2) (Fin 1)),
+      (∀ s, 0 ≤ tau₁ s) ∧ (∀ s, 0 ≤ tau₂ s) ∧
+        thickObserve kB Fcal (fun _ => 0) tau₁ p₁
+          = thickObserve kB Fcal (fun _ => 0) tau₂ p₂ ∧
+        trueComposition p₁ ≠ trueComposition p₂ := by
+  obtain ⟨N₀, N₀', τ₀, τ₀', hτ₀, hτ₀', hNe, hEq⟩ :=
+    selfAbsorption_breaks_identifiability kB T Fcal g E A 0 1 one_pos
+  refine ⟨![τ₀, 0], ![τ₀', 0], ⟨T, ![N₀, 1], g, E, A⟩, ⟨T, ![N₀', 1], g, E, A⟩,
+    ?_, ?_, ?_, ?_⟩
+  · intro s; fin_cases s
+    · simpa using hτ₀
+    · simp
+  · intro s; fin_cases s
+    · simpa using hτ₀'
+    · simp
+  · -- Equal thick observations: species `0` by the aliasing equality, species `1` by refl.
+    funext s; fin_cases s
+    · simpa [thickObserve] using hEq
+    · simp [thickObserve]
+  · -- Different compositions: the closure fraction of species `1` differs, since `N₀ ≠ N₀'`.
+    intro h
+    apply hNe
+    have h1 := congrFun h 1
+    simp only [trueComposition, composition, totalDensity, Fin.sum_univ_two,
+      Matrix.cons_val_zero, Matrix.cons_val_one, one_div] at h1
+    have h2 := inv_inj.mp h1
+    linarith
+
 end CflibsFormal

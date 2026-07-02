@@ -5,7 +5,7 @@
 > (the integrity spine) + citation from `docs/scope-tags.tsv`; the docs-sync CI gate fails if
 > any result is untagged, so a new theorem cannot land without declaring its epistemic status.
 
-**Scope-tag mix** (262 results): **EXACT** 87 · **REDUCED** 40 · **APPROXIMATION** 9 · **PURE-MATH** 126
+**Scope-tag mix** (300 results): **EXACT** 105 · **REDUCED** 52 · **APPROXIMATION** 9 · **PURE-MATH** 134
 
 `EXACT` = exact identity faithfully encoding the cited physics · `REDUCED` = valid dimensionless/lumped-factor form · `APPROXIMATION` = documented idealization / limiting case · `PURE-MATH` = infrastructure lemma, no physical claim. Classification cross-checked against `reviews/literature-validity-audit.md`.
 
@@ -123,6 +123,19 @@
 
 **Results**
 - `PURE-MATH` · `strictAntiOn_div_of_deriv_num_neg` — Quotient strictly antitone from a negative derivative numerator.
+
+## `AtomicDataPerturbation.lean`  (CflibsFormal)
+*the atomic-data perturbation channel*
+
+**Definitions**
+- `responseFactor` — Per-line response factor `ρ = g_u · A_u · exp(−E_u/(k_B T)) / U(T)`.
+- `recoveredDensity` — Recovered per-species density under wrong atomic data.
+
+**Results**
+- `EXACT` · `classicDensity_aliasing` — EXACT aliasing identity.  _[Tognoni 2010]_
+- `REDUCED` · `classicDensity_aliasing_error` — REDUCED lumped relative-error bound.  _[Tognoni 2010]_
+- `REDUCED` · `classicDensity_aliasing_error_channels` — REDUCED two-channel relative-error bound (`E' = E`).  _[Tognoni 2010]_
+- `REDUCED` · `classicComposition_atomicData_error` — REDUCED composition corollary.  _[Tognoni 2010]_
 
 ## `Boltzmann.lean`  (CflibsFormal)
 *Part 1: the Boltzmann distribution*
@@ -280,6 +293,9 @@
 - `EXACT` · `equivWidth_mono` — The curve of growth is increasing.  _[Gornushkin 1999]_
 - `EXACT` · `equivWidth_rectangular` — The flat-profile curve of growth recovers the slab deficit.  _[Gornushkin 1999]_
 - `EXACT` · `equivWidth_weakLine` — The weak-line (linear) limit of the curve of growth.  _[Gornushkin 1999]_
+- `EXACT` · `slabCurve_forward_lipschitz` — Saturation kills forward sensitivity (EXACT).  _[Gornushkin 1999]_
+- `EXACT` · `slabCurve_inverse_lipschitz` — Inverse ill-conditioning — the condition number of the equivalent-width inversion (EXACT).  _[Gornushkin 1999]_
+- `EXACT` · `slabCurve_roundTrip_lipschitz` — Round-trip inverse-Lipschitz bound in τ (EXACT).  _[Gornushkin 1999]_
 
 ## `ErrorBudget.lean`  (CflibsFormal)
 *the error-propagation chain and DERIVED reliability thresholds*
@@ -299,6 +315,9 @@
 - `REDUCED` · `olsIntercept_stable_centered` — Intercept (concentration) sensitivity, centered convention.  _[Tognoni 2010]_
 - `PURE-MATH` · `composition_abs_sub_le_uniform` — Uniform composition error bound.
 - `REDUCED` · `composition_target_sufficient` — Composition accuracy ⇒ per-species density-error budget (the closure-leg inverse).  _[Tognoni 2010]_
+- `REDUCED` · `olsSlope_stable_hetero` — N-line slope sensitivity, HETEROSCEDASTIC (per-line ℓ¹ bound).  _[Tognoni 2010]_
+- `REDUCED` · `olsSlope_stable_l1_of_hetero` — The heteroscedastic bound strictly generalizes `olsSlope_stable_l1`.  _[Tognoni 2010]_
+- `REDUCED` · `temp_rel_error_hetero` — Composed heteroscedastic noise ⇒ relative temperature error (gap #5, temperature leg).  _[Tognoni 2010]_
 
 ## `ForwardMap.lean`  (CflibsFormal)
 *Part 4: the optically-thin forward map*
@@ -347,6 +366,7 @@
 - `EXACT` · `temperature_not_identifiable_of_degenerate` — Degenerate pair ⇒ temperature NOT identifiable.  _[Ciucci 1999]_
 - `EXACT` · `density_identifiability` — Target 2 — relative-density / composition identifiability.  _[Ciucci 1999]_
 - `EXACT` · `electron_density_identifiability` — Target 3 — electron-density / stage-ratio identifiability via Saha.  _[Saha–Eggert (Griem)]_
+- `EXACT` · `temperature_ratio_near_degenerate` — Quantitative near-degeneracy — linear-in-`ΔE` temperature-conditioning bound.  _[Ciucci 1999]_
 
 ## `Inverse.lean`  (CflibsFormal)
 *Part 6: the algorithm-agnostic inverse-problem framework*
@@ -363,6 +383,15 @@
 - `EXACT` · `general_identifiability` — General identifiability — the central theorem.  _[Ciucci 1999]_
 - `PURE-MATH` · `sound_estimators_agree` — Cross-method agreement bridge.
 - `APPROXIMATION` · `rawCompositionEstimator_sound` — Soundness of the raw estimator (constant-`emit` case).  _[Ciucci 1999]_
+
+## `JointIdentifiability.lean`  (CflibsFormal)
+*Part 7: joint (temperature, composition) identifiability*
+
+**Definitions**
+- `observe` — Two-line observation / forward map.
+
+**Results**
+- `EXACT` · `joint_identifiability` — Joint (temperature, composition) identifiability — discharging the `hTratio` caveat.  _[Ciucci 1999]_
 
 ## `LeastSquaresFit.lean`  (CflibsFormal)
 *the ordinary-least-squares projection / feasibility inverse*
@@ -429,6 +458,11 @@
 - `PURE-MATH` · `sahaSplit_sum` — The two stages partition the element's total density: `n_neutral + n_ion = N_tot` (exact at any `n_e`).
 - `REDUCED` · `sahaSplit_saha` — The split is genuinely the Saha split: `n_ion·n_e/n_neutral = S`.  _[Aguilera & Aragón 2007]_
 - `REDUCED` · `sahaIonDensity_antitone` — Ionization suppression.  _[Aguilera & Aragón 2007]_
+- `EXACT` · `homologousPair_ratio_closed_form` — Cross-species two-line ratio — closed form (shared partition function).  _[Ciucci 1999]_
+- `EXACT` · `homologousPair_ratio_temperature_invariant` — THE per-shot-`T` deliverable — homologous-pair exact temperature invariance.  _[Ciucci 1999]_
+- `EXACT` · `nonHomologousPair_ratio_temperature_dependent` — Contrast — invariance is a property OF the energy matching.  _[Ciucci 1999]_
+- `EXACT` · `homologousPair_ratio_perU_closed_form` — Per-species-`U` two-line ratio — closed form with the `U`-residual explicit.  _[Ciucci 1999]_
+- `REDUCED` · `homologousPair_ratio_perU_temperature_invariant` — Per-species-`U` homologous-pair temperature invariance (REDUCED).  _[Ciucci 1999]_
 
 ## `MultiSpecies.lean`  (CflibsFormal)
 *Multi-species / multi-stage composition glue*
@@ -436,12 +470,22 @@
 **Definitions**
 - `speciesComposition` — Elemental/species composition vector: the number fraction of species `s`, `C s = N s / (∑_t N t)`.
 - `deNormalizedDensity` — Number density of species `s` recovered from its measured designated-line intensity `I` by dividing out the calibration `Fcal`, Einstein coefficient `A s`, d…
+- `deNormalizedDensityPerU` — Per-species de-normalized density reader.
+- `lineIntensityPerU` — Per-species forward line-emission model.
 
 **Results**
 - `EXACT` · `speciesComposition_sum_one` — Multi-species closure.  _[Ciucci 1999]_
 - `EXACT` · `speciesComposition_mem_stdSimplex` — Multi-species closure as simplex membership.  _[Ciucci 1999]_
 - `EXACT` · `deNormalized_lineIntensity` — Inversion identity.  _[Ciucci 1999]_
 - `EXACT` · `density_ratio_from_intensities` — Density-from-intensity bridge.  _[Ciucci 1999]_
+- `PURE-MATH` · `deNormalizedDensity_eq_deNormalizedDensityPerU` — Shared-`U` reader is the per-`U` reader at `Us = partitionFunction kB T g E`.
+- `PURE-MATH` · `lineIntensity_eq_lineIntensityPerU` — Shared-`U` forward map is the per-`U` forward map at `Us = partitionFunction kB T g E`.
+- `EXACT` · `deNormalized_lineIntensity_perU` — Per-species inversion identity.  _[Ciucci 1999]_
+- `EXACT` · `deNormalized_lineIntensity_ofPerU` — Shared-`U` inversion identity as a special case of the per-`U` one.  _[Ciucci 1999]_
+- `EXACT` · `density_ratio_from_intensities_perU` — Per-species density-from-intensity bridge.  _[Ciucci 1999]_
+- `EXACT` · `density_ratio_from_intensities_ofPerU` — Shared-`U` ratio theorem as a special case of the per-`U` one.  _[Ciucci 1999]_
+- `PURE-MATH` · `speciesComposition_ratio` — Composition ratio equals density ratio.
+- `EXACT` · `speciesComposition_ratio_from_intensities_perU` — Relative composition from intensities (per-species `U`).  _[Ciucci 1999]_
 
 ## `OLS.lean`  (CflibsFormal)
 *the ordinary-least-squares algebraic foundation*
@@ -507,6 +551,22 @@
 - `EXACT` · `log_sahaFactor` — Saha-plot log identity.  _[Saha–Eggert (Griem)]_
 - `PURE-MATH` · `chargeNeutrality_two_stage` — Charge neutrality, two-stage form.
 
+## `SahaEquilibrium.lean`  (CflibsFormal)
+*Coupled Saha–closure–charge self-consistency (reduced core)*
+
+**Definitions**
+- `sahaEquilibriumNe` — Self-consistent electron density of the reduced single-element, two-stage, fixed-`T` Saha core: the unique positive root of `n_e² = S · (Ntot − n_e)`,  `n_e…
+
+**Results**
+- `PURE-MATH` · `sahaEquilibriumNe_pos` — Positivity of the self-consistent density.
+- `REDUCED` · `sahaEquilibriumNe_selfConsistent` — Self-consistency (fixed-point) equation.  _[Saha–Eggert (Griem)]_
+- `PURE-MATH` · `sahaEquilibriumNe_lt_totalDensity` — The equilibrium density is below the total density.
+- `PURE-MATH` · `selfConsistent_unique` — Uniqueness of the positive root.
+- `REDUCED` · `sahaEquilibrium_selfConsistent` — Existence of the self-consistent state.  _[Saha–Eggert (Griem)]_
+- `REDUCED` · `selfConsistentState_unique` — Uniqueness of the self-consistent state.  _[Saha–Eggert (Griem)]_
+- `REDUCED` · `sahaEquilibrium_unique_state` — Unique existence of the coupled self-consistent state.  _[Saha–Eggert (Griem)]_
+- `REDUCED` · `sahaEquilibriumNe_strictMono_S` — Monotonicity in the Saha factor.  _[Saha–Eggert (Griem)]_
+
 ## `SahaInverse.lean`  (CflibsFormal)
 *Part 6: coupling Saha into the inverse problem*
 
@@ -518,6 +578,15 @@
 - `REDUCED` · `sahaBoltzmann_plot` — Saha–Boltzmann plot.  _[Yalcin 1999]_
 - `EXACT` · `sahaBoltzmann_shift_eq_log_saha` — Saha–Boltzmann shift equals the log Saha factor.  _[Yalcin 1999]_
 - `EXACT` · `saha_joint_identifiability` — Joint identifiability of `(T, n_e)` from the Saha–Boltzmann plot.  _[Yalcin 1999]_
+
+## `SahaStability.lean`  (CflibsFormal)
+*Part 2b: stability of the `n_e` diagnostic*
+
+**Results**
+- `PURE-MATH` · `saha_ratio_cancel` — Ratio-cancellation core (PURE-MATH).
+- `EXACT` · `electronDensity_relativeError` — EXACT relative-error transfer for `n_e`.  _[Saha–Eggert (Griem)]_
+- `PURE-MATH` · `saha_inv_lipschitz` — Lipschitz core (PURE-MATH).
+- `EXACT` · `electronDensity_lipschitz` — EXACT sensitivity bound for the `n_e` diagnostic.  _[Saha–Eggert (Griem)]_
 
 ## `SelfAbsorption.lean`  (CflibsFormal)
 *self-absorption / optical-thickness-aware forward map*
@@ -550,6 +619,7 @@
 - `EXACT` · `thick_density_identifiability` — PRESERVED (known, matched `τ`) — per-species density identifiability.  _[Bulajic 2002]_
 - `EXACT` · `thick_composition_identifiability` — PRESERVED (known, matched `τ`) — multi-species composition identifiability.  _[Bulajic 2002]_
 - `EXACT` · `selfAbsorption_breaks_identifiability` — LOST (unknown `τ`) — self-absorption breaks identifiability.  _[Bulajic 2002]_
+- `EXACT` · `selfAbsorption_breaks_composition_identifiability` — LOST at the COMPOSITION level (unknown per-species `τ`) — self-absorption breaks closure identifiability.  _[Bulajic 2002]_
 
 ## `SelfReversal.lean`  (CflibsFormal)
 *self-reversal (the two-zone line dip)*

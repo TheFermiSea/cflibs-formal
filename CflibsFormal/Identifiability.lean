@@ -42,6 +42,12 @@ The theorems are:
   produce identical ratio observations: the distinct-energy hypothesis of
   Target 1 is *necessary*, and a runtime "small `ΔE` ⇒ refuse" gate is grounded
   in a theorem rather than a heuristic.
+* `temperature_ratio_near_degenerate` — **quantitative interpolation.** For small
+  `|E_i − E_j|` the two-line ratio is *nearly* `T`-independent: the difference of the
+  ratio at two temperatures is bounded LINEARLY in `|E_i − E_j|`, so as `ΔE → 0` the
+  observable temperature signal vanishes and inference is ill-conditioned. This is the
+  quantitative form of `temperature_degeneracy`, whose `ΔE = 0` collapse it recovers as
+  an exact limit (RHS `→ 0`).
 * `density_identifiability` — **Target 2.** With `T` and atomic data fixed and
   nondegenerate, the species total number density `N` is recovered from a single
   line intensity (equal intensities ⇒ equal `N`). Since composition `C_s` is `N_s`
@@ -295,6 +301,147 @@ example {N : ℝ}
     N = 4 :=
   density_identifiability (kB := 1) (T := 1) (Fcal := 1) (g := nvIdg) (E := nvIdE) (A := nvIdA)
     (fun _ => one_pos) one_pos (0 : Fin 1) one_pos hI
+
+/-! ### Quantitative near-degeneracy — the linear-in-`ΔE` conditioning bound
+
+`temperature_degeneracy` is the *exact* `ΔE = 0` statement: at equal upper-level energies the
+two-line ratio is constant in `T`. The runtime solver, however, refuses not only at `ΔE = 0` but
+for *small* `|E_i − E_j|`; that gate wants a quantitative interpolation. The next theorem supplies
+it: the two-temperature ratio difference is bounded LINEARLY in `|E_i − E_j|`. -/
+
+/-- **Elementary exponential slope bound.** For all reals `a, b`,
+`exp a − exp b ≤ exp a · (a − b)`. Proof: `exp a − exp b = exp a·(1 − exp(b−a))` and
+`1 − exp(b−a) ≤ a − b` from `Real.add_one_le_exp (b − a) : (b − a) + 1 ≤ exp(b − a)` (valid for
+every `a, b`, no ordering needed). Private helper (no scope-tag row); pure real analysis. -/
+private lemma exp_sub_le_mul (a b : ℝ) :
+    Real.exp a - Real.exp b ≤ Real.exp a * (a - b) := by
+  have hstep : b - a + 1 ≤ Real.exp (b - a) := Real.add_one_le_exp (b - a)
+  have hle : Real.exp a * (1 - Real.exp (b - a)) ≤ Real.exp a * (a - b) :=
+    mul_le_mul_of_nonneg_left (by linarith) (Real.exp_pos a).le
+  have hrw : Real.exp a * (1 - Real.exp (b - a)) = Real.exp a - Real.exp b := by
+    have hab : a + (b - a) = b := by ring
+    rw [mul_sub, mul_one, ← Real.exp_add, hab]
+  rwa [hrw] at hle
+
+/-- **Two-point Lipschitz-type bound for `exp`.** `|exp a − exp b| ≤ max(exp a, exp b)·|a − b|`.
+The slope is controlled by the larger endpoint value (the exponential is convex and increasing).
+Symmetrising `exp_sub_le_mul` over `le_total b a`. Private helper (no scope-tag row); pure real
+analysis. -/
+private lemma abs_exp_sub_le (a b : ℝ) :
+    |Real.exp a - Real.exp b| ≤ max (Real.exp a) (Real.exp b) * |a - b| := by
+  rcases le_total b a with h | h
+  · rw [max_eq_left (Real.exp_le_exp.mpr h),
+      abs_of_nonneg (sub_nonneg.mpr (Real.exp_le_exp.mpr h)),
+      abs_of_nonneg (sub_nonneg.mpr h)]
+    exact exp_sub_le_mul a b
+  · rw [max_eq_right (Real.exp_le_exp.mpr h),
+      abs_sub_comm (Real.exp a) (Real.exp b), abs_sub_comm a b,
+      abs_of_nonneg (sub_nonneg.mpr (Real.exp_le_exp.mpr h)),
+      abs_of_nonneg (sub_nonneg.mpr h)]
+    exact exp_sub_le_mul b a
+
+/-- **Quantitative near-degeneracy — linear-in-`ΔE` temperature-conditioning bound.**
+
+For positive atomic data (`g k > 0`, `A k > 0`), positive densities/calibrations, and any two
+temperatures `T₁, T₂` (via their inverse-temperature slots `1/(k_B·T_m)`), the two-line
+intensity ratio differs between the two parameter sets by at most a quantity **linear in**
+`|E_i − E_j|`:
+
+`|ratio(T₁) − ratio(T₂)| ≤ ((g_j·A_j)/(g_i·A_i)) · C · |E_i − E_j| · |1/(k_B·T₁) − 1/(k_B·T₂)|`,
+
+with the explicit constant `C = max(exp x₁, exp x₂)`, `x_m = (E_i − E_j)/(k_B·T_m)`.
+
+Derivation (all steps EXACT, no approximation of the forward model): by
+`lineIntensity_ratio_closed_form` the difference is `(g_j·A_j)/(g_i·A_i)·(exp x₁ − exp x₂)`;
+`abs_exp_sub_le` gives `|exp x₁ − exp x₂| ≤ max(exp x₁, exp x₂)·|x₁ − x₂|`; and
+`x₁ − x₂ = (E_i − E_j)·(1/(k_B·T₁) − 1/(k_B·T₂))` factors the energy gap out of the argument
+difference. Everything (`Fcal`, `N`, the partition function `U`) cancels, exactly as in the
+identifiability theorems.
+
+Physics reading: as `ΔE = E_i − E_j → 0` the right-hand side vanishes *linearly* in `ΔE`, so the
+temperature-dependence of the observed ratio — the entire signal a two-line thermometer has to
+work with — shrinks to zero at a controlled rate. Any measurement noise `ε` of fixed size then
+swamps the `O(ΔE)` signal, so `T` inference is ill-conditioned: this is the quantitative,
+finite-`ΔE` form of `temperature_degeneracy` (the `ΔE = 0` collapse), and it grounds the strict
+solver's *"small `ΔE` ⇒ refuse"* gate in a bound rather than a heuristic threshold. At `E_i = E_j`
+the factor `|E_i − E_j|` is `0`, so the bound forces `ratio(T₁) = ratio(T₂)`, recovering
+`temperature_degeneracy` as the exact limit (see the witness below). (Ciucci et al. 1999, the
+two-line Boltzmann ratio.) -/
+theorem temperature_ratio_near_degenerate [Nonempty ι]
+    {kB T₁ T₂ N₁ N₂ Fcal₁ Fcal₂ : ℝ} {g E A : ι → ℝ}
+    (hg : ∀ k, 0 < g k) (hN₁ : 0 < N₁) (hN₂ : 0 < N₂)
+    (hFcal₁ : 0 < Fcal₁) (hFcal₂ : 0 < Fcal₂) (hA : ∀ k, 0 < A k) (i j : ι) :
+    |lineIntensity kB T₁ N₁ Fcal₁ g E A j / lineIntensity kB T₁ N₁ Fcal₁ g E A i
+        - lineIntensity kB T₂ N₂ Fcal₂ g E A j / lineIntensity kB T₂ N₂ Fcal₂ g E A i|
+      ≤ (g j * A j) / (g i * A i)
+        * max (Real.exp ((E i - E j) / (kB * T₁))) (Real.exp ((E i - E j) / (kB * T₂)))
+        * |E i - E j| * |1 / (kB * T₁) - 1 / (kB * T₂)| := by
+  rw [lineIntensity_ratio_closed_form hg hN₁ hFcal₁ hA i j,
+    lineIntensity_ratio_closed_form hg hN₂ hFcal₂ hA i j]
+  set K := (g j * A j) / (g i * A i) with hK
+  have hKpos : 0 < K := by
+    rw [hK]; exact div_pos (mul_pos (hg j) (hA j)) (mul_pos (hg i) (hA i))
+  set x₁ := (E i - E j) / (kB * T₁) with hx₁
+  set x₂ := (E i - E j) / (kB * T₂) with hx₂
+  -- Factor the positive prefactor `K` out of the difference and its absolute value.
+  have h1 : |K * Real.exp x₁ - K * Real.exp x₂| = K * |Real.exp x₁ - Real.exp x₂| := by
+    rw [← mul_sub, abs_mul, abs_of_pos hKpos]
+  rw [h1]
+  -- Two-point exponential bound.
+  have h2 : |Real.exp x₁ - Real.exp x₂|
+      ≤ max (Real.exp x₁) (Real.exp x₂) * |x₁ - x₂| := abs_exp_sub_le x₁ x₂
+  -- Factor the energy gap out of the argument difference.
+  have h3 : |x₁ - x₂| = |E i - E j| * |1 / (kB * T₁) - 1 / (kB * T₂)| := by
+    rw [hx₁, hx₂, ← abs_mul]
+    congr 1
+    ring
+  rw [h3] at h2
+  calc K * |Real.exp x₁ - Real.exp x₂|
+      ≤ K * (max (Real.exp x₁) (Real.exp x₂)
+          * (|E i - E j| * |1 / (kB * T₁) - 1 / (kB * T₂)|)) :=
+        mul_le_mul_of_nonneg_left h2 hKpos.le
+    _ = K * max (Real.exp x₁) (Real.exp x₂)
+          * |E i - E j| * |1 / (kB * T₁) - 1 / (kB * T₂)| := by ring
+
+/-- **`ΔE = 0` limit — the bound recovers `temperature_degeneracy`.** Non-vacuity witness for the
+near-degeneracy bound: at equal energies (`E i = E j`) the factor `|E_i − E_j|` is `0`, so the
+right-hand side is exactly `0`; the bound then forces the ratio difference to `0`, i.e. the ratio
+is `T`-independent. So the linear bound genuinely interpolates through the exact degeneracy at
+`ΔE = 0` (it is not a slack over-estimate that stays positive there). -/
+example [Nonempty ι] {kB T₁ T₂ N₁ N₂ Fcal₁ Fcal₂ : ℝ} {g E A : ι → ℝ}
+    (hg : ∀ k, 0 < g k) (hN₁ : 0 < N₁) (hN₂ : 0 < N₂)
+    (hFcal₁ : 0 < Fcal₁) (hFcal₂ : 0 < Fcal₂) (hA : ∀ k, 0 < A k)
+    (i j : ι) (hE : E i = E j) :
+    lineIntensity kB T₁ N₁ Fcal₁ g E A j / lineIntensity kB T₁ N₁ Fcal₁ g E A i
+      = lineIntensity kB T₂ N₂ Fcal₂ g E A j / lineIntensity kB T₂ N₂ Fcal₂ g E A i := by
+  have hb := temperature_ratio_near_degenerate (kB := kB) (T₁ := T₁) (T₂ := T₂) (E := E)
+    hg hN₁ hN₂ hFcal₁ hFcal₂ hA i j
+  rw [hE] at hb
+  simp only [sub_self, abs_zero, mul_zero, zero_mul] at hb
+  exact sub_eq_zero.mp (abs_eq_zero.mp (le_antisymm hb (abs_nonneg _)))
+
+private def nvNdgg : Fin 2 → ℝ := ![1, 1]
+private def nvNdgE : Fin 2 → ℝ := ![0, 1]
+private def nvNdgA : Fin 2 → ℝ := ![1, 1]
+
+/-- **Non-vacuity witness — the bounded signal is genuinely non-zero away from degeneracy.** With
+distinct energies (`E = ![0,1]`, so `E 0 ≠ E 1`) the two-line ratio is a *non-constant* function
+of `T`: at `T = 1` and `T = 2` the ratios genuinely differ (via `temperature_identifiability`
+contrapositively — equal ratios would force `1 = 2`). So the near-degeneracy bound bounds a
+signal that is truly positive for `ΔE ≠ 0` and only vanishes in the `ΔE → 0` limit; it is not the
+trivial `0 ≤ 0`. -/
+example :
+    lineIntensity 1 1 1 1 nvNdgg nvNdgE nvNdgA 1 / lineIntensity 1 1 1 1 nvNdgg nvNdgE nvNdgA 0
+      ≠ lineIntensity 1 2 1 1 nvNdgg nvNdgE nvNdgA 1
+          / lineIntensity 1 2 1 1 nvNdgg nvNdgE nvNdgA 0 := by
+  intro h
+  have hg : ∀ k, 0 < nvNdgg k := fun k => by fin_cases k <;> norm_num [nvNdgg]
+  have hA : ∀ k, 0 < nvNdgA k := fun k => by fin_cases k <;> norm_num [nvNdgA]
+  have hE : nvNdgE 0 ≠ nvNdgE 1 := by norm_num [nvNdgE]
+  have hT : (1 : ℝ) = 2 :=
+    temperature_identifiability one_pos one_pos two_pos hg one_pos one_pos one_pos one_pos hA
+      0 1 hE h
+  norm_num at hT
 
 end CflibsFormal
 

@@ -183,4 +183,148 @@ theorem equivWidth_weakLine {φ : ℝ → ℝ} (hφnn : 0 ≤ φ) (hφ : Integra
     simp only [zero_add, smul_eq_mul, zero_mul, neg_zero, Real.exp_zero]
     ring
 
+/-- **Saturation kills forward sensitivity (EXACT).** For `τ₁ ≤ τ₂` the slab curve of growth
+`g(τ) = 1 - exp(-τ)` — the rectangular equivalent width `W = 1 - e^{-τ}` of
+`equivWidth_rectangular` — obeys `|g(τ₂) - g(τ₁)| ≤ e^{-τ₁} · (τ₂ - τ₁)`: the forward response
+decays like `e^{-τ}`, so deep in saturation the observable stops moving with `τ`. Proof:
+`e^{-τ₁} - e^{-τ₂} = e^{-τ₁}(1 - e^{-(τ₂-τ₁)}) ≤ e^{-τ₁}(τ₂-τ₁)` via `Real.one_sub_le_exp_neg`. The
+thick-regime √τ damping-wing growth stays out of scope (see the module honest-scope note). -/
+theorem slabCurve_forward_lipschitz {τ₁ τ₂ : ℝ} (hτ : τ₁ ≤ τ₂) :
+    |(1 - Real.exp (-τ₂)) - (1 - Real.exp (-τ₁))| ≤ Real.exp (-τ₁) * (τ₂ - τ₁) := by
+  have hle : Real.exp (-τ₂) ≤ Real.exp (-τ₁) := Real.exp_le_exp.mpr (by linarith)
+  have hprod : Real.exp (-τ₁) * Real.exp (-(τ₂ - τ₁)) = Real.exp (-τ₂) := by
+    rw [← Real.exp_add]; congr 1; ring
+  have hval : (1 - Real.exp (-τ₂)) - (1 - Real.exp (-τ₁))
+      = Real.exp (-τ₁) - Real.exp (-τ₂) := by ring
+  rw [hval, abs_of_nonneg (by linarith)]
+  have hcalc : Real.exp (-τ₁) * (1 - Real.exp (-(τ₂ - τ₁)))
+      = Real.exp (-τ₁) - Real.exp (-τ₂) := by rw [mul_sub, mul_one, hprod]
+  have ha : (0:ℝ) ≤ Real.exp (-τ₁) := (Real.exp_pos _).le
+  have hkey : Real.exp (-τ₁) * (1 - Real.exp (-(τ₂ - τ₁)))
+      ≤ Real.exp (-τ₁) * (τ₂ - τ₁) :=
+    mul_le_mul_of_nonneg_left (by linarith [Real.one_sub_le_exp_neg (τ₂ - τ₁)]) ha
+  linarith [hkey, hcalc]
+
+/-- **Inverse ill-conditioning — the condition number of the equivalent-width inversion (EXACT).**
+On the unsaturated region `W₁, W₂ ≤ Wmax` with `Wmax < 1` (nonnegativity of the widths is not
+even needed), the inverse `τ = -log(1 - W)` is Lipschitz with constant `1/(1 - Wmax)`:
+`|log(1-W₁) - log(1-W₂)| ≤ |W₁ - W₂| / (1 - Wmax)`. The condition number `1/(1 - Wmax)` blows up as
+`Wmax → 1`, quantifying why the inversion is unusable in saturation — the explicit bound that
+licenses the runtime saturation gate ("refuse when saturated"). Proof: `log a - log b ≤ (a-b)/b`
+(from `Real.log_le_sub_one_of_pos`) two-sidedly, then `1 - W ≥ 1 - Wmax > 0`. -/
+theorem slabCurve_inverse_lipschitz {W₁ W₂ Wmax : ℝ} (hWmax : Wmax < 1)
+    (hW₁ : W₁ ≤ Wmax) (hW₂ : W₂ ≤ Wmax) :
+    |Real.log (1 - W₁) - Real.log (1 - W₂)| ≤ |W₁ - W₂| / (1 - Wmax) := by
+  have hc : (0:ℝ) < 1 - Wmax := by linarith
+  have hupos : (0:ℝ) < 1 - W₁ := by linarith
+  have hvpos : (0:ℝ) < 1 - W₂ := by linarith
+  have hcv : 1 - Wmax ≤ 1 - W₂ := by linarith
+  have hcu : 1 - Wmax ≤ 1 - W₁ := by linarith
+  have hMnn : (0:ℝ) ≤ |W₁ - W₂| := abs_nonneg _
+  have hlog : ∀ a b : ℝ, 0 < a → 0 < b → Real.log a - Real.log b ≤ (a - b) / b := by
+    intro a b ha hb
+    have h := Real.log_le_sub_one_of_pos (div_pos ha hb)
+    rw [Real.log_div ha.ne' hb.ne'] at h
+    have heq : (a - b) / b = a / b - 1 := by rw [sub_div, div_self hb.ne']
+    linarith
+  have hf : Real.log (1 - W₁) - Real.log (1 - W₂) ≤ |W₁ - W₂| / (1 - Wmax) := by
+    have h1 := hlog (1 - W₁) (1 - W₂) hupos hvpos
+    have heqs : (1 - W₁) - (1 - W₂) = W₂ - W₁ := by ring
+    have hle : (1 - W₁) - (1 - W₂) ≤ |W₁ - W₂| := by
+      rw [heqs, abs_sub_comm]; exact le_abs_self _
+    have h2 : ((1 - W₁) - (1 - W₂)) / (1 - W₂) ≤ |W₁ - W₂| / (1 - Wmax) := by
+      rw [div_le_div_iff₀ hvpos hc]
+      nlinarith [mul_nonneg hMnn (by linarith : (0:ℝ) ≤ (1 - W₂) - (1 - Wmax)),
+        mul_nonneg (by linarith [hle] : (0:ℝ) ≤ |W₁ - W₂| - ((1 - W₁) - (1 - W₂))) hc.le]
+    linarith [h1, h2]
+  have hr : Real.log (1 - W₂) - Real.log (1 - W₁) ≤ |W₁ - W₂| / (1 - Wmax) := by
+    have h1 := hlog (1 - W₂) (1 - W₁) hvpos hupos
+    have heqs : (1 - W₂) - (1 - W₁) = W₁ - W₂ := by ring
+    have hle : (1 - W₂) - (1 - W₁) ≤ |W₁ - W₂| := by
+      rw [heqs]; exact le_abs_self _
+    have h2 : ((1 - W₂) - (1 - W₁)) / (1 - W₁) ≤ |W₁ - W₂| / (1 - Wmax) := by
+      rw [div_le_div_iff₀ hupos hc]
+      nlinarith [mul_nonneg hMnn (by linarith : (0:ℝ) ≤ (1 - W₁) - (1 - Wmax)),
+        mul_nonneg (by linarith [hle] : (0:ℝ) ≤ |W₁ - W₂| - ((1 - W₂) - (1 - W₁))) hc.le]
+    linarith [h1, h2]
+  exact abs_sub_le_iff.mpr ⟨hf, hr⟩
+
+/-- **Round-trip inverse-Lipschitz bound in τ (EXACT).** For `0 ≤ τ₁, τ₂ ≤ τmax`,
+`|τ₁ - τ₂| ≤ |g(τ₁) - g(τ₂)| · e^{τmax}` with `g(τ) = 1 - exp(-τ)`: the inverse-Lipschitz constant
+`e^{τmax}` equals `1/(1 - Wmax)` for `Wmax = g(τmax)`, the same blow-up as
+`slabCurve_inverse_lipschitz` phrased via a τ-bound instead of a `W`-bound. Proof: for `a ≤ b`,
+`e^{-a} - e^{-b} = e^{-b}(e^{b-a} - 1) ≥ e^{-τmax}(b - a)` via `Real.add_one_le_exp`, then multiply
+by `e^{τmax}`. The thick-regime √τ damping wing stays out of scope (module honest-scope note). -/
+theorem slabCurve_roundTrip_lipschitz {τ₁ τ₂ τmax : ℝ}
+    (hτ₁ : 0 ≤ τ₁) (hτ₂ : 0 ≤ τ₂) (h₁ : τ₁ ≤ τmax) (h₂ : τ₂ ≤ τmax) :
+    |τ₁ - τ₂| ≤ |(1 - Real.exp (-τ₁)) - (1 - Real.exp (-τ₂))| * Real.exp τmax := by
+  have key : ∀ a b : ℝ, 0 ≤ a → b ≤ τmax → a ≤ b →
+      b - a ≤ (Real.exp (-a) - Real.exp (-b)) * Real.exp τmax := by
+    intro a b ha hbmax hab
+    have hb1 : (0:ℝ) ≤ Real.exp (-b) := (Real.exp_pos _).le
+    have hmul : Real.exp (-b) * Real.exp (b - a) = Real.exp (-a) := by
+      rw [← Real.exp_add]; congr 1; ring
+    have hfac : Real.exp (-a) - Real.exp (-b)
+        = Real.exp (-b) * (Real.exp (b - a) - 1) := by rw [mul_sub, mul_one, hmul]
+    have hlow : Real.exp (-b) * (b - a) ≤ Real.exp (-a) - Real.exp (-b) := by
+      rw [hfac]
+      exact mul_le_mul_of_nonneg_left (by linarith [Real.add_one_le_exp (b - a)]) hb1
+    have hba : (0:ℝ) ≤ b - a := by linarith
+    have hbb : Real.exp (-τmax) ≤ Real.exp (-b) := Real.exp_le_exp.mpr (by linarith)
+    have hlow2 : Real.exp (-τmax) * (b - a) ≤ Real.exp (-a) - Real.exp (-b) :=
+      le_trans (mul_le_mul_of_nonneg_right hbb hba) hlow
+    have hexpmax : (0:ℝ) < Real.exp τmax := Real.exp_pos _
+    have hcancel : Real.exp (-τmax) * Real.exp τmax = 1 := by
+      rw [← Real.exp_add, neg_add_cancel, Real.exp_zero]
+    have hLHS : Real.exp (-τmax) * (b - a) * Real.exp τmax = b - a := by
+      rw [mul_right_comm, hcancel, one_mul]
+    have hfin := mul_le_mul_of_nonneg_right hlow2 hexpmax.le
+    rw [hLHS] at hfin
+    exact hfin
+  rcases le_total τ₁ τ₂ with h | h
+  · have habs1 : |τ₁ - τ₂| = τ₂ - τ₁ := by
+      rw [abs_sub_comm]; exact abs_of_nonneg (by linarith)
+    have hsgn : (1 - Real.exp (-τ₁)) - (1 - Real.exp (-τ₂))
+        = -(Real.exp (-τ₁) - Real.exp (-τ₂)) := by ring
+    have hexple : Real.exp (-τ₂) ≤ Real.exp (-τ₁) := Real.exp_le_exp.mpr (by linarith)
+    have habs2 : |(1 - Real.exp (-τ₁)) - (1 - Real.exp (-τ₂))|
+        = Real.exp (-τ₁) - Real.exp (-τ₂) := by
+      rw [hsgn, abs_neg, abs_of_nonneg (by linarith)]
+    rw [habs1, habs2]
+    exact key τ₁ τ₂ hτ₁ h₂ h
+  · have habs1 : |τ₁ - τ₂| = τ₁ - τ₂ := abs_of_nonneg (by linarith)
+    have hsgn : (1 - Real.exp (-τ₁)) - (1 - Real.exp (-τ₂))
+        = Real.exp (-τ₂) - Real.exp (-τ₁) := by ring
+    have hexple : Real.exp (-τ₁) ≤ Real.exp (-τ₂) := Real.exp_le_exp.mpr (by linarith)
+    have habs2 : |(1 - Real.exp (-τ₁)) - (1 - Real.exp (-τ₂))|
+        = Real.exp (-τ₂) - Real.exp (-τ₁) := by
+      rw [hsgn, abs_of_nonneg (by linarith)]
+    rw [habs1, habs2]
+    exact key τ₂ τ₁ hτ₂ h₁ h
+
+/-- Rectangular-profile witness (unit-area indicator of `[0,1]`) for the inverse map. -/
+private noncomputable def nvCogRectProfile : ℝ → ℝ :=
+  Set.indicator (Set.Icc 0 1) (fun _ => 1)
+
+/-- Non-vacuity: for the rectangular equivalent width `W = 1 - e^{-τ}` (`equivWidth_rectangular`)
+the inverse `τ = -log(1 - W)` recovers `τ` exactly, so the forward/inverse pair of the slab curve
+is a genuine bijection off saturation and the conditioning bounds above act on a real inversion. -/
+example (τ : ℝ) : -Real.log (1 - equivWidth nvCogRectProfile τ) = τ := by
+  unfold nvCogRectProfile
+  rw [equivWidth_rectangular]
+  have h : (1:ℝ) - (1 - Real.exp (-τ)) = Real.exp (-τ) := by ring
+  rw [h, Real.log_exp, neg_neg]
+
+-- Non-vacuity: the forward-sensitivity bound is a real inequality on concrete depths `τ ∈ {1, 2}`.
+example : |(1 - Real.exp (-(2:ℝ))) - (1 - Real.exp (-(1:ℝ)))| ≤ Real.exp (-(1:ℝ)) * (2 - 1) :=
+  slabCurve_forward_lipschitz (by norm_num)
+
+-- Non-vacuity: the inverse ill-conditioning bound instantiates on `[0, 1/2]` (`Wmax = 1/2`).
+example : |Real.log (1 - (0:ℝ)) - Real.log (1 - (1/2:ℝ))| ≤ |(0:ℝ) - 1/2| / (1 - 1/2) :=
+  slabCurve_inverse_lipschitz (by norm_num) (by norm_num) (by norm_num)
+
+-- Non-vacuity: the round-trip inverse-Lipschitz bound instantiates on `τ ≤ 2`.
+example : |(1:ℝ) - 2| ≤ |(1 - Real.exp (-(1:ℝ))) - (1 - Real.exp (-(2:ℝ)))| * Real.exp 2 :=
+  slabCurve_roundTrip_lipschitz (by norm_num) (by norm_num) (by norm_num) (by norm_num)
+
 end CflibsFormal

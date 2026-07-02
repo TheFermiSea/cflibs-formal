@@ -10,6 +10,18 @@ Saha.lean	saha_relation	EXACT	Saha–Eggert (Griem)
 Saha.lean	electronDensity_antitone	PURE-MATH	—
 Saha.lean	log_sahaFactor	EXACT	Saha–Eggert (Griem)
 Saha.lean	chargeNeutrality_two_stage	PURE-MATH	—
+SahaStability.lean	saha_ratio_cancel	PURE-MATH	—
+SahaStability.lean	electronDensity_relativeError	EXACT	Saha–Eggert (Griem)
+SahaStability.lean	saha_inv_lipschitz	PURE-MATH	—
+SahaStability.lean	electronDensity_lipschitz	EXACT	Saha–Eggert (Griem)
+SahaEquilibrium.lean	sahaEquilibriumNe_pos	PURE-MATH	—
+SahaEquilibrium.lean	sahaEquilibriumNe_selfConsistent	REDUCED	Saha–Eggert (Griem)
+SahaEquilibrium.lean	sahaEquilibriumNe_lt_totalDensity	PURE-MATH	—
+SahaEquilibrium.lean	selfConsistent_unique	PURE-MATH	—
+SahaEquilibrium.lean	sahaEquilibrium_selfConsistent	REDUCED	Saha–Eggert (Griem)
+SahaEquilibrium.lean	selfConsistentState_unique	REDUCED	Saha–Eggert (Griem)
+SahaEquilibrium.lean	sahaEquilibrium_unique_state	REDUCED	Saha–Eggert (Griem)
+SahaEquilibrium.lean	sahaEquilibriumNe_strictMono_S	REDUCED	Saha–Eggert (Griem)
 Closure.lean	totalDensity_pos	PURE-MATH	—
 Closure.lean	composition_sum_one	EXACT	Ciucci 1999
 Closure.lean	composition_nonneg	PURE-MATH	—
@@ -28,6 +40,14 @@ MultiSpecies.lean	speciesComposition_sum_one	EXACT	Ciucci 1999
 MultiSpecies.lean	speciesComposition_mem_stdSimplex	EXACT	Ciucci 1999
 MultiSpecies.lean	deNormalized_lineIntensity	EXACT	Ciucci 1999
 MultiSpecies.lean	density_ratio_from_intensities	EXACT	Ciucci 1999
+MultiSpecies.lean	deNormalizedDensity_eq_deNormalizedDensityPerU	PURE-MATH	—
+MultiSpecies.lean	lineIntensity_eq_lineIntensityPerU	PURE-MATH	—
+MultiSpecies.lean	deNormalized_lineIntensity_perU	EXACT	Ciucci 1999
+MultiSpecies.lean	deNormalized_lineIntensity_ofPerU	EXACT	Ciucci 1999
+MultiSpecies.lean	density_ratio_from_intensities_perU	EXACT	Ciucci 1999
+MultiSpecies.lean	density_ratio_from_intensities_ofPerU	EXACT	Ciucci 1999
+MultiSpecies.lean	speciesComposition_ratio	PURE-MATH	—
+MultiSpecies.lean	speciesComposition_ratio_from_intensities_perU	EXACT	Ciucci 1999
 Classic.lean	classicDensity_recovers	EXACT	Ciucci 1999
 Classic.lean	classic_sound	EXACT	Ciucci 1999
 Classic.lean	classic_sound_sum_one	PURE-MATH	—
@@ -37,11 +57,17 @@ Identifiability.lean	lineIntensity_ratio_closed_form	EXACT	Ciucci 1999
 Identifiability.lean	temperature_identifiability	EXACT	Ciucci 1999
 Identifiability.lean	temperature_degeneracy	EXACT	Ciucci 1999
 Identifiability.lean	temperature_not_identifiable_of_degenerate	EXACT	Ciucci 1999
+Identifiability.lean	temperature_ratio_near_degenerate	EXACT	Ciucci 1999
+AtomicDataPerturbation.lean	classicDensity_aliasing	EXACT	Tognoni 2010
+AtomicDataPerturbation.lean	classicDensity_aliasing_error	REDUCED	Tognoni 2010
+AtomicDataPerturbation.lean	classicDensity_aliasing_error_channels	REDUCED	Tognoni 2010
+AtomicDataPerturbation.lean	classicComposition_atomicData_error	REDUCED	Tognoni 2010
 Identifiability.lean	density_identifiability	EXACT	Ciucci 1999
 Identifiability.lean	electron_density_identifiability	EXACT	Saha–Eggert (Griem)
 Inverse.lean	general_identifiability	EXACT	Ciucci 1999
 Inverse.lean	sound_estimators_agree	PURE-MATH	—
 Inverse.lean	rawCompositionEstimator_sound	APPROXIMATION	Ciucci 1999
+JointIdentifiability.lean	joint_identifiability	EXACT	Ciucci 1999
 Robustness.lean	twoLineBeta_stable	PURE-MATH	—
 Robustness.lean	logRatioIntercept_stable	PURE-MATH	—
 Robustness.lean	twoLineBeta_continuous	PURE-MATH	—
@@ -88,6 +114,7 @@ SelfAbsorptionInverse.lean	lineIntensity_smul_left	PURE-MATH	—
 SelfAbsorptionInverse.lean	thick_density_identifiability	EXACT	Bulajic 2002
 SelfAbsorptionInverse.lean	thick_composition_identifiability	EXACT	Bulajic 2002
 SelfAbsorptionInverse.lean	selfAbsorption_breaks_identifiability	EXACT	Bulajic 2002
+SelfAbsorptionInverse.lean	selfAbsorption_breaks_composition_identifiability	EXACT	Bulajic 2002
 CurveOfGrowth.lean	cogIntensity_slab_eq	EXACT	Gornushkin 1999
 CurveOfGrowth.lean	cogIntensity_strictMono	EXACT	Cristoforetti–Tognoni 2013
 CurveOfGrowth.lean	cogIntensity_injective	EXACT	Cristoforetti–Tognoni 2013
@@ -213,6 +240,9 @@ ErrorBudget.lean	maxPerLineError_sufficient	REDUCED	Tognoni 2010
 ErrorBudget.lean	abs_exp_sub_one_le	PURE-MATH	—
 ErrorBudget.lean	relDensity_le	EXACT	Tognoni 2010
 ErrorBudget.lean	olsIntercept_stable_centered	REDUCED	Tognoni 2010
+ErrorBudget.lean	olsSlope_stable_hetero	REDUCED	Tognoni 2010
+ErrorBudget.lean	olsSlope_stable_l1_of_hetero	REDUCED	Tognoni 2010
+ErrorBudget.lean	temp_rel_error_hetero	REDUCED	Tognoni 2010
 ErrorBudget.lean	composition_abs_sub_le_uniform	PURE-MATH	—
 ErrorBudget.lean	composition_target_sufficient	REDUCED	Tognoni 2010
 Alt/OLSVariance.lean	olsSlope_estimator_eq	PURE-MATH	—
@@ -246,6 +276,11 @@ MatrixEffects.lean	recovered_ratio_from_intensities	EXACT	Aitchison 1986
 MatrixEffects.lean	sahaSplit_sum	PURE-MATH	—
 MatrixEffects.lean	sahaSplit_saha	REDUCED	Aguilera & Aragón 2007
 MatrixEffects.lean	sahaIonDensity_antitone	REDUCED	Aguilera & Aragón 2007
+MatrixEffects.lean	homologousPair_ratio_closed_form	EXACT	Ciucci 1999
+MatrixEffects.lean	homologousPair_ratio_temperature_invariant	EXACT	Ciucci 1999
+MatrixEffects.lean	nonHomologousPair_ratio_temperature_dependent	EXACT	Ciucci 1999
+MatrixEffects.lean	homologousPair_ratio_perU_closed_form	EXACT	Ciucci 1999
+MatrixEffects.lean	homologousPair_ratio_perU_temperature_invariant	REDUCED	Ciucci 1999
 TemporalEvolution.lean	temporal_temperature_insitu	REDUCED	Tognoni 2010
 TemporalEvolution.lean	temporal_composition_invariant	EXACT	Ciucci 1999
 TemporalEvolution.lean	temporal_composition_gate_independent	REDUCED	Tognoni 2010
@@ -261,3 +296,6 @@ EquivalentWidth.lean	equivWidth_le_thin	EXACT	Gornushkin 1999
 EquivalentWidth.lean	equivWidth_mono	EXACT	Gornushkin 1999
 EquivalentWidth.lean	equivWidth_rectangular	EXACT	Gornushkin 1999
 EquivalentWidth.lean	equivWidth_weakLine	EXACT	Gornushkin 1999
+EquivalentWidth.lean	slabCurve_forward_lipschitz	EXACT	Gornushkin 1999
+EquivalentWidth.lean	slabCurve_inverse_lipschitz	EXACT	Gornushkin 1999
+EquivalentWidth.lean	slabCurve_roundTrip_lipschitz	EXACT	Gornushkin 1999

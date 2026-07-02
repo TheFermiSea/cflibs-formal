@@ -37,8 +37,19 @@ We prove:
 partition-function value across species, because it composes exactly with
 `ForwardMap.lineIntensity`, which takes a single `(g, E, A : ι → ℝ)`. This models
 "one designated emitting level per species drawn from a common atomic-data family
-indexed by species". A genuine multi-element form with per-species partition functions
-`U_s` and per-species atomic data is deferred to a follow-up module.
+indexed by species".
+
+**Per-species generalization (gap #7).** The genuine multi-element form with a per-species
+partition function `U_s(T)` — a free positive scalar, summed over species `s`'s *own*
+internal levels — is provided below via `deNormalizedDensityPerU` / `lineIntensityPerU` and
+the theorems `deNormalized_lineIntensity_perU`, `density_ratio_from_intensities_perU`, and
+`speciesComposition_ratio_from_intensities_perU`. The single-family `deNormalizedDensity` /
+`lineIntensity` are the special case `U_s := partitionFunction kB T g E` (bridged by the
+`rfl`-lemmas `deNormalizedDensity_eq_deNormalizedDensityPerU` /
+`lineIntensity_eq_lineIntensityPerU`), so the shared-`U` inversion and ratio theorems are
+re-derived as specializations (`deNormalized_lineIntensity_ofPerU` /
+`density_ratio_from_intensities_ofPerU`). This discharges the shared-`U` reduction flagged
+in `docs/SOLVER_FORMALIZATION_GAPS.md` gap #7.
 -/
 
 namespace CflibsFormal
@@ -123,5 +134,169 @@ theorem density_ratio_from_intensities [Nonempty ι] {kB T Ns Nt Fcal : ℝ} {g 
       = Ns / Nt := by
   rw [deNormalized_lineIntensity hg hNs hFcal hA s,
     deNormalized_lineIntensity hg hNt hFcal hA t]
+
+/-! ### Per-species partition functions (gap #7)
+
+The declarations below replace the single shared partition-function value of
+`deNormalizedDensity` / `lineIntensity` by a **per-species** partition function `U_s`,
+carried as an explicit positive scalar. Physically `U_s = U_s(T)` is the internal partition
+function of species `s`, summed over *its own* level manifold; here it is decoupled from the
+designated-line degeneracies/energies `(g s, E s)` used in the emission factor, which is the
+genuine multi-element structure of CF-LIBS. The shared-`U` API is recovered by substituting
+`U_s := partitionFunction kB T g E` (the `rfl`-bridges below), making every shared-`U`
+statement a special case of the per-species one rather than an independent claim. -/
+
+/-- **Per-species de-normalized density reader.** Number density of species `s` recovered
+from its designated-line intensity `I` using species `s`'s *own* partition function `Us`
+(an explicit positive scalar):
+`N_s = I · U_s / (Fcal · A s · g s · exp(-E s/(k_B T)))`.
+Genuine multi-element generalization of `deNormalizedDensity`: `Us` no longer has to be the
+shared `partitionFunction kB T g E`; each species carries its own `U_s(T)` while the emitting
+line contributes its own `(g s, E s, A s)`. Setting `Us := partitionFunction kB T g E` gives
+back `deNormalizedDensity` definitionally (`deNormalizedDensity_eq_deNormalizedDensityPerU`).
+Discharges the shared-`U` reduction of `docs/SOLVER_FORMALIZATION_GAPS.md` gap #7.
+**Scope EXACT** for the CF-LIBS internal-standard (one designated line per species) reader:
+the per-species inverse is written exactly, with `U_s` an unconstrained physical input. -/
+noncomputable def deNormalizedDensityPerU (kB T Fcal Us : ℝ) (g E A : ι → ℝ)
+    (s : ι) (I : ℝ) : ℝ :=
+  I * Us / (Fcal * A s * g s * boltzmannFactor kB T (E s))
+
+/-- **Per-species forward line-emission model.** Integrated optically-thin intensity of
+species `s`'s designated line with species `s`'s *own* partition function `Us`:
+`I = Fcal · A s · N · g s · exp(-E s/(k_B T)) / U_s`.
+This is `ForwardMap.lineIntensity` with the shared partition function replaced by a
+per-species scalar; `lineIntensity_eq_lineIntensityPerU` records that the shared-family
+forward map is the special case `Us := partitionFunction kB T g E`. **Scope EXACT** (single
+designated line per species; `U_s` a free positive input). -/
+noncomputable def lineIntensityPerU (kB T N Fcal Us : ℝ) (g E A : ι → ℝ) (s : ι) : ℝ :=
+  Fcal * A s * (N * g s * boltzmannFactor kB T (E s) / Us)
+
+/-- **Shared-`U` reader is the per-`U` reader at `Us = partitionFunction kB T g E`.**
+Definitional bridge (`rfl`) making `deNormalizedDensity` a special case of
+`deNormalizedDensityPerU`. -/
+theorem deNormalizedDensity_eq_deNormalizedDensityPerU
+    (kB T Fcal : ℝ) (g E A : ι → ℝ) (s : ι) (I : ℝ) :
+    deNormalizedDensity kB T Fcal g E A s I
+      = deNormalizedDensityPerU kB T Fcal (partitionFunction kB T g E) g E A s I := rfl
+
+/-- **Shared-`U` forward map is the per-`U` forward map at `Us = partitionFunction kB T g E`.**
+Definitional bridge (`rfl`) making `lineIntensity` a special case of `lineIntensityPerU`. -/
+theorem lineIntensity_eq_lineIntensityPerU
+    (kB T N Fcal : ℝ) (g E A : ι → ℝ) (s : ι) :
+    lineIntensity kB T N Fcal g E A s
+      = lineIntensityPerU kB T N Fcal (partitionFunction kB T g E) g E A s := rfl
+
+omit [Fintype ι] in
+/-- **Per-species inversion identity.** De-normalizing species `s`'s per-`U` forward line
+intensity recovers its number density `N` exactly, using the species' own partition function
+`Us`. Genuine multi-element generalization of `deNormalized_lineIntensity`; note the proof
+needs only `0 < Us` (a per-species positivity), and — unlike the shared-`U` version — no
+`Nonempty ι` and no `0 < N`. -/
+theorem deNormalized_lineIntensity_perU {kB T N Fcal Us : ℝ} {g E A : ι → ℝ}
+    (hg : ∀ k, 0 < g k) (hFcal : 0 < Fcal) (hA : ∀ k, 0 < A k) (hUs : 0 < Us) (s : ι) :
+    deNormalizedDensityPerU kB T Fcal Us g E A s (lineIntensityPerU kB T N Fcal Us g E A s)
+      = N := by
+  have hgs := (hg s).ne'
+  have hAs := (hA s).ne'
+  have hFcal' := hFcal.ne'
+  have hUs' := hUs.ne'
+  have hbf := (boltzmannFactor_pos kB T (E s)).ne'
+  unfold deNormalizedDensityPerU lineIntensityPerU
+  field_simp
+
+/-- **Shared-`U` inversion identity as a special case of the per-`U` one.** Re-derives the
+`deNormalized_lineIntensity` statement by specializing `deNormalized_lineIntensity_perU` to
+`Us = partitionFunction kB T g E` via the `rfl`-bridges — witnessing that the shared-`U`
+inversion is not an independent claim. (The original `deNormalized_lineIntensity` above is
+retained verbatim for downstream importers.) -/
+theorem deNormalized_lineIntensity_ofPerU [Nonempty ι] {kB T N Fcal : ℝ} {g E A : ι → ℝ}
+    (hg : ∀ k, 0 < g k) (hFcal : 0 < Fcal) (hA : ∀ k, 0 < A k) (s : ι) :
+    deNormalizedDensity kB T Fcal g E A s (lineIntensity kB T N Fcal g E A s) = N := by
+  simp only [deNormalizedDensity_eq_deNormalizedDensityPerU, lineIntensity_eq_lineIntensityPerU]
+  exact deNormalized_lineIntensity_perU hg hFcal hA (partitionFunction_pos hg) s
+
+omit [Fintype ι] in
+/-- **Per-species density-from-intensity bridge.** With *genuinely per-species* partition
+functions `Us, Ut` (each summed over its own species' level manifold) and per-species
+designated-line data `(g s, E s, A s)` / `(g t, E t, A t)`, at a common temperature `T` and
+calibration `Fcal`, the ratio of the two species' `U`-de-normalized line intensities equals
+the true density ratio `N_s / N_t`. Hence relative composition is fixed by the measured
+intensities and per-species atomic data at known `T`, with no shared-`U` assumption. The
+shared-`U` `density_ratio_from_intensities` is the special case `Us = Ut =
+partitionFunction kB T g E` (`density_ratio_from_intensities_ofPerU`). -/
+theorem density_ratio_from_intensities_perU
+    {kB T Ns Nt Fcal Us Ut : ℝ} {g E A : ι → ℝ}
+    (hg : ∀ k, 0 < g k) (hFcal : 0 < Fcal) (hA : ∀ k, 0 < A k)
+    (hUs : 0 < Us) (hUt : 0 < Ut) (s t : ι) :
+    deNormalizedDensityPerU kB T Fcal Us g E A s (lineIntensityPerU kB T Ns Fcal Us g E A s)
+        / deNormalizedDensityPerU kB T Fcal Ut g E A t (lineIntensityPerU kB T Nt Fcal Ut g E A t)
+      = Ns / Nt := by
+  rw [deNormalized_lineIntensity_perU hg hFcal hA hUs s,
+    deNormalized_lineIntensity_perU hg hFcal hA hUt t]
+
+/-- **Shared-`U` ratio theorem as a special case of the per-`U` one.** Re-derives
+`density_ratio_from_intensities` by specializing `density_ratio_from_intensities_perU` to
+`Us = Ut = partitionFunction kB T g E`. Notably it needs neither `0 < Ns` nor `0 < Nt`,
+which the per-`U` inversion made unnecessary. -/
+theorem density_ratio_from_intensities_ofPerU [Nonempty ι] {kB T Ns Nt Fcal : ℝ}
+    {g E A : ι → ℝ}
+    (hg : ∀ k, 0 < g k) (hFcal : 0 < Fcal) (hA : ∀ k, 0 < A k) (s t : ι) :
+    deNormalizedDensity kB T Fcal g E A s (lineIntensity kB T Ns Fcal g E A s)
+        / deNormalizedDensity kB T Fcal g E A t (lineIntensity kB T Nt Fcal g E A t)
+      = Ns / Nt := by
+  simp only [deNormalizedDensity_eq_deNormalizedDensityPerU, lineIntensity_eq_lineIntensityPerU]
+  exact density_ratio_from_intensities_perU hg hFcal hA
+    (partitionFunction_pos hg) (partitionFunction_pos hg) s t
+
+/-- **Composition ratio equals density ratio.** `C s / C t = N s / N t` for the multi-species
+number-fraction vector, since the shared total density cancels. The closure-side companion of
+the intensity bridge. -/
+theorem speciesComposition_ratio {N : ι → ℝ} (hD : totalDensity N ≠ 0) (s t : ι) :
+    speciesComposition N s / speciesComposition N t = N s / N t := by
+  unfold speciesComposition composition
+  exact div_div_div_cancel_right₀ hD (N s) (N t)
+
+/-- **Relative composition from intensities (per-species `U`).** The elemental
+number-fraction ratio `C_s / C_t` of two species equals the ratio of their per-`U`
+de-normalized designated-line intensities — relative composition is fixed by the measured
+intensities and per-species atomic data at known `T`, with genuinely per-species partition
+functions `Us, Ut`. Combines `density_ratio_from_intensities_perU` with
+`speciesComposition_ratio`. -/
+theorem speciesComposition_ratio_from_intensities_perU
+    {kB T Fcal Us Ut : ℝ} {g E A : ι → ℝ} {N : ι → ℝ}
+    (hg : ∀ k, 0 < g k) (hFcal : 0 < Fcal) (hA : ∀ k, 0 < A k)
+    (hUs : 0 < Us) (hUt : 0 < Ut) (hD : totalDensity N ≠ 0) (s t : ι) :
+    deNormalizedDensityPerU kB T Fcal Us g E A s (lineIntensityPerU kB T (N s) Fcal Us g E A s)
+        / deNormalizedDensityPerU kB T Fcal Ut g E A t
+            (lineIntensityPerU kB T (N t) Fcal Ut g E A t)
+      = speciesComposition N s / speciesComposition N t := by
+  rw [density_ratio_from_intensities_perU hg hFcal hA hUs hUt s t,
+    speciesComposition_ratio hD s t]
+
+/-! ### Non-vacuity witnesses (per-species `U`) -/
+
+/-- Emitting-level degeneracies of two species: genuinely different, `g 0 = 2 ≠ 5 = g 1`. -/
+private def nvPuG : Fin 2 → ℝ := ![2, 5]
+
+/-- Upper-level energies of the two designated lines (arbitrary, distinct). -/
+private def nvPuE : Fin 2 → ℝ := ![1, 2]
+
+/-- Einstein coefficients of the two designated lines (positive). -/
+private def nvPuA : Fin 2 → ℝ := ![1, 1]
+
+/-- **Non-vacuity of `density_ratio_from_intensities_perU`.** Two species with genuinely
+DIFFERENT emitting-level degeneracies (`g 0 = 2 ≠ 5 = g 1`) and genuinely DIFFERENT
+per-species partition functions (`U_0 = 3 ≠ 7 = U_1`) recover a non-trivial density ratio
+`N_0 / N_1 = 2 / 3` from their per-`U` de-normalized designated-line intensities. This is a
+regime the shared-`U` theorem cannot express, since it forces `U_0 = U_1`. -/
+example :
+    deNormalizedDensityPerU (1 : ℝ) 1 1 3 nvPuG nvPuE nvPuA 0
+        (lineIntensityPerU (1 : ℝ) 1 2 1 3 nvPuG nvPuE nvPuA 0)
+      / deNormalizedDensityPerU (1 : ℝ) 1 1 7 nvPuG nvPuE nvPuA 1
+          (lineIntensityPerU (1 : ℝ) 1 3 1 7 nvPuG nvPuE nvPuA 1)
+      = 2 / 3 := by
+  have hg : ∀ k : Fin 2, 0 < nvPuG k := fun k => by fin_cases k <;> norm_num [nvPuG]
+  have hA : ∀ k : Fin 2, 0 < nvPuA k := fun k => by fin_cases k <;> norm_num [nvPuA]
+  exact density_ratio_from_intensities_perU hg (by norm_num) hA (by norm_num) (by norm_num) 0 1
 
 end CflibsFormal
