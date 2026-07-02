@@ -3,7 +3,7 @@
 Generated 2026-06-30 from the formal-leverage review that mapped the CF-LIBS
 no-fallback ("strict mode") solver work onto this verified spec.
 
-**Verification status (authoritative):** `cflibs-formal` is **axiom-clean** — 680
+**Verification status (authoritative):** `cflibs-formal` is **axiom-clean** — 692
 declarations, `lake env axiom-audit` exit 0, foundation-audit 0/0/0. The only axioms
 are the three standard mathlib foundations (`propext`, `Classical.choice`, `Quot.sound`).
 The "2 sorry / 2 admit / 11 axiom" sometimes quoted are **phantom textual counts**

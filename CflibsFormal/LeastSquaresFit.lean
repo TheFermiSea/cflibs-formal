@@ -154,6 +154,13 @@ global minimum of `rss E y` over all affine fits — the smallest achievable mis
 noncomputable def leastSquaresResidual (E y : ι → ℝ) : ℝ :=
   rss E y (olsSlope E y) (olsIntercept E y)
 
+/-- The minimal residual is nonnegative (a sum of squares). Companion fact to
+`LeastSquaresFeasible`: feasibility is impossible at any tolerance `ε < 0`, so the runtime gate
+only ever tests `ε ≥ 0`. -/
+theorem leastSquaresResidual_nonneg (E y : ι → ℝ) : 0 ≤ leastSquaresResidual E y := by
+  unfold leastSquaresResidual rss
+  exact Finset.sum_nonneg fun k _ => sq_nonneg _
+
 /-- **Least-squares feasibility** at tolerance `ε`: the minimal residual is within `ε`,
 `leastSquaresResidual E y ≤ ε`. The runtime admissibility gate — a linear fit to the (noisy)
 data is feasible at level `ε` exactly when *some* line fits within `ε`
@@ -221,7 +228,7 @@ example : olsSlope ![0, 1] ![3, 5] = 2 ∧ olsIntercept ![0, 1] ![3, 5] = 3
     ∧ leastSquaresResidual ![0, 1] ![3, 5] = 0 := by
   refine ols_minimizer_eq_inverse (m0 := 2) (b0 := 3) (fun k => ?_) ?_
   · fin_cases k <;> norm_num
-  · simp [mean, Fin.sum_univ_two]; norm_num
+  · norm_num [mean, Fin.sum_univ_two]
 
 /-- **Off-manifold (noisy) witness.** The three points `(E, y) = ((0,0), (1,0), (2,1))` are NOT
 collinear — no affine `m·E + b` fits all three — so a zero minimal residual is impossible (it
@@ -230,9 +237,7 @@ would put the data on the OLS line, `leastSquaresResidual_eq_zero_iff`). Hence
 targets, distinct from the collinear `ols_recovers_line` case (residual `0`). This is what makes
 `ols_minimizes_rss` / `leastSquaresFeasible_iff_exists` non-vacuous off the manifold. -/
 example : 0 < leastSquaresResidual ![0, 1, 2] ![0, 0, 1] := by
-  have hnn : 0 ≤ leastSquaresResidual ![0, 1, 2] ![0, 0, 1] := by
-    unfold leastSquaresResidual rss
-    exact Finset.sum_nonneg fun k _ => sq_nonneg _
+  have hnn : 0 ≤ leastSquaresResidual ![0, 1, 2] ![0, 0, 1] := leastSquaresResidual_nonneg _ _
   have hne : leastSquaresResidual ![0, 1, 2] ![0, 0, 1] ≠ 0 := by
     intro hzero
     rw [leastSquaresResidual_eq_zero_iff] at hzero

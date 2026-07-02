@@ -85,6 +85,20 @@ to the OLS fit. -/
 noncomputable def olsBoltzmannOrdinate (kB T N Fcal : ℝ) (g E A : ι → ℝ) (k : ι) : ℝ :=
   Real.log (lineIntensity kB T N Fcal g E A k / (g k * A k))
 
+/-- The forward-model Boltzmann-plot ordinates are AFFINE in the energy:
+`olsBoltzmannOrdinate … k = −(1/(k_B T))·E k + log(Fcal·N/U)` — a direct restatement of
+`ForwardMap.boltzmann_plot_intensity` in slope–intercept form. The single collinearity witness
+consumed by both the intercept recovery (`olsIntercept_of_forward`, via `ols_recovers_line`)
+and the zero-residual feasibility (`olsBoltzmann_forward_feasible`, via
+`ols_minimizer_eq_inverse`). -/
+private theorem olsBoltzmannOrdinate_affine [Nonempty ι] {kB T N Fcal : ℝ} {g E A : ι → ℝ}
+    (hg : ∀ k, 0 < g k) (hN : 0 < N) (hFcal : 0 < Fcal) (hA : ∀ k, 0 < A k) (k : ι) :
+    olsBoltzmannOrdinate kB T N Fcal g E A k
+      = -(1 / (kB * T)) * E k + Real.log (Fcal * N / partitionFunction kB T g E) := by
+  unfold olsBoltzmannOrdinate
+  rw [boltzmann_plot_intensity hg hN hFcal hA k]
+  ring
+
 /-- Per-species density read off the OLS intercept:
   `N_s = exp(b_s) · U_s(T) / Fcal`,
 where `b_s = olsIntercept` of the observed ordinates `y_k = log (I_k / (g_k A_k))`. A
@@ -115,14 +129,8 @@ theorem olsIntercept_of_forward [Nonempty ι] {kB T N Fcal : ℝ} {g E A : ι �
     (hg : ∀ k, 0 < g k) (hN : 0 < N) (hFcal : 0 < Fcal) (hA : ∀ k, 0 < A k)
     (hvar : 0 < ∑ k, (E k - mean E) ^ 2) :
     olsIntercept E (fun k => olsBoltzmannOrdinate kB T N Fcal g E A k)
-      = Real.log (Fcal * N / partitionFunction kB T g E) := by
-  have hcol : ∀ k, olsBoltzmannOrdinate kB T N Fcal g E A k
-      = -(1 / (kB * T)) * E k + Real.log (Fcal * N / partitionFunction kB T g E) := by
-    intro k
-    unfold olsBoltzmannOrdinate
-    rw [boltzmann_plot_intensity hg hN hFcal hA k]
-    ring
-  exact (ols_recovers_line hcol hvar).2
+      = Real.log (Fcal * N / partitionFunction kB T g E) :=
+  (ols_recovers_line (olsBoltzmannOrdinate_affine hg hN hFcal hA) hvar).2
 
 /-- **Per-species soundness core.** Feeding the FULL forward-model spectrum of a species
 through the OLS density reader recovers the true density `N`. The OLS intercept recovers
@@ -198,15 +206,20 @@ what the strict-mode feasibility gate tests. -/
 theorem olsBoltzmann_forward_feasible [Nonempty ι] {kB T N Fcal : ℝ} {g E A : ι → ℝ}
     (hg : ∀ k, 0 < g k) (hN : 0 < N) (hFcal : 0 < Fcal) (hA : ∀ k, 0 < A k)
     (hvar : 0 < ∑ k, (E k - mean E) ^ 2) :
-    leastSquaresResidual E (fun k => olsBoltzmannOrdinate kB T N Fcal g E A k) = 0 := by
-  have hcol : ∀ k, (fun k => olsBoltzmannOrdinate kB T N Fcal g E A k) k
-      = -(1 / (kB * T)) * E k + Real.log (Fcal * N / partitionFunction kB T g E) := by
-    intro k
-    change olsBoltzmannOrdinate kB T N Fcal g E A k = _
-    unfold olsBoltzmannOrdinate
-    rw [boltzmann_plot_intensity hg hN hFcal hA k]
-    ring
-  exact (ols_minimizer_eq_inverse hcol hvar).2.2
+    leastSquaresResidual E (fun k => olsBoltzmannOrdinate kB T N Fcal g E A k) = 0 :=
+  (ols_minimizer_eq_inverse (olsBoltzmannOrdinate_affine hg hN hFcal hA) hvar).2.2
+
+/-- **Feasibility form.** The noise-free forward spectrum is `LeastSquaresFeasible` at every
+tolerance `ε ≥ 0`: the zero minimal residual (`olsBoltzmann_forward_feasible`) meets any
+nonnegative gate. This is the docstring claim above made formal, and the exact shape the
+strict-mode runtime feasibility gate consumes. -/
+theorem olsBoltzmann_forward_feasible_at [Nonempty ι] {kB T N Fcal : ℝ} {g E A : ι → ℝ}
+    (hg : ∀ k, 0 < g k) (hN : 0 < N) (hFcal : 0 < Fcal) (hA : ∀ k, 0 < A k)
+    (hvar : 0 < ∑ k, (E k - mean E) ^ 2) {ε : ℝ} (hε : 0 ≤ ε) :
+    LeastSquaresFeasible E (fun k => olsBoltzmannOrdinate kB T N Fcal g E A k) ε := by
+  unfold LeastSquaresFeasible
+  rw [olsBoltzmann_forward_feasible hg hN hFcal hA hvar]
+  exact hε
 
 /-! ### Non-vacuity witness for `leastSquares_sound`
 

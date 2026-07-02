@@ -5,7 +5,7 @@
 > (the integrity spine) + citation from `docs/scope-tags.tsv`; the docs-sync CI gate fails if
 > any result is untagged, so a new theorem cannot land without declaring its epistemic status.
 
-**Scope-tag mix** (260 results): **EXACT** 87 · **REDUCED** 39 · **APPROXIMATION** 9 · **PURE-MATH** 125
+**Scope-tag mix** (262 results): **EXACT** 87 · **REDUCED** 40 · **APPROXIMATION** 9 · **PURE-MATH** 126
 
 `EXACT` = exact identity faithfully encoding the cited physics · `REDUCED` = valid dimensionless/lumped-factor form · `APPROXIMATION` = documented idealization / limiting case · `PURE-MATH` = infrastructure lemma, no physical claim. Classification cross-checked against `reviews/literature-validity-audit.md`.
 
@@ -88,6 +88,7 @@
 - `REDUCED` · `leastSquares_sound` — MAIN soundness.  _[Tognoni 2010]_
 - `REDUCED` · `leastSquares_agrees_classic` — Same-spectrum agreement on the noise-free forward fixpoint.  _[Tognoni 2010]_
 - `REDUCED` · `olsBoltzmann_forward_feasible` — The noise-free forward spectrum is exactly least-squares-feasible.  _[Tognoni 2010]_
+- `REDUCED` · `olsBoltzmann_forward_feasible_at` — Feasibility form.  _[Tognoni 2010]_
 
 ## `Alt/OLSVariance.lean`  (CflibsFormal.Alt)
 *the Gauss–Markov variance law for the OLS Boltzmann-plot slope*
@@ -377,6 +378,7 @@
 - `PURE-MATH` · `residual_dot_energy_zero` — Normal equation (raw energy regressor).
 - `PURE-MATH` · `rss_decomposition` — Projection / Pythagorean identity.
 - `PURE-MATH` · `ols_minimizes_rss` — THE CRUX — OLS is the least-squares minimizer.
+- `PURE-MATH` · `leastSquaresResidual_nonneg` — The minimal residual is nonnegative (a sum of squares).
 - `PURE-MATH` · `leastSquaresFeasible_iff_exists` — Feasibility is minimality.
 - `PURE-MATH` · `leastSquaresResidual_eq_zero_iff` — On-manifold characterization.
 - `PURE-MATH` · `ols_minimizer_eq_inverse` — Bridge — the least-squares minimizer equals the identifiable inverse on-manifold.

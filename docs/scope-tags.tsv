@@ -70,6 +70,7 @@ LeastSquaresFit.lean	residual_centered_dot_zero	PURE-MATH	—
 LeastSquaresFit.lean	residual_dot_energy_zero	PURE-MATH	—
 LeastSquaresFit.lean	rss_decomposition	PURE-MATH	—
 LeastSquaresFit.lean	ols_minimizes_rss	PURE-MATH	—
+LeastSquaresFit.lean	leastSquaresResidual_nonneg	PURE-MATH	—
 LeastSquaresFit.lean	leastSquaresFeasible_iff_exists	PURE-MATH	—
 LeastSquaresFit.lean	leastSquaresResidual_eq_zero_iff	PURE-MATH	—
 LeastSquaresFit.lean	ols_minimizer_eq_inverse	PURE-MATH	—
@@ -192,6 +193,7 @@ Alt/CSigmaCurveOfGrowth.lean	csigma_curve_of_growth_density_droop	APPROXIMATION	
 Alt/LeastSquares.lean	olsIntercept_of_forward	REDUCED	Ciucci 1999
 Alt/LeastSquares.lean	olsDensity_recovers	REDUCED	Ciucci 1999
 Alt/LeastSquares.lean	olsBoltzmann_forward_feasible	REDUCED	Tognoni 2010
+Alt/LeastSquares.lean	olsBoltzmann_forward_feasible_at	REDUCED	Tognoni 2010
 Alt/LeastSquares.lean	leastSquares_sound	REDUCED	Tognoni 2010
 Alt/LeastSquares.lean	leastSquares_agrees_classic	REDUCED	Tognoni 2010
 Alt/SelfAbsorbed.lean	classicDensity_smul_intensity	PURE-MATH	—
