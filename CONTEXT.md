@@ -55,6 +55,13 @@ definition is defined once and reused verbatim, and every module imports only `M
   `Identifiability`, `MultiSpecies`, `SelfAbsorption`, `Robustness`, `Inverse`
   (algorithm-agnostic estimator framework), `CompositionRobustness`,
   `CompositionIdentifiability`, `SelfAbsorptionInverse`, `SahaInverse`, `CurveOfGrowth`,
+  `JointIdentifiability` (two-line observation map — `(T, composition)` jointly identifiable
+  from the observations alone, discharging `general_identifiability`'s assumed-ratio caveat),
+  `SahaStability` (Lipschitz/relative-error transfer of the Saha n_e diagnostic),
+  `SahaEquilibrium` (the reduced Saha–closure–charge self-consistency core: unique existence
+  of the coupled `(n_e, N₀, N₁)` state at fixed T),
+  `AtomicDataPerturbation` (the wrong-atomic-data aliasing identity + relative-error bounds
+  through to composition — the accuracy-floor channel),
   `EquivalentWidth` (the *integrated* curve of growth — equivalent width `W(τ)=∫(1−e^{−τφ})`:
   the slope-1 saturation bound `W ≤ τ·∫φ`, monotonicity, and the flat-profile slab identity
   `W = 1−e^{−τ}`; the slope-½ damping wing is honestly out of scope),
@@ -193,7 +200,7 @@ Gates 1–4 are automated in CI (`.github/workflows/lean_action_ci.yml`).
 
 ## Status
 
-39 modules, 257 axiom-clean named results (theorem/lemma) + 111 defs (counts via `scripts/stats.sh`).
+43 modules, 300 axiom-clean named results (theorem/lemma) + 117 defs (counts via `scripts/stats.sh`).
 Three automated CI gates: axiom-cleanliness (`tools/`), style/structure lint (`runLinter`), and the
 import-hygiene check (`scripts/stats.sh`).
 Adversarially validated (verdict: sound-with-minor-fixes, zero blockers; all findings fixed).
