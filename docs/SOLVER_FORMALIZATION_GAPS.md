@@ -3,7 +3,7 @@
 Generated 2026-06-30 from the formal-leverage review that mapped the CF-LIBS
 no-fallback ("strict mode") solver work onto this verified spec.
 
-**Verification status (authoritative):** `cflibs-formal` is **axiom-clean** — 667
+**Verification status (authoritative):** `cflibs-formal` is **axiom-clean** — 680
 declarations, `lake env axiom-audit` exit 0, foundation-audit 0/0/0. The only axioms
 are the three standard mathlib foundations (`propext`, `Classical.choice`, `Quot.sound`).
 The "2 sorry / 2 admit / 11 axiom" sometimes quoted are **phantom textual counts**
@@ -17,13 +17,29 @@ strict solver would step outside the verified envelope.
 
 ## Tier 1 — load-bearing (strict-mode trust gates depend on these; prove first)
 
-1. **Existence / least-squares inverse.** Every inverse theorem (`Inverse.lean`,
+1. **Existence / least-squares inverse.** ✅ **Addressed (linear/Boltzmann-plot case)** in
+   `LeastSquaresFit.lean` (2026-07-02). Every *other* inverse theorem (`Inverse.lean`,
    `SahaInverse.lean`, `Identifiability.lean`) is *exact-fit injectivity*: equal
-   observations ⇒ equal parameters. There is no existence/feasibility theorem for
-   **noisy, off-manifold** data — which is every real spectrum. → Formalize the
-   least-squares/projection inverse: existence of a minimizer + a residual-based
-   feasibility predicate + conditions under which the minimizer equals the
-   identifiable inverse (discharge `Sound` for the shipped estimator).
+   observations ⇒ equal parameters, with no existence/feasibility statement for **noisy,
+   off-manifold** data — which is every real spectrum. `LeastSquaresFit.lean` now supplies,
+   for the log-linearized Boltzmann-plot fit CF-LIBS actually uses:
+   * **existence of the minimizer** — `ols_minimizes_rss`: the closed-form OLS estimate
+     globally minimizes the residual sum of squares `rss` over all `(m,b)` for *arbitrary*
+     off-manifold `y` (constructive, via the projection identity `rss_decomposition` +
+     normal equations `residual_sum_zero` / `residual_dot_energy_zero`);
+   * a **residual-based feasibility predicate** — `LeastSquaresFeasible` +
+     `leastSquaresFeasible_iff_exists` (feasible at `ε` ⟺ some line fits within `ε`);
+   * **minimizer = identifiable inverse on-manifold** — `ols_minimizer_eq_inverse` +
+     `leastSquaresResidual_eq_zero_iff` (zero minimal residual ⟺ on-manifold), and
+     `Alt.olsBoltzmann_forward_feasible` shows the noise-free forward spectrum has zero
+     residual, i.e. the projection inverse coincides with the identifiable inverse there —
+     which is *why* `leastSquares_sound` holds on the fixpoint (`Sound` discharged
+     on-manifold; off-manifold there is no ground-truth `(T,N)` to be `Sound` against).
+
+   **Residual (still open):** the *fully nonlinear joint* least-squares inverse over the
+   coupled multi-species forward map (fit `(T, n_e, composition)` simultaneously from raw
+   intensities, not the per-species log-linearized line) — this overlaps gaps #6 and #8 and
+   is a separate, larger effort.
 
 2. **Atomic-data perturbation channel.** Identifiability assumes the two parameter
    sets share *identical, correct* `g, A, E, U(T)` (`CompositionIdentifiability.lean:132`,

@@ -20,6 +20,7 @@ import CflibsFormal.ForwardMapEnergy
 import CflibsFormal.HydrogenStark
 import CflibsFormal.Identifiability
 import CflibsFormal.Inverse
+import CflibsFormal.LeastSquaresFit
 import CflibsFormal.LineBroadening
 import CflibsFormal.MatrixEffects
 import CflibsFormal.MultiSpecies

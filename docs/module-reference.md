@@ -11,7 +11,7 @@ One row per module under `CflibsFormal/`. *Base* = imports no `CflibsFormal` mod
 | `Alt/CSigma.lean` | `CflibsFormal.Alt` | 17 | 10 | – | – | the C-sigma (Cσ) single-line method (alternative estimator) |
 | `Alt/CSigmaCurveOfGrowth.lean` | `CflibsFormal.Alt` | 7 | 2 | – | ✓ | The Cσ curve of growth — self-absorption droop below the universal line |
 | `Alt/GaussMarkov.lean` | `CflibsFormal.Alt` | 7 | 1 | – | ✓ | Gauss–Markov optimality (BLUE) for the OLS Boltzmann-plot slope |
-| `Alt/LeastSquares.lean` | `CflibsFormal.Alt` | 4 | 3 | – | ✓ | the multi-line ordinary-least-squares Boltzmann-plot estimator |
+| `Alt/LeastSquares.lean` | `CflibsFormal.Alt` | 5 | 3 | – | ✓ | the multi-line ordinary-least-squares Boltzmann-plot estimator |
 | `Alt/OLSVariance.lean` | `CflibsFormal.Alt` | 7 | 1 | – | ✓ | the Gauss–Markov variance law for the OLS Boltzmann-plot slope |
 | `Alt/SelfAbsorbed.lean` | `CflibsFormal.Alt` | 5 | 1 | – | – | the self-absorption-corrected composition estimator (alternative) |
 | `Analysis.lean` | `CflibsFormal` | 1 | 0 | ✓ | – | Shared analysis scaffolding |
@@ -30,6 +30,7 @@ One row per module under `CflibsFormal/`. *Base* = imports no `CflibsFormal` mod
 | `HydrogenStark.lean` | `CflibsFormal` | 4 | 2 | ✓ | ✓ | the hydrogen-line (Balmer) Stark electron-density diagnostic |
 | `Identifiability.lean` | `CflibsFormal` | 3 | 0 | – | – | Part 5: identifiability of the inverse problem |
 | `Inverse.lean` | `CflibsFormal` | 3 | 6 | – | – | Part 6: the algorithm-agnostic inverse-problem framework |
+| `LeastSquaresFit.lean` | `CflibsFormal` | 8 | 3 | – | – | the ordinary-least-squares projection / feasibility inverse |
 | `LineBroadening.lean` | `CflibsFormal` | 5 | 4 | ✓ | ✓ | line broadening (Doppler width + the Voigt Gaussian budget) |
 | `MatrixEffects.lean` | `CflibsFormal` | 17 | 7 | – | ✓ | matrix effects (completeness, ablation, ionization suppression) |
 | `MultiSpecies.lean` | `CflibsFormal` | 4 | 2 | – | – | Multi-species / multi-stage composition glue |
@@ -46,5 +47,5 @@ One row per module under `CflibsFormal/`. *Base* = imports no `CflibsFormal` mod
 | `StarkShift.lean` | `CflibsFormal` | 9 | 3 | ✓ | ✓ | the Stark line-shift electron-density diagnostic |
 | `TemporalEvolution.lean` | `CflibsFormal` | 8 | 7 | – | ✓ | time-resolved (gate-delayed) recovery |
 | `VoigtWidth.lean` | `CflibsFormal` | 7 | 1 | ✓ | ✓ | the Voigt FWHM combination (Olivero–Longbothum) |
-| **38 modules** | | **248** | **108** | | | |
+| **39 modules** | | **257** | **111** | | | |
 

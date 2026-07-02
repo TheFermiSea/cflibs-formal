@@ -5,6 +5,7 @@ Authors: Brian Squires
 -/
 import Mathlib
 import CflibsFormal.OLS
+import CflibsFormal.LeastSquaresFit
 import CflibsFormal.Boltzmann
 import CflibsFormal.ForwardMap
 import CflibsFormal.Closure
@@ -184,6 +185,28 @@ theorem leastSquares_agrees_classic [Nonempty ι] [Nonempty κ] {kB T Fcal : ℝ
           (fun t => lineIntensity kB T (N t) Fcal (g t) (E t) (A t) (u t)) s := by
   rw [leastSquares_sound hg hN hFcal hA hvar s,
     Classic.classic_sound hg hFcal (fun t => hA t (u t)) hNtot s]
+
+/-- **The noise-free forward spectrum is exactly least-squares-feasible.** Fed the genuine
+forward-model Boltzmann-plot ordinates, the least-squares fit has ZERO minimal residual: the data
+lies exactly on the line `−E_k/(k_B T) + log(Fcal·N/U)`, so the projection inverse coincides with
+the identifiable inverse (`olsSlope = −1/(k_B T)`, `olsIntercept = log(Fcal·N/U)`, cf.
+`olsIntercept_of_forward`) and the fit is `LeastSquaresFeasible` at every tolerance `ε ≥ 0`. This
+is the on-manifold anchor of the projection inverse (`LeastSquaresFit.ols_minimizer_eq_inverse`):
+it is precisely why the OLS estimator is `Sound` on the noise-free fixpoint (`leastSquares_sound`).
+Off the fixpoint the residual is positive and quantifies the model/measurement mismatch, which is
+what the strict-mode feasibility gate tests. -/
+theorem olsBoltzmann_forward_feasible [Nonempty ι] {kB T N Fcal : ℝ} {g E A : ι → ℝ}
+    (hg : ∀ k, 0 < g k) (hN : 0 < N) (hFcal : 0 < Fcal) (hA : ∀ k, 0 < A k)
+    (hvar : 0 < ∑ k, (E k - mean E) ^ 2) :
+    leastSquaresResidual E (fun k => olsBoltzmannOrdinate kB T N Fcal g E A k) = 0 := by
+  have hcol : ∀ k, (fun k => olsBoltzmannOrdinate kB T N Fcal g E A k) k
+      = -(1 / (kB * T)) * E k + Real.log (Fcal * N / partitionFunction kB T g E) := by
+    intro k
+    change olsBoltzmannOrdinate kB T N Fcal g E A k = _
+    unfold olsBoltzmannOrdinate
+    rw [boltzmann_plot_intensity hg hN hFcal hA k]
+    ring
+  exact (ols_minimizer_eq_inverse hcol hvar).2.2
 
 /-! ### Non-vacuity witness for `leastSquares_sound`
 

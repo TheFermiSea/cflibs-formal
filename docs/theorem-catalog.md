@@ -5,7 +5,7 @@
 > (the integrity spine) + citation from `docs/scope-tags.tsv`; the docs-sync CI gate fails if
 > any result is untagged, so a new theorem cannot land without declaring its epistemic status.
 
-**Scope-tag mix** (248 results): **EXACT** 84 · **REDUCED** 38 · **APPROXIMATION** 9 · **PURE-MATH** 117
+**Scope-tag mix** (257 results): **EXACT** 84 · **REDUCED** 39 · **APPROXIMATION** 9 · **PURE-MATH** 125
 
 `EXACT` = exact identity faithfully encoding the cited physics · `REDUCED` = valid dimensionless/lumped-factor form · `APPROXIMATION` = documented idealization / limiting case · `PURE-MATH` = infrastructure lemma, no physical claim. Classification cross-checked against `reviews/literature-validity-audit.md`.
 
@@ -87,6 +87,7 @@
 - `REDUCED` · `olsDensity_recovers` — Per-species soundness core.  _[Ciucci 1999]_
 - `REDUCED` · `leastSquares_sound` — MAIN soundness.  _[Tognoni 2010]_
 - `REDUCED` · `leastSquares_agrees_classic` — Same-spectrum agreement on the noise-free forward fixpoint.  _[Tognoni 2010]_
+- `REDUCED` · `olsBoltzmann_forward_feasible` — The noise-free forward spectrum is exactly least-squares-feasible.  _[Tognoni 2010]_
 
 ## `Alt/OLSVariance.lean`  (CflibsFormal.Alt)
 *the Gauss–Markov variance law for the OLS Boltzmann-plot slope*
@@ -358,6 +359,24 @@
 - `EXACT` · `general_identifiability` — General identifiability — the central theorem.  _[Ciucci 1999]_
 - `PURE-MATH` · `sound_estimators_agree` — Cross-method agreement bridge.
 - `APPROXIMATION` · `rawCompositionEstimator_sound` — Soundness of the raw estimator (constant-`emit` case).  _[Ciucci 1999]_
+
+## `LeastSquaresFit.lean`  (CflibsFormal)
+*the ordinary-least-squares projection / feasibility inverse*
+
+**Definitions**
+- `rss` — Residual sum of squares of the affine fit `k ↦ m·Eₖ + b` to the ordinates `y`: `rss E y m b = ∑ₖ (m·Eₖ + b − yₖ)²`.
+- `leastSquaresResidual` — Minimal (least-squares) residual of the data `(E, y)`: the residual sum of squares at the OLS estimates, `rss E y (olsSlope E y) (olsIntercept E y)`.
+- `LeastSquaresFeasible` — Least-squares feasibility at tolerance `ε`: the minimal residual is within `ε`, `leastSquaresResidual E y ≤ ε`.
+
+**Results**
+- `PURE-MATH` · `residual_sum_zero` — Normal equation (constant regressor).
+- `PURE-MATH` · `residual_centered_dot_zero` — Normal equation (centered energy regressor).
+- `PURE-MATH` · `residual_dot_energy_zero` — Normal equation (raw energy regressor).
+- `PURE-MATH` · `rss_decomposition` — Projection / Pythagorean identity.
+- `PURE-MATH` · `ols_minimizes_rss` — THE CRUX — OLS is the least-squares minimizer.
+- `PURE-MATH` · `leastSquaresFeasible_iff_exists` — Feasibility is minimality.
+- `PURE-MATH` · `leastSquaresResidual_eq_zero_iff` — On-manifold characterization.
+- `PURE-MATH` · `ols_minimizer_eq_inverse` — Bridge — the least-squares minimizer equals the identifiable inverse on-manifold.
 
 ## `LineBroadening.lean`  (CflibsFormal)
 *line broadening (Doppler width + the Voigt Gaussian budget)*
