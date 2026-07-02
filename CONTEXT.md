@@ -47,6 +47,11 @@ definition is defined once and reused verbatim, and every module imports only `M
   `OLS` (the pure-algebra ordinary-least-squares foundation — `mean`, `olsSlope`, the centering
   identities, and the noise gain `∑wₖ²=1/SS_E` — the single core home reused by `Alt/LeastSquares`,
   `ErrorBudget`, and `Alt/OLSVariance`/`Alt/GaussMarkov`; a `Mathlib`-only base module),
+  `LeastSquaresFit` (the least-squares/projection inverse for **noisy off-manifold** data on top
+  of `OLS`: the normal equations, the projection identity `rss_decomposition`, global minimality
+  `ols_minimizes_rss`, a residual feasibility predicate `LeastSquaresFeasible`, and the
+  on-manifold bridge `ols_minimizer_eq_inverse` where the projection inverse meets the exact-fit
+  inverse — a `Mathlib`-only base module),
   `Identifiability`, `MultiSpecies`, `SelfAbsorption`, `Robustness`, `Inverse`
   (algorithm-agnostic estimator framework), `CompositionRobustness`,
   `CompositionIdentifiability`, `SelfAbsorptionInverse`, `SahaInverse`, `CurveOfGrowth`,
@@ -188,7 +193,7 @@ Gates 1–4 are automated in CI (`.github/workflows/lean_action_ci.yml`).
 
 ## Status
 
-35 modules, 241 axiom-clean named results (theorem/lemma) + 107 defs (counts via `scripts/stats.sh`).
+39 modules, 257 axiom-clean named results (theorem/lemma) + 111 defs (counts via `scripts/stats.sh`).
 Three automated CI gates: axiom-cleanliness (`tools/`), style/structure lint (`runLinter`), and the
 import-hygiene check (`scripts/stats.sh`).
 Adversarially validated (verdict: sound-with-minor-fixes, zero blockers; all findings fixed).
