@@ -26,14 +26,22 @@ forward model:
 * `electronDensityFromRatio`, `sahaFactor`, and the strict-antitone inverse
   `electronDensity_antitone` from `Saha.lean`.
 
-The three theorems are:
+The theorems are:
 
+* `lineIntensity_ratio_closed_form` — the shared engine: the within-set two-line
+  ratio is `I_j/I_i = ((g_j·A_j)/(g_i·A_i)) · exp((E_i − E_j)/(k_B T))`.
 * `temperature_identifiability` — **Target 1.** Two same-species lines with
   *distinct upper-level energies* fix `T` uniquely: if two parameter sets
   produce the same intensity *ratio* on such a line pair, then `T₁ = T₂`. The
   calibration `Fcal`, density `N`, partition function `U`, degeneracies `g`, and
   Einstein coefficient `A` all cancel; the proof reduces to injectivity of
   `Real.exp` and `E i ≠ E j`.
+* `temperature_degeneracy` / `temperature_not_identifiable_of_degenerate` — the
+  **degeneracy converse.** With `E i = E j` the ratio collapses to the
+  `T`-independent constant `(g_j·A_j)/(g_i·A_i)`, so distinct temperatures
+  produce identical ratio observations: the distinct-energy hypothesis of
+  Target 1 is *necessary*, and a runtime "small `ΔE` ⇒ refuse" gate is grounded
+  in a theorem rather than a heuristic.
 * `density_identifiability` — **Target 2.** With `T` and atomic data fixed and
   nondegenerate, the species total number density `N` is recovered from a single
   line intensity (equal intensities ⇒ equal `N`). Since composition `C_s` is `N_s`
@@ -58,6 +66,34 @@ open scoped BigOperators
 
 variable {ι : Type*} [Fintype ι]
 variable {κ : Type*} [Fintype κ]
+
+/-- **Two-line intensity-ratio closed form.** Within one parameter set, the same-species
+two-line ratio is
+  `I_j / I_i = ((g_j·A_j)/(g_i·A_i)) · exp((E_i − E_j)/(k_B T))` —
+the calibration `Fcal`, density `N`, and partition function `U(T)` all cancel (Ciucci et al.
+1999, the two-line Boltzmann ratio). This single identity carries BOTH directions of the
+temperature question: with `E i ≠ E j` the exponential factor genuinely varies with `T` and the
+temperature is identifiable (`temperature_identifiability`); with `E i = E j` it collapses to
+the `T`-independent constant `(g_j·A_j)/(g_i·A_i)` and the temperature is provably lost
+(`temperature_degeneracy`). No sign or positivity constraint on `T` is needed — the identity is
+total algebra over ℝ (at `T = 0` both sides read the same `exp(·/0) = exp 0` convention). -/
+theorem lineIntensity_ratio_closed_form [Nonempty ι] {kB T N Fcal : ℝ} {g E A : ι → ℝ}
+    (hg : ∀ k, 0 < g k) (hN : 0 < N) (hFcal : 0 < Fcal) (hA : ∀ k, 0 < A k) (i j : ι) :
+    lineIntensity kB T N Fcal g E A j / lineIntensity kB T N Fcal g E A i
+      = (g j * A j) / (g i * A i) * Real.exp ((E i - E j) / (kB * T)) := by
+  have hU : 0 < partitionFunction kB T g E := partitionFunction_pos hg
+  have hgi : g i ≠ 0 := (hg i).ne'
+  have hgj : g j ≠ 0 := (hg j).ne'
+  have hAi : A i ≠ 0 := (hA i).ne'
+  have hAj : A j ≠ 0 := (hA j).ne'
+  have hNne : N ≠ 0 := hN.ne'
+  have hFne : Fcal ≠ 0 := hFcal.ne'
+  have hexp : Real.exp ((E i - E j) / (kB * T))
+      = Real.exp (-E j / (kB * T)) / Real.exp (-E i / (kB * T)) := by
+    rw [← Real.exp_sub]; ring_nf
+  rw [hexp]
+  simp only [lineIntensity, population, boltzmannFactor]
+  field_simp
 
 /-- **Target 1 — temperature identifiability.**
 
@@ -87,26 +123,8 @@ theorem temperature_identifiability [Nonempty ι]
       lineIntensity kB T₁ N₁ Fcal₁ g E A j / lineIntensity kB T₁ N₁ Fcal₁ g E A i
         = lineIntensity kB T₂ N₂ Fcal₂ g E A j / lineIntensity kB T₂ N₂ Fcal₂ g E A i) :
     T₁ = T₂ := by
-  -- A clean closed form for the within-set intensity ratio:
-  -- `I_j / I_i = (g j · A j) / (g i · A i) · exp((E i − E j)/(kB·T))`.
-  have key : ∀ (T N Fcal : ℝ), 0 < T → 0 < N → 0 < Fcal →
-      lineIntensity kB T N Fcal g E A j / lineIntensity kB T N Fcal g E A i
-        = (g j * A j) / (g i * A i) * Real.exp ((E i - E j) / (kB * T)) := by
-    intro T N Fcal hT hN hFcal
-    have hU : 0 < partitionFunction kB T g E := partitionFunction_pos hg
-    have hgi : g i ≠ 0 := (hg i).ne'
-    have hgj : g j ≠ 0 := (hg j).ne'
-    have hAi : A i ≠ 0 := (hA i).ne'
-    have hAj : A j ≠ 0 := (hA j).ne'
-    have hNne : N ≠ 0 := hN.ne'
-    have hFne : Fcal ≠ 0 := hFcal.ne'
-    have hexp : Real.exp ((E i - E j) / (kB * T))
-        = Real.exp (-E j / (kB * T)) / Real.exp (-E i / (kB * T)) := by
-      rw [← Real.exp_sub]; ring_nf
-    rw [hexp]
-    simp only [lineIntensity, population, boltzmannFactor]
-    field_simp
-  rw [key T₁ N₁ Fcal₁ hT₁ hN₁ hFcal₁, key T₂ N₂ Fcal₂ hT₂ hN₂ hFcal₂] at hratio
+  rw [lineIntensity_ratio_closed_form hg hN₁ hFcal₁ hA i j,
+    lineIntensity_ratio_closed_form hg hN₂ hFcal₂ hA i j] at hratio
   -- Cancel the common positive prefactor `(g j · A j) / (g i · A i)`.
   have hc : (0 : ℝ) < (g j * A j) / (g i * A i) :=
     div_pos (mul_pos (hg j) (hA j)) (mul_pos (hg i) (hA i))
@@ -120,6 +138,63 @@ theorem temperature_identifiability [Nonempty ι]
   -- `(E i − E j)·(kB·T₂) = (E i − E j)·(kB·T₁)`.
   have h2 : kB * T₂ = kB * T₁ := mul_left_cancel₀ hEij hexp
   exact (mul_left_cancel₀ hkB.ne' h2).symm
+
+/-- **Degeneracy converse — equal energies make the ratio `T`-independent.** If the two lines
+share the SAME upper-level energy (`E i = E j`), the two-line intensity ratio collapses to the
+constant `(g_j·A_j)/(g_i·A_i)` (`lineIntensity_ratio_closed_form` with a zero exponent) — the
+same value for EVERY temperature, density, and calibration on both sides. The ratio observation
+then carries no information about `T`: the ratio-equality antecedent of
+`temperature_identifiability` is satisfied by every pair `(T₁, T₂)` whatsoever, so its
+distinct-energy hypothesis `E i ≠ E j` is *necessary*, not merely convenient. Note the
+strength: no positivity of `kB`, `T₁`, `T₂` is needed — the collapse is total. -/
+theorem temperature_degeneracy [Nonempty ι]
+    {kB T₁ T₂ N₁ N₂ Fcal₁ Fcal₂ : ℝ} {g E A : ι → ℝ}
+    (hg : ∀ k, 0 < g k) (hN₁ : 0 < N₁) (hN₂ : 0 < N₂)
+    (hFcal₁ : 0 < Fcal₁) (hFcal₂ : 0 < Fcal₂) (hA : ∀ k, 0 < A k)
+    (i j : ι) (hE : E i = E j) :
+    lineIntensity kB T₁ N₁ Fcal₁ g E A j / lineIntensity kB T₁ N₁ Fcal₁ g E A i
+      = lineIntensity kB T₂ N₂ Fcal₂ g E A j / lineIntensity kB T₂ N₂ Fcal₂ g E A i := by
+  rw [lineIntensity_ratio_closed_form hg hN₁ hFcal₁ hA i j,
+    lineIntensity_ratio_closed_form hg hN₂ hFcal₂ hA i j, hE]
+  simp
+
+/-- **Degenerate pair ⇒ temperature NOT identifiable.** With a degenerate line pair
+(`E i = E j`), two genuinely different positive temperatures (here `T₁ = 1 ≠ 2 = T₂`, same
+density and calibration) produce the SAME two-line ratio observation — the formal converse of
+`temperature_identifiability`, exhibiting the non-injectivity directly. This grounds the
+runtime "small `ΔE` ⇒ refuse" gate of the strict-mode solver: at `ΔE = 0` the refusal is not
+heuristic caution but a theorem — NO algorithm can recover `T` from a degenerate pair's ratio,
+because the observation itself is constant in `T`. -/
+theorem temperature_not_identifiable_of_degenerate [Nonempty ι]
+    {kB N Fcal : ℝ} {g E A : ι → ℝ}
+    (hg : ∀ k, 0 < g k) (hN : 0 < N) (hFcal : 0 < Fcal) (hA : ∀ k, 0 < A k)
+    (i j : ι) (hE : E i = E j) :
+    ∃ T₁ T₂ : ℝ, 0 < T₁ ∧ 0 < T₂ ∧ T₁ ≠ T₂ ∧
+      lineIntensity kB T₁ N Fcal g E A j / lineIntensity kB T₁ N Fcal g E A i
+        = lineIntensity kB T₂ N Fcal g E A j / lineIntensity kB T₂ N Fcal g E A i :=
+  ⟨1, 2, one_pos, two_pos, by norm_num,
+    temperature_degeneracy hg hN hN hFcal hFcal hA i j hE⟩
+
+private def nvDegg : Fin 2 → ℝ := ![1, 2]
+private def nvDegE : Fin 2 → ℝ := ![5, 5]
+private def nvDegA : Fin 2 → ℝ := ![1, 3]
+
+/-- **Non-vacuity witness for the degeneracy converse.** A genuine two-line degenerate pair
+(`ι = Fin 2`, distinct indices `0 ≠ 1`, equal energies `E = ![5,5]`, non-trivial atomic data
+`g = ![1,2]`, `A = ![1,3]`): at BOTH `T = 1` and `T = 2` the ratio equals the same non-trivial
+constant `(g₁·A₁)/(g₀·A₀) = 6`. So the aliasing of `temperature_degeneracy` is real content on
+distinct lines with a genuinely non-constant forward model — not an artifact of `i = j` or of a
+trivial ratio `1`. -/
+example :
+    lineIntensity 1 1 1 1 nvDegg nvDegE nvDegA 1 / lineIntensity 1 1 1 1 nvDegg nvDegE nvDegA 0
+      = 6
+    ∧ lineIntensity 1 2 1 1 nvDegg nvDegE nvDegA 1 / lineIntensity 1 2 1 1 nvDegg nvDegE nvDegA 0
+      = 6 := by
+  have hg : ∀ k, 0 < nvDegg k := fun k => by fin_cases k <;> norm_num [nvDegg]
+  have hA : ∀ k, 0 < nvDegA k := fun k => by fin_cases k <;> norm_num [nvDegA]
+  constructor <;>
+    rw [lineIntensity_ratio_closed_form hg one_pos one_pos hA 0 1] <;>
+    norm_num [nvDegg, nvDegE, nvDegA]
 
 /-- **Target 2 — relative-density / composition identifiability.**
 

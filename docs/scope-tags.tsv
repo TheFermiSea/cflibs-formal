@@ -33,7 +33,10 @@ Classic.lean	classic_sound	EXACT	Ciucci 1999
 Classic.lean	classic_sound_sum_one	PURE-MATH	—
 Classic.lean	classic_temperature_correct	REDUCED	Ciucci 1999
 Classic.lean	classic_calibration_free	EXACT	Ciucci 1999
+Identifiability.lean	lineIntensity_ratio_closed_form	EXACT	Ciucci 1999
 Identifiability.lean	temperature_identifiability	EXACT	Ciucci 1999
+Identifiability.lean	temperature_degeneracy	EXACT	Ciucci 1999
+Identifiability.lean	temperature_not_identifiable_of_degenerate	EXACT	Ciucci 1999
 Identifiability.lean	density_identifiability	EXACT	Ciucci 1999
 Identifiability.lean	electron_density_identifiability	EXACT	Saha–Eggert (Griem)
 Inverse.lean	general_identifiability	EXACT	Ciucci 1999

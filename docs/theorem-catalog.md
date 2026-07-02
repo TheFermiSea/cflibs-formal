@@ -5,7 +5,7 @@
 > (the integrity spine) + citation from `docs/scope-tags.tsv`; the docs-sync CI gate fails if
 > any result is untagged, so a new theorem cannot land without declaring its epistemic status.
 
-**Scope-tag mix** (257 results): **EXACT** 84 · **REDUCED** 39 · **APPROXIMATION** 9 · **PURE-MATH** 125
+**Scope-tag mix** (260 results): **EXACT** 87 · **REDUCED** 39 · **APPROXIMATION** 9 · **PURE-MATH** 125
 
 `EXACT` = exact identity faithfully encoding the cited physics · `REDUCED` = valid dimensionless/lumped-factor form · `APPROXIMATION` = documented idealization / limiting case · `PURE-MATH` = infrastructure lemma, no physical claim. Classification cross-checked against `reviews/literature-validity-audit.md`.
 
@@ -340,7 +340,10 @@
 *Part 5: identifiability of the inverse problem*
 
 **Results**
+- `EXACT` · `lineIntensity_ratio_closed_form` — Two-line intensity-ratio closed form.  _[Ciucci 1999]_
 - `EXACT` · `temperature_identifiability` — Target 1 — temperature identifiability.  _[Ciucci 1999]_
+- `EXACT` · `temperature_degeneracy` — Degeneracy converse — equal energies make the ratio `T`-independent.  _[Ciucci 1999]_
+- `EXACT` · `temperature_not_identifiable_of_degenerate` — Degenerate pair ⇒ temperature NOT identifiable.  _[Ciucci 1999]_
 - `EXACT` · `density_identifiability` — Target 2 — relative-density / composition identifiability.  _[Ciucci 1999]_
 - `EXACT` · `electron_density_identifiability` — Target 3 — electron-density / stage-ratio identifiability via Saha.  _[Saha–Eggert (Griem)]_
 

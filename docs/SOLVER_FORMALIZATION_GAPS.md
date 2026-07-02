@@ -56,11 +56,20 @@ strict solver would step outside the verified envelope.
    → Prove `electronDensityFromRatio` sensitivity constants + the design-matrix
    rank/condition requirement.
 
-4. **Degeneracy converse.** Identifiability holds *under* `E_i ≠ E_j`
-   (`Identifiability.lean:85`), but there is no theorem that `E_i = E_j` (or near-equal)
-   ⇒ the slope/ratio is T-independent ⇒ non-injective. → Prove the degeneracy lemma so
-   the "small ΔE → refuse" decision (and the `ss_e>0` / energy-spread gate) is grounded,
-   not just heuristic.
+4. **Degeneracy converse.** ✅ **Addressed (exact-degenerate case)** in
+   `Identifiability.lean` (2026-07-02). `lineIntensity_ratio_closed_form` names the shared
+   two-line ratio engine `I_j/I_i = ((g_j·A_j)/(g_i·A_i))·exp((E_i−E_j)/(k_B T))`;
+   `temperature_degeneracy` proves `E_i = E_j` ⇒ the ratio collapses to the `T`-independent
+   constant `(g_j·A_j)/(g_i·A_i)` (for *any* `T₁, T₂, N, Fcal` — no positivity needed);
+   `temperature_not_identifiable_of_degenerate` exhibits the non-injectivity (`T₁ = 1 ≠ 2 = T₂`
+   with identical ratio observations). So `temperature_identifiability`'s `E_i ≠ E_j`
+   hypothesis is provably *necessary*, and the "ΔE = 0 → refuse" decision is a theorem.
+
+   **Residual (still open):** the *near-degenerate quantitative* version — a bound
+   `|∂(ratio)/∂T| ≲ ΔE/(k_B T²)` making "small ΔE ⇒ ill-conditioned" (not just "zero ΔE ⇒
+   lost") rigorous; the `ss_e > 0` OLS energy-spread gate has its deterministic counterpart in
+   `ErrorBudget.requiredEnergySpread_sufficient`, but the two-line conditioning constant is
+   not yet formalized (overlaps gap #3).
 
 5. **End-to-end noise → composition propagation.** Error bounds take the per-species
    density error δ as a *given hypothesis* (`CompositionRobustness.lean:98,147`); the
