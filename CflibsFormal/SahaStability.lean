@@ -6,6 +6,7 @@ Authors: Brian Squires
 import Mathlib
 import CflibsFormal.Saha
 import CflibsFormal.PartitionLipschitz
+import CflibsFormal.Analysis
 
 /-!
 # Saha–Boltzmann formalization — Part 2b: stability of the `n_e` diagnostic
@@ -257,52 +258,6 @@ private lemma rpow_three_halves_two_point {xmin xmax x y : ℝ}
   calc |Real.sqrt x * (x - y)| + |y * (Real.sqrt x - Real.sqrt y)|
       ≤ Real.sqrt xmax * |x - y| + xmax / (2 * Real.sqrt xmin) * |x - y| := add_le_add h1 h2
     _ = (Real.sqrt xmax + xmax / (2 * Real.sqrt xmin)) * |x - y| := by ring
-
-/-- **Elementary exponential slope bound (PURE-MATH).** `exp a − exp b ≤ exp a·(a − b)`.
-Re-derived privately (the `PartitionLipschitz` copy is `private` to that module). -/
-private lemma exp_sub_le_mul (a b : ℝ) :
-    Real.exp a - Real.exp b ≤ Real.exp a * (a - b) := by
-  have hstep : b - a + 1 ≤ Real.exp (b - a) := Real.add_one_le_exp (b - a)
-  have hle : Real.exp a * (1 - Real.exp (b - a)) ≤ Real.exp a * (a - b) :=
-    mul_le_mul_of_nonneg_left (by linarith) (Real.exp_pos a).le
-  have hrw : Real.exp a * (1 - Real.exp (b - a)) = Real.exp a - Real.exp b := by
-    have hab : a + (b - a) = b := by ring
-    rw [mul_sub, mul_one, ← Real.exp_add, hab]
-  rwa [hrw] at hle
-
-/-- **Two-point Lipschitz bound for `exp` (PURE-MATH).**
-`|exp a − exp b| ≤ max(exp a, exp b)·|a − b|`. Re-derived privately. -/
-private lemma abs_exp_sub_le (a b : ℝ) :
-    |Real.exp a - Real.exp b| ≤ max (Real.exp a) (Real.exp b) * |a - b| := by
-  rcases le_total b a with h | h
-  · rw [max_eq_left (Real.exp_le_exp.mpr h),
-      abs_of_nonneg (sub_nonneg.mpr (Real.exp_le_exp.mpr h)),
-      abs_of_nonneg (sub_nonneg.mpr h)]
-    exact exp_sub_le_mul a b
-  · rw [max_eq_right (Real.exp_le_exp.mpr h),
-      abs_sub_comm (Real.exp a) (Real.exp b), abs_sub_comm a b,
-      abs_of_nonneg (sub_nonneg.mpr (Real.exp_le_exp.mpr h)),
-      abs_of_nonneg (sub_nonneg.mpr h)]
-    exact exp_sub_le_mul b a
-
-/-- **Inverse-temperature gap bound (PURE-MATH).** On a floor `Tmin ≤ T₁, T₂`,
-`|1/(k_B T₁) − 1/(k_B T₂)| ≤ |T₁ − T₂|/(k_B·Tmin²)`. Re-derived privately. -/
-private lemma inv_kT_sub_le {kB Tmin T1 T2 : ℝ}
-    (hkB : 0 < kB) (hTmin : 0 < Tmin) (hT1 : Tmin ≤ T1) (hT2 : Tmin ≤ T2) :
-    |1 / (kB * T1) - 1 / (kB * T2)| ≤ |T1 - T2| / (kB * Tmin ^ 2) := by
-  have hT1pos : 0 < T1 := lt_of_lt_of_le hTmin hT1
-  have hT2pos : 0 < T2 := lt_of_lt_of_le hTmin hT2
-  have hbig : 0 < kB * T1 * T2 := mul_pos (mul_pos hkB hT1pos) hT2pos
-  have hsmall : 0 < kB * Tmin ^ 2 := mul_pos hkB (pow_pos hTmin 2)
-  have heq : 1 / (kB * T1) - 1 / (kB * T2) = (T2 - T1) / (kB * T1 * T2) := by
-    field_simp
-  rw [heq, abs_div, abs_of_pos hbig, abs_sub_comm T2 T1, div_le_div_iff₀ hbig hsmall]
-  have hTsq : Tmin ^ 2 ≤ T1 * T2 := by
-    rw [sq]; exact mul_le_mul hT1 hT2 hTmin.le hT1pos.le
-  have hden : kB * Tmin ^ 2 ≤ kB * T1 * T2 := by
-    calc kB * Tmin ^ 2 ≤ kB * (T1 * T2) := mul_le_mul_of_nonneg_left hTsq hkB.le
-      _ = kB * T1 * T2 := by ring
-  exact mul_le_mul_of_nonneg_left hden (abs_nonneg _)
 
 /-- **Exponential channel two-point bound (PURE-MATH).** For `χ ≥ 0` and a temperature
 floor `Tmin ≤ T₁, T₂` (`0 < Tmin`, `0 < k_B`),

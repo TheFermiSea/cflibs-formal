@@ -5,7 +5,7 @@
 > (the integrity spine) + citation from `docs/scope-tags.tsv`; the docs-sync CI gate fails if
 > any result is untagged, so a new theorem cannot land without declaring its epistemic status.
 
-**Scope-tag mix** (341 results): **EXACT** 113 · **REDUCED** 75 · **APPROXIMATION** 9 · **PURE-MATH** 144
+**Scope-tag mix** (344 results): **EXACT** 113 · **REDUCED** 75 · **APPROXIMATION** 9 · **PURE-MATH** 147
 
 `EXACT` = exact identity faithfully encoding the cited physics · `REDUCED` = valid dimensionless/lumped-factor form · `APPROXIMATION` = documented idealization / limiting case · `PURE-MATH` = infrastructure lemma, no physical claim. Classification cross-checked against `reviews/literature-validity-audit.md`.
 
@@ -123,6 +123,10 @@
 
 **Results**
 - `PURE-MATH` · `strictAntiOn_div_of_deriv_num_neg` — Quotient strictly antitone from a negative derivative numerator.
+- `PURE-MATH` · `exp_sub_le_mul` — Elementary exponential slope bound.
+- `PURE-MATH` · `abs_exp_sub_le` — Two-point Lipschitz-type bound for `exp`.
+- `PURE-MATH` · `abs_exp_sub_one_le` — Exponential perturbation bound.
+- `PURE-MATH` · `inv_kT_sub_le` — Inverse-temperature gap bound.
 
 ## `AtomicDataPerturbation.lean`  (CflibsFormal)
 *the atomic-data perturbation channel*
@@ -324,7 +328,6 @@
 - `REDUCED` · `temp_rel_error_le` — Temperature stability from a slope-error bound.  _[Tognoni 2010]_
 - `REDUCED` · `requiredEnergySpread_sufficient` — Minimum energy spread is SUFFICIENT for a target slope accuracy.  _[Tognoni 2010]_
 - `REDUCED` · `maxPerLineError_sufficient` — Maximum per-line error (minimum SNR) is SUFFICIENT for a target slope accuracy.  _[Tognoni 2010]_
-- `PURE-MATH` · `abs_exp_sub_one_le` — A clean exponential perturbation bound: `|exp x − 1| ≤ exp η − 1` whenever `|x| ≤ η`.
 - `EXACT` · `relDensity_le` — Relative density error from an intercept (log-concentration) error.  _[Tognoni 2010]_
 - `REDUCED` · `olsIntercept_stable_centered` — Intercept (concentration) sensitivity, centered convention.  _[Tognoni 2010]_
 - `PURE-MATH` · `composition_abs_sub_le_uniform` — Uniform composition error bound.

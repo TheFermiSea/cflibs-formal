@@ -271,7 +271,6 @@ ErrorBudget.lean	temp_rel_error_eq	EXACT	Tognoni 2010
 ErrorBudget.lean	temp_rel_error_le	REDUCED	Tognoni 2010
 ErrorBudget.lean	requiredEnergySpread_sufficient	REDUCED	Tognoni 2010
 ErrorBudget.lean	maxPerLineError_sufficient	REDUCED	Tognoni 2010
-ErrorBudget.lean	abs_exp_sub_one_le	PURE-MATH	—
 ErrorBudget.lean	relDensity_le	EXACT	Tognoni 2010
 ErrorBudget.lean	olsIntercept_stable_centered	REDUCED	Tognoni 2010
 ErrorBudget.lean	olsSlope_stable_hetero	REDUCED	Tognoni 2010
@@ -324,6 +323,10 @@ TemporalEvolution.lean	temporal_saha_composition_gate_independent	REDUCED	Tognon
 TemporalEvolution.lean	mem_lteWindow_thermalized	REDUCED	Cristoforetti 2010
 TemporalEvolution.lean	mcwhirter_requirement_antitone	PURE-MATH	—
 Analysis.lean	strictAntiOn_div_of_deriv_num_neg	PURE-MATH	—
+Analysis.lean	exp_sub_le_mul	PURE-MATH	—
+Analysis.lean	abs_exp_sub_le	PURE-MATH	—
+Analysis.lean	abs_exp_sub_one_le	PURE-MATH	—
+Analysis.lean	inv_kT_sub_le	PURE-MATH	—
 EquivalentWidth.lean	equivWidth_integrand_integrable	PURE-MATH	—
 EquivalentWidth.lean	equivWidth_nonneg	PURE-MATH	—
 EquivalentWidth.lean	equivWidth_le_thin	EXACT	Gornushkin 1999

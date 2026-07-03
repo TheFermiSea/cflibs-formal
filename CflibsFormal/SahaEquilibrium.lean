@@ -483,7 +483,7 @@ stages; exact LTE; and the interval hypotheses `b < Ntot`, `r ≤ b`, `x ∈ [0,
 which bound the local slope of `√(S·(Ntot−·))`.  The constant `q` is explicit and
 need not be sharp. -/
 theorem sahaIter_contraction {S Ntot b x : ℝ} (hS : 0 < S) (hN : 0 < Ntot)
-    (hb : b < Ntot) (hrb : sahaEquilibriumNe S Ntot ≤ b) (_hx0 : 0 ≤ x) (hxb : x ≤ b) :
+    (hb : b < Ntot) (hrb : sahaEquilibriumNe S Ntot ≤ b) (hxb : x ≤ b) :
     |sahaIter S Ntot x - sahaEquilibriumNe S Ntot|
       ≤ Real.sqrt S / (2 * Real.sqrt (Ntot - b)) * |x - sahaEquilibriumNe S Ntot| := by
   set r := sahaEquilibriumNe S Ntot
@@ -540,7 +540,7 @@ theorem sahaIter_contraction {S Ntot b x : ℝ} (hS : 0 < S) (hN : 0 < Ntot)
 the invariant interval on which the contraction runs.  Reduction: the sufficient
 condition `√(S·Ntot) ≤ b` (with `x ∈ [0, b]`). -/
 theorem sahaIter_mapsTo {S Ntot b x : ℝ} (hS : 0 < S)
-    (hbN : Real.sqrt (S * Ntot) ≤ b) (hx0 : 0 ≤ x) (_hxb : x ≤ b) :
+    (hbN : Real.sqrt (S * Ntot) ≤ b) (hx0 : 0 ≤ x) :
     0 ≤ sahaIter S Ntot x ∧ sahaIter S Ntot x ≤ b := by
   unfold sahaIter
   refine ⟨Real.sqrt_nonneg _, ?_⟩
@@ -567,7 +567,7 @@ theorem sahaIter_geometric_error {S Ntot b x0 : ℝ} (hS : 0 < S) (hN : 0 < Ntot
     | zero => exact ⟨hx0, hx0b⟩
     | succ k ih =>
       rw [Function.iterate_succ_apply']
-      exact sahaIter_mapsTo hS hbN ih.1 ih.2
+      exact sahaIter_mapsTo hS hbN ih.1
   induction n with
   | zero => simp
   | succ k ih =>
@@ -575,7 +575,7 @@ theorem sahaIter_geometric_error {S Ntot b x0 : ℝ} (hS : 0 < S) (hN : 0 < Ntot
     calc |sahaIter S Ntot ((sahaIter S Ntot)^[k] x0) - sahaEquilibriumNe S Ntot|
         ≤ Real.sqrt S / (2 * Real.sqrt (Ntot - b))
             * |(sahaIter S Ntot)^[k] x0 - sahaEquilibriumNe S Ntot| :=
-          sahaIter_contraction hS hN hb hrb (hmem k).1 (hmem k).2
+          sahaIter_contraction hS hN hb hrb (hmem k).2
       _ ≤ Real.sqrt S / (2 * Real.sqrt (Ntot - b))
             * ((Real.sqrt S / (2 * Real.sqrt (Ntot - b))) ^ k
               * |x0 - sahaEquilibriumNe S Ntot|) :=
