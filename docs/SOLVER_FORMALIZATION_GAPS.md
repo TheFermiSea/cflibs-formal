@@ -3,7 +3,7 @@
 Generated 2026-06-30 from the formal-leverage review that mapped the CF-LIBS
 no-fallback ("strict mode") solver work onto this verified spec.
 
-**Verification status (authoritative):** `cflibs-formal` is **axiom-clean** — 910
+**Verification status (authoritative):** `cflibs-formal` is **axiom-clean** — 1030
 declarations, `lake env axiom-audit` exit 0, foundation-audit 0/0/0. The only axioms
 are the three standard mathlib foundations (`propext`, `Classical.choice`, `Quot.sound`).
 The "2 sorry / 2 admit / 11 axiom" sometimes quoted are **phantom textual counts**
@@ -40,9 +40,13 @@ strict solver would step outside the verified envelope.
    `nlObjective_exists_min` (a minimizer of the nonlinear joint `(T, N)` objective exists on
    any compact physical box, for ANY off-manifold observation, via the extreme value theorem)
    + `nlObjective_onManifold_min` (the true parameters are a zero-residual global optimum in
-   the noise-free case). Still open: uniqueness/characterization of the nonlinear minimizer
-   (the objective is non-convex in `T`) and the fully-coupled multi-species
-   `(T, n_e, composition)` fit.
+   the noise-free case). The N-direction is now ✅ closed (2026-07-02, VARPRO): `lineIntensity_linear_in_N`
+   (the forward map is linear in N), `nlObjective_Nsection_decomposition` (the N-section is
+   exactly quadratic), `profiledDensity_isMinOn_Nsection` + `Nsection_minimizer_unique`
+   (the profiled density is the UNIQUE N-section minimizer — every joint minimizer's
+   N-coordinate is determined by its T-coordinate; the 2-D fit is provably 1-D in T).
+   Still open: T-direction uniqueness (genuinely non-convex) and the fully-coupled
+   multi-species `(T, n_e, composition)` fit.
 
 2. **Atomic-data perturbation channel.** ✅ **Addressed** in `AtomicDataPerturbation.lean`
    (2026-07-02). `classicDensity_aliasing` (EXACT): inverting the true spectrum with wrong
@@ -51,17 +55,21 @@ strict solver would step outside the verified envelope.
    missing/NULL data is refusal. `classicDensity_aliasing_error` (lumped relative response
    error δ ⇒ `|N̂−N| ≤ N·δ/(1−δ)`), `classicDensity_aliasing_error_channels` (split
    `δ_gA`/`δ_U` channels), and `classicComposition_atomicData_error` (composed through the
-   verbatim `CompositionRobustness` bound to `|Ĉ_s − C_s|`). **Residual:** per-line
-   heterogeneous δ across a multi-line fit, and the `ΔE ≠ 0` channel split out of the
-   lumped ρ (currently absorbed exactly, not isolated).
+   verbatim `CompositionRobustness` bound to `|Ĉ_s − C_s|`). **Residual:** the `ΔE ≠ 0` channel is ✅
+   isolated (2026-07-02, `classicDensity_aliasing_error_energy`); per-line heterogeneous δ
+   across a multi-line fit remains.
 
 3. **n_e / Saha stability + multi-line conditioning.** ✅ **Partially addressed** in
    `SahaStability.lean` (2026-07-02): `electronDensity_relativeError` (EXACT — the
    diagnostic's log-derivative is exactly −1, so relative stage-ratio error transfers
    one-to-one to relative n_e error) and `electronDensity_lipschitz` (the explicit
-   sensitivity constant `S/R₀²` on `R ≥ R₀`). **Residual:** the T-channel (`∂n_e/∂T`) is
-   honestly open — `dS/dT` mixes the thermal bracket, `exp(−χ/kT)`, and the
-   partition-ratio `U_{z+1}/U_z`, whose sign is not definite without extra hypotheses. The
+   sensitivity constant `S/R₀²` on `R ≥ R₀`). **Residual:** the T-channel is ✅ closed as a
+   two-sided sensitivity bound (2026-07-02): `sahaFactor_lipschitz_temp` (channelwise —
+   thermal bracket + exponential + partition-ratio via `PartitionLipschitz` — assembled
+   into an explicit Lipschitz constant on a `[Tmin,Tmax]` box) and
+   `electronDensityFromRatio_lipschitz_temp` (the `(ΔT, ΔR)` budget is complete).
+   MONOTONICITY stays honestly open (`dS/dT` sign-indefinite through `U_{z+1}/U_z`) — but
+   the runtime error budget needs the bound, not the sign. The
    design-matrix leg is ✅ closed (2026-07-02) — `OLS.lean`: `det_designNormalMatrix`
    (`det = n·SS_E`, the Lagrange/variance identity) and `designNormalMatrix_det_ne_zero_iff`
    (nonsingular ⟺ positive energy spread), so the OLS `hvar` hypothesis IS the exact rank
@@ -95,9 +103,14 @@ strict solver would step outside the verified envelope.
    (2026-07-02) — `PartitionLipschitz.lean`: `partitionFunction_two_point_bound`
    (`|U(T₁)−U(T₂)| ≤ (∑g·E)·|Δ(1/k_BT)|`), `partitionFunction_lipschitz_temp` (explicit
    constant `(∑g·E)/(k_B·Tmin²)`), `partitionFunction_relative_error_temp` (the `δ_U` a
-   density bound consumes). Still open: the literal Lean composition into the density
-   channel — it needs a T-split aliasing identity (`classicDensity` inverting at `T̂ ≠ T`)
-   that `AtomicDataPerturbation` does not yet expose — and hence the final δ→ΔC coupling.
+   density bound consumes). ✅ **FULLY CLOSED** (2026-07-02): the T-split bridge now exists —
+   `classicDensity_temperature_aliasing` (EXACT wrong-T aliasing identity),
+   `classicDensity_temperature_aliasing_error` (bounded by `|T̂−T|` via the exp channel +
+   `PartitionLipschitz`), `classicComposition_temperature_error` — and the end-to-end chain
+   is composed in `NoiseToComposition.lean`: `noise_to_temperatureGap` → `noise_to_density`
+   → **`noise_to_composition`** (per-line ordinate noise `ε_k` ⇒ explicit `|Ĉ_s − C_s|`
+   bound through SS_E, `∑g·E`, and the temperature box — the composed bound this gap
+   originally demanded). Each link's reductions compound and are restated in-module.
 
 6. **Coupled Saha–closure–charge fixed point.** ✅ **Addressed (reduced core)** in
    `SahaEquilibrium.lean` (2026-07-02): the single-element, two-stage, fixed-T system
@@ -109,9 +122,13 @@ strict solver would step outside the verified envelope.
    ✅ closed (2026-07-02) — same module: `multiElement_exists_pos_fixedPoint` /
    `multiElement_pos_fixedPoint_unique` (the shared-n_e charge-neutrality fixed point
    `x = ∑_s Ntot_s·S_s/(x+S_s)` exists and is unique, via IVT + strict antitonicity) +
-   `multiElement_single_eq_sahaEquilibriumNe` (single-element consistency). Still open: the
-   outer T-iteration and *convergence of the iterative map* (the fixed point exists and is
-   unique; the solver's convergence flag is licensed for the target, not yet its iteration).
+   `multiElement_single_eq_sahaEquilibriumNe` (single-element consistency). The scalar iteration is ✅ closed
+   (2026-07-02): `sahaIter` (the natural map `x ↦ √(S(Ntot−x))`), `sahaIter_fixedPoint`,
+   `sahaIter_contraction` (one-step contraction with explicit ratio `√S/(2√(Ntot−b))`),
+   `sahaIter_geometric_error` (`qⁿ` decay), `sahaIter_tendsto` (full convergence to the
+   root) — under explicit, satisfiable interval conditions (witnessed at `S=1, Ntot=2,
+   b=3/2, q=√2/2`). Still open: the outer T-iteration and the multi-element coupled
+   iteration's convergence.
 
 7. **Multi-species per-U generalization.** ✅ **Addressed** in `MultiSpecies.lean`
    (2026-07-02): `deNormalizedDensityPerU` / `lineIntensityPerU` with genuinely
@@ -149,8 +166,11 @@ strict solver would step outside the verified envelope.
     bound (2026-07-02) — `equivWidth_lorentzian_sqrt_lower`: for the Lorentzian profile and
     `τ ≥ 8π`, `(1−e⁻¹)/(2√(2π))·√τ ≤ W(τ)` (with `lorentzian_integral : ∫φ = 1`), so the
     damping-wing growth is rigorously √τ-fast — in stark contrast to the slab's `W ≤ 1`.
-    Still open: the Ladenburg–Reiche asymptotic EQUALITY (sharp constant + matching upper
-    bound).
+    The matching upper bound is ✅ closed (2026-07-02):
+    `equivWidth_lorentzian_sqrt_upper` (`W ≤ C·√τ`, inner-interval + arctan tail) and
+    `equivWidth_lorentzian_sqrt_two_sided` — the √τ damping-wing REGIME is pinned two-sidedly
+    up to constants. Still open: only the Ladenburg–Reiche sharp-constant asymptotic
+    EQUALITY.
 11. **Matrix-effect invariance under per-shot (T, n_e) variation.** ✅ **Partially
     addressed** in `MatrixEffects.lean` (2026-07-02): `homologousPair_ratio_closed_form` +
     `homologousPair_ratio_temperature_invariant` — energy-matched (homologous) cross-species

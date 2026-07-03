@@ -26,6 +26,7 @@ import CflibsFormal.LeastSquaresFit
 import CflibsFormal.LineBroadening
 import CflibsFormal.MatrixEffects
 import CflibsFormal.MultiSpecies
+import CflibsFormal.NoiseToComposition
 import CflibsFormal.NonlinearLeastSquares
 import CflibsFormal.OLS
 import CflibsFormal.PartialLTE

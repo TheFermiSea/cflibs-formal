@@ -5,7 +5,7 @@
 > (the integrity spine) + citation from `docs/scope-tags.tsv`; the docs-sync CI gate fails if
 > any result is untagged, so a new theorem cannot land without declaring its epistemic status.
 
-**Scope-tag mix** (317 results): **EXACT** 108 · **REDUCED** 60 · **APPROXIMATION** 9 · **PURE-MATH** 140
+**Scope-tag mix** (341 results): **EXACT** 113 · **REDUCED** 75 · **APPROXIMATION** 9 · **PURE-MATH** 144
 
 `EXACT` = exact identity faithfully encoding the cited physics · `REDUCED` = valid dimensionless/lumped-factor form · `APPROXIMATION` = documented idealization / limiting case · `PURE-MATH` = infrastructure lemma, no physical claim. Classification cross-checked against `reviews/literature-validity-audit.md`.
 
@@ -130,12 +130,18 @@
 **Definitions**
 - `responseFactor` — Per-line response factor `ρ = g_u · A_u · exp(−E_u/(k_B T)) / U(T)`.
 - `recoveredDensity` — Recovered per-species density under wrong atomic data.
+- `tempResponseErrorBound` — Named temperature-response error bound.
+- `recoveredDensityAtT` — Recovered per-species density at a wrong temperature.
 
 **Results**
 - `EXACT` · `classicDensity_aliasing` — EXACT aliasing identity.  _[Tognoni 2010]_
 - `REDUCED` · `classicDensity_aliasing_error` — REDUCED lumped relative-error bound.  _[Tognoni 2010]_
 - `REDUCED` · `classicDensity_aliasing_error_channels` — REDUCED two-channel relative-error bound (`E' = E`).  _[Tognoni 2010]_
 - `REDUCED` · `classicComposition_atomicData_error` — REDUCED composition corollary.  _[Tognoni 2010]_
+- `EXACT` · `classicDensity_temperature_aliasing` — EXACT temperature-aliasing identity.  _[Tognoni 2010]_
+- `REDUCED` · `classicDensity_aliasing_error_energy` — REDUCED energy-channel isolation (gap #2 residual).  _[Tognoni 2010]_
+- `REDUCED` · `classicDensity_temperature_aliasing_error` — REDUCED temperature-error bound.  _[Tognoni 2010]_
+- `REDUCED` · `classicComposition_temperature_error` — REDUCED composition corollary (temperature channel).  _[Tognoni 2010]_
 
 ## `Boltzmann.lean`  (CflibsFormal)
 *Part 1: the Boltzmann distribution*
@@ -302,6 +308,8 @@
 - `PURE-MATH` · `lorentzian_integral` — The Lorentzian is a unit-area profile: `∫ L = 1` (since `∫ (1 + x²)⁻¹ = π`).
 - `EXACT` · `equivWidth_lorentzian_sqrt_lower` — The √τ damping-wing lower bound (EXACT, within the model).  _[Gornushkin 1999]_
 - `EXACT` · `nvLz_sqrt_lower_at_threshold` — Non-vacuity: the √τ lower bound fires at the threshold `τ = 8π` (hypothesis `8π ≤ 8π`), so the constant `c = (1 - e⁻¹)/(2√(2π))` gives a genuine lower bound…  _[Gornushkin 1999]_
+- `EXACT` · `equivWidth_lorentzian_sqrt_upper` — The √τ damping-wing UPPER bound (EXACT, within the model).  _[Gornushkin 1999]_
+- `EXACT` · `equivWidth_lorentzian_sqrt_two_sided` — The √τ damping-wing REGIME, pinned up to constants (EXACT, within the model).  _[Gornushkin 1999]_
 
 ## `ErrorBudget.lean`  (CflibsFormal)
 *the error-propagation chain and DERIVED reliability thresholds*
@@ -493,16 +501,37 @@
 - `PURE-MATH` · `speciesComposition_ratio` — Composition ratio equals density ratio.
 - `EXACT` · `speciesComposition_ratio_from_intensities_perU` — Relative composition from intensities (per-species `U`).  _[Ciucci 1999]_
 
+## `NoiseToComposition.lean`  (CflibsFormal)
+*the end-to-end noise → composition chain (gap #5, the composed bound)*
+
+**Definitions**
+- `noiseTempGapBound` — Noise-derived temperature-gap bound.
+- `tempResponseErrorBoundOfGap` — Gap-form temperature-response error bound.
+
+**Results**
+- `PURE-MATH` · `tempResponseErrorBound_eq_ofGap` — The named temperature-response bound is the gap-form bound at the actual gap.
+- `PURE-MATH` · `tempResponseErrorBoundOfGap_mono` — Temperature-response error bound is monotone in the gap (PURE-MATH).
+- `REDUCED` · `noise_to_temperatureGap` — Noise ⇒ temperature gap (REDUCED, Tognoni 2010).  _[Tognoni 2010]_
+- `REDUCED` · `noise_to_density` — Noise ⇒ per-species recovered-density error (REDUCED, Tognoni 2010).  _[Tognoni 2010]_
+- `REDUCED` · `noise_to_composition` — HEADLINE — noise ⇒ recovered-composition error (REDUCED, Tognoni 2010).  _[Tognoni 2010]_
+
 ## `NonlinearLeastSquares.lean`  (CflibsFormal)
 *the nonlinear joint `(T, N)` least-squares inverse (existence leg)*
 
 **Definitions**
 - `nlObjective` — Nonlinear least-squares objective for the joint `(T, N)` fit: `nlObjective kB Fcal g E A obs (T, N) = ∑ₖ (I_k(T,N) − obs_k)²`, where `I_k(T,N) = lineIntensit…
+- `profiledDensity` — Profiled density (variable-projection closed form).
 
 **Results**
 - `PURE-MATH` · `nlObjective_continuousOn` — Continuity on the physical box.
 - `REDUCED` · `nlObjective_exists_min` — Existence of the joint minimizer (headline).  _[Tognoni 2010]_
 - `EXACT` · `nlObjective_onManifold_min` — On-manifold anchor.  _[Tognoni 2010]_
+- `EXACT` · `lineIntensity_linear_in_N` — Linearity of the forward map in the density `N` (EXACT).  _[Ciucci 1999]_
+- `PURE-MATH` · `nlObjective_Nsection_decomposition` — `N`-section decomposition (PURE-MATH).
+- `PURE-MATH` · `profiledDensity_denom_pos` — Nondegeneracy of the profiled least squares.
+- `REDUCED` · `profiledDensity_isMinOn_Nsection` — `N`-section global minimality (headline, REDUCED).  _[Tognoni 2010]_
+- `REDUCED` · `nlObjective_Nsection_lt_of_ne` — Strict excess off the profiled density (uniqueness core, REDUCED).  _[Tognoni 2010]_
+- `REDUCED` · `Nsection_minimizer_unique` — Uniqueness of the `N`-section minimizer (headline, REDUCED).  _[Tognoni 2010]_
 
 ## `OLS.lean`  (CflibsFormal)
 *the ordinary-least-squares algebraic foundation*
@@ -585,6 +614,7 @@
 **Definitions**
 - `sahaEquilibriumNe` — Self-consistent electron density of the reduced single-element, two-stage, fixed-`T` Saha core: the unique positive root of `n_e² = S · (Ntot − n_e)`,  `n_e…
 - `multiElementIonized` — Multi-element ionized-density closure map `G`.
+- `sahaIter` — Scalar fixed-point iteration map of the reduced Saha self-consistency equation `n_e² = S · (Ntot − n_e)`.
 
 **Results**
 - `PURE-MATH` · `sahaEquilibriumNe_pos` — Positivity of the self-consistent density.
@@ -599,6 +629,11 @@
 - `REDUCED` · `multiElement_exists_pos_fixedPoint` — Existence of the coupled electron density.  _[Saha–Eggert (Griem)]_
 - `REDUCED` · `multiElement_pos_fixedPoint_unique` — Uniqueness of the coupled electron density.  _[Saha–Eggert (Griem)]_
 - `REDUCED` · `multiElement_single_eq_sahaEquilibriumNe` — Single-species consistency.  _[Saha–Eggert (Griem)]_
+- `EXACT` · `sahaIter_fixedPoint` — `sahaEquilibriumNe` is a fixed point of `sahaIter` (`EXACT`; Saha–Eggert, Griem).  _[Saha–Eggert (Griem)]_
+- `REDUCED` · `sahaIter_contraction` — One-step geometric contraction toward the fixed point (`REDUCED`; Saha–Eggert, Griem).  _[Saha–Eggert (Griem)]_
+- `REDUCED` · `sahaIter_mapsTo` — Interval invariance of the iteration (`REDUCED`; Saha–Eggert, Griem).  _[Saha–Eggert (Griem)]_
+- `REDUCED` · `sahaIter_geometric_error` — Geometric error decay of the iterates (`REDUCED`; Saha–Eggert, Griem).  _[Saha–Eggert (Griem)]_
+- `REDUCED` · `sahaIter_tendsto` — Geometric convergence of the iteration (`REDUCED`; Saha–Eggert, Griem).  _[Saha–Eggert (Griem)]_
 
 ## `SahaInverse.lean`  (CflibsFormal)
 *Part 6: coupling Saha into the inverse problem*
@@ -615,11 +650,16 @@
 ## `SahaStability.lean`  (CflibsFormal)
 *Part 2b: stability of the `n_e` diagnostic*
 
+**Definitions**
+- `sahaFactorLipConst` — Explicit `T`-Lipschitz constant for `sahaFactor` on a box `[Tmin, Tmax]` (`REDUCED`, Saha–Eggert (Griem)).
+
 **Results**
 - `PURE-MATH` · `saha_ratio_cancel` — Ratio-cancellation core (PURE-MATH).
 - `EXACT` · `electronDensity_relativeError` — EXACT relative-error transfer for `n_e`.  _[Saha–Eggert (Griem)]_
 - `PURE-MATH` · `saha_inv_lipschitz` — Lipschitz core (PURE-MATH).
 - `EXACT` · `electronDensity_lipschitz` — EXACT sensitivity bound for the `n_e` diagnostic.  _[Saha–Eggert (Griem)]_
+- `REDUCED` · `sahaFactor_lipschitz_temp` — Saha-factor `T`-Lipschitz (two-sided sensitivity) bound (`REDUCED`, Saha–Eggert (Griem)).  _[Saha–Eggert (Griem)]_
+- `REDUCED` · `electronDensityFromRatio_lipschitz_temp` — Electron-density `T`-sensitivity bound (`REDUCED`, Saha–Eggert (Griem)).  _[Saha–Eggert (Griem)]_
 
 ## `SelfAbsorption.lean`  (CflibsFormal)
 *self-absorption / optical-thickness-aware forward map*

@@ -457,4 +457,125 @@ theorem nvLz_sqrt_lower_at_threshold :
       ≤ equivWidth lorentzian (8 * Real.pi) :=
   equivWidth_lorentzian_sqrt_lower le_rfl
 
+/-- For `t ≥ 0` the arctangent lies below the diagonal: `arctan t ≤ t`. The graph of `arctan` is
+concave on `[0, ∞)` with unit slope at the origin; here from `Real.lt_tan` on `arctan t ∈ [0, π/2)`
+together with `tan (arctan t) = t`. (PURE-MATH.) -/
+private theorem nvLzu_arctan_le_self {t : ℝ} (ht : 0 ≤ t) : Real.arctan t ≤ t := by
+  rcases eq_or_lt_of_le ht with h | h
+  · subst h; simp
+  · have hlt := Real.lt_tan (Real.arctan_pos.mpr h) (Real.arctan_lt_pi_div_two t)
+    rw [Real.tan_arctan] at hlt
+    exact hlt.le
+
+/-- **The √τ damping-wing UPPER bound (EXACT, within the model).** Matching
+`equivWidth_lorentzian_sqrt_lower`: for the Lorentzian profile the equivalent width grows *at most*
+like `√τ`, with the explicit constant `C = 4/√π`, for every `τ ≥ 0`:
+
+  `W(τ) = equivWidth lorentzian τ ≤ (4/√π) · √τ`.
+
+**Construction (split at `a = √(τ/π)`).** Decompose `ℝ = [-a, a] ∪ [-a, a]ᶜ`
+(`integral_add_compl`). On the core `[-a, a]` the integrand `1 - e^{-τL} ≤ 1`, so the inner part is
+`≤ vol [-a, a] = 2a`. On the tails `1 - e^{-τL} ≤ τ·L` (`Real.one_sub_le_exp_neg`), and the
+Lorentzian tail mass is `∫_{[-a,a]ᶜ} L = 1 - (2/π)·arctan a = (2/π)·arctan(1/a) ≤ (2/π)/a`
+(`arctan_inv_of_pos`, `nvLzu_arctan_le_self`); since `τ = π·a²` the outer part is
+`≤ τ·(2/π)/a = 2a`. Total `W ≤ 4a = 4√(τ/π) = (4/√π)·√τ`.
+
+**Scope.** A genuine **upper bound**; the constant `4/√π ≈ 2.257` is NOT sharp (the split is
+deliberately crude). With the lower bound this pins the `√τ` *regime* up to constants — but the
+Ladenburg–Reiche sharp-constant asymptotic *equality* stays OUT of scope (module honest-scope
+note). Gornushkin 1999. -/
+theorem equivWidth_lorentzian_sqrt_upper {τ : ℝ} (hτ : 0 ≤ τ) :
+    equivWidth lorentzian τ ≤ 4 / Real.sqrt Real.pi * Real.sqrt τ := by
+  have hπpos := Real.pi_pos
+  have hπne : Real.pi ≠ 0 := Real.pi_ne_zero
+  have hlor_nn : (0 : ℝ → ℝ) ≤ lorentzian := fun x => (lorentzian_pos x).le
+  rcases eq_or_lt_of_le hτ with hz | hτpos
+  · rw [← hz]; simp [equivWidth]
+  · have hτ0 : (0:ℝ) ≤ τ := hτpos.le
+    set a := Real.sqrt (τ / Real.pi) with ha_def
+    have ha_pos : 0 < a := Real.sqrt_pos.mpr (div_pos hτpos hπpos)
+    have hane : a ≠ 0 := ha_pos.ne'
+    have hasq : a ^ 2 = τ / Real.pi := Real.sq_sqrt (div_nonneg hτ0 hπpos.le)
+    have hπa2 : Real.pi * a ^ 2 = τ := by rw [hasq]; field_simp
+    set f := fun x => 1 - Real.exp (-(τ * lorentzian x))
+    have hf_int : Integrable f :=
+      equivWidth_integrand_integrable hτ0 hlor_nn lorentzian_integrable
+    have hvol : ∫ _ in Set.Icc (-a) a, (1:ℝ) = 2 * a := by
+      rw [setIntegral_const, smul_eq_mul, mul_one, measureReal_def, Real.volume_Icc,
+        ENNReal.toReal_ofReal (by linarith : (0:ℝ) ≤ a - -a)]
+      ring
+    have hinner : ∫ x in Set.Icc (-a) a, f x ≤ 2 * a := by
+      have hci : IntegrableOn (fun _ : ℝ => (1:ℝ)) (Set.Icc (-a) a) :=
+        integrableOn_const (hs := measure_Icc_lt_top.ne)
+      have hle : ∫ x in Set.Icc (-a) a, f x ≤ ∫ _ in Set.Icc (-a) a, (1:ℝ) := by
+        refine setIntegral_mono_on hf_int.integrableOn hci measurableSet_Icc (fun x _ => ?_)
+        change (1:ℝ) - Real.exp (-(τ * lorentzian x)) ≤ 1
+        linarith [Real.exp_pos (-(τ * lorentzian x))]
+      exact hle.trans_eq hvol
+    have hLs : ∫ x in Set.Icc (-a) a, lorentzian x = 2 / Real.pi * Real.arctan a := by
+      have hL : ∀ x, lorentzian x = (Real.pi)⁻¹ * (1 + x ^ 2)⁻¹ := by
+        intro x; unfold lorentzian; simp only [one_div]
+      simp only [hL]
+      rw [integral_const_mul, integral_Icc_eq_integral_Ioc,
+        intervalIntegral.integral_of_le (by linarith : (-a:ℝ) ≤ a) |>.symm,
+        integral_inv_one_add_sq, Real.arctan_neg]
+      ring
+    have hcompl : ∫ x in (Set.Icc (-a) a)ᶜ, lorentzian x
+        = 1 - 2 / Real.pi * Real.arctan a := by
+      rw [setIntegral_compl₀ measurableSet_Icc.nullMeasurableSet lorentzian_integrable,
+        lorentzian_integral, hLs]
+    have hinv : Real.arctan a⁻¹ = Real.pi / 2 - Real.arctan a := Real.arctan_inv_of_pos ha_pos
+    have hinv' : Real.arctan a = Real.pi / 2 - Real.arctan a⁻¹ := by linarith [hinv]
+    have harc : Real.arctan a⁻¹ ≤ a⁻¹ := nvLzu_arctan_le_self (inv_pos.mpr ha_pos).le
+    have hstep : ∫ x in (Set.Icc (-a) a)ᶜ, f x
+        ≤ τ * ∫ x in (Set.Icc (-a) a)ᶜ, lorentzian x := by
+      rw [← integral_const_mul]
+      refine setIntegral_mono_on hf_int.integrableOn
+        (lorentzian_integrable.const_mul τ).integrableOn measurableSet_Icc.compl (fun x _ => ?_)
+      change (1:ℝ) - Real.exp (-(τ * lorentzian x)) ≤ τ * lorentzian x
+      linarith [Real.one_sub_le_exp_neg (τ * lorentzian x)]
+    rw [hcompl] at hstep
+    have hkey : τ * (1 - 2 / Real.pi * Real.arctan a) = 2 * a ^ 2 * Real.arctan a⁻¹ := by
+      rw [← hπa2, hinv']; field_simp; ring
+    have hfin2 : 2 * a ^ 2 * Real.arctan a⁻¹ ≤ 2 * a := by
+      have h1 : 2 * a ^ 2 * Real.arctan a⁻¹ ≤ 2 * a ^ 2 * a⁻¹ :=
+        mul_le_mul_of_nonneg_left harc (by positivity)
+      have h2 : 2 * a ^ 2 * a⁻¹ = 2 * a := by field_simp
+      linarith [h1, h2]
+    have houter : ∫ x in (Set.Icc (-a) a)ᶜ, f x ≤ 2 * a :=
+      hstep.trans (hkey.le.trans hfin2)
+    calc equivWidth lorentzian τ
+        = (∫ x in Set.Icc (-a) a, f x) + (∫ x in (Set.Icc (-a) a)ᶜ, f x) := by
+          rw [equivWidth]; exact (integral_add_compl measurableSet_Icc hf_int).symm
+      _ ≤ 2 * a + 2 * a := add_le_add hinner houter
+      _ = 4 * a := by ring
+      _ = 4 / Real.sqrt Real.pi * Real.sqrt τ := by rw [ha_def, Real.sqrt_div hτ0]; ring
+
+/-- **The √τ damping-wing REGIME, pinned up to constants (EXACT, within the model).** Combining
+`equivWidth_lorentzian_sqrt_lower` with `equivWidth_lorentzian_sqrt_upper`: for `τ ≥ 8π` the
+Lorentzian equivalent width is trapped between two explicit `√τ` lines,
+
+  `(1 - e⁻¹)/(2√(2π)) · √τ ≤ W(τ) ≤ (4/√π) · √τ`.
+
+So the curve of growth grows *exactly* on the order of `√τ` — the slope-½ damping wing — with the
+two explicit constants (`≈ 0.126` and `≈ 2.257`) bracketing it. **The sharp Ladenburg–Reiche
+asymptotic EQUALITY (the exact slope-½ constant `W ∼ 2√(τ·⟨width⟩)`) stays OUT of scope:** it needs
+the profile-specific improper-integral asymptotics, not merely the two-sided envelope proved here.
+Gornushkin 1999. -/
+theorem equivWidth_lorentzian_sqrt_two_sided {τ : ℝ} (hτ : 8 * Real.pi ≤ τ) :
+    (1 - Real.exp (-1)) / (2 * Real.sqrt (2 * Real.pi)) * Real.sqrt τ
+        ≤ equivWidth lorentzian τ
+    ∧ equivWidth lorentzian τ ≤ 4 / Real.sqrt Real.pi * Real.sqrt τ :=
+  ⟨equivWidth_lorentzian_sqrt_lower hτ,
+    equivWidth_lorentzian_sqrt_upper (le_trans (by positivity) hτ)⟩
+
+/-- Non-vacuity: the two-sided √τ envelope fires at the threshold `τ = 8π`, trapping the Lorentzian
+equivalent width between the two explicit constants at a concrete optical depth. -/
+example :
+    (1 - Real.exp (-1)) / (2 * Real.sqrt (2 * Real.pi)) * Real.sqrt (8 * Real.pi)
+        ≤ equivWidth lorentzian (8 * Real.pi)
+    ∧ equivWidth lorentzian (8 * Real.pi)
+        ≤ 4 / Real.sqrt Real.pi * Real.sqrt (8 * Real.pi) :=
+  equivWidth_lorentzian_sqrt_two_sided le_rfl
+
 end CflibsFormal

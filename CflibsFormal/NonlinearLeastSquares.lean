@@ -199,3 +199,209 @@ example :
     (fun k => by norm_num [nvNlsG])
 
 end CflibsFormal
+
+/-!
+## Variable projection (VARPRO): the forward map is linear in `N`, so the `N`-section profiles out
+
+The joint objective `nlObjective` is nonlinear and non-convex in `T`, but it is **exactly quadratic
+in `N`**: the forward line intensity is `lineIntensity kB T N Fcal g E A k = N · c_k(T)` with
+`c_k(T) := lineIntensity kB T 1 Fcal g E A k` — linear in the density `N`. Hence for every *fixed*
+`T` the `N`-section `N ↦ nlObjective … (T, N) = ∑ₖ (N·c_k − obs_k)²` is a 1-D ordinary least-squares
+problem, solved in closed form by the **profiled density**
+`N̂(T) = (∑ₖ c_k·obs_k) / (∑ₖ c_k²)` (classical variable projection). We prove:
+
+* `lineIntensity_linear_in_N` — the exact linearity-in-`N` identity of the forward map.
+* `nlObjective_Nsection_decomposition` — the Pythagorean/projection identity for the `N`-section,
+  mirroring `LeastSquaresFit.rss_decomposition`: the excess of any `N` over `N̂(T)` is
+  `(N − N̂(T))² · ∑ₖ c_k²`.
+* `profiledDensity_isMinOn_Nsection` / `nlObjective_Nsection_lt_of_ne` /
+  `Nsection_minimizer_unique` — **the headline**: `N̂(T)` is the *unique* global minimizer of the
+  `N`-section, so the `N`-coordinate of any joint minimizer is determined by its `T`-coordinate. The
+  2-D joint fit is thus provably 1-D in `T` — the VARPRO reduction the solver exploits.
+* `profiledDensity_denom_pos` — the nondegeneracy `0 < ∑ₖ c_k²` holds for any `T` under positive
+  degeneracies, Einstein coefficients, and calibration (the forward map is positive at unit
+  density), so the reduction is never vacuous.
+
+**Honest scope.** This closes the *`N`-direction* of gap #1 exactly and exposes the variable
+projection. The *`T`-direction* uniqueness remains genuinely open: `nlObjective` is non-convex in
+`T` through `exp(−E_k/(k_B T))` and the partition function `U(T)`, so the profiled-`T` objective
+`T ↦ nlObjective … (T, N̂(T))` may have multiple local minima — none of that is addressed here.
+The VARPRO structure and the calibration-free `(T, N)` inversion it accelerates are Tognoni et al.
+(2010); the linearity of the forward map in `N` is Ciucci et al. (1999) (see `ForwardMap.lean`).
+-/
+
+namespace CflibsFormal
+
+open Finset Real
+open scoped BigOperators
+
+variable {ι : Type*} [Fintype ι]
+
+/-- **Linearity of the forward map in the density `N` (EXACT).**
+`lineIntensity kB T N Fcal g E A k = N · lineIntensity kB T 1 Fcal g E A k`. The CF-LIBS
+optically-thin line intensity `I_k = Fcal · A_k · N · g_k · exp(−E_k/(k_B T)) / U(T)` carries the
+number density `N` as a bare scalar multiplier: only the `population` numerator contains `N`, and it
+enters linearly, while `Fcal`, `A_k`, `g_k`, the Boltzmann factor and the partition function `U(T)`
+are all independent of `N`. Pure algebra through `population`; the enabling structural fact behind
+variable projection (the `N`-section is exactly quadratic). (Ciucci et al. 1999 forward map.) -/
+theorem lineIntensity_linear_in_N (kB T N Fcal : ℝ) (g E A : ι → ℝ) (k : ι) :
+    lineIntensity kB T N Fcal g E A k = N * lineIntensity kB T 1 Fcal g E A k := by
+  simp only [lineIntensity, population]
+  ring
+
+/-- **Profiled density (variable-projection closed form).** For a fixed temperature `T`, the
+density that minimizes the `N`-section `N ↦ ∑ₖ (N·c_k − obs_k)²` of `nlObjective`, where
+`c_k = lineIntensity kB T 1 Fcal g E A k`:
+`N̂(T) = (∑ₖ c_k·obs_k) / (∑ₖ c_k²)`. This is the ordinary-least-squares estimate of the scalar
+`N` in the single-regressor model `obs_k ≈ N·c_k` — the classical VARPRO "profiling out" of the
+linear parameter, leaving a reduced objective in `T` alone. -/
+noncomputable def profiledDensity (kB Fcal : ℝ) (g E A obs : ι → ℝ) (T : ℝ) : ℝ :=
+  (∑ k, lineIntensity kB T 1 Fcal g E A k * obs k)
+    / ∑ k, (lineIntensity kB T 1 Fcal g E A k) ^ 2
+
+/-- General 1-D least-squares Pythagorean identity for a single regressor `c`: if `N̂` satisfies the
+normal equation `N̂ · ∑ c² = ∑ c·obs`, then `∑ (N·c − obs)² = ∑ (N̂·c − obs)² + (N − N̂)² · ∑ c²`.
+Pure algebra; the cross term vanishes by the normal equation. -/
+private lemma nsection_decomp_general (c obs : ι → ℝ) (Nhat N : ℝ)
+    (hNhat : Nhat * (∑ k, (c k) ^ 2) = ∑ k, c k * obs k) :
+    ∑ k, (N * c k - obs k) ^ 2
+      = ∑ k, (Nhat * c k - obs k) ^ 2 + (N - Nhat) ^ 2 * ∑ k, (c k) ^ 2 := by
+  have hz : ∑ k, 2 * (N - Nhat) * (c k * (Nhat * c k - obs k)) = 0 := by
+    rw [← Finset.mul_sum]
+    have hinner : ∑ k, c k * (Nhat * c k - obs k) = 0 := by
+      have hpt : ∀ k ∈ Finset.univ,
+          c k * (Nhat * c k - obs k) = Nhat * (c k) ^ 2 - c k * obs k := fun k _ => by ring
+      rw [Finset.sum_congr rfl hpt, Finset.sum_sub_distrib, ← Finset.mul_sum, hNhat, sub_self]
+    rw [hinner, mul_zero]
+  have hpt2 : ∀ k ∈ Finset.univ,
+      (N * c k - obs k) ^ 2
+        = (Nhat * c k - obs k) ^ 2 + (N - Nhat) ^ 2 * (c k) ^ 2
+          + 2 * (N - Nhat) * (c k * (Nhat * c k - obs k)) := fun k _ => by ring
+  rw [Finset.sum_congr rfl hpt2, Finset.sum_add_distrib, Finset.sum_add_distrib, hz,
+    ← Finset.mul_sum]
+  ring
+
+/-- **`N`-section decomposition (PURE-MATH).** For a fixed `T` with nondegenerate regressor energy
+`0 < ∑ₖ c_k²` (`c_k = lineIntensity kB T 1 Fcal g E A k`), for every density `N`:
+`nlObjective … (T, N) = nlObjective … (T, N̂(T)) + (N − N̂(T))² · ∑ₖ c_k²`, where
+`N̂(T) = profiledDensity … T`. The nonlinear objective, rewritten through
+`lineIntensity_linear_in_N` into the 1-D least squares `∑ₖ (N·c_k − obs_k)²`, decomposes
+orthogonally: any `N`'s excess residual over the profiled minimum is exactly `(N − N̂)² · ∑ c²`.
+The 2-D nonlinear analogue of `LeastSquaresFit.rss_decomposition`. -/
+theorem nlObjective_Nsection_decomposition (kB Fcal T : ℝ) (g E A obs : ι → ℝ)
+    (hc : 0 < ∑ k, (lineIntensity kB T 1 Fcal g E A k) ^ 2) (N : ℝ) :
+    nlObjective kB Fcal g E A obs (T, N)
+      = nlObjective kB Fcal g E A obs (T, profiledDensity kB Fcal g E A obs T)
+        + (N - profiledDensity kB Fcal g E A obs T) ^ 2
+          * ∑ k, (lineIntensity kB T 1 Fcal g E A k) ^ 2 := by
+  have hrw : ∀ M : ℝ, nlObjective kB Fcal g E A obs (T, M)
+      = ∑ k, (M * lineIntensity kB T 1 Fcal g E A k - obs k) ^ 2 := by
+    intro M
+    change ∑ k, (lineIntensity kB T M Fcal g E A k - obs k) ^ 2
+        = ∑ k, (M * lineIntensity kB T 1 Fcal g E A k - obs k) ^ 2
+    refine Finset.sum_congr rfl (fun k _ => ?_)
+    rw [lineIntensity_linear_in_N]
+  have hNhat : profiledDensity kB Fcal g E A obs T
+      * (∑ k, (lineIntensity kB T 1 Fcal g E A k) ^ 2)
+      = ∑ k, lineIntensity kB T 1 Fcal g E A k * obs k := by
+    unfold profiledDensity
+    rw [div_mul_cancel₀ _ hc.ne']
+  rw [hrw N, hrw (profiledDensity kB Fcal g E A obs T)]
+  exact nsection_decomp_general (fun k => lineIntensity kB T 1 Fcal g E A k) obs
+    (profiledDensity kB Fcal g E A obs T) N hNhat
+
+/-- **Nondegeneracy of the profiled least squares.** For any temperature `T`, under positive
+degeneracies `g`, calibration `Fcal`, and Einstein coefficients `A`, the regressor energy
+`∑ₖ (lineIntensity kB T 1 Fcal g E A k)²` is strictly positive: each `c_k` is a positive observable
+at unit density (`lineIntensity_pos`; the Boltzmann factor is positive for *any* `T`, so no lower
+bound on `T` is needed), and a sum over the nonempty level set of positive squares is positive. This
+is the hypothesis `0 < ∑ c²` of the decomposition and minimality theorems, so they are never
+vacuous. -/
+theorem profiledDensity_denom_pos [Nonempty ι] {kB T Fcal : ℝ} {g E A : ι → ℝ}
+    (hg : ∀ k, 0 < g k) (hFcal : 0 < Fcal) (hA : ∀ k, 0 < A k) :
+    0 < ∑ k, (lineIntensity kB T 1 Fcal g E A k) ^ 2 := by
+  refine Finset.sum_pos (fun k _ => ?_) univ_nonempty
+  exact pow_pos (lineIntensity_pos hg one_pos hFcal hA k) 2
+
+/-- **`N`-section global minimality (headline, REDUCED).** For a fixed `T` with `0 < ∑ₖ c_k²`, the
+profiled density `N̂(T) = profiledDensity … T` minimizes the `N`-section of the joint objective:
+`nlObjective … (T, N̂(T)) ≤ nlObjective … (T, N)` for every `N`. Immediate from
+`nlObjective_Nsection_decomposition` — the excess `(N − N̂)² · ∑ c²` is a nonnegative sum of
+squares. Reduces the joint 2-D fit's `N`-direction to the closed-form VARPRO estimate (Tognoni et
+al. 2010); the `T`-direction remains open (non-convex). -/
+theorem profiledDensity_isMinOn_Nsection (kB Fcal T : ℝ) (g E A obs : ι → ℝ)
+    (hc : 0 < ∑ k, (lineIntensity kB T 1 Fcal g E A k) ^ 2) (N : ℝ) :
+    nlObjective kB Fcal g E A obs (T, profiledDensity kB Fcal g E A obs T)
+      ≤ nlObjective kB Fcal g E A obs (T, N) := by
+  rw [nlObjective_Nsection_decomposition kB Fcal T g E A obs hc N]
+  have hexc : 0 ≤ (N - profiledDensity kB Fcal g E A obs T) ^ 2
+      * ∑ k, (lineIntensity kB T 1 Fcal g E A k) ^ 2 := mul_nonneg (sq_nonneg _) hc.le
+  linarith
+
+/-- **Strict excess off the profiled density (uniqueness core, REDUCED).** For a fixed `T` with
+`0 < ∑ₖ c_k²`, every density `N ≠ N̂(T)` gives *strictly* larger `N`-section residual:
+`nlObjective … (T, N̂(T)) < nlObjective … (T, N)`. The excess `(N − N̂)² · ∑ c²` is a positive times
+a positive, using `sq_pos_of_ne_zero`. This is what makes `N̂(T)` the *unique* `N`-section
+minimizer (`Nsection_minimizer_unique`). (Tognoni et al. 2010 VARPRO reduction.) -/
+theorem nlObjective_Nsection_lt_of_ne (kB Fcal T : ℝ) (g E A obs : ι → ℝ)
+    (hc : 0 < ∑ k, (lineIntensity kB T 1 Fcal g E A k) ^ 2) {N : ℝ}
+    (hN : N ≠ profiledDensity kB Fcal g E A obs T) :
+    nlObjective kB Fcal g E A obs (T, profiledDensity kB Fcal g E A obs T)
+      < nlObjective kB Fcal g E A obs (T, N) := by
+  rw [nlObjective_Nsection_decomposition kB Fcal T g E A obs hc N]
+  have hexc : 0 < (N - profiledDensity kB Fcal g E A obs T) ^ 2
+      * ∑ k, (lineIntensity kB T 1 Fcal g E A k) ^ 2 :=
+    mul_pos (sq_pos_of_ne_zero (sub_ne_zero.mpr hN)) hc
+  linarith
+
+/-- **Uniqueness of the `N`-section minimizer (headline, REDUCED).** For a fixed `T` with
+`0 < ∑ₖ c_k²`, any density `N` that minimizes the `N`-section — `nlObjective … (T, N) ≤
+nlObjective … (T, N')` for all `N'` — must equal the profiled density `N̂(T)`. If it did not,
+`nlObjective_Nsection_lt_of_ne` would make `N̂(T)` strictly better, contradicting minimality of `N`.
+So the `N`-coordinate of every joint minimizer is *pinned* to `N̂(T̂)` by its `T`-coordinate: the
+joint 2-D CF-LIBS fit is provably 1-D in `T`. This is the variable-projection reduction the solver
+exploits (Tognoni et al. 2010); `T`-uniqueness stays open (non-convex objective). -/
+theorem Nsection_minimizer_unique (kB Fcal T : ℝ) (g E A obs : ι → ℝ)
+    (hc : 0 < ∑ k, (lineIntensity kB T 1 Fcal g E A k) ^ 2) {N : ℝ}
+    (hmin : ∀ N', nlObjective kB Fcal g E A obs (T, N)
+      ≤ nlObjective kB Fcal g E A obs (T, N')) :
+    N = profiledDensity kB Fcal g E A obs T := by
+  by_contra hne
+  have hlt := nlObjective_Nsection_lt_of_ne kB Fcal T g E A obs hc hne
+  have hle := hmin (profiledDensity kB Fcal g E A obs T)
+  linarith
+
+/-! ### Non-vacuity witnesses -/
+
+/-- Positive degeneracies for the one-line VARPRO witness. -/
+private def nvVpG : Fin 1 → ℝ := fun _ => 1
+
+/-- Level energies for the one-line VARPRO witness. -/
+private def nvVpE : Fin 1 → ℝ := fun _ => 0
+
+/-- Positive Einstein coefficients for the one-line VARPRO witness. -/
+private def nvVpA : Fin 1 → ℝ := fun _ => 1
+
+/-- A concrete off-manifold observation for the one-line VARPRO witness. -/
+private def nvVpObs : Fin 1 → ℝ := fun _ => 5
+
+/-- **Non-vacuity of the nondegeneracy.** With `kB = T = Fcal = 1`, one emitting level and unit
+degeneracy / Einstein coefficient, the regressor energy `∑ₖ c_k²` is strictly positive, so
+`profiledDensity_denom_pos`'s hypotheses are jointly satisfiable and the profiled least squares is
+genuinely nondegenerate. -/
+example : 0 < ∑ k, (lineIntensity 1 1 1 1 nvVpG nvVpE nvVpA k) ^ 2 :=
+  profiledDensity_denom_pos (fun _ => by norm_num [nvVpG]) one_pos (fun _ => by norm_num [nvVpA])
+
+/-- **Non-vacuity of the `N`-section minimality.** For the one-line witness (off-manifold
+`obs ≡ 5`), the profiled density minimizes the `N`-section for every `N` — confirming the headline
+minimality theorem is instantiable at concrete data with all hypotheses met. -/
+example (N : ℝ) :
+    nlObjective 1 1 nvVpG nvVpE nvVpA nvVpObs (1, profiledDensity 1 1 nvVpG nvVpE nvVpA nvVpObs 1)
+      ≤ nlObjective 1 1 nvVpG nvVpE nvVpA nvVpObs (1, N) := by
+  have hg : ∀ k, 0 < nvVpG k := fun _ => by norm_num [nvVpG]
+  have hA : ∀ k, 0 < nvVpA k := fun _ => by norm_num [nvVpA]
+  have hc : 0 < ∑ k, (lineIntensity 1 1 1 1 nvVpG nvVpE nvVpA k) ^ 2 :=
+    profiledDensity_denom_pos hg one_pos hA
+  exact profiledDensity_isMinOn_Nsection 1 1 1 nvVpG nvVpE nvVpA nvVpObs hc N
+
+end CflibsFormal

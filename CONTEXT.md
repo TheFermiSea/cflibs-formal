@@ -65,8 +65,12 @@ definition is defined once and reused verbatim, and every module imports only `M
   `PartitionLipschitz` (the `U_s(T)` temperature-sensitivity leg: two-point and Lipschitz
   partition-function bounds with explicit constants),
   `NonlinearLeastSquares` (the nonlinear joint `(T, N)` fit: EVT existence of a minimizer on a
-  compact physical box for any off-manifold observation — the nonlinear sibling of
-  `LeastSquaresFit`),
+  compact physical box for any off-manifold observation, plus the VARPRO structure — the
+  N-section is exactly quadratic with a unique profiled-density minimizer, so the 2-D fit is
+  provably 1-D in `T` — the nonlinear sibling of `LeastSquaresFit`),
+  `NoiseToComposition` (the composed end-to-end error chain: per-line ordinate noise ⇒
+  temperature gap ⇒ recovered-density error ⇒ composition error, assembled from `ErrorBudget`,
+  `AtomicDataPerturbation`, and `CompositionRobustness`),
   `EquivalentWidth` (the *integrated* curve of growth — equivalent width `W(τ)=∫(1−e^{−τφ})`:
   the slope-1 saturation bound `W ≤ τ·∫φ`, monotonicity, and the flat-profile slab identity
   `W = 1−e^{−τ}`; the slope-½ damping wing is honestly out of scope),
@@ -205,7 +209,7 @@ Gates 1–4 are automated in CI (`.github/workflows/lean_action_ci.yml`).
 
 ## Status
 
-45 modules, 317 axiom-clean named results (theorem/lemma) + 121 defs (counts via `scripts/stats.sh`).
+46 modules, 341 axiom-clean named results (theorem/lemma) + 128 defs (counts via `scripts/stats.sh`).
 Three automated CI gates: axiom-cleanliness (`tools/`), style/structure lint (`runLinter`), and the
 import-hygiene check (`scripts/stats.sh`).
 Adversarially validated (verdict: sound-with-minor-fixes, zero blockers; all findings fixed).

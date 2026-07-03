@@ -14,6 +14,8 @@ SahaStability.lean	saha_ratio_cancel	PURE-MATH	—
 SahaStability.lean	electronDensity_relativeError	EXACT	Saha–Eggert (Griem)
 SahaStability.lean	saha_inv_lipschitz	PURE-MATH	—
 SahaStability.lean	electronDensity_lipschitz	EXACT	Saha–Eggert (Griem)
+SahaStability.lean	sahaFactor_lipschitz_temp	REDUCED	Saha–Eggert (Griem)
+SahaStability.lean	electronDensityFromRatio_lipschitz_temp	REDUCED	Saha–Eggert (Griem)
 SahaEquilibrium.lean	sahaEquilibriumNe_pos	PURE-MATH	—
 SahaEquilibrium.lean	sahaEquilibriumNe_selfConsistent	REDUCED	Saha–Eggert (Griem)
 SahaEquilibrium.lean	sahaEquilibriumNe_lt_totalDensity	PURE-MATH	—
@@ -26,12 +28,28 @@ SahaEquilibrium.lean	multiElementIonized_strictAntiOn	PURE-MATH	—
 SahaEquilibrium.lean	multiElement_exists_pos_fixedPoint	REDUCED	Saha–Eggert (Griem)
 SahaEquilibrium.lean	multiElement_pos_fixedPoint_unique	REDUCED	Saha–Eggert (Griem)
 SahaEquilibrium.lean	multiElement_single_eq_sahaEquilibriumNe	REDUCED	Saha–Eggert (Griem)
+SahaEquilibrium.lean	sahaIter_fixedPoint	EXACT	Saha–Eggert (Griem)
+SahaEquilibrium.lean	sahaIter_contraction	REDUCED	Saha–Eggert (Griem)
+SahaEquilibrium.lean	sahaIter_mapsTo	REDUCED	Saha–Eggert (Griem)
+SahaEquilibrium.lean	sahaIter_geometric_error	REDUCED	Saha–Eggert (Griem)
+SahaEquilibrium.lean	sahaIter_tendsto	REDUCED	Saha–Eggert (Griem)
 PartitionLipschitz.lean	partitionFunction_two_point_bound	REDUCED	Tognoni 2010
 PartitionLipschitz.lean	partitionFunction_lipschitz_temp	REDUCED	Tognoni 2010
 PartitionLipschitz.lean	partitionFunction_relative_error_temp	REDUCED	Tognoni 2010
 NonlinearLeastSquares.lean	nlObjective_continuousOn	PURE-MATH	—
 NonlinearLeastSquares.lean	nlObjective_exists_min	REDUCED	Tognoni 2010
 NonlinearLeastSquares.lean	nlObjective_onManifold_min	EXACT	Tognoni 2010
+NonlinearLeastSquares.lean	lineIntensity_linear_in_N	EXACT	Ciucci 1999
+NonlinearLeastSquares.lean	nlObjective_Nsection_decomposition	PURE-MATH	—
+NonlinearLeastSquares.lean	profiledDensity_denom_pos	PURE-MATH	—
+NonlinearLeastSquares.lean	profiledDensity_isMinOn_Nsection	REDUCED	Tognoni 2010
+NonlinearLeastSquares.lean	nlObjective_Nsection_lt_of_ne	REDUCED	Tognoni 2010
+NonlinearLeastSquares.lean	Nsection_minimizer_unique	REDUCED	Tognoni 2010
+NoiseToComposition.lean	tempResponseErrorBound_eq_ofGap	PURE-MATH	—
+NoiseToComposition.lean	tempResponseErrorBoundOfGap_mono	PURE-MATH	—
+NoiseToComposition.lean	noise_to_temperatureGap	REDUCED	Tognoni 2010
+NoiseToComposition.lean	noise_to_density	REDUCED	Tognoni 2010
+NoiseToComposition.lean	noise_to_composition	REDUCED	Tognoni 2010
 Closure.lean	totalDensity_pos	PURE-MATH	—
 Closure.lean	composition_sum_one	EXACT	Ciucci 1999
 Closure.lean	composition_nonneg	PURE-MATH	—
@@ -72,6 +90,10 @@ AtomicDataPerturbation.lean	classicDensity_aliasing	EXACT	Tognoni 2010
 AtomicDataPerturbation.lean	classicDensity_aliasing_error	REDUCED	Tognoni 2010
 AtomicDataPerturbation.lean	classicDensity_aliasing_error_channels	REDUCED	Tognoni 2010
 AtomicDataPerturbation.lean	classicComposition_atomicData_error	REDUCED	Tognoni 2010
+AtomicDataPerturbation.lean	classicDensity_temperature_aliasing	EXACT	Tognoni 2010
+AtomicDataPerturbation.lean	classicDensity_aliasing_error_energy	REDUCED	Tognoni 2010
+AtomicDataPerturbation.lean	classicDensity_temperature_aliasing_error	REDUCED	Tognoni 2010
+AtomicDataPerturbation.lean	classicComposition_temperature_error	REDUCED	Tognoni 2010
 Identifiability.lean	density_identifiability	EXACT	Ciucci 1999
 Identifiability.lean	electron_density_identifiability	EXACT	Saha–Eggert (Griem)
 Inverse.lean	general_identifiability	EXACT	Ciucci 1999
@@ -315,4 +337,6 @@ EquivalentWidth.lean	lorentzian_pos	PURE-MATH	—
 EquivalentWidth.lean	lorentzian_integrable	PURE-MATH	—
 EquivalentWidth.lean	lorentzian_integral	PURE-MATH	—
 EquivalentWidth.lean	equivWidth_lorentzian_sqrt_lower	EXACT	Gornushkin 1999
+EquivalentWidth.lean	equivWidth_lorentzian_sqrt_upper	EXACT	Gornushkin 1999
+EquivalentWidth.lean	equivWidth_lorentzian_sqrt_two_sided	EXACT	Gornushkin 1999
 EquivalentWidth.lean	nvLz_sqrt_lower_at_threshold	EXACT	Gornushkin 1999

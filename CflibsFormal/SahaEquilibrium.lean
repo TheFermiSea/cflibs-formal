@@ -63,10 +63,12 @@ This is the **REDUCED** core, not the full CF-LIBS self-consistency loop.  We fi
 `T` (hence a scalar Saha factor `S`), restrict to a *single* element resolved into
 *two* stages, and impose exact LTE.  The multi-element section relaxes the
 single-element restriction — existence and uniqueness of the coupled fixed point
-are proven at fixed `T` — but what remains open is the outer temperature iteration
-and — crucially — the *convergence of the fixed-point iteration itself*.  We prove
-existence and uniqueness of the fixed point, **not** that the CF-LIBS iterative map
-converges to it.
+are proven at fixed `T`.  For the *single*-element scalar core we now also prove
+**convergence of the fixed-point iteration** `sahaIter`: it is a geometric
+contraction toward `sahaEquilibriumNe` on an explicit invariant interval, so the
+iterates converge to the root (see the convergence section below).  What remains
+open is the outer temperature iteration and the convergence of the *multi-element*
+coupled iteration.
 
 ## Literature
 
@@ -432,5 +434,222 @@ example {x : ℝ} (hx : 0 < x) (hxeq : x = multiElementIonized nvMseS nvMseNtot 
     norm_num
   exact multiElement_pos_fixedPoint_unique nvMseS nvMseNtot nvMseS_pos nvMseNtot_pos
     hx one_pos hxeq h1
+
+/-! ## Convergence of the scalar fixed-point iteration
+
+The last open leg of gap #6.  The single-element self-consistency equation
+`n_e² = S · (Ntot − n_e)` rewrites in fixed-point form `n_e = √(S · (Ntot − n_e))`,
+whose natural scalar iteration is `sahaIter`.  We prove this iteration is a geometric
+contraction toward the closed-form root `sahaEquilibriumNe S Ntot` on an explicit
+invariant interval, hence converges — licensing the solver's convergence flag for the
+iteration itself, not merely for the (already established) target fixed point. -/
+
+/-- **Scalar fixed-point iteration map** of the reduced Saha self-consistency equation
+`n_e² = S · (Ntot − n_e)`.  Writing it as `n_e = √(S · (Ntot − n_e))`, the natural
+iteration is `x ↦ √(S · (Ntot − x))`. -/
+noncomputable def sahaIter (S Ntot x : ℝ) : ℝ := Real.sqrt (S * (Ntot - x))
+
+/-- **`sahaEquilibriumNe` is a fixed point of `sahaIter`** (`EXACT`; Saha–Eggert,
+Griem).  The closed-form root satisfies `sahaIter S Ntot r = r`: by self-consistency
+`S · (Ntot − r) = r²`, and `√(r²) = r` since `r ≥ 0`. -/
+theorem sahaIter_fixedPoint {S Ntot : ℝ} (hS : 0 < S) (hN : 0 < Ntot) :
+    sahaIter S Ntot (sahaEquilibriumNe S Ntot) = sahaEquilibriumNe S Ntot := by
+  have hpos := sahaEquilibriumNe_pos hS hN
+  have hsc := sahaEquilibriumNe_selfConsistent hS hN
+  unfold sahaIter
+  rw [← hsc]
+  exact Real.sqrt_sq hpos.le
+
+/-- **Sqrt-difference identity** (`PURE-MATH`).  For `u, v ≥ 0` with `√u + √v > 0`,
+`|√u − √v| = |u − v| / (√u + √v)`, from `(√u − √v)(√u + √v) = u − v`. -/
+private theorem abs_sqrt_sub_eq {u v : ℝ} (hu : 0 ≤ u) (hv : 0 ≤ v)
+    (hpos : 0 < Real.sqrt u + Real.sqrt v) :
+    |Real.sqrt u - Real.sqrt v| = |u - v| / (Real.sqrt u + Real.sqrt v) := by
+  rw [eq_div_iff hpos.ne', ← abs_of_pos hpos, ← abs_mul]
+  congr 1
+  have h1 : Real.sqrt u ^ 2 = u := Real.sq_sqrt hu
+  have h2 : Real.sqrt v ^ 2 = v := Real.sq_sqrt hv
+  linear_combination h1 - h2
+
+/-- **One-step geometric contraction toward the fixed point** (`REDUCED`; Saha–Eggert,
+Griem).  Write `r := sahaEquilibriumNe S Ntot`.  On the interval `[0, b]` with
+`b < Ntot` and `r ≤ b`, the iteration map contracts distances to `r` by the explicit
+factor `q := √S / (2 · √(Ntot − b))`:
+
+`|sahaIter S Ntot x − r| ≤ q · |x − r|`.
+
+Reduction (stated as the sufficient conditions): fixed `T`; single element, two
+stages; exact LTE; and the interval hypotheses `b < Ntot`, `r ≤ b`, `x ∈ [0, b]`,
+which bound the local slope of `√(S·(Ntot−·))`.  The constant `q` is explicit and
+need not be sharp. -/
+theorem sahaIter_contraction {S Ntot b x : ℝ} (hS : 0 < S) (hN : 0 < Ntot)
+    (hb : b < Ntot) (hrb : sahaEquilibriumNe S Ntot ≤ b) (_hx0 : 0 ≤ x) (hxb : x ≤ b) :
+    |sahaIter S Ntot x - sahaEquilibriumNe S Ntot|
+      ≤ Real.sqrt S / (2 * Real.sqrt (Ntot - b)) * |x - sahaEquilibriumNe S Ntot| := by
+  set r := sahaEquilibriumNe S Ntot
+  have hrpos : 0 < r := sahaEquilibriumNe_pos hS hN
+  have hsc : r ^ 2 = S * (Ntot - r) := sahaEquilibriumNe_selfConsistent hS hN
+  have hNb : 0 < Ntot - b := by linarith
+  have hSNb : 0 < S * (Ntot - b) := mul_pos hS hNb
+  have hden_ne : (2 : ℝ) * Real.sqrt (Ntot - b) ≠ 0 :=
+    (mul_pos (by norm_num : (0 : ℝ) < 2) (Real.sqrt_pos.mpr hNb)).ne'
+  have hqval : Real.sqrt S / (2 * Real.sqrt (Ntot - b))
+      * (2 * Real.sqrt (S * (Ntot - b))) = S := by
+    rw [Real.sqrt_mul hS.le]
+    rw [show Real.sqrt S / (2 * Real.sqrt (Ntot - b))
+          * (2 * (Real.sqrt S * Real.sqrt (Ntot - b)))
+        = Real.sqrt S * Real.sqrt S
+          * ((2 * Real.sqrt (Ntot - b)) / (2 * Real.sqrt (Ntot - b))) by ring]
+    rw [div_self hden_ne, mul_one]
+    exact Real.mul_self_sqrt hS.le
+  set u := S * (Ntot - x) with hudef
+  set v := S * (Ntot - r) with hvdef
+  have hu_ge : S * (Ntot - b) ≤ u := by
+    rw [hudef]; exact mul_le_mul_of_nonneg_left (by linarith) hS.le
+  have hv_ge : S * (Ntot - b) ≤ v := by
+    rw [hvdef]; exact mul_le_mul_of_nonneg_left (by linarith) hS.le
+  have hu_pos : 0 < u := lt_of_lt_of_le hSNb hu_ge
+  have hv_pos : 0 < v := lt_of_lt_of_le hSNb hv_ge
+  have hrv : Real.sqrt v = r := by rw [← hsc]; exact Real.sqrt_sq hrpos.le
+  have hiter : sahaIter S Ntot x = Real.sqrt u := by unfold sahaIter; rw [hudef]
+  have hsqrtSNb_pos : 0 < Real.sqrt (S * (Ntot - b)) := Real.sqrt_pos.mpr hSNb
+  have hbound_u : Real.sqrt (S * (Ntot - b)) ≤ Real.sqrt u := Real.sqrt_le_sqrt hu_ge
+  have hbound_v : Real.sqrt (S * (Ntot - b)) ≤ Real.sqrt v := Real.sqrt_le_sqrt hv_ge
+  have hsum_ge : 2 * Real.sqrt (S * (Ntot - b)) ≤ Real.sqrt u + Real.sqrt v := by linarith
+  have hsum_pos : 0 < Real.sqrt u + Real.sqrt v := by linarith
+  have habs : |Real.sqrt u - Real.sqrt v| = |u - v| / (Real.sqrt u + Real.sqrt v) :=
+    abs_sqrt_sub_eq hu_pos.le hv_pos.le hsum_pos
+  have huv : |u - v| = S * |x - r| := by
+    rw [hudef, hvdef, show S * (Ntot - x) - S * (Ntot - r) = S * (r - x) by ring,
+      abs_mul, abs_of_pos hS, abs_sub_comm r x]
+  rw [hiter]
+  conv_lhs => rw [← hrv]
+  rw [habs, huv, div_le_iff₀ hsum_pos]
+  calc S * |x - r|
+      = Real.sqrt S / (2 * Real.sqrt (Ntot - b))
+          * (2 * Real.sqrt (S * (Ntot - b))) * |x - r| := by rw [hqval]
+    _ = Real.sqrt S / (2 * Real.sqrt (Ntot - b)) * |x - r|
+          * (2 * Real.sqrt (S * (Ntot - b))) := by ring
+    _ ≤ Real.sqrt S / (2 * Real.sqrt (Ntot - b)) * |x - r|
+          * (Real.sqrt u + Real.sqrt v) :=
+        mul_le_mul_of_nonneg_left hsum_ge (by positivity)
+
+/-- **Interval invariance of the iteration** (`REDUCED`; Saha–Eggert, Griem).  Under
+`√(S · Ntot) ≤ b`, the map `sahaIter S Ntot` sends `[0, b]` into `[0, b]`:
+`0 ≤ √(S·(Ntot−x))` always, and `√(S·(Ntot−x)) ≤ √(S·Ntot) ≤ b` for `x ≥ 0`.  This is
+the invariant interval on which the contraction runs.  Reduction: the sufficient
+condition `√(S·Ntot) ≤ b` (with `x ∈ [0, b]`). -/
+theorem sahaIter_mapsTo {S Ntot b x : ℝ} (hS : 0 < S)
+    (hbN : Real.sqrt (S * Ntot) ≤ b) (hx0 : 0 ≤ x) (_hxb : x ≤ b) :
+    0 ≤ sahaIter S Ntot x ∧ sahaIter S Ntot x ≤ b := by
+  unfold sahaIter
+  refine ⟨Real.sqrt_nonneg _, ?_⟩
+  calc Real.sqrt (S * (Ntot - x)) ≤ Real.sqrt (S * Ntot) := by
+        apply Real.sqrt_le_sqrt; nlinarith [mul_nonneg hS.le hx0]
+    _ ≤ b := hbN
+
+/-- **Geometric error decay of the iterates** (`REDUCED`; Saha–Eggert, Griem).  With
+`q := √S / (2·√(Ntot − b))`, every iterate started in `[0, b]` obeys
+`|(sahaIter S Ntot)^[n] x0 − r| ≤ qⁿ · |x0 − r|`, `r := sahaEquilibriumNe S Ntot`.
+Proof: the iterates stay in `[0, b]` (`sahaIter_mapsTo`), so the one-step contraction
+`sahaIter_contraction` applies at each step; induct on `n`.  The bound holds for any
+`q` (no `q < 1` needed) — it is the explicit per-step decay.  Reduction: the interval
+hypotheses `b < Ntot`, `r ≤ b`, `√(S·Ntot) ≤ b`, `x0 ∈ [0, b]`. -/
+theorem sahaIter_geometric_error {S Ntot b x0 : ℝ} (hS : 0 < S) (hN : 0 < Ntot)
+    (hb : b < Ntot) (hrb : sahaEquilibriumNe S Ntot ≤ b)
+    (hbN : Real.sqrt (S * Ntot) ≤ b) (hx0 : 0 ≤ x0) (hx0b : x0 ≤ b) (n : ℕ) :
+    |(sahaIter S Ntot)^[n] x0 - sahaEquilibriumNe S Ntot|
+      ≤ (Real.sqrt S / (2 * Real.sqrt (Ntot - b))) ^ n
+          * |x0 - sahaEquilibriumNe S Ntot| := by
+  have hmem : ∀ m, 0 ≤ (sahaIter S Ntot)^[m] x0 ∧ (sahaIter S Ntot)^[m] x0 ≤ b := by
+    intro m
+    induction m with
+    | zero => exact ⟨hx0, hx0b⟩
+    | succ k ih =>
+      rw [Function.iterate_succ_apply']
+      exact sahaIter_mapsTo hS hbN ih.1 ih.2
+  induction n with
+  | zero => simp
+  | succ k ih =>
+    rw [Function.iterate_succ_apply']
+    calc |sahaIter S Ntot ((sahaIter S Ntot)^[k] x0) - sahaEquilibriumNe S Ntot|
+        ≤ Real.sqrt S / (2 * Real.sqrt (Ntot - b))
+            * |(sahaIter S Ntot)^[k] x0 - sahaEquilibriumNe S Ntot| :=
+          sahaIter_contraction hS hN hb hrb (hmem k).1 (hmem k).2
+      _ ≤ Real.sqrt S / (2 * Real.sqrt (Ntot - b))
+            * ((Real.sqrt S / (2 * Real.sqrt (Ntot - b))) ^ k
+              * |x0 - sahaEquilibriumNe S Ntot|) :=
+          mul_le_mul_of_nonneg_left ih (by positivity)
+      _ = (Real.sqrt S / (2 * Real.sqrt (Ntot - b))) ^ (k + 1)
+            * |x0 - sahaEquilibriumNe S Ntot| := by ring
+
+/-- **Geometric convergence of the iteration** (`REDUCED`; Saha–Eggert, Griem).  When
+the contraction factor `q := √S / (2·√(Ntot − b))` satisfies `q < 1`, the iterates
+converge to the closed-form root `r := sahaEquilibriumNe S Ntot` for any start
+`x0 ∈ [0, b]`: `(sahaIter S Ntot)^[n] x0 → r`.  Squeeze the error `|·^[n] x0 − r|`
+between `0` and `qⁿ · |x0 − r| → 0` (`sahaIter_geometric_error` +
+`tendsto_pow_atTop_nhds_zero_of_lt_one`).  Reduction: the same interval hypotheses,
+plus `q < 1`. -/
+theorem sahaIter_tendsto {S Ntot b x0 : ℝ} (hS : 0 < S) (hN : 0 < Ntot)
+    (hb : b < Ntot) (hrb : sahaEquilibriumNe S Ntot ≤ b)
+    (hbN : Real.sqrt (S * Ntot) ≤ b)
+    (hq : Real.sqrt S / (2 * Real.sqrt (Ntot - b)) < 1)
+    (hx0 : 0 ≤ x0) (hx0b : x0 ≤ b) :
+    Filter.Tendsto (fun n => (sahaIter S Ntot)^[n] x0) Filter.atTop
+      (nhds (sahaEquilibriumNe S Ntot)) := by
+  have hq0 : 0 ≤ Real.sqrt S / (2 * Real.sqrt (Ntot - b)) := by positivity
+  have hgeom : Filter.Tendsto
+      (fun n => (Real.sqrt S / (2 * Real.sqrt (Ntot - b))) ^ n
+        * |x0 - sahaEquilibriumNe S Ntot|) Filter.atTop (nhds 0) := by
+    have h1 : Filter.Tendsto
+        (fun n : ℕ => (Real.sqrt S / (2 * Real.sqrt (Ntot - b))) ^ n)
+        Filter.atTop (nhds 0) := tendsto_pow_atTop_nhds_zero_of_lt_one hq0 hq
+    simpa using h1.mul_const |x0 - sahaEquilibriumNe S Ntot|
+  have habs : Filter.Tendsto
+      (fun n => |(sahaIter S Ntot)^[n] x0 - sahaEquilibriumNe S Ntot|)
+      Filter.atTop (nhds 0) :=
+    squeeze_zero (fun _ => abs_nonneg _)
+      (fun n => sahaIter_geometric_error hS hN hb hrb hbN hx0 hx0b n) hgeom
+  rw [tendsto_iff_dist_tendsto_zero]
+  simpa only [Real.dist_eq] using habs
+
+/-! ### Non-vacuity witness (iteration convergence)
+
+`S = 1`, `Ntot = 2`, `b = 3/2`: all hypotheses of `sahaIter_tendsto` hold at once —
+`b < Ntot` (`3/2 < 2`), `r = 1 ≤ 3/2`, `√(S·Ntot) = √2 ≤ 3/2` (as `2 ≤ 9/4`), and
+`q = √1 / (2·√(1/2)) = √2/2 < 1` — so the iteration from `x0 = 0 ∈ [0, 3/2]` provably
+converges to `sahaEquilibriumNe 1 2 = 1`.  This certifies the convergence theorems are
+not vacuous. -/
+
+private def nvSitS : ℝ := 1
+private def nvSitNtot : ℝ := 2
+private noncomputable def nvSitB : ℝ := 3 / 2
+
+example : Filter.Tendsto (fun n => (sahaIter nvSitS nvSitNtot)^[n] 0) Filter.atTop
+    (nhds (sahaEquilibriumNe nvSitS nvSitNtot)) := by
+  have hS : (0 : ℝ) < nvSitS := by norm_num [nvSitS]
+  have hN : (0 : ℝ) < nvSitNtot := by norm_num [nvSitNtot]
+  have hb : nvSitB < nvSitNtot := by norm_num [nvSitB, nvSitNtot]
+  have hre : sahaEquilibriumNe nvSitS nvSitNtot = 1 := by
+    have hsqrt : Real.sqrt (nvSitS ^ 2 + 4 * nvSitS * nvSitNtot) = 3 := by
+      rw [show nvSitS ^ 2 + 4 * nvSitS * nvSitNtot = (3 : ℝ) ^ 2 by
+        norm_num [nvSitS, nvSitNtot]]
+      exact Real.sqrt_sq (by norm_num)
+    unfold sahaEquilibriumNe
+    rw [hsqrt]; norm_num [nvSitS]
+  have hrb : sahaEquilibriumNe nvSitS nvSitNtot ≤ nvSitB := by rw [hre]; norm_num [nvSitB]
+  have hbN : Real.sqrt (nvSitS * nvSitNtot) ≤ nvSitB := by
+    rw [show nvSitS * nvSitNtot = (2 : ℝ) by norm_num [nvSitS, nvSitNtot],
+      show nvSitB = Real.sqrt ((3 / 2 : ℝ) ^ 2) by
+        rw [Real.sqrt_sq (by norm_num)]; norm_num [nvSitB]]
+    exact Real.sqrt_le_sqrt (by norm_num)
+  have hqlt : Real.sqrt nvSitS / (2 * Real.sqrt (nvSitNtot - nvSitB)) < 1 := by
+    rw [show nvSitS = (1 : ℝ) from rfl, Real.sqrt_one,
+      show nvSitNtot - nvSitB = (1 / 2 : ℝ) by norm_num [nvSitNtot, nvSitB],
+      div_lt_one (by positivity)]
+    nlinarith [Real.sq_sqrt (show (0 : ℝ) ≤ 1 / 2 by norm_num),
+      Real.sqrt_nonneg (1 / 2 : ℝ)]
+  exact sahaIter_tendsto (b := nvSitB) hS hN hb hrb hbN hqlt (by norm_num)
+    (by norm_num [nvSitB])
 
 end CflibsFormal
