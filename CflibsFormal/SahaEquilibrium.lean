@@ -472,15 +472,15 @@ private theorem abs_sqrt_sub_eq {u v : ℝ} (hu : 0 ≤ u) (hv : 0 ≤ v)
   linear_combination h1 - h2
 
 /-- **One-step geometric contraction toward the fixed point** (`REDUCED`; Saha–Eggert,
-Griem).  Write `r := sahaEquilibriumNe S Ntot`.  On the interval `[0, b]` with
-`b < Ntot` and `r ≤ b`, the iteration map contracts distances to `r` by the explicit
+Griem).  Write `r := sahaEquilibriumNe S Ntot`.  For any `x ≤ b` with `b < Ntot`
+and `r ≤ b`, the iteration map contracts distances to `r` by the explicit
 factor `q := √S / (2 · √(Ntot − b))`:
 
 `|sahaIter S Ntot x − r| ≤ q · |x − r|`.
 
 Reduction (stated as the sufficient conditions): fixed `T`; single element, two
-stages; exact LTE; and the interval hypotheses `b < Ntot`, `r ≤ b`, `x ∈ [0, b]`,
-which bound the local slope of `√(S·(Ntot−·))`.  The constant `q` is explicit and
+stages; exact LTE; and the hypotheses `b < Ntot`, `r ≤ b`, `x ≤ b` (`0 ≤ x` is not
+needed), which bound the local slope of `√(S·(Ntot−·))`.  The constant `q` is explicit and
 need not be sharp. -/
 theorem sahaIter_contraction {S Ntot b x : ℝ} (hS : 0 < S) (hN : 0 < Ntot)
     (hb : b < Ntot) (hrb : sahaEquilibriumNe S Ntot ≤ b) (hxb : x ≤ b) :
@@ -535,10 +535,10 @@ theorem sahaIter_contraction {S Ntot b x : ℝ} (hS : 0 < S) (hN : 0 < Ntot)
         mul_le_mul_of_nonneg_left hsum_ge (by positivity)
 
 /-- **Interval invariance of the iteration** (`REDUCED`; Saha–Eggert, Griem).  Under
-`√(S · Ntot) ≤ b`, the map `sahaIter S Ntot` sends `[0, b]` into `[0, b]`:
+`√(S · Ntot) ≤ b`, the map `sahaIter S Ntot` sends all of `[0, ∞)` into `[0, b]`:
 `0 ≤ √(S·(Ntot−x))` always, and `√(S·(Ntot−x)) ≤ √(S·Ntot) ≤ b` for `x ≥ 0`.  This is
 the invariant interval on which the contraction runs.  Reduction: the sufficient
-condition `√(S·Ntot) ≤ b` (with `x ∈ [0, b]`). -/
+condition `√(S·Ntot) ≤ b` (for any `x ≥ 0`; `x ≤ b` is not needed). -/
 theorem sahaIter_mapsTo {S Ntot b x : ℝ} (hS : 0 < S)
     (hbN : Real.sqrt (S * Ntot) ≤ b) (hx0 : 0 ≤ x) :
     0 ≤ sahaIter S Ntot x ∧ sahaIter S Ntot x ≤ b := by
