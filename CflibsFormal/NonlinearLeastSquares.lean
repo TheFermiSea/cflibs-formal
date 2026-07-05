@@ -441,7 +441,7 @@ private lemma residual_two_cross (c0 c1 o0 o1 : ℝ) (hden : c0 ^ 2 + c1 ^ 2 ≠
 /-- The joint objective at any `(T, N)`, rewritten through linearity in `N`:
 `nlObjective … (T, N) = ∑ₖ (N·c_k(T) − obs_k)²`, `c_k(T) = lineIntensity kB T 1 Fcal g E A k`.
 Shared expansion behind the two-line closed form and the exact-fit characterization. -/
-private lemma nlObjective_eq_sq_sum (kB Fcal T N : ℝ) (g E A obs : ι → ℝ) :
+theorem nlObjective_eq_sq_sum (kB Fcal T N : ℝ) (g E A obs : ι → ℝ) :
     nlObjective kB Fcal g E A obs (T, N)
       = ∑ k, (N * lineIntensity kB T 1 Fcal g E A k - obs k) ^ 2 := by
   change ∑ k, (lineIntensity kB T N Fcal g E A k - obs k) ^ 2 = _
@@ -451,7 +451,7 @@ private lemma nlObjective_eq_sq_sum (kB Fcal T N : ℝ) (g E A obs : ι → ℝ)
 `N` reproduces every line exactly: `nlObjective … (T, N) = 0 ↔ ∀ k, N·c_k(T) = obs_k`. A sum of
 squares is zero iff every summand is (`Finset.sum_eq_zero_iff_of_nonneg`). This is the engine behind
 on-manifold `T`- and joint uniqueness: a perfect fit forces the intensity ratios, hence `T`. -/
-private lemma nlObjective_eq_zero_iff (kB Fcal T N : ℝ) (g E A obs : ι → ℝ) :
+theorem nlObjective_eq_zero_iff (kB Fcal T N : ℝ) (g E A obs : ι → ℝ) :
     nlObjective kB Fcal g E A obs (T, N) = 0
       ↔ ∀ k, N * lineIntensity kB T 1 Fcal g E A k = obs k := by
   rw [nlObjective_eq_sq_sum, Finset.sum_eq_zero_iff_of_nonneg (fun k _ => sq_nonneg _)]
@@ -462,7 +462,7 @@ private lemma nlObjective_eq_zero_iff (kB Fcal T N : ℝ) (g E A obs : ι → �
 /-- **Profiled density recovers the true density on-manifold.** If `obs` is the exact forward
 spectrum of `(T₀, N₀)`, the variable-projection density at the true temperature is exactly `N₀`
 (`∑ c_k·obs_k = N₀·∑ c_k²`, then divide by the nondegeneracy). -/
-private lemma profiledDensity_onManifold {kB Fcal T0 N0 : ℝ} {g E A obs : ι → ℝ}
+theorem profiledDensity_onManifold {kB Fcal T0 N0 : ℝ} {g E A obs : ι → ℝ}
     (hc : 0 < ∑ k, (lineIntensity kB T0 1 Fcal g E A k) ^ 2)
     (hobs : ∀ k, obs k = lineIntensity kB T0 N0 Fcal g E A k) :
     profiledDensity kB Fcal g E A obs T0 = N0 := by

@@ -5,7 +5,7 @@
 > (the integrity spine) + citation from `docs/scope-tags.tsv`; the docs-sync CI gate fails if
 > any result is untagged, so a new theorem cannot land without declaring its epistemic status.
 
-**Scope-tag mix** (345 results): **EXACT** 116 · **REDUCED** 75 · **APPROXIMATION** 9 · **PURE-MATH** 145
+**Scope-tag mix** (348 results): **EXACT** 116 · **REDUCED** 75 · **APPROXIMATION** 9 · **PURE-MATH** 148
 
 `EXACT` = exact identity faithfully encoding the cited physics · `REDUCED` = valid dimensionless/lumped-factor form · `APPROXIMATION` = documented idealization / limiting case · `PURE-MATH` = infrastructure lemma, no physical claim. Classification cross-checked against `reviews/literature-validity-audit.md`.
 
@@ -532,6 +532,9 @@
 - `REDUCED` · `profiledDensity_isMinOn_Nsection` — `N`-section global minimality (headline, REDUCED).  _[Tognoni 2010]_
 - `REDUCED` · `nlObjective_Nsection_lt_of_ne` — Strict excess off the profiled density (uniqueness core, REDUCED).  _[Tognoni 2010]_
 - `REDUCED` · `Nsection_minimizer_unique` — Uniqueness of the `N`-section minimizer (headline, REDUCED).  _[Tognoni 2010]_
+- `PURE-MATH` · `nlObjective_eq_sq_sum` — The joint objective at any `(T, N)`, rewritten through linearity in `N`: `nlObjective … (T, N) = ∑ₖ (N·c_k(T) − obs_k)²`, `c_k(T) = lineIntensity kB T 1 Fcal…
+- `PURE-MATH` · `nlObjective_eq_zero_iff` — Exact-fit characterization of a zero residual.
+- `PURE-MATH` · `profiledDensity_onManifold` — Profiled density recovers the true density on-manifold.
 - `PURE-MATH` · `profiledResidual_two_closed_form` — Two-line profiled-residual closed form (PURE-MATH).
 - `EXACT` · `profiledT_onManifold_unique` — On-manifold `T`-uniqueness for `m` lines (EXACT, Ciucci 1999).  _[Ciucci 1999]_
 - `EXACT` · `profiledT_two_onManifold_unique` — Two-line on-manifold `T`-uniqueness (EXACT, Ciucci 1999).  _[Ciucci 1999]_

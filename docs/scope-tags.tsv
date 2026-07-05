@@ -45,6 +45,9 @@ NonlinearLeastSquares.lean	profiledDensity_denom_pos	PURE-MATH	—
 NonlinearLeastSquares.lean	profiledDensity_isMinOn_Nsection	REDUCED	Tognoni 2010
 NonlinearLeastSquares.lean	nlObjective_Nsection_lt_of_ne	REDUCED	Tognoni 2010
 NonlinearLeastSquares.lean	Nsection_minimizer_unique	REDUCED	Tognoni 2010
+NonlinearLeastSquares.lean	nlObjective_eq_sq_sum	PURE-MATH	—
+NonlinearLeastSquares.lean	nlObjective_eq_zero_iff	PURE-MATH	—
+NonlinearLeastSquares.lean	profiledDensity_onManifold	PURE-MATH	—
 NonlinearLeastSquares.lean	profiledResidual_two_closed_form	PURE-MATH	—
 NonlinearLeastSquares.lean	profiledT_two_onManifold_unique	EXACT	Ciucci 1999
 NonlinearLeastSquares.lean	profiledT_onManifold_unique	EXACT	Ciucci 1999
