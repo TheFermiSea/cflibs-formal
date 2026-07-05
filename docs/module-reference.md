@@ -37,7 +37,7 @@ One row per module under `CflibsFormal/`. *Base* = imports no `CflibsFormal` mod
 | `MatrixEffects.lean` | `CflibsFormal` | 22 | 7 | – | ✓ | matrix effects (completeness, ablation, ionization suppression) |
 | `MultiSpecies.lean` | `CflibsFormal` | 12 | 4 | – | – | Multi-species / multi-stage composition glue |
 | `NoiseToComposition.lean` | `CflibsFormal` | 5 | 2 | – | ✓ | the end-to-end noise → composition chain (gap #5, the composed bound) |
-| `NonlinearLeastSquares.lean` | `CflibsFormal` | 22 | 2 | – | ✓ | the nonlinear joint `(T, N)` least-squares inverse (existence leg) |
+| `NonlinearLeastSquares.lean` | `CflibsFormal` | 23 | 2 | – | ✓ | the nonlinear joint `(T, N)` least-squares inverse (existence leg) |
 | `OLS.lean` | `CflibsFormal` | 9 | 5 | ✓ | – | the ordinary-least-squares algebraic foundation |
 | `PartialLTE.lean` | `CflibsFormal` | 6 | 2 | – | ✓ | the partial-LTE thermalization limit |
 | `PartitionLipschitz.lean` | `CflibsFormal` | 3 | 0 | – | ✓ | the `U_s(T)` partition-function Lipschitz leg (gap #5) |
@@ -54,5 +54,5 @@ One row per module under `CflibsFormal/`. *Base* = imports no `CflibsFormal` mod
 | `StarkShift.lean` | `CflibsFormal` | 9 | 3 | ✓ | ✓ | the Stark line-shift electron-density diagnostic |
 | `TemporalEvolution.lean` | `CflibsFormal` | 8 | 7 | – | ✓ | time-resolved (gate-delayed) recovery |
 | `VoigtWidth.lean` | `CflibsFormal` | 7 | 1 | ✓ | ✓ | the Voigt FWHM combination (Olivero–Longbothum) |
-| **46 modules** | | **354** | **128** | | | |
+| **46 modules** | | **355** | **128** | | | |
 

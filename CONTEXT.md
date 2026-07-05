@@ -209,7 +209,7 @@ Gates 1–4 are automated in CI (`.github/workflows/lean_action_ci.yml`).
 
 ## Status
 
-46 modules, 354 axiom-clean named results (theorem/lemma) + 128 defs (counts via `scripts/stats.sh`).
+46 modules, 355 axiom-clean named results (theorem/lemma) + 128 defs (counts via `scripts/stats.sh`).
 Three automated CI gates: axiom-cleanliness (`tools/`), style/structure lint (`runLinter`), and the
 import-hygiene check (`scripts/stats.sh`).
 Adversarially validated (verdict: sound-with-minor-fixes, zero blockers; all findings fixed).

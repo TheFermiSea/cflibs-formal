@@ -764,9 +764,9 @@ via `lineIntensity`), the profiled residual at the *true* temperature is control
 energy: `Φ_obs(T₀) ≤ 2·∑ₖ η_k²`. Immediate instance of `profiledResidual_stability_in_obs` against
 the clean forward spectrum, whose profiled residual at `T₀` is exactly `0`
 (`profiledDensity_onManifold` + `nlObjective_eq_zero_iff`). This quantifies
-"small `L²` noise ⇒ small residual at the truth" — the *value* half of the near-manifold picture,
-not the argmin-uniqueness
-half (which the full perturbation theorem would need). -/
+"small `L²` noise ⇒ small residual at the truth" — the *value* half of the near-manifold picture;
+the *argmin* half (that `T₀` strictly out-competes far temperatures) is
+`profiledResidual_true_strict_lt` below. -/
 theorem profiledResidual_nearManifold_bound [Nonempty ι] {kB Fcal T0 N0 : ℝ}
     {g E A obs η : ι → ℝ}
     (hc : 0 < ∑ k, (lineIntensity kB T0 1 Fcal g E A k) ^ 2)
@@ -802,6 +802,81 @@ example :
   profiledResidual_stability_in_obs
     (profiledDensity_denom_pos (fun k => by fin_cases k <;> norm_num) (by norm_num)
       (fun k => by fin_cases k <;> norm_num))
+
+/-- **Near-manifold strict domination by the true temperature (REDUCED, Tognoni 2010).** The
+*argmin* half of the near-manifold picture. For noisy data `obs = forward(T₀,N₀) + η`, the true
+`T₀` gives a **strictly** smaller profiled residual than any temperature `T` whose *clean* residual
+gap exceeds six times the noise energy: `6·∑ηₖ² < Φ_clean(T) ⟹ Φ_obs(T₀) < Φ_obs(T)`. So every
+temperature the noise-free objective separates from `T₀` by more than `O(‖η‖²)` still loses to `T₀`
+on the noisy data — a quantitative local-minimizer statement. Honestly **not** a topological
+neighborhood-uniqueness theorem: temperatures with clean gap `≤ 6‖η‖²` are uncontrolled (that tail
+would need the heavy perturbation machinery). Proof: `profiledResidual_stability_in_obs`
+(clean vs noisy) gives `Φ_clean(T) ≤ 2·Φ_obs(T) + 2∑ηₖ²` and `profiledResidual_nearManifold_bound`
+gives `Φ_obs(T₀) ≤ 2∑ηₖ²`; the gap hypothesis closes the strict inequality by linear arithmetic. -/
+theorem profiledResidual_true_strict_lt [Nonempty ι] {kB Fcal T0 N0 T : ℝ} {g E A obs η : ι → ℝ}
+    (hc0 : 0 < ∑ k, (lineIntensity kB T0 1 Fcal g E A k) ^ 2)
+    (hcT : 0 < ∑ k, (lineIntensity kB T 1 Fcal g E A k) ^ 2)
+    (hobs : ∀ k, obs k = lineIntensity kB T0 N0 Fcal g E A k + η k)
+    (hgap : 6 * ∑ k, (η k) ^ 2
+      < nlObjective kB Fcal g E A (fun k => lineIntensity kB T0 N0 Fcal g E A k)
+          (T, profiledDensity kB Fcal g E A (fun k => lineIntensity kB T0 N0 Fcal g E A k) T)) :
+    nlObjective kB Fcal g E A obs (T0, profiledDensity kB Fcal g E A obs T0)
+      < nlObjective kB Fcal g E A obs (T, profiledDensity kB Fcal g E A obs T) := by
+  have htruth := profiledResidual_nearManifold_bound hc0 hobs
+  have hstab := profiledResidual_stability_in_obs (kB := kB) (Fcal := Fcal) (T := T)
+    (g := g) (E := E) (A := A) (obs := fun k => lineIntensity kB T0 N0 Fcal g E A k)
+    (obs' := obs) hcT
+  have hη : ∑ k, (obs k - lineIntensity kB T0 N0 Fcal g E A k) ^ 2 = ∑ k, (η k) ^ 2 := by
+    refine Finset.sum_congr rfl (fun k _ => ?_)
+    rw [hobs k]; ring
+  rw [hη] at hstab
+  linarith [htruth, hstab, hgap]
+
+/-- Non-vacuity witness: `profiledResidual_nearManifold_bound` at concrete two-line data
+(`E = ![0,1]`, `T₀ = N₀ = 1`) with noise `η = ![1,1]`; nondegeneracy via
+`profiledDensity_denom_pos`. -/
+example :
+    nlObjective 1 1 ![1, 1] ![0, 1] ![1, 1]
+        (fun k => lineIntensity 1 1 1 1 ![1, 1] ![0, 1] ![1, 1] k + (![1, 1] : Fin 2 → ℝ) k)
+        (1, profiledDensity 1 1 ![1, 1] ![0, 1] ![1, 1]
+          (fun k => lineIntensity 1 1 1 1 ![1, 1] ![0, 1] ![1, 1] k + (![1, 1] : Fin 2 → ℝ) k) 1)
+      ≤ 2 * ∑ k, ((![1, 1] : Fin 2 → ℝ) k) ^ 2 :=
+  profiledResidual_nearManifold_bound
+    (profiledDensity_denom_pos (fun k => by fin_cases k <;> norm_num) (by norm_num)
+      (fun k => by fin_cases k <;> norm_num)) (fun _ => rfl)
+
+/-- Non-vacuity witness: strict domination in the noise-free limit `η = 0`, where the gap hypothesis
+reduces to `0 < Φ_clean(T)` for `T ≠ T₀` — discharged by `profiledT_onManifold_unique` (residual
+strictly positive off the true temperature) at `E = ![0,1]`, `T₀ = 1`, `T = 2`. -/
+example :
+    nlObjective 1 1 ![1, 1] ![0, 1] ![1, 1]
+        (fun k => lineIntensity 1 1 1 1 ![1, 1] ![0, 1] ![1, 1] k + (![0, 0] : Fin 2 → ℝ) k)
+        (1, profiledDensity 1 1 ![1, 1] ![0, 1] ![1, 1]
+          (fun k => lineIntensity 1 1 1 1 ![1, 1] ![0, 1] ![1, 1] k + (![0, 0] : Fin 2 → ℝ) k) 1)
+      < nlObjective 1 1 ![1, 1] ![0, 1] ![1, 1]
+        (fun k => lineIntensity 1 1 1 1 ![1, 1] ![0, 1] ![1, 1] k + (![0, 0] : Fin 2 → ℝ) k)
+        (2, profiledDensity 1 1 ![1, 1] ![0, 1] ![1, 1]
+          (fun k => lineIntensity 1 1 1 1 ![1, 1] ![0, 1] ![1, 1] k + (![0, 0] : Fin 2 → ℝ) k)
+          2) := by
+  have hg : ∀ k, 0 < (![1, 1] : Fin 2 → ℝ) k := fun k => by fin_cases k <;> norm_num
+  have hA : ∀ k, 0 < (![1, 1] : Fin 2 → ℝ) k := fun k => by fin_cases k <;> norm_num
+  have hgap : 6 * ∑ k, ((![0, 0] : Fin 2 → ℝ) k) ^ 2
+      < nlObjective 1 1 ![1, 1] ![0, 1] ![1, 1]
+          (fun k => lineIntensity 1 1 1 1 ![1, 1] ![0, 1] ![1, 1] k)
+          (2, profiledDensity 1 1 ![1, 1] ![0, 1] ![1, 1]
+            (fun k => lineIntensity 1 1 1 1 ![1, 1] ![0, 1] ![1, 1] k) 2) := by
+    have hsum0 : (6 : ℝ) * ∑ k, ((![0, 0] : Fin 2 → ℝ) k) ^ 2 = 0 := by simp [Fin.sum_univ_two]
+    rw [hsum0]
+    refine lt_of_le_of_ne ?_ ?_
+    · rw [nlObjective_eq_sq_sum]; exact Finset.sum_nonneg (fun k _ => sq_nonneg _)
+    · intro h
+      have h21 : (2 : ℝ) = 1 := (profiledT_onManifold_unique (by norm_num) hg (by norm_num) hA
+        (by norm_num) (by norm_num) (by norm_num) 0 1
+        (by simp only [Matrix.cons_val_zero, Matrix.cons_val_one]; norm_num)
+        (fun _ => rfl)).mp h.symm
+      norm_num at h21
+  exact profiledResidual_true_strict_lt (profiledDensity_denom_pos hg (by norm_num) hA)
+    (profiledDensity_denom_pos hg (by norm_num) hA) (fun _ => rfl) hgap
 
 /-- **Profiled residual at an orthogonal observation (PURE-MATH).** If the observation vector `obs`
 is orthogonal to the unit-density line-intensity vector `c(T)`, i.e.
