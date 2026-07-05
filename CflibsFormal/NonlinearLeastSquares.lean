@@ -630,69 +630,57 @@ exactly-fitting temperature, `obs` arbitrary), a near-manifold `L²` stability b
 residual (M4 — the value half of the perturbation picture), and the honest `m ≥ 3` non-uniqueness
 counterexample (M6 — the residual value is not injective in `T`, fencing off the frontier). -/
 
-/-- **Two-line OFF-manifold `T`-uniqueness (EXACT, Ciucci 1999).** The first genuinely off-manifold
-identifiability result: `obs : Fin 2 → ℝ` is *arbitrary* (no on-manifold / exact-forward-spectrum
-hypothesis), only `obs 0 ≠ 0`. If two positive temperatures `T₁, T₂` both drive the
-density-profiled two-line residual `Φ₂(T) = nlObjective … (T, N̂(T))` to zero, they coincide.
+/-- **OFF-manifold `T`-uniqueness for `m` lines (EXACT, Ciucci 1999).** The first genuinely
+off-manifold identifiability result: `obs : ι → ℝ` is *arbitrary* (no on-manifold /
+exact-forward-spectrum hypothesis), only `obs i ≠ 0` on the chosen distinct-energy pair `E i ≠ E j`.
+If two positive temperatures `T₁, T₂` both drive the density-profiled residual
+`Φ(T) = nlObjective … (T, N̂(T))` to zero, they coincide. So `m` off-manifold lines admit **at most
+one** exactly-fitting temperature.
 
-Mechanism (no closed form beyond `profiledResidual_two_closed_form`): the two-line projection
-residual is `Φ₂(T) = (obs₁·c₀(T) − obs₀·c₁(T))² / (c₀(T)² + c₁(T)²)` with
-`c_k(T) = lineIntensity kB T 1 Fcal g E A k > 0`. A positive denominator makes `Φ₂(T) = 0`
-equivalent to the cross-ratio condition `obs₁·c₀(T) = obs₀·c₁(T)`, i.e. `c₁(T)/c₀(T) = obs₁/obs₀`.
-Since the right-hand side is `obs`-fixed, the ratio is *forced identical* at `T₁` and `T₂`;
-`temperature_identifiability` (distinct energies `E 0 ≠ E 1`, `Real.exp` injectivity) then pins
-`T₁ = T₂`. Because `obs` is unconstrained, this is a real off-manifold uniqueness statement, not the
-on-manifold `profiledT_two_onManifold_unique`. Two off-manifold lines still admit **at most one**
-exactly-fitting temperature. -/
+Mechanism (the same exact-fit engine as the on-manifold `profiledT_onManifold_unique`, no closed
+form): `Φ(T) = 0 ⟺` an exact fit `∀ k, N̂(T)·c_k(T) = obs_k` (`nlObjective_eq_zero_iff`). On pair
+`(i, j)` this forces the cross-ratio `obs_j·c_i(T) = obs_i·c_j(T)` at each temperature; since the
+observed ratio `obs_j/obs_i` is `obs`-fixed, the intensity ratio `c_j/c_i` is *forced identical* at
+`T₁` and `T₂`, and `temperature_identifiability` (distinct energies, `Real.exp` injectivity) pins
+`T₁ = T₂`. Unlike the on-manifold results, `obs` is unconstrained — this is a true off-manifold
+uniqueness statement. -/
+theorem profiledT_offManifold_unique [Nonempty ι] {kB Fcal T1 T2 : ℝ} {g E A obs : ι → ℝ}
+    (hkB : 0 < kB) (hg : ∀ k, 0 < g k) (hFcal : 0 < Fcal) (hA : ∀ k, 0 < A k)
+    (hT1 : 0 < T1) (hT2 : 0 < T2) (i j : ι) (hobsi : obs i ≠ 0) (hE : E i ≠ E j)
+    (h1 : nlObjective kB Fcal g E A obs (T1, profiledDensity kB Fcal g E A obs T1) = 0)
+    (h2 : nlObjective kB Fcal g E A obs (T2, profiledDensity kB Fcal g E A obs T2) = 0) :
+    T1 = T2 := by
+  rw [nlObjective_eq_zero_iff] at h1 h2
+  have hci1 : 0 < lineIntensity kB T1 1 Fcal g E A i := lineIntensity_pos hg one_pos hFcal hA i
+  have hci2 : 0 < lineIntensity kB T2 1 Fcal g E A i := lineIntensity_pos hg one_pos hFcal hA i
+  -- Cross-ratio `obs_j·c_i(T) = obs_i·c_j(T)` at each temperature, straight from the exact fit.
+  have cr1 : obs j * lineIntensity kB T1 1 Fcal g E A i
+      = obs i * lineIntensity kB T1 1 Fcal g E A j := by rw [← h1 i, ← h1 j]; ring
+  have cr2 : obs j * lineIntensity kB T2 1 Fcal g E A i
+      = obs i * lineIntensity kB T2 1 Fcal g E A j := by rw [← h2 i, ← h2 j]; ring
+  -- The shared observed ratio forces `c_j(T₁)·c_i(T₂) = c_j(T₂)·c_i(T₁)`.
+  have hprod : lineIntensity kB T1 1 Fcal g E A j * lineIntensity kB T2 1 Fcal g E A i
+      = lineIntensity kB T2 1 Fcal g E A j * lineIntensity kB T1 1 Fcal g E A i := by
+    have G : obs i * (lineIntensity kB T1 1 Fcal g E A j * lineIntensity kB T2 1 Fcal g E A i)
+        = obs i * (lineIntensity kB T2 1 Fcal g E A j * lineIntensity kB T1 1 Fcal g E A i) := by
+      linear_combination (lineIntensity kB T1 1 Fcal g E A i) * cr2
+        - (lineIntensity kB T2 1 Fcal g E A i) * cr1
+    exact mul_left_cancel₀ hobsi G
+  refine temperature_identifiability hkB hT1 hT2 hg one_pos one_pos hFcal hFcal hA i j hE ?_
+  rw [div_eq_div_iff hci1.ne' hci2.ne']
+  exact hprod
+
+/-- **Two-line OFF-manifold `T`-uniqueness (EXACT, Ciucci 1999).** The `Fin 2`, distinct-energy
+`E 0 ≠ E 1` instance of `profiledT_offManifold_unique` (pair `i, j = 0, 1`, `obs 0 ≠ 0`): two
+off-manifold lines admit at most one exactly-fitting temperature. A corollary of the general-`m`
+result. -/
 theorem profiledT_two_offManifold_unique {kB Fcal T1 T2 : ℝ} {g E A obs : Fin 2 → ℝ}
     (hkB : 0 < kB) (hg : ∀ k, 0 < g k) (hFcal : 0 < Fcal) (hA : ∀ k, 0 < A k)
     (hT1 : 0 < T1) (hT2 : 0 < T2) (hobs0 : obs 0 ≠ 0) (hE : E 0 ≠ E 1)
     (h1 : nlObjective kB Fcal g E A obs (T1, profiledDensity kB Fcal g E A obs T1) = 0)
     (h2 : nlObjective kB Fcal g E A obs (T2, profiledDensity kB Fcal g E A obs T2) = 0) :
-    T1 = T2 := by
-  -- unit-density line intensities, all positive
-  have hc0T1 : 0 < lineIntensity kB T1 1 Fcal g E A 0 := lineIntensity_pos hg one_pos hFcal hA 0
-  have hc1T1 : 0 < lineIntensity kB T1 1 Fcal g E A 1 := lineIntensity_pos hg one_pos hFcal hA 1
-  have hc0T2 : 0 < lineIntensity kB T2 1 Fcal g E A 0 := lineIntensity_pos hg one_pos hFcal hA 0
-  have hc1T2 : 0 < lineIntensity kB T2 1 Fcal g E A 1 := lineIntensity_pos hg one_pos hFcal hA 1
-  -- positive Rayleigh-quotient denominators at each temperature
-  have hden1 : (0 : ℝ) < (lineIntensity kB T1 1 Fcal g E A 0) ^ 2
-      + (lineIntensity kB T1 1 Fcal g E A 1) ^ 2 := by
-    have := pow_pos hc0T1 2; have := sq_nonneg (lineIntensity kB T1 1 Fcal g E A 1); linarith
-  have hden2 : (0 : ℝ) < (lineIntensity kB T2 1 Fcal g E A 0) ^ 2
-      + (lineIntensity kB T2 1 Fcal g E A 1) ^ 2 := by
-    have := pow_pos hc0T2 2; have := sq_nonneg (lineIntensity kB T2 1 Fcal g E A 1); linarith
-  -- Φ₂(Tᵢ) = 0 ⇒ numerator squared vanishes ⇒ cross-ratio equality obs₁·c₀ = obs₀·c₁
-  rw [profiledResidual_two_closed_form kB Fcal T1 g E A obs hden1] at h1
-  rw [profiledResidual_two_closed_form kB Fcal T2 g E A obs hden2] at h2
-  have eq1 : obs 1 * lineIntensity kB T1 1 Fcal g E A 0
-      = obs 0 * lineIntensity kB T1 1 Fcal g E A 1 := by
-    have hn : (obs 1 * lineIntensity kB T1 1 Fcal g E A 0
-        - obs 0 * lineIntensity kB T1 1 Fcal g E A 1) ^ 2 = 0 := by
-      rcases div_eq_zero_iff.mp h1 with h | h
-      · exact h
-      · exact absurd h hden1.ne'
-    exact sub_eq_zero.mp (sq_eq_zero_iff.mp hn)
-  have eq2 : obs 1 * lineIntensity kB T2 1 Fcal g E A 0
-      = obs 0 * lineIntensity kB T2 1 Fcal g E A 1 := by
-    have hn : (obs 1 * lineIntensity kB T2 1 Fcal g E A 0
-        - obs 0 * lineIntensity kB T2 1 Fcal g E A 1) ^ 2 = 0 := by
-      rcases div_eq_zero_iff.mp h2 with h | h
-      · exact h
-      · exact absurd h hden2.ne'
-    exact sub_eq_zero.mp (sq_eq_zero_iff.mp hn)
-  -- the shared ratio obs₁/obs₀ forces c₁(T₁)·c₀(T₂) = c₁(T₂)·c₀(T₁)
-  have hprod : lineIntensity kB T1 1 Fcal g E A 1 * lineIntensity kB T2 1 Fcal g E A 0
-      = lineIntensity kB T2 1 Fcal g E A 1 * lineIntensity kB T1 1 Fcal g E A 0 := by
-    have G : obs 0 * (lineIntensity kB T1 1 Fcal g E A 1 * lineIntensity kB T2 1 Fcal g E A 0)
-        = obs 0 * (lineIntensity kB T2 1 Fcal g E A 1 * lineIntensity kB T1 1 Fcal g E A 0) := by
-      linear_combination (lineIntensity kB T1 1 Fcal g E A 0) * eq2
-        - (lineIntensity kB T2 1 Fcal g E A 0) * eq1
-    exact mul_left_cancel₀ hobs0 G
-  -- feed the identical intensity ratio into temperature_identifiability (N₁ = N₂ = 1)
-  refine temperature_identifiability hkB hT1 hT2 hg one_pos one_pos hFcal hFcal hA 0 1 hE ?_
-  rw [div_eq_div_iff hc0T1.ne' hc0T2.ne']
-  exact hprod
+    T1 = T2 :=
+  profiledT_offManifold_unique hkB hg hFcal hA hT1 hT2 0 1 hobs0 hE h1 h2
 
 /-! ### Non-vacuity witness (two-line OFF-manifold `T`-uniqueness) -/
 
@@ -743,7 +731,7 @@ theorem profiledResidual_stability_in_obs [Nonempty ι] {kB Fcal T : ℝ} {g E A
     nlObjective kB Fcal g E A obs (T, profiledDensity kB Fcal g E A obs T)
       ≤ 2 * nlObjective kB Fcal g E A obs' (T, profiledDensity kB Fcal g E A obs' T)
         + 2 * ∑ k, (obs' k - obs k) ^ 2 := by
-  set Nh' := profiledDensity kB Fcal g E A obs' T with hNh'
+  set Nh' := profiledDensity kB Fcal g E A obs' T
   -- Minimality of the profiled density for `obs`, evaluated against the competitor `Nh'`.
   have hmin : nlObjective kB Fcal g E A obs (T, profiledDensity kB Fcal g E A obs T)
       ≤ nlObjective kB Fcal g E A obs (T, Nh') :=
@@ -785,7 +773,7 @@ theorem profiledResidual_nearManifold_bound [Nonempty ι] {kB Fcal T0 N0 : ℝ}
     (hobs : ∀ k, obs k = lineIntensity kB T0 N0 Fcal g E A k + η k) :
     nlObjective kB Fcal g E A obs (T0, profiledDensity kB Fcal g E A obs T0)
       ≤ 2 * ∑ k, (η k) ^ 2 := by
-  set f := fun k => lineIntensity kB T0 N0 Fcal g E A k with hf
+  set f := fun k => lineIntensity kB T0 N0 Fcal g E A k
   -- The clean forward spectrum has zero profiled residual at `T0`.
   have hfN : profiledDensity kB Fcal g E A f T0 = N0 :=
     profiledDensity_onManifold hc (fun k => rfl)
@@ -799,7 +787,7 @@ theorem profiledResidual_nearManifold_bound [Nonempty ι] {kB Fcal T0 N0 : ℝ}
   have hbound := profiledResidual_stability_in_obs (kB := kB) (Fcal := Fcal) (T := T0)
     (g := g) (E := E) (A := A) (obs := obs) (obs' := f) hc
   rw [hfzero, hsumeq] at hbound
-  linarith [hbound]
+  linarith
 
 /-- Non-vacuity witness: the stability bound holds at concrete distinct-energy two-line data
 (`kB = Fcal = 1`, `g = A = ![1,1]`, `E = ![0,1]`), with clean data `![1,1]` vs. perturbed `![0,0]`.
@@ -868,7 +856,21 @@ private lemma hl3 : Real.exp (Real.log 3) = 3 := Real.exp_log (by norm_num)
 private lemma e4 : Real.exp (2 * Real.log 2) = 4 := by rw [two_mul, Real.exp_add, hl2]; norm_num
 private lemma e9 : Real.exp (2 * Real.log 3) = 9 := by rw [two_mul, Real.exp_add, hl3]; norm_num
 
-/-- Orthogonality of `ceObs` to the line-intensity vector at `T = 1`. -/
+/-- Shared reduction for the orthogonality lemmas: at unit degeneracy/Einstein coefficients, the
+line-intensity dot product factors as the Boltzmann dot product over the (nonzero) partition
+function, so a vanishing Boltzmann dot product gives a vanishing line-intensity dot product. -/
+private lemma ce_lineIntensity_sum_of_boltzmann {T : ℝ}
+    (hnum : ∑ k, boltzmannFactor 1 T (ceE k) * ceObs k = 0) :
+    ∑ k, lineIntensity 1 T 1 1 ceG ceE ceA k * ceObs k = 0 := by
+  have hLI : ∀ k, lineIntensity 1 T 1 1 ceG ceE ceA k * ceObs k
+      = boltzmannFactor 1 T (ceE k) * ceObs k / partitionFunction 1 T ceG ceE := by
+    intro k
+    simp only [lineIntensity, population]
+    rw [show ceA k = 1 from rfl, show ceG k = 1 from rfl]
+    ring
+  rw [Finset.sum_congr rfl (fun k _ => hLI k), ← Finset.sum_div, hnum, zero_div]
+
+/-- Orthogonality of `ceObs` to the line-intensity ray at `T = 1` (Boltzmann factors `1, 4, 9`). -/
 private lemma ce_orth_one :
     ∑ k, lineIntensity 1 1 1 1 ceG ceE ceA k * ceObs k = 0 := by
   have b0 : boltzmannFactor 1 1 (ceE 0) = 1 := by
@@ -880,18 +882,10 @@ private lemma ce_orth_one :
   have b2 : boltzmannFactor 1 1 (ceE 2) = 9 := by
     simp only [boltzmannFactor]
     rw [show -(ceE 2) / (1 * 1) = 2 * Real.log 3 from by simp only [ceE]; ring, e9]
-  have hnum : ∑ k, boltzmannFactor 1 1 (ceE k) * ceObs k = 0 := by
-    rw [Fin.sum_univ_three, b0, b1, b2]
-    simp only [ceObs]; norm_num
-  have hLI : ∀ k, lineIntensity 1 1 1 1 ceG ceE ceA k * ceObs k
-      = boltzmannFactor 1 1 (ceE k) * ceObs k / partitionFunction 1 1 ceG ceE := by
-    intro k
-    simp only [lineIntensity, population]
-    rw [show ceA k = 1 from rfl, show ceG k = 1 from rfl]
-    ring
-  rw [Finset.sum_congr rfl (fun k _ => hLI k), ← Finset.sum_div, hnum, zero_div]
+  exact ce_lineIntensity_sum_of_boltzmann
+    (by rw [Fin.sum_univ_three, b0, b1, b2]; simp only [ceObs]; norm_num)
 
-/-- Orthogonality of `ceObs` to the line-intensity vector at `T = 2`. -/
+/-- Orthogonality of `ceObs` to the line-intensity ray at `T = 2` (Boltzmann factors `1, 2, 3`). -/
 private lemma ce_orth_two :
     ∑ k, lineIntensity 1 2 1 1 ceG ceE ceA k * ceObs k = 0 := by
   have b0 : boltzmannFactor 1 2 (ceE 0) = 1 := by
@@ -903,16 +897,8 @@ private lemma ce_orth_two :
   have b2 : boltzmannFactor 1 2 (ceE 2) = 3 := by
     simp only [boltzmannFactor]
     rw [show -(ceE 2) / (1 * 2) = Real.log 3 from by simp only [ceE]; ring, hl3]
-  have hnum : ∑ k, boltzmannFactor 1 2 (ceE k) * ceObs k = 0 := by
-    rw [Fin.sum_univ_three, b0, b1, b2]
-    simp only [ceObs]; norm_num
-  have hLI : ∀ k, lineIntensity 1 2 1 1 ceG ceE ceA k * ceObs k
-      = boltzmannFactor 1 2 (ceE k) * ceObs k / partitionFunction 1 2 ceG ceE := by
-    intro k
-    simp only [lineIntensity, population]
-    rw [show ceA k = 1 from rfl, show ceG k = 1 from rfl]
-    ring
-  rw [Finset.sum_congr rfl (fun k _ => hLI k), ← Finset.sum_div, hnum, zero_div]
+  exact ce_lineIntensity_sum_of_boltzmann
+    (by rw [Fin.sum_univ_three, b0, b1, b2]; simp only [ceObs]; norm_num)
 
 /-- **Off-manifold `T`-non-uniqueness for `m = 3` (EXACT, HONEST NEGATIVE result).** The
 density-profiled least-squares residual is NOT injective in the temperature once there are `m ≥ 3`

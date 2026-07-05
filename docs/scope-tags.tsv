@@ -52,6 +52,7 @@ NonlinearLeastSquares.lean	profiledResidual_two_closed_form	PURE-MATH	—
 NonlinearLeastSquares.lean	profiledT_two_onManifold_unique	EXACT	Ciucci 1999
 NonlinearLeastSquares.lean	profiledT_onManifold_unique	EXACT	Ciucci 1999
 NonlinearLeastSquares.lean	joint_onManifold_unique	EXACT	Ciucci 1999
+NonlinearLeastSquares.lean	profiledT_offManifold_unique	EXACT	Ciucci 1999
 NonlinearLeastSquares.lean	profiledT_two_offManifold_unique	EXACT	Ciucci 1999
 NonlinearLeastSquares.lean	profiledResidual_stability_in_obs	REDUCED	Tognoni 2010
 NonlinearLeastSquares.lean	profiledResidual_nearManifold_bound	REDUCED	Tognoni 2010
