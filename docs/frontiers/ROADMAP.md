@@ -118,7 +118,7 @@ graph TD
 ### Phase 1 — tractability-A quick wins (no unmet deps, mostly PURE-MATH)
 | Frontier | Deliverable theorem(s) | Target module | Scope tag |
 |---|---|---|---|
-| 01 M1 | `profiledResidual_two_closed_form` + `profiledT_two_onManifold_unique` (Φ₂ closed form; on-manifold `=0 ⟺ T=T0`) | `NonlinearLeastSquares.lean` | PURE-MATH + EXACT |
+| 01 M1 ✅ | `profiledResidual_two_closed_form` + `profiledT_two_onManifold_unique` (Φ₂ closed form; on-manifold `=0 ⟺ T=T0`) — **DONE** (`NonlinearLeastSquares.lean`, PURE-MATH + EXACT/Ciucci 1999; reuses `temperature_identifiability`) | `NonlinearLeastSquares.lean` | PURE-MATH + EXACT |
 | 02 M2 | `partitionFunction_upper_growth` (crux termwise bound) — with A-siblings M1 `thermalBracket_strictMono`, M3 `partitionFunction_mono_temp` | `SahaStability.lean` | PURE-MATH |
 | 03 M1 | `multiElementIonized_two_point` + `multiElementIonized_lipschitz` | `SahaEquilibrium.lean` | PURE-MATH |
 | 04 M1 | `outerContraction_box` (abstract two-leg box contraction spine) | `SahaEquilibrium.lean` (new block) | REDUCED |

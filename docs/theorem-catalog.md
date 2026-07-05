@@ -5,7 +5,7 @@
 > (the integrity spine) + citation from `docs/scope-tags.tsv`; the docs-sync CI gate fails if
 > any result is untagged, so a new theorem cannot land without declaring its epistemic status.
 
-**Scope-tag mix** (341 results): **EXACT** 113 · **REDUCED** 75 · **APPROXIMATION** 9 · **PURE-MATH** 144
+**Scope-tag mix** (343 results): **EXACT** 114 · **REDUCED** 75 · **APPROXIMATION** 9 · **PURE-MATH** 145
 
 `EXACT` = exact identity faithfully encoding the cited physics · `REDUCED` = valid dimensionless/lumped-factor form · `APPROXIMATION` = documented idealization / limiting case · `PURE-MATH` = infrastructure lemma, no physical claim. Classification cross-checked against `reviews/literature-validity-audit.md`.
 
@@ -532,6 +532,8 @@
 - `REDUCED` · `profiledDensity_isMinOn_Nsection` — `N`-section global minimality (headline, REDUCED).  _[Tognoni 2010]_
 - `REDUCED` · `nlObjective_Nsection_lt_of_ne` — Strict excess off the profiled density (uniqueness core, REDUCED).  _[Tognoni 2010]_
 - `REDUCED` · `Nsection_minimizer_unique` — Uniqueness of the `N`-section minimizer (headline, REDUCED).  _[Tognoni 2010]_
+- `PURE-MATH` · `profiledResidual_two_closed_form` — Two-line profiled-residual closed form (PURE-MATH).
+- `EXACT` · `profiledT_two_onManifold_unique` — Two-line on-manifold `T`-uniqueness (EXACT, Ciucci 1999).  _[Ciucci 1999]_
 
 ## `OLS.lean`  (CflibsFormal)
 *the ordinary-least-squares algebraic foundation*

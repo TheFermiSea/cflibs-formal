@@ -5,6 +5,7 @@ Authors: Brian Squires
 -/
 import Mathlib
 import CflibsFormal.ForwardMap
+import CflibsFormal.Identifiability
 
 /-!
 # CF-LIBS formalization — the nonlinear joint `(T, N)` least-squares inverse (existence leg)
@@ -403,5 +404,133 @@ example (N : ℝ) :
   have hc : 0 < ∑ k, (lineIntensity 1 1 1 1 nvVpG nvVpE nvVpA k) ^ 2 :=
     profiledDensity_denom_pos hg one_pos hA
   exact profiledDensity_isMinOn_Nsection 1 1 1 nvVpG nvVpE nvVpA nvVpObs hc N
+
+/-! ### Two-line profiled `T`-uniqueness (Frontier 01, milestone M1)
+
+The VARPRO reduction above pins the `N`-coordinate of any joint minimizer to `N̂(T)`, leaving the
+open question of the *`T`-direction*. For **two lines** the profiled objective collapses to an
+explicit closed form and the on-manifold minimizer is provably unique in `T`.
+
+The key cancellation: the profiled residual is the projection residual of `obs` onto the ray through
+`c(T) = (c₀(T), c₁(T))`, `c_k(T) = lineIntensity kB T 1 Fcal g E A k`. The Rayleigh quotient is
+invariant under positive rescaling of `c`, so the calibration `Fcal`, density, and the *entire
+partition function* `U(T)` — the intimidating half of the stated non-convexity — cancel exactly,
+leaving `Φ₂(T) = (obs₁·c₀ − obs₀·c₁)² / (c₀² + c₁²)`. Dividing through by `c₀²` gives the equivalent
+ratio form `(obs₁ − obs₀·t)² / (1 + t²)` with `t = c₁/c₀` strictly monotone in `T` under distinct
+energies; the symmetric cross form used here needs no `c₀ ≠ 0` beyond the nondegeneracy
+`0 < c₀² + c₁²`.
+
+On-manifold this upgrades `temperature_identifiability` (an *exact-fit* ratio result, Ciucci 1999)
+to a *least-squares* uniqueness statement: the true temperature is the unique global
+`T`-minimizer of the profiled residual, not merely a zero of the exact ratio. (Tognoni et al. 2010
+VARPRO; Ciucci et al. 1999 two-line Boltzmann ratio.) The `m ≥ 3` off-manifold case is the classical
+multimodal exponential-fitting problem and is *not* claimed here.
+-/
+
+/-- Projection-residual Lagrange identity for a single regressor over two levels: the least-squares
+residual of `obs = (o0, o1)` against the profiled multiple of `(c0, c1)` equals
+`(o1·c0 − o0·c1)² / (c0² + c1²)`. Pure real algebra (`field_simp` + `ring`); the shared core of the
+two-line profiled-residual closed form. -/
+private lemma residual_two_cross (c0 c1 o0 o1 : ℝ) (hden : c0 ^ 2 + c1 ^ 2 ≠ 0) :
+    ((c0 * o0 + c1 * o1) / (c0 ^ 2 + c1 ^ 2) * c0 - o0) ^ 2
+      + ((c0 * o0 + c1 * o1) / (c0 ^ 2 + c1 ^ 2) * c1 - o1) ^ 2
+      = (o1 * c0 - o0 * c1) ^ 2 / (c0 ^ 2 + c1 ^ 2) := by
+  field_simp
+  ring
+
+/-- **Two-line profiled-residual closed form (PURE-MATH).** For two lines, evaluating the joint
+objective at the variable-projection density `N̂(T) = profiledDensity … T` yields the explicit
+projection residual
+`nlObjective … (T, N̂(T)) = (obs₁·c₀ − obs₀·c₁)² / (c₀² + c₁²)`,
+with `c_k = lineIntensity kB T 1 Fcal g E A k`. The calibration, density, and partition function all
+cancel out of the Rayleigh-quotient residual — only the two unit-density line intensities `c₀, c₁`
+survive. Pure algebra: expand `nlObjective` over `Fin 2`, substitute `profiledDensity`, then apply
+the Lagrange identity `residual_two_cross`. Needs only the nondegeneracy `0 < c₀² + c₁²`
+(`profiledDensity_denom_pos`). This is the closed form the two-line `T`-uniqueness rests on. -/
+theorem profiledResidual_two_closed_form (kB Fcal T : ℝ) (g E A obs : Fin 2 → ℝ)
+    (hc : (0 : ℝ) < (lineIntensity kB T 1 Fcal g E A 0) ^ 2
+      + (lineIntensity kB T 1 Fcal g E A 1) ^ 2) :
+    nlObjective kB Fcal g E A obs (T, profiledDensity kB Fcal g E A obs T)
+      = (obs 1 * lineIntensity kB T 1 Fcal g E A 0
+          - obs 0 * lineIntensity kB T 1 Fcal g E A 1) ^ 2
+        / ((lineIntensity kB T 1 Fcal g E A 0) ^ 2
+          + (lineIntensity kB T 1 Fcal g E A 1) ^ 2) := by
+  have hexpand : nlObjective kB Fcal g E A obs (T, profiledDensity kB Fcal g E A obs T)
+      = ∑ k, (profiledDensity kB Fcal g E A obs T
+          * lineIntensity kB T 1 Fcal g E A k - obs k) ^ 2 := by
+    change ∑ k, (lineIntensity kB T (profiledDensity kB Fcal g E A obs T) Fcal g E A k - obs k) ^ 2
+        = ∑ k, (profiledDensity kB Fcal g E A obs T
+            * lineIntensity kB T 1 Fcal g E A k - obs k) ^ 2
+    exact Finset.sum_congr rfl (fun k _ => by rw [lineIntensity_linear_in_N])
+  have hN : profiledDensity kB Fcal g E A obs T
+      = (lineIntensity kB T 1 Fcal g E A 0 * obs 0 + lineIntensity kB T 1 Fcal g E A 1 * obs 1)
+        / ((lineIntensity kB T 1 Fcal g E A 0) ^ 2
+          + (lineIntensity kB T 1 Fcal g E A 1) ^ 2) := by
+    simp only [profiledDensity, Fin.sum_univ_two]
+  rw [hexpand, Fin.sum_univ_two, hN]
+  exact residual_two_cross (lineIntensity kB T 1 Fcal g E A 0) (lineIntensity kB T 1 Fcal g E A 1)
+    (obs 0) (obs 1) hc.ne'
+
+/-- **Two-line on-manifold `T`-uniqueness (EXACT, Ciucci 1999).** When `obs` is the exact forward
+spectrum of `(T₀, N₀)` on two lines with **distinct upper-level energies** `E 0 ≠ E 1`, the profiled
+residual `Φ₂(T) = nlObjective … (T, N̂(T))` vanishes **iff** `T = T₀`. So the true temperature is
+the *unique* global minimizer of the (density-profiled) least-squares objective — a strengthening
+of `nlObjective_onManifold_min`, which pins only the minimum *value* `0`, to a statement about the
+*argmin*. Via the closed form `profiledResidual_two_closed_form`, `Φ₂(T) = 0` is equivalent to the
+ratio equality `obs₁·c₀(T) = obs₀·c₁(T)`, which on-manifold is exactly the hypothesis of
+`temperature_identifiability` (Ciucci 1999); distinct energies plus `Real.exp` injectivity force
+`T = T₀`. The reverse direction is the exact-fit collapse `N̂(T₀) = N₀`. This is the two-line
+least-squares analogue of temperature identifiability; the `m ≥ 3` off-manifold case is genuinely
+multimodal and is not addressed. -/
+theorem profiledT_two_onManifold_unique {kB Fcal T0 N0 T : ℝ} {g E A obs : Fin 2 → ℝ}
+    (hkB : 0 < kB) (hg : ∀ k, 0 < g k) (hFcal : 0 < Fcal) (hA : ∀ k, 0 < A k)
+    (hN0 : 0 < N0) (hE : E 0 ≠ E 1) (hT0 : 0 < T0) (hT : 0 < T)
+    (hobs : ∀ k, obs k = lineIntensity kB T0 N0 Fcal g E A k) :
+    nlObjective kB Fcal g E A obs (T, profiledDensity kB Fcal g E A obs T) = 0 ↔ T = T0 := by
+  have hc0 : 0 < lineIntensity kB T 1 Fcal g E A 0 := lineIntensity_pos hg one_pos hFcal hA 0
+  have hc : (0 : ℝ) < (lineIntensity kB T 1 Fcal g E A 0) ^ 2
+      + (lineIntensity kB T 1 Fcal g E A 1) ^ 2 :=
+    add_pos_of_pos_of_nonneg (pow_pos hc0 2) (sq_nonneg _)
+  have ho0 : 0 < obs 0 := by rw [hobs 0]; exact lineIntensity_pos hg hN0 hFcal hA 0
+  rw [profiledResidual_two_closed_form kB Fcal T g E A obs hc, div_eq_zero_iff, sq_eq_zero_iff]
+  constructor
+  · rintro (hnum | hden)
+    · refine temperature_identifiability hkB hT hT0 hg one_pos hN0 hFcal hFcal hA 0 1 hE ?_
+      rw [← hobs 1, ← hobs 0, div_eq_div_iff hc0.ne' ho0.ne']
+      linear_combination -hnum
+    · exact absurd hden hc.ne'
+  · intro hTeq
+    rw [hTeq]
+    left
+    rw [hobs 0, hobs 1, lineIntensity_linear_in_N kB T0 N0 Fcal g E A 1,
+      lineIntensity_linear_in_N kB T0 N0 Fcal g E A 0]
+    ring
+
+/-! ### Non-vacuity witness (two-line `T`-uniqueness) -/
+
+/-- Degeneracies for the two-line `T`-uniqueness witness. -/
+private def nvT2G : Fin 2 → ℝ := fun _ => 1
+
+/-- **Distinct** upper-level energies for the witness (`E 0 = 0 ≠ 1 = E 1`). -/
+private def nvT2E : Fin 2 → ℝ := ![0, 1]
+
+/-- Einstein coefficients for the two-line `T`-uniqueness witness. -/
+private def nvT2A : Fin 2 → ℝ := fun _ => 1
+
+/-- On-manifold observation for the witness: the exact forward spectrum of `(T₀, N₀) = (1, 1)`. -/
+private noncomputable def nvT2Obs : Fin 2 → ℝ :=
+  fun k => lineIntensity 1 1 1 1 nvT2G nvT2E nvT2A k
+
+/-- **Non-vacuity of the two-line `T`-uniqueness.** With `kB = Fcal = T₀ = N₀ = 1`, distinct
+energies `E = ![0, 1]` (so `E 0 ≠ E 1`), and the on-manifold spectrum `nvT2Obs`, all hypotheses of
+`profiledT_two_onManifold_unique` are jointly satisfiable — the distinct-energy hypothesis is
+genuinely instantiable, so the on-manifold `T`-uniqueness biconditional is not vacuous. -/
+example :
+    nlObjective 1 1 nvT2G nvT2E nvT2A nvT2Obs
+        (1, profiledDensity 1 1 nvT2G nvT2E nvT2A nvT2Obs 1) = 0 ↔ (1 : ℝ) = 1 :=
+  profiledT_two_onManifold_unique one_pos (fun _ => by norm_num [nvT2G]) one_pos
+    (fun _ => by norm_num [nvT2A]) one_pos
+    (by simp only [nvT2E, Matrix.cons_val_zero, Matrix.cons_val_one]; norm_num)
+    one_pos one_pos (fun _ => rfl)
 
 end CflibsFormal
