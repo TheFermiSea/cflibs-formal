@@ -5,7 +5,7 @@
 > (the integrity spine) + citation from `docs/scope-tags.tsv`; the docs-sync CI gate fails if
 > any result is untagged, so a new theorem cannot land without declaring its epistemic status.
 
-**Scope-tag mix** (348 results): **EXACT** 116 · **REDUCED** 75 · **APPROXIMATION** 9 · **PURE-MATH** 148
+**Scope-tag mix** (353 results): **EXACT** 118 · **REDUCED** 77 · **APPROXIMATION** 9 · **PURE-MATH** 149
 
 `EXACT` = exact identity faithfully encoding the cited physics · `REDUCED` = valid dimensionless/lumped-factor form · `APPROXIMATION` = documented idealization / limiting case · `PURE-MATH` = infrastructure lemma, no physical claim. Classification cross-checked against `reviews/literature-validity-audit.md`.
 
@@ -539,6 +539,11 @@
 - `EXACT` · `profiledT_onManifold_unique` — On-manifold `T`-uniqueness for `m` lines (EXACT, Ciucci 1999).  _[Ciucci 1999]_
 - `EXACT` · `profiledT_two_onManifold_unique` — Two-line on-manifold `T`-uniqueness (EXACT, Ciucci 1999).  _[Ciucci 1999]_
 - `EXACT` · `joint_onManifold_unique` — Joint `(T, N)` on-manifold uniqueness (EXACT, Ciucci 1999).  _[Ciucci 1999]_
+- `EXACT` · `profiledT_two_offManifold_unique` — Two-line OFF-manifold `T`-uniqueness (EXACT, Ciucci 1999).  _[Ciucci 1999]_
+- `REDUCED` · `profiledResidual_stability_in_obs` — Near-manifold stability of the profiled residual in the observation (REDUCED, Tognoni 2010).  _[Tognoni 2010]_
+- `REDUCED` · `profiledResidual_nearManifold_bound` — Near-manifold residual bound at the true temperature (REDUCED, Tognoni 2010).  _[Tognoni 2010]_
+- `PURE-MATH` · `profiledResidual_of_orthogonal` — Profiled residual at an orthogonal observation (PURE-MATH).
+- `EXACT` · `profiledResidual_not_injective_m3` — Off-manifold `T`-non-uniqueness for `m = 3` (EXACT, HONEST NEGATIVE result).  _[Ciucci 1999]_
 
 ## `OLS.lean`  (CflibsFormal)
 *the ordinary-least-squares algebraic foundation*
