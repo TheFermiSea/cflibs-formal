@@ -438,6 +438,43 @@ private lemma residual_two_cross (c0 c1 o0 o1 : ℝ) (hden : c0 ^ 2 + c1 ^ 2 ≠
   field_simp
   ring
 
+/-- The joint objective at any `(T, N)`, rewritten through linearity in `N`:
+`nlObjective … (T, N) = ∑ₖ (N·c_k(T) − obs_k)²`, `c_k(T) = lineIntensity kB T 1 Fcal g E A k`.
+Shared expansion behind the two-line closed form and the exact-fit characterization. -/
+private lemma nlObjective_eq_sq_sum (kB Fcal T N : ℝ) (g E A obs : ι → ℝ) :
+    nlObjective kB Fcal g E A obs (T, N)
+      = ∑ k, (N * lineIntensity kB T 1 Fcal g E A k - obs k) ^ 2 := by
+  change ∑ k, (lineIntensity kB T N Fcal g E A k - obs k) ^ 2 = _
+  exact Finset.sum_congr rfl (fun k _ => by rw [lineIntensity_linear_in_N])
+
+/-- **Exact-fit characterization of a zero residual.** The joint objective vanishes at `(T, N)` iff
+`N` reproduces every line exactly: `nlObjective … (T, N) = 0 ↔ ∀ k, N·c_k(T) = obs_k`. A sum of
+squares is zero iff every summand is (`Finset.sum_eq_zero_iff_of_nonneg`). This is the engine behind
+on-manifold `T`- and joint uniqueness: a perfect fit forces the intensity ratios, hence `T`. -/
+private lemma nlObjective_eq_zero_iff (kB Fcal T N : ℝ) (g E A obs : ι → ℝ) :
+    nlObjective kB Fcal g E A obs (T, N) = 0
+      ↔ ∀ k, N * lineIntensity kB T 1 Fcal g E A k = obs k := by
+  rw [nlObjective_eq_sq_sum, Finset.sum_eq_zero_iff_of_nonneg (fun k _ => sq_nonneg _)]
+  refine ⟨fun h k => ?_, fun h k _ => by simp [h k]⟩
+  have hk := sq_eq_zero_iff.mp (h k (Finset.mem_univ k))
+  linarith
+
+/-- **Profiled density recovers the true density on-manifold.** If `obs` is the exact forward
+spectrum of `(T₀, N₀)`, the variable-projection density at the true temperature is exactly `N₀`
+(`∑ c_k·obs_k = N₀·∑ c_k²`, then divide by the nondegeneracy). -/
+private lemma profiledDensity_onManifold {kB Fcal T0 N0 : ℝ} {g E A obs : ι → ℝ}
+    (hc : 0 < ∑ k, (lineIntensity kB T0 1 Fcal g E A k) ^ 2)
+    (hobs : ∀ k, obs k = lineIntensity kB T0 N0 Fcal g E A k) :
+    profiledDensity kB Fcal g E A obs T0 = N0 := by
+  have hnum : ∑ k, lineIntensity kB T0 1 Fcal g E A k * obs k
+      = N0 * ∑ k, (lineIntensity kB T0 1 Fcal g E A k) ^ 2 := by
+    rw [Finset.mul_sum]
+    refine Finset.sum_congr rfl (fun k _ => ?_)
+    rw [hobs k, lineIntensity_linear_in_N kB T0 N0 Fcal g E A k]
+    ring
+  unfold profiledDensity
+  rw [hnum, mul_div_assoc, div_self hc.ne', mul_one]
+
 /-- **Two-line profiled-residual closed form (PURE-MATH).** For two lines, evaluating the joint
 objective at the variable-projection density `N̂(T) = profiledDensity … T` yields the explicit
 projection residual
@@ -455,56 +492,98 @@ theorem profiledResidual_two_closed_form (kB Fcal T : ℝ) (g E A obs : Fin 2 �
           - obs 0 * lineIntensity kB T 1 Fcal g E A 1) ^ 2
         / ((lineIntensity kB T 1 Fcal g E A 0) ^ 2
           + (lineIntensity kB T 1 Fcal g E A 1) ^ 2) := by
-  have hexpand : nlObjective kB Fcal g E A obs (T, profiledDensity kB Fcal g E A obs T)
-      = ∑ k, (profiledDensity kB Fcal g E A obs T
-          * lineIntensity kB T 1 Fcal g E A k - obs k) ^ 2 := by
-    change ∑ k, (lineIntensity kB T (profiledDensity kB Fcal g E A obs T) Fcal g E A k - obs k) ^ 2
-        = ∑ k, (profiledDensity kB Fcal g E A obs T
-            * lineIntensity kB T 1 Fcal g E A k - obs k) ^ 2
-    exact Finset.sum_congr rfl (fun k _ => by rw [lineIntensity_linear_in_N])
   have hN : profiledDensity kB Fcal g E A obs T
       = (lineIntensity kB T 1 Fcal g E A 0 * obs 0 + lineIntensity kB T 1 Fcal g E A 1 * obs 1)
         / ((lineIntensity kB T 1 Fcal g E A 0) ^ 2
           + (lineIntensity kB T 1 Fcal g E A 1) ^ 2) := by
     simp only [profiledDensity, Fin.sum_univ_two]
-  rw [hexpand, Fin.sum_univ_two, hN]
+  rw [nlObjective_eq_sq_sum, Fin.sum_univ_two, hN]
   exact residual_two_cross (lineIntensity kB T 1 Fcal g E A 0) (lineIntensity kB T 1 Fcal g E A 1)
     (obs 0) (obs 1) hc.ne'
 
-/-- **Two-line on-manifold `T`-uniqueness (EXACT, Ciucci 1999).** When `obs` is the exact forward
-spectrum of `(T₀, N₀)` on two lines with **distinct upper-level energies** `E 0 ≠ E 1`, the profiled
-residual `Φ₂(T) = nlObjective … (T, N̂(T))` vanishes **iff** `T = T₀`. So the true temperature is
-the *unique* global minimizer of the (density-profiled) least-squares objective — a strengthening
-of `nlObjective_onManifold_min`, which pins only the minimum *value* `0`, to a statement about the
-*argmin*. Via the closed form `profiledResidual_two_closed_form`, `Φ₂(T) = 0` is equivalent to the
-ratio equality `obs₁·c₀(T) = obs₀·c₁(T)`, which on-manifold is exactly the hypothesis of
-`temperature_identifiability` (Ciucci 1999); distinct energies plus `Real.exp` injectivity force
-`T = T₀`. The reverse direction is the exact-fit collapse `N̂(T₀) = N₀`. This is the two-line
-least-squares analogue of temperature identifiability; the `m ≥ 3` off-manifold case is genuinely
-multimodal and is not addressed. -/
+/-! ### General on-manifold `T`- and joint uniqueness (`m` lines)
+
+The two-line closed form is `Fin 2`-specific, but the *on-manifold* uniqueness needs no closed form.
+`nlObjective … (T, N̂(T)) = 0` is a sum of squares, so it vanishes **iff** the profiled density fits
+every line exactly (`nlObjective_eq_zero_iff`). On the distinct-energy pair `(i, j)` an exact fit
+forces the intensity ratio `c_j(T)/c_i(T)` to equal the observed ratio, which on-manifold is the
+ratio at `T₀`; `temperature_identifiability` (Ciucci 1999, `Real.exp` injectivity) then gives
+`T = T₀`. This holds for **any** finite line set with one distinct-energy pair — no Lagrange /
+Cauchy–Schwarz `∑_{i<j}` machinery is needed. The `m ≥ 3` *off-manifold* case is the classical
+multimodal exponential-fitting problem and is not claimed. -/
+
+/-- **On-manifold `T`-uniqueness for `m` lines (EXACT, Ciucci 1999).** With `obs` the exact forward
+spectrum of `(T₀, N₀)` and **one** distinct-energy pair `E i ≠ E j`, the profiled residual
+`Φ(T) = nlObjective … (T, N̂(T))` vanishes **iff** `T = T₀`, for any finite line set. So the true
+temperature is the unique global minimizer of the density-profiled objective — the general-`m`
+strengthening of `nlObjective_onManifold_min` (min *value* `0` → unique *argmin*), and the
+least-squares analogue of `temperature_identifiability`. Forward: `Φ(T) = 0` forces an exact fit
+(`nlObjective_eq_zero_iff`), so `c_j(T)/c_i(T) = obs_j/obs_i = c_j(T₀)/c_i(T₀)`, and distinct
+energies force `T = T₀`. Reverse: at `T₀` the profiled density is exactly `N₀`
+(`profiledDensity_onManifold`), a perfect fit. The `m ≥ 3` off-manifold case is genuinely multimodal
+and is not addressed. -/
+theorem profiledT_onManifold_unique [Nonempty ι] {kB Fcal T0 N0 T : ℝ} {g E A obs : ι → ℝ}
+    (hkB : 0 < kB) (hg : ∀ k, 0 < g k) (hFcal : 0 < Fcal) (hA : ∀ k, 0 < A k)
+    (hN0 : 0 < N0) (hT0 : 0 < T0) (hT : 0 < T) (i j : ι) (hE : E i ≠ E j)
+    (hobs : ∀ k, obs k = lineIntensity kB T0 N0 Fcal g E A k) :
+    nlObjective kB Fcal g E A obs (T, profiledDensity kB Fcal g E A obs T) = 0 ↔ T = T0 := by
+  have hci : 0 < lineIntensity kB T 1 Fcal g E A i := lineIntensity_pos hg one_pos hFcal hA i
+  have hoi : 0 < obs i := by rw [hobs i]; exact lineIntensity_pos hg hN0 hFcal hA i
+  have hcT0 : 0 < ∑ k, (lineIntensity kB T0 1 Fcal g E A k) ^ 2 :=
+    profiledDensity_denom_pos hg hFcal hA
+  rw [nlObjective_eq_zero_iff]
+  constructor
+  · intro hfit
+    refine temperature_identifiability hkB hT hT0 hg one_pos hN0 hFcal hFcal hA i j hE ?_
+    rw [← hobs j, ← hobs i, div_eq_div_iff hci.ne' hoi.ne', ← hfit i, ← hfit j]
+    ring
+  · intro hTeq
+    rw [hTeq]
+    intro k
+    rw [profiledDensity_onManifold hcT0 hobs, hobs k,
+      lineIntensity_linear_in_N kB T0 N0 Fcal g E A k]
+
+/-- **Two-line on-manifold `T`-uniqueness (EXACT, Ciucci 1999).** The `Fin 2`, distinct-energy
+`E 0 ≠ E 1` instance of `profiledT_onManifold_unique`: on-manifold, `Φ₂(T) = 0 ↔ T = T₀`. The
+original two-line milestone, now a corollary of the general-`m` result. -/
 theorem profiledT_two_onManifold_unique {kB Fcal T0 N0 T : ℝ} {g E A obs : Fin 2 → ℝ}
     (hkB : 0 < kB) (hg : ∀ k, 0 < g k) (hFcal : 0 < Fcal) (hA : ∀ k, 0 < A k)
     (hN0 : 0 < N0) (hE : E 0 ≠ E 1) (hT0 : 0 < T0) (hT : 0 < T)
     (hobs : ∀ k, obs k = lineIntensity kB T0 N0 Fcal g E A k) :
-    nlObjective kB Fcal g E A obs (T, profiledDensity kB Fcal g E A obs T) = 0 ↔ T = T0 := by
-  have hc0 : 0 < lineIntensity kB T 1 Fcal g E A 0 := lineIntensity_pos hg one_pos hFcal hA 0
-  have hc : (0 : ℝ) < (lineIntensity kB T 1 Fcal g E A 0) ^ 2
-      + (lineIntensity kB T 1 Fcal g E A 1) ^ 2 :=
-    add_pos_of_pos_of_nonneg (pow_pos hc0 2) (sq_nonneg _)
-  have ho0 : 0 < obs 0 := by rw [hobs 0]; exact lineIntensity_pos hg hN0 hFcal hA 0
-  rw [profiledResidual_two_closed_form kB Fcal T g E A obs hc, div_eq_zero_iff, sq_eq_zero_iff]
+    nlObjective kB Fcal g E A obs (T, profiledDensity kB Fcal g E A obs T) = 0 ↔ T = T0 :=
+  profiledT_onManifold_unique hkB hg hFcal hA hN0 hT0 hT 0 1 hE hobs
+
+/-- **Joint `(T, N)` on-manifold uniqueness (EXACT, Ciucci 1999).** For any parameter pair `p` with
+positive temperature `0 < p.1`, the joint objective vanishes **iff** `p` is exactly the true
+parameters: `nlObjective … p = 0 ↔ p = (T₀, N₀)`, given one distinct-energy pair. This is the full
+argmin uniqueness that the `N`-VARPRO reduction and `profiledT_onManifold_unique` combine to give:
+a zero residual forces an exact fit at every line, which pins `T = T₀` (the ratio argument) and then
+`N = N₀` (cancel `c_i(T₀) > 0`). Upgrades `nlObjective_onManifold_min` from "value `0` at the true
+parameters" to "`(T₀, N₀)` is the *only* zero of the residual among positive temperatures". -/
+theorem joint_onManifold_unique [Nonempty ι] {kB Fcal T0 N0 : ℝ} {g E A obs : ι → ℝ}
+    (hkB : 0 < kB) (hg : ∀ k, 0 < g k) (hFcal : 0 < Fcal) (hA : ∀ k, 0 < A k)
+    (hN0 : 0 < N0) (hT0 : 0 < T0) (i j : ι) (hE : E i ≠ E j)
+    (hobs : ∀ k, obs k = lineIntensity kB T0 N0 Fcal g E A k)
+    {p : ℝ × ℝ} (hp : 0 < p.1) :
+    nlObjective kB Fcal g E A obs p = 0 ↔ p = (T0, N0) := by
+  obtain ⟨T, N⟩ := p
+  have hpT : 0 < T := hp
+  have hci : 0 < lineIntensity kB T 1 Fcal g E A i := lineIntensity_pos hg one_pos hFcal hA i
+  have hoi : 0 < obs i := by rw [hobs i]; exact lineIntensity_pos hg hN0 hFcal hA i
+  rw [nlObjective_eq_zero_iff, Prod.mk.injEq]
   constructor
-  · rintro (hnum | hden)
-    · refine temperature_identifiability hkB hT hT0 hg one_pos hN0 hFcal hFcal hA 0 1 hE ?_
-      rw [← hobs 1, ← hobs 0, div_eq_div_iff hc0.ne' ho0.ne']
-      linear_combination -hnum
-    · exact absurd hden hc.ne'
-  · intro hTeq
-    rw [hTeq]
-    left
-    rw [hobs 0, hobs 1, lineIntensity_linear_in_N kB T0 N0 Fcal g E A 1,
-      lineIntensity_linear_in_N kB T0 N0 Fcal g E A 0]
-    ring
+  · intro hfit
+    have hTeq : T = T0 := by
+      refine temperature_identifiability hkB hpT hT0 hg one_pos hN0 hFcal hFcal hA i j hE ?_
+      rw [← hobs j, ← hobs i, div_eq_div_iff hci.ne' hoi.ne', ← hfit i, ← hfit j]
+      ring
+    have hci0 : 0 < lineIntensity kB T0 1 Fcal g E A i := lineIntensity_pos hg one_pos hFcal hA i
+    have hi := hfit i
+    rw [hTeq, hobs i, lineIntensity_linear_in_N kB T0 N0 Fcal g E A i] at hi
+    exact ⟨hTeq, mul_right_cancel₀ hci0.ne' hi⟩
+  · rintro ⟨hTeq, hNeq⟩
+    intro k
+    rw [hNeq, hTeq, hobs k, lineIntensity_linear_in_N kB T0 N0 Fcal g E A k]
 
 /-! ### Non-vacuity witness (two-line `T`-uniqueness) -/
 
@@ -532,5 +611,15 @@ example :
     (fun _ => by norm_num [nvT2A]) one_pos
     (by simp only [nvT2E, Matrix.cons_val_zero, Matrix.cons_val_one]; norm_num)
     one_pos one_pos (fun _ => rfl)
+
+/-- **Non-vacuity of the joint `(T, N)` uniqueness.** The same distinct-energy witness instantiates
+`joint_onManifold_unique` at the true parameters `p = (1, 1)`, confirming its hypotheses (including
+a positive-temperature `p`) are jointly satisfiable. -/
+example :
+    nlObjective 1 1 nvT2G nvT2E nvT2A nvT2Obs (1, 1) = 0 ↔ ((1 : ℝ), (1 : ℝ)) = (1, 1) :=
+  joint_onManifold_unique one_pos (fun _ => by norm_num [nvT2G]) one_pos
+    (fun _ => by norm_num [nvT2A]) one_pos one_pos 0 1
+    (by simp only [nvT2E, Matrix.cons_val_zero, Matrix.cons_val_one]; norm_num)
+    (fun _ => rfl) one_pos
 
 end CflibsFormal
