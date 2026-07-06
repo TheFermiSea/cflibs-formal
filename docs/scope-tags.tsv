@@ -57,6 +57,7 @@ NonlinearLeastSquares.lean	profiledT_two_offManifold_unique	EXACT	Ciucci 1999
 NonlinearLeastSquares.lean	profiledResidual_stability_in_obs	REDUCED	Tognoni 2010
 NonlinearLeastSquares.lean	profiledResidual_nearManifold_bound	REDUCED	Tognoni 2010
 NonlinearLeastSquares.lean	profiledResidual_true_strict_lt	REDUCED	Tognoni 2010
+NonlinearLeastSquares.lean	profiledResidual_minimizer_trapped	REDUCED	Tognoni 2010
 NonlinearLeastSquares.lean	profiledResidual_of_orthogonal	PURE-MATH	—
 NonlinearLeastSquares.lean	profiledResidual_not_injective_m3	EXACT	Ciucci 1999
 NoiseToComposition.lean	tempResponseErrorBound_eq_ofGap	PURE-MATH	—

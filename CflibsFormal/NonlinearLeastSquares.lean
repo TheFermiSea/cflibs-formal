@@ -878,6 +878,56 @@ example :
   exact profiledResidual_true_strict_lt (profiledDensity_denom_pos hg (by norm_num) hA)
     (profiledDensity_denom_pos hg (by norm_num) hA) (fun _ => rfl) hgap
 
+/-- **Near-manifold minimizer localization / trapping (REDUCED, Tognoni 2010).** The topological
+form of the near-manifold picture. For noisy data `obs = forward(T₀,N₀) + η`, any temperature `T`
+that fits the noisy data **at least as well as `T₀`** — in particular any minimizer of the profiled
+objective over a set containing `T₀` — has a small *clean* residual gap: `Φ_clean(T) ≤ 6·∑ηₖ²`. So
+every noisy near-optimizer is trapped in the clean sublevel set `{T : Φ_clean(T) ≤ 6·∑ηₖ²}`. This is
+a genuine neighborhood of `T₀` (it contains `T₀`, where `Φ_clean = 0`), and since `Φ_clean` vanishes
+**only** at `T₀` (`profiledT_onManifold_unique`), the trapping set collapses to `{T₀}` as the noise
+energy `∑ηₖ² → 0`: the solver's answer is provably pinned near the truth, with the closeness
+controlled by the noise. This is the argmin-localization face of `profiledResidual_true_strict_lt`
+(its contrapositive), from `profiledResidual_nearManifold_bound` +
+`profiledResidual_stability_in_obs` via `linarith`.
+
+Honest scope — what this deliberately does **not** claim: (1) `T₀` is *not* asserted to be a strict
+local minimizer of the noisy `Φ_obs` — under generic noise the minimizer shifts off `T₀` by
+`O(‖η‖)`, so that statement is false; trapping localizes the *shifted* minimizer, which is correct.
+(2) The *metric* refinement `|T − T₀| ≤ C·√(∑ηₖ²)` and strict-convexity uniqueness of the minimizer
+*within* the neighborhood need the Rayleigh-quotient curvature/Hessian route (heavy, and flagged
+as a trap in the frontier dossier); they remain open. -/
+theorem profiledResidual_minimizer_trapped [Nonempty ι] {kB Fcal T0 N0 T : ℝ} {g E A obs η : ι → ℝ}
+    (hc0 : 0 < ∑ k, (lineIntensity kB T0 1 Fcal g E A k) ^ 2)
+    (hcT : 0 < ∑ k, (lineIntensity kB T 1 Fcal g E A k) ^ 2)
+    (hobs : ∀ k, obs k = lineIntensity kB T0 N0 Fcal g E A k + η k)
+    (hle : nlObjective kB Fcal g E A obs (T, profiledDensity kB Fcal g E A obs T)
+         ≤ nlObjective kB Fcal g E A obs (T0, profiledDensity kB Fcal g E A obs T0)) :
+    nlObjective kB Fcal g E A (fun k => lineIntensity kB T0 N0 Fcal g E A k)
+        (T, profiledDensity kB Fcal g E A (fun k => lineIntensity kB T0 N0 Fcal g E A k) T)
+      ≤ 6 * ∑ k, (η k) ^ 2 := by
+  have htruth := profiledResidual_nearManifold_bound hc0 hobs
+  have hstab := profiledResidual_stability_in_obs (kB := kB) (Fcal := Fcal) (T := T)
+    (g := g) (E := E) (A := A) (obs := fun k => lineIntensity kB T0 N0 Fcal g E A k)
+    (obs' := obs) hcT
+  have hη : ∑ k, (obs k - lineIntensity kB T0 N0 Fcal g E A k) ^ 2 = ∑ k, (η k) ^ 2 := by
+    refine Finset.sum_congr rfl (fun k _ => ?_)
+    rw [hobs k]; ring
+  rw [hη] at hstab
+  linarith [htruth, hstab, hle]
+
+/-- Non-vacuity witness: the trapping bound at `T = T₀` (the `hle` premise is `le_refl`, the clean
+gap at `T₀` is `0`, so `0 ≤ 6·∑ηₖ²`) — data `E = ![0,1]`, `T₀ = N₀ = 1`, noise `η = ![1,1]`. -/
+example :
+    nlObjective 1 1 ![1, 1] ![0, 1] ![1, 1]
+        (fun k => lineIntensity 1 1 1 1 ![1, 1] ![0, 1] ![1, 1] k)
+        (1, profiledDensity 1 1 ![1, 1] ![0, 1] ![1, 1]
+          (fun k => lineIntensity 1 1 1 1 ![1, 1] ![0, 1] ![1, 1] k) 1)
+      ≤ 6 * ∑ k, ((![1, 1] : Fin 2 → ℝ) k) ^ 2 := by
+  have hg : ∀ k, 0 < (![1, 1] : Fin 2 → ℝ) k := fun k => by fin_cases k <;> norm_num
+  have hA : ∀ k, 0 < (![1, 1] : Fin 2 → ℝ) k := fun k => by fin_cases k <;> norm_num
+  exact profiledResidual_minimizer_trapped (profiledDensity_denom_pos hg (by norm_num) hA)
+    (profiledDensity_denom_pos hg (by norm_num) hA) (fun _ => rfl) (le_refl _)
+
 /-- **Profiled residual at an orthogonal observation (PURE-MATH).** If the observation vector `obs`
 is orthogonal to the unit-density line-intensity vector `c(T)`, i.e.
 `∑ₖ lineIntensity kB T 1 Fcal g E A k · obs_k = 0`, then the variable-projection density profiles to
