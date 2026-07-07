@@ -60,6 +60,9 @@ NonlinearLeastSquares.lean	profiledResidual_true_strict_lt	REDUCED	Tognoni 2010
 NonlinearLeastSquares.lean	profiledResidual_minimizer_trapped	REDUCED	Tognoni 2010
 NonlinearLeastSquares.lean	profiledResidual_of_orthogonal	PURE-MATH	—
 NonlinearLeastSquares.lean	profiledResidual_not_injective_m3	EXACT	Ciucci 1999
+NonlinearLeastSquares.lean	two_ratio_diff	EXACT	Ciucci 1999
+NonlinearLeastSquares.lean	clean_residual_ratio	EXACT	Ciucci 1999
+NonlinearLeastSquares.lean	profiledResidual_metric_bound	REDUCED	Tognoni 2010
 NoiseToComposition.lean	tempResponseErrorBound_eq_ofGap	PURE-MATH	—
 NoiseToComposition.lean	tempResponseErrorBoundOfGap_mono	PURE-MATH	—
 NoiseToComposition.lean	noise_to_temperatureGap	REDUCED	Tognoni 2010
@@ -339,6 +342,7 @@ TemporalEvolution.lean	temporal_saha_composition_gate_independent	REDUCED	Tognon
 TemporalEvolution.lean	mem_lteWindow_thermalized	REDUCED	Cristoforetti 2010
 TemporalEvolution.lean	mcwhirter_requirement_antitone	PURE-MATH	—
 Analysis.lean	strictAntiOn_div_of_deriv_num_neg	PURE-MATH	—
+Analysis.lean	temp_exp_diff_lower	PURE-MATH	—
 EquivalentWidth.lean	equivWidth_integrand_integrable	PURE-MATH	—
 EquivalentWidth.lean	equivWidth_nonneg	PURE-MATH	—
 EquivalentWidth.lean	equivWidth_le_thin	EXACT	Gornushkin 1999

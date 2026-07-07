@@ -5,7 +5,7 @@
 > (the integrity spine) + citation from `docs/scope-tags.tsv`; the docs-sync CI gate fails if
 > any result is untagged, so a new theorem cannot land without declaring its epistemic status.
 
-**Scope-tag mix** (356 results): **EXACT** 119 · **REDUCED** 79 · **APPROXIMATION** 9 · **PURE-MATH** 149
+**Scope-tag mix** (360 results): **EXACT** 121 · **REDUCED** 80 · **APPROXIMATION** 9 · **PURE-MATH** 150
 
 `EXACT` = exact identity faithfully encoding the cited physics · `REDUCED` = valid dimensionless/lumped-factor form · `APPROXIMATION` = documented idealization / limiting case · `PURE-MATH` = infrastructure lemma, no physical claim. Classification cross-checked against `reviews/literature-validity-audit.md`.
 
@@ -123,6 +123,7 @@
 
 **Results**
 - `PURE-MATH` · `strictAntiOn_div_of_deriv_num_neg` — Quotient strictly antitone from a negative derivative numerator.
+- `PURE-MATH` · `temp_exp_diff_lower` — On a temperature box `[Tmin,Tmax]` (`0 < Tmin`), the map `T ↦ exp (D / T)` is Lipschitz-below in `T`, with explicit positive constant `exp (-(|D| / Tmin)) *…
 
 ## `AtomicDataPerturbation.lean`  (CflibsFormal)
 *the atomic-data perturbation channel*
@@ -547,6 +548,9 @@
 - `REDUCED` · `profiledResidual_minimizer_trapped` — Near-manifold minimizer localization / trapping (REDUCED, Tognoni 2010).  _[Tognoni 2010]_
 - `PURE-MATH` · `profiledResidual_of_orthogonal` — Profiled residual at an orthogonal observation (PURE-MATH).
 - `EXACT` · `profiledResidual_not_injective_m3` — Off-manifold `T`-non-uniqueness for `m = 3` (EXACT, HONEST NEGATIVE result).  _[Ciucci 1999]_
+- `EXACT` · `two_ratio_diff` — The two-line intensity-ratio difference is a scaled `Real.exp` difference.  _[Ciucci 1999]_
+- `EXACT` · `clean_residual_ratio` — On-manifold, the two-line profiled residual in the intensity-ratio coordinate.  _[Ciucci 1999]_
+- `REDUCED` · `profiledResidual_metric_bound` — —  _[Tognoni 2010]_
 
 ## `OLS.lean`  (CflibsFormal)
 *the ordinary-least-squares algebraic foundation*

@@ -6,6 +6,7 @@ Authors: Brian Squires
 import Mathlib
 import CflibsFormal.ForwardMap
 import CflibsFormal.Identifiability
+import CflibsFormal.Analysis
 
 /-!
 # CF-LIBS formalization — the nonlinear joint `(T, N)` least-squares inverse (existence leg)
@@ -1058,5 +1059,136 @@ theorem profiledResidual_not_injective_m3 :
   · simp only [ceE]; intro h; linarith
   · rw [hphi1, hphi2]
   · rw [hphi1]; norm_num
+
+
+/-! ### Two-line metric neighborhood bound (Frontier 01, M4 tail — piece 2)
+
+The trapping bound localizes the noisy minimizer to a `Φ_clean`-sublevel neighborhood of `T₀`; here
+that is upgraded to an explicit **metric** neighborhood in the temperature itself. On a box, the
+intensity-ratio coordinate is a bi-Lipschitz image of `T` (via `temp_exp_diff_lower`), so the
+`Φ_clean` control transfers to a bound `(sensitivity)²·(T−T₀)² ≤ 6·(1+Rmax²)·∑ηₖ²`, i.e.
+`|T−T₀| ≤ C·√(∑ηₖ²)` with `C` an explicit box constant. -/
+
+/-- The two-line intensity-ratio difference is a scaled `Real.exp` difference. -/
+lemma two_ratio_diff {kB Fcal T T0 : ℝ} {g E A : Fin 2 → ℝ}
+    (hg : ∀ k, 0 < g k) (hFcal : 0 < Fcal) (hA : ∀ k, 0 < A k) :
+    lineIntensity kB T 1 Fcal g E A 1 / lineIntensity kB T 1 Fcal g E A 0
+      - lineIntensity kB T0 1 Fcal g E A 1 / lineIntensity kB T0 1 Fcal g E A 0
+    = (g 1 * A 1) / (g 0 * A 0)
+        * (Real.exp ((E 0 - E 1) / (kB * T)) - Real.exp ((E 0 - E 1) / (kB * T0))) := by
+  rw [lineIntensity_ratio_closed_form (T := T) hg one_pos hFcal hA 0 1,
+      lineIntensity_ratio_closed_form (T := T0) hg one_pos hFcal hA 0 1]
+  ring
+
+/-- On-manifold, the two-line profiled residual in the intensity-ratio coordinate. -/
+lemma clean_residual_ratio {kB Fcal T0 N0 T : ℝ} {g E A obs : Fin 2 → ℝ}
+    (hg : ∀ k, 0 < g k) (hFcal : 0 < Fcal) (hA : ∀ k, 0 < A k)
+    (hobs : ∀ k, obs k = lineIntensity kB T0 N0 Fcal g E A k) :
+    nlObjective kB Fcal g E A obs (T, profiledDensity kB Fcal g E A obs T)
+      = N0 ^ 2 * (lineIntensity kB T0 1 Fcal g E A 0) ^ 2
+        * (lineIntensity kB T 1 Fcal g E A 1 / lineIntensity kB T 1 Fcal g E A 0
+           - lineIntensity kB T0 1 Fcal g E A 1 / lineIntensity kB T0 1 Fcal g E A 0) ^ 2
+        / (1 + (lineIntensity kB T 1 Fcal g E A 1 / lineIntensity kB T 1 Fcal g E A 0) ^ 2) := by
+  have hc0T : 0 < lineIntensity kB T 1 Fcal g E A 0 := lineIntensity_pos hg one_pos hFcal hA 0
+  have hc1T : 0 < lineIntensity kB T 1 Fcal g E A 1 := lineIntensity_pos hg one_pos hFcal hA 1
+  have hc0T0 : 0 < lineIntensity kB T0 1 Fcal g E A 0 := lineIntensity_pos hg one_pos hFcal hA 0
+  have _hc1T0 : 0 < lineIntensity kB T0 1 Fcal g E A 1 := lineIntensity_pos hg one_pos hFcal hA 1
+  have hc : (0 : ℝ) < (lineIntensity kB T 1 Fcal g E A 0) ^ 2
+      + (lineIntensity kB T 1 Fcal g E A 1) ^ 2 := add_pos (pow_pos hc0T 2) (pow_pos hc1T 2)
+  rw [profiledResidual_two_closed_form kB Fcal T g E A obs hc,
+      hobs 0, hobs 1, lineIntensity_linear_in_N kB T0 N0 Fcal g E A 0,
+      lineIntensity_linear_in_N kB T0 N0 Fcal g E A 1]
+  field_simp
+  ring
+
+theorem profiledResidual_metric_bound {kB Fcal Tmin Tmax T0 N0 T : ℝ} {g E A obs η : Fin 2 → ℝ}
+    (hg : ∀ k, 0 < g k) (hFcal : 0 < Fcal) (hA : ∀ k, 0 < A k)
+    (hN0 : 0 < N0) (hTmin : 0 < Tmin)
+    (hT : Tmin ≤ T) (hTM : T ≤ Tmax) (hT0 : Tmin ≤ T0) (hT0M : T0 ≤ Tmax)
+    (hobs : ∀ k, obs k = lineIntensity kB T0 N0 Fcal g E A k + η k)
+    (hle : nlObjective kB Fcal g E A obs (T, profiledDensity kB Fcal g E A obs T)
+         ≤ nlObjective kB Fcal g E A obs (T0, profiledDensity kB Fcal g E A obs T0)) :
+    (N0 * lineIntensity kB T0 1 Fcal g E A 0 * ((g 1 * A 1) / (g 0 * A 0))
+      * (Real.exp (-(|(E 0 - E 1) / kB| / Tmin)) * (|(E 0 - E 1) / kB| / Tmax ^ 2))) ^ 2
+        * (T - T0) ^ 2
+      ≤ 6 * (1 + ((g 1 * A 1) / (g 0 * A 0) * Real.exp (|(E 0 - E 1) / kB| / Tmin)) ^ 2)
+          * ∑ k, (η k) ^ 2 := by
+  set c0T0 := lineIntensity kB T0 1 Fcal g E A 0 with hc0
+  set rT := lineIntensity kB T 1 Fcal g E A 1 / lineIntensity kB T 1 Fcal g E A 0 with hrT
+  set rT0 := lineIntensity kB T0 1 Fcal g E A 1 / lineIntensity kB T0 1 Fcal g E A 0 with hrT0
+  set K := (g 1 * A 1) / (g 0 * A 0) with hK
+  set cA := Real.exp (-(|(E 0 - E 1) / kB| / Tmin)) * (|(E 0 - E 1) / kB| / Tmax ^ 2) with hcA
+  set Rmax := K * Real.exp (|(E 0 - E 1) / kB| / Tmin) with hRmax
+  set n := ∑ k, (η k) ^ 2 with hn
+  have hc0pos : 0 < c0T0 := lineIntensity_pos hg one_pos hFcal hA 0
+  have hc0T : 0 < lineIntensity kB T 1 Fcal g E A 0 := lineIntensity_pos hg one_pos hFcal hA 0
+  have hc1T : 0 < lineIntensity kB T 1 Fcal g E A 1 := lineIntensity_pos hg one_pos hFcal hA 1
+  have hKpos : 0 < K := div_pos (mul_pos (hg 1) (hA 1)) (mul_pos (hg 0) (hA 0))
+  have hcAnn : 0 ≤ cA := by rw [hcA]; positivity
+  have hrTnn : 0 ≤ rT := by rw [hrT]; exact le_of_lt (div_pos hc1T hc0T)
+  have hspos : (0:ℝ) < 1 + rT ^ 2 := by positivity
+  have hnnn : 0 ≤ n := Finset.sum_nonneg (fun k _ => sq_nonneg _)
+  have hcT : 0 < ∑ k, (lineIntensity kB T 1 Fcal g E A k) ^ 2 :=
+    profiledDensity_denom_pos hg hFcal hA
+  have hc0d : 0 < ∑ k, (lineIntensity kB T0 1 Fcal g E A k) ^ 2 :=
+    profiledDensity_denom_pos hg hFcal hA
+  have htrap := profiledResidual_minimizer_trapped hc0d hcT hobs hle
+  have hform := clean_residual_ratio (kB := kB) (Fcal := Fcal) (T0 := T0) (N0 := N0) (T := T)
+    (g := g) (E := E) (A := A) (obs := fun k => lineIntensity kB T0 N0 Fcal g E A k)
+    hg hFcal hA (fun _ => rfl)
+  rw [hform, div_le_iff₀ hspos] at htrap
+  have hrd := two_ratio_diff (kB := kB) (Fcal := Fcal) (T := T) (T0 := T0)
+    (g := g) (E := E) (A := A) hg hFcal hA
+  have hL1 := temp_exp_diff_lower (D := (E 0 - E 1) / kB) (Tmin := Tmin) (Tmax := Tmax)
+    (T := T) (T0 := T0) hTmin hT hTM hT0 hT0M
+  simp only [div_div] at hL1
+  set eD := Real.exp ((E 0 - E 1) / (kB * T)) - Real.exp ((E 0 - E 1) / (kB * T0)) with heD
+  have he2 : cA ^ 2 * (T - T0) ^ 2 ≤ eD ^ 2 := by
+    have hnn : 0 ≤ cA * |T - T0| := mul_nonneg hcAnn (abs_nonneg _)
+    have hsq := mul_self_le_mul_self hnn hL1
+    have e1 : cA * |T - T0| * (cA * |T - T0|) = cA ^ 2 * (T - T0) ^ 2 := by
+      rw [← sq_abs (T - T0)]; ring
+    have e2 : |eD| * |eD| = eD ^ 2 := by rw [← sq_abs eD]; ring
+    rw [e1, e2] at hsq; exact hsq
+  have hstep : N0 ^ 2 * c0T0 ^ 2 * K ^ 2 * cA ^ 2 * (T - T0) ^ 2
+      ≤ N0 ^ 2 * c0T0 ^ 2 * (rT - rT0) ^ 2 := by
+    have hmul := mul_le_mul_of_nonneg_left he2
+      (show (0:ℝ) ≤ N0 ^ 2 * c0T0 ^ 2 * K ^ 2 by positivity)
+    calc N0 ^ 2 * c0T0 ^ 2 * K ^ 2 * cA ^ 2 * (T - T0) ^ 2
+        = N0 ^ 2 * c0T0 ^ 2 * K ^ 2 * (cA ^ 2 * (T - T0) ^ 2) := by ring
+      _ ≤ N0 ^ 2 * c0T0 ^ 2 * K ^ 2 * eD ^ 2 := hmul
+      _ = N0 ^ 2 * c0T0 ^ 2 * (K * eD) ^ 2 := by ring
+      _ = N0 ^ 2 * c0T0 ^ 2 * (rT - rT0) ^ 2 := by rw [← hrd]
+  -- r(T) bounded on the box:  rT ≤ Rmax
+  have hrbound : rT ≤ Rmax := by
+    have hrTeq : rT = K * Real.exp ((E 0 - E 1) / (kB * T)) := by
+      rw [hrT, hK, lineIntensity_ratio_closed_form hg one_pos hFcal hA 0 1]
+    have harg : (E 0 - E 1) / (kB * T) ≤ |(E 0 - E 1) / kB| / Tmin := by
+      rw [← div_div]
+      gcongr
+      exact le_abs_self _
+    rw [hrTeq, hRmax]
+    exact mul_le_mul_of_nonneg_left (Real.exp_le_exp.mpr harg) hKpos.le
+  have hRmaxnn : 0 ≤ Rmax := by rw [hRmax]; positivity
+  have hr2 : rT ^ 2 ≤ Rmax ^ 2 := by
+    apply sq_le_sq'
+    · linarith [hrTnn]
+    · exact hrbound
+  calc (N0 * c0T0 * K * cA) ^ 2 * (T - T0) ^ 2
+      = N0 ^ 2 * c0T0 ^ 2 * K ^ 2 * cA ^ 2 * (T - T0) ^ 2 := by ring
+    _ ≤ N0 ^ 2 * c0T0 ^ 2 * (rT - rT0) ^ 2 := hstep
+    _ ≤ 6 * n * (1 + rT ^ 2) := htrap
+    _ ≤ 6 * n * (1 + Rmax ^ 2) := by nlinarith [hnnn, hr2]
+    _ = 6 * (1 + Rmax ^ 2) * n := by ring
+
+/-- Non-vacuity: every hypothesis of `profiledResidual_metric_bound` is dischargeable at concrete
+box data (`Tmin=1, Tmax=2, T0=T=1`, `E=![0,1]`, noise `η=![1,1]`). -/
+example : True := by
+  have _ := profiledResidual_metric_bound (kB := 1) (Fcal := 1) (Tmin := 1) (Tmax := 2)
+    (T0 := 1) (N0 := 1) (T := 1) (g := ![1, 1]) (E := ![0, 1]) (A := ![1, 1]) (η := ![1, 1])
+    (obs := fun k => lineIntensity 1 1 1 1 ![1, 1] ![0, 1] ![1, 1] k + (![1, 1] : Fin 2 → ℝ) k)
+    (fun k => by fin_cases k <;> norm_num) one_pos (fun k => by fin_cases k <;> norm_num)
+    one_pos one_pos le_rfl (by norm_num) le_rfl (by norm_num) (fun _ => rfl) le_rfl
+  trivial
 
 end CflibsFormal
