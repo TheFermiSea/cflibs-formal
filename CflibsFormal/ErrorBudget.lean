@@ -5,6 +5,7 @@ Authors: Brian Squires
 -/
 import Mathlib
 import CflibsFormal.CompositionRobustness
+import CflibsFormal.Analysis
 import CflibsFormal.OLS
 
 /-!
@@ -251,22 +252,6 @@ theorem maxPerLineError_sufficient [Nonempty ι] {E y yHat : ι → ℝ} {eps ta
   exact abs_le_of_sq_le_sq hbound htau.le
 
 /-! ## Task 3 — compose into composition error (the concentration channel + closure) -/
-
-/-- A clean exponential perturbation bound: `|exp x − 1| ≤ exp η − 1` whenever `|x| ≤ η`. The
-kernel of "log-domain error ⇒ relative error": a bounded additive error on a log-quantity (an
-intercept, a temperature) maps to a bounded relative error. Exact (no linearization); the
-leading term is `η`, since `exp η − 1 → η` as `η → 0`. -/
-theorem abs_exp_sub_one_le {x eta : ℝ} (hx : |x| ≤ eta) :
-    |Real.exp x - 1| ≤ Real.exp eta - 1 := by
-  have h := abs_le.mp hx
-  have hup : Real.exp x ≤ Real.exp eta := Real.exp_le_exp.mpr h.2
-  have hlo : Real.exp (-eta) ≤ Real.exp x := Real.exp_le_exp.mpr h.1
-  have hsum : (2 : ℝ) ≤ Real.exp eta + Real.exp (-eta) := by
-    have a := Real.add_one_le_exp eta
-    have b := Real.add_one_le_exp (-eta)
-    linarith
-  rw [abs_le]
-  exact ⟨by nlinarith [hlo, hsum], by linarith [hup]⟩
 
 /-- **Relative density error from an intercept (log-concentration) error.** The OLS density
 reader is `N = exp(b)·U/Fcal` (`Alt.olsDensity`); at fixed temperature (`U`, `Fcal` shared) an

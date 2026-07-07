@@ -9,6 +9,7 @@ import CflibsFormal.ForwardMap
 import CflibsFormal.Classic
 import CflibsFormal.CompositionRobustness
 import CflibsFormal.PartitionLipschitz
+import CflibsFormal.Analysis
 
 /-!
 # CF-LIBS formalization — the atomic-data perturbation channel
@@ -367,46 +368,6 @@ The identities/bounds below realise the T-split bridge described in the Honest-s
 same-data / wrong-`T` aliasing identity, its box error bound, the isolated energy channel, and the
 composition corollary the end-to-end module consumes. -/
 
-/-- **Two-point `|exp − 1|` bound (PURE-MATH).** `|exp x − 1| ≤ exp |x| − 1`: for `x ≥ 0` the two
-sides agree in sign, and for `x ≤ 0` the bound follows from `exp x + exp(−x) ≥ 2`
-(`Real.add_one_le_exp` twice) together with `exp(−x) ≤ exp |x|`. Private helper; pure real
-analysis. -/
-private lemma abs_exp_sub_one_le (x : ℝ) : |Real.exp x - 1| ≤ Real.exp |x| - 1 := by
-  rw [abs_le]
-  refine ⟨?_, ?_⟩
-  · have h1 : x + 1 ≤ Real.exp x := Real.add_one_le_exp x
-    have h2 : -x + 1 ≤ Real.exp (-x) := Real.add_one_le_exp (-x)
-    have h3 : Real.exp (-x) ≤ Real.exp |x| := by
-      refine Real.exp_le_exp.mpr ?_
-      rw [← abs_neg]
-      exact le_abs_self (-x)
-    linarith
-  · have hx : Real.exp x ≤ Real.exp |x| := Real.exp_le_exp.mpr (le_abs_self x)
-    linarith
-
-/-- **Inverse-temperature gap bound (PURE-MATH).** Re-derived locally (the copy in
-`PartitionLipschitz.lean` is private to that module): on a floor `Tmin ≤ T₁, T₂` (`0 < Tmin`,
-`0 < k_B`), `|1/(k_B T₁) − 1/(k_B T₂)| ≤ |T₁ − T₂|/(k_B·Tmin²)`. Private helper; pure real
-algebra. -/
-private lemma inv_kT_sub_le' {kB Tmin T1 T2 : ℝ}
-    (hkB : 0 < kB) (hTmin : 0 < Tmin) (hT1 : Tmin ≤ T1) (hT2 : Tmin ≤ T2) :
-    |1 / (kB * T1) - 1 / (kB * T2)| ≤ |T1 - T2| / (kB * Tmin ^ 2) := by
-  have hT1pos : 0 < T1 := lt_of_lt_of_le hTmin hT1
-  have hT2pos : 0 < T2 := lt_of_lt_of_le hTmin hT2
-  have hkT1 : kB * T1 ≠ 0 := (mul_pos hkB hT1pos).ne'
-  have hkT2 : kB * T2 ≠ 0 := (mul_pos hkB hT2pos).ne'
-  have hbig : 0 < kB * T1 * T2 := mul_pos (mul_pos hkB hT1pos) hT2pos
-  have hsmall : 0 < kB * Tmin ^ 2 := mul_pos hkB (pow_pos hTmin 2)
-  have heq : 1 / (kB * T1) - 1 / (kB * T2) = (T2 - T1) / (kB * T1 * T2) := by
-    field_simp
-  rw [heq, abs_div, abs_of_pos hbig, abs_sub_comm T2 T1, div_le_div_iff₀ hbig hsmall]
-  have hTsq : Tmin ^ 2 ≤ T1 * T2 := by
-    rw [sq]; exact mul_le_mul hT1 hT2 hTmin.le hT1pos.le
-  have hden : kB * Tmin ^ 2 ≤ kB * T1 * T2 := by
-    calc kB * Tmin ^ 2 ≤ kB * (T1 * T2) := mul_le_mul_of_nonneg_left hTsq hkB.le
-      _ = kB * T1 * T2 := by ring
-  exact mul_le_mul_of_nonneg_left hden (abs_nonneg _)
-
 /-- **Single-term partition-function floor (PURE-MATH).** For `Eₖ ≥ 0`, `gₖ > 0`, `Tmin ≤ T`, any
 level `k0` gives `g_{k0}·exp(−E_{k0}/(k_B·Tmin)) ≤ U(T)`: with `Eₖ ≥ 0` the `k0` Boltzmann factor
 is minimised at `Tmin`, and a single term is ≤ the whole (nonnegative) sum. This is the `U`-floor
@@ -502,7 +463,7 @@ theorem classicDensity_aliasing_error_energy [Nonempty ι]
   have hmono : Real.exp |(E' u - E u) / (kB * T)| ≤ Real.exp (|E' u - E u| / (kB * Tmin)) :=
     Real.exp_le_exp.mpr hwle
   calc |Real.exp ((E' u - E u) / (kB * T)) - 1|
-      ≤ Real.exp |(E' u - E u) / (kB * T)| - 1 := abs_exp_sub_one_le _
+      ≤ Real.exp |(E' u - E u) / (kB * T)| - 1 := abs_exp_sub_one_le le_rfl
     _ ≤ Real.exp (|E' u - E u| / (kB * Tmin)) - 1 := by linarith
 
 /-- **Named temperature-response error bound.** The explicit `delta/(1 − delta)`-shaped envelope of
@@ -570,7 +531,7 @@ theorem classicDensity_temperature_aliasing_error [Nonempty ι]
       abs_mul, abs_of_nonneg (hE u)]
     calc E u * |1 / (kB * T) - 1 / (kB * That)|
         ≤ E u * (|T - That| / (kB * Tmin ^ 2)) :=
-          mul_le_mul_of_nonneg_left (inv_kT_sub_le' hkB hTmin hT hThat) (hE u)
+          mul_le_mul_of_nonneg_left (inv_kT_sub_le hkB hTmin hT hThat) (hE u)
       _ = E u * |That - T| / (kB * Tmin ^ 2) := by rw [abs_sub_comm T That]; ring
   have hu1 : |boltzmannFactor kB That (E u) / boltzmannFactor kB T (E u) - 1|
       ≤ Real.exp (E u * |That - T| / (kB * Tmin ^ 2)) - 1 := by
@@ -578,7 +539,7 @@ theorem classicDensity_temperature_aliasing_error [Nonempty ι]
     have hmono : Real.exp |(-E u / (kB * That) - -E u / (kB * T))|
         ≤ Real.exp (E u * |That - T| / (kB * Tmin ^ 2)) := Real.exp_le_exp.mpr hzabs
     calc |Real.exp (-E u / (kB * That) - -E u / (kB * T)) - 1|
-        ≤ Real.exp |(-E u / (kB * That) - -E u / (kB * T))| - 1 := abs_exp_sub_one_le _
+        ≤ Real.exp |(-E u / (kB * That) - -E u / (kB * T))| - 1 := abs_exp_sub_one_le le_rfl
       _ ≤ Real.exp (E u * |That - T| / (kB * Tmin ^ 2)) - 1 := by linarith
   have hnum : |partitionFunction kB That g E - partitionFunction kB T g E|
       ≤ (∑ k, g k * E k) * |That - T| / (kB * Tmin ^ 2) := by
@@ -586,7 +547,7 @@ theorem classicDensity_temperature_aliasing_error [Nonempty ι]
         ≤ (∑ k, g k * E k) * |1 / (kB * That) - 1 / (kB * T)| :=
           partitionFunction_two_point_bound hkB hThatpos hTpos hg hE
       _ ≤ (∑ k, g k * E k) * (|That - T| / (kB * Tmin ^ 2)) :=
-          mul_le_mul_of_nonneg_left (inv_kT_sub_le' hkB hTmin hThat hT) hsumnn
+          mul_le_mul_of_nonneg_left (inv_kT_sub_le hkB hTmin hThat hT) hsumnn
       _ = (∑ k, g k * E k) * |That - T| / (kB * Tmin ^ 2) := by ring
   have hUfloor : g k0 * Real.exp (-E k0 / (kB * Tmin)) ≤ partitionFunction kB T g E :=
     partitionFunction_floor hkB hTmin hT hg hE k0

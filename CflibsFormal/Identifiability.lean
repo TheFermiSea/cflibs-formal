@@ -7,6 +7,7 @@ import Mathlib
 import CflibsFormal.Boltzmann
 import CflibsFormal.Saha
 import CflibsFormal.ForwardMap
+import CflibsFormal.Analysis
 
 /-!
 # Saha–Boltzmann formalization — Part 5: identifiability of the inverse problem
@@ -308,37 +309,6 @@ example {N : ℝ}
 two-line ratio is constant in `T`. The runtime solver, however, refuses not only at `ΔE = 0` but
 for *small* `|E_i − E_j|`; that gate wants a quantitative interpolation. The next theorem supplies
 it: the two-temperature ratio difference is bounded LINEARLY in `|E_i − E_j|`. -/
-
-/-- **Elementary exponential slope bound.** For all reals `a, b`,
-`exp a − exp b ≤ exp a · (a − b)`. Proof: `exp a − exp b = exp a·(1 − exp(b−a))` and
-`1 − exp(b−a) ≤ a − b` from `Real.add_one_le_exp (b − a) : (b − a) + 1 ≤ exp(b − a)` (valid for
-every `a, b`, no ordering needed). Private helper (no scope-tag row); pure real analysis. -/
-private lemma exp_sub_le_mul (a b : ℝ) :
-    Real.exp a - Real.exp b ≤ Real.exp a * (a - b) := by
-  have hstep : b - a + 1 ≤ Real.exp (b - a) := Real.add_one_le_exp (b - a)
-  have hle : Real.exp a * (1 - Real.exp (b - a)) ≤ Real.exp a * (a - b) :=
-    mul_le_mul_of_nonneg_left (by linarith) (Real.exp_pos a).le
-  have hrw : Real.exp a * (1 - Real.exp (b - a)) = Real.exp a - Real.exp b := by
-    have hab : a + (b - a) = b := by ring
-    rw [mul_sub, mul_one, ← Real.exp_add, hab]
-  rwa [hrw] at hle
-
-/-- **Two-point Lipschitz-type bound for `exp`.** `|exp a − exp b| ≤ max(exp a, exp b)·|a − b|`.
-The slope is controlled by the larger endpoint value (the exponential is convex and increasing).
-Symmetrising `exp_sub_le_mul` over `le_total b a`. Private helper (no scope-tag row); pure real
-analysis. -/
-private lemma abs_exp_sub_le (a b : ℝ) :
-    |Real.exp a - Real.exp b| ≤ max (Real.exp a) (Real.exp b) * |a - b| := by
-  rcases le_total b a with h | h
-  · rw [max_eq_left (Real.exp_le_exp.mpr h),
-      abs_of_nonneg (sub_nonneg.mpr (Real.exp_le_exp.mpr h)),
-      abs_of_nonneg (sub_nonneg.mpr h)]
-    exact exp_sub_le_mul a b
-  · rw [max_eq_right (Real.exp_le_exp.mpr h),
-      abs_sub_comm (Real.exp a) (Real.exp b), abs_sub_comm a b,
-      abs_of_nonneg (sub_nonneg.mpr (Real.exp_le_exp.mpr h)),
-      abs_of_nonneg (sub_nonneg.mpr h)]
-    exact exp_sub_le_mul b a
 
 /-- **Quantitative near-degeneracy — linear-in-`ΔE` temperature-conditioning bound.**
 
