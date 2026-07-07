@@ -115,16 +115,16 @@ graph TD
 
 ## 4. Phased execution plan (ordered by value × tractability)
 
-### Phase 1 — tractability-A quick wins (no unmet deps, mostly PURE-MATH)
+### Phase 1 — tractability-A quick wins (no unmet deps, mostly PURE-MATH) — **COMPLETE 2026-07-07** (12-agent Opus/Sonnet-develop + Fable-audit workflow; all six milestones landed: 02 `thermalBracket_strictMono`+`partitionFunction_upper_growth`+`partitionFunction_mono_temp`, 03 `multiElementIonized_two_point`+`_lipschitz`, 04 `outerMap` spine (`_mapsTo`/`_contraction`/`_geometric_error`/`outerContraction_box`), 05 `abs_log_ratio_le` (Analysis)+`olsIntercept_stable_hetero` (ErrorBudget), 06 `centeredDesignNormalMatrix(_eq_diagonal)` (OLS), 07 `equivWidth_lorentzian_scaled` (EquivalentWidth))
 | Frontier | Deliverable theorem(s) | Target module | Scope tag |
 |---|---|---|---|
 | 01 M1–M6 ✅ | On-manifold (M1–M3): `profiledResidual_two_closed_form` + `profiledT_onManifold_unique` (general-`m`, two-line a corollary) + `joint_onManifold_unique` (full `(T,N)` argmin). Off-manifold (M4–M6): `profiledT_offManifold_unique` (M5 — general-`m`, at most one exactly-fitting `T`, `obs` arbitrary; two-line a corollary) + `profiledResidual_stability_in_obs`/`profiledResidual_nearManifold_bound`/`profiledResidual_true_strict_lt`/`profiledResidual_minimizer_trapped` (M4 — near-manifold `L²` stability *value* half + *argmin* half (`T₀` strictly beats any `T` with clean gap > 6‖η‖²) + topological *localization* (`profiledResidual_minimizer_trapped`) + **explicit metric bound** `profiledResidual_metric_bound` (piece 2: `|T−T₀| ≤ C·√(∑ηₖ²)` on a box via the bi-Lipschitz intensity-ratio coordinate — `temp_exp_diff_lower` in Analysis.lean + `clean_residual_ratio`); only strict-convexity uniqueness-*within*-the-neighborhood (Hessian route, dossier-flagged trap) stays open — and "`T₀` is a strict local min" is honestly FALSE under noise) + `profiledResidual_not_injective_m3` (M6 — honest negative: explicit 3-line `Φ(1)=Φ(2)=19` counterexample, off-manifold `T`-uniqueness FALSE for `m≥3`) — **DONE** (`NonlinearLeastSquares.lean`; exact-fit route, no `∑_{i<j}` Lagrange machinery needed) | `NonlinearLeastSquares.lean` | PURE-MATH + EXACT + REDUCED |
-| 02 M2 | `partitionFunction_upper_growth` (crux termwise bound) — with A-siblings M1 `thermalBracket_strictMono`, M3 `partitionFunction_mono_temp` | `SahaStability.lean` | PURE-MATH |
-| 03 M1 | `multiElementIonized_two_point` + `multiElementIonized_lipschitz` | `SahaEquilibrium.lean` | PURE-MATH |
-| 04 M1 | `outerContraction_box` (abstract two-leg box contraction spine) | `SahaEquilibrium.lean` (new block) | REDUCED |
-| 05 M0+M1 | `olsIntercept_stable_hetero`; `abs_log_ratio_le` (shared infra, unlock 05/06) | `ErrorBudget.lean` / `Analysis.lean` | PURE-MATH |
-| 06 M1 | `centeredDesignNormalMatrix_eq_diagonal` (keystone) | `OLS.lean` | PURE-MATH |
-| 07 M1 | `equivWidth_lorentzian_scaled` (scaling identity) | `EquivalentWidth.lean` | EXACT |
+| 02 M2 ✅ | `partitionFunction_upper_growth` (crux termwise bound) — with A-siblings M1 `thermalBracket_strictMono`, M3 `partitionFunction_mono_temp` | `SahaStability.lean` | PURE-MATH |
+| 03 M1 ✅ | `multiElementIonized_two_point` + `multiElementIonized_lipschitz` | `SahaEquilibrium.lean` | PURE-MATH |
+| 04 M1 ✅ | `outerContraction_box` (abstract two-leg box contraction spine) | `SahaEquilibrium.lean` (new block) | REDUCED |
+| 05 M0+M1 ✅ | `olsIntercept_stable_hetero`; `abs_log_ratio_le` (shared infra, unlock 05/06) | `ErrorBudget.lean` / `Analysis.lean` | PURE-MATH |
+| 06 M1 ✅ | `centeredDesignNormalMatrix_eq_diagonal` (keystone) | `OLS.lean` | PURE-MATH |
+| 07 M1 ✅ | `equivWidth_lorentzian_scaled` (scaling identity) | `EquivalentWidth.lean` | EXACT |
 
 ### Phase 2 — B-grade, dependencies now satisfied
 | Frontier | Deliverable theorem(s) | Target module | Scope tag |

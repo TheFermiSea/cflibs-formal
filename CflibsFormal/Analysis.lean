@@ -193,5 +193,65 @@ theorem inv_kT_sub_le {kB Tmin T1 T2 : ℝ}
       _ = kB * T1 * T2 := by ring
   exact mul_le_mul_of_nonneg_left hden (abs_nonneg _)
 
+/-! ### Log-ratio transfer bound (Frontier 05 shared infrastructure) -/
+/-! ## M1 — log-ratio transfer lemma (PURE-MATH; destined for `Analysis.lean`) -/
+
+/-- **Log-ratio transfer bound.** If `a'` is a relative perturbation of `a` bounded by `δ < 1`
+(`|a' - a| ≤ δ * a`), then the log-ratio `log (a / a')` is bounded by `δ / (1 - δ)`. This is the
+two-sided sharpening of `Real.log_le_sub_one_of_pos`: the upper side `log r ≤ r - 1 ≤ δ/(1-δ)`
+comes from `r = a/a' ≤ 1/(1-δ)` directly (so `r - 1 ≤ 1/(1-δ) - 1 = δ/(1-δ)`; `δ < 1` keeps the
+denominator positive); the lower side `-log r = log r⁻¹ ≤ r⁻¹ - 1` needs `r⁻¹ = a'/a ≤ 1 + δ`,
+giving the tighter `r⁻¹ - 1 ≤ δ`, which is widened to the stated `δ/(1-δ)` via `δ ≤ δ/(1-δ)` — so
+the single constant `δ/(1-δ)` (the WORSE of the two sides, attained on the upper side) bounds
+`|log r|` on both sides. Pure real analysis; no physics content. -/
+theorem abs_log_ratio_le {a a' δ : ℝ} (ha : 0 < a) (ha' : 0 < a')
+    (hδ1 : δ < 1) (hpert : |a' - a| ≤ δ * a) :
+    |Real.log (a / a')| ≤ δ / (1 - δ) := by
+  have hδ0 : 0 ≤ δ := by
+    have := abs_nonneg (a' - a)
+    nlinarith [this, hpert, ha]
+  have h1δ : 0 < 1 - δ := by linarith
+  have hbound := abs_le.mp hpert
+  -- a' ≤ a + δ a = a(1+δ), and a - δ a ≤ a' i.e. a(1-δ) ≤ a'
+  have hub : a' ≤ a * (1 + δ) := by nlinarith [hbound.2]
+  have hlb : a * (1 - δ) ≤ a' := by nlinarith [hbound.1]
+  have hr : 0 < a / a' := div_pos ha ha'
+  have hrinv : 0 < a' / a := div_pos ha' ha
+  -- Upper bound on log (a/a')
+  have hupper : Real.log (a / a') ≤ δ / (1 - δ) := by
+    have hle1 : a / a' ≤ 1 / (1 - δ) := by
+      rw [div_le_div_iff₀ ha' h1δ]
+      nlinarith [hlb]
+    have hstep : Real.log (a / a') ≤ a / a' - 1 := Real.log_le_sub_one_of_pos hr
+    have hstep2 : a / a' - 1 ≤ 1 / (1 - δ) - 1 := by linarith [hle1]
+    have heq : (1 : ℝ) / (1 - δ) - 1 = δ / (1 - δ) := by
+      rw [eq_div_iff h1δ.ne']; field_simp; ring
+    linarith [hstep, hstep2, heq.le, heq.ge]
+  -- Lower bound: -log(a/a') = log(a'/a) ≤ a'/a - 1 ≤ δ ≤ δ/(1-δ)
+  have hlower : -(δ / (1 - δ)) ≤ Real.log (a / a') := by
+    have hloginv : Real.log (a' / a) ≤ a' / a - 1 := Real.log_le_sub_one_of_pos hrinv
+    have hle2 : a' / a ≤ 1 + δ := by
+      rw [div_le_iff₀ ha]
+      linarith [hub]
+    have hstep2 : a' / a - 1 ≤ δ := by linarith [hle2]
+    have hδled : δ ≤ δ / (1 - δ) := by
+      rw [le_div_iff₀ h1δ]
+      nlinarith [hδ0]
+    have hlogeq : Real.log (a' / a) = -Real.log (a / a') := by
+      rw [← Real.log_inv]; congr 1; field_simp
+    linarith [hloginv, hstep2, hδled, hlogeq]
+  rw [abs_le]
+  exact ⟨hlower, hupper⟩
+
+/-- **Non-vacuity witness for `abs_log_ratio_le`.** `a = 1`, `a' = 1.2`, `δ = 0.25`: genuinely
+`0 < 0.25 < 1`, `|1.2 - 1| = 0.2 ≤ 0.25 * 1`, and the bound `δ/(1-δ) = 1/3 ≈ 0.333` is a
+non-trivial (non-zero, finite) constant, confirming the hypotheses are jointly satisfiable and
+the conclusion is not vacuous. -/
+example : |Real.log ((1 : ℝ) / 1.2)| ≤ (0.25 : ℝ) / (1 - 0.25) :=
+  abs_log_ratio_le (a := 1) (a' := 1.2) (δ := 0.25)
+    (by norm_num) (by norm_num) (by norm_num) (by norm_num)
+
+/-! ## M0 — `olsIntercept_stable_hetero` (PURE-MATH; destined for `ErrorBudget.lean`) -/
+
 end CflibsFormal
 

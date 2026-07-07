@@ -254,4 +254,58 @@ example : (designNormalMatrix nvDmE11).det = 0 := by
   simp only [Matrix.cons_val_zero, Matrix.cons_val_one, Fin.sum_univ_two, Fintype.card_fin]
   norm_num
 
+/-! ### Centered design normal matrix: diagonalization keystone (Frontier 06, Phase 1) -/
+variable {ι : Type*} [Fintype ι]
+
+/-- **Centered design normal matrix.** The normal matrix `BᵀB` of the two-column *centered*
+Boltzmann-plot design `B = [(E − Ē) | 1]`, where `Ē = mean E`:
+`![![∑ₖ (Eₖ − Ē)², ∑ₖ (Eₖ − Ē)], ![∑ₖ (Eₖ − Ē), n]]` with `n = card ι`. Unlike the raw
+`designNormalMatrix` (`OLS.lean:185`), the off-diagonal entries here are the sum of *centered*
+energies, which vanishes identically (`centered_sum_zero`) — this is what
+`centeredDesignNormalMatrix_eq_diagonal` exploits. Pure linear algebra of the centered
+two-column design (no physics content in the definition itself). -/
+noncomputable def centeredDesignNormalMatrix (E : ι → ℝ) : Matrix (Fin 2) (Fin 2) ℝ :=
+  ![![∑ k, (E k - mean E) ^ 2, ∑ k, (E k - mean E)],
+    ![∑ k, (E k - mean E),     (Fintype.card ι : ℝ)]]
+
+/-- **THE keystone: the centered normal matrix is diagonal.** `centeredDesignNormalMatrix E
+= Matrix.diagonal ![SS_E, n]` with `SS_E = ∑ₖ (Eₖ − Ē)²` and `n = card ι`. The off-diagonal
+entries are `∑ₖ (Eₖ − Ē) = 0` (`centered_sum_zero`, `OLS.lean:64`) because the constant column
+`1` is orthogonal to the centered energy column exactly when the energies are referenced to
+their own mean. This exhibits the eigenvalues of the centered design as the literal diagonal
+entries `SS_E` and `n`, with no spectral machinery needed — the keystone for the condition
+number `κ = max(SS_E, n) / min(SS_E, n)` (dossier `06-condition-numbers.md` §4 M1). -/
+theorem centeredDesignNormalMatrix_eq_diagonal [Nonempty ι] (E : ι → ℝ) :
+    centeredDesignNormalMatrix E
+      = Matrix.diagonal ![∑ k, (E k - mean E) ^ 2, (Fintype.card ι : ℝ)] := by
+  have h0 : ∑ k, (E k - mean E) = 0 := centered_sum_zero E
+  unfold centeredDesignNormalMatrix
+  ext i j
+  fin_cases i <;> fin_cases j <;>
+    simp [Matrix.diagonal, h0]
+
+/-- **Non-vacuity witness.** Two lines at distinct energies `E = (0, 1)`: `mean E = 1/2`, so
+`SS_E = ∑ₖ (Eₖ − 1/2)² = 1/2` and `n = 2`. The centered normal matrix is
+`![![1/2, 0], ![0, 2]]` — genuinely diagonal with two *distinct*, both-nonzero, entries
+(`1/2 ≠ 2`), so `centeredDesignNormalMatrix_eq_diagonal` is non-trivially satisfiable and its
+conclusion is not the zero matrix or a degenerate `diag(c, c)`. -/
+private def nvCenteredE01 : Fin 2 → ℝ := ![0, 1]
+
+example : centeredDesignNormalMatrix nvCenteredE01
+    = Matrix.diagonal ![(1 : ℝ) / 2, 2] := by
+  have h := centeredDesignNormalMatrix_eq_diagonal nvCenteredE01
+  rw [h]
+  congr 1
+  unfold nvCenteredE01 mean
+  simp [Fin.sum_univ_two]
+  norm_num
+
+example : (centeredDesignNormalMatrix nvCenteredE01) 0 0
+    ≠ (centeredDesignNormalMatrix nvCenteredE01) 1 1 := by
+  have h := centeredDesignNormalMatrix_eq_diagonal nvCenteredE01
+  rw [h]
+  unfold nvCenteredE01 mean
+  simp [Matrix.diagonal, Fin.sum_univ_two]
+  norm_num
+
 end CflibsFormal

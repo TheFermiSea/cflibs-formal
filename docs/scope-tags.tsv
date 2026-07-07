@@ -16,6 +16,9 @@ SahaStability.lean	saha_inv_lipschitz	PURE-MATH	—
 SahaStability.lean	electronDensity_lipschitz	EXACT	Saha–Eggert (Griem)
 SahaStability.lean	sahaFactor_lipschitz_temp	REDUCED	Saha–Eggert (Griem)
 SahaStability.lean	electronDensityFromRatio_lipschitz_temp	REDUCED	Saha–Eggert (Griem)
+SahaStability.lean	thermalBracket_strictMono	PURE-MATH	—
+SahaStability.lean	partitionFunction_upper_growth	PURE-MATH	—
+SahaStability.lean	partitionFunction_mono_temp	PURE-MATH	—
 SahaEquilibrium.lean	sahaEquilibriumNe_pos	PURE-MATH	—
 SahaEquilibrium.lean	sahaEquilibriumNe_selfConsistent	REDUCED	Saha–Eggert (Griem)
 SahaEquilibrium.lean	sahaEquilibriumNe_lt_totalDensity	PURE-MATH	—
@@ -33,6 +36,12 @@ SahaEquilibrium.lean	sahaIter_contraction	REDUCED	Saha–Eggert (Griem)
 SahaEquilibrium.lean	sahaIter_mapsTo	REDUCED	Saha–Eggert (Griem)
 SahaEquilibrium.lean	sahaIter_geometric_error	REDUCED	Saha–Eggert (Griem)
 SahaEquilibrium.lean	sahaIter_tendsto	REDUCED	Saha–Eggert (Griem)
+SahaEquilibrium.lean	multiElementIonized_two_point	PURE-MATH	—
+SahaEquilibrium.lean	multiElementIonized_lipschitz	PURE-MATH	—
+SahaEquilibrium.lean	outerMap_mapsTo	PURE-MATH	—
+SahaEquilibrium.lean	outerMap_contraction	PURE-MATH	—
+SahaEquilibrium.lean	outerMap_geometric_error	PURE-MATH	—
+SahaEquilibrium.lean	outerContraction_box	PURE-MATH	—
 PartitionLipschitz.lean	partitionFunction_two_point_bound	REDUCED	Tognoni 2010
 PartitionLipschitz.lean	partitionFunction_lipschitz_temp	REDUCED	Tognoni 2010
 PartitionLipschitz.lean	partitionFunction_relative_error_temp	REDUCED	Tognoni 2010
@@ -143,6 +152,7 @@ OLS.lean	olsSlope_noise_gain	PURE-MATH	—
 OLS.lean	ols_recovers_line	PURE-MATH	—
 OLS.lean	det_designNormalMatrix	PURE-MATH	—
 OLS.lean	designNormalMatrix_det_ne_zero_iff	REDUCED	Tognoni 2010
+OLS.lean	centeredDesignNormalMatrix_eq_diagonal	PURE-MATH	—
 LeastSquaresFit.lean	residual_sum_zero	PURE-MATH	—
 LeastSquaresFit.lean	residual_centered_dot_zero	PURE-MATH	—
 LeastSquaresFit.lean	residual_dot_energy_zero	PURE-MATH	—
@@ -296,6 +306,7 @@ ErrorBudget.lean	olsSlope_stable_l1_of_hetero	REDUCED	Tognoni 2010
 ErrorBudget.lean	temp_rel_error_hetero	REDUCED	Tognoni 2010
 ErrorBudget.lean	composition_abs_sub_le_uniform	PURE-MATH	—
 ErrorBudget.lean	composition_target_sufficient	REDUCED	Tognoni 2010
+ErrorBudget.lean	olsIntercept_stable_hetero	REDUCED	Tognoni 2010
 Alt/OLSVariance.lean	olsSlope_estimator_eq	PURE-MATH	—
 Alt/OLSVariance.lean	expectation_const_add_weightedNoise	PURE-MATH	—
 Alt/OLSVariance.lean	variance_const_add_weightedNoise	PURE-MATH	—
@@ -346,6 +357,7 @@ Analysis.lean	exp_sub_le_mul	PURE-MATH	—
 Analysis.lean	abs_exp_sub_le	PURE-MATH	—
 Analysis.lean	abs_exp_sub_one_le	PURE-MATH	—
 Analysis.lean	inv_kT_sub_le	PURE-MATH	—
+Analysis.lean	abs_log_ratio_le	PURE-MATH	—
 EquivalentWidth.lean	equivWidth_integrand_integrable	PURE-MATH	—
 EquivalentWidth.lean	equivWidth_nonneg	PURE-MATH	—
 EquivalentWidth.lean	equivWidth_le_thin	EXACT	Gornushkin 1999
@@ -362,3 +374,4 @@ EquivalentWidth.lean	equivWidth_lorentzian_sqrt_lower	EXACT	Gornushkin 1999
 EquivalentWidth.lean	equivWidth_lorentzian_sqrt_upper	EXACT	Gornushkin 1999
 EquivalentWidth.lean	equivWidth_lorentzian_sqrt_two_sided	EXACT	Gornushkin 1999
 EquivalentWidth.lean	nvLz_sqrt_lower_at_threshold	EXACT	Gornushkin 1999
+EquivalentWidth.lean	equivWidth_lorentzian_scaled	EXACT	Gornushkin 1999

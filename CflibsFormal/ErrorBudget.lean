@@ -429,4 +429,43 @@ example :
     (by simp only [nvHetE, mean, Fin.sum_univ_two]; norm_num)
     (by intro k; fin_cases k <;> simp [nvHetY, nvHetYhat, nvHetEps])
 
+/-! ### Heteroscedastic intercept sensitivity (Frontier 05, Phase 1) -/
+/-- **Intercept sensitivity, HETEROSCEDASTIC (per-line budget, centered convention).** The
+per-line-budget mirror of `olsIntercept_stable_centered`: with energies referenced to their mean
+(`mean E = 0`) and a per-line ordinate-error budget `εₖ` (rather than one global `ε`), the OLS
+intercept error is bounded by the average of the per-line budgets: `|b̂ - b| ≤ (∑ₖ εₖ) / card ι`.
+Same proof shape as `olsSlope_stable_hetero` — the per-line `εₖ` survives the final
+`Finset.sum_le_sum` unfactored, rather than being pulled out as a common constant. This is the
+missing intercept twin of `olsSlope_stable_hetero` referenced in the frontier-05 dossier. -/
+theorem olsIntercept_stable_hetero [Nonempty ι] {E y yHat eps : ι → ℝ}
+    (hcent : mean E = 0) (hδ : ∀ k, |yHat k - y k| ≤ eps k) :
+    |olsIntercept E yHat - olsIntercept E y| ≤ (∑ k, eps k) / (Fintype.card ι) := by
+  have hcard : (0 : ℝ) < (Fintype.card ι : ℝ) := by exact_mod_cast Fintype.card_pos
+  have hi : ∀ z : ι → ℝ, olsIntercept E z = mean z := by
+    intro z; unfold olsIntercept; rw [hcent, mul_zero, sub_zero]
+  rw [hi, hi]
+  have heq : mean yHat - mean y = (∑ k, (yHat k - y k)) / (Fintype.card ι) := by
+    unfold mean; rw [← sub_div, ← Finset.sum_sub_distrib]
+  rw [heq, abs_div, abs_of_pos hcard, div_le_div_iff_of_pos_right hcard]
+  calc |∑ k, (yHat k - y k)|
+      ≤ ∑ k, |yHat k - y k| := Finset.abs_sum_le_sum_abs _ _
+    _ ≤ ∑ k, eps k := Finset.sum_le_sum (fun k _ => hδ k)
+
+/-- **Non-vacuity witness for `olsIntercept_stable_hetero`.** Two lines at energies `E = (-1, 1)`
+(centered: `mean E = 0`), true ordinates `y = (0, 0)`, measured `ŷ = (0, 2)`, with a genuinely
+PER-LINE budget `ε = (0, 2)`: line 0 noiseless (`ε₀ = 0`), line 1 at `ε₁ = 2`. The hypotheses are
+jointly satisfiable with a heteroscedastic budget a homoscedastic single-`ε` bound could not use
+(it would need `ε ≥ 2` on the noiseless line 0). -/
+private def nvHetIE : Fin 2 → ℝ := ![-1, 1]
+private def nvHetIY : Fin 2 → ℝ := ![0, 0]
+private def nvHetIYhat : Fin 2 → ℝ := ![0, 2]
+private def nvHetIEps : Fin 2 → ℝ := ![0, 2]
+
+example :
+    |olsIntercept nvHetIE nvHetIYhat - olsIntercept nvHetIE nvHetIY|
+      ≤ (∑ k, nvHetIEps k) / (Fintype.card (Fin 2)) :=
+  olsIntercept_stable_hetero
+    (by simp only [nvHetIE, mean, Fin.sum_univ_two]; norm_num)
+    (by intro k; fin_cases k <;> simp [nvHetIY, nvHetIYhat, nvHetIEps])
+
 end CflibsFormal

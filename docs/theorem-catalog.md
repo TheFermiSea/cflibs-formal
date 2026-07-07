@@ -5,7 +5,7 @@
 > (the integrity spine) + citation from `docs/scope-tags.tsv`; the docs-sync CI gate fails if
 > any result is untagged, so a new theorem cannot land without declaring its epistemic status.
 
-**Scope-tag mix** (363 results): **EXACT** 121 · **REDUCED** 80 · **APPROXIMATION** 9 · **PURE-MATH** 153
+**Scope-tag mix** (376 results): **EXACT** 122 · **REDUCED** 81 · **APPROXIMATION** 9 · **PURE-MATH** 164
 
 `EXACT` = exact identity faithfully encoding the cited physics · `REDUCED` = valid dimensionless/lumped-factor form · `APPROXIMATION` = documented idealization / limiting case · `PURE-MATH` = infrastructure lemma, no physical claim. Classification cross-checked against `reviews/literature-validity-audit.md`.
 
@@ -128,6 +128,7 @@
 - `PURE-MATH` · `abs_exp_sub_le` — Two-point Lipschitz-type bound for `exp`.
 - `PURE-MATH` · `abs_exp_sub_one_le` — Exponential perturbation bound.
 - `PURE-MATH` · `inv_kT_sub_le` — Inverse-temperature gap bound.
+- `PURE-MATH` · `abs_log_ratio_le` — Log-ratio transfer bound.
 
 ## `AtomicDataPerturbation.lean`  (CflibsFormal)
 *the atomic-data perturbation channel*
@@ -315,6 +316,7 @@
 - `EXACT` · `nvLz_sqrt_lower_at_threshold` — Non-vacuity: the √τ lower bound fires at the threshold `τ = 8π` (hypothesis `8π ≤ 8π`), so the constant `c = (1 - e⁻¹)/(2√(2π))` gives a genuine lower bound…  _[Gornushkin 1999]_
 - `EXACT` · `equivWidth_lorentzian_sqrt_upper` — The √τ damping-wing UPPER bound (EXACT, within the model).  _[Gornushkin 1999]_
 - `EXACT` · `equivWidth_lorentzian_sqrt_two_sided` — The √τ damping-wing REGIME, pinned up to constants (EXACT, within the model).  _[Gornushkin 1999]_
+- `EXACT` · `equivWidth_lorentzian_scaled` — The Lorentzian equivalent-width rescaling identity (EXACT, within the model).  _[Gornushkin 1999]_
 
 ## `ErrorBudget.lean`  (CflibsFormal)
 *the error-propagation chain and DERIVED reliability thresholds*
@@ -336,6 +338,7 @@
 - `REDUCED` · `olsSlope_stable_hetero` — N-line slope sensitivity, HETEROSCEDASTIC (per-line ℓ¹ bound).  _[Tognoni 2010]_
 - `REDUCED` · `olsSlope_stable_l1_of_hetero` — The heteroscedastic bound strictly generalizes `olsSlope_stable_l1`.  _[Tognoni 2010]_
 - `REDUCED` · `temp_rel_error_hetero` — Composed heteroscedastic noise ⇒ relative temperature error (gap #5, temperature leg).  _[Tognoni 2010]_
+- `REDUCED` · `olsIntercept_stable_hetero` — Intercept sensitivity, HETEROSCEDASTIC (per-line budget, centered convention).  _[Tognoni 2010]_
 
 ## `ForwardMap.lean`  (CflibsFormal)
 *Part 4: the optically-thin forward map*
@@ -564,6 +567,7 @@
 - `olsIntercept` — Ordinary-least-squares intercept `b = ybar − m·Ebar`.
 - `olsWeight` — Gauss–Markov weight `wₖ = (Eₖ − Ē)/SS_E` with `SS_E = ∑ⱼ (Eⱼ − Ē)²`.
 - `designNormalMatrix` — Design-matrix normal matrix of the Boltzmann-plot fit.
+- `centeredDesignNormalMatrix` — Centered design normal matrix.
 
 **Results**
 - `PURE-MATH` · `centered_sum_zero` — The centered energies sum to zero: `∑ₖ (Eₖ − Ē) = 0`.
@@ -575,6 +579,7 @@
 - `PURE-MATH` · `ols_recovers_line` — THE CRUX.
 - `PURE-MATH` · `det_designNormalMatrix` — THE determinant identity (Lagrange / variance identity).
 - `REDUCED` · `designNormalMatrix_det_ne_zero_iff` — Nonsingularity ⇔ positive energy spread (the runtime rank gate).  _[Tognoni 2010]_
+- `PURE-MATH` · `centeredDesignNormalMatrix_eq_diagonal` — THE keystone: the centered normal matrix is diagonal.
 
 ## `PartialLTE.lean`  (CflibsFormal)
 *the partial-LTE thermalization limit*
@@ -637,6 +642,7 @@
 - `sahaEquilibriumNe` — Self-consistent electron density of the reduced single-element, two-stage, fixed-`T` Saha core: the unique positive root of `n_e² = S · (Ntot − n_e)`,  `n_e…
 - `multiElementIonized` — Multi-element ionized-density closure map `G`.
 - `sahaIter` — Scalar fixed-point iteration map of the reduced Saha self-consistency equation `n_e² = S · (Ntot − n_e)`.
+- `outerMap` — Abstract outer-iteration self-map (`PURE-MATH`).
 
 **Results**
 - `PURE-MATH` · `sahaEquilibriumNe_pos` — Positivity of the self-consistent density.
@@ -656,6 +662,12 @@
 - `REDUCED` · `sahaIter_mapsTo` — Interval invariance of the iteration (`REDUCED`; Saha–Eggert, Griem).  _[Saha–Eggert (Griem)]_
 - `REDUCED` · `sahaIter_geometric_error` — Geometric error decay of the iterates (`REDUCED`; Saha–Eggert, Griem).  _[Saha–Eggert (Griem)]_
 - `REDUCED` · `sahaIter_tendsto` — Geometric convergence of the iteration (`REDUCED`; Saha–Eggert, Griem).  _[Saha–Eggert (Griem)]_
+- `PURE-MATH` · `multiElementIonized_two_point` — Two-point / discrete-slope identity for the closure map `G := multiElementIonized S Ntot` (`PURE-MATH`).
+- `PURE-MATH` · `multiElementIonized_lipschitz` — Global Lipschitz bound for the closure map `G := multiElementIonized S Ntot` (`PURE-MATH`).
+- `PURE-MATH` · `outerMap_mapsTo` — Interval invariance of the outer sweep (`PURE-MATH`).
+- `PURE-MATH` · `outerMap_contraction` — One-step box contraction with the product constant (`PURE-MATH`).
+- `PURE-MATH` · `outerMap_geometric_error` — Geometric error decay of the outer iterates (`PURE-MATH`).
+- `PURE-MATH` · `outerContraction_box` — Outer T-iteration abstract spine — the two-leg box contraction (`PURE-MATH`).
 
 ## `SahaInverse.lean`  (CflibsFormal)
 *Part 6: coupling Saha into the inverse problem*
@@ -682,6 +694,9 @@
 - `EXACT` · `electronDensity_lipschitz` — EXACT sensitivity bound for the `n_e` diagnostic.  _[Saha–Eggert (Griem)]_
 - `REDUCED` · `sahaFactor_lipschitz_temp` — Saha-factor `T`-Lipschitz (two-sided sensitivity) bound (`REDUCED`, Saha–Eggert (Griem)).  _[Saha–Eggert (Griem)]_
 - `REDUCED` · `electronDensityFromRatio_lipschitz_temp` — Electron-density `T`-sensitivity bound (`REDUCED`, Saha–Eggert (Griem)).  _[Saha–Eggert (Griem)]_
+- `PURE-MATH` · `thermalBracket_strictMono` — Strict monotonicity of the thermal-de-Broglie bracket in `T` (PURE-MATH).
+- `PURE-MATH` · `partitionFunction_upper_growth` — Partition-function upper growth against the ionization exponential (PURE-MATH).
+- `PURE-MATH` · `partitionFunction_mono_temp` — Monotonicity of the partition function in `T` (PURE-MATH).
 
 ## `SelfAbsorption.lean`  (CflibsFormal)
 *self-absorption / optical-thickness-aware forward map*

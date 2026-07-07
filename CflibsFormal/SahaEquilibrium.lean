@@ -652,4 +652,333 @@ example : Filter.Tendsto (fun n => (sahaIter nvSitS nvSitNtot)^[n] 0) Filter.atT
   exact sahaIter_tendsto (b := nvSitB) hS hN hb hrb hbN hqlt (by norm_num)
     (by norm_num [nvSitB])
 
+/-! ### Multi-element iteration: two-point identity + Lipschitz core (Frontier 03, Phase 1) -/
+
+section MultiElementCore
+
+variable {ι : Type*} [Fintype ι]
+
+/-- **Two-point / discrete-slope identity for the closure map** `G := multiElementIonized S Ntot`
+(`PURE-MATH`).  For electron densities `x, y ≥ 0` and positive Saha factors `S s > 0` (which keep
+every denominator `x + S s`, `y + S s` strictly positive), the exact finite-sum algebra
+
+`G x − G y = (y − x) · ∑ s, Ntot s · S s / ((x + S s) · (y + S s))`.
+
+This is the algebraic core of the multi-element iteration: it exhibits `G` as antitone with the
+*exact* local slope `∑ s, Ntot s · S s / ((x + S s)(y + S s))`.  No calculus is used — only
+`div_sub_div` per term and `Finset.mul_sum`.  (No positivity of `Ntot s` is needed here; only the
+denominators must be nonzero.) -/
+theorem multiElementIonized_two_point (S Ntot : ι → ℝ) (hS : ∀ s, 0 < S s)
+    (x y : ℝ) (hx : 0 ≤ x) (hy : 0 ≤ y) :
+    multiElementIonized S Ntot x - multiElementIonized S Ntot y
+      = (y - x) * ∑ s, Ntot s * S s / ((x + S s) * (y + S s)) := by
+  change (∑ s, Ntot s * S s / (x + S s)) - (∑ s, Ntot s * S s / (y + S s))
+      = (y - x) * ∑ s, Ntot s * S s / ((x + S s) * (y + S s))
+  rw [← Finset.sum_sub_distrib, Finset.mul_sum]
+  refine Finset.sum_congr rfl (fun s _ => ?_)
+  have hxs : (0 : ℝ) < x + S s := by linarith [hS s]
+  have hys : (0 : ℝ) < y + S s := by linarith [hS s]
+  field_simp
+  ring
+
+/-- **Global Lipschitz bound for the closure map** `G := multiElementIonized S Ntot`
+(`PURE-MATH`).  With `S s > 0` and `Ntot s > 0`, for all `x, y ≥ 0`
+
+`|G x − G y| ≤ (∑ s, Ntot s / S s) · |x − y|`.
+
+The explicit constant `L := ∑ s, Ntot s / S s` is the value of the exact local slope at `x = y = 0`.
+Proof: the two-point identity gives `G x − G y = (y − x) · c(x,y)` with the slope sum `c(x,y) ≥ 0`,
+and each slope term `Ntot s · S s / ((x + S s)(y + S s)) ≤ Ntot s / S s` because
+`(x + S s)(y + S s) ≥ S s · S s` for `x, y ≥ 0`. -/
+theorem multiElementIonized_lipschitz (S Ntot : ι → ℝ) (hS : ∀ s, 0 < S s)
+    (hN : ∀ s, 0 < Ntot s) (x y : ℝ) (hx : 0 ≤ x) (hy : 0 ≤ y) :
+    |multiElementIonized S Ntot x - multiElementIonized S Ntot y|
+      ≤ (∑ s, Ntot s / S s) * |x - y| := by
+  rw [multiElementIonized_two_point S Ntot hS x y hx hy, abs_mul, abs_sub_comm y x]
+  have hsum_nonneg : 0 ≤ ∑ s, Ntot s * S s / ((x + S s) * (y + S s)) :=
+    Finset.sum_nonneg fun s _ =>
+      div_nonneg (mul_nonneg (hN s).le (hS s).le)
+        (mul_nonneg (by linarith [hS s]) (by linarith [hS s]))
+  rw [abs_of_nonneg hsum_nonneg,
+    mul_comm (|x - y|) (∑ s, Ntot s * S s / ((x + S s) * (y + S s)))]
+  refine mul_le_mul_of_nonneg_right ?_ (abs_nonneg _)
+  refine Finset.sum_le_sum fun s _ => ?_
+  have hxs : (0 : ℝ) < x + S s := by linarith [hS s]
+  have hys : (0 : ℝ) < y + S s := by linarith [hS s]
+  rw [div_le_div_iff₀ (mul_pos hxs hys) (hS s)]
+  nlinarith [mul_nonneg (hN s).le hx, mul_nonneg (hN s).le hy,
+    mul_nonneg (mul_nonneg (hN s).le hx) hy, hS s, hN s, hx, hy]
+
+/-! ### Non-vacuity witnesses
+
+Two species with `S = ![1, 1]`, `Ntot = ![1, 1]`: `G x = 2/(x + 1)`, so `G 0 = 2`, `G 1 = 1`.
+The two-point identity then reads `G 0 − G 1 = 1 = (1 − 0) · (1/2 + 1/2)`, and the Lipschitz
+constant is `∑ Ntot/S = 2`, giving the true non-trivial bound `1 = |G 0 − G 1| ≤ 2 · |0 − 1| = 2`.
+This certifies both theorems are not vacuous (`G` genuinely varies). -/
+
+private def nvMe2S : Fin 2 → ℝ := ![1, 1]
+private def nvMe2N : Fin 2 → ℝ := ![1, 1]
+
+private theorem nvMe2S_pos : ∀ s, 0 < nvMe2S s := by intro s; fin_cases s <;> norm_num [nvMe2S]
+private theorem nvMe2N_pos : ∀ s, 0 < nvMe2N s := by intro s; fin_cases s <;> norm_num [nvMe2N]
+
+-- Two-point identity holds non-vacuously at concrete data: `G 0 − G 1 = 1 = (1−0)·1`.
+example : multiElementIonized nvMe2S nvMe2N 0 - multiElementIonized nvMe2S nvMe2N 1
+    = (1 - 0) * ∑ s, nvMe2N s * nvMe2S s / ((0 + nvMe2S s) * (1 + nvMe2S s)) :=
+  multiElementIonized_two_point nvMe2S nvMe2N nvMe2S_pos 0 1 le_rfl zero_le_one
+
+-- and the two sides are the concrete nonzero value `1`, so the identity is non-degenerate.
+example : multiElementIonized nvMe2S nvMe2N 0 - multiElementIonized nvMe2S nvMe2N 1 = 1 := by
+  change (∑ s, nvMe2N s * nvMe2S s / (0 + nvMe2S s))
+      - (∑ s, nvMe2N s * nvMe2S s / (1 + nvMe2S s)) = 1
+  simp only [nvMe2S, nvMe2N, Fin.sum_univ_two, Matrix.cons_val_zero, Matrix.cons_val_one]
+  norm_num
+
+-- Lipschitz bound holds non-vacuously: `1 = |G 0 − G 1| ≤ (∑ Ntot/S)·|0−1| = 2`.
+example : |multiElementIonized nvMe2S nvMe2N 0 - multiElementIonized nvMe2S nvMe2N 1|
+    ≤ (∑ s, nvMe2N s / nvMe2S s) * |(0 : ℝ) - 1| :=
+  multiElementIonized_lipschitz nvMe2S nvMe2N nvMe2S_pos nvMe2N_pos 0 1 le_rfl zero_le_one
+
+end MultiElementCore
+
+/-! ### Outer T-iteration: abstract two-leg box-contraction spine (Frontier 04, Phase 1) -/
+
+section OuterIteration
+
+open scoped NNReal
+
+variable {Tmin Tmax nemin nemax L1 L2 : ℝ} {legNe legT : ℝ → ℝ}
+
+/-- **Abstract outer-iteration self-map** (`PURE-MATH`).  Given two legs
+`legNe, legT : ℝ → ℝ`, the outer sweep on the temperature coordinate is the
+composition `Φ T = legT (legNe T)`.  Purely abstract: no physics is baked in, so
+frontiers 03/04 can instantiate `legNe := (T ↦ n_e(T))` and `legT := (n_e ↦ T')`
+independently. -/
+def outerMap (legNe legT : ℝ → ℝ) (T : ℝ) : ℝ := legT (legNe T)
+
+/-- **Interval invariance of the outer sweep** (`PURE-MATH`).  If `legNe` maps the
+temperature box `[Tmin,Tmax]` into the density box `[nemin,nemax]` and `legT` maps
+the density box back into the temperature box, then `Φ = legT ∘ legNe` maps
+`[Tmin,Tmax]` into itself.  This is a genuine hypothesis, not automatic (cf. the
+inner-loop `sahaIter_mapsTo`); it is exactly the composition of the two leg
+invariances. -/
+theorem outerMap_mapsTo
+    (hmapsNe : ∀ T ∈ Set.Icc Tmin Tmax, legNe T ∈ Set.Icc nemin nemax)
+    (hmapsT : ∀ n ∈ Set.Icc nemin nemax, legT n ∈ Set.Icc Tmin Tmax) :
+    ∀ T ∈ Set.Icc Tmin Tmax, outerMap legNe legT T ∈ Set.Icc Tmin Tmax := by
+  intro T hT
+  exact hmapsT (legNe T) (hmapsNe T hT)
+
+/-- **One-step box contraction with the product constant** (`PURE-MATH`).  On the
+temperature box, if `legNe` is `L1`-Lipschitz (into the density box) and `legT` is
+`L2`-Lipschitz on that density box, then the composition `Φ = legT ∘ legNe`
+contracts distances by the **product** `L1·L2`:
+`|Φ T − Φ T'| ≤ (L1·L2)·|T − T'|` for `T, T' ∈ [Tmin,Tmax]`.
+This is the abstract statement of direction (a): the composite Lipschitz constant is
+the product of the individual leg constants (only `0 ≤ L2` is needed here). -/
+theorem outerMap_contraction
+    (hmapsNe : ∀ T ∈ Set.Icc Tmin Tmax, legNe T ∈ Set.Icc nemin nemax)
+    (hL1 : ∀ T ∈ Set.Icc Tmin Tmax, ∀ T' ∈ Set.Icc Tmin Tmax,
+        |legNe T - legNe T'| ≤ L1 * |T - T'|)
+    (hL2 : ∀ n ∈ Set.Icc nemin nemax, ∀ n' ∈ Set.Icc nemin nemax,
+        |legT n - legT n'| ≤ L2 * |n - n'|)
+    (hL2nn : 0 ≤ L2)
+    {T T' : ℝ} (hT : T ∈ Set.Icc Tmin Tmax) (hT' : T' ∈ Set.Icc Tmin Tmax) :
+    |outerMap legNe legT T - outerMap legNe legT T'| ≤ L1 * L2 * |T - T'| := by
+  have h2 : |legT (legNe T) - legT (legNe T')| ≤ L2 * |legNe T - legNe T'| :=
+    hL2 (legNe T) (hmapsNe T hT) (legNe T') (hmapsNe T' hT')
+  have h1 : |legNe T - legNe T'| ≤ L1 * |T - T'| := hL1 T hT T' hT'
+  calc |outerMap legNe legT T - outerMap legNe legT T'|
+      = |legT (legNe T) - legT (legNe T')| := rfl
+    _ ≤ L2 * |legNe T - legNe T'| := h2
+    _ ≤ L2 * (L1 * |T - T'|) := mul_le_mul_of_nonneg_left h1 hL2nn
+    _ = L1 * L2 * |T - T'| := by ring
+
+/-- **Geometric error decay of the outer iterates** (`PURE-MATH`).  Fix a fixed
+point `Tstar ∈ [Tmin,Tmax]` of `Φ = legT ∘ legNe` (`Φ Tstar = Tstar`).  Then every
+iterate started in the box obeys the geometric bound
+`|Φ^[n] T0 − Tstar| ≤ (L1·L2)^n · |T0 − Tstar|`.
+Proof: the iterates stay in the box (`outerMap_mapsTo`), so the one-step contraction
+`outerMap_contraction` toward `Tstar` applies at each step; induct on `n`.  Holds for
+any `L1·L2` (no `< 1` needed) — it is the explicit per-step decay rate. -/
+theorem outerMap_geometric_error
+    (hmapsNe : ∀ T ∈ Set.Icc Tmin Tmax, legNe T ∈ Set.Icc nemin nemax)
+    (hmapsT : ∀ n ∈ Set.Icc nemin nemax, legT n ∈ Set.Icc Tmin Tmax)
+    (hL1 : ∀ T ∈ Set.Icc Tmin Tmax, ∀ T' ∈ Set.Icc Tmin Tmax,
+        |legNe T - legNe T'| ≤ L1 * |T - T'|)
+    (hL2 : ∀ n ∈ Set.Icc nemin nemax, ∀ n' ∈ Set.Icc nemin nemax,
+        |legT n - legT n'| ≤ L2 * |n - n'|)
+    (hL1nn : 0 ≤ L1) (hL2nn : 0 ≤ L2)
+    {Tstar T0 : ℝ} (hTstar : Tstar ∈ Set.Icc Tmin Tmax)
+    (hfix : outerMap legNe legT Tstar = Tstar)
+    (hT0 : T0 ∈ Set.Icc Tmin Tmax) (n : ℕ) :
+    |(outerMap legNe legT)^[n] T0 - Tstar| ≤ (L1 * L2) ^ n * |T0 - Tstar| := by
+  have hnn : 0 ≤ L1 * L2 := mul_nonneg hL1nn hL2nn
+  have hmem : ∀ m, (outerMap legNe legT)^[m] T0 ∈ Set.Icc Tmin Tmax := by
+    intro m
+    induction m with
+    | zero => simpa using hT0
+    | succ k ih =>
+      rw [Function.iterate_succ_apply']
+      exact outerMap_mapsTo hmapsNe hmapsT _ ih
+  induction n with
+  | zero => simp
+  | succ k ih =>
+    rw [Function.iterate_succ_apply']
+    have hstep : |outerMap legNe legT ((outerMap legNe legT)^[k] T0) - Tstar|
+        ≤ (L1 * L2) * |(outerMap legNe legT)^[k] T0 - Tstar| := by
+      have hc := outerMap_contraction hmapsNe hL1 hL2 hL2nn (hmem k) hTstar
+      rwa [hfix] at hc
+    calc |outerMap legNe legT ((outerMap legNe legT)^[k] T0) - Tstar|
+        ≤ (L1 * L2) * |(outerMap legNe legT)^[k] T0 - Tstar| := hstep
+      _ ≤ (L1 * L2) * ((L1 * L2) ^ k * |T0 - Tstar|) :=
+          mul_le_mul_of_nonneg_left ih hnn
+      _ = (L1 * L2) ^ (k + 1) * |T0 - Tstar| := by ring
+
+/-- **Convergence of the outer iterates to the fixed point** (`PURE-MATH`).  When the
+product contraction constant satisfies `L1·L2 < 1`, the iterates `Φ^[n] T0` converge
+to any box fixed point `Tstar` for every start `T0 ∈ [Tmin,Tmax]`.  Squeeze the error
+`|Φ^[n] T0 − Tstar|` between `0` and `(L1·L2)^n · |T0 − Tstar| → 0`
+(`outerMap_geometric_error` + `tendsto_pow_atTop_nhds_zero_of_lt_one`). -/
+private theorem outerMap_tendsto
+    (hmapsNe : ∀ T ∈ Set.Icc Tmin Tmax, legNe T ∈ Set.Icc nemin nemax)
+    (hmapsT : ∀ n ∈ Set.Icc nemin nemax, legT n ∈ Set.Icc Tmin Tmax)
+    (hL1 : ∀ T ∈ Set.Icc Tmin Tmax, ∀ T' ∈ Set.Icc Tmin Tmax,
+        |legNe T - legNe T'| ≤ L1 * |T - T'|)
+    (hL2 : ∀ n ∈ Set.Icc nemin nemax, ∀ n' ∈ Set.Icc nemin nemax,
+        |legT n - legT n'| ≤ L2 * |n - n'|)
+    (hL1nn : 0 ≤ L1) (hL2nn : 0 ≤ L2) (hq : L1 * L2 < 1)
+    {Tstar T0 : ℝ} (hTstar : Tstar ∈ Set.Icc Tmin Tmax)
+    (hfix : outerMap legNe legT Tstar = Tstar) (hT0 : T0 ∈ Set.Icc Tmin Tmax) :
+    Filter.Tendsto (fun n => (outerMap legNe legT)^[n] T0) Filter.atTop (nhds Tstar) := by
+  have hnn : 0 ≤ L1 * L2 := mul_nonneg hL1nn hL2nn
+  have hgeom : Filter.Tendsto (fun n => (L1 * L2) ^ n * |T0 - Tstar|)
+      Filter.atTop (nhds 0) := by
+    have h1 : Filter.Tendsto (fun n : ℕ => (L1 * L2) ^ n) Filter.atTop (nhds 0) :=
+      tendsto_pow_atTop_nhds_zero_of_lt_one hnn hq
+    simpa using h1.mul_const |T0 - Tstar|
+  have habs : Filter.Tendsto (fun n => |(outerMap legNe legT)^[n] T0 - Tstar|)
+      Filter.atTop (nhds 0) :=
+    squeeze_zero (fun _ => abs_nonneg _)
+      (fun n => outerMap_geometric_error hmapsNe hmapsT hL1 hL2 hL1nn hL2nn hTstar hfix hT0 n)
+      hgeom
+  rw [tendsto_iff_dist_tendsto_zero]
+  simpa only [Real.dist_eq] using habs
+
+/-- **Outer T-iteration abstract spine — the two-leg box contraction** (`PURE-MATH`).
+
+Abstract Banach contraction for the CF-LIBS outer temperature sweep, stated on plain
+real functions with **no physics baked in**.  Let `legNe, legT : ℝ → ℝ` be two legs
+with:
+* `legNe` mapping the temperature box `[Tmin,Tmax]` into the density box
+  `[nemin,nemax]` and `legT` mapping it back (`hmapsNe`, `hmapsT`);
+* `legNe` `L1`-Lipschitz on the temperature box and `legT` `L2`-Lipschitz on the
+  density box (`hL1`, `hL2`), with `0 ≤ L1`, `0 ≤ L2`;
+* the **product gate** `L1·L2 < 1` (`hq`) — the runtime-checkable certificate;
+* the box nonempty, `Tmin ≤ Tmax` (`hTle`).
+
+Then the outer sweep `Φ = legT ∘ legNe` has a fixed point `Tstar ∈ [Tmin,Tmax]`
+(`Φ Tstar = Tstar`), that fixed point is the **unique** one in the box, and the
+iterates `Φ^[n] T0` converge to `Tstar` for **every** start `T0 ∈ [Tmin,Tmax]`.
+
+Existence is Banach's theorem on the complete set `Set.Icc Tmin Tmax`
+(`ContractingWith.exists_fixedPoint'`, using the composite one-step contraction
+`outerMap_contraction` with constant `L1·L2`); uniqueness is `|T − Tstar| ≤
+(L1·L2)|T − Tstar|` with `L1·L2 < 1`; convergence is the geometric squeeze
+(`outerMap_geometric_error`).
+
+**Scope / honesty.**  This is the *abstract* spine only.  It asserts **nothing**
+about the Saha–Boltzmann physics: whether the real CF-LIBS legs actually satisfy
+`hmapsNe/hmapsT/hL1/hL2` and the gate `L1·L2 < 1` is the content of later milestones
+(the `n_e`-leg constant is `sahaFactorLipConst`, the `T`-leg constant is the
+combined-slope sensitivity).  The gate `L1·L2 < 1` is **sufficient, not necessary**.
+Instantiated with a single-stage two-line temperature leg (`Φ` constant, `L = 0`) the
+statement is true but vacuous; non-degeneracy requires the combined Saha–Boltzmann
+slope coupling — this spine is agnostic to that choice. -/
+theorem outerContraction_box
+    (hTle : Tmin ≤ Tmax)
+    (hmapsNe : ∀ T ∈ Set.Icc Tmin Tmax, legNe T ∈ Set.Icc nemin nemax)
+    (hmapsT : ∀ n ∈ Set.Icc nemin nemax, legT n ∈ Set.Icc Tmin Tmax)
+    (hL1 : ∀ T ∈ Set.Icc Tmin Tmax, ∀ T' ∈ Set.Icc Tmin Tmax,
+        |legNe T - legNe T'| ≤ L1 * |T - T'|)
+    (hL2 : ∀ n ∈ Set.Icc nemin nemax, ∀ n' ∈ Set.Icc nemin nemax,
+        |legT n - legT n'| ≤ L2 * |n - n'|)
+    (hq : L1 * L2 < 1) (hL1nn : 0 ≤ L1) (hL2nn : 0 ≤ L2) :
+    ∃ Tstar ∈ Set.Icc Tmin Tmax,
+      outerMap legNe legT Tstar = Tstar ∧
+      (∀ T ∈ Set.Icc Tmin Tmax, outerMap legNe legT T = T → T = Tstar) ∧
+      ∀ T0 ∈ Set.Icc Tmin Tmax,
+        Filter.Tendsto (fun n => (outerMap legNe legT)^[n] T0)
+          Filter.atTop (nhds Tstar) := by
+  have hmaps : Set.MapsTo (outerMap legNe legT) (Set.Icc Tmin Tmax) (Set.Icc Tmin Tmax) :=
+    fun x hx => outerMap_mapsTo hmapsNe hmapsT x hx
+  have hcomplete : IsComplete (Set.Icc Tmin Tmax) := isClosed_Icc.isComplete
+  set K : ℝ≥0 := ⟨L1 * L2, mul_nonneg hL1nn hL2nn⟩ with hKdef
+  have hKcoe : (K : ℝ) = L1 * L2 := rfl
+  have hK : K < 1 := by rw [← NNReal.coe_lt_one, hKcoe]; exact hq
+  have hlip : LipschitzWith K
+      (hmaps.restrict (outerMap legNe legT) (Set.Icc Tmin Tmax) (Set.Icc Tmin Tmax)) := by
+    refine lipschitzWith_iff_dist_le_mul.mpr ?_
+    rintro ⟨x, hx⟩ ⟨y, hy⟩
+    rw [Subtype.dist_eq, Subtype.dist_eq, Set.MapsTo.val_restrict_apply,
+        Set.MapsTo.val_restrict_apply, Real.dist_eq, Real.dist_eq, hKcoe]
+    exact outerMap_contraction hmapsNe hL1 hL2 hL2nn hx hy
+  have hcontract : ContractingWith K
+      (hmaps.restrict (outerMap legNe legT) (Set.Icc Tmin Tmax) (Set.Icc Tmin Tmax)) :=
+    ⟨hK, hlip⟩
+  have hxs : Tmin ∈ Set.Icc Tmin Tmax := Set.left_mem_Icc.mpr hTle
+  have hx : edist Tmin (outerMap legNe legT Tmin) ≠ ⊤ := edist_ne_top _ _
+  obtain ⟨Tstar, hTstar, hfixpt, _htend, _herr⟩ :=
+    hcontract.exists_fixedPoint' hcomplete hmaps hxs hx
+  have hfix : outerMap legNe legT Tstar = Tstar := hfixpt
+  refine ⟨Tstar, hTstar, hfix, ?_, ?_⟩
+  · intro T hT hTfix
+    have hc := outerMap_contraction hmapsNe hL1 hL2 hL2nn hT hTstar
+    rw [hTfix, hfix] at hc
+    by_contra hne
+    have habs : 0 < |T - Tstar| := abs_pos.mpr (sub_ne_zero.mpr hne)
+    have hpos : 0 < (1 - L1 * L2) * |T - Tstar| := mul_pos (by linarith) habs
+    nlinarith [hc, hpos]
+  · intro T0 hT0
+    exact outerMap_tendsto hmapsNe hmapsT hL1 hL2 hL1nn hL2nn hq hTstar hfix hT0
+
+/-! ### Non-vacuity witnesses (concrete halving legs)
+
+Halving legs `legNe = (·/2)`, `legT = (·/2)` on `[0,1] × [0,1]` with
+`L1 = L2 = 1/2` (so `L1·L2 = 1/4 < 1`): a *genuine* (non-degenerate, `L ≠ 0`)
+contraction `Φ T = T/4` with fixed point `0`.  Every hypothesis of each lemma is
+met simultaneously at concrete data, so none is vacuous. -/
+
+private noncomputable def leg2 : ℝ → ℝ := fun x => x / 2
+
+private theorem leg2_maps : ∀ x ∈ Set.Icc (0:ℝ) 1, leg2 x ∈ Set.Icc (0:ℝ) 1 := by
+  intro x hx
+  simp only [Set.mem_Icc, leg2] at hx ⊢
+  constructor <;> linarith [hx.1, hx.2]
+
+private theorem leg2_lipschitz (a b : ℝ) : |leg2 a - leg2 b| ≤ 1 / 2 * |a - b| := by
+  simp only [leg2]
+  rw [← sub_div, abs_div, abs_of_pos (show (0:ℝ) < 2 by norm_num)]
+  linarith [abs_nonneg (a - b)]
+
+example : ∀ T ∈ Set.Icc (0:ℝ) 1, outerMap leg2 leg2 T ∈ Set.Icc (0:ℝ) 1 :=
+  outerMap_mapsTo (nemin := 0) (nemax := 1) leg2_maps leg2_maps
+
+example : |outerMap leg2 leg2 (1 : ℝ) - outerMap leg2 leg2 0| ≤ 1 / 2 * (1 / 2) * |(1:ℝ) - 0| :=
+  outerMap_contraction (Tmin := 0) (Tmax := 1) (nemin := 0) (nemax := 1) (L1 := 1/2) (L2 := 1/2)
+    leg2_maps (fun a _ b _ => leg2_lipschitz a b) (fun a _ b _ => leg2_lipschitz a b)
+    (by norm_num) (by norm_num [Set.mem_Icc]) (by norm_num [Set.mem_Icc])
+
+example : ∃ Tstar ∈ Set.Icc (0:ℝ) 1,
+    outerMap leg2 leg2 Tstar = Tstar ∧
+    (∀ T ∈ Set.Icc (0:ℝ) 1, outerMap leg2 leg2 T = T → T = Tstar) ∧
+    ∀ T0 ∈ Set.Icc (0:ℝ) 1,
+      Filter.Tendsto (fun n => (outerMap leg2 leg2)^[n] T0) Filter.atTop (nhds Tstar) :=
+  outerContraction_box (Tmin := 0) (Tmax := 1) (nemin := 0) (nemax := 1) (L1 := 1/2) (L2 := 1/2)
+    (by norm_num) leg2_maps leg2_maps (fun a _ b _ => leg2_lipschitz a b)
+    (fun a _ b _ => leg2_lipschitz a b) (by norm_num) (by norm_num) (by norm_num)
+
+
+end OuterIteration
+
 end CflibsFormal

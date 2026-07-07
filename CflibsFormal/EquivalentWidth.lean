@@ -578,4 +578,69 @@ example :
         ≤ 4 / Real.sqrt Real.pi * Real.sqrt (8 * Real.pi) :=
   equivWidth_lorentzian_sqrt_two_sided le_rfl
 
+/-! ### Lorentzian width-scaling identity (Frontier 07, Phase 1) -/
+/-- **The Lorentzian equivalent-width rescaling identity (EXACT, within the model).**
+For width scale `τ > 0`, the equivalent width of the (unit-width) Lorentzian profile
+`equivWidth lorentzian τ = ∫ x, (1 - exp(-(τ · lorentzian x)))` equals `√(τ/π)` times the
+same equivalent-width integral evaluated at the *rescaled* unit profile with optical depth
+`β/(1+β·u²)` where `β = τ/π`. This is the substitution `x = √(τ/π) · u` (Jacobian `√(τ/π)`)
+that trades the `τ`-dependent Lorentzian width for a `τ`-dependent optical depth on a
+fixed (unit) profile — the algebraic core of the Ladenburg–Reiche sharp-constant ladder
+(`docs/frontiers/07-ladenburg-reiche.md`, milestone M1).
+
+**Proof.** With `a := √(τ/π) > 0`, `a² = τ/π`, and `g x := 1 - exp(-(τ·lorentzian x))`:
+pointwise `g (a * u) = 1 - exp(-((τ/π)/(1 + (τ/π)·u²)))` (pure algebra, since
+`τ · lorentzian (a·u) = τ/(π·(1+(a u)²)) = (τ/π)/(1+(τ/π)u²)` using `(au)² = a²u² = (τ/π)u²`).
+Mathlib's full-line linear change of variables
+`MeasureTheory.Measure.integral_comp_mul_left g a : ∫ x, g (a*x) = |a⁻¹| • ∫ y, g y`
+then gives `∫ y, g y = a * ∫ u, g (a*u)` (since `a > 0`), i.e. exactly the claimed identity. -/
+theorem equivWidth_lorentzian_scaled (τ : ℝ) (hτ : 0 < τ) :
+    equivWidth lorentzian τ
+      = Real.sqrt (τ / Real.pi) *
+          ∫ u, (1 - Real.exp (-((τ / Real.pi) / (1 + (τ / Real.pi) * u ^ 2)))) := by
+  have hπpos := Real.pi_pos
+  set a := Real.sqrt (τ / Real.pi)
+  have ha_pos : 0 < a := Real.sqrt_pos.mpr (div_pos hτ hπpos)
+  have ha2 : a ^ 2 = τ / Real.pi := Real.sq_sqrt (div_pos hτ hπpos).le
+  set g : ℝ → ℝ := fun x => 1 - Real.exp (-(τ * lorentzian x))
+  have hpt : ∀ u : ℝ,
+      g (a * u) = 1 - Real.exp (-((τ / Real.pi) / (1 + (τ / Real.pi) * u ^ 2))) := by
+    intro u
+    have hau2 : (a * u) ^ 2 = (τ / Real.pi) * u ^ 2 := by rw [mul_pow, ha2]
+    have hkey : τ * lorentzian (a * u) = (τ / Real.pi) / (1 + (τ / Real.pi) * u ^ 2) := by
+      unfold lorentzian
+      rw [hau2]
+      have hd1 : (1 : ℝ) + a ^ 2 * u ^ 2 ≠ 0 := by
+        rw [ha2]; positivity
+      have hd2 : (1 : ℝ) + τ / Real.pi * u ^ 2 ≠ 0 := by positivity
+      field_simp
+    change (1 : ℝ) - Real.exp (-(τ * lorentzian (a * u)))
+        = 1 - Real.exp (-((τ / Real.pi) / (1 + (τ / Real.pi) * u ^ 2)))
+    rw [hkey]
+  have hlem := MeasureTheory.Measure.integral_comp_mul_left g a
+  have habs : |a⁻¹| = a⁻¹ := abs_of_pos (inv_pos.mpr ha_pos)
+  rw [habs, smul_eq_mul] at hlem
+  have hane : a ≠ 0 := ha_pos.ne'
+  have hval : (∫ y, g y) = a * ∫ u, g (a * u) := by
+    have hmul : a * ∫ x, g (a * x) = a * (a⁻¹ * ∫ y, g y) := congrArg (fun z => a * z) hlem
+    rw [← mul_assoc, mul_inv_cancel₀ hane, one_mul] at hmul
+    exact hmul.symm
+  have hcongr : (∫ u, g (a * u))
+      = ∫ u, (1 - Real.exp (-((τ / Real.pi) / (1 + (τ / Real.pi) * u ^ 2)))) := by
+    congr 1
+    funext u
+    exact hpt u
+  change (∫ y, g y) = a * ∫ u, (1 - Real.exp (-((τ / Real.pi) / (1 + (τ / Real.pi) * u ^ 2))))
+  rw [hval, hcongr]
+
+/-- Non-vacuity: `equivWidth_lorentzian_scaled` instantiates at a concrete depth `τ = π`
+(so `τ/π = 1`), giving a genuine rescaling identity between the Lorentzian equivalent width
+at `τ = π` and the unit-optical-depth Cauchy-kernel integral `∫ u, (1 - exp(-1/(1+u²)))`. -/
+example :
+    equivWidth lorentzian Real.pi
+      = Real.sqrt (Real.pi / Real.pi) *
+          ∫ u, (1 - Real.exp (-((Real.pi / Real.pi) / (1 + (Real.pi / Real.pi) * u ^ 2)))) :=
+  equivWidth_lorentzian_scaled Real.pi Real.pi_pos
+
+
 end CflibsFormal

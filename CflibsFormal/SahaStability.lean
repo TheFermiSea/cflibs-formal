@@ -681,4 +681,108 @@ example : 0 < sahaFactorLipConst 1 1 2 1 1 1 nvStcG nvStcE nvStcG nvStcE := by
   unfold sahaFactorLipConst
   positivity
 
+/-! ### Partition-function growth & monotonicity groundwork (Frontier 02, Phase 1) -/
+/-- **Strict monotonicity of the thermal-de-Broglie bracket in `T` (PURE-MATH).**
+`thermalBracket kB · me h = (2π m_e k_B/h²)·T` is *strictly* increasing in the
+temperature: for positive constants `k_B, m_e, h` and `Ta < Tb`,
+`thermalBracket kB Ta me h < thermalBracket kB Tb me h`.  Strict sibling of the
+existing `thermalBracket_mono`; the difference is the positive linear coefficient
+`(2π m_e k_B/h²)` times the positive gap `Tb − Ta`. -/
+lemma thermalBracket_strictMono {kB me h Ta Tb : ℝ}
+    (hkB : 0 < kB) (hme : 0 < me) (hh : 0 < h) (hab : Ta < Tb) :
+    thermalBracket kB Ta me h < thermalBracket kB Tb me h := by
+  have hcoef : 0 < 2 * Real.pi * me * kB / h ^ 2 := div_pos (by positivity) (pow_pos hh 2)
+  have hdiff : thermalBracket kB Tb me h - thermalBracket kB Ta me h
+      = (2 * Real.pi * me * kB / h ^ 2) * (Tb - Ta) := by
+    unfold thermalBracket; ring
+  nlinarith [mul_pos hcoef (sub_pos.mpr hab)]
+
+/-- **Partition-function upper growth against the ionization exponential (PURE-MATH).**
+The crux termwise bound.  If every level energy is capped by `chi` (`∀ k, E k ≤ chi`)
+and the degeneracies are positive, then raising the temperature from `T₁` to `T₂ ≥ T₁`
+inflates the partition function by at most the factor `exp(chi·(1/(k_B T₁) − 1/(k_B T₂)))`:
+
+`U(T₂) ≤ exp(chi·(1/(k_B T₁) − 1/(k_B T₂)))·U(T₁)`.
+
+Proved termwise: dividing by `gₖ > 0` and using `exp` monotonicity, the claim reduces to
+the scalar inequality `(E k − chi)·(1/(k_B T₁) − 1/(k_B T₂)) ≤ 0`, which holds because
+`1/(k_B T₁) ≥ 1/(k_B T₂) > 0` (temperature raises the inverse-temperature floor) and
+`E k − chi ≤ 0`.  This pairs `U`'s growth against the `exp(−chi/(k_B T))` Saha factor —
+it does **not** require `E k ≥ 0`. -/
+lemma partitionFunction_upper_growth {kB T1 T2 chi : ℝ} {g E : ι → ℝ}
+    (hkB : 0 < kB) (hT1 : 0 < T1) (hT12 : T1 ≤ T2)
+    (hg : ∀ k, 0 < g k) (hEχ : ∀ k, E k ≤ chi) :
+    partitionFunction kB T2 g E
+      ≤ Real.exp (chi * (1 / (kB * T1) - 1 / (kB * T2))) * partitionFunction kB T1 g E := by
+  have hkT1 : 0 < kB * T1 := mul_pos hkB hT1
+  have hinv : 1 / (kB * T2) ≤ 1 / (kB * T1) :=
+    one_div_le_one_div_of_le hkT1 (mul_le_mul_of_nonneg_left hT12 hkB.le)
+  unfold partitionFunction
+  rw [Finset.mul_sum]
+  apply Finset.sum_le_sum
+  intro k _
+  unfold boltzmannFactor
+  have hexp : -E k / (kB * T2)
+      ≤ chi * (1 / (kB * T1) - 1 / (kB * T2)) + -E k / (kB * T1) := by
+    have e1 : -E k / (kB * T2) = -(E k) * (1 / (kB * T2)) := by ring
+    have e2 : -E k / (kB * T1) = -(E k) * (1 / (kB * T1)) := by ring
+    rw [e1, e2]
+    nlinarith [mul_nonneg (sub_nonneg.mpr (hEχ k)) (sub_nonneg.mpr hinv)]
+  calc g k * Real.exp (-E k / (kB * T2))
+      ≤ g k * Real.exp (chi * (1 / (kB * T1) - 1 / (kB * T2)) + -E k / (kB * T1)) :=
+        mul_le_mul_of_nonneg_left (Real.exp_le_exp.mpr hexp) (hg k).le
+    _ = Real.exp (chi * (1 / (kB * T1) - 1 / (kB * T2))) * (g k * Real.exp (-E k / (kB * T1))) := by
+        rw [Real.exp_add]; ring
+
+/-- **Monotonicity of the partition function in `T` (PURE-MATH).**  For non-negative
+level energies (`∀ k, 0 ≤ E k`) and positive degeneracies, the partition function is
+nondecreasing in temperature: `T₁ ≤ T₂ ⇒ U(T₁) ≤ U(T₂)`.  Each Boltzmann factor
+`exp(−Eₖ/(k_B T))` is nondecreasing in `T` when `Eₖ ≥ 0` and `k_B > 0` (the exponent
+`−Eₖ/(k_B T)` rises toward `0` as `T` grows), and a sum of nondecreasing terms is
+nondecreasing.  Public restatement of the private `partitionFunction_ge_floor`, with the
+floor taken as the lower temperature `T₁`. -/
+lemma partitionFunction_mono_temp {kB T1 T2 : ℝ} {g E : ι → ℝ}
+    (hkB : 0 < kB) (hT1 : 0 < T1) (hT12 : T1 ≤ T2)
+    (hg : ∀ k, 0 < g k) (hE : ∀ k, 0 ≤ E k) :
+    partitionFunction kB T1 g E ≤ partitionFunction kB T2 g E := by
+  unfold partitionFunction
+  apply Finset.sum_le_sum
+  intro k _
+  apply mul_le_mul_of_nonneg_left _ (hg k).le
+  unfold boltzmannFactor
+  apply Real.exp_le_exp.mpr
+  rw [neg_div, neg_div, neg_le_neg_iff]
+  exact div_le_div_of_nonneg_left (hE k) (mul_pos hkB hT1)
+    (mul_le_mul_of_nonneg_left hT12 hkB.le)
+
+/-! ### Non-vacuity witnesses
+
+Concrete `Fin 1` data (`k_B = m_e = h = 1`, `g = 1`) certifying that each lemma's
+hypotheses are jointly satisfiable and the conclusion is a genuine, non-degenerate
+constraint on a varying quantity. -/
+
+private def nvG : Fin 1 → ℝ := fun _ => 1
+private def nvE0 : Fin 1 → ℝ := fun _ => 0
+private def nvE1 : Fin 1 → ℝ := fun _ => 1
+
+/-- Non-vacuity for `thermalBracket_strictMono`: the bracket strictly increases from
+`T = 1` to `T = 2` (a genuine `<`, not `0 < 0`). -/
+example : thermalBracket 1 1 1 1 < thermalBracket 1 2 1 1 :=
+  thermalBracket_strictMono one_pos one_pos one_pos one_lt_two
+
+/-- Non-vacuity for `partitionFunction_upper_growth`: with `E = 0 < chi = 1`, the growth
+factor `exp(1·(1 − 1/2)) = exp(1/2) > 1` is a non-trivial bound (`U(2) = 1 ≤ exp(1/2)`). -/
+example :
+    partitionFunction (1 : ℝ) 2 nvG nvE0
+      ≤ Real.exp (1 * (1 / (1 * 1) - 1 / (1 * 2))) * partitionFunction (1 : ℝ) 1 nvG nvE0 :=
+  partitionFunction_upper_growth (ι := Fin 1) one_pos one_pos one_le_two
+    (fun _ => one_pos) (fun _ => by norm_num [nvE0])
+
+/-- Non-vacuity for `partitionFunction_mono_temp`: with `E = 1 > 0`, the two temperatures
+give strictly different partition values (`exp(−1) < exp(−1/2)`), so the `≤` is a real
+constraint on a genuinely varying quantity. -/
+example : partitionFunction (1 : ℝ) 1 nvG nvE1 ≤ partitionFunction (1 : ℝ) 2 nvG nvE1 :=
+  partitionFunction_mono_temp (ι := Fin 1) one_pos one_pos one_le_two
+    (fun _ => one_pos) (fun _ => by norm_num [nvE1])
+
 end CflibsFormal
