@@ -15,9 +15,11 @@ One row per module under `CflibsFormal/`. *Base* = imports no `CflibsFormal` mod
 | `Alt/OLSAtomicDataPerturbation.lean` | `CflibsFormal.Alt` | 6 | 2 | – | ✓ | per-line atomic-data error in the OLS density reader |
 | `Alt/OLSVariance.lean` | `CflibsFormal.Alt` | 7 | 1 | – | ✓ | the Gauss–Markov variance law for the OLS Boltzmann-plot slope |
 | `Alt/SelfAbsorbed.lean` | `CflibsFormal.Alt` | 5 | 1 | – | – | the self-absorption-corrected composition estimator (alternative) |
+| `Alt/StochasticBudget.lean` | `CflibsFormal.Alt` | 7 | 1 | – | ✓ | Chebyshev tail (concentration) bounds for the OLS slope and intercept |
 | `Analysis.lean` | `CflibsFormal` | 7 | 0 | ✓ | – | Shared analysis scaffolding |
 | `AtomicDataPerturbation.lean` | `CflibsFormal` | 8 | 4 | – | ✓ | the atomic-data perturbation channel |
 | `Boltzmann.lean` | `CflibsFormal` | 5 | 3 | ✓ | – | Part 1: the Boltzmann distribution |
+| `Certificates.lean` | `CflibsFormal` | 12 | 12 | – | ✓ | runtime certificates (the typed bridge) |
 | `Classic.lean` | `CflibsFormal.Classic` | 5 | 2 | – | – | the classic calibration-free algorithm, assembled and sound |
 | `Closure.lean` | `CflibsFormal` | 6 | 2 | – | – | Closure of species composition |
 | `CompositionIdentifiability.lean` | `CflibsFormal` | 3 | 1 | – | – | multi-line / many-element composition identifiability |
@@ -56,5 +58,5 @@ One row per module under `CflibsFormal/`. *Base* = imports no `CflibsFormal` mod
 | `StarkShift.lean` | `CflibsFormal` | 9 | 3 | ✓ | ✓ | the Stark line-shift electron-density diagnostic |
 | `TemporalEvolution.lean` | `CflibsFormal` | 8 | 7 | – | ✓ | time-resolved (gate-delayed) recovery |
 | `VoigtWidth.lean` | `CflibsFormal` | 7 | 1 | ✓ | ✓ | the Voigt FWHM combination (Olivero–Longbothum) |
-| **48 modules** | | **412** | **140** | | | |
+| **50 modules** | | **431** | **153** | | | |
 

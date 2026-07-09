@@ -5,7 +5,7 @@
 > (the integrity spine) + citation from `docs/scope-tags.tsv`; the docs-sync CI gate fails if
 > any result is untagged, so a new theorem cannot land without declaring its epistemic status.
 
-**Scope-tag mix** (412 results): **EXACT** 127 · **REDUCED** 98 · **APPROXIMATION** 8 · **PURE-MATH** 179
+**Scope-tag mix** (431 results): **EXACT** 130 · **REDUCED** 110 · **APPROXIMATION** 8 · **PURE-MATH** 183
 
 `EXACT` = exact identity faithfully encoding the cited physics · `REDUCED` = valid dimensionless/lumped-factor form · `APPROXIMATION` = documented idealization / limiting case · `PURE-MATH` = infrastructure lemma, no physical claim. Classification cross-checked against `reviews/literature-validity-audit.md`.
 
@@ -133,6 +133,21 @@
 - `REDUCED` · `selfAbsorbed_eq_classic_corrected` — Relationship to classic — structural identity.  _[Bulajic 2002]_
 - `REDUCED` · `selfAbsorbed_eq_classic_thin` — Reduction to classic in the optically-thin limit.  _[Bulajic 2002]_
 
+## `Alt/StochasticBudget.lean`  (CflibsFormal.Alt)
+*Chebyshev tail (concentration) bounds for the OLS slope and intercept*
+
+**Definitions**
+- `alphaHat` — The OLS-intercept estimator as a random variable.
+
+**Results**
+- `PURE-MATH` · `alphaHat_estimator_eq` — Intercept estimator = truth + weighted noise (pure pointwise algebra, no probability).
+- `PURE-MATH` · `betaHat_memLp_two` — `L²` membership of the OLS slope estimator `MemLp β̂ 2 μ`, the square-integrability that Chebyshev's inequality (`meas_ge_le_variance_div_sq`) requires.
+- `REDUCED` · `olsSlope_chebyshev` — Slope concentration — Chebyshev's inequality on `β̂`.  _[Aitken 1935]_
+- `REDUCED` · `alphaHat_unbiased` — Intercept unbiasedness `𝔼[α̂] = α`.  _[Aitken 1935]_
+- `EXACT` · `alphaHat_variance_eq` — THE classical intercept-variance law `Var(α̂) = σ²·(1/n + Ē²/SS_E)`, with `n = Fintype.card ι`, `Ē = mean E`, `SS_E = ∑ₖ (Eₖ − Ē)²`.  _[Aitken 1935]_
+- `PURE-MATH` · `alphaHat_memLp_two` — `L²` membership of the OLS intercept estimator `MemLp α̂ 2 μ`, the intercept twin of `betaHat_memLp_two`.
+- `REDUCED` · `alphaHat_chebyshev` — Intercept concentration — Chebyshev's inequality on `α̂`.  _[Aitken 1935]_
+
 ## `Analysis.lean`  (CflibsFormal)
 *Shared analysis scaffolding*
 
@@ -178,6 +193,37 @@
 - `EXACT` · `population_sum` — Normalization.  _[Boltzmann]_
 - `EXACT` · `boltzmann_plot` — Boltzmann-plot identity.  _[Boltzmann]_
 - `EXACT` · `temperature_from_two_levels` — Temperature from two levels.  _[Boltzmann]_
+
+## `Certificates.lean`  (CflibsFormal)
+*runtime certificates (the typed bridge)*
+
+**Definitions**
+- `energySpreadCert` — C1 certificate.
+- `jointRankCert` — C2 certificate.
+- `conditioningCert` — C3 certificate.
+- `slopeBudgetCert` — C4 certificate.
+- `tempBudgetCert` — C5 certificate.
+- `compBudgetCert` — C6 certificate.
+- `mcWhirterCert` — C7 certificate.
+- `sahaIterCert` — C9 certificate.
+- `dampedIterCert` — C10 certificate.
+- `knownTauCert` — C12 certificate.
+- `saDistinctCert` — C13 certificate.
+- `aliasBudgetCert` — C14 certificate.
+
+**Results**
+- `REDUCED` · `energySpread_certificate_sound` — C1 soundness (thin re-export of `designNormalMatrix_det_ne_zero_iff`, `OLS.lean:220`).  _[Tognoni 2010]_
+- `REDUCED` · `jointRank_certificate_sound` — C2 soundness (thin re-export of `jointDesign_det_pos_iff`, `OLS.lean:683`).  _[Aguilera & Aragón 2007]_
+- `PURE-MATH` · `conditioning_certificate_sound` — C3 soundness (thin re-export of `boltzmannConditionNumber_ge_one` + `centeredScaledDesign_orthonormal`, `OLS.lean:341,471`).
+- `REDUCED` · `slopeBudget_certificate_sound` — C4 soundness (thin re-export of `maxPerLineError_sufficient`, `ErrorBudget.lean:244`).  _[Tognoni 2010]_
+- `REDUCED` · `tempBudget_certificate_sound` — C5 soundness (thin re-export of `temp_rel_error_le`, `ErrorBudget.lean:215`).  _[Tognoni 2010]_
+- `REDUCED` · `compBudget_certificate_sound` — C6 soundness (thin re-export of `composition_target_sufficient`, `ErrorBudget.lean:325`).  _[Tognoni 2010]_
+- `REDUCED` · `mcWhirter_certificate_sound` — C7 soundness (thin re-export of `mcwhirter_iff_thermalizationLimit`, `PartialLTE.lean:87`).  _[Cristoforetti 2010]_
+- `REDUCED` · `sahaIter_certificate_sound` — C9 soundness (thin re-export of `sahaIter_tendsto`, `SahaEquilibrium.lean:593`).  _[Saha–Eggert (Griem)]_
+- `REDUCED` · `dampedIter_certificate_sound` — C10 soundness (thin re-export of `dampedMultiElementIter_tendsto`, `SahaEquilibrium.lean:869`).  _[Saha–Eggert (Griem)]_
+- `EXACT` · `knownTau_certificate_sound` — C12 soundness (thin re-export of `lineIntensity_eq_selfAbsorbedIntensity_div`, `SelfAbsorption.lean:237`).  _[Gornushkin 1999]_
+- `EXACT` · `saDistinct_certificate_sound` — C13 soundness (thin re-export of `cogRatio_injOn`, `CurveOfGrowth.lean:254`).  _[Cristoforetti–Tognoni 2013]_
+- `REDUCED` · `aliasBudget_certificate_sound` — C14 soundness (thin re-export of `classicDensity_aliasing_error`, `AtomicDataPerturbation.lean:213`).  _[Tognoni 2010]_
 
 ## `Classic.lean`  (CflibsFormal.Classic)
 *the classic calibration-free algorithm, assembled and sound*

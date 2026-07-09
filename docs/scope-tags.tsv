@@ -411,3 +411,22 @@ EquivalentWidth.lean	equivWidth_lorentzian_scaled	EXACT	Gornushkin 1999
 EquivalentWidth.lean	integral_one_sub_exp_neg_inv_sq	PURE-MATH	—
 EquivalentWidth.lean	tendsto_integral_g_beta	PURE-MATH	—
 EquivalentWidth.lean	equivWidth_lorentzian_sqrt_sharp	EXACT	Ladenburg–Reiche 1913
+Alt/StochasticBudget.lean	alphaHat_estimator_eq	PURE-MATH	—
+Alt/StochasticBudget.lean	betaHat_memLp_two	PURE-MATH	—
+Alt/StochasticBudget.lean	olsSlope_chebyshev	REDUCED	Aitken 1935
+Alt/StochasticBudget.lean	alphaHat_unbiased	REDUCED	Aitken 1935
+Alt/StochasticBudget.lean	alphaHat_variance_eq	EXACT	Aitken 1935
+Alt/StochasticBudget.lean	alphaHat_memLp_two	PURE-MATH	—
+Alt/StochasticBudget.lean	alphaHat_chebyshev	REDUCED	Aitken 1935
+Certificates.lean	energySpread_certificate_sound	REDUCED	Tognoni 2010
+Certificates.lean	jointRank_certificate_sound	REDUCED	Aguilera & Aragón 2007
+Certificates.lean	conditioning_certificate_sound	PURE-MATH	—
+Certificates.lean	slopeBudget_certificate_sound	REDUCED	Tognoni 2010
+Certificates.lean	tempBudget_certificate_sound	REDUCED	Tognoni 2010
+Certificates.lean	compBudget_certificate_sound	REDUCED	Tognoni 2010
+Certificates.lean	mcWhirter_certificate_sound	REDUCED	Cristoforetti 2010
+Certificates.lean	sahaIter_certificate_sound	REDUCED	Saha–Eggert (Griem)
+Certificates.lean	dampedIter_certificate_sound	REDUCED	Saha–Eggert (Griem)
+Certificates.lean	knownTau_certificate_sound	EXACT	Gornushkin 1999
+Certificates.lean	saDistinct_certificate_sound	EXACT	Cristoforetti–Tognoni 2013
+Certificates.lean	aliasBudget_certificate_sound	REDUCED	Tognoni 2010

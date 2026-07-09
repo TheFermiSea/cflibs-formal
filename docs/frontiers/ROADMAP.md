@@ -152,6 +152,22 @@ each dossier §4/§5).*
 
 ---
 
+## 6. Second corpus (2026-07-09) — frontiers 08–12
+
+*Produced by a 14-agent research/review/dev/audit workflow (all dossiers adversarially reviewed:
+mathlib inventory re-grepped, milestone algebra re-derived, citations checked; dev chains
+independently audited). Dossiers live beside 01–07 in this directory.*
+
+| Frontier | Dossier | Status |
+|---|---|---|
+| 08 Non-LTE / collisional-radiative kinetics | `08-nonlte-kinetics.md` (reviewed: FIXED) | **Dossier recorded** — crown thesis: the two-level departure coefficient is an *algebraic* fixed point (no ODE), and `\|b−1\| ≤ δ_b` enters the Boltzmann plot as exactly an additive `log b` ordinate error, feeding the EXISTING hetero-δ machinery. A-milestones ready for a dev sweep. |
+| 09 Radiative transfer beyond the uniform slab | `09-radiative-transfer-depth.md` (reviewed: FIXED) | **Dossier recorded** — N-zone `rtEmergent` fold with the proven two-layer model as the M2 convention guard; sandwich bounds; uniform slab as the collapse case. A-milestones ready. |
+| 10 Spatial inversion: Abel / onion peeling | `10-spatial-abel-inversion.md` (reviewed: FIXED) | **Dossier recorded** — discrete onion peeling as exact triangular linear algebra (identifiability + peeling error recursion); continuous-Abel injectivity correctly refused (mathlib integral-transform infra absent). A-milestones ready. |
+| 11 Stochastic layer | `11-stochastic-layer.md` (reviewed: FIXED) | **A-grade milestones LANDED** (`Alt/StochasticBudget.lean`, audit PASS): `alphaHat` estimator ladder (`_estimator_eq`/`_unbiased`/`_variance_eq` = σ²(1/n+Ē²/SS_E)), `MemLp` bridges, **Chebyshev tail bounds** `olsSlope_chebyshev` + `alphaHat_chebyshev` (first distributional statements in the repo). B-grade follow-ups (temperature tail transfer, composition union bound, sub-Gaussian upgrade) recorded in the dossier. |
+| 12 Runtime certificates (CF-LIBS-improved bridge) | `12-runtime-certificates.md` (reviewed: FIXED) | **M1 LANDED** (`Certificates.lean`, audit PASS): 12 arithmetic-evaluable certificates, each a `Prop` + thin soundness wrapper re-exporting a proven gate (energy spread, joint rank, conditioning, slope/temp/composition budgets, McWhirter, Saha/damped iteration, known-τ SA, COG distinctness, alias budget) + non-vacuity witnesses. Reference Python mirror at `docs/integration/cflibs_certificates.py` (smoke-tested, 12/12 + negative cases) — PROPOSED for CF-LIBS-improved, not installed. M2+ (oracle fixture extension, Rust-side, CI wiring) designed in the dossier. |
+
+---
+
 ## 5. Refusals (recorded so future sessions do not re-litigate)
 
 - **01 §2.5, §5 — global m≥3 off-manifold T-uniqueness is likely FALSE.** This is the classic multimodal
