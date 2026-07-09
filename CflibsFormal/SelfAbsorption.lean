@@ -27,8 +27,10 @@ We prove:
   recovers `ForwardMap` in the optically-thin limit (a strict generalization).
 * `selfAbsorbedIntensity_le_lineIntensity` / `selfAbsorbedIntensity_lt_lineIntensity` —
   the **bias-direction theorem**: a self-absorbed line is measured below its thin value,
-  so neglecting self-absorption biases the inferred upper-level population and hence the
-  CF-LIBS composition DOWNWARD.
+  so neglecting self-absorption biases the inferred upper-level population DOWNWARD — and
+  hence the extracted composition of any *differentially* self-absorbed species DOWNWARD
+  (a self-absorption factor common to ALL species cancels in the scale-invariant closure;
+  see `SelfAbsorptionInverse`).
 * `slabIntensity_eq_thin_mul_SA` — the **derivation** of `SA(τ)` from first principles:
   the radiative-transfer slab intensity `S·(1-exp(-τ))` (defined independently of `SA`)
   factors as the optically-thin emission `S·τ` times `SA(τ)`. With `slabIntensity_le_thin`

@@ -203,7 +203,7 @@ example :
 end CflibsFormal
 
 /-!
-## Variable projection (VARPRO): the forward map is linear in `N`, so the `N`-section profiles out
+## Variable projection (VARPRO, Golub & Pereyra 1973): the `N`-section profiles out
 
 The joint objective `nlObjective` is nonlinear and non-convex in `T`, but it is **exactly quadratic
 in `N`**: the forward line intensity is `lineIntensity kB T N Fcal g E A k = N · c_k(T)` with
@@ -1190,5 +1190,295 @@ example : True := by
     (fun k => by fin_cases k <;> norm_num) one_pos (fun k => by fin_cases k <;> norm_num)
     one_pos one_pos le_rfl (by norm_num) le_rfl (by norm_num) (fun _ => rfl) le_rfl
   trivial
+
+/-- **Two-line profiled residual as a function of the intensity ratio `t = c₁/c₀`.**
+`profiledRatioResidual obs₀ obs₁ t = (obs₁ − obs₀·t)² / (1 + t²)`. After the density is profiled
+out (`profiledResidual_two_closed_form`) and the cross form `(obs₁·c₀ − obs₀·c₁)²/(c₀²+c₁²)` is
+divided through by `c₀²`, the two-line profiled least-squares residual is exactly this explicit
+function of the single strictly-monotone intensity-ratio coordinate `t = c₁/c₀` — the calibration,
+density, and the entire partition function `U(T)` having cancelled. -/
+noncomputable def profiledRatioResidual (obs0 obs1 t : ℝ) : ℝ := (obs1 - obs0 * t) ^ 2 / (1 + t ^ 2)
+
+/-- **Algebraic two-point difference identity for the ratio residual (pure `ring`).** With
+`u_i := obs₁ − obs₀·t_i` and `v_i := obs₀ + obs₁·t_i`,
+`Φ(t₂) − Φ(t₁) = −(t₂ − t₁)·(u₁·v₂ + u₂·v₁) / ((1+t₁²)(1+t₂²))`. This is the exact discrete
+"derivative" of the Rayleigh-quotient residual: the sign of the difference is `−sign(t₂−t₁)·
+sign(u₁v₂+u₂v₁)`, which drives both the on-each-side monotonicity and the box uniqueness below,
+with no calculus. -/
+private lemma profiledRatioResidual_diff (obs0 obs1 t1 t2 : ℝ) :
+    profiledRatioResidual obs0 obs1 t2 - profiledRatioResidual obs0 obs1 t1
+      = -(t2 - t1) * ((obs1 - obs0 * t1) * (obs0 + obs1 * t2)
+                      + (obs1 - obs0 * t2) * (obs0 + obs1 * t1))
+        / ((1 + t1 ^ 2) * (1 + t2 ^ 2)) := by
+  unfold profiledRatioResidual
+  have h1 : (1:ℝ) + t1 ^ 2 ≠ 0 := by positivity
+  have h2 : (1:ℝ) + t2 ^ 2 ≠ 0 := by positivity
+  field_simp
+  ring
+
+/-- **Strict decrease below the residual apex (REDUCED, Ciucci 1999).** On any set `S` of ratio
+values where `v = obs₀ + obs₁·t > 0` (the antipode `t = −obs₀/obs₁` is avoided) and
+`u = obs₁ − obs₀·t > 0` (below the apex `t* = obs₁/obs₀`), the two-line profiled residual
+`profiledRatioResidual obs₀ obs₁` is **strictly decreasing**. Directly from the two-point difference
+identity: `u_i, v_i > 0` make `u₁v₂ + u₂v₁ > 0`, so `Φ(t₂) − Φ(t₁) < 0` for `t₁ < t₂`. Sign
+conditions are explicit hypotheses (hence REDUCED), avoiding any Hessian/curvature computation. -/
+theorem profiledResidual_two_strictAntiOn {obs0 obs1 : ℝ} {S : Set ℝ}
+    (hv : ∀ t ∈ S, 0 < obs0 + obs1 * t) (hu : ∀ t ∈ S, 0 < obs1 - obs0 * t) :
+    StrictAntiOn (profiledRatioResidual obs0 obs1) S := by
+  intro t1 h1 t2 h2 hlt
+  have hnum : 0 < (obs1 - obs0 * t1) * (obs0 + obs1 * t2)
+      + (obs1 - obs0 * t2) * (obs0 + obs1 * t1) :=
+    add_pos (mul_pos (hu t1 h1) (hv t2 h2)) (mul_pos (hu t2 h2) (hv t1 h1))
+  have hD : (0:ℝ) < (1 + t1 ^ 2) * (1 + t2 ^ 2) := by positivity
+  have hlt' : profiledRatioResidual obs0 obs1 t2 - profiledRatioResidual obs0 obs1 t1 < 0 := by
+    rw [profiledRatioResidual_diff]
+    apply div_neg_of_neg_of_pos _ hD
+    nlinarith [mul_pos (sub_pos.mpr hlt) hnum]
+  linarith
+
+/-- **Strict increase above the residual apex (REDUCED, Ciucci 1999).** On any set `S` where
+`v = obs₀ + obs₁·t > 0` and `u = obs₁ − obs₀·t < 0` (above the apex `t* = obs₁/obs₀`), the two-line
+profiled residual is **strictly increasing**. Symmetric to `profiledResidual_two_strictAntiOn`:
+`u_i < 0 < v_i` make `u₁v₂ + u₂v₁ < 0`, so `Φ(t₂) − Φ(t₁) > 0` for `t₁ < t₂`. -/
+theorem profiledResidual_two_strictMonoOn {obs0 obs1 : ℝ} {S : Set ℝ}
+    (hv : ∀ t ∈ S, 0 < obs0 + obs1 * t) (hu : ∀ t ∈ S, obs1 - obs0 * t < 0) :
+    StrictMonoOn (profiledRatioResidual obs0 obs1) S := by
+  intro t1 h1 t2 h2 hlt
+  have hnum : (obs1 - obs0 * t1) * (obs0 + obs1 * t2)
+      + (obs1 - obs0 * t2) * (obs0 + obs1 * t1) < 0 := by
+    have a1 := mul_neg_of_neg_of_pos (hu t1 h1) (hv t2 h2)
+    have a2 := mul_neg_of_neg_of_pos (hu t2 h2) (hv t1 h1)
+    linarith
+  have hD : (0:ℝ) < (1 + t1 ^ 2) * (1 + t2 ^ 2) := by positivity
+  have hgt' : 0 < profiledRatioResidual obs0 obs1 t2 - profiledRatioResidual obs0 obs1 t1 := by
+    rw [profiledRatioResidual_diff]
+    apply div_pos _ hD
+    nlinarith [mul_pos (sub_pos.mpr hlt) (neg_pos.mpr hnum)]
+  linarith
+
+/-- **The off-manifold two-line profiled residual equals the ratio residual (PURE-MATH).** For
+arbitrary observations, the density-profiled two-line residual equals `profiledRatioResidual` at the
+intensity ratio `t = c₁(T)/c₀(T)`. The cross form of `profiledResidual_two_closed_form` divided
+through by `c₀² > 0`; the partition function has already cancelled. -/
+theorem profiledResidual_two_eq_ratio {kB Fcal T : ℝ} {g E A obs : Fin 2 → ℝ}
+    (hc0 : 0 < lineIntensity kB T 1 Fcal g E A 0) :
+    nlObjective kB Fcal g E A obs (T, profiledDensity kB Fcal g E A obs T)
+      = profiledRatioResidual (obs 0) (obs 1)
+          (lineIntensity kB T 1 Fcal g E A 1 / lineIntensity kB T 1 Fcal g E A 0) := by
+  have hc : (0:ℝ) < (lineIntensity kB T 1 Fcal g E A 0) ^ 2
+      + (lineIntensity kB T 1 Fcal g E A 1) ^ 2 :=
+    add_pos_of_pos_of_nonneg (pow_pos hc0 2) (sq_nonneg _)
+  rw [profiledResidual_two_closed_form kB Fcal T g E A obs hc, profiledRatioResidual]
+  field_simp
+
+/-- Core box-uniqueness lemma at the ratio level: on a region where `v = obs₀ + obs₁·t > 0`
+(antipode avoided), if `s₁ < s_m < s₂` and the residual takes equal values at `s₁, s₂`, then it is
+**strictly smaller** at the interior point `s_m`. Proof via the Möbius coordinate
+`r(t) = (obs₁ − obs₀·t)/(obs₀ + obs₁·t)`: `r` is strictly monotone on `{v>0}` (pure-`ring`
+two-point identity `r(x) − r(y) = (obs₀²+obs₁²)(y−x)/(v_x v_y)`), and
+`Φ = (obs₀²+obs₁²)·r²/(1+r²)` is increasing in `r²`; equal `Φ` at `s₁,s₂` forces `r(s₁) = −r(s₂)`,
+so the interior `r(s_m)` is strictly closer to `0`. No IVT, no calculus. -/
+private lemma profiledRatioResidual_strict_between {obs0 obs1 s1 sm s2 : ℝ}
+    (hv1 : 0 < obs0 + obs1 * s1) (hvm : 0 < obs0 + obs1 * sm) (hv2 : 0 < obs0 + obs1 * s2)
+    (h1 : s1 < sm) (h2 : sm < s2)
+    (heq : profiledRatioResidual obs0 obs1 s1 = profiledRatioResidual obs0 obs1 s2) :
+    profiledRatioResidual obs0 obs1 sm < profiledRatioResidual obs0 obs1 s1 := by
+  unfold profiledRatioResidual at *
+  set a := obs1; set b := obs0
+  -- hv_i : 0 < b + a * s_i
+  have hab : (0:ℝ) < a ^ 2 + b ^ 2 := by
+    nlinarith [mul_pos hv1 hv1, sq_nonneg (a - b * s1), sq_nonneg s1]
+  set r1 := (a - b * s1) / (b + a * s1) with hr1def
+  set rm := (a - b * sm) / (b + a * sm) with hrmdef
+  set r2 := (a - b * s2) / (b + a * s2) with hr2def
+  have hPsi : ∀ s : ℝ, 0 < b + a * s →
+      (a - b * s) ^ 2 / (1 + s ^ 2)
+        = (a ^ 2 + b ^ 2) * ((a - b * s) / (b + a * s)) ^ 2
+            / (1 + ((a - b * s) / (b + a * s)) ^ 2) := by
+    intro s hs
+    have hs' : b + a * s ≠ 0 := hs.ne'
+    have h1s : (1:ℝ) + s ^ 2 ≠ 0 := by positivity
+    field_simp
+    ring
+  have mono_r : ∀ x y : ℝ, 0 < b + a * x → 0 < b + a * y → x < y →
+      (a - b * y) / (b + a * y) < (a - b * x) / (b + a * x) := by
+    intro x y hx hy hxy
+    have hid : (a - b * x) / (b + a * x) - (a - b * y) / (b + a * y)
+        = (a ^ 2 + b ^ 2) * (y - x) / ((b + a * x) * (b + a * y)) := by
+      field_simp; ring
+    have hpos : 0 < (a ^ 2 + b ^ 2) * (y - x) / ((b + a * x) * (b + a * y)) :=
+      div_pos (mul_pos hab (sub_pos.mpr hxy)) (mul_pos hx hy)
+    linarith [hid ▸ hpos]
+  have hm1 : rm < r1 := mono_r s1 sm hv1 hvm h1
+  have hm2 : r2 < rm := mono_r sm s2 hvm hv2 h2
+  have hr12 : r1 ^ 2 = r2 ^ 2 := by
+    have e1 := hPsi s1 hv1
+    have e2 := hPsi s2 hv2
+    rw [← hr1def] at e1; rw [← hr2def] at e2
+    rw [e1, e2] at heq
+    have d1 : (0:ℝ) < 1 + r1 ^ 2 := by positivity
+    have d2 : (0:ℝ) < 1 + r2 ^ 2 := by positivity
+    rw [div_eq_div_iff d1.ne' d2.ne'] at heq
+    nlinarith [heq, hab]
+  have hrmlt : rm ^ 2 < r1 ^ 2 := by
+    nlinarith [hr12, hm1, hm2, mul_pos (sub_pos.mpr hm2) (sub_pos.mpr hm1)]
+  rw [hPsi sm hvm, hPsi s1 hv1, ← hrmdef, ← hr1def]
+  have d1 : (0:ℝ) < 1 + r1 ^ 2 := by positivity
+  have dm : (0:ℝ) < 1 + rm ^ 2 := by positivity
+  rw [div_lt_div_iff₀ dm d1]
+  nlinarith [hrmlt, hab, sq_nonneg rm, sq_nonneg r1]
+
+/-- **Two-line OFF-manifold box-uniqueness of the profiled temperature (REDUCED, Ciucci 1999).** The
+first genuinely off-manifold `T`-*minimizer* uniqueness for two lines. For **arbitrary** data
+`obs` (no on-manifold hypothesis), on a temperature box `[Tmin,Tmax]` with distinct upper-level
+energies `E 0 ≠ E 1` and where the antipode is avoided —
+`0 < obs₀·c₀(T) + obs₁·c₁(T)` for every `T` in the box, i.e. `obs` keeps a positive projection onto
+the line-intensity ray (automatic for any nonzero physical spectrum, `obs ≥ 0`) — any two
+temperatures that both minimize the density-profiled residual over the box are **equal**.
+
+Mechanism, entirely algebraic (no Hessian/curvature): the profiled residual is
+`Φ(T) = profiledRatioResidual obs₀ obs₁ (c₁(T)/c₀(T))` (`profiledResidual_two_eq_ratio`), the ratio
+`c₁/c₀ = K·exp((E₀−E₁)/(k_B T))` is strictly monotone in `T` (`lineIntensity_ratio_closed_form` +
+`Real.exp` strict monotonicity, `E₀ ≠ E₁`), and the ratio residual is strictly *unimodal* on the
+antipode-free region (`profiledRatioResidual_strict_between`): were there two distinct box
+minimizers, their midpoint temperature would give a strictly smaller residual, contradicting
+minimality. Honest scope: uniqueness of the **minimizer** over the box (REDUCED — two lines, box,
+antipode-avoidance hypothesis); the general `m ≥ 3` off-manifold problem is genuinely multimodal
+(`profiledResidual_not_injective_m3`) and is not addressed. -/
+theorem profiledT_two_offManifold_box_unique {kB Fcal Tmin Tmax T1 T2 : ℝ} {g E A obs : Fin 2 → ℝ}
+    (hkB : 0 < kB) (hg : ∀ k, 0 < g k) (hFcal : 0 < Fcal) (hA : ∀ k, 0 < A k)
+    (hTmin : 0 < Tmin) (hE : E 0 ≠ E 1)
+    (hpos : ∀ T ∈ Set.Icc Tmin Tmax,
+      0 < obs 0 * lineIntensity kB T 1 Fcal g E A 0 + obs 1 * lineIntensity kB T 1 Fcal g E A 1)
+    (hT1 : T1 ∈ Set.Icc Tmin Tmax) (hT2 : T2 ∈ Set.Icc Tmin Tmax)
+    (hmin1 : ∀ T ∈ Set.Icc Tmin Tmax,
+      nlObjective kB Fcal g E A obs (T1, profiledDensity kB Fcal g E A obs T1)
+        ≤ nlObjective kB Fcal g E A obs (T, profiledDensity kB Fcal g E A obs T))
+    (hmin2 : ∀ T ∈ Set.Icc Tmin Tmax,
+      nlObjective kB Fcal g E A obs (T2, profiledDensity kB Fcal g E A obs T2)
+        ≤ nlObjective kB Fcal g E A obs (T, profiledDensity kB Fcal g E A obs T)) :
+    T1 = T2 := by
+  have hc0 : ∀ T, 0 < lineIntensity kB T 1 Fcal g E A 0 :=
+    fun T => lineIntensity_pos hg one_pos hFcal hA 0
+  have hbridge : ∀ T, nlObjective kB Fcal g E A obs (T, profiledDensity kB Fcal g E A obs T)
+      = profiledRatioResidual (obs 0) (obs 1)
+          (lineIntensity kB T 1 Fcal g E A 1 / lineIntensity kB T 1 Fcal g E A 0) :=
+    fun T => profiledResidual_two_eq_ratio (hc0 T)
+  have hv : ∀ T ∈ Set.Icc Tmin Tmax,
+      0 < obs 0 + obs 1
+        * (lineIntensity kB T 1 Fcal g E A 1 / lineIntensity kB T 1 Fcal g E A 0) := by
+    intro T hT
+    have h0 := hc0 T
+    rw [show obs 0 + obs 1 * (lineIntensity kB T 1 Fcal g E A 1 / lineIntensity kB T 1 Fcal g E A 0)
+        = (obs 0 * lineIntensity kB T 1 Fcal g E A 0 + obs 1 * lineIntensity kB T 1 Fcal g E A 1)
+          / lineIntensity kB T 1 Fcal g E A 0 from by field_simp]
+    exact div_pos (hpos T hT) h0
+  have sform : ∀ T, lineIntensity kB T 1 Fcal g E A 1 / lineIntensity kB T 1 Fcal g E A 0
+      = (g 1 * A 1) / (g 0 * A 0) * Real.exp ((E 0 - E 1) / (kB * T)) :=
+    fun T => lineIntensity_ratio_closed_form hg one_pos hFcal hA 0 1
+  have hK : (0:ℝ) < (g 1 * A 1) / (g 0 * A 0) :=
+    div_pos (mul_pos (hg 1) (hA 1)) (mul_pos (hg 0) (hA 0))
+  have slt : ∀ {P Q : ℝ}, 0 < P → P < Q →
+      ((E 0 - E 1 < 0 →
+          lineIntensity kB P 1 Fcal g E A 1 / lineIntensity kB P 1 Fcal g E A 0
+            < lineIntensity kB Q 1 Fcal g E A 1 / lineIntensity kB Q 1 Fcal g E A 0)
+        ∧ (0 < E 0 - E 1 →
+          lineIntensity kB Q 1 Fcal g E A 1 / lineIntensity kB Q 1 Fcal g E A 0
+            < lineIntensity kB P 1 Fcal g E A 1 / lineIntensity kB P 1 Fcal g E A 0)) := by
+    intro P Q hP hPQ
+    have hQ : 0 < Q := hP.trans hPQ
+    rw [sform P, sform Q]
+    refine ⟨fun hD => ?_, fun hD => ?_⟩
+    · refine mul_lt_mul_of_pos_left (Real.exp_lt_exp.mpr ?_) hK
+      rw [div_lt_div_iff₀ (mul_pos hkB hP) (mul_pos hkB hQ)]
+      nlinarith [hD, mul_pos hkB (sub_pos.mpr hPQ)]
+    · refine mul_lt_mul_of_pos_left (Real.exp_lt_exp.mpr ?_) hK
+      rw [div_lt_div_iff₀ (mul_pos hkB hQ) (mul_pos hkB hP)]
+      nlinarith [hD, mul_pos hkB (sub_pos.mpr hPQ)]
+  -- No two distinct box minimizers.
+  have contra : ∀ Ta Tb, Ta ∈ Set.Icc Tmin Tmax → Tb ∈ Set.Icc Tmin Tmax → Ta < Tb →
+      (∀ T ∈ Set.Icc Tmin Tmax,
+        nlObjective kB Fcal g E A obs (Ta, profiledDensity kB Fcal g E A obs Ta)
+          ≤ nlObjective kB Fcal g E A obs (T, profiledDensity kB Fcal g E A obs T)) →
+      (∀ T ∈ Set.Icc Tmin Tmax,
+        nlObjective kB Fcal g E A obs (Tb, profiledDensity kB Fcal g E A obs Tb)
+          ≤ nlObjective kB Fcal g E A obs (T, profiledDensity kB Fcal g E A obs T)) →
+      False := by
+    intro Ta Tb hTa hTb hab hmina hminb
+    set Tm := (Ta + Tb) / 2 with hTmdef
+    have hTmmem : Tm ∈ Set.Icc Tmin Tmax :=
+      ⟨by rw [hTmdef]; linarith [hTa.1, hTb.1], by rw [hTmdef]; linarith [hTa.2, hTb.2]⟩
+    have haTm : Ta < Tm := by rw [hTmdef]; linarith
+    have hTmb : Tm < Tb := by rw [hTmdef]; linarith
+    have hTa0 : 0 < Ta := lt_of_lt_of_le hTmin hTa.1
+    have hTm0 : 0 < Tm := lt_of_lt_of_le hTmin hTmmem.1
+    have hΦeq : nlObjective kB Fcal g E A obs (Ta, profiledDensity kB Fcal g E A obs Ta)
+        = nlObjective kB Fcal g E A obs (Tb, profiledDensity kB Fcal g E A obs Tb) :=
+      le_antisymm (hmina Tb hTb) (hminb Ta hTa)
+    have hΦaTm := hmina Tm hTmmem
+    have hΦbTm := hminb Tm hTmmem
+    have hva := hv Ta hTa
+    have hvm := hv Tm hTmmem
+    have hvb := hv Tb hTb
+    rcases lt_or_gt_of_ne (sub_ne_zero.mpr hE) with hD | hD
+    · have o1 := (slt hTa0 haTm).1 hD
+      have o2 := (slt hTm0 hTmb).1 hD
+      have hcore := profiledRatioResidual_strict_between hva hvm hvb o1 o2
+        (by rw [← hbridge Ta, ← hbridge Tb]; exact hΦeq)
+      rw [← hbridge Tm, ← hbridge Ta] at hcore
+      linarith
+    · have o1 := (slt hTa0 haTm).2 hD
+      have o2 := (slt hTm0 hTmb).2 hD
+      have hcore := profiledRatioResidual_strict_between hvb hvm hva o2 o1
+        (by rw [← hbridge Tb, ← hbridge Ta]; exact hΦeq.symm)
+      rw [← hbridge Tm, ← hbridge Tb] at hcore
+      linarith
+  rcases lt_trichotomy T1 T2 with h | h | h
+  · exact (contra T1 T2 hT1 hT2 h hmin1 hmin2).elim
+  · exact h
+  · exact (contra T2 T1 hT2 hT1 h hmin2 hmin1).elim
+
+/-! ### Non-vacuity witnesses (two-line off-manifold box uniqueness, M4) -/
+
+/-- Non-vacuity of `profiledResidual_two_strictAntiOn`: on `[0, 1/2]` with `obs = (1, 1)` both
+sign conditions hold (`v = 1 + t > 0`, `u = 1 − t > 0`), so the strict-decrease theorem applies to a
+genuinely nonempty interval below the apex `t* = 1`. -/
+example : StrictAntiOn (profiledRatioResidual 1 1) (Set.Icc 0 (1/2)) :=
+  profiledResidual_two_strictAntiOn (fun t ht => by have := ht.1; linarith)
+    (fun t ht => by have := ht.2; linarith)
+
+/-- Non-vacuity of `profiledResidual_two_strictMonoOn`: on `[2, 3]` with `obs = (1, 1)` we have
+`v = 1 + t > 0` and `u = 1 − t < 0` (above the apex `t* = 1`), so the strict-increase theorem
+applies to a nonempty interval. -/
+example : StrictMonoOn (profiledRatioResidual 1 1) (Set.Icc 2 3) :=
+  profiledResidual_two_strictMonoOn (fun t ht => by have := ht.1; linarith)
+    (fun t ht => by have := ht.1; linarith)
+
+/-- Non-vacuity of `profiledT_two_offManifold_box_unique`: at concrete distinct-energy two-line data
+(`kB = Fcal = 1`, `g = A = ![1,1]`, `E = ![0,1]`, box `[1,2]`) with an **arbitrary off-manifold**
+observation `obs = ![3,7]`, every dischargeable hypothesis is met — in particular the
+antipode-avoidance `0 < 3·c₀(T) + 7·c₁(T)` holds on the whole box (positive `obs`, positive line
+intensities). So any two box minimizers of the profiled residual are forced equal; the theorem is
+not vacuous. -/
+example {T1 T2 : ℝ}
+    (hT1 : T1 ∈ Set.Icc (1 : ℝ) 2) (hT2 : T2 ∈ Set.Icc (1 : ℝ) 2)
+    (hmin1 : ∀ T ∈ Set.Icc (1 : ℝ) 2,
+      nlObjective 1 1 ![1, 1] ![0, 1] ![1, 1] ![3, 7]
+          (T1, profiledDensity 1 1 ![1, 1] ![0, 1] ![1, 1] ![3, 7] T1)
+        ≤ nlObjective 1 1 ![1, 1] ![0, 1] ![1, 1] ![3, 7]
+          (T, profiledDensity 1 1 ![1, 1] ![0, 1] ![1, 1] ![3, 7] T))
+    (hmin2 : ∀ T ∈ Set.Icc (1 : ℝ) 2,
+      nlObjective 1 1 ![1, 1] ![0, 1] ![1, 1] ![3, 7]
+          (T2, profiledDensity 1 1 ![1, 1] ![0, 1] ![1, 1] ![3, 7] T2)
+        ≤ nlObjective 1 1 ![1, 1] ![0, 1] ![1, 1] ![3, 7]
+          (T, profiledDensity 1 1 ![1, 1] ![0, 1] ![1, 1] ![3, 7] T)) :
+    T1 = T2 := by
+  have hg : ∀ k, 0 < (![1, 1] : Fin 2 → ℝ) k := fun k => by fin_cases k <;> norm_num
+  have hA : ∀ k, 0 < (![1, 1] : Fin 2 → ℝ) k := fun k => by fin_cases k <;> norm_num
+  refine profiledT_two_offManifold_box_unique one_pos hg one_pos hA one_pos (by norm_num) ?_
+    hT1 hT2 hmin1 hmin2
+  intro T _
+  exact add_pos (mul_pos (by norm_num) (lineIntensity_pos hg one_pos one_pos hA 0))
+    (mul_pos (by norm_num) (lineIntensity_pos hg one_pos one_pos hA 1))
 
 end CflibsFormal

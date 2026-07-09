@@ -12,7 +12,7 @@ One row per module under `CflibsFormal/`. *Base* = imports no `CflibsFormal` mod
 | `Alt/CSigmaCurveOfGrowth.lean` | `CflibsFormal.Alt` | 7 | 2 | – | ✓ | The Cσ curve of growth — self-absorption droop below the universal line |
 | `Alt/GaussMarkov.lean` | `CflibsFormal.Alt` | 7 | 1 | – | ✓ | Gauss–Markov optimality (BLUE) for the OLS Boltzmann-plot slope |
 | `Alt/LeastSquares.lean` | `CflibsFormal.Alt` | 6 | 3 | – | ✓ | the multi-line ordinary-least-squares Boltzmann-plot estimator |
-| `Alt/OLSAtomicDataPerturbation.lean` | `CflibsFormal.Alt` | 3 | 1 | – | ✓ | per-line atomic-data error in the OLS density reader |
+| `Alt/OLSAtomicDataPerturbation.lean` | `CflibsFormal.Alt` | 6 | 2 | – | ✓ | per-line atomic-data error in the OLS density reader |
 | `Alt/OLSVariance.lean` | `CflibsFormal.Alt` | 7 | 1 | – | ✓ | the Gauss–Markov variance law for the OLS Boltzmann-plot slope |
 | `Alt/SelfAbsorbed.lean` | `CflibsFormal.Alt` | 5 | 1 | – | – | the self-absorption-corrected composition estimator (alternative) |
 | `Analysis.lean` | `CflibsFormal` | 7 | 0 | ✓ | – | Shared analysis scaffolding |
@@ -38,14 +38,14 @@ One row per module under `CflibsFormal/`. *Base* = imports no `CflibsFormal` mod
 | `MatrixEffects.lean` | `CflibsFormal` | 22 | 7 | – | ✓ | matrix effects (completeness, ablation, ionization suppression) |
 | `MultiSpecies.lean` | `CflibsFormal` | 12 | 4 | – | – | Multi-species / multi-stage composition glue |
 | `NoiseToComposition.lean` | `CflibsFormal` | 5 | 2 | – | ✓ | the end-to-end noise → composition chain (gap #5, the composed bound) |
-| `NonlinearLeastSquares.lean` | `CflibsFormal` | 27 | 2 | – | ✓ | the nonlinear joint `(T, N)` least-squares inverse (existence leg) |
-| `OLS.lean` | `CflibsFormal` | 15 | 7 | ✓ | – | the ordinary-least-squares algebraic foundation |
+| `NonlinearLeastSquares.lean` | `CflibsFormal` | 31 | 3 | – | ✓ | the nonlinear joint `(T, N)` least-squares inverse (existence leg) |
+| `OLS.lean` | `CflibsFormal` | 17 | 9 | ✓ | – | the ordinary-least-squares algebraic foundation |
 | `OuterLoopModelB.lean` | `CflibsFormal` | 1 | 0 | – | – | the outer temperature iteration, Model B headline (Frontier 04) |
 | `PartialLTE.lean` | `CflibsFormal` | 6 | 2 | – | ✓ | the partial-LTE thermalization limit |
 | `PartitionLipschitz.lean` | `CflibsFormal` | 3 | 0 | – | ✓ | the `U_s(T)` partition-function Lipschitz leg (gap #5) |
 | `Robustness.lean` | `CflibsFormal` | 5 | 2 | – | – | Robustness / error-propagation bounds |
 | `Saha.lean` | `CflibsFormal` | 6 | 4 | – | – | Part 2: the Saha ionization equilibrium |
-| `SahaEquilibrium.lean` | `CflibsFormal` | 30 | 5 | – | ✓ | Coupled Saha–closure–charge self-consistency (reduced core) |
+| `SahaEquilibrium.lean` | `CflibsFormal` | 34 | 6 | – | ✓ | Coupled Saha–closure–charge self-consistency (reduced core) |
 | `SahaInverse.lean` | `CflibsFormal` | 3 | 2 | – | ✓ | Part 6: coupling Saha into the inverse problem |
 | `SahaStability.lean` | `CflibsFormal` | 11 | 1 | – | ✓ | Part 2b: stability of the `n_e` diagnostic |
 | `SelfAbsorption.lean` | `CflibsFormal` | 10 | 3 | – | – | self-absorption / optical-thickness-aware forward map |
@@ -56,5 +56,5 @@ One row per module under `CflibsFormal/`. *Base* = imports no `CflibsFormal` mod
 | `StarkShift.lean` | `CflibsFormal` | 9 | 3 | ✓ | ✓ | the Stark line-shift electron-density diagnostic |
 | `TemporalEvolution.lean` | `CflibsFormal` | 8 | 7 | – | ✓ | time-resolved (gate-delayed) recovery |
 | `VoigtWidth.lean` | `CflibsFormal` | 7 | 1 | ✓ | ✓ | the Voigt FWHM combination (Olivero–Longbothum) |
-| **48 modules** | | **399** | **135** | | | |
+| **48 modules** | | **412** | **140** | | | |
 

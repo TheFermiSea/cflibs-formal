@@ -46,13 +46,16 @@ This module began as the *single-ratio, fixed-`T`* sensitivity analysis of `n_e`
 The **T-channel** is now also addressed — but as a *two-sided sensitivity bound*, not
 as monotonicity.  Two distinct statements must be kept apart:
 
-* **T-channel monotonicity — STILL OPEN.**  A *signed* bound on `∂n_e/∂T` needs the
-  closed form of `dS/dT`, whose sign is *not* definite: `S(T)` mixes the increasing
-  thermal-de-Broglie factor `(2π m_e k_B T/h²)^{3/2}` and `exp(−χ/(k_B T))` with the
-  partition-function ratio `U_{z+1}(T)/U_z(T)`, which can run either way.  No honest
-  one-sided monotonicity of the *whole* `sahaFactor` in `T` is available without extra
-  assumptions, so monotonicity remains SKIPPED rather than proven under a hidden
-  reduction.
+* **T-channel monotonicity — NOW CLOSED under an explicit, physically-universal
+  hypothesis (Frontier 02, M4/M5).**  Unconditionally, the sign of `dS/dT` is *not*
+  definite: `S(T)` mixes the increasing thermal-de-Broglie factor
+  `(2π m_e k_B T/h²)^{3/2}` and `exp(−χ/(k_B T))` with the partition-function ratio
+  `U_{z+1}(T)/U_z(T)`, which can run either way.  But under the *disclosed* (not hidden)
+  level-ceiling hypothesis `∀ k, EZ k ≤ chi` — every bound level of the lower stage sits
+  at or below the ionization limit, true for every real atom — the lower-stage growth is
+  dominated by the exponential channel and `S(T)` is *strictly increasing*
+  (`sahaFactor_strictMonoOn_temp`), as is the density reader `n_e = S(T)/R`
+  (`electronDensityFromRatio_strictMonoOn_temp`).
 * **T-channel two-sided sensitivity — NOW CLOSED (this module).**  The runtime error
   budget does not need a *sign*; it needs a two-point Lipschitz bound
   `|n_e(T₁,R) − n_e(T₂,R)| ≤ L·|T₁ − T₂|` on a temperature box `[Tmin, Tmax]`.  That is

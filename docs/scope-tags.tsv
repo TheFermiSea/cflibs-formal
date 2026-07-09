@@ -51,6 +51,10 @@ SahaEquilibrium.lean	dampedMultiElementIter_tendsto	REDUCED	Saha–Eggert (Griem
 SahaEquilibrium.lean	multiElementIonized_no_two_cycle	PURE-MATH	—
 SahaEquilibrium.lean	multiElementIonized_iter_tendsto	REDUCED	Saha–Eggert (Griem)
 SahaEquilibrium.lean	neLeg_mapsTo	REDUCED	Saha–Eggert (Griem)
+SahaEquilibrium.lean	jointOuterMap_mapsTo	PURE-MATH	—
+SahaEquilibrium.lean	jointOuterMap_contraction	PURE-MATH	—
+SahaEquilibrium.lean	jointOuterMap_geometric_error	PURE-MATH	—
+SahaEquilibrium.lean	jointOuterContraction_box	PURE-MATH	—
 OuterLoopModelB.lean	outerLoop_contracts	REDUCED	Aguilera & Aragón 2007
 PartitionLipschitz.lean	partitionFunction_two_point_bound	REDUCED	Tognoni 2010
 PartitionLipschitz.lean	partitionFunction_lipschitz_temp	REDUCED	Tognoni 2010
@@ -78,10 +82,14 @@ NonlinearLeastSquares.lean	profiledResidual_nearManifold_bound	REDUCED	Tognoni 2
 NonlinearLeastSquares.lean	profiledResidual_true_strict_lt	REDUCED	Tognoni 2010
 NonlinearLeastSquares.lean	profiledResidual_minimizer_trapped	REDUCED	Tognoni 2010
 NonlinearLeastSquares.lean	profiledResidual_of_orthogonal	PURE-MATH	—
-NonlinearLeastSquares.lean	profiledResidual_not_injective_m3	EXACT	Ciucci 1999
+NonlinearLeastSquares.lean	profiledResidual_not_injective_m3	PURE-MATH	—
 NonlinearLeastSquares.lean	two_ratio_diff	EXACT	Ciucci 1999
 NonlinearLeastSquares.lean	clean_residual_ratio	EXACT	Ciucci 1999
 NonlinearLeastSquares.lean	profiledResidual_metric_bound	REDUCED	Tognoni 2010
+NonlinearLeastSquares.lean	profiledResidual_two_strictAntiOn	REDUCED	Ciucci 1999
+NonlinearLeastSquares.lean	profiledResidual_two_strictMonoOn	REDUCED	Ciucci 1999
+NonlinearLeastSquares.lean	profiledResidual_two_eq_ratio	PURE-MATH	—
+NonlinearLeastSquares.lean	profiledT_two_offManifold_box_unique	REDUCED	Ciucci 1999
 NoiseToComposition.lean	tempResponseErrorBound_eq_ofGap	PURE-MATH	—
 NoiseToComposition.lean	tempResponseErrorBoundOfGap_mono	PURE-MATH	—
 NoiseToComposition.lean	noise_to_temperatureGap	REDUCED	Tognoni 2010
@@ -135,7 +143,7 @@ Identifiability.lean	density_identifiability	EXACT	Ciucci 1999
 Identifiability.lean	electron_density_identifiability	EXACT	Saha–Eggert (Griem)
 Inverse.lean	general_identifiability	EXACT	Ciucci 1999
 Inverse.lean	sound_estimators_agree	PURE-MATH	—
-Inverse.lean	rawCompositionEstimator_sound	APPROXIMATION	Ciucci 1999
+Inverse.lean	rawCompositionEstimator_sound	REDUCED	Ciucci 1999
 JointIdentifiability.lean	joint_identifiability	EXACT	Ciucci 1999
 Robustness.lean	twoLineBeta_stable	PURE-MATH	—
 Robustness.lean	logRatioIntercept_stable	PURE-MATH	—
@@ -168,6 +176,8 @@ OLS.lean	boltzmannConditionNumber_ge_one	PURE-MATH	—
 OLS.lean	centeredSolve_perturbation	PURE-MATH	—
 OLS.lean	centeredSolve_relative_condition	PURE-MATH	—
 OLS.lean	centeredScaledDesign_orthonormal	PURE-MATH	—
+OLS.lean	det_jointDesignNormalMatrix	PURE-MATH	—
+OLS.lean	jointDesign_det_pos_iff	REDUCED	Aguilera & Aragón 2007
 LeastSquaresFit.lean	residual_sum_zero	PURE-MATH	—
 LeastSquaresFit.lean	residual_centered_dot_zero	PURE-MATH	—
 LeastSquaresFit.lean	residual_dot_energy_zero	PURE-MATH	—
@@ -303,6 +313,9 @@ Alt/LeastSquares.lean	leastSquares_agrees_classic	REDUCED	Tognoni 2010
 Alt/OLSAtomicDataPerturbation.lean	olsDensity_aliasing_A	EXACT	Tognoni 2010
 Alt/OLSAtomicDataPerturbation.lean	olsDensity_aliasing_A_error	REDUCED	Tognoni 2010
 Alt/OLSAtomicDataPerturbation.lean	olsComposition_atomicData_error	REDUCED	Tognoni 2010
+Alt/OLSAtomicDataPerturbation.lean	olsSlope_wrong_abscissa	EXACT	Tognoni 2010
+Alt/OLSAtomicDataPerturbation.lean	olsIntercept_wrong_abscissa	EXACT	Tognoni 2010
+Alt/OLSAtomicDataPerturbation.lean	olsDensity_aliasing_E_error	REDUCED	Tognoni 2010
 Alt/SelfAbsorbed.lean	classicDensity_smul_intensity	PURE-MATH	—
 Alt/SelfAbsorbed.lean	selfAbsorbed_sound	EXACT	Bulajic 2002
 Alt/SelfAbsorbed.lean	selfAbsorbed_corrects_bias	EXACT	Bulajic 2002
@@ -397,4 +410,4 @@ EquivalentWidth.lean	nvLz_sqrt_lower_at_threshold	EXACT	Gornushkin 1999
 EquivalentWidth.lean	equivWidth_lorentzian_scaled	EXACT	Gornushkin 1999
 EquivalentWidth.lean	integral_one_sub_exp_neg_inv_sq	PURE-MATH	—
 EquivalentWidth.lean	tendsto_integral_g_beta	PURE-MATH	—
-EquivalentWidth.lean	equivWidth_lorentzian_sqrt_sharp	EXACT	Gornushkin 1999
+EquivalentWidth.lean	equivWidth_lorentzian_sqrt_sharp	EXACT	Ladenburg–Reiche 1913

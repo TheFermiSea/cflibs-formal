@@ -21,18 +21,21 @@ line. This is the multi-element **Boltzmann** master-line construction of Aguile
 Aragón, "Multi-element Saha–Boltzmann and Boltzmann plots in laser-induced plasmas,"
 *Spectrochimica Acta Part B* **62** (2007) 378.
 
-**Two sections.** The FIRST section formalizes the single-stage multi-element **Boltzmann** master
-plot (Aguilera & Aragón, *Spectrochim. Acta B* **62** (2007) 378): after subtracting the per-species
-offset, all lines of all species collapse onto `Y = −E/(k_B T)` using only `E/(k_B T)`. The SECOND
-section adds the defining feature of the **Saha–Boltzmann / Cσ graph** (Aragón & Aguilera,
-*J. Quant. Spectrosc. Radiat. Transfer* **149** (2014) 90): the **Saha-coupled cross-stage
-collapse**, where
-*ionic* (stage `Z+1`) lines also fall on the SAME master line via a Saha ionization-energy abscissa
-shift `+χ` and a Saha-bracket ordinate correction (`csigma_saha_master_line`,
-`csigma_cross_stage_collapse`) — this genuinely uses `Saha.lean` (`sahaFactor`, `log_sahaFactor`),
-and its exact construction was verified against the CF-LIBS literature. The remaining piece of the
-full Cσ graph — the σ (cross-section) / concentration normalization that collapses *all elements*
-onto ONE universal line of intercept `ln F` — is the multi-element extension (a natural follow-on).
+**Three sections.** The FIRST section formalizes the single-stage multi-element **Boltzmann**
+master plot (Aguilera & Aragón, *Spectrochim. Acta B* **62** (2007) 378): after subtracting the
+per-species offset, all lines of all species collapse onto `Y = −E/(k_B T)` using only
+`E/(k_B T)`. The SECOND section adds the defining feature of the **Saha–Boltzmann / Cσ graph**
+(Aragón & Aguilera, *J. Quant. Spectrosc. Radiat. Transfer* **149** (2014) 90): the
+**Saha-coupled cross-stage collapse**, where *ionic* (stage `Z+1`) lines also fall on the SAME
+master line via a Saha ionization-energy abscissa shift `+χ` and a Saha-bracket ordinate
+correction (`csigma_saha_master_line`, `csigma_cross_stage_collapse`) — this genuinely uses
+`Saha.lean` (`sahaFactor`, `log_sahaFactor`), and its exact construction was verified against
+the CF-LIBS literature. The THIRD section proves the final piece of the full Cσ graph: the
+per-species concentration/partition normalization `− ln(N_s/U_s)` that collapses *all elements*
+onto ONE universal line of intercept `ln Fcal` (`csigma_universal_line`,
+`csigma_universal_indep_species`, `csigma_saha_universal_line`). (That normalization is a
+concentration/partition offset, *not* the line cross-section σ itself — see the sibling
+`CSigmaCurveOfGrowth` module's disclaimer.)
 
 For line `k` (upper level `k`) of a species with data `(N, g, E, A)`, define the
 C-sigma ordinate

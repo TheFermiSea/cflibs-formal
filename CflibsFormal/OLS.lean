@@ -495,4 +495,244 @@ theorem centeredScaledDesign_orthonormal [Nonempty ι] (E : ι → ℝ)
     simp_rw [heq]
     rw [← Finset.sum_mul, h0, zero_mul]
 
+/-- **Joint Saha–Boltzmann design normal matrix.** The Gram matrix `XᵀX` of the three-column
+design `[1 | E | s]` (intercept, excitation energy, ion-stage indicator) that underlies the
+*joint* Saha–Boltzmann fit (temperature AND electron density from one regression, Aguilera &
+Aragón 2007). Row/column order is `(intercept, E, s)`:
+`M = ![![n, ∑E, ∑s], ![∑E, ∑E², ∑Es], ![∑s, ∑Es, ∑s²]]` with `n = card ι`. Pure linear algebra
+of the three-column design (no physics content in the definition itself); the physical content
+lives in `jointDesign_det_pos_iff`'s docstring. -/
+noncomputable def jointDesignNormalMatrix (E s : ι → ℝ) : Matrix (Fin 3) (Fin 3) ℝ :=
+  ![![(Fintype.card ι : ℝ), ∑ k, E k, ∑ k, s k],
+    ![∑ k, E k, ∑ k, E k ^ 2, ∑ k, E k * s k],
+    ![∑ k, s k, ∑ k, E k * s k, ∑ k, s k ^ 2]]
+
+/-- Expansion helper: `∑ₖ (fₖ − f̄)² = ∑ fₖ² − 2·f̄·∑fₖ + n·f̄²`. Same shape as the helper used
+inline in `det_designNormalMatrix`; isolated here because the joint proof needs it for both
+`E` and `s`. -/
+private theorem sq_expand [Nonempty ι] (f : ι → ℝ) :
+    ∑ k, (f k - mean f) ^ 2
+      = (∑ k, f k ^ 2) - 2 * mean f * (∑ k, f k) + (Fintype.card ι : ℝ) * mean f ^ 2 := by
+  rw [show (∑ k, (f k - mean f) ^ 2)
+      = ∑ k, (f k ^ 2 - 2 * mean f * f k + mean f ^ 2) from
+      Finset.sum_congr rfl (fun k _ => by ring)]
+  rw [Finset.sum_add_distrib, Finset.sum_sub_distrib, ← Finset.mul_sum,
+    Finset.sum_const, Finset.card_univ, nsmul_eq_mul]
+
+/-- Cross-term expansion helper: `∑ₖ (Eₖ − Ē)(sₖ − s̄) = ∑ Eₖsₖ − Ē·∑sₖ − s̄·∑Eₖ + n·Ē·s̄`. -/
+private theorem cross_expand [Nonempty ι] (E s : ι → ℝ) :
+    ∑ k, (E k - mean E) * (s k - mean s)
+      = (∑ k, E k * s k) - mean E * (∑ k, s k) - mean s * (∑ k, E k)
+        + (Fintype.card ι : ℝ) * mean E * mean s := by
+  rw [show (∑ k, (E k - mean E) * (s k - mean s))
+      = ∑ k, (E k * s k - mean E * s k - mean s * E k + mean E * mean s) from
+      Finset.sum_congr rfl (fun k _ => by ring)]
+  rw [Finset.sum_add_distrib, Finset.sum_sub_distrib, Finset.sum_sub_distrib,
+    ← Finset.mul_sum, ← Finset.mul_sum, Finset.sum_const, Finset.card_univ, nsmul_eq_mul]
+  ring
+
+/-- **THE closed-form determinant of the joint design.** `det (jointDesignNormalMatrix E s)
+= n · (SS_E · SS_s − S_Es²)` where `SS_E = ∑(Eₖ−Ē)²`, `SS_s = ∑(sₖ−s̄)²`,
+`S_Es = ∑(Eₖ−Ē)(sₖ−s̄)`. The three-column (intercept, energy, ion-indicator) upgrade of
+`det_designNormalMatrix` (`OLS.lean:194`): expand `Matrix.det_fin_three`, expand the three
+centered sums back to raw sums via `sq_expand`/`cross_expand`, and match — the `n·Ē²·s̄²` cross
+terms cancel identically, leaving exactly the raw-sum determinant. Pure algebra, no physics. -/
+theorem det_jointDesignNormalMatrix [Nonempty ι] (E s : ι → ℝ) :
+    (jointDesignNormalMatrix E s).det
+      = (Fintype.card ι : ℝ) *
+        ((∑ k, (E k - mean E) ^ 2) * (∑ k, (s k - mean s) ^ 2)
+          - (∑ k, (E k - mean E) * (s k - mean s)) ^ 2) := by
+  have hcard : (Fintype.card ι : ℝ) ≠ 0 := Nat.cast_ne_zero.mpr Fintype.card_ne_zero
+  rw [sq_expand E, sq_expand s, cross_expand E s]
+  unfold jointDesignNormalMatrix
+  rw [Matrix.det_fin_three]
+  simp only [Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val_two,
+    Matrix.head_cons, Matrix.tail_cons]
+  unfold mean
+  field_simp
+  ring
+
+/-- Sum-of-squares expansion of `∑ₖ (t·aₖ − bₖ)²` for a scalar `t`, used to complete the square
+in the Cauchy–Schwarz equality-case proof below. -/
+private theorem complete_square_expand (a b : ι → ℝ) (t : ℝ) :
+    ∑ k, (t * a k - b k) ^ 2
+      = t ^ 2 * (∑ k, a k ^ 2) - 2 * t * (∑ k, a k * b k) + ∑ k, b k ^ 2 := by
+  rw [show (∑ k, (t * a k - b k) ^ 2)
+      = ∑ k, (t ^ 2 * a k ^ 2 - 2 * t * (a k * b k) + b k ^ 2) from
+      Finset.sum_congr rfl (fun k _ => by ring)]
+  rw [Finset.sum_add_distrib, Finset.sum_sub_distrib, ← Finset.mul_sum, ← Finset.mul_sum]
+
+/-- **Cauchy–Schwarz, squared form, is always nonnegative** — `(∑a²)(∑b²) ≥ (∑ab)²` for any
+`a b : ι → ℝ` (no centering, no hypothesis). Proof: if `∑a² = 0` then `a ≡ 0` so both sides
+vanish; otherwise complete the square with `t₀ = (∑ab)/(∑a²)`: `(∑a²)·∑(t₀a−b)² = (∑a²)(∑b²) −
+(∑ab)²`, and the left side is a nonnegative times a sum of squares. -/
+private theorem sq_mul_sq_sub_sq_sum_nonneg [Nonempty ι] (a b : ι → ℝ) :
+    0 ≤ (∑ k, a k ^ 2) * (∑ k, b k ^ 2) - (∑ k, a k * b k) ^ 2 := by
+  rcases eq_or_lt_of_le (Finset.sum_nonneg (fun k (_ : k ∈ univ) => sq_nonneg (a k)))
+    with hSa | hSa
+  · have ha0 : ∀ k, a k = 0 := by
+      intro k
+      have h := (Finset.sum_eq_zero_iff_of_nonneg
+        (fun k (_ : k ∈ univ) => sq_nonneg (a k))).1 hSa.symm k (mem_univ k)
+      exact pow_eq_zero_iff (two_ne_zero) |>.1 h
+    have hab0 : ∑ k, a k * b k = 0 := Finset.sum_eq_zero (fun k _ => by rw [ha0 k]; ring)
+    rw [← hSa, hab0]
+    norm_num
+  · set t0 : ℝ := (∑ k, a k * b k) / (∑ k, a k ^ 2) with ht0
+    have hSane : (∑ k, a k ^ 2) ≠ 0 := hSa.ne'
+    have hkey : (∑ k, a k ^ 2) * ∑ k, (t0 * a k - b k) ^ 2
+        = (∑ k, a k ^ 2) * (∑ k, b k ^ 2) - (∑ k, a k * b k) ^ 2 := by
+      rw [complete_square_expand a b t0, ht0]
+      field_simp
+      ring
+    rw [← hkey]
+    exact mul_nonneg hSa.le (Finset.sum_nonneg (fun k _ => sq_nonneg _))
+
+/-- **Cauchy–Schwarz equality case, in coefficient-pair form.** `(∑a²)(∑b²) = (∑ab)²` iff `a`
+and `b` are proportional as a pair: `∃ c d, (c,d) ≠ (0,0) ∧ ∀k, c·aₖ = d·bₖ`. This symmetric
+existential is the honest "not linearly independent" reading that also covers the degenerate
+case `a ≡ 0` (witness `(c,d) = (1,0)`). Pure algebra: the `≠ 0` branch is `complete_square_expand`
+again, reading off `t₀·aₖ = bₖ` from a vanishing sum of squares; the `⇐` branch is a direct
+computation once `d ≠ 0` lets you solve `b = (c/d)·a`, and `d = 0` is impossible together with
+`a ≢ 0` and `c ≠ 0`, `c·a ≡ 0`. -/
+private theorem sq_mul_sq_sub_sq_eq_zero_iff [Nonempty ι] (a b : ι → ℝ) :
+    (∑ k, a k ^ 2) * (∑ k, b k ^ 2) = (∑ k, a k * b k) ^ 2
+      ↔ ∃ c d : ℝ, (c, d) ≠ (0, 0) ∧ ∀ k, c * a k = d * b k := by
+  rcases eq_or_lt_of_le (Finset.sum_nonneg (fun k (_ : k ∈ univ) => sq_nonneg (a k)))
+    with hSa | hSa
+  · have ha0 : ∀ k, a k = 0 := by
+      intro k
+      have h := (Finset.sum_eq_zero_iff_of_nonneg
+        (fun k (_ : k ∈ univ) => sq_nonneg (a k))).1 hSa.symm k (mem_univ k)
+      exact pow_eq_zero_iff (two_ne_zero) |>.1 h
+    have hab0 : ∑ k, a k * b k = 0 := Finset.sum_eq_zero (fun k _ => by rw [ha0 k]; ring)
+    constructor
+    · intro _
+      exact ⟨1, 0, by simp, fun k => by rw [ha0 k]; ring⟩
+    · intro _
+      rw [← hSa, hab0]; norm_num
+  · have hSane : (∑ k, a k ^ 2) ≠ 0 := hSa.ne'
+    set t0 : ℝ := (∑ k, a k * b k) / (∑ k, a k ^ 2) with ht0
+    have hkey : (∑ k, a k ^ 2) * ∑ k, (t0 * a k - b k) ^ 2
+        = (∑ k, a k ^ 2) * (∑ k, b k ^ 2) - (∑ k, a k * b k) ^ 2 := by
+      rw [complete_square_expand a b t0, ht0]
+      field_simp
+      ring
+    constructor
+    · intro heq
+      have hz : (∑ k, a k ^ 2) * ∑ k, (t0 * a k - b k) ^ 2 = 0 := by rw [hkey]; linarith
+      have hz2 : ∑ k, (t0 * a k - b k) ^ 2 = 0 := by
+        rcases mul_eq_zero.1 hz with h | h
+        · exact absurd h hSane
+        · exact h
+      have hall : ∀ k, t0 * a k - b k = 0 := by
+        intro k
+        have h := (Finset.sum_eq_zero_iff_of_nonneg
+          (fun k (_ : k ∈ univ) => sq_nonneg (t0 * a k - b k))).1 hz2 k (mem_univ k)
+        exact pow_eq_zero_iff (two_ne_zero) |>.1 h
+      exact ⟨t0, 1, by simp, fun k => by have := hall k; linarith⟩
+    · rintro ⟨c, d, hcd, hprop⟩
+      rcases eq_or_ne d 0 with hd0 | hdne
+      · exfalso
+        subst hd0
+        have hc0 : c ≠ 0 := by
+          intro hc0'; apply hcd; simp [hc0']
+        have : ∀ k, a k = 0 := by
+          intro k
+          have h := hprop k
+          simp only [zero_mul] at h
+          exact (mul_eq_zero.1 h).resolve_left hc0
+        have : (∑ k, a k ^ 2) = 0 :=
+          Finset.sum_eq_zero (fun k _ => by rw [this k]; ring)
+        exact absurd this hSane
+      · have hb : ∀ k, b k = (c / d) * a k := by
+          intro k
+          have h := hprop k
+          field_simp
+          linarith [h]
+        have hab : ∑ k, a k * b k = (c / d) * ∑ k, a k ^ 2 := by
+          rw [Finset.mul_sum]
+          exact Finset.sum_congr rfl (fun k _ => by rw [hb k]; ring)
+        have hbb : ∑ k, b k ^ 2 = (c / d) ^ 2 * ∑ k, a k ^ 2 := by
+          rw [Finset.mul_sum]
+          exact Finset.sum_congr rfl (fun k _ => by rw [hb k]; ring)
+        rw [hab, hbb]
+        ring
+
+/-- **The centered energies and ion-indicator are proportional**, as a pair: `∃ (c,d) ≠ (0,0)`
+with `c·(Eₖ − Ē) = d·(sₖ − s̄)` for every line `k`. The honest "linearly dependent" reading of
+rank-deficiency for the two non-intercept columns of the joint design — symmetric in `E`/`s`
+(no privileged direction) and correctly covers the degenerate case where one column is
+constant (witness `(1, 0)` or `(0, 1)`). Pure linear algebra, no physics. -/
+def jointDesignCenteredProportional (E s : ι → ℝ) : Prop :=
+  ∃ c d : ℝ, (c, d) ≠ (0, 0) ∧ ∀ k, c * (E k - mean E) = d * (s k - mean s)
+
+/-- **THE rank gate for the joint Saha–Boltzmann design.** `det (jointDesignNormalMatrix E s) > 0`
+iff the centered energies and centered ion-indicator are NOT proportional
+(`jointDesignCenteredProportional`) — the three-column upgrade of
+`designNormalMatrix_det_ne_zero_iff` (`OLS.lean:220`). Physical reading: the *joint* fit that
+recovers temperature (from `E`) AND electron density (from the Saha ion-stage shift `s`) in one
+regression is identifiable exactly when the ion-stage indicator is not collinear with the
+excitation energies across the fitted lines (Aguilera & Aragón 2007) — i.e. when the design
+carries genuinely independent T- and nₑ-information, not merely a rescaled copy of one energy
+axis. Proof: `det = n · (SS_E·SS_s − S_Es²)` (`det_jointDesignNormalMatrix`) with `n > 0` and
+`SS_E·SS_s − S_Es² ≥ 0` always (`sq_mul_sq_sub_sq_sum_nonneg`), so `det > 0 ↔ SS_E·SS_s ≠ S_Es²
+↔ ¬Proportional` (`sq_mul_sq_sub_sq_eq_zero_iff`). No spectral/eigenvalue machinery — the
+refusal recorded in the frontier dossier (§5/§6): this is a determinant-sign gate, not a
+condition number. -/
+theorem jointDesign_det_pos_iff [Nonempty ι] (E s : ι → ℝ) :
+    0 < (jointDesignNormalMatrix E s).det ↔ ¬ jointDesignCenteredProportional E s := by
+  rw [det_jointDesignNormalMatrix]
+  have hcard : (0 : ℝ) < (Fintype.card ι : ℝ) := by exact_mod_cast Fintype.card_pos
+  set a : ι → ℝ := fun k => E k - mean E with ha
+  set b : ι → ℝ := fun k => s k - mean s with hb
+  have hnn := sq_mul_sq_sub_sq_sum_nonneg a b
+  have heqiff := sq_mul_sq_sub_sq_eq_zero_iff a b
+  unfold jointDesignCenteredProportional
+  constructor
+  · intro hpos hprop
+    have heq0 : (∑ k, a k ^ 2) * (∑ k, b k ^ 2) - (∑ k, a k * b k) ^ 2 = 0 := by
+      rw [sub_eq_zero]; exact heqiff.2 hprop
+    have : (Fintype.card ι : ℝ) *
+        ((∑ k, a k ^ 2) * (∑ k, b k ^ 2) - (∑ k, a k * b k) ^ 2) = 0 := by
+      rw [heq0, mul_zero]
+    exact absurd this hpos.ne'
+  · intro hnp
+    have hne : (∑ k, a k ^ 2) * (∑ k, b k ^ 2) - (∑ k, a k * b k) ^ 2 ≠ 0 := by
+      intro h
+      apply hnp
+      exact heqiff.1 (by rw [← sub_eq_zero]; exact h)
+    have hpos2 : 0 < (∑ k, a k ^ 2) * (∑ k, b k ^ 2) - (∑ k, a k * b k) ^ 2 :=
+      lt_of_le_of_ne hnn (Ne.symm hne)
+    exact mul_pos hcard hpos2
+
+/-- **Non-vacuity witness for the joint design.** Three lines with energies `E = (0, 1, 2)` and
+ion-stage indicator `s = (0, 0, 1)` (two lines from the neutral stage, one from the singly
+ionized stage — a genuine, non-degenerate joint Saha–Boltzmann design). `Ē = 1`, `s̄ = 1/3`, so
+`SS_E = 1 + 0 + 1 = 2`, `SS_s = 1/9 + 1/9 + 4/9 = 6/9 = 2/3`, `S_Es = (-1)(-1/3) + 0·(-1/3) +
+1·(2/3) = 1/3 + 2/3 = 1`, giving `det = 3·(2·(2/3) − 1²) = 3·(4/3 − 1) = 3·(1/3) = 1 > 0` — a
+concrete strictly positive determinant, so `jointDesign_det_pos_iff` is non-trivially
+satisfiable and the joint fit is genuinely identifiable on this data. -/
+private def nvJointE : Fin 3 → ℝ := ![0, 1, 2]
+
+private def nvJointS : Fin 3 → ℝ := ![0, 0, 1]
+
+example : (jointDesignNormalMatrix nvJointE nvJointS).det = 1 := by
+  rw [det_jointDesignNormalMatrix]
+  unfold nvJointE nvJointS mean
+  simp [Fin.sum_univ_three]
+  norm_num
+
+/-- The witness data is genuinely identifiable: the positive determinant above and
+`jointDesign_det_pos_iff` together certify that the centered energies and ion-indicator are
+NOT proportional on this concrete design. -/
+example : ¬ jointDesignCenteredProportional nvJointE nvJointS := by
+  rw [← jointDesign_det_pos_iff]
+  have h : (jointDesignNormalMatrix nvJointE nvJointS).det = 1 := by
+    rw [det_jointDesignNormalMatrix]
+    unfold nvJointE nvJointS mean
+    simp [Fin.sum_univ_three]
+    norm_num
+  rw [h]; norm_num
+
 end CflibsFormal

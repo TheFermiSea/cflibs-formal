@@ -317,4 +317,165 @@ theorem olsComposition_atomicData_error [Nonempty ι] [Nonempty κ]
     exact hstep.trans (hdelta t)
   exact composition_abs_sub_le_uniform hN0 hStot hShat hbound s
 
+/-! ## M6 — E-channel (wrong abscissa) aliasing for the OLS reader
+
+The `E`-channel of the atomic-data error: the spectrum is emitted with the TRUE upper-level
+energies `E`, but the analyst fits the Boltzmann plot against the WRONG energies `E'`
+(correct `g`, `A`, so the *ordinate* `log(I_k/(g_k A_k)) = c − m·E_k` is unchanged — it carries
+the true `E` — only the *abscissa* of the fit is wrong). Unlike the `A`-channel
+(`olsDensity_aliasing_A`), whose bias is a clean multiplicative constant, the wrong abscissa is
+a genuine **projection artifact** (dossier `05-heterogeneous-delta.md` §4 M6, §5): the fit is no
+longer exact, and the recovered slope/intercept couple to the *conditioning* of `E'`. The two
+EXACT identities below pin the artifact down algebraically; the REDUCED bound isolates the clean
+intercept channel available in the centered convention.
+
+**Honest scope — bias, not variance.** Every statement here is a worst-case SYSTEMATIC bias over
+a fixed wrong abscissa `E'`, not a statistical variance; there is no "more lines ⇒ better" claim
+(mirrors the honest-scope note on `olsDensity_aliasing_A_error`). -/
+
+/-- Regression coefficient of the TRUE energies `E` on the WRONG abscissa `E'`:
+`Cov(E',E)/Var(E') = (∑ₖ (E'ₖ − Ē')(Eₖ − Ē)) / (∑ₖ (E'ₖ − Ē')²)`. This is the coefficient the
+OLS slope picks up when the fit is run against `E'` in place of `E` — the algebraic heart of the
+wrong-abscissa (`E`-channel) aliasing. Pure algebra (no physics); `= 1` exactly when `E' = E`. -/
+noncomputable def regCoef (E E' : ι → ℝ) : ℝ :=
+  (∑ k, (E' k - mean E') * (E k - mean E)) / (∑ k, (E' k - mean E') ^ 2)
+
+/-- **(M6a) EXACT wrong-abscissa slope identity.** The true Boltzmann-plot ordinate is affine in
+the TRUE energy, `yₖ = c − m·Eₖ` (`m = 1/(k_B T) > 0`, `c = log(Fcal·N/U)`). Fitting it by OLS
+against the WRONG abscissa `E'` yields a slope that is EXACTLY `−m` times the regression
+coefficient of `E` on `E'`:
+  `olsSlope E' (fun k => c − m·Eₖ) = −m · regCoef E E'`.
+So a wrong abscissa rescales the recovered inverse-temperature by `regCoef E E'` (which is `1`
+iff `E' = E`, and can be arbitrarily large when `E'` is ill-conditioned — the projection
+artifact). Pure algebra from `olsSlope_eq_centered` + `centered_sum_zero E'` (the `c` term drops
+because `∑ₖ (E'ₖ − Ē') = 0`); no positivity or physics hypotheses. EXACT: a cancellation
+identity, no approximation. -/
+theorem olsSlope_wrong_abscissa [Nonempty ι] (E E' : ι → ℝ) (c m : ℝ) :
+    olsSlope E' (fun k => c - m * E k) = -m * regCoef E E' := by
+  have h0' : ∑ k, (E' k - mean E') = 0 := centered_sum_zero E'
+  rw [olsSlope_eq_centered]
+  unfold regCoef
+  rw [← mul_div_assoc]
+  congr 1
+  have key : ∑ k, (E' k - mean E') * (c - m * E k)
+      = -m * ∑ k, (E' k - mean E') * (E k - mean E) := by
+    have expand : ∀ k, (E' k - mean E') * (c - m * E k)
+        = (c - m * mean E) * (E' k - mean E')
+          + (-m) * ((E' k - mean E') * (E k - mean E)) := by
+      intro k; ring
+    rw [Finset.sum_congr rfl (fun k _ => expand k)]
+    rw [Finset.sum_add_distrib, ← Finset.mul_sum, ← Finset.mul_sum, h0', mul_zero, zero_add]
+  exact key
+
+/-- **(M6b) EXACT wrong-abscissa intercept identity.** For the same affine ordinate
+`yₖ = c − m·Eₖ`, the OLS intercept against the WRONG abscissa `E'` is
+  `olsIntercept E' (fun k => c − m·Eₖ) = c − m·(Ē − Ē'·regCoef E E')`,
+where `Ē = mean E`, `Ē' = mean E'`. Equivalently `= c − m·α`, `α = Ē − Ē'·regCoef E E'` the
+intercept of the regression of `E` on `E'`: the density-bearing intercept picks up EXACTLY the
+regression intercept of the true energies on the wrong abscissa. At `E' = E` (`regCoef = 1`,
+`Ē' = Ē`) this collapses to `c`, recovering the exact reading. Proof: `mean_affine` for the
+mean ordinate + the slope identity (M6a) + `ring`; no positivity or physics hypotheses. EXACT. -/
+theorem olsIntercept_wrong_abscissa [Nonempty ι] (E E' : ι → ℝ) (c m : ℝ) :
+    olsIntercept E' (fun k => c - m * E k)
+      = c - m * (mean E - mean E' * regCoef E E') := by
+  unfold olsIntercept
+  rw [olsSlope_wrong_abscissa]
+  have hmean : mean (fun k => c - m * E k) = c - m * mean E := by
+    rw [show (fun k => c - m * E k) = (fun k => (-m) * E k + c) from
+      funext (fun k => by ring), mean_affine]
+    ring
+  rw [hmean]; ring
+
+/-- **(M6c) REDUCED intercept-channel log-density error under a wrong abscissa.** The analyst
+reads the density off the OLS intercept; the intercept is `log(Fcal·N/U)`, so its error is the
+LOG-density bias. In the standard analyst-centered Boltzmann-plot convention `mean E' = 0`
+(energies referenced to the analyst's own — wrong — mean), the intercept collapses to the mean
+ordinate and is therefore INSENSITIVE to the slope/tilt distortion `regCoef` (M6b); the residual
+intercept bias is exactly `−m·Ē = −m·mean(E − E')` and is cleanly bounded:
+  `|olsIntercept E' ŷ − log(Fcal·N/U(E))| ≤ (1/(k_B T))·(∑ₖ |Eₖ − E'ₖ|)/card ι`
+with `ŷₖ = log(Iₖ/(gₖ Aₖ))` the true intensity ordinate and `m = 1/(k_B T) > 0`. REDUCED, and
+honestly partial in two ways: (i) it bounds ONLY the intercept/abscissa-projection channel — the
+recovered *density* additionally carries the partition-function factor `U(T;g,E')/U(T;g,E)` (the
+`E`-channel perturbs `U` too), a SEPARATE bias not included here; (ii) the centering `mean E' = 0`
+is load-bearing — the *uncentered* intercept bias is conditioning-dependent (it scales with
+`regCoef`, which blows up as `E'` degenerates), so no bound in `maxₖ|E'ₖ − Eₖ|` alone exists off
+the centered convention (the projection artifact, dossier §5). **Bias, not variance:** a fixed
+wrong abscissa, worst case; no line-count / averaging claim. -/
+theorem olsDensity_aliasing_E_error [Nonempty ι] {kB T N Fcal : ℝ} {g E E' A : ι → ℝ}
+    (hg : ∀ k, 0 < g k) (hN : 0 < N) (hFcal : 0 < Fcal) (hA : ∀ k, 0 < A k)
+    (hkT : 0 < kB * T) (hcent' : mean E' = 0) :
+    |olsIntercept E' (fun k => Real.log (lineIntensity kB T N Fcal g E A k / (g k * A k)))
+        - Real.log (Fcal * N / partitionFunction kB T g E)|
+      ≤ (1 / (kB * T)) * ((∑ k, |E k - E' k|) / (Fintype.card ι)) := by
+  have hcard : (0 : ℝ) < (Fintype.card ι : ℝ) := by exact_mod_cast Fintype.card_pos
+  have hmpos : (0 : ℝ) < 1 / (kB * T) := one_div_pos.mpr hkT
+  have hy : (fun k => Real.log (lineIntensity kB T N Fcal g E A k / (g k * A k)))
+      = (fun k => Real.log (Fcal * N / partitionFunction kB T g E) - (1 / (kB * T)) * E k) := by
+    funext k
+    rw [boltzmann_plot_intensity hg hN hFcal hA k]; ring
+  rw [hy, olsIntercept_wrong_abscissa, hcent', zero_mul, sub_zero]
+  have hsum' : ∑ k, E' k = 0 := by
+    have h := hcent'
+    unfold mean at h
+    rcases div_eq_zero_iff.mp h with h1 | h1
+    · exact h1
+    · exact absurd h1 (ne_of_gt hcard)
+  have hmeanE : mean E = (∑ k, (E k - E' k)) / (Fintype.card ι) := by
+    unfold mean; rw [Finset.sum_sub_distrib, hsum', sub_zero]
+  have hsimp : (Real.log (Fcal * N / partitionFunction kB T g E)
+        - 1 / (kB * T) * mean E)
+        - Real.log (Fcal * N / partitionFunction kB T g E)
+        = -(1 / (kB * T) * mean E) := by ring
+  rw [hsimp, abs_neg, abs_mul, abs_of_pos hmpos, hmeanE, abs_div, abs_of_pos hcard]
+  apply mul_le_mul_of_nonneg_left _ hmpos.le
+  gcongr
+  exact Finset.abs_sum_le_sum_abs _ _
+
+/-! ### Non-vacuity witnesses for the E-channel aliasing
+
+Each demonstrates a GENUINE aliasing (`E ≠ E'`, non-degenerate effect), not a vacuous identity. -/
+
+/-- Witness (M6a): energies `E = (0,2)`, wrong abscissa `E' = (0,1)` give `regCoef = 2 ≠ 1`, so
+the wrong-abscissa slope of `yₖ = −Eₖ` (`c = 0`, `m = 1`) is `−2`, twice the true slope `−1`
+— a genuine (2×) inverse-temperature distortion. -/
+private def nvEaE : Fin 2 → ℝ := ![0, 2]
+private def nvEaE' : Fin 2 → ℝ := ![0, 1]
+
+example : olsSlope nvEaE' (fun k => (0 : ℝ) - 1 * nvEaE k) = -2 := by
+  rw [olsSlope_wrong_abscissa]
+  unfold regCoef mean nvEaE nvEaE'
+  simp [Fin.sum_univ_two]
+  norm_num
+
+/-- Witness (M6b): energies `E = (1,3)`, wrong abscissa `E' = E − 1 = (0,2)` (a pure shift,
+`regCoef = 1`) give intercept `−1` for `yₖ = −Eₖ` (`c = 0`), a genuine `−1` shift of the
+density-bearing intercept away from the true `c = 0`. -/
+private def nvEbE : Fin 2 → ℝ := ![1, 3]
+private def nvEbE' : Fin 2 → ℝ := ![0, 2]
+
+example : olsIntercept nvEbE' (fun k => (0 : ℝ) - 1 * nvEbE k) = -1 := by
+  rw [olsIntercept_wrong_abscissa]
+  unfold regCoef mean nvEbE nvEbE'
+  simp [Fin.sum_univ_two]
+  norm_num
+
+/-- Witness (M6c): centered wrong abscissa `E' = (−1,1)` (`mean E' = 0`) against true
+`E = (0,2)` (`mean E = 1 ≠ 0`), `kB = T = Fcal = g = A = 1`, `N = 2`: the intercept bias is a
+genuine `|−m·mean E| = 1 ≠ 0`, and the bound `(1)·(|0−(−1)| + |2−1|)/2 = 1` is met (saturated) —
+hypotheses jointly satisfiable, conclusion non-vacuous. -/
+private def nvEcE : Fin 2 → ℝ := ![0, 2]
+private def nvEcE' : Fin 2 → ℝ := ![-1, 1]
+
+example :
+    |olsIntercept nvEcE'
+        (fun k => Real.log (lineIntensity 1 1 2 1 (fun _ => 1) nvEcE (fun _ => 1) k
+          / ((fun _ => (1 : ℝ)) k * (fun _ => (1 : ℝ)) k)))
+      - Real.log (1 * 2 / partitionFunction 1 1 (fun _ => 1) nvEcE)|
+      ≤ (1 / (1 * 1)) * ((∑ k, |nvEcE k - nvEcE' k|) / (Fintype.card (Fin 2))) :=
+  olsDensity_aliasing_E_error
+    (g := fun _ => 1) (E := nvEcE) (E' := nvEcE') (A := fun _ => 1)
+    (fun _ => one_pos) (by norm_num) one_pos (fun _ => one_pos)
+    (by norm_num)
+    (by simp [mean, nvEcE', Fin.sum_univ_two])
+
 end CflibsFormal.Alt

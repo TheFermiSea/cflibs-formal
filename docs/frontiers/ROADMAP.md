@@ -137,15 +137,15 @@ graph TD
 | 07 M2→M4 ✅ | `integral_one_sub_exp_neg_inv_sq = 2√π` (crux) → `tendsto_integral_g_beta` (DCT) → `equivWidth_lorentzian_sqrt_sharp` (C=2) | `EquivalentWidth.lean` | EXACT / PURE-MATH |
 | 01 M2/M3/M5 ✅ | joint two-line on-manifold uniqueness; general-m on-manifold uniqueness; two-line off-manifold box uniqueness — **already landed in Phase 1** (`joint_onManifold_unique`, `profiledT_onManifold_unique`, `profiledT_offManifold_unique`, `profiledResidual_metric_bound`); not re-run this pass. | `NonlinearLeastSquares.lean` | EXACT / REDUCED |
 
-### Phase 3 — C-grade / upstream-blocked (defer)
-| Frontier | Deliverable | Blocker | Scope |
+### Phase 3 — C-grade / upstream-blocked — **attemptable subset COMPLETE 2026-07-09** (4 dev→audit chains, Opus/Sonnet develop + independent Opus oversight, run alongside the full-codebase literature validation; verdicts 3 PASS + 1 FIXED, 0 FAIL. The two recorded §5 refusals — 03 M8 Newton, 07 full Bessel — were NOT attempted, by design.)
+| Frontier | Deliverable | Status | Scope |
 |---|---|---|---|
-| 01 M4 / M6 | near-manifold local uniqueness (B/C); m≥3 off-manifold **counterexample** | perturbation vs calculus route; positive theorem refused (§5) | REDUCED / EXACT |
-| 04 M8 | joint `(T,n_e)` 2-D map + multi-element outer | needs 03's crown convergence; product-metric | REDUCED |
-| 05 M6 | E-channel (`E'≠E`) aliasing | wrong-abscissa residual; no repo analogue | REDUCED/APPROX |
-| 06 M7 | multi-element Saha–Boltzmann joint design κ | no k-column design object; non-closed-form spectral κ | REDUCED |
-| 03 M8 | Newton quadratic rate | concave-Newton convexity infra ABSENT | — |
-| 07 (full) | full L–R function `x·e^{−x}(I₀+I₁)` | modified Bessel ABSENT (XL upstream) | — |
+| 01 M4 / M6 ✅ | m≥3 counterexample (landed earlier as `profiledResidual_not_injective_m3`, retagged PURE-MATH); **two-line off-manifold box uniqueness** `profiledT_two_offManifold_box_unique` + `profiledResidual_two_strictAntiOn`/`_strictMonoOn` + `profiledResidual_two_eq_ratio` — via the algebraic two-point factorization `ΔΦ = −(t₂−t₁)(u₁v₂+u₂v₁)/((1+t₁²)(1+t₂²))` in the intensity-ratio coordinate, **no calculus** (the dossier's Hessian trap never entered). Global m≥3 positive theorem NOT attempted (§5 refusal — FALSE). | DONE | PURE-MATH / REDUCED |
+| 04 M8 ✅ (abstract) | joint `(T,n_e)` 2-D map: `jointOuterMap` + `_mapsTo`/`_contraction` (row-sum gate `max(a+b,c+d)<1`, max metric)/`_geometric_error`/`jointOuterContraction_box` (∃! box fixed point + joint convergence). Multi-element physics instantiation deferred (import-DAG: belongs in a higher module). | DONE (spine) | PURE-MATH |
+| 05 M6 ✅ | E-channel aliasing: EXACT projection identities `olsSlope_wrong_abscissa` (slope rescales by `regCoef E E'`) + `olsIntercept_wrong_abscissa`, REDUCED `olsDensity_aliasing_E_error` (centered-convention intercept channel). Honest opens: the `U(T;E')/U(T;E)` partition channel and the uncentered (conditioning-dependent) bias — both documented in-module. | DONE (core) | EXACT / REDUCED |
+| 06 M7 ✅ (det gate) | 3-column joint design `jointDesignNormalMatrix` + closed-form `det_jointDesignNormalMatrix` (= n·(SS_E·SS_s − S_Es²)) + full biconditional rank gate `jointDesign_det_pos_iff` (det>0 ↔ centered E,s not proportional; from-scratch Cauchy–Schwarz equality case). Spectral κ NOT attempted (§5 refusal). | DONE | PURE-MATH / REDUCED |
+| 03 M8 | Newton quadratic rate | **REFUSED — not attempted** (concave-Newton convexity infra ABSENT; §5: defer indefinitely) | — |
+| 07 (full) | full L–R function `x·e^{−x}(I₀+I₁)` | **REFUSED — not attempted** (modified Bessel ABSENT, XL upstream; §5) | — |
 
 *Every new theorem requires a `docs/scope-tags.tsv` row or the docs-sync CI gate fails (repo memory; noted in
 each dossier §4/§5).*

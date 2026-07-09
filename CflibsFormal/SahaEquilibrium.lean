@@ -1381,4 +1381,313 @@ example : ∃ Tstar ∈ Set.Icc (0:ℝ) 1,
 
 end OuterIteration
 
+section JointOuterIteration
+
+open scoped NNReal
+
+variable {Tmin Tmax nemin nemax a b c d : ℝ} {fT fNe : ℝ → ℝ → ℝ}
+
+/-- **Joint (T, n_e) outer self-map** (`PURE-MATH`).  The 2-D upgrade of `outerMap`:
+given two joint update functions `fT, fNe : ℝ → ℝ → ℝ`, one outer sweep sends the
+state `p = (T, n_e)` to `(fT T n_e, fNe T n_e)`.  Purely abstract — no physics is
+baked in — so frontiers 03/04 can instantiate `fT` (temperature-from-combined-slope)
+and `fNe` (density-from-Saha / multi-element closure) independently.  Convergence is
+analysed in the product (max) metric on `ℝ × ℝ`, in which
+`dist (T,n) (T',n') = max |T−T'| |n−n'|` (`Prod.dist_eq`). -/
+def jointOuterMap (fT fNe : ℝ → ℝ → ℝ) (p : ℝ × ℝ) : ℝ × ℝ := (fT p.1 p.2, fNe p.1 p.2)
+
+/-- **Interval invariance of the joint sweep** (`PURE-MATH`).  If both components keep
+the box `[Tmin,Tmax] ×ˢ [nemin,nemax]` invariant — `fT` lands in `[Tmin,Tmax]` and
+`fNe` lands in `[nemin,nemax]` for every `(T,n)` in the box — then the joint map
+`(T,n) ↦ (fT T n, fNe T n)` maps the box into itself.  A genuine hypothesis, not
+automatic (cf. `outerMap_mapsTo` / `sahaIter_mapsTo`); it is exactly the conjunction of
+the two component invariances. -/
+theorem jointOuterMap_mapsTo
+    (hmapsT : ∀ T ∈ Set.Icc Tmin Tmax, ∀ n ∈ Set.Icc nemin nemax,
+        fT T n ∈ Set.Icc Tmin Tmax)
+    (hmapsNe : ∀ T ∈ Set.Icc Tmin Tmax, ∀ n ∈ Set.Icc nemin nemax,
+        fNe T n ∈ Set.Icc nemin nemax) :
+    ∀ p ∈ Set.Icc Tmin Tmax ×ˢ Set.Icc nemin nemax,
+      jointOuterMap fT fNe p ∈ Set.Icc Tmin Tmax ×ˢ Set.Icc nemin nemax := by
+  intro p hp
+  obtain ⟨hp1, hp2⟩ := Set.mem_prod.mp hp
+  rw [Set.mem_prod]
+  exact ⟨hmapsT p.1 hp1 p.2 hp2, hmapsNe p.1 hp1 p.2 hp2⟩
+
+/-- **One-step max-metric contraction with the row-sum constant** (`PURE-MATH`).  On the
+box, suppose each component obeys a two-variable Lipschitz bound
+`|fT T n − fT T' n'| ≤ a|T−T'| + b|n−n'|` and
+`|fNe T n − fNe T' n'| ≤ c|T−T'| + d|n−n'|` with all four coefficients `≥ 0`.  Then in
+the product (max) metric the joint map contracts by the **row-sum gate**
+`q = max (a+b) (c+d)`:
+`dist (Φ p) (Φ p') ≤ max (a+b) (c+d) · dist p p'`.
+Pure algebra on `max`/`abs`: each coordinate distance is `≤ dist p p'`, so each component
+bound collapses to `(row sum)·dist p p'`, and the max of the two is `≤ q·dist p p'`. -/
+theorem jointOuterMap_contraction
+    (hLT : ∀ T ∈ Set.Icc Tmin Tmax, ∀ n ∈ Set.Icc nemin nemax,
+        ∀ T' ∈ Set.Icc Tmin Tmax, ∀ n' ∈ Set.Icc nemin nemax,
+        |fT T n - fT T' n'| ≤ a * |T - T'| + b * |n - n'|)
+    (hLNe : ∀ T ∈ Set.Icc Tmin Tmax, ∀ n ∈ Set.Icc nemin nemax,
+        ∀ T' ∈ Set.Icc Tmin Tmax, ∀ n' ∈ Set.Icc nemin nemax,
+        |fNe T n - fNe T' n'| ≤ c * |T - T'| + d * |n - n'|)
+    (ha : 0 ≤ a) (hb : 0 ≤ b) (hc : 0 ≤ c) (hd : 0 ≤ d)
+    {p p' : ℝ × ℝ}
+    (hp : p ∈ Set.Icc Tmin Tmax ×ˢ Set.Icc nemin nemax)
+    (hp' : p' ∈ Set.Icc Tmin Tmax ×ˢ Set.Icc nemin nemax) :
+    dist (jointOuterMap fT fNe p) (jointOuterMap fT fNe p')
+      ≤ max (a + b) (c + d) * dist p p' := by
+  obtain ⟨hp1, hp2⟩ := Set.mem_prod.mp hp
+  obtain ⟨hp1', hp2'⟩ := Set.mem_prod.mp hp'
+  set M := dist p p' with hM
+  have hM1 : |p.1 - p'.1| ≤ M := by
+    rw [hM, Prod.dist_eq, Real.dist_eq, Real.dist_eq]; exact le_max_left _ _
+  have hM2 : |p.2 - p'.2| ≤ M := by
+    rw [hM, Prod.dist_eq, Real.dist_eq, Real.dist_eq]; exact le_max_right _ _
+  have hMnn : 0 ≤ M := dist_nonneg
+  have hT : |fT p.1 p.2 - fT p'.1 p'.2| ≤ (a + b) * M := by
+    calc |fT p.1 p.2 - fT p'.1 p'.2|
+        ≤ a * |p.1 - p'.1| + b * |p.2 - p'.2| := hLT p.1 hp1 p.2 hp2 p'.1 hp1' p'.2 hp2'
+      _ ≤ a * M + b * M :=
+          add_le_add (mul_le_mul_of_nonneg_left hM1 ha) (mul_le_mul_of_nonneg_left hM2 hb)
+      _ = (a + b) * M := by ring
+  have hNe : |fNe p.1 p.2 - fNe p'.1 p'.2| ≤ (c + d) * M := by
+    calc |fNe p.1 p.2 - fNe p'.1 p'.2|
+        ≤ c * |p.1 - p'.1| + d * |p.2 - p'.2| := hLNe p.1 hp1 p.2 hp2 p'.1 hp1' p'.2 hp2'
+      _ ≤ c * M + d * M :=
+          add_le_add (mul_le_mul_of_nonneg_left hM1 hc) (mul_le_mul_of_nonneg_left hM2 hd)
+      _ = (c + d) * M := by ring
+  rw [Prod.dist_eq]
+  dsimp only [jointOuterMap]
+  rw [Real.dist_eq, Real.dist_eq]
+  apply max_le
+  · calc |fT p.1 p.2 - fT p'.1 p'.2|
+        ≤ (a + b) * M := hT
+      _ ≤ max (a + b) (c + d) * M := mul_le_mul_of_nonneg_right (le_max_left _ _) hMnn
+  · calc |fNe p.1 p.2 - fNe p'.1 p'.2|
+        ≤ (c + d) * M := hNe
+      _ ≤ max (a + b) (c + d) * M := mul_le_mul_of_nonneg_right (le_max_right _ _) hMnn
+
+/-- **Geometric error decay of the joint iterates** (`PURE-MATH`).  Fix a box fixed point
+`pstar` of the joint map (`Φ pstar = pstar`).  Every iterate started in the box obeys the
+geometric bound in the product metric
+`dist (Φ^[n] p0) pstar ≤ (max (a+b) (c+d))^n · dist p0 pstar`.
+Proof: iterates stay in the box (`jointOuterMap_mapsTo`), so the one-step contraction
+toward `pstar` applies at each step; induct on `n`.  Holds for any coefficients (no `< 1`
+needed) — it is the explicit per-step decay rate. -/
+theorem jointOuterMap_geometric_error
+    (hmapsT : ∀ T ∈ Set.Icc Tmin Tmax, ∀ n ∈ Set.Icc nemin nemax,
+        fT T n ∈ Set.Icc Tmin Tmax)
+    (hmapsNe : ∀ T ∈ Set.Icc Tmin Tmax, ∀ n ∈ Set.Icc nemin nemax,
+        fNe T n ∈ Set.Icc nemin nemax)
+    (hLT : ∀ T ∈ Set.Icc Tmin Tmax, ∀ n ∈ Set.Icc nemin nemax,
+        ∀ T' ∈ Set.Icc Tmin Tmax, ∀ n' ∈ Set.Icc nemin nemax,
+        |fT T n - fT T' n'| ≤ a * |T - T'| + b * |n - n'|)
+    (hLNe : ∀ T ∈ Set.Icc Tmin Tmax, ∀ n ∈ Set.Icc nemin nemax,
+        ∀ T' ∈ Set.Icc Tmin Tmax, ∀ n' ∈ Set.Icc nemin nemax,
+        |fNe T n - fNe T' n'| ≤ c * |T - T'| + d * |n - n'|)
+    (ha : 0 ≤ a) (hb : 0 ≤ b) (hc : 0 ≤ c) (hd : 0 ≤ d)
+    {pstar p0 : ℝ × ℝ} (hpstar : pstar ∈ Set.Icc Tmin Tmax ×ˢ Set.Icc nemin nemax)
+    (hfix : jointOuterMap fT fNe pstar = pstar)
+    (hp0 : p0 ∈ Set.Icc Tmin Tmax ×ˢ Set.Icc nemin nemax) (n : ℕ) :
+    dist ((jointOuterMap fT fNe)^[n] p0) pstar
+      ≤ (max (a + b) (c + d)) ^ n * dist p0 pstar := by
+  have hqnn : 0 ≤ max (a + b) (c + d) :=
+    le_trans (by linarith : (0:ℝ) ≤ a + b) (le_max_left _ _)
+  have hmem : ∀ m, (jointOuterMap fT fNe)^[m] p0 ∈ Set.Icc Tmin Tmax ×ˢ Set.Icc nemin nemax := by
+    intro m
+    induction m with
+    | zero => simpa using hp0
+    | succ k ih =>
+      rw [Function.iterate_succ_apply']
+      exact jointOuterMap_mapsTo hmapsT hmapsNe _ ih
+  induction n with
+  | zero => simp
+  | succ k ih =>
+    rw [Function.iterate_succ_apply']
+    have hstep : dist (jointOuterMap fT fNe ((jointOuterMap fT fNe)^[k] p0)) pstar
+        ≤ max (a + b) (c + d) * dist ((jointOuterMap fT fNe)^[k] p0) pstar := by
+      have hcon := jointOuterMap_contraction hLT hLNe ha hb hc hd (hmem k) hpstar
+      rwa [hfix] at hcon
+    calc dist (jointOuterMap fT fNe ((jointOuterMap fT fNe)^[k] p0)) pstar
+        ≤ max (a + b) (c + d) * dist ((jointOuterMap fT fNe)^[k] p0) pstar := hstep
+      _ ≤ max (a + b) (c + d) * ((max (a + b) (c + d)) ^ k * dist p0 pstar) :=
+          mul_le_mul_of_nonneg_left ih hqnn
+      _ = (max (a + b) (c + d)) ^ (k + 1) * dist p0 pstar := by ring
+
+/-- **Convergence of the joint iterates to the fixed point** (`PURE-MATH`).  When the
+row-sum gate satisfies `max (a+b) (c+d) < 1`, the iterates `Φ^[n] p0` converge in the
+product metric to any box fixed point `pstar` for every start `p0` in the box.  Squeeze the
+error `dist (Φ^[n] p0) pstar` between `0` and `(max (a+b) (c+d))^n · dist p0 pstar → 0`
+(`jointOuterMap_geometric_error` + `tendsto_pow_atTop_nhds_zero_of_lt_one`).  Convergence in
+the `ℝ × ℝ` product metric is exactly joint (both-coordinate) convergence. -/
+private theorem jointOuterMap_tendsto
+    (hmapsT : ∀ T ∈ Set.Icc Tmin Tmax, ∀ n ∈ Set.Icc nemin nemax,
+        fT T n ∈ Set.Icc Tmin Tmax)
+    (hmapsNe : ∀ T ∈ Set.Icc Tmin Tmax, ∀ n ∈ Set.Icc nemin nemax,
+        fNe T n ∈ Set.Icc nemin nemax)
+    (hLT : ∀ T ∈ Set.Icc Tmin Tmax, ∀ n ∈ Set.Icc nemin nemax,
+        ∀ T' ∈ Set.Icc Tmin Tmax, ∀ n' ∈ Set.Icc nemin nemax,
+        |fT T n - fT T' n'| ≤ a * |T - T'| + b * |n - n'|)
+    (hLNe : ∀ T ∈ Set.Icc Tmin Tmax, ∀ n ∈ Set.Icc nemin nemax,
+        ∀ T' ∈ Set.Icc Tmin Tmax, ∀ n' ∈ Set.Icc nemin nemax,
+        |fNe T n - fNe T' n'| ≤ c * |T - T'| + d * |n - n'|)
+    (ha : 0 ≤ a) (hb : 0 ≤ b) (hc : 0 ≤ c) (hd : 0 ≤ d)
+    (hq : max (a + b) (c + d) < 1)
+    {pstar p0 : ℝ × ℝ} (hpstar : pstar ∈ Set.Icc Tmin Tmax ×ˢ Set.Icc nemin nemax)
+    (hfix : jointOuterMap fT fNe pstar = pstar)
+    (hp0 : p0 ∈ Set.Icc Tmin Tmax ×ˢ Set.Icc nemin nemax) :
+    Filter.Tendsto (fun n => (jointOuterMap fT fNe)^[n] p0) Filter.atTop (nhds pstar) := by
+  have hqnn : 0 ≤ max (a + b) (c + d) :=
+    le_trans (by linarith : (0:ℝ) ≤ a + b) (le_max_left _ _)
+  have hgeom : Filter.Tendsto (fun n => (max (a + b) (c + d)) ^ n * dist p0 pstar)
+      Filter.atTop (nhds 0) := by
+    have h1 : Filter.Tendsto (fun n : ℕ => (max (a + b) (c + d)) ^ n) Filter.atTop (nhds 0) :=
+      tendsto_pow_atTop_nhds_zero_of_lt_one hqnn hq
+    simpa using h1.mul_const (dist p0 pstar)
+  have habs : Filter.Tendsto (fun n => dist ((jointOuterMap fT fNe)^[n] p0) pstar)
+      Filter.atTop (nhds 0) :=
+    squeeze_zero (fun _ => dist_nonneg)
+      (fun n => jointOuterMap_geometric_error hmapsT hmapsNe hLT hLNe ha hb hc hd hpstar hfix hp0 n)
+      hgeom
+  exact tendsto_iff_dist_tendsto_zero.mpr habs
+
+/-- **Joint (T, n_e) outer loop contracts — the 2-D box Banach theorem** (`PURE-MATH`).
+
+The 2-D upgrade of `outerContraction_box`, stated on plain real update functions
+`fT, fNe : ℝ → ℝ → ℝ` with **no physics baked in**, in the product (max) metric on
+`ℝ × ℝ`.  Assume:
+* both components keep the box `[Tmin,Tmax] ×ˢ [nemin,nemax]` invariant (`hmapsT`,
+  `hmapsNe`);
+* each component obeys a two-variable Lipschitz bound with nonnegative coefficients
+  `|fT T n − fT T' n'| ≤ a|T−T'| + b|n−n'|`, `|fNe T n − fNe T' n'| ≤ c|T−T'| + d|n−n'|`
+  (`hLT`, `hLNe`, `ha…hd`);
+* the **row-sum gate** `max (a+b) (c+d) < 1` (`hq`) — the runtime-checkable certificate;
+* the box nonempty, `Tmin ≤ Tmax` and `nemin ≤ nemax` (`hTle`, `hnele`).
+
+Then the joint sweep `Φ (T,n) = (fT T n, fNe T n)` has a fixed point
+`pstar ∈ [Tmin,Tmax] ×ˢ [nemin,nemax]` (`Φ pstar = pstar`), that fixed point is the
+**unique** one in the box, and the iterates `Φ^[n] p0` converge to `pstar` (jointly in both
+coordinates, product metric) for **every** start `p0` in the box.
+
+Existence is Banach's theorem on the complete box (`ContractingWith.exists_fixedPoint'`,
+using the max-metric one-step contraction `jointOuterMap_contraction` with constant
+`max (a+b) (c+d)`); uniqueness is `dist p pstar ≤ q·dist p pstar` with `q < 1`; convergence
+is the geometric squeeze (`jointOuterMap_geometric_error`).
+
+**Scope / honesty.**  This is the *abstract* 2-D spine only — it asserts nothing about the
+Saha–Boltzmann physics.  Whether the real CF-LIBS legs satisfy `hmapsT/hmapsNe/hLT/hLNe`
+and the gate is downstream content: the `n_e`-in-`T` constant is `sahaFactorLipConst`
+(`SahaStability`), the `T`-in-`n_e` constant is the combined-slope sensitivity
+(`combinedSlopeTempUpdate_lipschitz`, `ErrorBudget`); the off-diagonal coefficients `b, c`
+carry the genuine 2-D coupling.  The gate is **sufficient, not necessary**.  A decoupled
+instantiation (`b = c = 0`) recovers two independent 1-D loops; the joint form is the honest
+home for the coupled Aguilera–Aragón multi-element outer iteration. -/
+theorem jointOuterContraction_box
+    (hTle : Tmin ≤ Tmax) (hnele : nemin ≤ nemax)
+    (hmapsT : ∀ T ∈ Set.Icc Tmin Tmax, ∀ n ∈ Set.Icc nemin nemax,
+        fT T n ∈ Set.Icc Tmin Tmax)
+    (hmapsNe : ∀ T ∈ Set.Icc Tmin Tmax, ∀ n ∈ Set.Icc nemin nemax,
+        fNe T n ∈ Set.Icc nemin nemax)
+    (hLT : ∀ T ∈ Set.Icc Tmin Tmax, ∀ n ∈ Set.Icc nemin nemax,
+        ∀ T' ∈ Set.Icc Tmin Tmax, ∀ n' ∈ Set.Icc nemin nemax,
+        |fT T n - fT T' n'| ≤ a * |T - T'| + b * |n - n'|)
+    (hLNe : ∀ T ∈ Set.Icc Tmin Tmax, ∀ n ∈ Set.Icc nemin nemax,
+        ∀ T' ∈ Set.Icc Tmin Tmax, ∀ n' ∈ Set.Icc nemin nemax,
+        |fNe T n - fNe T' n'| ≤ c * |T - T'| + d * |n - n'|)
+    (ha : 0 ≤ a) (hb : 0 ≤ b) (hc : 0 ≤ c) (hd : 0 ≤ d)
+    (hq : max (a + b) (c + d) < 1) :
+    ∃ pstar ∈ Set.Icc Tmin Tmax ×ˢ Set.Icc nemin nemax,
+      jointOuterMap fT fNe pstar = pstar ∧
+      (∀ p ∈ Set.Icc Tmin Tmax ×ˢ Set.Icc nemin nemax,
+        jointOuterMap fT fNe p = p → p = pstar) ∧
+      ∀ p0 ∈ Set.Icc Tmin Tmax ×ˢ Set.Icc nemin nemax,
+        Filter.Tendsto (fun n => (jointOuterMap fT fNe)^[n] p0)
+          Filter.atTop (nhds pstar) := by
+  have hqnn : 0 ≤ max (a + b) (c + d) :=
+    le_trans (by linarith : (0:ℝ) ≤ a + b) (le_max_left _ _)
+  have hmaps : Set.MapsTo (jointOuterMap fT fNe)
+      (Set.Icc Tmin Tmax ×ˢ Set.Icc nemin nemax) (Set.Icc Tmin Tmax ×ˢ Set.Icc nemin nemax) :=
+    fun x hx => jointOuterMap_mapsTo hmapsT hmapsNe x hx
+  have hcomplete : IsComplete (Set.Icc Tmin Tmax ×ˢ Set.Icc nemin nemax) :=
+    (isClosed_Icc.prod isClosed_Icc).isComplete
+  set K : ℝ≥0 := ⟨max (a + b) (c + d), hqnn⟩ with hKdef
+  have hKcoe : (K : ℝ) = max (a + b) (c + d) := rfl
+  have hK : K < 1 := by rw [← NNReal.coe_lt_one, hKcoe]; exact hq
+  have hlip : LipschitzWith K
+      (hmaps.restrict (jointOuterMap fT fNe)
+        (Set.Icc Tmin Tmax ×ˢ Set.Icc nemin nemax)
+        (Set.Icc Tmin Tmax ×ˢ Set.Icc nemin nemax)) := by
+    refine lipschitzWith_iff_dist_le_mul.mpr ?_
+    rintro ⟨x, hx⟩ ⟨y, hy⟩
+    rw [Subtype.dist_eq, Subtype.dist_eq, Set.MapsTo.val_restrict_apply,
+        Set.MapsTo.val_restrict_apply, hKcoe]
+    exact jointOuterMap_contraction hLT hLNe ha hb hc hd hx hy
+  have hcontract : ContractingWith K
+      (hmaps.restrict (jointOuterMap fT fNe)
+        (Set.Icc Tmin Tmax ×ˢ Set.Icc nemin nemax)
+        (Set.Icc Tmin Tmax ×ˢ Set.Icc nemin nemax)) :=
+    ⟨hK, hlip⟩
+  have hxs : (Tmin, nemin) ∈ Set.Icc Tmin Tmax ×ˢ Set.Icc nemin nemax :=
+    Set.mk_mem_prod (Set.left_mem_Icc.mpr hTle) (Set.left_mem_Icc.mpr hnele)
+  have hx : edist (Tmin, nemin) (jointOuterMap fT fNe (Tmin, nemin)) ≠ ⊤ := edist_ne_top _ _
+  obtain ⟨pstar, hpstar, hfixpt, _htend, _herr⟩ :=
+    hcontract.exists_fixedPoint' hcomplete hmaps hxs hx
+  have hfix : jointOuterMap fT fNe pstar = pstar := hfixpt
+  refine ⟨pstar, hpstar, hfix, ?_, ?_⟩
+  · intro p hp hpfix
+    have hcon := jointOuterMap_contraction hLT hLNe ha hb hc hd hp hpstar
+    rw [hpfix, hfix] at hcon
+    by_contra hne
+    have hpos : 0 < dist p pstar := dist_pos.mpr hne
+    nlinarith [hcon, mul_pos (show (0:ℝ) < 1 - max (a + b) (c + d) by linarith) hpos]
+  · intro p0 hp0
+    exact jointOuterMap_tendsto hmapsT hmapsNe hLT hLNe ha hb hc hd hq hpstar hfix hp0
+
+/-! ### Non-vacuity witnesses (concrete coupled halving legs)
+
+Coupled legs `fT T n = fNe T n = (T + n)/4` on `[0,1] ×ˢ [0,1]` with row coefficients
+`a = b = c = d = 1/4` (so `max (a+b) (c+d) = 1/2 < 1`): a *genuine, coupled* (every
+`a,b,c,d ≠ 0`, so off-diagonal coupling is live) contraction with fixed point `(0,0)`.
+Every hypothesis of each lemma is met simultaneously at concrete data, so none is vacuous. -/
+
+private noncomputable def jleg : ℝ → ℝ → ℝ := fun T n => (T + n) / 4
+
+private theorem jleg_maps : ∀ T ∈ Set.Icc (0:ℝ) 1, ∀ n ∈ Set.Icc (0:ℝ) 1,
+    jleg T n ∈ Set.Icc (0:ℝ) 1 := by
+  intro T hT n hn
+  simp only [Set.mem_Icc, jleg] at hT hn ⊢
+  constructor <;> [linarith [hT.1, hn.1]; linarith [hT.2, hn.2]]
+
+private theorem jleg_lip (T T' n n' : ℝ) :
+    |jleg T n - jleg T' n'| ≤ 1 / 4 * |T - T'| + 1 / 4 * |n - n'| := by
+  have h : jleg T n - jleg T' n' = ((T - T') + (n - n')) / 4 := by simp only [jleg]; ring
+  rw [h, abs_div, abs_of_pos (show (0:ℝ) < 4 by norm_num)]
+  have := abs_add_le (T - T') (n - n')
+  linarith [abs_nonneg (T - T'), abs_nonneg (n - n')]
+
+example : ∀ p ∈ Set.Icc (0:ℝ) 1 ×ˢ Set.Icc (0:ℝ) 1,
+    jointOuterMap jleg jleg p ∈ Set.Icc (0:ℝ) 1 ×ˢ Set.Icc (0:ℝ) 1 :=
+  jointOuterMap_mapsTo jleg_maps jleg_maps
+
+example : dist (jointOuterMap jleg jleg ((1:ℝ), (1:ℝ))) (jointOuterMap jleg jleg ((0:ℝ), (0:ℝ)))
+    ≤ max (1/4 + 1/4) (1/4 + 1/4) * dist ((1:ℝ), (1:ℝ)) ((0:ℝ), (0:ℝ)) :=
+  jointOuterMap_contraction (Tmin := 0) (Tmax := 1) (nemin := 0) (nemax := 1)
+    (a := 1/4) (b := 1/4) (c := 1/4) (d := 1/4)
+    (fun T _ n _ T' _ n' _ => jleg_lip T T' n n') (fun T _ n _ T' _ n' _ => jleg_lip T T' n n')
+    (by norm_num) (by norm_num) (by norm_num) (by norm_num)
+    (by simp [Set.mem_Icc]) (by simp [Set.mem_Icc])
+
+example : ∃ pstar ∈ Set.Icc (0:ℝ) 1 ×ˢ Set.Icc (0:ℝ) 1,
+    jointOuterMap jleg jleg pstar = pstar ∧
+    (∀ p ∈ Set.Icc (0:ℝ) 1 ×ˢ Set.Icc (0:ℝ) 1, jointOuterMap jleg jleg p = p → p = pstar) ∧
+    ∀ p0 ∈ Set.Icc (0:ℝ) 1 ×ˢ Set.Icc (0:ℝ) 1,
+      Filter.Tendsto (fun n => (jointOuterMap jleg jleg)^[n] p0) Filter.atTop (nhds pstar) :=
+  jointOuterContraction_box (Tmin := 0) (Tmax := 1) (nemin := 0) (nemax := 1)
+    (a := 1/4) (b := 1/4) (c := 1/4) (d := 1/4)
+    (by norm_num) (by norm_num) jleg_maps jleg_maps
+    (fun T _ n _ T' _ n' _ => jleg_lip T T' n n') (fun T _ n _ T' _ n' _ => jleg_lip T T' n n')
+    (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
+
+end JointOuterIteration
+
 end CflibsFormal

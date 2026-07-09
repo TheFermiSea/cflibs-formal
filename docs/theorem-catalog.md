@@ -5,7 +5,7 @@
 > (the integrity spine) + citation from `docs/scope-tags.tsv`; the docs-sync CI gate fails if
 > any result is untagged, so a new theorem cannot land without declaring its epistemic status.
 
-**Scope-tag mix** (399 results): **EXACT** 126 · **REDUCED** 92 · **APPROXIMATION** 9 · **PURE-MATH** 172
+**Scope-tag mix** (412 results): **EXACT** 127 · **REDUCED** 98 · **APPROXIMATION** 8 · **PURE-MATH** 179
 
 `EXACT` = exact identity faithfully encoding the cited physics · `REDUCED` = valid dimensionless/lumped-factor form · `APPROXIMATION` = documented idealization / limiting case · `PURE-MATH` = infrastructure lemma, no physical claim. Classification cross-checked against `reviews/literature-validity-audit.md`.
 
@@ -95,11 +95,15 @@
 
 **Definitions**
 - `olsRecoveredDensity` — Per-species OLS density reader under wrong `A'`.
+- `regCoef` — Regression coefficient of the TRUE energies `E` on the WRONG abscissa `E'`: `Cov(E',E)/Var(E') = (∑ₖ (E'ₖ − Ē')(Eₖ − Ē)) / (∑ₖ (E'ₖ − Ē')²)`.
 
 **Results**
 - `EXACT` · `olsDensity_aliasing_A` — EXACT aliasing identity, OLS density reader, A-channel.  _[Tognoni 2010]_
 - `REDUCED` · `olsDensity_aliasing_A_error` — REDUCED closed-form density-error bound, OLS reader, A-channel.  _[Tognoni 2010]_
 - `REDUCED` · `olsComposition_atomicData_error` — REDUCED composition corollary, OLS reader, A-channel.  _[Tognoni 2010]_
+- `EXACT` · `olsSlope_wrong_abscissa` — (M6a) EXACT wrong-abscissa slope identity.  _[Tognoni 2010]_
+- `EXACT` · `olsIntercept_wrong_abscissa` — (M6b) EXACT wrong-abscissa intercept identity.  _[Tognoni 2010]_
+- `REDUCED` · `olsDensity_aliasing_E_error` — (M6c) REDUCED intercept-channel log-density error under a wrong abscissa.  _[Tognoni 2010]_
 
 ## `Alt/OLSVariance.lean`  (CflibsFormal.Alt)
 *the Gauss–Markov variance law for the OLS Boltzmann-plot slope*
@@ -330,7 +334,7 @@
 - `EXACT` · `equivWidth_lorentzian_scaled` — The Lorentzian equivalent-width rescaling identity (EXACT, within the model).  _[Gornushkin 1999]_
 - `PURE-MATH` · `integral_one_sub_exp_neg_inv_sq` — M2 (analytic crux) — the limit integral `∫_ℝ (1 − e^{−1/u²}) du = 2√π` (PURE-MATH).
 - `PURE-MATH` · `tendsto_integral_g_beta` — M3 (dominated convergence) — the rescaled integral converges (PURE-MATH).
-- `EXACT` · `equivWidth_lorentzian_sqrt_sharp` — M4 — the sharp Ladenburg–Reiche wing constant `C = 2` (EXACT, within the model).  _[Gornushkin 1999]_
+- `EXACT` · `equivWidth_lorentzian_sqrt_sharp` — M4 — the sharp Ladenburg–Reiche wing constant `C = 2` (EXACT, within the model).  _[Ladenburg–Reiche 1913]_
 
 ## `ErrorBudget.lean`  (CflibsFormal)
 *the error-propagation chain and DERIVED reliability thresholds*
@@ -423,7 +427,7 @@
 **Results**
 - `EXACT` · `general_identifiability` — General identifiability — the central theorem.  _[Ciucci 1999]_
 - `PURE-MATH` · `sound_estimators_agree` — Cross-method agreement bridge.
-- `APPROXIMATION` · `rawCompositionEstimator_sound` — Soundness of the raw estimator (constant-`emit` case).  _[Ciucci 1999]_
+- `REDUCED` · `rawCompositionEstimator_sound` — Soundness of the raw estimator (constant-`emit` case).  _[Ciucci 1999]_
 
 ## `JointIdentifiability.lean`  (CflibsFormal)
 *Part 7: joint (temperature, composition) identifiability*
@@ -548,6 +552,7 @@
 **Definitions**
 - `nlObjective` — Nonlinear least-squares objective for the joint `(T, N)` fit: `nlObjective kB Fcal g E A obs (T, N) = ∑ₖ (I_k(T,N) − obs_k)²`, where `I_k(T,N) = lineIntensit…
 - `profiledDensity` — Profiled density (variable-projection closed form).
+- `profiledRatioResidual` — Two-line profiled residual as a function of the intensity ratio `t = c₁/c₀`.
 
 **Results**
 - `PURE-MATH` · `nlObjective_continuousOn` — Continuity on the physical box.
@@ -573,10 +578,14 @@
 - `REDUCED` · `profiledResidual_true_strict_lt` — Near-manifold strict domination by the true temperature (REDUCED, Tognoni 2010).  _[Tognoni 2010]_
 - `REDUCED` · `profiledResidual_minimizer_trapped` — Near-manifold minimizer localization / trapping (REDUCED, Tognoni 2010).  _[Tognoni 2010]_
 - `PURE-MATH` · `profiledResidual_of_orthogonal` — Profiled residual at an orthogonal observation (PURE-MATH).
-- `EXACT` · `profiledResidual_not_injective_m3` — Off-manifold `T`-non-uniqueness for `m = 3` (EXACT, HONEST NEGATIVE result).  _[Ciucci 1999]_
+- `PURE-MATH` · `profiledResidual_not_injective_m3` — Off-manifold `T`-non-uniqueness for `m = 3` (EXACT, HONEST NEGATIVE result).
 - `EXACT` · `two_ratio_diff` — The two-line intensity-ratio difference is a scaled `Real.exp` difference.  _[Ciucci 1999]_
 - `EXACT` · `clean_residual_ratio` — On-manifold, the two-line profiled residual in the intensity-ratio coordinate.  _[Ciucci 1999]_
 - `REDUCED` · `profiledResidual_metric_bound` — —  _[Tognoni 2010]_
+- `REDUCED` · `profiledResidual_two_strictAntiOn` — Strict decrease below the residual apex (REDUCED, Ciucci 1999).  _[Ciucci 1999]_
+- `REDUCED` · `profiledResidual_two_strictMonoOn` — Strict increase above the residual apex (REDUCED, Ciucci 1999).  _[Ciucci 1999]_
+- `PURE-MATH` · `profiledResidual_two_eq_ratio` — The off-manifold two-line profiled residual equals the ratio residual (PURE-MATH).
+- `REDUCED` · `profiledT_two_offManifold_box_unique` — Two-line OFF-manifold box-uniqueness of the profiled temperature (REDUCED, Ciucci 1999).  _[Ciucci 1999]_
 
 ## `OLS.lean`  (CflibsFormal)
 *the ordinary-least-squares algebraic foundation*
@@ -589,6 +598,8 @@
 - `designNormalMatrix` — Design-matrix normal matrix of the Boltzmann-plot fit.
 - `centeredDesignNormalMatrix` — Centered design normal matrix.
 - `boltzmannConditionNumber` — M3 — the Boltzmann-plot condition number (2×2 diagonal `κ`).
+- `jointDesignNormalMatrix` — Joint Saha–Boltzmann design normal matrix.
+- `jointDesignCenteredProportional` — The centered energies and ion-indicator are proportional, as a pair: `∃ (c,d) ≠ (0,0)` with `c·(Eₖ − Ē) = d·(sₖ − s̄)` for every line `k`.
 
 **Results**
 - `PURE-MATH` · `centered_sum_zero` — The centered energies sum to zero: `∑ₖ (Eₖ − Ē) = 0`.
@@ -606,6 +617,8 @@
 - `PURE-MATH` · `centeredSolve_perturbation` — M4 — per-channel perturbation bound (the payoff).
 - `PURE-MATH` · `centeredSolve_relative_condition` — M5 — the textbook relative-condition statement.
 - `PURE-MATH` · `centeredScaledDesign_orthonormal` — M6 — THE HONEST HEADLINE: the scaled centered design is orthonormal, so `κ_scaled = 1`.
+- `PURE-MATH` · `det_jointDesignNormalMatrix` — THE closed-form determinant of the joint design.
+- `REDUCED` · `jointDesign_det_pos_iff` — THE rank gate for the joint Saha–Boltzmann design.  _[Aguilera & Aragón 2007]_
 
 ## `OuterLoopModelB.lean`  (CflibsFormal)
 *the outer temperature iteration, Model B headline (Frontier 04)*
@@ -676,6 +689,7 @@
 - `sahaIter` — Scalar fixed-point iteration map of the reduced Saha self-consistency equation `n_e² = S · (Ntot − n_e)`.
 - `dampedMultiElementIter` — Damped (Krasnoselskii–Mann / averaged) closure iteration.
 - `outerMap` — Abstract outer-iteration self-map (`PURE-MATH`).
+- `jointOuterMap` — Joint (T, n_e) outer self-map (`PURE-MATH`).
 
 **Results**
 - `PURE-MATH` · `sahaEquilibriumNe_pos` — Positivity of the self-consistent density.
@@ -708,6 +722,10 @@
 - `PURE-MATH` · `outerMap_geometric_error` — Geometric error decay of the outer iterates (`PURE-MATH`).
 - `PURE-MATH` · `outerContraction_box` — Outer T-iteration abstract spine — the two-leg box contraction (`PURE-MATH`).
 - `REDUCED` · `neLeg_mapsTo` — `n_e`-leg interval invariance (`REDUCED`; Saha–Eggert (Griem)).  _[Saha–Eggert (Griem)]_
+- `PURE-MATH` · `jointOuterMap_mapsTo` — Interval invariance of the joint sweep (`PURE-MATH`).
+- `PURE-MATH` · `jointOuterMap_contraction` — One-step max-metric contraction with the row-sum constant (`PURE-MATH`).
+- `PURE-MATH` · `jointOuterMap_geometric_error` — Geometric error decay of the joint iterates (`PURE-MATH`).
+- `PURE-MATH` · `jointOuterContraction_box` — Joint (T, n_e) outer loop contracts — the 2-D box Banach theorem (`PURE-MATH`).
 
 ## `SahaInverse.lean`  (CflibsFormal)
 *Part 6: coupling Saha into the inverse problem*
