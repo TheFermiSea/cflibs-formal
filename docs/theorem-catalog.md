@@ -5,7 +5,7 @@
 > (the integrity spine) + citation from `docs/scope-tags.tsv`; the docs-sync CI gate fails if
 > any result is untagged, so a new theorem cannot land without declaring its epistemic status.
 
-**Scope-tag mix** (431 results): **EXACT** 130 · **REDUCED** 110 · **APPROXIMATION** 8 · **PURE-MATH** 183
+**Scope-tag mix** (467 results): **EXACT** 138 · **REDUCED** 122 · **APPROXIMATION** 8 · **PURE-MATH** 199
 
 `EXACT` = exact identity faithfully encoding the cited physics · `REDUCED` = valid dimensionless/lumped-factor form · `APPROXIMATION` = documented idealization / limiting case · `PURE-MATH` = infrastructure lemma, no physical claim. Classification cross-checked against `reviews/literature-validity-audit.md`.
 
@@ -138,6 +138,9 @@
 
 **Definitions**
 - `alphaHat` — The OLS-intercept estimator as a random variable.
+- `tempOfSlope` — Slope→temperature reader `T = 1/(k_B·x)`: the (sign-normalized) Boltzmann-plot inverse-temperature map, the deterministic bridge the tail transfer routes thr…
+- `tempHat` — The recovered-temperature estimator as a random variable: the temperature read off the random OLS slope, `T̂ ω = tempOfSlope kB (β̂ ω)`.
+- `densityHat` — The recovered-density estimator as a random variable: the CF-LIBS density read off the random OLS intercept, `N̂ ω = exp(α̂ ω)·U/Fcal` (the intercept identit…
 
 **Results**
 - `PURE-MATH` · `alphaHat_estimator_eq` — Intercept estimator = truth + weighted noise (pure pointwise algebra, no probability).
@@ -147,6 +150,12 @@
 - `EXACT` · `alphaHat_variance_eq` — THE classical intercept-variance law `Var(α̂) = σ²·(1/n + Ē²/SS_E)`, with `n = Fintype.card ι`, `Ē = mean E`, `SS_E = ∑ₖ (Eₖ − Ē)²`.  _[Aitken 1935]_
 - `PURE-MATH` · `alphaHat_memLp_two` — `L²` membership of the OLS intercept estimator `MemLp α̂ 2 μ`, the intercept twin of `betaHat_memLp_two`.
 - `REDUCED` · `alphaHat_chebyshev` — Intercept concentration — Chebyshev's inequality on `α̂`.  _[Aitken 1935]_
+- `PURE-MATH` · `temp_slope_event_subset` — —
+- `REDUCED` · `temp_tail_transfer` — —  _[Tognoni 2010]_
+- `PURE-MATH` · `density_event_subset` — —
+- `REDUCED` · `density_tail_species` — —  _[Tognoni 2010]_
+- `REDUCED` · `composition_tail_union` — —  _[Tognoni 2010]_
+- `REDUCED` · `olsSlope_subGaussian_tail` — —  _[Aitken 1935]_
 
 ## `Analysis.lean`  (CflibsFormal)
 *Shared analysis scaffolding*
@@ -408,6 +417,7 @@
 - `REDUCED` · `temp_rel_error_hetero` — Composed heteroscedastic noise ⇒ relative temperature error (gap #5, temperature leg).  _[Tognoni 2010]_
 - `REDUCED` · `olsIntercept_stable_hetero` — Intercept sensitivity, HETEROSCEDASTIC (per-line budget, centered convention).  _[Tognoni 2010]_
 - `REDUCED` · `combinedSlope_offset_lipschitz` — Offset→slope sensitivity of the combined Saha–Boltzmann slope (`REDUCED`; Aguilera & Aragón 2007).  _[Aguilera & Aragón 2007]_
+- `PURE-MATH` · `log_lip_floor` — `log`-Lipschitz on a positive floor (`PURE-MATH`).
 - `REDUCED` · `combinedSlopeTempUpdate_lipschitz` — `T`-leg Lipschitz constant of the outer CF-LIBS loop (`REDUCED`; Aguilera & Aragón 2007).  _[Aguilera & Aragón 2007]_
 
 ## `ForwardMap.lean`  (CflibsFormal)
@@ -592,6 +602,30 @@
 - `REDUCED` · `noise_to_density` — Noise ⇒ per-species recovered-density error (REDUCED, Tognoni 2010).  _[Tognoni 2010]_
 - `REDUCED` · `noise_to_composition` — HEADLINE — noise ⇒ recovered-composition error (REDUCED, Tognoni 2010).  _[Tognoni 2010]_
 
+## `NonLTEKinetics.lean`  (CflibsFormal)
+*non-LTE departure coefficients and the departure error budget*
+
+**Definitions**
+- `departureCoeff` — Two-level departure coefficient `b₂ = R₂₁/(R₂₁ + A₂₁)`: the fraction of the LTE upper-level population that survives radiative leakage, in terms of the colli…
+- `departureCoeffNe` — Density-parametric departure coefficient `b₂(n_e) = n_e C₂₁/(n_e C₂₁ + A₂₁)`, the electron-impact form of `departureCoeff` with `R₂₁ = n_e C₂₁` (`C₂₁` the el…
+
+**Results**
+- `REDUCED` · `two_level_balance` — Two-level balance fixed point (`REDUCED`; Griem 1997 §6).  _[Griem 1997]_
+- `PURE-MATH` · `departureCoeff_pos` — The departure coefficient is strictly positive for positive rates.
+- `PURE-MATH` · `departureCoeff_le_one` — The departure coefficient is at most `1` (sub-LTE: radiative leakage can only *underpopulate* the upper level).
+- `PURE-MATH` · `departureCoeffNe_nonneg` — The density-form departure coefficient is nonnegative.
+- `PURE-MATH` · `departureCoeffNe_le_one` — The density-form departure coefficient is at most `1` (sub-LTE).
+- `PURE-MATH` · `one_sub_departureCoeffNe` — Explicit density bound on the departure (`PURE-MATH`).
+- `PURE-MATH` · `departureCoeffNe_strictMonoOn_ne` — Denser plasma is closer to LTE (`PURE-MATH`).
+- `REDUCED` · `departureCoeffNe_tendsto_one` — LTE limit (`REDUCED`; Cristoforetti 2010 boundary regime).  _[Cristoforetti 2010]_
+- `EXACT` · `mcwhirter_forces_departure` — McWhirter's factor-of-10 rate ratio forces `b₂ ≥ 10/11` (`EXACT`; McWhirter 1965).  _[McWhirter 1965]_
+- `REDUCED` · `departure_threshold_iff` — Departure threshold equivalence (`REDUCED`; Cristoforetti 2010).  _[Cristoforetti 2010]_
+- `EXACT` · `nonlte_ordinate_shift` — A departure coefficient is an additive Boltzmann-plot ordinate shift (`EXACT`; Boltzmann).  _[Boltzmann]_
+- `PURE-MATH` · `abs_log_departure_le` — A bounded departure gives a bounded log-ordinate perturbation (`PURE-MATH`).
+- `REDUCED` · `nonlte_temp_error` — Non-LTE temperature error budget, temperature leg (`REDUCED`; Cristoforetti 2010).  _[Cristoforetti 2010]_
+- `REDUCED` · `nonlte_density_error` — Non-LTE density error budget, density leg (`REDUCED`; Cristoforetti 2010).  _[Cristoforetti 2010]_
+- `REDUCED` · `nonlte_temp_error_uniform` — Non-LTE temperature error budget, uniform departure bound (`REDUCED`; Cristoforetti 2010).  _[Cristoforetti 2010]_
+
 ## `NonlinearLeastSquares.lean`  (CflibsFormal)
 *the nonlinear joint `(T, N)` least-squares inverse (existence leg)*
 
@@ -694,6 +728,23 @@
 - `REDUCED` · `partitionFunction_two_point_bound` — Two-point partition-function bound — the `U_s(T)` sensitivity leg (`REDUCED`, Tognoni 2010).  _[Tognoni 2010]_
 - `REDUCED` · `partitionFunction_lipschitz_temp` — Lipschitz-in-`T` partition-function bound (`REDUCED`, Tognoni 2010).  _[Tognoni 2010]_
 - `REDUCED` · `partitionFunction_relative_error_temp` — Relative partition-function error from a temperature error (`REDUCED`, Tognoni 2010).  _[Tognoni 2010]_
+
+## `RadiativeTransferDepth.lean`  (CflibsFormal)
+*depth-structured radiative transfer (the N-zone stack)*
+
+**Definitions**
+- `rtStep` — One homogeneous zone.
+- `rtEmergent` — `N`-zone stacked emergent intensity.
+- `rtFormal` — The continuous formal solution.
+
+**Results**
+- `EXACT` · `rtEmergent_single` — Single-zone base case (exact).  _[Gornushkin 1999]_
+- `EXACT` · `rtEmergent_two` — Two-zone base case (exact).  _[Cowan–Dieke 1948]_
+- `EXACT` · `rtEmergent_sandwich` — The monotone sandwich (exact).  _[Gornushkin 1999]_
+- `EXACT` · `rtEmergent_uniform` — Uniform slab is the extremal case (exact).  _[Gornushkin 1999]_
+- `EXACT` · `rtFormal_const` — Constant source recovers the slab (exact).  _[Gornushkin 1999]_
+- `EXACT` · `rtFormal_sandwich` — The continuous sandwich (exact).  _[Gornushkin 1999]_
+- `PURE-MATH` · `rtFormalLinear` — Linear (Eddington–Barbier) source — exact evaluation.
 
 ## `Robustness.lean`  (CflibsFormal)
 *Robustness / error-propagation bounds*
@@ -854,12 +905,22 @@
 
 **Definitions**
 - `chordIntensity` — The line-of-sight forward map for the onion-peeling discretization of the Abel transform: the lateral chord-intensity vector `I = L · ε`, where `ε : Fin N →…
+- `onionPeel` — The explicit onion-peeling recovery map: the left inverse of the forward map `chordIntensity`, `onionPeel G I = L⁻¹ · I`.
+- `peelDiagFloor` — The smallest self-path-length `ℓ = ⨅ᵢ Lᵢᵢ` across the shells (the strongest diagonal floor; `> 0` for `N ≥ 1` since the diagonal is positive).
+- `peelCouplingRatio` — The worst per-row coupling ratio `ρ = ⨆ᵢ (∑_{j>i} |Lᵢⱼ|)/Lᵢᵢ`: how strongly, in the extremal row, the already-peeled outer shells couple back into shell `i`…
 
 **Results**
 - `PURE-MATH` · `chordGeometry_det_ne_zero` — The path-length matrix of a physical onion-peeling geometry is nonsingular: its determinant is the product of the (positive) self-path-lengths, hence nonzero.
 - `PURE-MATH` · `chordGeometry_isUnit` — The path-length matrix is invertible.
 - `EXACT` · `chord_profile_identifiable` — Spatial identifiability — relaxing single-zone homogeneity.  _[Parigger 2016]_
 - `EXACT` · `singleZone_identifiable` — The single-zone homogeneous model (`N = 1`) obtained by instantiating the general spatial identifiability at `N = 1`.  _[Parigger 2016]_
+- `PURE-MATH` · `peeling_identity` — The onion-peeling recursion as an exact pointwise identity.
+- `PURE-MATH` · `onionPeel_chordIntensity` — `onionPeel` inverts the discrete Abel forward map exactly: `onionPeel G (chordIntensity G.L ε) = ε` for every radial profile `ε`.
+- `PURE-MATH` · `onionPeel_blockTriangular` — The recovery is genuinely *inside-out*: `L⁻¹` is upper-triangular, so the recovered emissivity `εᵢ = (onionPeel G I) i` depends only on the chord intensities…
+- `PURE-MATH` · `peeling_single_step` — One-shell perturbation inequality.
+- `REDUCED` · `peeling_amplification` — Geometric-in-shell-depth error amplification (deterministic worst case).  _[Aguilera & Aragón 2007]_
+- `REDUCED` · `peeling_amplification_iSup` — Named-constant form of `peeling_amplification`.  _[Aguilera & Aragón 2007]_
+- `PURE-MATH` · `peeling_condition_linfty` — Abstract ℓ∞ condition bound (cross-check).
 
 ## `StarkBroadening.lean`  (CflibsFormal)
 *Stark broadening + the McWhirter LTE criterion*

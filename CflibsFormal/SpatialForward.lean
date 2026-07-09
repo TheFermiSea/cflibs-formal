@@ -204,4 +204,289 @@ example :
   have h1 := congrFun hcontra 1
   simp [chordIntensity, Matrix.mulVec_eq_sum, Fin.sum_univ_two] at h1
 
+/-! ## Constructive recovery, peeling recursion, and error amplification
+
+The results above prove the discrete Abel inversion is *well-posed* (the profile is
+uniquely identifiable) but say nothing *constructive* or *quantitative*. The
+following deepen that: `peeling_identity` exposes the back-substitution algorithm
+as an exact identity; `onionPeel` names the recovery map; `peeling_single_step` and
+`peeling_amplification` quantify how a chord-intensity error is amplified into a
+radial-profile error, compounding geometrically toward the plasma core. -/
+
+/-- Split the chord intensity of shell `i` at the diagonal: the self-term
+`Lᵢᵢ · εᵢ` plus the outer-shell terms `j > i`; the inner terms `j < i` vanish by
+upper-triangularity (`G.upper`). Private helper for `peeling_identity` /
+`peeling_single_step`. -/
+private theorem chordIntensity_split {N : ℕ} (G : ChordGeometry N) (eps : Fin N → ℝ)
+    (i : Fin N) :
+    chordIntensity G.L eps i
+      = G.L i i * eps i + ∑ j ∈ Finset.univ.filter (i < ·), G.L i j * eps j := by
+  have hmv : chordIntensity G.L eps i = ∑ j, G.L i j * eps j := by
+    simp [chordIntensity, Matrix.mulVec, dotProduct]
+  rw [hmv, ← Finset.add_sum_erase Finset.univ (fun j => G.L i j * eps j) (Finset.mem_univ i)]
+  congr 1
+  refine (Finset.sum_subset ?_ ?_).symm
+  · intro x hx
+    rw [Finset.mem_filter] at hx
+    rw [Finset.mem_erase]
+    exact ⟨ne_of_gt hx.2, Finset.mem_univ x⟩
+  · intro x hx hxnot
+    rw [Finset.mem_erase] at hx
+    have hnlt : ¬ i < x := fun h => hxnot (Finset.mem_filter.mpr ⟨Finset.mem_univ x, h⟩)
+    have hxi : x < i := lt_of_le_of_ne (not_lt.mp hnlt) hx.1
+    change G.L i x * eps x = 0
+    rw [G.upper hxi, zero_mul]
+
+/-- **The onion-peeling recursion as an exact pointwise identity.**
+
+Solving the row `Iᵢ = Lᵢᵢ·εᵢ + ∑_{j>i} Lᵢⱼ·εⱼ` of the discrete Abel system for
+`εᵢ` (legal since `Lᵢᵢ > 0`) recovers the back-substitution the practitioner runs:
+the true emissivity of shell `i` equals its measured chord intensity minus the
+already-peeled outer shells `j > i`, all divided by the self-path `Lᵢᵢ`. This is
+the *constructive* content behind `chord_profile_identifiable`'s abstract
+injectivity — it names the recovered value rather than merely asserting uniqueness.
+It is an unconditional identity: every true profile `ε` satisfies it at every `i`,
+so no well-founded recursion is needed to state it. -/
+theorem peeling_identity {N : ℕ} (G : ChordGeometry N) (eps : Fin N → ℝ) (i : Fin N) :
+    eps i = (chordIntensity G.L eps i
+        - ∑ j ∈ Finset.univ.filter (i < ·), G.L i j * eps j) / G.L i i := by
+  have hne := (G.diag_pos i).ne'
+  rw [chordIntensity_split, add_sub_cancel_right]
+  field_simp
+
+/-- The explicit **onion-peeling recovery map**: the left inverse of the forward
+map `chordIntensity`, `onionPeel G I = L⁻¹ · I`. `chord_profile_identifiable`
+proved the radial profile is *uniquely* recovered; this *names* the map that
+recovers it. -/
+noncomputable def onionPeel {N : ℕ} (G : ChordGeometry N) (I : Fin N → ℝ) : Fin N → ℝ :=
+  G.L⁻¹.mulVec I
+
+/-- `onionPeel` inverts the discrete Abel forward map exactly:
+`onionPeel G (chordIntensity G.L ε) = ε` for every radial profile `ε`. Exact
+recovery, from `L⁻¹(L·ε) = ε` with `L` invertible (`chordGeometry_isUnit`). -/
+theorem onionPeel_chordIntensity {N : ℕ} (G : ChordGeometry N) (eps : Fin N → ℝ) :
+    onionPeel G (chordIntensity G.L eps) = eps := by
+  letI := (chordGeometry_isUnit G).invertible
+  exact Matrix.inv_mulVec_eq_vec rfl
+
+/-- The recovery is genuinely *inside-out*: `L⁻¹` is upper-triangular, so the
+recovered emissivity `εᵢ = (onionPeel G I) i` depends only on the chord
+intensities `Iⱼ` for `j ≥ i` (the shells at or outside radius `i`) — exactly the
+physical peeling order (outermost shell first). -/
+theorem onionPeel_blockTriangular {N : ℕ} (G : ChordGeometry N) :
+    (G.L⁻¹).BlockTriangular id := by
+  letI := (chordGeometry_isUnit G).invertible
+  exact Matrix.blockTriangular_inv_of_blockTriangular G.upper
+
+/-- **One-shell perturbation inequality.** Applying `peeling_identity` to two
+profiles `ε, ε'` and subtracting (the forward map is linear, so
+`ΔI = L·Δε`): the recovered-profile error at shell `i`, scaled by the self-path
+`Lᵢᵢ`, is bounded by its own chord-measurement error `|ΔIᵢ|` plus the leakage of
+every already-recovered outer shell `j > i` through the geometric coupling
+`|Lᵢⱼ|`. This one-step amplification is the recursion that `peeling_amplification`
+assembles into the geometric bound. -/
+theorem peeling_single_step {N : ℕ} (G : ChordGeometry N) (eps eps' : Fin N → ℝ)
+    (i : Fin N) :
+    |eps i - eps' i| * G.L i i
+      ≤ |chordIntensity G.L eps i - chordIntensity G.L eps' i|
+          + ∑ j ∈ Finset.univ.filter (i < ·), |G.L i j| * |eps j - eps' j| := by
+  have hdiff : (eps i - eps' i) * G.L i i
+      = (chordIntensity G.L eps i - chordIntensity G.L eps' i)
+          - ∑ j ∈ Finset.univ.filter (i < ·), G.L i j * (eps j - eps' j) := by
+    rw [chordIntensity_split G eps i, chordIntensity_split G eps' i]
+    simp only [mul_sub, Finset.sum_sub_distrib]
+    ring
+  calc |eps i - eps' i| * G.L i i
+      = |(eps i - eps' i) * G.L i i| := by
+        rw [abs_mul, abs_of_pos (G.diag_pos i)]
+    _ = |(chordIntensity G.L eps i - chordIntensity G.L eps' i)
+          - ∑ j ∈ Finset.univ.filter (i < ·), G.L i j * (eps j - eps' j)| := by rw [hdiff]
+    _ ≤ |chordIntensity G.L eps i - chordIntensity G.L eps' i|
+          + |∑ j ∈ Finset.univ.filter (i < ·), G.L i j * (eps j - eps' j)| :=
+        abs_sub _ _
+    _ ≤ |chordIntensity G.L eps i - chordIntensity G.L eps' i|
+          + ∑ j ∈ Finset.univ.filter (i < ·), |G.L i j| * |eps j - eps' j| := by
+        gcongr
+        refine (Finset.abs_sum_le_sum_abs _ _).trans ?_
+        apply le_of_eq
+        apply Finset.sum_congr rfl
+        intro j _
+        rw [abs_mul]
+
+/-- The smallest self-path-length `ℓ = ⨅ᵢ Lᵢᵢ` across the shells (the strongest
+diagonal floor; `> 0` for `N ≥ 1` since the diagonal is positive). -/
+noncomputable def peelDiagFloor {N : ℕ} (G : ChordGeometry N) : ℝ := ⨅ i, G.L i i
+
+/-- The worst per-row coupling ratio `ρ = ⨆ᵢ (∑_{j>i} |Lᵢⱼ|)/Lᵢᵢ`: how strongly,
+in the extremal row, the already-peeled outer shells couple back into shell `i`
+relative to its own self-path. `ρ ≳ 1` is the diagonally-non-dominant regime where
+the inward recursion amplifies. -/
+noncomputable def peelCouplingRatio {N : ℕ} (G : ChordGeometry N) : ℝ :=
+  ⨆ i, (∑ j ∈ Finset.univ.filter (i < ·), |G.L i j|) / G.L i i
+
+/-- **Geometric-in-shell-depth error amplification (deterministic worst case).**
+
+Given a floor `ell > 0` on the self-paths (`ell ≤ Lᵢᵢ`), a bound `emax` on the
+chord-intensity error (`|ΔIᵢ| ≤ emax`), and a per-row coupling ratio `rho ≥ 0`
+dominating the off-diagonal weight (`∑_{j>i} |Lᵢⱼ| ≤ rho·Lᵢᵢ`), the recovered
+radial-profile error at shell `i` obeys
+`|Δεᵢ| ≤ (emax/ell) · ∑_{k<N-i} rho^k`. The inward recursion compounds
+already-peeled outer-shell errors geometrically: the factor grows like
+`rho^{N-i}` toward the core (`i → 0`), the honest noise blow-up that
+radially-resolved CF-LIBS must pre-smooth against — at the critical coupling
+`rho = 1` it is exactly the shell count `N - i` (see the witness below).
+
+**REDUCED**: an adversarial worst-case upper bound (attained only for
+perfectly-correlated errors and the extremal-row geometry), in the deterministic
+style of `ErrorBudget.lean` — *not* the realized amplification, and deliberately
+*not* an `N`-independent stability claim. Proof: downward strong induction on the
+co-index `N - i.val`, assembling `peeling_single_step`. -/
+theorem peeling_amplification {N : ℕ} (G : ChordGeometry N) (eps eps' : Fin N → ℝ)
+    (ell rho emax : ℝ) (hell : 0 < ell) (hrho : 0 ≤ rho)
+    (hell_le : ∀ i, ell ≤ G.L i i)
+    (hemax : ∀ i, |chordIntensity G.L eps i - chordIntensity G.L eps' i| ≤ emax)
+    (hrho_ge : ∀ i, (∑ j ∈ Finset.univ.filter (i < ·), |G.L i j|) ≤ rho * G.L i i)
+    (i : Fin N) :
+    |eps i - eps' i| ≤ (emax / ell) * ∑ k ∈ Finset.range (N - i.val), rho ^ k := by
+  set q : ℝ := emax / ell with hq
+  have hemax_nonneg : 0 ≤ emax := le_trans (abs_nonneg _) (hemax i)
+  have hq_nonneg : 0 ≤ q := div_nonneg hemax_nonneg hell.le
+  suffices H : ∀ d : ℕ, ∀ i : Fin N, N - i.val ≤ d →
+      |eps i - eps' i| ≤ q * ∑ k ∈ Finset.range (N - i.val), rho ^ k by
+    exact H (N - i.val) i le_rfl
+  intro d
+  induction d with
+  | zero =>
+      intro i hi
+      exfalso
+      have := i.isLt
+      omega
+  | succ d ih =>
+      intro i hi
+      have hiN : i.val < N := i.isLt
+      have hLii : 0 < G.L i i := G.diag_pos i
+      have hNi : N - i.val = (N - i.val - 1) + 1 := by omega
+      set B' : ℝ := q * ∑ k ∈ Finset.range (N - i.val - 1), rho ^ k with hB'
+      have hB'_nonneg : 0 ≤ B' :=
+        mul_nonneg hq_nonneg (Finset.sum_nonneg (fun k _ => pow_nonneg hrho k))
+      have hbound_j : ∀ j ∈ Finset.univ.filter (i < ·), |eps j - eps' j| ≤ B' := by
+        intro j hj
+        rw [Finset.mem_filter] at hj
+        have hij : i < j := hj.2
+        have hijv : (i : ℕ) < (j : ℕ) := hij
+        have hjd : N - j.val ≤ d := by omega
+        calc |eps j - eps' j|
+            ≤ q * ∑ k ∈ Finset.range (N - j.val), rho ^ k := ih j hjd
+          _ ≤ q * ∑ k ∈ Finset.range (N - i.val - 1), rho ^ k := by
+              apply mul_le_mul_of_nonneg_left _ hq_nonneg
+              apply Finset.sum_le_sum_of_subset_of_nonneg
+              · intro k hk
+                rw [Finset.mem_range] at hk ⊢
+                omega
+              · intro k _ _
+                exact pow_nonneg hrho k
+          _ = B' := hB'.symm
+      have hstep := peeling_single_step G eps eps' i
+      have hsum_le : (∑ j ∈ Finset.univ.filter (i < ·), |G.L i j| * |eps j - eps' j|)
+          ≤ B' * (rho * G.L i i) := by
+        calc (∑ j ∈ Finset.univ.filter (i < ·), |G.L i j| * |eps j - eps' j|)
+            ≤ ∑ j ∈ Finset.univ.filter (i < ·), |G.L i j| * B' := by
+              apply Finset.sum_le_sum
+              intro j hj
+              exact mul_le_mul_of_nonneg_left (hbound_j j hj) (abs_nonneg _)
+          _ = (∑ j ∈ Finset.univ.filter (i < ·), |G.L i j|) * B' := by
+              rw [Finset.sum_mul]
+          _ = B' * (∑ j ∈ Finset.univ.filter (i < ·), |G.L i j|) := by rw [mul_comm]
+          _ ≤ B' * (rho * G.L i i) :=
+              mul_le_mul_of_nonneg_left (hrho_ge i) hB'_nonneg
+      have hstep2 : |eps i - eps' i| * G.L i i ≤ emax + B' * (rho * G.L i i) :=
+        hstep.trans (add_le_add (hemax i) hsum_le)
+      have hdiv : |eps i - eps' i| ≤ (emax + B' * (rho * G.L i i)) / G.L i i :=
+        (le_div_iff₀ hLii).mpr hstep2
+      have hsplit : (emax + B' * (rho * G.L i i)) / G.L i i = emax / G.L i i + B' * rho := by
+        rw [add_div, mul_div_assoc, mul_div_assoc, div_self hLii.ne', mul_one]
+      rw [hsplit, mul_comm B' rho] at hdiv
+      have hfloor : emax / G.L i i ≤ q := by
+        rw [hq]; gcongr; exact hell_le i
+      have hfinal : |eps i - eps' i| ≤ q + rho * B' := by linarith [hdiv, hfloor]
+      refine hfinal.trans (le_of_eq ?_)
+      rw [hNi, Finset.sum_range_succ', hB']
+      simp only [pow_succ, pow_zero]
+      rw [← Finset.sum_mul]
+      ring
+
+/-- **Named-constant form of `peeling_amplification`.** With the canonical geometry
+constants `peelDiagFloor G = ⨅ᵢ Lᵢᵢ` and `peelCouplingRatio G = ⨆ᵢ (∑_{j>i}
+|Lᵢⱼ|)/Lᵢᵢ`, the recovered-profile error at shell `i` obeys
+`|Δεᵢ| ≤ (‖ΔI‖∞ / ℓ) · ∑_{k<N-i} ρ^k`, where `‖ΔI‖∞ = ⨆ₖ |ΔIₖ|`. Instantiates
+`peeling_amplification`; positivity of `ℓ` is the finite minimum of the positive
+diagonal. **REDUCED** (same worst-case caveat). -/
+theorem peeling_amplification_iSup {N : ℕ} (G : ChordGeometry N) (eps eps' : Fin N → ℝ)
+    (i : Fin N) :
+    |eps i - eps' i|
+      ≤ (⨆ k, |chordIntensity G.L eps k - chordIntensity G.L eps' k|) / peelDiagFloor G
+          * ∑ k ∈ Finset.range (N - i.val), peelCouplingRatio G ^ k := by
+  haveI : Nonempty (Fin N) := ⟨i⟩
+  have hell_pos : 0 < peelDiagFloor G := by
+    obtain ⟨i₀, hi₀⟩ := Finite.exists_min (fun k => G.L k k)
+    have heq : peelDiagFloor G = G.L i₀ i₀ :=
+      le_antisymm (ciInf_le (Finite.bddBelow_range _) i₀) (le_ciInf hi₀)
+    rw [heq]; exact G.diag_pos i₀
+  have hell_le : ∀ k, peelDiagFloor G ≤ G.L k k := fun k =>
+    ciInf_le (Finite.bddBelow_range _) k
+  have hemax : ∀ k, |chordIntensity G.L eps k - chordIntensity G.L eps' k|
+      ≤ ⨆ k, |chordIntensity G.L eps k - chordIntensity G.L eps' k| := fun k =>
+    le_ciSup (f := fun k => |chordIntensity G.L eps k - chordIntensity G.L eps' k|)
+      (Finite.bddAbove_range _) k
+  have hrho_ge : ∀ k, (∑ j ∈ Finset.univ.filter (k < ·), |G.L k j|)
+      ≤ peelCouplingRatio G * G.L k k := by
+    intro k
+    have h1 : (∑ j ∈ Finset.univ.filter (k < ·), |G.L k j|) / G.L k k ≤ peelCouplingRatio G :=
+      le_ciSup (f := fun i => (∑ j ∈ Finset.univ.filter (i < ·), |G.L i j|) / G.L i i)
+        (Finite.bddAbove_range _) k
+    exact (div_le_iff₀ (G.diag_pos k)).mp h1
+  have hrho_nonneg : 0 ≤ peelCouplingRatio G := by
+    have h0 : (0 : ℝ) ≤ (∑ j ∈ Finset.univ.filter (i < ·), |G.L i j|) / G.L i i :=
+      div_nonneg (Finset.sum_nonneg (fun j _ => abs_nonneg _)) (G.diag_pos i).le
+    have h1 : (∑ j ∈ Finset.univ.filter (i < ·), |G.L i j|) / G.L i i ≤ peelCouplingRatio G :=
+      le_ciSup (f := fun i => (∑ j ∈ Finset.univ.filter (i < ·), |G.L i j|) / G.L i i)
+        (Finite.bddAbove_range _) i
+    exact h0.trans h1
+  exact peeling_amplification G eps eps' (peelDiagFloor G) (peelCouplingRatio G)
+    (⨆ k, |chordIntensity G.L eps k - chordIntensity G.L eps' k|)
+    hell_pos hrho_nonneg hell_le hemax hrho_ge i
+
+/-- Non-vacuity / legibility witness for `peeling_amplification`: at the critical
+coupling `ρ = 1` (off-diagonal weight rivals the diagonal) the geometric factor
+`∑_{k<N} ρ^k` collapses to exactly the shell count `N`. So the worst-case
+amplification grows *linearly in the number of shells* — the honest
+"core-singularity" blow-up the bound encodes, confirming it is not a vacuous or
+`N`-independent stability statement. -/
+example (N : ℕ) : (∑ k ∈ Finset.range N, (1 : ℝ) ^ k) = N := by simp
+
+section LinftyCondition
+
+attribute [local instance] Matrix.linftyOpNormedAddCommGroup
+
+/-- **Abstract ℓ∞ condition bound (cross-check).** In the ℓ∞ (max-abs-row-sum)
+induced matrix norm, `‖Δε‖∞ ≤ ‖L⁻¹‖∞ · ‖ΔI‖∞`: the textbook named condition factor
+`‖L⁻¹‖∞`. Complementary to `peeling_amplification`, which makes that otherwise
+opaque factor legible as `(1/ℓ)·∑ρ^k`. The norm here is the *elementary* ℓ∞ induced
+norm (`Matrix.linfty_opNorm_mulVec`), distinct from the L²/spectral operator norm. -/
+theorem peeling_condition_linfty {N : ℕ} (G : ChordGeometry N) (eps eps' : Fin N → ℝ) :
+    ‖eps - eps'‖ ≤ ‖G.L⁻¹‖ * ‖chordIntensity G.L eps - chordIntensity G.L eps'‖ := by
+  letI := (chordGeometry_isUnit G).invertible
+  have hΔ : chordIntensity G.L eps - chordIntensity G.L eps'
+      = G.L.mulVec (eps - eps') := by
+    simp [chordIntensity, Matrix.mulVec_sub]
+  have hrec : eps - eps'
+      = G.L⁻¹.mulVec (chordIntensity G.L eps - chordIntensity G.L eps') :=
+    (Matrix.inv_mulVec_eq_vec hΔ).symm
+  calc ‖eps - eps'‖
+      = ‖G.L⁻¹.mulVec (chordIntensity G.L eps - chordIntensity G.L eps')‖ := by rw [hrec]
+    _ ≤ ‖G.L⁻¹‖ * ‖chordIntensity G.L eps - chordIntensity G.L eps'‖ :=
+        Matrix.linfty_opNorm_mulVec _ _
+
+end LinftyCondition
+
 end CflibsFormal

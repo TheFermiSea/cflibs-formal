@@ -30,11 +30,13 @@ import CflibsFormal.LineBroadening
 import CflibsFormal.MatrixEffects
 import CflibsFormal.MultiSpecies
 import CflibsFormal.NoiseToComposition
+import CflibsFormal.NonLTEKinetics
 import CflibsFormal.NonlinearLeastSquares
 import CflibsFormal.OLS
 import CflibsFormal.OuterLoopModelB
 import CflibsFormal.PartialLTE
 import CflibsFormal.PartitionLipschitz
+import CflibsFormal.RadiativeTransferDepth
 import CflibsFormal.Robustness
 import CflibsFormal.Saha
 import CflibsFormal.SahaEquilibrium

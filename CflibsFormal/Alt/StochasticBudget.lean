@@ -331,4 +331,308 @@ example :
     ∧ (1 : ℝ) ^ 2 / ((∑ k, (![0, 1, 2] k - mean ![0, 1, 2]) ^ 2) * (1 : ℝ) ^ 2) < 1 := by
   constructor <;> (simp [mean, Fin.sum_univ_three]; norm_num)
 
+/-! ## Temperature tail transfer — the crown (`temp_tail_transfer`) -/
+
+/-- **Slope→temperature reader** `T = 1/(k_B·x)`: the (sign-normalized) Boltzmann-plot
+inverse-temperature map, the deterministic bridge the tail transfer routes through. -/
+noncomputable def tempOfSlope (kB x : ℝ) : ℝ := 1 / (kB * x)
+
+/-- **The recovered-temperature estimator as a random variable**: the temperature read off the
+random OLS slope, `T̂ ω = tempOfSlope kB (β̂ ω)`. The stochastic twin of the deterministic
+temperature reader; `temp_tail_transfer` bounds its tail around the true `T` on the
+sign-normalized branch `β = 1/(k_B·T)`. -/
+noncomputable def tempHat (kB : ℝ) (E : ι → ℝ) (α β : ℝ) (ε : ι → Ω → ℝ) (ω : Ω) : ℝ :=
+  tempOfSlope kB (betaHat E α β ε ω)
+
+theorem temp_slope_event_subset {kB T epsT x : ℝ}
+    (hkB : 0 < kB) (hT : 0 < T) (hepsT : 0 < epsT)
+    (hx : epsT ≤ |1 / (kB * x) - T|) :
+    epsT / (kB * T * (T + epsT)) ≤ |x - 1 / (kB * T)| := by
+  by_contra hlt
+  rw [not_le, abs_lt] at hlt
+  obtain ⟨hlo, hhi⟩ := hlt
+  have hTe : 0 < T + epsT := by linarith
+  have hkBne : kB ≠ 0 := hkB.ne'
+  have hTne : T ≠ 0 := hT.ne'
+  have hid_lo : 1 / (kB * T) - epsT / (kB * T * (T + epsT)) = 1 / (kB * (T + epsT)) := by
+    field_simp
+    ring
+  have hid_hi : 1 / (kB * T) + epsT / (kB * T * (T + epsT))
+      = (T + 2 * epsT) / (kB * T * (T + epsT)) := by
+    field_simp
+    ring
+  have hxlb : 1 / (kB * (T + epsT)) < x := by linarith [hlo, hid_lo]
+  have hxub : x < (T + 2 * epsT) / (kB * T * (T + epsT)) := by linarith [hhi, hid_hi]
+  have hxpos : 0 < x := lt_trans (by positivity) hxlb
+  have hkBx : 0 < kB * x := by positivity
+  have hy : (1 / (kB * x)) * (kB * x) = 1 := one_div_mul_cancel hkBx.ne'
+  have h1 : 1 < kB * x * (T + epsT) := by
+    have h := (div_lt_iff₀ (show (0:ℝ) < kB * (T + epsT) by positivity)).mp hxlb
+    nlinarith [h]
+  have h2 : kB * x * (T - epsT) < 1 := by
+    rcases le_or_gt T epsT with hle | hgt
+    · have : kB * x * (T - epsT) ≤ 0 :=
+        mul_nonpos_of_nonneg_of_nonpos hkBx.le (by linarith)
+      linarith
+    · have hpc : (0:ℝ) < kB * T * (T + epsT) := by positivity
+      have hc := (lt_div_iff₀ hpc).mp hxub
+      nlinarith [hc, mul_pos hT hTe, show (0:ℝ) < T - epsT by linarith]
+  have hfinal : |1 / (kB * x) - T| < epsT := by
+    rw [abs_lt]
+    refine ⟨?_, ?_⟩
+    · nlinarith [hy, h2, hkBx]
+    · nlinarith [hy, h1, hkBx]
+  exact absurd hx (not_le.mpr hfinal)
+
+theorem temp_tail_transfer [Nonempty ι] (E : ι → ℝ) (α β σ : ℝ) (ε : ι → Ω → ℝ)
+    {kB T epsT : ℝ}
+    (hvar : 0 < ∑ k, (E k - mean E) ^ 2) (hkB : 0 < kB) (hT : 0 < T) (hepsT : 0 < epsT)
+    (hβ : β = 1 / (kB * T))
+    (hL2 : ∀ k, MemLp (ε k) 2 μ) (hmean0 : ∀ k, μ[ε k] = 0)
+    (huncorr : ∀ i j, i ≠ j → covariance (ε i) (ε j) μ = 0)
+    (hhom : ∀ k, variance (ε k) μ = σ ^ 2) :
+    μ {ω | epsT ≤ |tempHat kB E α β ε ω - T|}
+      ≤ ENNReal.ofReal
+          (σ ^ 2 * kB ^ 2 * T ^ 2 * (T + epsT) ^ 2
+            / ((∑ k, (E k - mean E) ^ 2) * epsT ^ 2)) := by
+  subst hβ
+  have hkBne : kB ≠ 0 := hkB.ne'
+  have hTne : T ≠ 0 := hT.ne'
+  have hepsTne : epsT ≠ 0 := hepsT.ne'
+  have hSne : (∑ k, (E k - mean E) ^ 2) ≠ 0 := hvar.ne'
+  have hTene : T + epsT ≠ 0 := by positivity
+  set δ := epsT / (kB * T * (T + epsT)) with hδdef
+  have hδpos : 0 < δ := by rw [hδdef]; positivity
+  have hsub : {ω | epsT ≤ |tempHat kB E α (1 / (kB * T)) ε ω - T|}
+      ⊆ {ω | δ ≤ |betaHat E α (1 / (kB * T)) ε ω - 1 / (kB * T)|} := by
+    intro ω hω
+    simp only [Set.mem_setOf_eq] at hω ⊢
+    rw [hδdef]
+    exact temp_slope_event_subset hkB hT hepsT
+      (by simpa only [tempHat, tempOfSlope] using hω)
+  refine (measure_mono hsub).trans ?_
+  have hcheb := olsSlope_chebyshev E α (1 / (kB * T)) σ δ ε hvar hδpos hL2 hmean0 huncorr hhom
+  refine hcheb.trans (le_of_eq ?_)
+  congr 1
+  rw [hδdef]
+  field_simp
+
+/-! ### Non-vacuity witnesses (temperature tail) -/
+
+example : (1 : ℝ) / (1 * 1 * (1 + 1)) ≤ |(1 / 2 : ℝ) - 1 / (1 * 1)| :=
+  temp_slope_event_subset (by norm_num) (by norm_num) (by norm_num) (by norm_num)
+
+example :
+    (Measure.dirac (α := Unit) Unit.unit)
+        {ω | (1 : ℝ) ≤ |tempHat 1 ![0, 1, 2] 0 (1 / (1 * 1)) (fun _ => 0) ω - 1|}
+      ≤ ENNReal.ofReal
+          ((0 : ℝ) ^ 2 * (1 : ℝ) ^ 2 * (1 : ℝ) ^ 2 * ((1 : ℝ) + 1) ^ 2
+            / ((∑ k, (![0, 1, 2] k - mean ![0, 1, 2]) ^ 2) * (1 : ℝ) ^ 2)) := by
+  refine temp_tail_transfer ![0, 1, 2] 0 (1 / (1 * 1)) 0 (fun _ => 0) ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_
+  · simp [mean, Fin.sum_univ_three]; norm_num
+  · norm_num
+  · norm_num
+  · norm_num
+  · norm_num
+  · intro k; exact MemLp.zero
+  · intro k; simp
+  · intro i j _; simp
+  · intro k; rw [variance_zero]; norm_num
+
+example :
+    0 < (1 : ℝ) ^ 2 * (1 : ℝ) ^ 2 * (1 : ℝ) ^ 2 * ((1 : ℝ) + 10) ^ 2
+          / ((∑ k, (![0, 1, 2] k - mean ![0, 1, 2]) ^ 2) * (10 : ℝ) ^ 2)
+    ∧ (1 : ℝ) ^ 2 * (1 : ℝ) ^ 2 * (1 : ℝ) ^ 2 * ((1 : ℝ) + 10) ^ 2
+          / ((∑ k, (![0, 1, 2] k - mean ![0, 1, 2]) ^ 2) * (10 : ℝ) ^ 2) < 1 := by
+  constructor <;> (simp [mean, Fin.sum_univ_three]; norm_num)
+
+/-! ## Composition tail — per-species density bound and the union over species -/
+
+theorem density_event_subset {b bHat U Fcal τ : ℝ}
+    (hU : 0 < U) (hFcal : 0 < Fcal) (hτ : 0 < τ)
+    (h : τ ≤ |Real.exp bHat * U / Fcal - Real.exp b * U / Fcal|) :
+    Real.log (1 + τ / (Real.exp b * U / Fcal)) ≤ |bHat - b| := by
+  have hrel := relDensity_le hU.le hFcal (le_refl (|bHat - b|))
+  set N := Real.exp b * U / Fcal with hN
+  have hNpos : 0 < N := by rw [hN]; positivity
+  by_contra hlt
+  rw [not_le] at hlt
+  have h1τN : 0 < 1 + τ / N := by have := div_pos hτ hNpos; linarith
+  have hexp : Real.exp (|bHat - b|) < 1 + τ / N := by
+    calc Real.exp (|bHat - b|) < Real.exp (Real.log (1 + τ / N)) := Real.exp_lt_exp.mpr hlt
+      _ = 1 + τ / N := Real.exp_log h1τN
+  have hbound : N * (Real.exp (|bHat - b|) - 1) < τ := by
+    have hstep : N * (Real.exp (|bHat - b|) - 1) < N * (τ / N) :=
+      mul_lt_mul_of_pos_left (by linarith [hexp]) hNpos
+    have hNτ : N * (τ / N) = τ := by field_simp
+    rwa [hNτ] at hstep
+  linarith [h, hrel, hbound]
+
+/-- **The recovered-density estimator as a random variable**: the CF-LIBS density read off the
+random OLS intercept, `N̂ ω = exp(α̂ ω)·U/Fcal` (the intercept identity `b = log(Fcal·N/U)`
+inverted at the realized intercept `alphaHat`). The stochastic twin of the deterministic
+density reader; `density_tail_species` bounds its tail around the true `N = exp(α)·U/Fcal`. -/
+noncomputable def densityHat (E : ι → ℝ) (α β U Fcal : ℝ) (ε : ι → Ω → ℝ) (ω : Ω) : ℝ :=
+  Real.exp (alphaHat E α β ε ω) * U / Fcal
+
+theorem density_tail_species [Nonempty ι] (E : ι → ℝ) (α β σ U Fcal τ : ℝ) (ε : ι → Ω → ℝ)
+    (hvar : 0 < ∑ k, (E k - mean E) ^ 2) (hU : 0 < U) (hFcal : 0 < Fcal) (hτ : 0 < τ)
+    (hL2 : ∀ k, MemLp (ε k) 2 μ) (hmean0 : ∀ k, μ[ε k] = 0)
+    (huncorr : ∀ i j, i ≠ j → covariance (ε i) (ε j) μ = 0)
+    (hhom : ∀ k, variance (ε k) μ = σ ^ 2) :
+    μ {ω | τ ≤ |densityHat E α β U Fcal ε ω - Real.exp α * U / Fcal|}
+      ≤ ENNReal.ofReal
+          (σ ^ 2 * (1 / (Fintype.card ι : ℝ) + (mean E) ^ 2 / (∑ k, (E k - mean E) ^ 2))
+            / (Real.log (1 + τ / (Real.exp α * U / Fcal))) ^ 2) := by
+  have hNpos : 0 < Real.exp α * U / Fcal := by positivity
+  have hδpos : 0 < Real.log (1 + τ / (Real.exp α * U / Fcal)) := by
+    apply Real.log_pos
+    have := div_pos hτ hNpos
+    linarith
+  have hsub : {ω | τ ≤ |densityHat E α β U Fcal ε ω - Real.exp α * U / Fcal|}
+      ⊆ {ω | Real.log (1 + τ / (Real.exp α * U / Fcal)) ≤ |alphaHat E α β ε ω - α|} := by
+    intro ω hω
+    simp only [Set.mem_setOf_eq] at hω ⊢
+    exact density_event_subset hU hFcal hτ (by simpa only [densityHat] using hω)
+  refine (measure_mono hsub).trans ?_
+  exact alphaHat_chebyshev E α β σ (Real.log (1 + τ / (Real.exp α * U / Fcal))) ε
+    hvar hδpos hL2 hmean0 huncorr hhom
+
+theorem composition_tail_union [Nonempty ι] {κ : Type*} [Fintype κ]
+    (E : κ → ι → ℝ) (α β σ U Fcal : κ → ℝ) (τ : ℝ) (ε : κ → ι → Ω → ℝ)
+    (hvar : ∀ s, 0 < ∑ k, (E s k - mean (E s)) ^ 2)
+    (hU : ∀ s, 0 < U s) (hFcal : ∀ s, 0 < Fcal s) (hτ : 0 < τ)
+    (hL2 : ∀ s k, MemLp (ε s k) 2 μ) (hmean0 : ∀ s k, μ[ε s k] = 0)
+    (huncorr : ∀ s i j, i ≠ j → covariance (ε s i) (ε s j) μ = 0)
+    (hhom : ∀ s k, variance (ε s k) μ = (σ s) ^ 2) :
+    μ (⋃ s, {ω | τ ≤ |densityHat (E s) (α s) (β s) (U s) (Fcal s) (ε s) ω
+                        - Real.exp (α s) * U s / Fcal s|})
+      ≤ ∑ s, ENNReal.ofReal
+          ((σ s) ^ 2 * (1 / (Fintype.card ι : ℝ)
+              + (mean (E s)) ^ 2 / (∑ k, (E s k - mean (E s)) ^ 2))
+            / (Real.log (1 + τ / (Real.exp (α s) * U s / Fcal s))) ^ 2) := by
+  have hbi : (⋃ s, {ω | τ ≤ |densityHat (E s) (α s) (β s) (U s) (Fcal s) (ε s) ω
+                        - Real.exp (α s) * U s / Fcal s|})
+      = ⋃ s ∈ (Finset.univ : Finset κ),
+          {ω | τ ≤ |densityHat (E s) (α s) (β s) (U s) (Fcal s) (ε s) ω
+                    - Real.exp (α s) * U s / Fcal s|} := by
+    simp
+  rw [hbi]
+  refine (measure_biUnion_finset_le Finset.univ _).trans ?_
+  refine Finset.sum_le_sum (fun s _ => ?_)
+  exact density_tail_species (E s) (α s) (β s) (σ s) (U s) (Fcal s) τ (ε s)
+    (hvar s) (hU s) (hFcal s) hτ (hL2 s) (hmean0 s) (huncorr s) (hhom s)
+
+/-! ### Non-vacuity witnesses (composition tail) -/
+
+example : Real.log (1 + (1 : ℝ) / (Real.exp 0 * 1 / 1)) ≤ |Real.log 3 - 0| :=
+  density_event_subset (by norm_num) (by norm_num) (by norm_num)
+    (by rw [Real.exp_log (by norm_num), Real.exp_zero]; norm_num)
+
+example :
+    (Measure.dirac (α := Unit) Unit.unit)
+        {ω | (1 : ℝ) ≤ |densityHat ![0, 1, 2] 0 0 1 1 (fun _ => 0) ω
+                        - Real.exp 0 * 1 / 1|}
+      ≤ ENNReal.ofReal
+          ((0 : ℝ) ^ 2 * (1 / (Fintype.card (Fin 3) : ℝ)
+              + (mean ![0, 1, 2]) ^ 2 / (∑ k, (![0, 1, 2] k - mean ![0, 1, 2]) ^ 2))
+            / (Real.log (1 + (1 : ℝ) / (Real.exp 0 * 1 / 1))) ^ 2) := by
+  refine density_tail_species ![0, 1, 2] 0 0 0 1 1 1 (fun _ => 0)
+    ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_
+  · simp [mean, Fin.sum_univ_three]; norm_num
+  · norm_num
+  · norm_num
+  · norm_num
+  · intro k; exact MemLp.zero
+  · intro k; simp
+  · intro i j _; simp
+  · intro k; rw [variance_zero]; norm_num
+
+example :
+    (Measure.dirac (α := Unit) Unit.unit)
+        (⋃ _s : Fin 1, {ω | (1 : ℝ) ≤ |densityHat ![0, 1, 2] 0 0 1 1 (fun _ => 0) ω
+                        - Real.exp 0 * 1 / 1|})
+      ≤ ∑ _s : Fin 1, ENNReal.ofReal
+          ((0 : ℝ) ^ 2 * (1 / (Fintype.card (Fin 3) : ℝ)
+              + (mean (![0, 1, 2] : Fin 3 → ℝ)) ^ 2
+                / (∑ k, ((![0, 1, 2] : Fin 3 → ℝ) k - mean (![0, 1, 2] : Fin 3 → ℝ)) ^ 2))
+            / (Real.log (1 + (1 : ℝ) / (Real.exp 0 * 1 / 1))) ^ 2) := by
+  refine composition_tail_union (fun _ => ![0, 1, 2]) (fun _ => 0) (fun _ => 0) (fun _ => 0)
+    (fun _ => 1) (fun _ => 1) 1 (fun _ _ => 0) ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_
+  · intro s; simp [mean, Fin.sum_univ_three]; norm_num
+  · intro s; norm_num
+  · intro s; norm_num
+  · norm_num
+  · intro s k; exact MemLp.zero
+  · intro s k; simp
+  · intro s i j _; simp
+  · intro s k; rw [variance_zero]; norm_num
+
+/-! ## Sub-Gaussian upgrade of the slope tail (`olsSlope_subGaussian_tail`) -/
+
+omit [IsProbabilityMeasure μ] in
+theorem olsSlope_subGaussian_tail [Nonempty ι] (E : ι → ℝ) (α β : ℝ) (ε : ι → Ω → ℝ)
+    {c : NNReal} {δ : ℝ}
+    (hvar : 0 < ∑ k, (E k - mean E) ^ 2) (hδ : 0 ≤ δ) (hc : 0 < c)
+    (hindep : iIndepFun ε μ)
+    (hsubG : ∀ k, HasSubgaussianMGF (ε k) c μ) :
+    μ.real {ω | δ ≤ |betaHat E α β ε ω - β|}
+      ≤ 2 * Real.exp (-(δ ^ 2 * (∑ k, (E k - mean E) ^ 2)) / (2 * (c : ℝ))) := by
+  have hcpos : (0 : ℝ) < (c : ℝ) := hc
+  have hcR : (c : ℝ) ≠ 0 := hcpos.ne'
+  have hSSne : (∑ k, (E k - mean E) ^ 2) ≠ 0 := hvar.ne'
+  have hindep' : iIndepFun (fun k => (fun x : ℝ => olsWeight E k * x) ∘ ε k) μ :=
+    hindep.comp (fun k x => olsWeight E k * x) (fun k => measurable_id.const_mul (olsWeight E k))
+  have hsum : HasSubgaussianMGF (fun ω => ∑ k, olsWeight E k * ε k ω)
+      (∑ k, (⟨(olsWeight E k) ^ 2, sq_nonneg _⟩ * c : NNReal)) μ :=
+    HasSubgaussianMGF.sum_of_iIndepFun hindep'
+      (fun k _ => (hsubG k).const_mul (olsWeight E k))
+  have hw2 : ∑ k, (olsWeight E k) ^ 2 = 1 / (∑ k, (E k - mean E) ^ 2) := by
+    simp only [olsWeight]; exact olsSlope_noise_gain E hvar
+  have hterm : ∀ k, ((⟨(olsWeight E k) ^ 2, sq_nonneg _⟩ * c : NNReal) : ℝ)
+      = (olsWeight E k) ^ 2 * (c : ℝ) := fun k => by rw [NNReal.coe_mul]; rfl
+  have hCcoe : ((∑ k, (⟨(olsWeight E k) ^ 2, sq_nonneg _⟩ * c : NNReal)) : ℝ)
+      = (c : ℝ) / (∑ k, (E k - mean E) ^ 2) := by
+    push_cast [hterm]; rw [← Finset.sum_mul, hw2]; ring
+  have hexp_eq : -δ ^ 2 / (2 * (∑ k, ((⟨(olsWeight E k) ^ 2, sq_nonneg _⟩ * c : NNReal) : ℝ)))
+      = -(δ ^ 2 * (∑ k, (E k - mean E) ^ 2)) / (2 * (c : ℝ)) := by
+    rw [hCcoe]; field_simp
+  have hpos := hsum.measure_ge_le hδ
+  have hneg := hsum.neg.measure_ge_le hδ
+  simp only [NNReal.coe_sum, Pi.neg_apply] at hpos hneg
+  rw [hexp_eq] at hpos hneg
+  have hset : {ω | δ ≤ |betaHat E α β ε ω - β|}
+      = {ω | δ ≤ ∑ k, olsWeight E k * ε k ω}
+          ∪ {ω | δ ≤ -(∑ k, olsWeight E k * ε k ω)} := by
+    ext ω
+    simp only [Set.mem_setOf_eq, Set.mem_union]
+    rw [olsSlope_estimator_eq E α β ε hvar,
+      show β + (∑ k, olsWeight E k * ε k ω) - β = ∑ k, olsWeight E k * ε k ω from by ring]
+    exact le_abs
+  rw [hset]
+  calc μ.real ({ω | δ ≤ ∑ k, olsWeight E k * ε k ω}
+          ∪ {ω | δ ≤ -(∑ k, olsWeight E k * ε k ω)})
+      ≤ μ.real {ω | δ ≤ ∑ k, olsWeight E k * ε k ω}
+          + μ.real {ω | δ ≤ -(∑ k, olsWeight E k * ε k ω)} := measureReal_union_le _ _
+    _ ≤ Real.exp (-(δ ^ 2 * (∑ k, (E k - mean E) ^ 2)) / (2 * (c : ℝ)))
+          + Real.exp (-(δ ^ 2 * (∑ k, (E k - mean E) ^ 2)) / (2 * (c : ℝ))) :=
+        add_le_add hpos hneg
+    _ = 2 * Real.exp (-(δ ^ 2 * (∑ k, (E k - mean E) ^ 2)) / (2 * (c : ℝ))) := by ring
+
+/-! ### Non-vacuity witness (sub-Gaussian tail) -/
+
+example :
+    0 < 2 * Real.exp (-((3 : ℝ) ^ 2 * (∑ k, (![0, 1, 2] k - mean ![0, 1, 2]) ^ 2)) / (2 * (1 : ℝ)))
+    ∧ 2 * Real.exp (-((3 : ℝ) ^ 2 * (∑ k, (![0, 1, 2] k - mean ![0, 1, 2]) ^ 2)) / (2 * (1 : ℝ)))
+        < 1 := by
+  have hSS : (∑ k, (![0, 1, 2] k - mean ![0, 1, 2]) ^ 2) = 2 := by
+    simp [mean, Fin.sum_univ_three]; norm_num
+  rw [hSS]
+  refine ⟨by positivity, ?_⟩
+  have h : (10 : ℝ) ≤ Real.exp 9 := by have := Real.add_one_le_exp (9 : ℝ); linarith
+  have hpos : (0 : ℝ) < Real.exp 9 := Real.exp_pos 9
+  rw [show -((3 : ℝ) ^ 2 * 2) / (2 * 1) = -9 by norm_num, Real.exp_neg,
+    mul_inv_lt_iff₀ hpos, one_mul]
+  linarith
+
 end CflibsFormal.Alt

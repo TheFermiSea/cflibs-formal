@@ -15,7 +15,7 @@ One row per module under `CflibsFormal/`. *Base* = imports no `CflibsFormal` mod
 | `Alt/OLSAtomicDataPerturbation.lean` | `CflibsFormal.Alt` | 6 | 2 | – | ✓ | per-line atomic-data error in the OLS density reader |
 | `Alt/OLSVariance.lean` | `CflibsFormal.Alt` | 7 | 1 | – | ✓ | the Gauss–Markov variance law for the OLS Boltzmann-plot slope |
 | `Alt/SelfAbsorbed.lean` | `CflibsFormal.Alt` | 5 | 1 | – | – | the self-absorption-corrected composition estimator (alternative) |
-| `Alt/StochasticBudget.lean` | `CflibsFormal.Alt` | 7 | 1 | – | ✓ | Chebyshev tail (concentration) bounds for the OLS slope and intercept |
+| `Alt/StochasticBudget.lean` | `CflibsFormal.Alt` | 13 | 4 | – | ✓ | Chebyshev tail (concentration) bounds for the OLS slope and intercept |
 | `Analysis.lean` | `CflibsFormal` | 7 | 0 | ✓ | – | Shared analysis scaffolding |
 | `AtomicDataPerturbation.lean` | `CflibsFormal` | 8 | 4 | – | ✓ | the atomic-data perturbation channel |
 | `Boltzmann.lean` | `CflibsFormal` | 5 | 3 | ✓ | – | Part 1: the Boltzmann distribution |
@@ -28,7 +28,7 @@ One row per module under `CflibsFormal/`. *Base* = imports no `CflibsFormal` mod
 | `CurveOfGrowth.lean` | `CflibsFormal` | 10 | 2 | – | ✓ | the curve of growth and multi-line self-absorption |
 | `Dimensions.lean` | `CflibsFormal` | 16 | 15 | ✓ | – | a dimensional-analysis layer |
 | `EquivalentWidth.lean` | `CflibsFormal` | 20 | 2 | ✓ | ✓ | the equivalent-width curve of growth |
-| `ErrorBudget.lean` | `CflibsFormal` | 19 | 2 | – | – | the error-propagation chain and DERIVED reliability thresholds |
+| `ErrorBudget.lean` | `CflibsFormal` | 20 | 2 | – | – | the error-propagation chain and DERIVED reliability thresholds |
 | `ForwardMap.lean` | `CflibsFormal` | 3 | 1 | – | – | Part 4: the optically-thin forward map |
 | `ForwardMapEnergy.lean` | `CflibsFormal` | 5 | 1 | – | ✓ | the energy-intensity forward map and convention equivalence |
 | `HydrogenStark.lean` | `CflibsFormal` | 4 | 2 | ✓ | ✓ | the hydrogen-line (Balmer) Stark electron-density diagnostic |
@@ -40,11 +40,13 @@ One row per module under `CflibsFormal/`. *Base* = imports no `CflibsFormal` mod
 | `MatrixEffects.lean` | `CflibsFormal` | 22 | 7 | – | ✓ | matrix effects (completeness, ablation, ionization suppression) |
 | `MultiSpecies.lean` | `CflibsFormal` | 12 | 4 | – | – | Multi-species / multi-stage composition glue |
 | `NoiseToComposition.lean` | `CflibsFormal` | 5 | 2 | – | ✓ | the end-to-end noise → composition chain (gap #5, the composed bound) |
+| `NonLTEKinetics.lean` | `CflibsFormal` | 15 | 2 | – | ✓ | non-LTE departure coefficients and the departure error budget |
 | `NonlinearLeastSquares.lean` | `CflibsFormal` | 31 | 3 | – | ✓ | the nonlinear joint `(T, N)` least-squares inverse (existence leg) |
 | `OLS.lean` | `CflibsFormal` | 17 | 9 | ✓ | – | the ordinary-least-squares algebraic foundation |
 | `OuterLoopModelB.lean` | `CflibsFormal` | 1 | 0 | – | – | the outer temperature iteration, Model B headline (Frontier 04) |
 | `PartialLTE.lean` | `CflibsFormal` | 6 | 2 | – | ✓ | the partial-LTE thermalization limit |
 | `PartitionLipschitz.lean` | `CflibsFormal` | 3 | 0 | – | ✓ | the `U_s(T)` partition-function Lipschitz leg (gap #5) |
+| `RadiativeTransferDepth.lean` | `CflibsFormal` | 7 | 3 | – | ✓ | depth-structured radiative transfer (the N-zone stack) |
 | `Robustness.lean` | `CflibsFormal` | 5 | 2 | – | – | Robustness / error-propagation bounds |
 | `Saha.lean` | `CflibsFormal` | 6 | 4 | – | – | Part 2: the Saha ionization equilibrium |
 | `SahaEquilibrium.lean` | `CflibsFormal` | 34 | 6 | – | ✓ | Coupled Saha–closure–charge self-consistency (reduced core) |
@@ -53,10 +55,10 @@ One row per module under `CflibsFormal/`. *Base* = imports no `CflibsFormal` mod
 | `SelfAbsorption.lean` | `CflibsFormal` | 10 | 3 | – | – | self-absorption / optical-thickness-aware forward map |
 | `SelfAbsorptionInverse.lean` | `CflibsFormal` | 5 | 1 | – | – | Self-absorption coupled into the inverse problem — identifiability preserved vs. lost |
 | `SelfReversal.lean` | `CflibsFormal` | 4 | 1 | ✓ | ✓ | self-reversal (the two-zone line dip) |
-| `SpatialForward.lean` | `CflibsFormal` | 4 | 1 | ✓ | ✓ | spatially-resolved (discrete Abel / onion-peeling) forward model |
+| `SpatialForward.lean` | `CflibsFormal` | 11 | 4 | ✓ | ✓ | spatially-resolved (discrete Abel / onion-peeling) forward model |
 | `StarkBroadening.lean` | `CflibsFormal` | 7 | 4 | – | ✓ | Stark broadening + the McWhirter LTE criterion |
 | `StarkShift.lean` | `CflibsFormal` | 9 | 3 | ✓ | ✓ | the Stark line-shift electron-density diagnostic |
 | `TemporalEvolution.lean` | `CflibsFormal` | 8 | 7 | – | ✓ | time-resolved (gate-delayed) recovery |
 | `VoigtWidth.lean` | `CflibsFormal` | 7 | 1 | ✓ | ✓ | the Voigt FWHM combination (Olivero–Longbothum) |
-| **50 modules** | | **431** | **153** | | | |
+| **52 modules** | | **467** | **164** | | | |
 

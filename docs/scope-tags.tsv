@@ -216,10 +216,24 @@ SpatialForward.lean	chordGeometry_det_ne_zero	PURE-MATH	—
 SpatialForward.lean	chordGeometry_isUnit	PURE-MATH	—
 SpatialForward.lean	chord_profile_identifiable	EXACT	Parigger 2016
 SpatialForward.lean	singleZone_identifiable	EXACT	Parigger 2016
+SpatialForward.lean	peeling_identity	PURE-MATH	—
+SpatialForward.lean	onionPeel_chordIntensity	PURE-MATH	—
+SpatialForward.lean	onionPeel_blockTriangular	PURE-MATH	—
+SpatialForward.lean	peeling_single_step	PURE-MATH	—
+SpatialForward.lean	peeling_amplification	REDUCED	Aguilera & Aragón 2007
+SpatialForward.lean	peeling_amplification_iSup	REDUCED	Aguilera & Aragón 2007
+SpatialForward.lean	peeling_condition_linfty	PURE-MATH	—
 SelfReversal.lean	emergentIntensity_nonneg	PURE-MATH	—
 SelfReversal.lean	selfReversal_noShell	EXACT	Cowan–Dieke 1948
 SelfReversal.lean	selfReversal_uniformSource	EXACT	Cowan–Dieke 1948
 SelfReversal.lean	emergentIntensity_strictAnti_shell	EXACT	Cowan–Dieke 1948
+RadiativeTransferDepth.lean	rtEmergent_single	EXACT	Gornushkin 1999
+RadiativeTransferDepth.lean	rtEmergent_two	EXACT	Cowan–Dieke 1948
+RadiativeTransferDepth.lean	rtEmergent_sandwich	EXACT	Gornushkin 1999
+RadiativeTransferDepth.lean	rtEmergent_uniform	EXACT	Gornushkin 1999
+RadiativeTransferDepth.lean	rtFormal_const	EXACT	Gornushkin 1999
+RadiativeTransferDepth.lean	rtFormal_sandwich	EXACT	Gornushkin 1999
+RadiativeTransferDepth.lean	rtFormalLinear	PURE-MATH	—
 LineBroadening.lean	dopplerFWHM_pos	PURE-MATH	—
 LineBroadening.lean	dopplerFWHM_strictMono_T	PURE-MATH	—
 LineBroadening.lean	doppler_recovers	EXACT	Griem 1997
@@ -340,6 +354,22 @@ ErrorBudget.lean	composition_target_sufficient	REDUCED	Tognoni 2010
 ErrorBudget.lean	olsIntercept_stable_hetero	REDUCED	Tognoni 2010
 ErrorBudget.lean	combinedSlope_offset_lipschitz	REDUCED	Aguilera & Aragón 2007
 ErrorBudget.lean	combinedSlopeTempUpdate_lipschitz	REDUCED	Aguilera & Aragón 2007
+ErrorBudget.lean	log_lip_floor	PURE-MATH	—
+NonLTEKinetics.lean	two_level_balance	REDUCED	Griem 1997
+NonLTEKinetics.lean	departureCoeff_pos	PURE-MATH	—
+NonLTEKinetics.lean	departureCoeff_le_one	PURE-MATH	—
+NonLTEKinetics.lean	departureCoeffNe_nonneg	PURE-MATH	—
+NonLTEKinetics.lean	departureCoeffNe_le_one	PURE-MATH	—
+NonLTEKinetics.lean	one_sub_departureCoeffNe	PURE-MATH	—
+NonLTEKinetics.lean	departureCoeffNe_strictMonoOn_ne	PURE-MATH	—
+NonLTEKinetics.lean	departureCoeffNe_tendsto_one	REDUCED	Cristoforetti 2010
+NonLTEKinetics.lean	mcwhirter_forces_departure	EXACT	McWhirter 1965
+NonLTEKinetics.lean	departure_threshold_iff	REDUCED	Cristoforetti 2010
+NonLTEKinetics.lean	nonlte_ordinate_shift	EXACT	Boltzmann
+NonLTEKinetics.lean	abs_log_departure_le	PURE-MATH	—
+NonLTEKinetics.lean	nonlte_temp_error	REDUCED	Cristoforetti 2010
+NonLTEKinetics.lean	nonlte_density_error	REDUCED	Cristoforetti 2010
+NonLTEKinetics.lean	nonlte_temp_error_uniform	REDUCED	Cristoforetti 2010
 Alt/OLSVariance.lean	olsSlope_estimator_eq	PURE-MATH	—
 Alt/OLSVariance.lean	expectation_const_add_weightedNoise	PURE-MATH	—
 Alt/OLSVariance.lean	variance_const_add_weightedNoise	PURE-MATH	—
@@ -418,6 +448,12 @@ Alt/StochasticBudget.lean	alphaHat_unbiased	REDUCED	Aitken 1935
 Alt/StochasticBudget.lean	alphaHat_variance_eq	EXACT	Aitken 1935
 Alt/StochasticBudget.lean	alphaHat_memLp_two	PURE-MATH	—
 Alt/StochasticBudget.lean	alphaHat_chebyshev	REDUCED	Aitken 1935
+Alt/StochasticBudget.lean	temp_slope_event_subset	PURE-MATH	—
+Alt/StochasticBudget.lean	temp_tail_transfer	REDUCED	Tognoni 2010
+Alt/StochasticBudget.lean	density_event_subset	PURE-MATH	—
+Alt/StochasticBudget.lean	density_tail_species	REDUCED	Tognoni 2010
+Alt/StochasticBudget.lean	composition_tail_union	REDUCED	Tognoni 2010
+Alt/StochasticBudget.lean	olsSlope_subGaussian_tail	REDUCED	Aitken 1935
 Certificates.lean	energySpread_certificate_sound	REDUCED	Tognoni 2010
 Certificates.lean	jointRank_certificate_sound	REDUCED	Aguilera & Aragón 2007
 Certificates.lean	conditioning_certificate_sound	PURE-MATH	—
