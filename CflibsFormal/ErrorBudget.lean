@@ -468,4 +468,191 @@ example :
     (by simp only [nvHetIE, mean, Fin.sum_univ_two]; norm_num)
     (by intro k; fin_cases k <;> simp [nvHetIY, nvHetIYhat, nvHetIEps])
 
+/-! ## Frontier 04 (M4/M5) — the outer T-iteration `T`-leg: combined Saha–Boltzmann slope
+
+The single-stage two-line temperature is composition-independent (`ForwardMap`'s
+`temperature_from_two_lines`), so a `T`-leg built from it is a *constant* map — the outer
+CF-LIBS loop would then be degenerate (contraction constant `0`, headline true-but-vacuous).
+The **non-degenerate** loop of Aguilera & Aragón 2007 places *all* stages on one Boltzmann
+plot: the ion-stage ordinates are shifted by the Saha offset `c(n_e) = log S(T) − log n_e +
+Δlog U` (`SahaInverse.sahaBoltzmann_shift_eq_log_saha`), and that vertical shift of the ion
+*cluster* moves the *combined* OLS slope whenever the two clusters occupy different energy
+ranges. This section builds that combined slope, proves its offset→slope sensitivity (the
+content-bearing Lipschitz bound that makes the loop non-trivial), and packages the
+temperature update `n_e ↦ 1/(k_B·slope(n_e))` as the `L₂` leg of the outer contraction. -/
+
+/-- **Combined Saha–Boltzmann slope** (Aguilera & Aragón 2007, Model B).
+The OLS Boltzmann-plot slope over all lines when the ion-stage lines (selected by the
+offset multiplier `s`, e.g. `s k = 1` on ion lines and `0` on neutral lines) are shifted
+vertically by the Saha offset `c(n_e) = offConst − log n_e`, where `offConst` collects the
+`n_e`-independent part `log S(T) + Δlog U` at fixed `T`:
+`slope(n_e) = olsSlope E (fun k => y k + (offConst − log n_e)·s k)`.
+Unlike the single-stage two-line temperature (`temperature_from_two_lines`, composition-
+independent), this slope genuinely depends on `n_e` through the offset — the coupling that
+makes the outer CF-LIBS loop non-degenerate. -/
+noncomputable def combinedSahaBoltzmannSlope (E y s : ι → ℝ) (offConst ne : ℝ) : ℝ :=
+  olsSlope E (fun k => y k + (offConst - Real.log ne) * s k)
+
+/-- **Offset→slope sensitivity of the combined Saha–Boltzmann slope** (`REDUCED`; Aguilera &
+Aragón 2007). The combined slope is Lipschitz in `log n_e` with the explicit constant
+`|∑ₖ (Eₖ − Ē)·sₖ| / SS_E` (`= n_ion·|Ē_ion − Ē| / SS_E`, the covariance of the energies with
+the ion indicator):
+`|slope(n_e₁) − slope(n_e₂)| ≤ (|∑ₖ (Eₖ − Ē)·sₖ| / SS_E)·|log n_e₁ − log n_e₂|`.
+This is in fact an *equality* (the slope is affine in `log n_e`): via `olsSlope_sub_eq` the
+offset difference `log n_e₂ − log n_e₁` multiplies the centered-energy–weighted ion mass
+`∑ₖ (Eₖ − Ē)·sₖ`. The constant is **nonzero exactly when the ion cluster's mean energy
+differs from the overall mean** — precisely the non-degeneracy of Model B (contrast Model A,
+where the constant is `0`). `hvar : 0 < SS_E` supplies the nonzero denominator. -/
+theorem combinedSlope_offset_lipschitz [Nonempty ι] (E y s : ι → ℝ) {offConst : ℝ}
+    (hvar : 0 < ∑ k, (E k - mean E) ^ 2) (ne1 ne2 : ℝ) :
+    |combinedSahaBoltzmannSlope E y s offConst ne1
+        - combinedSahaBoltzmannSlope E y s offConst ne2|
+      ≤ (|∑ k, (E k - mean E) * s k| / (∑ k, (E k - mean E) ^ 2))
+          * |Real.log ne1 - Real.log ne2| := by
+  apply le_of_eq
+  unfold combinedSahaBoltzmannSlope
+  rw [olsSlope_sub_eq E (fun k => y k + (offConst - Real.log ne2) * s k)
+        (fun k => y k + (offConst - Real.log ne1) * s k)]
+  have hnum : (∑ k, (E k - mean E)
+        * ((y k + (offConst - Real.log ne1) * s k)
+            - (y k + (offConst - Real.log ne2) * s k)))
+      = (Real.log ne2 - Real.log ne1) * ∑ k, (E k - mean E) * s k := by
+    rw [Finset.mul_sum]
+    refine Finset.sum_congr rfl (fun k _ => ?_)
+    ring
+  rw [hnum, abs_div, abs_mul, abs_of_pos hvar, abs_sub_comm (Real.log ne2) (Real.log ne1)]
+  set C := |∑ k, (E k - mean E) * s k|
+  set SS := ∑ k, (E k - mean E) ^ 2
+  set D := |Real.log ne1 - Real.log ne2|
+  ring
+
+/-- **`log`-Lipschitz on a positive floor** (`PURE-MATH`). For `0 < c ≤ a, b`,
+`|log a − log b| ≤ |a − b| / c`, from `log t ≤ t − 1`. Private helper for the density→
+temperature leg. -/
+private theorem log_lip_floor {c a b : ℝ} (hc : 0 < c) (ha : c ≤ a) (hb : c ≤ b) :
+    |Real.log a - Real.log b| ≤ |a - b| / c := by
+  have hap : 0 < a := hc.trans_le ha
+  have hbp : 0 < b := hc.trans_le hb
+  rcases le_total b a with hba | hab
+  · rw [abs_of_nonneg (by have := Real.log_le_log hbp hba; linarith),
+      abs_of_nonneg (by linarith : (0:ℝ) ≤ a - b)]
+    have h1 : Real.log a - Real.log b ≤ (a - b) / b := by
+      calc Real.log a - Real.log b = Real.log (a / b) := (Real.log_div hap.ne' hbp.ne').symm
+        _ ≤ a / b - 1 := Real.log_le_sub_one_of_pos (div_pos hap hbp)
+        _ = (a - b) / b := by field_simp
+    have h2 : (a - b) / b ≤ (a - b) / c := by gcongr
+    linarith
+  · rw [abs_of_nonpos (by have := Real.log_le_log hap hab; linarith),
+      abs_of_nonpos (by linarith : a - b ≤ (0:ℝ))]
+    have h1 : Real.log b - Real.log a ≤ (b - a) / a := by
+      calc Real.log b - Real.log a = Real.log (b / a) := (Real.log_div hbp.ne' hap.ne').symm
+        _ ≤ b / a - 1 := Real.log_le_sub_one_of_pos (div_pos hbp hap)
+        _ = (b - a) / a := by field_simp
+    have h2 : (b - a) / a ≤ (b - a) / c := by gcongr
+    have hrw : -(a - b) = b - a := by ring
+    rw [hrw]
+    linarith
+
+/-- **Reciprocal-Lipschitz on a positive floor** (`PURE-MATH`). For `0 < kB`, `0 < m ≤ x, y`,
+`|1/(kB·x) − 1/(kB·y)| ≤ (1/(kB·m²))·|x − y|`, from `1/(kB x) − 1/(kB y) =
+(y − x)/(kB x y)` and `m² ≤ x y`. Private helper for the slope→temperature leg. -/
+private theorem recip_lip_floor {kB m x y : ℝ} (hkB : 0 < kB) (hm : 0 < m)
+    (hx : m ≤ x) (hy : m ≤ y) :
+    |1 / (kB * x) - 1 / (kB * y)| ≤ 1 / (kB * m ^ 2) * |x - y| := by
+  have hxp : 0 < x := hm.trans_le hx
+  have hyp : 0 < y := hm.trans_le hy
+  have key : 1 / (kB * x) - 1 / (kB * y) = (y - x) / (kB * x * y) := by field_simp
+  rw [key, abs_div, abs_of_pos (by positivity : (0:ℝ) < kB * x * y), abs_sub_comm y x,
+    one_div_mul_eq_div]
+  have hmm : m * m ≤ x * y := mul_le_mul hx hy hm.le hxp.le
+  have hden : kB * m ^ 2 ≤ kB * x * y := by nlinarith [hmm, hkB]
+  gcongr
+
+/-- **Combined Saha–Boltzmann temperature update** (Model B `T`-leg): the outer loop's map
+from a density `n_e` to the recovered inverse-temperature-scaled value `1/(k_B·slope(n_e))`,
+where `slope = combinedSahaBoltzmannSlope`. This is the CF-LIBS `T`-leg `legT : n_e ↦ T′`. -/
+noncomputable def combinedSlopeTempUpdate (kB : ℝ) (E y s : ι → ℝ) (offConst ne : ℝ) : ℝ :=
+  1 / (kB * combinedSahaBoltzmannSlope E y s offConst ne)
+
+/-- **`T`-leg Lipschitz constant of the outer CF-LIBS loop** (`REDUCED`; Aguilera & Aragón
+2007). On a density box with floor `n_e ≥ nemin > 0` and a combined-slope floor
+`slope(n_e) ≥ smin > 0`, the temperature update is Lipschitz in `n_e` with the explicit
+constant `L₂ = (|∑ₖ (Eₖ − Ē)·sₖ| / SS_E) / (k_B·smin²·nemin)`:
+`|legT(n_e₁) − legT(n_e₂)| ≤ L₂·|n_e₁ − n_e₂|`.
+The three chained legs are the reciprocal leg `slope ↦ 1/(k_B·slope)` (constant
+`1/(k_B·smin²)`, `recip_lip_floor`), the offset leg (`combinedSlope_offset_lipschitz`,
+constant `|∑ₖ (Eₖ − Ē)·sₖ|/SS_E`), and the log leg `n_e ↦ log n_e` (constant `1/nemin`,
+`log_lip_floor`). `L₂` is the second factor of the outer-loop product gate `L₁·L₂ < 1`
+(with `L₁ = sahaFactorLipConst/R₀` the density-reader constant). `REDUCED`: the slope floor
+`smin` and the density floor `nemin` are carried as explicit side conditions (the recovered
+temperature must stay in the box — genuine hypotheses, cf. `sahaIter_mapsTo`). -/
+theorem combinedSlopeTempUpdate_lipschitz [Nonempty ι] (kB : ℝ) (E y s : ι → ℝ)
+    {offConst nemin smin : ℝ}
+    (hvar : 0 < ∑ k, (E k - mean E) ^ 2) (hkB : 0 < kB) (hnemin : 0 < nemin) (hsmin : 0 < smin)
+    {ne1 ne2 : ℝ} (hne1 : nemin ≤ ne1) (hne2 : nemin ≤ ne2)
+    (hs1 : smin ≤ combinedSahaBoltzmannSlope E y s offConst ne1)
+    (hs2 : smin ≤ combinedSahaBoltzmannSlope E y s offConst ne2) :
+    |combinedSlopeTempUpdate kB E y s offConst ne1
+        - combinedSlopeTempUpdate kB E y s offConst ne2|
+      ≤ (|∑ k, (E k - mean E) * s k| / (∑ k, (E k - mean E) ^ 2))
+          / (kB * smin ^ 2 * nemin) * |ne1 - ne2| := by
+  set s1 := combinedSahaBoltzmannSlope E y s offConst ne1 with hs1def
+  set s2 := combinedSahaBoltzmannSlope E y s offConst ne2 with hs2def
+  set Kc := |∑ k, (E k - mean E) * s k| / (∑ k, (E k - mean E) ^ 2) with hKcdef
+  have hKc0 : 0 ≤ Kc := by rw [hKcdef]; positivity
+  have hrec : |combinedSlopeTempUpdate kB E y s offConst ne1
+        - combinedSlopeTempUpdate kB E y s offConst ne2|
+      ≤ 1 / (kB * smin ^ 2) * |s1 - s2| :=
+    recip_lip_floor hkB hsmin hs1 hs2
+  have hoff : |s1 - s2| ≤ Kc * |Real.log ne1 - Real.log ne2| :=
+    combinedSlope_offset_lipschitz E y s hvar ne1 ne2
+  have hlog : |Real.log ne1 - Real.log ne2| ≤ |ne1 - ne2| / nemin :=
+    log_lip_floor hnemin hne1 hne2
+  have hrecip_nn : (0:ℝ) ≤ 1 / (kB * smin ^ 2) := by positivity
+  calc |combinedSlopeTempUpdate kB E y s offConst ne1
+          - combinedSlopeTempUpdate kB E y s offConst ne2|
+      ≤ 1 / (kB * smin ^ 2) * |s1 - s2| := hrec
+    _ ≤ 1 / (kB * smin ^ 2) * (Kc * |Real.log ne1 - Real.log ne2|) :=
+        mul_le_mul_of_nonneg_left hoff hrecip_nn
+    _ ≤ 1 / (kB * smin ^ 2) * (Kc * (|ne1 - ne2| / nemin)) :=
+        mul_le_mul_of_nonneg_left (mul_le_mul_of_nonneg_left hlog hKc0) hrecip_nn
+    _ = Kc / (kB * smin ^ 2 * nemin) * |ne1 - ne2| := by ring
+
+/-! ### Non-vacuity witnesses (Model B non-degeneracy)
+
+Two lines at energies `E = (0, 1)` with a single ion line (`s = (0, 1)`): `Ē = 1/2`, so
+`∑ₖ (Eₖ − Ē)·sₖ = 1/2 ≠ 0` and the sensitivity constant is `1 > 0`. The combined slope then
+evaluates to `slope(n_e) = − log n_e`, a *genuinely* `n_e`-dependent (non-constant) map — the
+loop is real (contrast Model A, where the two-line temperature ignores its input). -/
+
+private def nvCsE : Fin 2 → ℝ := ![0, 1]
+private def nvCsY : Fin 2 → ℝ := ![0, 0]
+private def nvCsS : Fin 2 → ℝ := ![0, 1]
+
+/-- The offset→slope sensitivity constant is a genuine strictly positive value (Model B is
+non-degenerate: the ion cluster's mean energy differs from the overall mean). -/
+example : 0 < |∑ k, (nvCsE k - mean nvCsE) * nvCsS k| / (∑ k, (nvCsE k - mean nvCsE) ^ 2) := by
+  simp only [nvCsE, nvCsS, mean, Fin.sum_univ_two, Fintype.card_fin]
+  norm_num
+
+/-- Closed form on the witness data: `combinedSahaBoltzmannSlope = − log n_e`. -/
+example (ne : ℝ) : combinedSahaBoltzmannSlope nvCsE nvCsY nvCsS 0 ne = - Real.log ne := by
+  simp only [combinedSahaBoltzmannSlope, olsSlope, mean, nvCsE, nvCsY, nvCsS, Fin.sum_univ_two,
+    Fintype.card_fin, Matrix.cons_val_zero, Matrix.cons_val_one]
+  ring
+
+/-- The combined slope genuinely moves with `n_e` (non-degenerate `T`-leg): the slopes at
+`n_e = 1` and `n_e = e` differ (`0 ≠ −1`), so the outer map is not constant. -/
+example : combinedSahaBoltzmannSlope nvCsE nvCsY nvCsS 0 1
+    ≠ combinedSahaBoltzmannSlope nvCsE nvCsY nvCsS 0 (Real.exp 1) := by
+  have h1 : combinedSahaBoltzmannSlope nvCsE nvCsY nvCsS 0 1 = 0 := by
+    simp only [combinedSahaBoltzmannSlope, olsSlope, mean, nvCsE, nvCsY, nvCsS, Fin.sum_univ_two,
+      Fintype.card_fin, Matrix.cons_val_zero, Matrix.cons_val_one]
+    norm_num
+  have h2 : combinedSahaBoltzmannSlope nvCsE nvCsY nvCsS 0 (Real.exp 1) = -1 := by
+    simp only [combinedSahaBoltzmannSlope, olsSlope, mean, nvCsE, nvCsY, nvCsS, Fin.sum_univ_two,
+      Fintype.card_fin, Matrix.cons_val_zero, Matrix.cons_val_one, Real.log_exp]
+    norm_num
+  rw [h1, h2]; norm_num
+
 end CflibsFormal

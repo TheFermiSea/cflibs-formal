@@ -5,7 +5,7 @@
 > (the integrity spine) + citation from `docs/scope-tags.tsv`; the docs-sync CI gate fails if
 > any result is untagged, so a new theorem cannot land without declaring its epistemic status.
 
-**Scope-tag mix** (376 results): **EXACT** 122 · **REDUCED** 81 · **APPROXIMATION** 9 · **PURE-MATH** 164
+**Scope-tag mix** (399 results): **EXACT** 126 · **REDUCED** 92 · **APPROXIMATION** 9 · **PURE-MATH** 172
 
 `EXACT` = exact identity faithfully encoding the cited physics · `REDUCED` = valid dimensionless/lumped-factor form · `APPROXIMATION` = documented idealization / limiting case · `PURE-MATH` = infrastructure lemma, no physical claim. Classification cross-checked against `reviews/literature-validity-audit.md`.
 
@@ -89,6 +89,17 @@
 - `REDUCED` · `leastSquares_agrees_classic` — Same-spectrum agreement on the noise-free forward fixpoint.  _[Tognoni 2010]_
 - `REDUCED` · `olsBoltzmann_forward_feasible` — The noise-free forward spectrum is exactly least-squares-feasible.  _[Tognoni 2010]_
 - `REDUCED` · `olsBoltzmann_forward_feasible_at` — Feasibility form.  _[Tognoni 2010]_
+
+## `Alt/OLSAtomicDataPerturbation.lean`  (CflibsFormal.Alt)
+*per-line atomic-data error in the OLS density reader*
+
+**Definitions**
+- `olsRecoveredDensity` — Per-species OLS density reader under wrong `A'`.
+
+**Results**
+- `EXACT` · `olsDensity_aliasing_A` — EXACT aliasing identity, OLS density reader, A-channel.  _[Tognoni 2010]_
+- `REDUCED` · `olsDensity_aliasing_A_error` — REDUCED closed-form density-error bound, OLS reader, A-channel.  _[Tognoni 2010]_
+- `REDUCED` · `olsComposition_atomicData_error` — REDUCED composition corollary, OLS reader, A-channel.  _[Tognoni 2010]_
 
 ## `Alt/OLSVariance.lean`  (CflibsFormal.Alt)
 *the Gauss–Markov variance law for the OLS Boltzmann-plot slope*
@@ -317,9 +328,16 @@
 - `EXACT` · `equivWidth_lorentzian_sqrt_upper` — The √τ damping-wing UPPER bound (EXACT, within the model).  _[Gornushkin 1999]_
 - `EXACT` · `equivWidth_lorentzian_sqrt_two_sided` — The √τ damping-wing REGIME, pinned up to constants (EXACT, within the model).  _[Gornushkin 1999]_
 - `EXACT` · `equivWidth_lorentzian_scaled` — The Lorentzian equivalent-width rescaling identity (EXACT, within the model).  _[Gornushkin 1999]_
+- `PURE-MATH` · `integral_one_sub_exp_neg_inv_sq` — M2 (analytic crux) — the limit integral `∫_ℝ (1 − e^{−1/u²}) du = 2√π` (PURE-MATH).
+- `PURE-MATH` · `tendsto_integral_g_beta` — M3 (dominated convergence) — the rescaled integral converges (PURE-MATH).
+- `EXACT` · `equivWidth_lorentzian_sqrt_sharp` — M4 — the sharp Ladenburg–Reiche wing constant `C = 2` (EXACT, within the model).  _[Gornushkin 1999]_
 
 ## `ErrorBudget.lean`  (CflibsFormal)
 *the error-propagation chain and DERIVED reliability thresholds*
+
+**Definitions**
+- `combinedSahaBoltzmannSlope` — Combined Saha–Boltzmann slope (Aguilera & Aragón 2007, Model B).
+- `combinedSlopeTempUpdate` — Combined Saha–Boltzmann temperature update (Model B `T`-leg): the outer loop's map from a density `n_e` to the recovered inverse-temperature-scaled value `1/…
 
 **Results**
 - `REDUCED` · `olsSlope_stable_l1` — N-line slope sensitivity (ℓ¹ worst-case bound).  _[Tognoni 2010]_
@@ -339,6 +357,8 @@
 - `REDUCED` · `olsSlope_stable_l1_of_hetero` — The heteroscedastic bound strictly generalizes `olsSlope_stable_l1`.  _[Tognoni 2010]_
 - `REDUCED` · `temp_rel_error_hetero` — Composed heteroscedastic noise ⇒ relative temperature error (gap #5, temperature leg).  _[Tognoni 2010]_
 - `REDUCED` · `olsIntercept_stable_hetero` — Intercept sensitivity, HETEROSCEDASTIC (per-line budget, centered convention).  _[Tognoni 2010]_
+- `REDUCED` · `combinedSlope_offset_lipschitz` — Offset→slope sensitivity of the combined Saha–Boltzmann slope (`REDUCED`; Aguilera & Aragón 2007).  _[Aguilera & Aragón 2007]_
+- `REDUCED` · `combinedSlopeTempUpdate_lipschitz` — `T`-leg Lipschitz constant of the outer CF-LIBS loop (`REDUCED`; Aguilera & Aragón 2007).  _[Aguilera & Aragón 2007]_
 
 ## `ForwardMap.lean`  (CflibsFormal)
 *Part 4: the optically-thin forward map*
@@ -568,6 +588,7 @@
 - `olsWeight` — Gauss–Markov weight `wₖ = (Eₖ − Ē)/SS_E` with `SS_E = ∑ⱼ (Eⱼ − Ē)²`.
 - `designNormalMatrix` — Design-matrix normal matrix of the Boltzmann-plot fit.
 - `centeredDesignNormalMatrix` — Centered design normal matrix.
+- `boltzmannConditionNumber` — M3 — the Boltzmann-plot condition number (2×2 diagonal `κ`).
 
 **Results**
 - `PURE-MATH` · `centered_sum_zero` — The centered energies sum to zero: `∑ₖ (Eₖ − Ē) = 0`.
@@ -580,6 +601,17 @@
 - `PURE-MATH` · `det_designNormalMatrix` — THE determinant identity (Lagrange / variance identity).
 - `REDUCED` · `designNormalMatrix_det_ne_zero_iff` — Nonsingularity ⇔ positive energy spread (the runtime rank gate).  _[Tognoni 2010]_
 - `PURE-MATH` · `centeredDesignNormalMatrix_eq_diagonal` — THE keystone: the centered normal matrix is diagonal.
+- `PURE-MATH` · `det_centeredDesignNormalMatrix` — M2 — determinant consistency (centering is unimodular).
+- `PURE-MATH` · `boltzmannConditionNumber_ge_one` — `κ ≥ 1` always.
+- `PURE-MATH` · `centeredSolve_perturbation` — M4 — per-channel perturbation bound (the payoff).
+- `PURE-MATH` · `centeredSolve_relative_condition` — M5 — the textbook relative-condition statement.
+- `PURE-MATH` · `centeredScaledDesign_orthonormal` — M6 — THE HONEST HEADLINE: the scaled centered design is orthonormal, so `κ_scaled = 1`.
+
+## `OuterLoopModelB.lean`  (CflibsFormal)
+*the outer temperature iteration, Model B headline (Frontier 04)*
+
+**Results**
+- `REDUCED` · `outerLoop_contracts` — The CF-LIBS outer temperature loop contracts (`REDUCED`; Aguilera & Aragón 2007, Model B).  _[Aguilera & Aragón 2007]_
 
 ## `PartialLTE.lean`  (CflibsFormal)
 *the partial-LTE thermalization limit*
@@ -642,6 +674,7 @@
 - `sahaEquilibriumNe` — Self-consistent electron density of the reduced single-element, two-stage, fixed-`T` Saha core: the unique positive root of `n_e² = S · (Ntot − n_e)`,  `n_e…
 - `multiElementIonized` — Multi-element ionized-density closure map `G`.
 - `sahaIter` — Scalar fixed-point iteration map of the reduced Saha self-consistency equation `n_e² = S · (Ntot − n_e)`.
+- `dampedMultiElementIter` — Damped (Krasnoselskii–Mann / averaged) closure iteration.
 - `outerMap` — Abstract outer-iteration self-map (`PURE-MATH`).
 
 **Results**
@@ -664,10 +697,17 @@
 - `REDUCED` · `sahaIter_tendsto` — Geometric convergence of the iteration (`REDUCED`; Saha–Eggert, Griem).  _[Saha–Eggert (Griem)]_
 - `PURE-MATH` · `multiElementIonized_two_point` — Two-point / discrete-slope identity for the closure map `G := multiElementIonized S Ntot` (`PURE-MATH`).
 - `PURE-MATH` · `multiElementIonized_lipschitz` — Global Lipschitz bound for the closure map `G := multiElementIonized S Ntot` (`PURE-MATH`).
+- `REDUCED` · `dampedMultiElementIter_nonneg` — Nonnegativity preservation of the damped map (`REDUCED`; Saha–Eggert, Griem).  _[Saha–Eggert (Griem)]_
+- `REDUCED` · `dampedMultiElementIter_contraction` — One-step contraction of the damped map toward the fixed point (`REDUCED`; Saha–Eggert, Griem).  _[Saha–Eggert (Griem)]_
+- `REDUCED` · `dampedMultiElementIter_geometric_error` — Geometric error decay of the damped iterates (`REDUCED`; Saha–Eggert, Griem).  _[Saha–Eggert (Griem)]_
+- `REDUCED` · `dampedMultiElementIter_tendsto` — Unconditional convergence of the damped closure iteration (`REDUCED`; Saha–Eggert, Griem) — *the multi-element headline*.  _[Saha–Eggert (Griem)]_
+- `PURE-MATH` · `multiElementIonized_no_two_cycle` — The closure map admits no genuine 2-cycle (`PURE-MATH`).
+- `REDUCED` · `multiElementIonized_iter_tendsto` — Unconditional convergence of the literal direct closure iteration (`REDUCED`; Saha–Eggert, Griem) — *the crown result*.  _[Saha–Eggert (Griem)]_
 - `PURE-MATH` · `outerMap_mapsTo` — Interval invariance of the outer sweep (`PURE-MATH`).
 - `PURE-MATH` · `outerMap_contraction` — One-step box contraction with the product constant (`PURE-MATH`).
 - `PURE-MATH` · `outerMap_geometric_error` — Geometric error decay of the outer iterates (`PURE-MATH`).
 - `PURE-MATH` · `outerContraction_box` — Outer T-iteration abstract spine — the two-leg box contraction (`PURE-MATH`).
+- `REDUCED` · `neLeg_mapsTo` — `n_e`-leg interval invariance (`REDUCED`; Saha–Eggert (Griem)).  _[Saha–Eggert (Griem)]_
 
 ## `SahaInverse.lean`  (CflibsFormal)
 *Part 6: coupling Saha into the inverse problem*
@@ -697,6 +737,8 @@
 - `PURE-MATH` · `thermalBracket_strictMono` — Strict monotonicity of the thermal-de-Broglie bracket in `T` (PURE-MATH).
 - `PURE-MATH` · `partitionFunction_upper_growth` — Partition-function upper growth against the ionization exponential (PURE-MATH).
 - `PURE-MATH` · `partitionFunction_mono_temp` — Monotonicity of the partition function in `T` (PURE-MATH).
+- `EXACT` · `sahaFactor_strictMonoOn_temp` — Saha-factor strict monotonicity in temperature (M4, EXACT, Saha–Eggert (Griem)).  _[Saha–Eggert (Griem)]_
+- `EXACT` · `electronDensityFromRatio_strictMonoOn_temp` — Electron-density `n_e = S(T)/R` strict monotonicity in temperature (M5, EXACT, Saha–Eggert (Griem)).  _[Saha–Eggert (Griem)]_
 
 ## `SelfAbsorption.lean`  (CflibsFormal)
 *self-absorption / optical-thickness-aware forward map*

@@ -739,6 +739,377 @@ example : |multiElementIonized nvMe2S nvMe2N 0 - multiElementIonized nvMe2S nvMe
     ≤ (∑ s, nvMe2N s / nvMe2S s) * |(0 : ℝ) - 1| :=
   multiElementIonized_lipschitz nvMe2S nvMe2N nvMe2S_pos nvMe2N_pos 0 1 le_rfl zero_le_one
 
+/-- **Damped (Krasnoselskii–Mann / averaged) closure iteration.**  Relaxation of the direct
+substitution map `G := multiElementIonized S Ntot` by a step `lam ∈ (0,1)`:
+`H x := (1 − lam)·x + lam·G x`.  For the canonical choice `lam = 1/(1 + ∑ Ntot s/S s)` this
+averaged map is a genuine contraction toward the coupled fixed point (see
+`dampedMultiElementIter_contraction`), converting the *antitone* — hence generically oscillating —
+direct map `G` into a convergent scheme without any smallness hypothesis on `S`, `Ntot`. -/
+noncomputable def dampedMultiElementIter (S Ntot : ι → ℝ) (lam x : ℝ) : ℝ :=
+  (1 - lam) * x + lam * multiElementIonized S Ntot x
+
+/-- **Nonnegativity preservation of the damped map** (`REDUCED`; Saha–Eggert, Griem).  For
+`lam ∈ [0,1]` and `x ≥ 0`, the averaged iterate `dampedMultiElementIter S Ntot lam x ≥ 0`: it is a
+convex combination `(1 − lam)·x + lam·G x` of the nonnegative `x` and the nonnegative closure value
+`G x = ∑ Ntot s · S s/(x + S s)`.  This is the invariance keeping every damped iterate in `[0, ∞)`,
+so the one-step contraction (which only needs `x ≥ 0`) applies along the whole orbit.  Reduction:
+fixed `T`, two stages per element, exact LTE. -/
+theorem dampedMultiElementIter_nonneg (S Ntot : ι → ℝ) (hS : ∀ s, 0 < S s)
+    (hN : ∀ s, 0 < Ntot s) {lam x : ℝ} (hlam0 : 0 ≤ lam) (hlam1 : lam ≤ 1) (hx : 0 ≤ x) :
+    0 ≤ dampedMultiElementIter S Ntot lam x := by
+  unfold dampedMultiElementIter
+  have hGx : 0 ≤ multiElementIonized S Ntot x := by
+    change 0 ≤ ∑ s, Ntot s * S s / (x + S s)
+    exact Finset.sum_nonneg fun s _ =>
+      div_nonneg (mul_nonneg (hN s).le (hS s).le) (by linarith [hS s])
+  have h1 : 0 ≤ (1 - lam) * x := mul_nonneg (by linarith) hx
+  have h2 : 0 ≤ lam * multiElementIonized S Ntot x := mul_nonneg hlam0 hGx
+  linarith
+
+/-- **One-step contraction of the damped map toward the fixed point** (`REDUCED`; Saha–Eggert,
+Griem).  Write `G := multiElementIonized S Ntot` and take the canonical relaxation parameter
+`lam := 1/(1 + ∑ Ntot s/S s)`.  For any fixed point `r = G r` with `r ≥ 0` and any `x ≥ 0`,
+`|H x − r| ≤ (1 − lam)·|x − r|` where `H := dampedMultiElementIter S Ntot lam`.  The rate
+`1 − lam = (∑ Ntot s/S s)/(1 + ∑ Ntot s/S s) < 1` **unconditionally** (no smallness hypothesis on
+`S`, `Ntot`).  Proof: the two-point identity gives `G x − r = (r − x)·c` with local slope
+`c = ∑ Ntot s · S s/((x + S s)(r + S s)) ∈ [0, ∑ Ntot s/S s]`, so
+`H x − r = (x − r)·(1 − lam − lam·c)` with the averaged factor `1 − lam − lam·c ∈ [0, 1 − lam]`
+because `lam·(1 + c) ≤ lam·(1 + ∑ Ntot s/S s) = 1`.  Reduction: fixed `T`, two stages, exact LTE. -/
+theorem dampedMultiElementIter_contraction (S Ntot : ι → ℝ) (hS : ∀ s, 0 < S s)
+    (hN : ∀ s, 0 < Ntot s) {lam r x : ℝ}
+    (hlamval : lam = 1 / (1 + ∑ s, Ntot s / S s))
+    (hr : 0 ≤ r) (hfix : r = multiElementIonized S Ntot r) (hx : 0 ≤ x) :
+    |dampedMultiElementIter S Ntot lam x - r| ≤ (1 - lam) * |x - r| := by
+  set Mlip : ℝ := ∑ s, Ntot s / S s with hMlipdef
+  have hMlip_nonneg : 0 ≤ Mlip := by
+    rw [hMlipdef]; exact Finset.sum_nonneg fun s _ => div_nonneg (hN s).le (hS s).le
+  have h1M : (0 : ℝ) < 1 + Mlip := by linarith
+  have hlam_nonneg : 0 ≤ lam := by rw [hlamval]; positivity
+  have hlam1M : lam * (1 + Mlip) = 1 := by rw [hlamval]; field_simp
+  set c : ℝ := ∑ s, Ntot s * S s / ((x + S s) * (r + S s)) with hcdef
+  have hc_nonneg : 0 ≤ c := by
+    rw [hcdef]; exact Finset.sum_nonneg fun s _ =>
+      div_nonneg (mul_nonneg (hN s).le (hS s).le)
+        (mul_nonneg (by linarith [hS s]) (by linarith [hS s]))
+  have hc_le : c ≤ Mlip := by
+    rw [hcdef, hMlipdef]
+    refine Finset.sum_le_sum fun s _ => ?_
+    have hxs : (0 : ℝ) < x + S s := by linarith [hS s]
+    have hys : (0 : ℝ) < r + S s := by linarith [hS s]
+    rw [div_le_div_iff₀ (mul_pos hxs hys) (hS s)]
+    nlinarith [mul_nonneg (hN s).le hx, mul_nonneg (hN s).le hr,
+      mul_nonneg (mul_nonneg (hN s).le hx) hr, hS s, hN s, hx, hr]
+  have htp := multiElementIonized_two_point S Ntot hS x r hx hr
+  rw [← hcdef] at htp
+  have hGr : multiElementIonized S Ntot r = r := hfix.symm
+  have hGx : multiElementIonized S Ntot x = r + (r - x) * c := by
+    rw [hGr] at htp; linarith [htp]
+  have hHr : dampedMultiElementIter S Ntot lam x - r = (x - r) * (1 - lam - lam * c) := by
+    unfold dampedMultiElementIter
+    rw [hGx]; ring
+  have hexp : lam * (1 + c) = lam + lam * c := by ring
+  have hle1 : lam + lam * c ≤ 1 := by
+    rw [← hexp]
+    calc lam * (1 + c) ≤ lam * (1 + Mlip) :=
+          mul_le_mul_of_nonneg_left (by linarith [hc_le]) hlam_nonneg
+      _ = 1 := hlam1M
+  have h_nonneg : 0 ≤ 1 - lam - lam * c := by linarith [hle1]
+  have h_lamc_nonneg : 0 ≤ lam * c := mul_nonneg hlam_nonneg hc_nonneg
+  rw [hHr, abs_mul, mul_comm]
+  apply mul_le_mul_of_nonneg_right _ (abs_nonneg _)
+  rw [abs_of_nonneg h_nonneg]
+  linarith [h_lamc_nonneg]
+
+/-- **Geometric error decay of the damped iterates** (`REDUCED`; Saha–Eggert, Griem).  With
+`lam := 1/(1 + ∑ Ntot s/S s)` and `H := dampedMultiElementIter S Ntot lam`, every orbit started at
+`x0 ≥ 0` obeys `|H^[n] x0 − r| ≤ (1 − lam)ⁿ·|x0 − r|` for any fixed point `r = G r` with `r ≥ 0`.
+Proof: the iterates stay nonnegative (`dampedMultiElementIter_nonneg`), so the one-step contraction
+`dampedMultiElementIter_contraction` applies at each step; induct on `n`.  Reduction: fixed `T`, two
+stages, exact LTE. -/
+theorem dampedMultiElementIter_geometric_error (S Ntot : ι → ℝ) (hS : ∀ s, 0 < S s)
+    (hN : ∀ s, 0 < Ntot s) {lam r x0 : ℝ}
+    (hlamval : lam = 1 / (1 + ∑ s, Ntot s / S s))
+    (hr : 0 ≤ r) (hfix : r = multiElementIonized S Ntot r) (hx0 : 0 ≤ x0) (n : ℕ) :
+    |(dampedMultiElementIter S Ntot lam)^[n] x0 - r|
+      ≤ (1 - lam) ^ n * |x0 - r| := by
+  have hMlip_nonneg : 0 ≤ ∑ s, Ntot s / S s :=
+    Finset.sum_nonneg fun s _ => div_nonneg (hN s).le (hS s).le
+  have hlam_nonneg : 0 ≤ lam := by rw [hlamval]; positivity
+  have hlam1 : lam ≤ 1 := by
+    rw [hlamval, div_le_one (by linarith)]; linarith
+  have hmem : ∀ m, 0 ≤ (dampedMultiElementIter S Ntot lam)^[m] x0 := by
+    intro m
+    induction m with
+    | zero => exact hx0
+    | succ k ih =>
+      rw [Function.iterate_succ_apply']
+      exact dampedMultiElementIter_nonneg S Ntot hS hN hlam_nonneg hlam1 ih
+  induction n with
+  | zero => simp
+  | succ k ih =>
+    rw [Function.iterate_succ_apply']
+    calc |dampedMultiElementIter S Ntot lam ((dampedMultiElementIter S Ntot lam)^[k] x0) - r|
+        ≤ (1 - lam) * |(dampedMultiElementIter S Ntot lam)^[k] x0 - r| :=
+          dampedMultiElementIter_contraction S Ntot hS hN hlamval hr hfix (hmem k)
+      _ ≤ (1 - lam) * ((1 - lam) ^ k * |x0 - r|) :=
+          mul_le_mul_of_nonneg_left ih (by linarith)
+      _ = (1 - lam) ^ (k + 1) * |x0 - r| := by ring
+
+/-- **Unconditional convergence of the damped closure iteration** (`REDUCED`; Saha–Eggert, Griem) —
+*the multi-element headline*.  With the canonical relaxation `lam := 1/(1 + ∑ Ntot s/S s)`, the
+averaged iteration `H := dampedMultiElementIter S Ntot lam` converges to the coupled fixed point
+`r` (`r = G r`, `r ≥ 0`) from **any** nonnegative start `x0 ≥ 0`:
+`(dampedMultiElementIter S Ntot lam)^[n] x0 → r`.  Unlike the scalar leg (`sahaIter_tendsto`), which
+needs a `q < 1` side hypothesis pinning the interval, here the rate `1 − lam < 1` holds
+**automatically** for every admissible `S`, `Ntot` — the damping is exactly what removes the
+`∑ Ntot s/S s < 1` smallness condition that the raw direct map would require.  Squeeze the error
+`|·^[n] x0 − r|` between `0` and `(1 − lam)ⁿ·|x0 − r| → 0` (`dampedMultiElementIter_geometric_error`
++ `tendsto_pow_atTop_nhds_zero_of_lt_one`).  Reduction: fixed `T`, two stages per element, exact
+LTE; the *damped* (not literal direct) scheme; the outer `T`-loop remains separate. -/
+theorem dampedMultiElementIter_tendsto (S Ntot : ι → ℝ) (hS : ∀ s, 0 < S s)
+    (hN : ∀ s, 0 < Ntot s) {lam r x0 : ℝ}
+    (hlamval : lam = 1 / (1 + ∑ s, Ntot s / S s))
+    (hr : 0 ≤ r) (hfix : r = multiElementIonized S Ntot r) (hx0 : 0 ≤ x0) :
+    Filter.Tendsto (fun n => (dampedMultiElementIter S Ntot lam)^[n] x0) Filter.atTop
+      (nhds r) := by
+  have hMlip_nonneg : 0 ≤ ∑ s, Ntot s / S s :=
+    Finset.sum_nonneg fun s _ => div_nonneg (hN s).le (hS s).le
+  have hlam_pos : 0 < lam := by rw [hlamval]; positivity
+  have hlam1 : lam ≤ 1 := by
+    rw [hlamval, div_le_one (by linarith)]; linarith
+  have hk0 : 0 ≤ 1 - lam := by linarith
+  have hk1 : 1 - lam < 1 := by linarith
+  have hgeom : Filter.Tendsto (fun n => (1 - lam) ^ n * |x0 - r|)
+      Filter.atTop (nhds 0) := by
+    have h1 : Filter.Tendsto (fun n : ℕ => (1 - lam) ^ n) Filter.atTop (nhds 0) :=
+      tendsto_pow_atTop_nhds_zero_of_lt_one hk0 hk1
+    simpa using h1.mul_const |x0 - r|
+  have habs : Filter.Tendsto
+      (fun n => |(dampedMultiElementIter S Ntot lam)^[n] x0 - r|)
+      Filter.atTop (nhds 0) :=
+    squeeze_zero (fun _ => abs_nonneg _)
+      (fun n => dampedMultiElementIter_geometric_error S Ntot hS hN hlamval hr hfix hx0 n)
+      hgeom
+  rw [tendsto_iff_dist_tendsto_zero]
+  simpa only [Real.dist_eq] using habs
+
+/-- **The closure map admits no genuine 2-cycle** (`PURE-MATH`).  Write `G := multiElementIonized
+S Ntot`.  For nonnegative `p, q` with `G p = q` and `G q = p`, necessarily `p = q`: a 2-cycle
+collapses to a fixed point.  Proof (exact finite-sum algebra, no calculus): the two-point identity
+gives `q − p = (q − p)·∑ Ntot s · S s/((p + S s)(q + S s))`, so if `p ≠ q` the slope sum equals `1`;
+substituting `1/(p + S s) = (q + S s)/((p + S s)(q + S s))` into `q = G p` yields
+`0 = ∑ Ntot s · S s²/((p + S s)(q + S s))`, impossible since every term is strictly positive and the
+species family is nonempty.  This is the decisive lemma pinning the even/odd subsequence limits of
+the direct iteration together (`multiElementIonized_iter_tendsto`). -/
+theorem multiElementIonized_no_two_cycle (S Ntot : ι → ℝ) [Nonempty ι]
+    (hS : ∀ s, 0 < S s) (hN : ∀ s, 0 < Ntot s) {p q : ℝ} (hp : 0 ≤ p) (hq : 0 ≤ q)
+    (hpq : multiElementIonized S Ntot p = q) (hqp : multiElementIonized S Ntot q = p) :
+    p = q := by
+  by_contra hne
+  have htp := multiElementIonized_two_point S Ntot hS p q hp hq
+  rw [hpq, hqp] at htp
+  have hqp_ne : q - p ≠ 0 := sub_ne_zero.mpr (Ne.symm hne)
+  have key : (∑ s, Ntot s * S s / ((p + S s) * (q + S s))) = 1 := by
+    have h2 : (q - p) * (∑ s, Ntot s * S s / ((p + S s) * (q + S s))) = (q - p) * 1 := by
+      rw [mul_one]; exact htp.symm
+    exact mul_left_cancel₀ hqp_ne h2
+  have hEpos : 0 < ∑ s, Ntot s * S s ^ 2 / ((p + S s) * (q + S s)) := by
+    refine Finset.sum_pos (fun s _ => ?_) Finset.univ_nonempty
+    have hps : (0 : ℝ) < p + S s := by linarith [hS s]
+    have hqs : (0 : ℝ) < q + S s := by linarith [hS s]
+    exact div_pos (mul_pos (hN s) (pow_pos (hS s) 2)) (mul_pos hps hqs)
+  have hEeq : (∑ s, Ntot s * S s ^ 2 / ((p + S s) * (q + S s)))
+      = (∑ s, Ntot s * S s / (p + S s))
+        - q * ∑ s, Ntot s * S s / ((p + S s) * (q + S s)) := by
+    rw [Finset.mul_sum, ← Finset.sum_sub_distrib]
+    refine Finset.sum_congr rfl fun s _ => ?_
+    have hps : (0 : ℝ) < p + S s := by linarith [hS s]
+    have hqs : (0 : ℝ) < q + S s := by linarith [hS s]
+    field_simp
+    ring
+  have hpq' : (∑ s, Ntot s * S s / (p + S s)) = q := hpq
+  rw [hpq', key, mul_one, sub_self] at hEeq
+  linarith [hEpos, hEeq]
+
+/-- **Unconditional convergence of the literal direct closure iteration** (`REDUCED`; Saha–Eggert,
+Griem) — *the crown result*.  The genuine CF-LIBS substitution loop `x_{n+1} = G x_n` with
+`G := multiElementIonized S Ntot` — which, being *antitone*, generically **oscillates** — still
+converges to the coupled fixed point `r` (`0 < r`, `r = G r`) from every start `x0 ∈ [0, ∑ Ntot s]`:
+`(multiElementIonized S Ntot)^[n] x0 → r`.  No damping, no smallness hypothesis.  Proof: `G∘G` is
+monotone increasing and maps `[0, ∑ Ntot]` into itself, so the even orbit `(G∘G)^[k] x0` and the odd
+orbit `(G∘G)^[k] (G x0)` are each monotone (branching on the first step) and bounded, hence converge
+(`tendsto_atTop_ciSup`/`ciInf`) to fixed points of `G∘G` (`isFixedPt_of_tendsto_iterate`); the
+no-2-cycle lemma (`multiElementIonized_no_two_cycle`) plus positive-fixed-point uniqueness pins both
+limits to `r`, and interleaving the even/odd subsequences (`Nat.even_or_odd` +
+`Metric.tendsto_atTop`) gives the full `Tendsto`.  Reduction: fixed `T`, two stages, exact
+LTE; the outer `T`-loop remains separate. -/
+theorem multiElementIonized_iter_tendsto (S Ntot : ι → ℝ) [Nonempty ι]
+    (hS : ∀ s, 0 < S s) (hN : ∀ s, 0 < Ntot s) {r x0 : ℝ}
+    (hrpos : 0 < r) (hfix : r = multiElementIonized S Ntot r)
+    (hx0mem : x0 ∈ Set.Icc (0 : ℝ) (∑ s, Ntot s)) :
+    Filter.Tendsto (fun n => (multiElementIonized S Ntot)^[n] x0) Filter.atTop (nhds r) := by
+  set M : ℝ := ∑ s, Ntot s with hMdef
+  have hx0 : 0 ≤ x0 := hx0mem.1
+  have hx0M : x0 ≤ M := hx0mem.2
+  have hMpos : 0 < M := by
+    rw [hMdef]; exact Finset.sum_pos (fun i _ => hN i) Finset.univ_nonempty
+  have hG0 : multiElementIonized S Ntot 0 = M := by
+    change (∑ s, Ntot s * S s / ((0 : ℝ) + S s)) = M
+    rw [hMdef]
+    refine Finset.sum_congr rfl (fun s _ => ?_)
+    rw [zero_add, mul_div_assoc, div_self (hS s).ne', mul_one]
+  have hG_mapsTo : ∀ z : ℝ, 0 ≤ z →
+      0 ≤ multiElementIonized S Ntot z ∧ multiElementIonized S Ntot z ≤ M := by
+    intro z hz
+    refine ⟨?_, ?_⟩
+    · change 0 ≤ ∑ s, Ntot s * S s / (z + S s)
+      exact Finset.sum_nonneg fun s _ =>
+        div_nonneg (mul_nonneg (hN s).le (hS s).le) (by linarith [hS s])
+    · change (∑ s, Ntot s * S s / (z + S s)) ≤ M
+      rw [hMdef]
+      refine Finset.sum_le_sum fun s _ => ?_
+      rw [div_le_iff₀ (by linarith [hS s])]
+      nlinarith [mul_nonneg (hN s).le hz, hS s, hN s]
+  have hG_anti : ∀ a b : ℝ, 0 ≤ a → 0 ≤ b → a ≤ b →
+      multiElementIonized S Ntot b ≤ multiElementIonized S Ntot a := fun a b ha hb hab =>
+    (multiElementIonized_strictAntiOn S Ntot hS hN).antitoneOn
+      (Set.mem_Ici.mpr ha) (Set.mem_Ici.mpr hb) hab
+  have hG_contAt : ∀ z : ℝ, 0 ≤ z → ContinuousAt (multiElementIonized S Ntot) z := by
+    intro z hz
+    change Filter.Tendsto (fun x => ∑ s, Ntot s * S s / (x + S s)) (nhds z)
+      (nhds (∑ s, Ntot s * S s / (z + S s)))
+    refine tendsto_finsetSum Finset.univ (fun s _ => ?_)
+    have hden : (0 : ℝ) < z + S s := by linarith [hS s]
+    exact continuousAt_const.div (continuousAt_id.add continuousAt_const) hden.ne'
+  let F : ℝ → ℝ := (multiElementIonized S Ntot)^[2]
+  have hF_mapsTo : ∀ z : ℝ, 0 ≤ z → 0 ≤ F z ∧ F z ≤ M := by
+    intro z hz
+    exact hG_mapsTo _ (hG_mapsTo z hz).1
+  have hF_mono : ∀ a b : ℝ, 0 ≤ a → 0 ≤ b → a ≤ b → F a ≤ F b := by
+    intro a b ha hb hab
+    change multiElementIonized S Ntot (multiElementIonized S Ntot a)
+       ≤ multiElementIonized S Ntot (multiElementIonized S Ntot b)
+    exact hG_anti _ _ (hG_mapsTo b hb).1 (hG_mapsTo a ha).1 (hG_anti a b ha hb hab)
+  have hF_contAt : ∀ z : ℝ, 0 ≤ z → ContinuousAt F z := by
+    intro z hz
+    change ContinuousAt (fun w => multiElementIonized S Ntot (multiElementIonized S Ntot w)) z
+    exact (hG_contAt _ (hG_mapsTo z hz).1).comp (hG_contAt z hz)
+  have hFiter : ∀ m : ℕ, (multiElementIonized S Ntot)^[2 * m] = F^[m] := fun m => by
+    rw [Function.iterate_mul]
+  have horbit : ∀ y0 : ℝ, 0 ≤ y0 → y0 ≤ M →
+      Filter.Tendsto (fun k => F^[k] y0) Filter.atTop (nhds r) := by
+    intro y0 hy0 hy0M
+    have hmem : ∀ k, 0 ≤ F^[k] y0 ∧ F^[k] y0 ≤ M := by
+      intro k
+      induction k with
+      | zero => exact ⟨hy0, hy0M⟩
+      | succ n ih => rw [Function.iterate_succ_apply']; exact hF_mapsTo _ ih.1
+    obtain ⟨L, htends⟩ :
+        ∃ L, Filter.Tendsto (fun k => F^[k] y0) Filter.atTop (nhds L) := by
+      rcases le_total (F y0) y0 with hdec | hinc
+      · have hanti : Antitone (fun k => F^[k] y0) := by
+          refine antitone_nat_of_succ_le (fun k => ?_)
+          induction k with
+          | zero =>
+            simp only [Function.iterate_succ_apply', Function.iterate_zero_apply]
+            exact hdec
+          | succ n ih =>
+            have h1 : F^[n + 1] y0 = F (F^[n] y0) := Function.iterate_succ_apply' F n y0
+            have h2 : F^[n + 1 + 1] y0 = F (F^[n + 1] y0) :=
+              Function.iterate_succ_apply' F (n + 1) y0
+            rw [h1, h2]
+            exact hF_mono _ _ (hmem (n + 1)).1 (hmem n).1 ih
+        exact ⟨_, tendsto_atTop_ciInf hanti
+          ⟨0, by rintro x ⟨k, rfl⟩; exact (hmem k).1⟩⟩
+      · have hmono : Monotone (fun k => F^[k] y0) := by
+          refine monotone_nat_of_le_succ (fun k => ?_)
+          induction k with
+          | zero =>
+            simp only [Function.iterate_succ_apply', Function.iterate_zero_apply]
+            exact hinc
+          | succ n ih =>
+            have h1 : F^[n + 1] y0 = F (F^[n] y0) := Function.iterate_succ_apply' F n y0
+            have h2 : F^[n + 1 + 1] y0 = F (F^[n + 1] y0) :=
+              Function.iterate_succ_apply' F (n + 1) y0
+            rw [h1, h2]
+            exact hF_mono _ _ (hmem n).1 (hmem (n + 1)).1 ih
+        exact ⟨_, tendsto_atTop_ciSup hmono
+          ⟨M, by rintro x ⟨k, rfl⟩; exact (hmem k).2⟩⟩
+    have hL0 : 0 ≤ L := ge_of_tendsto' htends (fun k => (hmem k).1)
+    have hGLnn : 0 ≤ multiElementIonized S Ntot L := (hG_mapsTo L hL0).1
+    have hLfixF : F L = L := isFixedPt_of_tendsto_iterate htends (hF_contAt L hL0)
+    have hLfix : multiElementIonized S Ntot (multiElementIonized S Ntot L) = L := hLfixF
+    have hLfixG : L = multiElementIonized S Ntot L :=
+      multiElementIonized_no_two_cycle S Ntot hS hN
+        (p := L) (q := multiElementIonized S Ntot L) hL0 hGLnn rfl hLfix
+    have hLpos : 0 < L := by
+      rcases eq_or_lt_of_le hL0 with h | h
+      · exfalso; rw [← h, hG0] at hLfixG; linarith [hMpos]
+      · exact h
+    have hLr : L = r :=
+      multiElement_pos_fixedPoint_unique S Ntot hS hN hLpos hrpos hLfixG hfix
+    rw [hLr] at htends
+    exact htends
+  have he : Filter.Tendsto (fun k => F^[k] x0) Filter.atTop (nhds r) := horbit x0 hx0 hx0M
+  have ho : Filter.Tendsto (fun k => F^[k] (multiElementIonized S Ntot x0))
+      Filter.atTop (nhds r) :=
+    horbit (multiElementIonized S Ntot x0) (hG_mapsTo x0 hx0).1 (hG_mapsTo x0 hx0).2
+  rw [Metric.tendsto_atTop]
+  intro ε hε
+  obtain ⟨N1, hN1⟩ := (Metric.tendsto_atTop.mp he) ε hε
+  obtain ⟨N2, hN2⟩ := (Metric.tendsto_atTop.mp ho) ε hε
+  refine ⟨2 * max N1 N2 + 1, fun n hn => ?_⟩
+  rcases Nat.even_or_odd n with ⟨k, hk⟩ | ⟨k, hk⟩
+  · have hkN1 : N1 ≤ k := by omega
+    have hrw : (multiElementIonized S Ntot)^[n] x0 = F^[k] x0 := by
+      rw [hk, show k + k = 2 * k by ring, hFiter k]
+    rw [hrw]; exact hN1 k hkN1
+  · have hkN2 : N2 ≤ k := by omega
+    have hrw : (multiElementIonized S Ntot)^[n] x0
+        = F^[k] (multiElementIonized S Ntot x0) := by
+      rw [hk, Function.iterate_add_apply, Function.iterate_one, hFiter k]
+    rw [hrw]; exact hN2 k hkN2
+
+/-! ### Non-vacuity witnesses (frontier 03: damped, no-2-cycle, direct iteration)
+
+Two species with `S = ![1, 1]`, `Ntot = ![1, 1]`: the closure is `G x = 2/(x + 1)`, whose positive
+fixed point is `r = 1`.  The damped map at the canonical `lam = 1/(1 + ∑ Ntot/S) = 1/3` and the
+literal direct map both provably converge to `1` from `x0 = 0` (the direct map genuinely oscillates:
+`G 0 = 2`, `G 2 = 2/3`, `G(2/3) = 6/5`, …), certifying the convergence theorems are not vacuous. -/
+
+private def nvF3S : Fin 2 → ℝ := ![1, 1]
+private def nvF3N : Fin 2 → ℝ := ![1, 1]
+private theorem nvF3S_pos : ∀ s, 0 < nvF3S s := by intro s; fin_cases s <;> norm_num [nvF3S]
+private theorem nvF3N_pos : ∀ s, 0 < nvF3N s := by intro s; fin_cases s <;> norm_num [nvF3N]
+
+private theorem nvF3_fix : (1 : ℝ) = multiElementIonized nvF3S nvF3N 1 := by
+  change (1 : ℝ) = ∑ s, nvF3N s * nvF3S s / (1 + nvF3S s)
+  simp only [nvF3S, nvF3N, Fin.sum_univ_two, Matrix.cons_val_zero, Matrix.cons_val_one]
+  norm_num
+
+-- (a) damped iteration: unconditional convergence from x0 = 0 to r = 1, with lam = 1/3.
+example : Filter.Tendsto (fun n => (dampedMultiElementIter nvF3S nvF3N (1 / 3))^[n] 0)
+    Filter.atTop (nhds 1) := by
+  refine dampedMultiElementIter_tendsto nvF3S nvF3N nvF3S_pos nvF3N_pos (r := 1) ?_
+    (by norm_num) nvF3_fix (le_refl 0)
+  have hsum : (∑ s, nvF3N s / nvF3S s) = 2 := by
+    simp only [nvF3S, nvF3N, Fin.sum_univ_two, Matrix.cons_val_zero, Matrix.cons_val_one]
+    norm_num
+  rw [hsum]; norm_num
+
+-- (b) no 2-cycle at the concrete data.
+example {p q : ℝ} (hp : 0 ≤ p) (hq : 0 ≤ q)
+    (hpq : multiElementIonized nvF3S nvF3N p = q)
+    (hqp : multiElementIonized nvF3S nvF3N q = p) : p = q :=
+  multiElementIonized_no_two_cycle nvF3S nvF3N nvF3S_pos nvF3N_pos hp hq hpq hqp
+
+-- (c) direct iteration: unconditional convergence from x0 = 0 to r = 1 (oscillating orbit).
+example : Filter.Tendsto (fun n => (multiElementIonized nvF3S nvF3N)^[n] 0)
+    Filter.atTop (nhds 1) := by
+  refine multiElementIonized_iter_tendsto nvF3S nvF3N nvF3S_pos nvF3N_pos
+    (r := 1) one_pos nvF3_fix ?_
+  exact ⟨le_refl 0, Finset.sum_nonneg fun s _ => (nvF3N_pos s).le⟩
+
 end MultiElementCore
 
 /-! ### Outer T-iteration: abstract two-leg box-contraction spine (Frontier 04, Phase 1) -/
@@ -941,6 +1312,35 @@ theorem outerContraction_box
     nlinarith [hc, hpos]
   · intro T0 hT0
     exact outerMap_tendsto hmapsNe hmapsT hL1 hL2 hL1nn hL2nn hq hTstar hfix hT0
+
+/-- **`n_e`-leg interval invariance** (`REDUCED`; Saha–Eggert (Griem)).  The density reader
+`legNe T = electronDensityFromRatio … T … R = S(T)/R` maps the temperature box `[Tmin,Tmax]`
+into the density box `[nemin,nemax]`, *provided* the Saha factor `S(T)` is boxed by
+`[Slo,Shi]` on `[Tmin,Tmax]`, `R > 0`, `nemin ≤ Slo/R` and `Shi/R ≤ nemax`.  This is the
+concrete `hmapsNe` hypothesis of `outerContraction_box`/`outerLoop_contracts` for the Saha
+density leg — a genuine side condition carried exactly as the inner loop's `sahaIter_mapsTo`
+carries `√(S·Ntot) ≤ b`.  The Saha-factor box bounds `hSlo`/`hShi` are inputs here (they are
+discharged downstream from the partition-function floor/ceiling of `SahaStability`,
+`partitionFunction_ge_floor`/`partitionFunction_le_sum`, in a module that imports it).  Proof:
+division is monotone in a positive denominator, so `Slo/R ≤ S(T)/R ≤ Shi/R`. -/
+theorem neLeg_mapsTo {ι κ : Type*} [Fintype ι] [Fintype κ]
+    {kB me h chi Slo Shi R : ℝ} {gZ EZ : ι → ℝ} {gZ1 EZ1 : κ → ℝ}
+    (hR : 0 < R)
+    (hSlo : ∀ T ∈ Set.Icc Tmin Tmax, Slo ≤ sahaFactor kB T me h chi gZ EZ gZ1 EZ1)
+    (hShi : ∀ T ∈ Set.Icc Tmin Tmax, sahaFactor kB T me h chi gZ EZ gZ1 EZ1 ≤ Shi)
+    (hnemin : nemin ≤ Slo / R) (hnemax : Shi / R ≤ nemax) :
+    ∀ T ∈ Set.Icc Tmin Tmax,
+      electronDensityFromRatio kB T me h chi gZ EZ gZ1 EZ1 R ∈ Set.Icc nemin nemax := by
+  intro T hT
+  rw [Set.mem_Icc]
+  unfold electronDensityFromRatio
+  constructor
+  · calc nemin ≤ Slo / R := hnemin
+      _ ≤ sahaFactor kB T me h chi gZ EZ gZ1 EZ1 / R :=
+          div_le_div_of_nonneg_right (hSlo T hT) hR.le
+  · calc sahaFactor kB T me h chi gZ EZ gZ1 EZ1 / R ≤ Shi / R :=
+          div_le_div_of_nonneg_right (hShi T hT) hR.le
+      _ ≤ nemax := hnemax
 
 /-! ### Non-vacuity witnesses (concrete halving legs)
 

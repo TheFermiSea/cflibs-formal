@@ -126,16 +126,16 @@ graph TD
 | 06 M1 ✅ | `centeredDesignNormalMatrix_eq_diagonal` (keystone) | `OLS.lean` | PURE-MATH |
 | 07 M1 ✅ | `equivWidth_lorentzian_scaled` (scaling identity) | `EquivalentWidth.lean` | EXACT |
 
-### Phase 2 — B-grade, dependencies now satisfied
+### Phase 2 — B-grade, dependencies now satisfied — **COMPLETE 2026-07-09** (12-agent Opus/Sonnet-develop + independent Opus oversight workflow; Fable retired mid-run, audits reassigned to Opus. Verdicts: 5 PASS + 1 FIXED, 0 FAIL. All six frontier chains landed; the two hardest crux targets — 07's `∫(1−e^{−1/u²})=2√π` and 03's literal-direct-iteration crown — both fully closed. Only Newton (03 M8) and the single simultaneous end-to-end witness for 04's `outerLoop_contracts` deferred, both honestly documented.)
 | Frontier | Deliverable theorem(s) | Target module | Scope tag |
 |---|---|---|---|
-| 02 M4/M5 | `sahaFactor_strictMonoOn_temp` (headline) → `electronDensityFromRatio_strictMonoOn_temp` | `SahaStability.lean` | EXACT |
-| 05 M2→M4 | `olsDensity_aliasing_A` (EXACT anchor) → `_error` (REDUCED) → `olsComposition_atomicData_error` | new `Alt/OLSAtomicDataPerturbation.lean` | EXACT / REDUCED |
-| 03 M3→M7 | `dampedIter_*` unconditional convergence (headline); `multiElementIonized_no_two_cycle`; `multiElementIonized_iter_tendsto` (crown) | `SahaEquilibrium.lean` | REDUCED / PURE-MATH |
-| 04 M2→M6 | `neLeg_mapsTo`, `LipschitzOnWith` package, **`combinedSahaBoltzmannSlope` + `combinedSlope_offset_lipschitz` (crux)**, `T`-leg, outer-loop-contracts headline | `SahaEquilibrium.lean` / `ErrorBudget.lean` | REDUCED |
-| 06 M2→M6 | `det_centeredDesignNormalMatrix`, `boltzmannConditionNumber`(+`_ge_one`), `centeredSolve_perturbation`, `centeredSolve_relative_condition`, `centeredScaledDesign_orthonormal` | `OLS.lean` | PURE-MATH |
-| 07 M2→M4 | `integral_one_sub_exp_neg_inv_sq = 2√π` (crux) → DCT convergence → `equivWidth_lorentzian_sqrt_sharp` | `EquivalentWidth.lean` | EXACT |
-| 01 M2/M3/M5 | joint two-line on-manifold uniqueness; general-m on-manifold uniqueness; two-line off-manifold box uniqueness | `NonlinearLeastSquares.lean` | EXACT / REDUCED |
+| 02 M4/M5 ✅ | `sahaFactor_strictMonoOn_temp` (headline) → `electronDensityFromRatio_strictMonoOn_temp` | `SahaStability.lean` | EXACT |
+| 05 M2→M4 ✅ | `olsDensity_aliasing_A` (EXACT anchor) → `_error` (REDUCED) → `olsComposition_atomicData_error` (+ `olsRecoveredDensity` def) | new `Alt/OLSAtomicDataPerturbation.lean` | EXACT / REDUCED |
+| 03 M3→M7 ✅ | `dampedMultiElementIter_{nonneg,contraction,geometric_error,tendsto}` (unconditional damped headline); `multiElementIonized_no_two_cycle`; `multiElementIonized_iter_tendsto` (**crown — literal direct iteration**). M8 Newton deferred (concave-Newton infra absent). | `SahaEquilibrium.lean` | REDUCED / PURE-MATH |
+| 04 M2→M6 ✅ | `neLeg_mapsTo`; **`combinedSahaBoltzmannSlope` + `combinedSlope_offset_lipschitz` (crux)** + `combinedSlopeTempUpdate(_lipschitz)`; `outerLoop_contracts` headline (new module `OuterLoopModelB.lean`, REDUCED-conditional on the `L₁·L₂<1` gate). | `ErrorBudget.lean` / `SahaEquilibrium.lean` / `OuterLoopModelB.lean` | REDUCED |
+| 06 M2→M6 ✅ | `det_centeredDesignNormalMatrix`, `boltzmannConditionNumber`(+`_ge_one`), `centeredSolve_perturbation`, `centeredSolve_relative_condition`, `centeredScaledDesign_orthonormal` | `OLS.lean` | PURE-MATH |
+| 07 M2→M4 ✅ | `integral_one_sub_exp_neg_inv_sq = 2√π` (crux) → `tendsto_integral_g_beta` (DCT) → `equivWidth_lorentzian_sqrt_sharp` (C=2) | `EquivalentWidth.lean` | EXACT / PURE-MATH |
+| 01 M2/M3/M5 ✅ | joint two-line on-manifold uniqueness; general-m on-manifold uniqueness; two-line off-manifold box uniqueness — **already landed in Phase 1** (`joint_onManifold_unique`, `profiledT_onManifold_unique`, `profiledT_offManifold_unique`, `profiledResidual_metric_bound`); not re-run this pass. | `NonlinearLeastSquares.lean` | EXACT / REDUCED |
 
 ### Phase 3 — C-grade / upstream-blocked (defer)
 | Frontier | Deliverable | Blocker | Scope |

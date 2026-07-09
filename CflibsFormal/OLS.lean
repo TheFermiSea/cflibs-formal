@@ -308,4 +308,191 @@ example : (centeredDesignNormalMatrix nvCenteredE01) 0 0
   simp [Matrix.diagonal, Fin.sum_univ_two]
   norm_num
 
+/-- **M2 — determinant consistency (centering is unimodular).** Via the diagonal exhibition
+(`centeredDesignNormalMatrix_eq_diagonal`) and `Matrix.det_diagonal` (`det = ∏ dᵢ`), the
+determinant of the *centered* normal matrix is the same `n · SS_E` as the raw
+`designNormalMatrix` (`det_designNormalMatrix`, `OLS.lean:194`) — a cross-check confirming
+centering preserves the determinant (it is a unimodular row operation). Pure linear algebra;
+no physics content. -/
+theorem det_centeredDesignNormalMatrix [Nonempty ι] (E : ι → ℝ) :
+    (centeredDesignNormalMatrix E).det = (Fintype.card ι : ℝ) * ∑ k, (E k - mean E) ^ 2 := by
+  rw [centeredDesignNormalMatrix_eq_diagonal, Matrix.det_diagonal]
+  simp [Fin.prod_univ_two, mul_comm]
+
+/-- **M3 — the Boltzmann-plot condition number (2×2 diagonal `κ`).** Because
+`centeredDesignNormalMatrix_eq_diagonal` exhibits the centered normal matrix as
+`Matrix.diagonal ![SS_E, n]`, its eigenvalues *are* the diagonal entries `SS_E` and `n` with no
+spectral machinery required; `κ := max(SS_E, n) / min(SS_E, n)` is the textbook 2-norm
+condition number `λ_max/λ_min` (Golub & Van Loan, *Matrix Computations*, §2.6 — standard
+numerical linear algebra, not a LIBS-specific citation) specialized to this diagonal case.
+**Honesty note** (dossier `06-condition-numbers.md` §5/§6): this raw `max/min` ratio mixes
+units (`SS_E` has units of energy², `n` is a bare count) and is *not* scale-invariant; it is
+NOT proposed as a shift/scale-invariant physical quantity. Its scale-free counterpart is
+`centeredScaledDesign_orthonormal` (`κ_scaled = 1`) below — see that theorem's docstring for
+the honest headline. -/
+noncomputable def boltzmannConditionNumber (E : ι → ℝ) : ℝ :=
+  max (∑ k, (E k - mean E) ^ 2) (Fintype.card ι)
+    / min (∑ k, (E k - mean E) ^ 2) (Fintype.card ι)
+
+/-- **`κ ≥ 1` always.** Immediate from `min ≤ max` (`min_le_max`) together with
+`min(SS_E, n) > 0` (needs `hvar : 0 < SS_E` and `n > 0` from `[Nonempty ι]`). Confirms
+`boltzmannConditionNumber` is a genuine condition number in the textbook sense (never
+sub-unity; `κ = 1` exactly at `SS_E = n`). -/
+theorem boltzmannConditionNumber_ge_one [Nonempty ι] (E : ι → ℝ)
+    (hvar : 0 < ∑ k, (E k - mean E) ^ 2) :
+    1 ≤ boltzmannConditionNumber E := by
+  unfold boltzmannConditionNumber
+  have hcard : (0:ℝ) < (Fintype.card ι : ℝ) := by exact_mod_cast Fintype.card_pos
+  have hmin : 0 < min (∑ k, (E k - mean E) ^ 2) (Fintype.card ι) := lt_min hvar hcard
+  rw [le_div_iff₀ hmin, one_mul]
+  exact min_le_max
+
+/-- **M4 — per-channel perturbation bound (the payoff).** On the diagonal centered system
+`diag(SS_E, n)·x = c`, a perturbation `Δc` of the right-hand side propagates componentwise as
+`Δx = (Δc₀/SS_E, Δc₁/n)`; this bounds the squared 2-norm of `Δx` by the squared 2-norm of `Δc`
+scaled by `1/min(SS_E, n)²`. The slope channel's gain `1/SS_E` is *literally* the summand
+identity behind `olsSlope_noise_gain` (`OLS.lean:128`, `∑ wₖ² = 1/SS_E`) and the intercept
+channel's gain `1/n` is *literally* `olsIntercept_stable_centered`'s gain
+(`ErrorBudget.lean:297`); this theorem is the statement that these two known per-channel
+sensitivities are exactly the diagonal entries of one matrix condition-number bound — not a
+new physical constant, but the packaging the ledger residual (`SOLVER_FORMALIZATION_GAPS.md:76`)
+was asking for. Pure algebra on two reals. -/
+theorem centeredSolve_perturbation [Nonempty ι] (E : ι → ℝ)
+    (hvar : 0 < ∑ k, (E k - mean E) ^ 2) (Δc : Fin 2 → ℝ) :
+    (Δc 0 / (∑ k, (E k - mean E) ^ 2)) ^ 2 + (Δc 1 / (Fintype.card ι : ℝ)) ^ 2
+      ≤ (Δc 0 ^ 2 + Δc 1 ^ 2) / (min (∑ k, (E k - mean E) ^ 2) (Fintype.card ι)) ^ 2 := by
+  set S := ∑ k, (E k - mean E) ^ 2 with hS
+  set n := (Fintype.card ι : ℝ) with hn
+  have hcard : (0:ℝ) < n := by rw [hn]; exact_mod_cast Fintype.card_pos
+  have hmin : 0 < min S n := lt_min hvar hcard
+  have hSge : min S n ≤ S := min_le_left _ _
+  have hnge : min S n ≤ n := min_le_right _ _
+  have h1 : (Δc 0 / S) ^ 2 ≤ (Δc 0 / min S n) ^ 2 := by
+    rw [div_pow, div_pow]
+    exact div_le_div_of_nonneg_left (sq_nonneg _) (pow_pos hmin 2)
+      (pow_le_pow_left₀ hmin.le hSge 2)
+  have h2 : (Δc 1 / n) ^ 2 ≤ (Δc 1 / min S n) ^ 2 := by
+    rw [div_pow, div_pow]
+    exact div_le_div_of_nonneg_left (sq_nonneg _) (pow_pos hmin 2)
+      (pow_le_pow_left₀ hmin.le hnge 2)
+  calc (Δc 0 / S) ^ 2 + (Δc 1 / n) ^ 2
+      ≤ (Δc 0 / min S n) ^ 2 + (Δc 1 / min S n) ^ 2 := add_le_add h1 h2
+    _ = (Δc 0 ^ 2 + Δc 1 ^ 2) / (min S n) ^ 2 := by
+        rw [div_pow, div_pow, ← add_div]
+
+/-- **M5 — the textbook relative-condition statement.** Assembles the component bounds
+`‖Δx‖ ≤ (1/λ_min)·‖Δc‖` (from `centeredSolve_perturbation`, `λ_min = min(SS_E, n)`) and
+`‖c‖ ≤ λ_max·‖x‖` (the symmetric lower bound on the diagonal solve, `λ_max = max(SS_E, n)`)
+into the standard NLA perturbation theorem `‖Δx‖/‖x‖ ≤ κ·‖Δc‖/‖c‖` (Golub & Van Loan §2.6),
+specialized to the `2×2` diagonal centered normal system, with `x = (c₀/SS_E, c₁/n)` the
+centered-design solve and `κ = boltzmannConditionNumber E`. Requires `c ≠ 0` (`hc`) so the
+relative denominators are nonzero. Pure algebra/`Real.sqrt` bookkeeping — no new mathematical
+content beyond `centeredSolve_perturbation` and `boltzmannConditionNumber`. -/
+theorem centeredSolve_relative_condition [Nonempty ι] (E : ι → ℝ)
+    (hvar : 0 < ∑ k, (E k - mean E) ^ 2) (c Δc : Fin 2 → ℝ)
+    (hc : c 0 ^ 2 + c 1 ^ 2 ≠ 0) :
+    Real.sqrt ((Δc 0 / (∑ k, (E k - mean E) ^ 2)) ^ 2 + (Δc 1 / (Fintype.card ι : ℝ)) ^ 2)
+        / Real.sqrt ((c 0 / (∑ k, (E k - mean E) ^ 2)) ^ 2 + (c 1 / (Fintype.card ι : ℝ)) ^ 2)
+      ≤ boltzmannConditionNumber E
+          * Real.sqrt (Δc 0 ^ 2 + Δc 1 ^ 2) / Real.sqrt (c 0 ^ 2 + c 1 ^ 2) := by
+  set S := ∑ k, (E k - mean E) ^ 2 with hS
+  set n := (Fintype.card ι : ℝ) with hn
+  have hcard : (0:ℝ) < n := by rw [hn]; exact_mod_cast Fintype.card_pos
+  set m := min S n with hmdef
+  set M := max S n with hMdef
+  have hm : 0 < m := lt_min hvar hcard
+  have hM : 0 < M := lt_of_lt_of_le hvar (le_max_left _ _)
+  have hSM : S ≤ M := le_max_left _ _
+  have hnM : n ≤ M := le_max_right _ _
+  set P := Δc 0 ^ 2 + Δc 1 ^ 2 with hPdef
+  set Q := c 0 ^ 2 + c 1 ^ 2 with hQdef
+  have hQnn : 0 ≤ Q := add_nonneg (sq_nonneg _) (sq_nonneg _)
+  have hQpos : 0 < Q := lt_of_le_of_ne hQnn (Ne.symm hc)
+  have hPnn : 0 ≤ P := add_nonneg (sq_nonneg _) (sq_nonneg _)
+  -- lower bound: Q / M^2 ≤ B
+  have hlow : Q / M ^ 2 ≤ (c 0 / S) ^ 2 + (c 1 / n) ^ 2 := by
+    have h1 : c 0 ^ 2 / M ^ 2 ≤ (c 0 / S) ^ 2 := by
+      rw [div_pow]
+      exact div_le_div_of_nonneg_left (sq_nonneg _) (pow_pos hvar 2)
+        (pow_le_pow_left₀ hvar.le hSM 2)
+    have h2 : c 1 ^ 2 / M ^ 2 ≤ (c 1 / n) ^ 2 := by
+      rw [div_pow]
+      exact div_le_div_of_nonneg_left (sq_nonneg _) (pow_pos hcard 2)
+        (pow_le_pow_left₀ hcard.le hnM 2)
+    calc Q / M ^ 2 = c 0 ^ 2 / M ^ 2 + c 1 ^ 2 / M ^ 2 := by rw [hQdef, add_div]
+      _ ≤ (c 0 / S) ^ 2 + (c 1 / n) ^ 2 := add_le_add h1 h2
+  have hAP : (Δc 0 / S) ^ 2 + (Δc 1 / n) ^ 2 ≤ P / m ^ 2 := centeredSolve_perturbation E hvar Δc
+  have hAsqrt : Real.sqrt ((Δc 0 / S) ^ 2 + (Δc 1 / n) ^ 2) ≤ Real.sqrt P / m := by
+    calc Real.sqrt ((Δc 0 / S) ^ 2 + (Δc 1 / n) ^ 2) ≤ Real.sqrt (P / m ^ 2) :=
+          Real.sqrt_le_sqrt hAP
+      _ = Real.sqrt P / m := by rw [Real.sqrt_div hPnn, Real.sqrt_sq hm.le]
+  have hBsqrt : Real.sqrt Q / M ≤ Real.sqrt ((c 0 / S) ^ 2 + (c 1 / n) ^ 2) := by
+    calc Real.sqrt Q / M = Real.sqrt (Q / M ^ 2) := by
+          rw [Real.sqrt_div hQnn, Real.sqrt_sq hM.le]
+      _ ≤ Real.sqrt ((c 0 / S) ^ 2 + (c 1 / n) ^ 2) := Real.sqrt_le_sqrt hlow
+  have hBnn : 0 ≤ (c 0 / S) ^ 2 + (c 1 / n) ^ 2 := add_nonneg (sq_nonneg _) (sq_nonneg _)
+  have hBpos : 0 < (c 0 / S) ^ 2 + (c 1 / n) ^ 2 :=
+    lt_of_lt_of_le (div_pos hQpos (pow_pos hM 2)) hlow
+  have hBsqrtpos : 0 < Real.sqrt ((c 0 / S) ^ 2 + (c 1 / n) ^ 2) := Real.sqrt_pos.mpr hBpos
+  have hQsqrtpos : 0 < Real.sqrt Q := Real.sqrt_pos.mpr hQpos
+  have step1 : Real.sqrt ((Δc 0 / S) ^ 2 + (Δc 1 / n) ^ 2)
+      / Real.sqrt ((c 0 / S) ^ 2 + (c 1 / n) ^ 2)
+      ≤ (Real.sqrt P / m) / Real.sqrt ((c 0 / S) ^ 2 + (c 1 / n) ^ 2) :=
+    (div_le_div_iff_of_pos_right hBsqrtpos).mpr hAsqrt
+  have step2 : (Real.sqrt P / m) / Real.sqrt ((c 0 / S) ^ 2 + (c 1 / n) ^ 2)
+      ≤ (Real.sqrt P / m) / (Real.sqrt Q / M) := by
+    apply div_le_div_of_nonneg_left (div_nonneg (Real.sqrt_nonneg _) hm.le)
+      (div_pos hQsqrtpos hM) hBsqrt
+  have hκ : boltzmannConditionNumber E = M / m := by
+    unfold boltzmannConditionNumber
+    rw [← hS, ← hn, ← hMdef, ← hmdef]
+  have step3 : (Real.sqrt P / m) / (Real.sqrt Q / M)
+      = boltzmannConditionNumber E * Real.sqrt P / Real.sqrt Q := by
+    rw [hκ]
+    field_simp
+  calc Real.sqrt ((Δc 0 / S) ^ 2 + (Δc 1 / n) ^ 2) / Real.sqrt ((c 0 / S) ^ 2 + (c 1 / n) ^ 2)
+      ≤ (Real.sqrt P / m) / Real.sqrt ((c 0 / S) ^ 2 + (c 1 / n) ^ 2) := step1
+    _ ≤ (Real.sqrt P / m) / (Real.sqrt Q / M) := step2
+    _ = boltzmannConditionNumber E * Real.sqrt P / Real.sqrt Q := step3
+
+/-- **M6 — THE HONEST HEADLINE: the scaled centered design is orthonormal, so `κ_scaled = 1`.**
+Scale each centered-design column to unit norm — `u = (E − Ē)/√SS_E`, `v = 1/√n` — and this
+correlation-matrix normalization makes the two columns exactly orthonormal (`⟨u,u⟩ = ⟨v,v⟩ = 1`,
+`⟨u,v⟩ = 0`). The condition number of an orthonormal design is `1`: the *entire* conditioning
+"problem" reported by `boltzmannConditionNumber` (M3) is an artifact of the two raw columns
+carrying different scales (`SS_E` in units of energy², `n` a bare count — note the mixed
+units, itself the reason `boltzmannConditionNumber`'s raw `max/min` ratio is not scale
+invariant, dossier `06-condition-numbers.md` §5/§6). After scaling there is **no** residual
+matrix-conditioning content: the only genuine, scale-free sensitivity left is the slope
+channel's noise gain `1/SS_E` (`olsSlope_noise_gain`, `OLS.lean:128`) and the intercept
+channel's `1/n` (`olsIntercept_stable_centered`, `ErrorBudget.lean:297`) — both already
+proven. This theorem is the honest statement of what a matrix condition number adds (and does
+not add) over those two existing constants for the two-column Boltzmann-plot design. -/
+theorem centeredScaledDesign_orthonormal [Nonempty ι] (E : ι → ℝ)
+    (hvar : 0 < ∑ k, (E k - mean E) ^ 2) :
+    (∑ k, ((E k - mean E) / Real.sqrt (∑ k, (E k - mean E) ^ 2)) ^ 2 = 1)
+      ∧ (∑ _k : ι, (1 / Real.sqrt (Fintype.card ι : ℝ)) ^ 2 = (1:ℝ))
+      ∧ (∑ k, ((E k - mean E) / Real.sqrt (∑ k, (E k - mean E) ^ 2))
+            * (1 / Real.sqrt (Fintype.card ι : ℝ)) = 0) := by
+  set S := ∑ k, (E k - mean E) ^ 2 with hS
+  set n := (Fintype.card ι : ℝ) with hn
+  have hcard : (0:ℝ) < n := by rw [hn]; exact_mod_cast Fintype.card_pos
+  have hSsqrt : Real.sqrt S ≠ 0 := ne_of_gt (Real.sqrt_pos.mpr hvar)
+  have hnsqrt : Real.sqrt n ≠ 0 := ne_of_gt (Real.sqrt_pos.mpr hcard)
+  refine ⟨?_, ?_, ?_⟩
+  · have : ∀ k, ((E k - mean E) / Real.sqrt S) ^ 2 = (E k - mean E) ^ 2 / S := by
+      intro k
+      rw [div_pow, Real.sq_sqrt hvar.le]
+    simp_rw [this]
+    rw [← Finset.sum_div, div_self hvar.ne']
+  · have : (1 / Real.sqrt n) ^ 2 = 1 / n := by rw [div_pow, Real.sq_sqrt hcard.le, one_pow]
+    rw [Finset.sum_const, this, nsmul_eq_mul, Finset.card_univ, hn]
+    field_simp
+  · have h0 : ∑ k, (E k - mean E) = 0 := centered_sum_zero E
+    have heq : ∀ k, ((E k - mean E) / Real.sqrt S) * (1 / Real.sqrt n)
+        = (E k - mean E) * (1 / (Real.sqrt S * Real.sqrt n)) := by
+      intro k; ring
+    simp_rw [heq]
+    rw [← Finset.sum_mul, h0, zero_mul]
+
 end CflibsFormal

@@ -642,5 +642,300 @@ example :
           ∫ u, (1 - Real.exp (-((Real.pi / Real.pi) / (1 + (Real.pi / Real.pi) * u ^ 2)))) :=
   equivWidth_lorentzian_scaled Real.pi Real.pi_pos
 
+/-! ### Ladenburg–Reiche sharp constant (Frontier 07, milestones M2–M4) -/
+section LadenburgReiche
+open Filter
+open scoped Topology
+
+private noncomputable def ladenburgAux (u : ℝ) : ℝ := u * (1 - Real.exp (-(u^2)⁻¹))
+private noncomputable def ladenburgAux' (u : ℝ) : ℝ :=
+  (1 - Real.exp (-(u^2)⁻¹)) - 2 * (Real.exp (-(u^2)⁻¹) * (u^2)⁻¹)
+
+private theorem integrable_one_sub_exp_neg_inv_sq :
+    Integrable (fun u:ℝ => 1 - Real.exp (-(u^2)⁻¹)) := by
+  have hg : Integrable (fun u:ℝ => 2*(1+u^2)⁻¹) := integrable_inv_one_add_sq.const_mul 2
+  refine Integrable.mono' hg ?_ ?_
+  · exact (measurable_const.sub ((Real.measurable_exp).comp
+      (((measurable_id.pow_const 2).inv).neg))).aestronglyMeasurable
+  · filter_upwards with u
+    have hnn : 0 ≤ 1 - Real.exp (-(u^2)⁻¹) := by
+      have : Real.exp (-(u^2)⁻¹) ≤ 1 :=
+        Real.exp_le_one_iff.mpr (by simp only [neg_nonpos]; positivity)
+      linarith
+    rw [Real.norm_eq_abs, abs_of_nonneg hnn]
+    have hle : 1 - Real.exp (-(u^2)⁻¹) ≤ (u^2)⁻¹ := by
+      linarith [Real.one_sub_le_exp_neg ((u^2)⁻¹)]
+    rcases le_or_gt (u^2) 1 with h | h
+    · have hexppos := Real.exp_pos (-(u^2)⁻¹)
+      have h2 : (1:ℝ) ≤ 2*(1+u^2)⁻¹ := by
+        rw [le_mul_inv_iff₀ (by positivity)]; linarith
+      linarith
+    · have hu2pos : (0:ℝ) < u^2 := by linarith
+      have hb : (u^2)⁻¹ ≤ 2*(1+u^2)⁻¹ := by
+        have h1 : (2:ℝ)*(1+u^2)⁻¹ = ((1+u^2)/2)⁻¹ := by rw [inv_div, div_eq_mul_inv]
+        rw [h1]; exact inv_anti₀ (by positivity) (by linarith)
+      linarith
+
+private theorem integrableOn_gaussianKernel :
+    IntegrableOn (fun u:ℝ => Real.exp (-(u^2)⁻¹) * (u^2)⁻¹) (Set.Ioi 0) := by
+  have hg : IntegrableOn (fun u:ℝ => 4*(1+u^2)⁻¹) (Set.Ioi 0) :=
+    (integrable_inv_one_add_sq.const_mul 4).integrableOn
+  refine Integrable.mono' hg ?_ ?_
+  · exact ((Real.measurable_exp.comp (((measurable_id.pow_const 2).inv).neg)).mul
+      ((measurable_id.pow_const 2).inv)).aestronglyMeasurable
+  · apply ae_restrict_of_forall_mem measurableSet_Ioi
+    intro u hu
+    have hupos : (0:ℝ) < u := hu
+    have hu2pos : (0:ℝ) < u^2 := by positivity
+    have hnn : 0 ≤ Real.exp (-(u^2)⁻¹) * (u^2)⁻¹ := by positivity
+    rw [Real.norm_eq_abs, abs_of_nonneg hnn]
+    have hexp1 : Real.exp (-(u^2)⁻¹) ≤ 1 :=
+      Real.exp_le_one_iff.mpr (by simp only [neg_nonpos]; positivity)
+    have hey : Real.exp (-(u^2)⁻¹) * (u^2)⁻¹ ≤ 1 := by
+      rw [Real.exp_neg, mul_comm ((Real.exp ((u^2)⁻¹))⁻¹) ((u^2)⁻¹), ← div_eq_mul_inv,
+        div_le_one (Real.exp_pos _)]
+      linarith [Real.add_one_le_exp ((u^2)⁻¹)]
+    rcases le_or_gt (u^2) 1 with h | h
+    · have h4 : (1:ℝ) ≤ 4*(1+u^2)⁻¹ := by
+        rw [le_mul_inv_iff₀ (by positivity)]; linarith
+      linarith
+    · have hb1 : Real.exp (-(u^2)⁻¹) * (u^2)⁻¹ ≤ (u^2)⁻¹ :=
+        le_trans (mul_le_mul_of_nonneg_right hexp1 (by positivity)) (le_of_eq (one_mul _))
+      have hb2 : (u^2)⁻¹ ≤ 4*(1+u^2)⁻¹ := by
+        have h1 : (4:ℝ)*(1+u^2)⁻¹ = ((1+u^2)/4)⁻¹ := by rw [inv_div, div_eq_mul_inv]
+        rw [h1]; exact inv_anti₀ (by positivity) (by linarith)
+      linarith
+
+private theorem integral_gaussianKernel_Ioi :
+    ∫ x in Set.Ioi (0:ℝ), Real.exp (-(x^2)⁻¹) * (x^2)⁻¹ = Real.sqrt Real.pi / 2 := by
+  have hsub := integral_comp_rpow_Ioi (fun y => Real.exp (-1 * y^2)) (p := -1) (by norm_num)
+  have hgauss := integral_gaussian_Ioi 1
+  rw [hgauss] at hsub
+  have hpi1 : Real.sqrt (Real.pi / 1) / 2 = Real.sqrt Real.pi / 2 := by norm_num
+  rw [hpi1] at hsub
+  rw [← hsub]
+  apply setIntegral_congr_fun measurableSet_Ioi
+  intro x hx
+  have hx0 : (0:ℝ) < x := hx
+  simp only [smul_eq_mul]
+  have h1 : |(-1:ℝ)| = 1 := by norm_num
+  have h2 : x ^ ((-1:ℝ) - 1) = (x^2)⁻¹ := by
+    rw [show ((-1:ℝ) - 1) = -(2:ℝ) by norm_num, Real.rpow_neg hx0.le,
+      show (2:ℝ) = ((2:ℕ):ℝ) by norm_num, Real.rpow_natCast]
+  have h3 : (x ^ (-1:ℝ))^2 = (x^2)⁻¹ := by rw [Real.rpow_neg_one, inv_pow]
+  rw [h1, h2, h3, one_mul]; ring_nf
+
+private theorem ladenburgAux_hasDerivAt {u : ℝ} (hu : 0 < u) :
+    HasDerivAt ladenburgAux (ladenburgAux' u) u := by
+  have hune : u ≠ 0 := hu.ne'
+  have hu2ne : u^2 ≠ 0 := pow_ne_zero 2 hune
+  have h_sq : HasDerivAt (fun x:ℝ => x^2) (2*u) u := by simpa using hasDerivAt_pow 2 u
+  have h_inv : HasDerivAt (fun x:ℝ => (x^2)⁻¹) (-(2*u)/(u^2)^2) u := h_sq.inv hu2ne
+  have h_narg : HasDerivAt (fun x:ℝ => -(x^2)⁻¹) (-(-(2*u)/(u^2)^2)) u := h_inv.neg
+  have h_exp : HasDerivAt (fun x:ℝ => Real.exp (-(x^2)⁻¹))
+      (Real.exp (-(u^2)⁻¹) * (-(-(2*u)/(u^2)^2))) u := h_narg.exp
+  have h_1sub : HasDerivAt (fun x:ℝ => 1 - Real.exp (-(x^2)⁻¹))
+      (-(Real.exp (-(u^2)⁻¹) * (-(-(2*u)/(u^2)^2)))) u := h_exp.const_sub 1
+  have hraw := (hasDerivAt_id u).mul h_1sub
+  have hFeq : (1:ℝ) * (1 - Real.exp (-(u^2)⁻¹))
+      + u * -(Real.exp (-(u^2)⁻¹) * (-(-(2*u)/(u^2)^2))) = ladenburgAux' u := by
+    unfold ladenburgAux'; field_simp; ring
+  rw [← hFeq]
+  exact hraw
+
+private theorem ladenburgAux_continuousWithinAt :
+    ContinuousWithinAt ladenburgAux (Set.Ici 0) 0 := by
+  have hbound : ∀ u:ℝ, ‖ladenburgAux u‖ ≤ |u| := by
+    intro u
+    rw [Real.norm_eq_abs]
+    unfold ladenburgAux
+    rw [abs_mul]
+    have hexp1 : Real.exp (-(u^2)⁻¹) ≤ 1 :=
+      Real.exp_le_one_iff.mpr (by simp only [neg_nonpos]; positivity)
+    have hexppos := Real.exp_pos (-(u^2)⁻¹)
+    have h1 : |1 - Real.exp (-(u^2)⁻¹)| ≤ 1 := by
+      rw [abs_le]; constructor <;> linarith
+    calc |u| * |1 - Real.exp (-(u^2)⁻¹)| ≤ |u| * 1 :=
+          mul_le_mul_of_nonneg_left h1 (abs_nonneg u)
+      _ = |u| := mul_one _
+  have htendabs : Tendsto (fun u:ℝ => |u|) (𝓝 0) (𝓝 0) := by
+    simpa using continuous_abs.tendsto (0:ℝ)
+  have htend : Tendsto ladenburgAux (𝓝 0) (𝓝 0) := squeeze_zero_norm hbound htendabs
+  have hf0 : ladenburgAux 0 = 0 := by simp [ladenburgAux]
+  rw [ContinuousWithinAt, hf0]
+  exact htend.mono_left nhdsWithin_le_nhds
+
+private theorem ladenburgAux_tendsto : Tendsto ladenburgAux atTop (𝓝 0) := by
+  apply tendsto_of_tendsto_of_tendsto_of_le_of_le' (tendsto_const_nhds) tendsto_inv_atTop_zero
+  · filter_upwards [eventually_gt_atTop 0] with u hu
+    unfold ladenburgAux
+    have hnn : 0 ≤ 1 - Real.exp (-(u^2)⁻¹) := by
+      have := Real.exp_le_one_iff.mpr (by simp only [neg_nonpos]; positivity : -(u^2)⁻¹ ≤ 0)
+      linarith
+    exact mul_nonneg hu.le hnn
+  · filter_upwards [eventually_gt_atTop 0] with u hu
+    unfold ladenburgAux
+    have hle : 1 - Real.exp (-(u^2)⁻¹) ≤ (u^2)⁻¹ := by
+      linarith [Real.one_sub_le_exp_neg ((u^2)⁻¹)]
+    calc u * (1 - Real.exp (-(u^2)⁻¹)) ≤ u * (u^2)⁻¹ :=
+          mul_le_mul_of_nonneg_left hle hu.le
+      _ = u⁻¹ := by rw [pow_two, mul_inv, ← mul_assoc, mul_inv_cancel₀ hu.ne', one_mul]
+
+private theorem ladenburgAux'_integrableOn :
+    IntegrableOn ladenburgAux' (Set.Ioi 0) := by
+  unfold ladenburgAux'
+  exact (integrable_one_sub_exp_neg_inv_sq.integrableOn).sub
+    (integrableOn_gaussianKernel.const_mul 2)
+
+/-- **M2 (analytic crux) — the limit integral `∫_ℝ (1 − e^{−1/u²}) du = 2√π` (PURE-MATH).**
+The full-line improper integral of the Ladenburg–Reiche limit integrand evaluates in closed form.
+By evenness (`integral_comp_abs`) it is `2·∫_{u>0}`; on the half-line an integration-by-parts with
+`f(u) = u·(1 − e^{−1/u²})` (whose boundary terms vanish: `f(0)=0`, `f(u) ≤ 1/u → 0`) reduces the
+integrand to `2·e^{−1/u²}/u²`, and the reciprocal substitution `w = 1/u` (`integral_comp_rpow_Ioi`
+at `p = −1`) turns that into the half-line Gaussian `∫_{w>0} e^{−w²} = √π/2`
+(`integral_gaussian_Ioi`). Hence `∫_{u>0} (1 − e^{−1/u²}) = √π`, and the full line gives `2√π`. The
+exact constant that
+pins the Lorentzian curve-of-growth slope-½ wing (`docs/frontiers/07-ladenburg-reiche.md`, M2). -/
+theorem integral_one_sub_exp_neg_inv_sq :
+    (∫ u, (1 - Real.exp (-(1 / u^2)))) = 2 * Real.sqrt Real.pi := by
+  have hcv : (fun u:ℝ => 1 - Real.exp (-(1 / u^2)))
+      = (fun u:ℝ => 1 - Real.exp (-(u^2)⁻¹)) := by funext u; rw [one_div]
+  rw [hcv]
+  have habs := integral_comp_abs (f := fun y:ℝ => 1 - Real.exp (-(y^2)⁻¹))
+  simp only [sq_abs] at habs
+  rw [habs]
+  have hftc := integral_Ioi_of_hasDerivAt_of_tendsto ladenburgAux_continuousWithinAt
+    (fun x hx => ladenburgAux_hasDerivAt hx) ladenburgAux'_integrableOn ladenburgAux_tendsto
+  have haux0 : ladenburgAux 0 = 0 := by simp [ladenburgAux]
+  rw [haux0, sub_zero] at hftc
+  have hsplit : ∫ u in Set.Ioi (0:ℝ), ladenburgAux' u
+      = (∫ u in Set.Ioi (0:ℝ), (1 - Real.exp (-(u^2)⁻¹)))
+        - ∫ u in Set.Ioi (0:ℝ), 2 * (Real.exp (-(u^2)⁻¹) * (u^2)⁻¹) := by
+    unfold ladenburgAux'
+    exact integral_sub (integrable_one_sub_exp_neg_inv_sq.integrableOn)
+      (integrableOn_gaussianKernel.const_mul 2)
+  have hK : ∫ u in Set.Ioi (0:ℝ), 2 * (Real.exp (-(u^2)⁻¹) * (u^2)⁻¹) = Real.sqrt Real.pi := by
+    rw [integral_const_mul, integral_gaussianKernel_Ioi]; ring
+  rw [hsplit, hK] at hftc
+  have hJ : ∫ u in Set.Ioi (0:ℝ), (1 - Real.exp (-(u^2)⁻¹)) = Real.sqrt Real.pi := by
+    linarith [hftc]
+  rw [hJ]
+
+private theorem gbeta_nonneg {β : ℝ} (hβ : 0 ≤ β) (u : ℝ) :
+    0 ≤ 1 - Real.exp (-(β/(1+β*u^2))) := by
+  have hy : (0:ℝ) ≤ β/(1+β*u^2) := by positivity
+  have : Real.exp (-(β/(1+β*u^2))) ≤ 1 :=
+    Real.exp_le_one_iff.mpr (by simp only [neg_nonpos]; exact hy)
+  linarith
+
+private theorem gbeta_le {β : ℝ} (hβ : 0 ≤ β) (u : ℝ) :
+    1 - Real.exp (-(β/(1+β*u^2))) ≤ 2*(1+u^2)⁻¹ := by
+  have hden : (0:ℝ) < 1 + β*u^2 := by positivity
+  have hy : (0:ℝ) ≤ β/(1+β*u^2) := by positivity
+  have hle : 1 - Real.exp (-(β/(1+β*u^2))) ≤ β/(1+β*u^2) := by
+    linarith [Real.one_sub_le_exp_neg (β/(1+β*u^2))]
+  rcases le_or_gt (u^2) 1 with h | h
+  · have hexppos := Real.exp_pos (-(β/(1+β*u^2)))
+    have h2 : (1:ℝ) ≤ 2*(1+u^2)⁻¹ := by rw [le_mul_inv_iff₀ (by positivity)]; linarith
+    linarith
+  · have hu2pos : (0:ℝ) < u^2 := by linarith
+    have hstep : β/(1+β*u^2) ≤ (u^2)⁻¹ := by
+      rw [div_le_iff₀ hden]
+      have he : (u^2)⁻¹ * (1+β*u^2) = (u^2)⁻¹ + β := by
+        rw [mul_add, mul_one, mul_comm β (u^2), ← mul_assoc,
+          inv_mul_cancel₀ hu2pos.ne', one_mul]
+      rw [he]; linarith [inv_nonneg.mpr hu2pos.le]
+    have hb2 : (u^2)⁻¹ ≤ 2*(1+u^2)⁻¹ := by
+      have h1 : (2:ℝ)*(1+u^2)⁻¹ = ((1+u^2)/2)⁻¹ := by rw [inv_div, div_eq_mul_inv]
+      rw [h1]; exact inv_anti₀ (by positivity) (by linarith)
+    linarith
+
+/-- **M3 (dominated convergence) — the rescaled integral converges (PURE-MATH).**
+As `τ → ∞` the rescaled Lorentzian integrand `1 − exp(−((τ/π)/(1 + (τ/π)u²)))` converges pointwise
+(for `u ≠ 0`, full measure) to `1 − exp(−1/u²)` and is dominated uniformly by the integrable
+envelope `2/(1+u²)` (the domination bound `gbeta_le`). Dominated convergence along `atTop`
+(`tendsto_integral_filter_of_dominated_convergence`) then transports the limit under the integral,
+so `∫_ℝ (1 − exp(−((τ/π)/(1+(τ/π)u²)))) → ∫_ℝ (1 − exp(−1/u²))`
+(`docs/frontiers/07-ladenburg-reiche.md`, M3). -/
+theorem tendsto_integral_g_beta :
+    Filter.Tendsto
+      (fun τ => ∫ u, (1 - Real.exp (-((τ/Real.pi)/(1+(τ/Real.pi)*u^2)))))
+      Filter.atTop (nhds (∫ u, (1 - Real.exp (-(1/u^2))))) := by
+  have hπ := Real.pi_pos
+  apply tendsto_integral_filter_of_dominated_convergence (fun u:ℝ => 2*(1+u^2)⁻¹)
+  · -- AEStronglyMeasurable
+    filter_upwards with τ
+    apply Measurable.aestronglyMeasurable
+    fun_prop
+  · -- domination
+    filter_upwards [eventually_ge_atTop 0] with τ hτ
+    have hβ : 0 ≤ τ/Real.pi := by positivity
+    filter_upwards with u
+    rw [Real.norm_eq_abs, abs_of_nonneg (gbeta_nonneg hβ u)]
+    exact gbeta_le hβ u
+  · exact integrable_inv_one_add_sq.const_mul 2
+  · -- pointwise limit ae
+    have hne : ∀ᵐ u:ℝ, u ≠ 0 := by
+      rw [ae_iff]; simp only [not_not, ne_eq]
+      exact Real.volume_singleton
+    filter_upwards [hne] with u hu
+    have hu2pos : (0:ℝ) < u^2 := by positivity
+    have heq : ∀ τ:ℝ, 0 < τ →
+        (τ/Real.pi)/(1+(τ/Real.pi)*u^2) = (Real.pi*τ⁻¹ + u^2)⁻¹ := by
+      intro τ hτ
+      have hτ0 : τ ≠ 0 := hτ.ne'
+      have hπ0 : Real.pi ≠ 0 := hπ.ne'
+      have hd1 : (1:ℝ) + (τ/Real.pi)*u^2 ≠ 0 := by positivity
+      have hd2 : Real.pi*τ⁻¹ + u^2 ≠ 0 := by positivity
+      rw [eq_comm, inv_eq_iff_eq_inv]; field_simp
+    have hd : Tendsto (fun τ:ℝ => Real.pi*τ⁻¹ + u^2) atTop (𝓝 (u^2)) := by
+      have h0 : Tendsto (fun τ:ℝ => Real.pi*τ⁻¹) atTop (𝓝 0) := by
+        simpa using tendsto_inv_atTop_zero.const_mul Real.pi
+      simpa using h0.add_const (u^2)
+    have hinner : Tendsto (fun τ:ℝ => (Real.pi*τ⁻¹ + u^2)⁻¹) atTop (𝓝 (u^2)⁻¹) :=
+      hd.inv₀ (by positivity)
+    have hcomp : Tendsto (fun τ:ℝ => 1 - Real.exp (-(Real.pi*τ⁻¹ + u^2)⁻¹)) atTop
+        (𝓝 (1 - Real.exp (-(u^2)⁻¹))) := by
+      apply Tendsto.const_sub
+      exact (Real.continuous_exp.tendsto _).comp (hinner.neg)
+    rw [one_div]
+    apply hcomp.congr'
+    filter_upwards [eventually_gt_atTop 0] with τ hτ
+    rw [heq τ hτ]
+
+/-- **M4 — the sharp Ladenburg–Reiche wing constant `C = 2` (EXACT, within the model).**
+The Lorentzian equivalent width obeys the sharp slope-½ asymptotic
+`W(τ)/√τ → 2` as `τ → ∞`, upgrading the two-sided envelope
+`equivWidth_lorentzian_sqrt_two_sided` (constants `≈ 0.126` and `≈ 2.257`) to the exact
+Ladenburg–Reiche damping-wing law `W(τ) ∼ 2√τ`. Combining the rescaling identity
+`equivWidth_lorentzian_scaled` (M1) — which gives `W(τ)/√τ = (1/√π)·S(τ)` with
+`S(τ) = ∫ (1 − exp(−((τ/π)/(1+(τ/π)u²))))` — with the dominated-convergence limit
+`S(τ) → 2√π` (`tendsto_integral_g_beta`, M3, evaluated by `integral_one_sub_exp_neg_inv_sq`, M2)
+yields the limit `(1/√π)·2√π = 2`. The exact constant `2` lies strictly inside the previously
+proven bracket `[0.126, 2.257]`, confirming consistency. This is the bessel-free capstone of the
+`equivWidth_lorentzian_*` development (the full `x·e^{−x}(I₀+I₁)` curve needs modified Bessel
+functions, absent from mathlib, and is out of scope). Gornushkin 1999 / Ladenburg–Reiche. -/
+theorem equivWidth_lorentzian_sqrt_sharp :
+    Filter.Tendsto (fun τ => equivWidth lorentzian τ / Real.sqrt τ) Filter.atTop (nhds 2) := by
+  have hπ := Real.pi_pos
+  have hsqπ : Real.sqrt Real.pi ≠ 0 := (Real.sqrt_pos.mpr hπ).ne'
+  have hS : Tendsto (fun τ => ∫ u, (1 - Real.exp (-((τ/Real.pi)/(1+(τ/Real.pi)*u^2))))) atTop
+      (𝓝 (2 * Real.sqrt Real.pi)) := by
+    have h := tendsto_integral_g_beta
+    rwa [integral_one_sub_exp_neg_inv_sq] at h
+  have hconst : Tendsto
+      (fun τ => (Real.sqrt Real.pi)⁻¹
+        * ∫ u, (1 - Real.exp (-((τ/Real.pi)/(1+(τ/Real.pi)*u^2))))) atTop
+      (𝓝 ((Real.sqrt Real.pi)⁻¹ * (2 * Real.sqrt Real.pi))) := hS.const_mul _
+  have hval : (Real.sqrt Real.pi)⁻¹ * (2 * Real.sqrt Real.pi) = 2 := by
+    rw [mul_comm 2 (Real.sqrt Real.pi), ← mul_assoc, inv_mul_cancel₀ hsqπ, one_mul]
+  rw [hval] at hconst
+  apply hconst.congr'
+  filter_upwards [eventually_gt_atTop 0] with τ hτ
+  have hsqτ : Real.sqrt τ ≠ 0 := (Real.sqrt_pos.mpr hτ).ne'
+  rw [equivWidth_lorentzian_scaled τ hτ, Real.sqrt_div hτ.le]
+  field_simp
+
+end LadenburgReiche
 
 end CflibsFormal

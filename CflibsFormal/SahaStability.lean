@@ -755,6 +755,70 @@ lemma partitionFunction_mono_temp {kB T1 T2 : ℝ} {g E : ι → ℝ}
   exact div_le_div_of_nonneg_left (hE k) (mul_pos hkB hT1)
     (mul_le_mul_of_nonneg_left hT12 hkB.le)
 
+/-- **Saha-factor strict monotonicity in temperature (M4, EXACT, Saha–Eggert (Griem)).**
+On the whole positive temperature axis, under the physically universal hypothesis that
+every bound level of the lower (neutral) stage sits at or below the ionization limit
+(`∀ k, EZ k ≤ chi`), the Saha factor `S(T)` is *strictly* increasing in `T`. Proof:
+rewrite `log S(T₁) < log S(T₂)` via `log_sahaFactor` at both temperatures; the upper-stage
+partition term is nondecreasing (`partitionFunction_mono_temp`), the lower-stage growth is
+dominated by the same χ-weighted factor as the exponential channel
+(`partitionFunction_upper_growth`), and the thermal bracket is *strictly* increasing
+(`thermalBracket_strictMono`), which alone supplies strictness; assemble by `linarith`
+through `Real.log_lt_log_iff` using `sahaFactor_pos`. `hchi` and `hEZ` are carried for API
+parity with `sahaFactor_lipschitz_temp` but are not load-bearing in this proof. -/
+theorem sahaFactor_strictMonoOn_temp [Nonempty ι] [Nonempty κ]
+    {kB me h chi : ℝ} {gZ EZ : ι → ℝ} {gZ1 EZ1 : κ → ℝ}
+    (hkB : 0 < kB) (hme : 0 < me) (hh : 0 < h) (_hchi : 0 ≤ chi)
+    (hgZ : ∀ k, 0 < gZ k) (_hEZ : ∀ k, 0 ≤ EZ k)
+    (hgZ1 : ∀ k, 0 < gZ1 k) (hEZ1 : ∀ k, 0 ≤ EZ1 k)
+    (hEχ : ∀ k, EZ k ≤ chi) :
+    StrictMonoOn (fun T => sahaFactor kB T me h chi gZ EZ gZ1 EZ1) (Set.Ioi 0) := by
+  intro T1 hT1 T2 hT2 hlt
+  simp only [Set.mem_Ioi] at hT1 hT2
+  have hS1 : 0 < sahaFactor kB T1 me h chi gZ EZ gZ1 EZ1 := sahaFactor_pos hkB hT1 hme hh hgZ hgZ1
+  have hS2 : 0 < sahaFactor kB T2 me h chi gZ EZ gZ1 EZ1 := sahaFactor_pos hkB hT2 hme hh hgZ hgZ1
+  rw [← Real.log_lt_log_iff hS1 hS2]
+  rw [log_sahaFactor hkB hT1 hme hh hgZ hgZ1, log_sahaFactor hkB hT2 hme hh hgZ hgZ1]
+  have hP1 : partitionFunction kB T1 gZ1 EZ1 ≤ partitionFunction kB T2 gZ1 EZ1 :=
+    partitionFunction_mono_temp hkB hT1 hlt.le hgZ1 hEZ1
+  have hlogP1 : Real.log (partitionFunction kB T1 gZ1 EZ1)
+      ≤ Real.log (partitionFunction kB T2 gZ1 EZ1) :=
+    Real.log_le_log (partitionFunction_pos hgZ1) hP1
+  have hU0pos : 0 < partitionFunction kB T1 gZ EZ := partitionFunction_pos hgZ
+  have hU0 : partitionFunction kB T2 gZ EZ
+      ≤ Real.exp (chi * (1 / (kB * T1) - 1 / (kB * T2))) * partitionFunction kB T1 gZ EZ :=
+    partitionFunction_upper_growth hkB hT1 hlt.le hgZ hEχ
+  have hlogU0 : Real.log (partitionFunction kB T2 gZ EZ)
+      ≤ chi * (1 / (kB * T1) - 1 / (kB * T2)) + Real.log (partitionFunction kB T1 gZ EZ) := by
+    have hstep := Real.log_le_log (partitionFunction_pos hgZ) hU0
+    rwa [Real.log_mul (Real.exp_pos _).ne' hU0pos.ne', Real.log_exp] at hstep
+  have hBt : thermalBracket kB T1 me h < thermalBracket kB T2 me h :=
+    thermalBracket_strictMono hkB hme hh hlt
+  have hlogBt : Real.log (thermalBracket kB T1 me h) < Real.log (thermalBracket kB T2 me h) :=
+    Real.log_lt_log (thermalBracket_pos hkB hT1 hme hh) hBt
+  have hchiEq : chi * (1 / (kB * T1) - 1 / (kB * T2)) = chi / (kB * T1) - chi / (kB * T2) := by
+    ring
+  rw [hchiEq] at hlogU0
+  linarith
+
+/-- **Electron-density `n_e = S(T)/R` strict monotonicity in temperature (M5, EXACT,
+Saha–Eggert (Griem)).** For a fixed positive measured stage ratio `R`, the density reader
+inherits the strict monotonicity of `S`: dividing a strictly increasing function by a
+fixed positive constant preserves strict monotonicity. -/
+theorem electronDensityFromRatio_strictMonoOn_temp [Nonempty ι] [Nonempty κ]
+    {kB me h chi : ℝ} {gZ EZ : ι → ℝ} {gZ1 EZ1 : κ → ℝ} {R : ℝ}
+    (hkB : 0 < kB) (hme : 0 < me) (hh : 0 < h) (hchi : 0 ≤ chi)
+    (hgZ : ∀ k, 0 < gZ k) (hEZ : ∀ k, 0 ≤ EZ k)
+    (hgZ1 : ∀ k, 0 < gZ1 k) (hEZ1 : ∀ k, 0 ≤ EZ1 k)
+    (hEχ : ∀ k, EZ k ≤ chi) (hR : 0 < R) :
+    StrictMonoOn (fun T => electronDensityFromRatio kB T me h chi gZ EZ gZ1 EZ1 R)
+      (Set.Ioi 0) := by
+  intro T1 hT1 T2 hT2 hlt
+  have hS := sahaFactor_strictMonoOn_temp hkB hme hh hchi hgZ hEZ hgZ1 hEZ1 hEχ hT1 hT2 hlt
+  change sahaFactor kB T1 me h chi gZ EZ gZ1 EZ1 / R
+      < sahaFactor kB T2 me h chi gZ EZ gZ1 EZ1 / R
+  exact div_lt_div_of_pos_right hS hR
+
 /-! ### Non-vacuity witnesses
 
 Concrete `Fin 1` data (`k_B = m_e = h = 1`, `g = 1`) certifying that each lemma's
@@ -784,5 +848,32 @@ constraint on a genuinely varying quantity. -/
 example : partitionFunction (1 : ℝ) 1 nvG nvE1 ≤ partitionFunction (1 : ℝ) 2 nvG nvE1 :=
   partitionFunction_mono_temp (ι := Fin 1) one_pos one_pos one_le_two
     (fun _ => one_pos) (fun _ => by norm_num [nvE1])
+
+private def nvG2 : Fin 1 → ℝ := fun _ => 1
+private def nvE1_2 : Fin 1 → ℝ := fun _ => 1
+
+/-- Non-vacuity for `sahaFactor_strictMonoOn_temp`: `S` strictly increases from `T = 1` to
+`T = 2` with `chi = 1` at the level ceiling (`E = 1 = chi`, so `hEχ` holds with equality). -/
+example :
+    sahaFactor 1 1 1 1 1 nvG2 nvE1_2 nvG2 nvE1_2
+      < sahaFactor 1 2 1 1 1 nvG2 nvE1_2 nvG2 nvE1_2 :=
+  sahaFactor_strictMonoOn_temp (ι := Fin 1) (κ := Fin 1)
+    one_pos one_pos one_pos zero_le_one
+    (fun _ => by norm_num [nvG2]) (fun _ => by norm_num [nvE1_2])
+    (fun _ => by norm_num [nvG2]) (fun _ => by norm_num [nvE1_2])
+    (fun _ => by norm_num [nvE1_2])
+    (Set.mem_Ioi.mpr one_pos) (Set.mem_Ioi.mpr (by norm_num : (0:ℝ) < 2)) one_lt_two
+
+/-- Non-vacuity for `electronDensityFromRatio_strictMonoOn_temp`: the `n_e` reader
+strictly increases from `T = 1` to `T = 2` at fixed `R = 1`. -/
+example :
+    electronDensityFromRatio 1 1 1 1 1 nvG2 nvE1_2 nvG2 nvE1_2 1
+      < electronDensityFromRatio 1 2 1 1 1 nvG2 nvE1_2 nvG2 nvE1_2 1 :=
+  electronDensityFromRatio_strictMonoOn_temp (ι := Fin 1) (κ := Fin 1)
+    one_pos one_pos one_pos zero_le_one
+    (fun _ => by norm_num [nvG2]) (fun _ => by norm_num [nvE1_2])
+    (fun _ => by norm_num [nvG2]) (fun _ => by norm_num [nvE1_2])
+    (fun _ => by norm_num [nvE1_2]) one_pos
+    (Set.mem_Ioi.mpr one_pos) (Set.mem_Ioi.mpr (by norm_num : (0:ℝ) < 2)) one_lt_two
 
 end CflibsFormal

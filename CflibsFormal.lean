@@ -2,6 +2,7 @@ import CflibsFormal.Alt.CSigma
 import CflibsFormal.Alt.CSigmaCurveOfGrowth
 import CflibsFormal.Alt.GaussMarkov
 import CflibsFormal.Alt.LeastSquares
+import CflibsFormal.Alt.OLSAtomicDataPerturbation
 import CflibsFormal.Alt.OLSVariance
 import CflibsFormal.Alt.SelfAbsorbed
 import CflibsFormal.Analysis
@@ -29,6 +30,7 @@ import CflibsFormal.MultiSpecies
 import CflibsFormal.NoiseToComposition
 import CflibsFormal.NonlinearLeastSquares
 import CflibsFormal.OLS
+import CflibsFormal.OuterLoopModelB
 import CflibsFormal.PartialLTE
 import CflibsFormal.PartitionLipschitz
 import CflibsFormal.Robustness
