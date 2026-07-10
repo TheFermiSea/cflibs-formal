@@ -7,7 +7,7 @@ implementation must reproduce, where **each check instantiates a proven theorem.
 The fixtures exercise the **multi-element** problem that is the whole point of CF-LIBS (several
 chemically distinct elements, each with its own atomic data and partition function `U_s`, tied
 together by the closure), across the classic algorithm **and the alternative estimators** the
-spec proves sound/equivalent. Five scenarios:
+spec proves sound/equivalent. Six scenarios:
 
 1. **ternary alloy** — 3 chemically-distinct elements, 4 lines each, distinct optical depths:
    checked with the classic inversion, the multi-line **OLS** Boltzmann-plot estimator, the
@@ -26,6 +26,15 @@ spec proves sound/equivalent. Five scenarios:
    `n_e = nRef·width/(2w)` (`StarkBroadening.starkDensity_recovers`), its forward round trip, and
    the `√T·ΔE³` McWhirter LTE-bound shape (`mcWhirterBound`). Kept dimensionless so the physical
    `REF_NE`/`1.6e12` constants stay out of the lossless formatter; the Python checker applies them.
+6. **runtime certificates** — the **typed bridge** (`CflibsFormal/Certificates.lean`, dossier 12
+   M3): the **12 certificate predicates** (C1–C7, C9, C10, C12–C14), each a pure-arithmetic `Prop`
+   whose truth activates a **proven soundness theorem** (well-posedness / convergence / error
+   guarantee). Each is emitted on its **non-vacuity witness** (the exact inputs of the Lean
+   `example`s), with the concrete inputs, expected boolean verdict, decisive value (determinant /
+   contraction rate / budget margin), and guarantee theorem — plus the reference mirror's **four
+   rejection tests** (`docs/integration/cflibs_certificates.py`). The Float mirror is 1:1 with each
+   `def …Cert` (**same inequalities, same strictness**); the checker re-derives verdict + value and
+   requires agreement.
 
 ## Files
 
@@ -113,6 +122,40 @@ Why **distinct** per-line λ matters: a `λ=1` fixture is blind to every λ-bug 
 uniformly). A λ-drop bug (pipeline omits the `1/λ` factor) **tilts the slope** because λ
 correlates with `E_k` → wrong `T`. The negative test (drop `1/λ` in `line_intensity_energy`)
 fails 13 checks including the temperature recovery (`T → 0.893` vs `1.0`).
+
+**Scenario 6 — runtime certificates (the typed bridge):**
+
+The `certificates` array carries one entry per predicate in `CflibsFormal/Certificates.lean`
+(dossier 12 M3), each on its **non-vacuity witness** (the exact inputs of the module's Lean
+`example`s). Every entry is `{id, name, theorem, predicate, inputs, verdict, value}`: the Float
+mirror emits the expected boolean `verdict` and the decisive `value` (the number the predicate
+compares — a determinant, contraction rate, or budget margin); the checker re-derives both from
+`inputs` and requires agreement (the value only where `verdict` holds — a margin/rate is
+meaningful only on the accept side). Each `…Cert` mirror is 1:1 with its Lean `def`: **same
+inequalities, same strictness**. A certificate is **SUFFICIENT** for its guarantee, generally not
+necessary; a `False` verdict names which proven precondition failed, it does not disprove the
+guarantee. `value`s use the same formulas as the reference mirror `docs/integration/cflibs_certificates.py`.
+
+| id | predicate (verdict) · decisive value | guarantee theorem (soundness re-export) |
+| --- | --- | --- |
+| `C1` energy_spread | `0 < SSₑ` · `SSₑ` | `OLS.designNormalMatrix_det_ne_zero_iff` — Boltzmann normal matrix nonsingular ⇒ T-identifiable |
+| `C2` joint_rank | `0 < SSₑ·SSₛ − S_Es²` · joint Gram det | `OLS.jointDesign_det_pos_iff` — centered `E`,`s` not collinear ⇒ joint (T,nₑ) identifiable |
+| `C3` conditioning | `0 < SSₑ` · `SSₑ` | `OLS.boltzmannConditionNumber_ge_one` (+ `centeredScaledDesign_orthonormal`) — κ≥1, scaled design orthonormal |
+| `C4` slope_budget | `ε²·n ≤ τ_β²·SSₑ` · slack `rhs−lhs` | `ErrorBudget.maxPerLineError_sufficient` — `\|Δβ\| ≤ τ_β` (ε epistemic, R1) |
+| `C5` temp_budget | `k_B·T̂·B ≤ τ_T` · slack `τ_T−lhs` | `ErrorBudget.temp_rel_error_le` — `\|ΔT\|/T ≤ τ_T` (B epistemic, R1) |
+| `C6` comp_budget | `(n+1)·δ ≤ τ_C·Ŝ` · slack `rhs−lhs` | `ErrorBudget.composition_target_sufficient` — `\|ΔCₛ\| ≤ τ_C` ∀s (δ epistemic, R1) |
+| `C7` mcwhirter | `C·√T·ΔE³ ≤ nₑ` · margin `nₑ−lhs` | `PartialLTE.mcwhirter_iff_thermalizationLimit` — `ΔE ≤ E*` (internal consistency only, R3) |
+| `C9` saha_iter | `b<Ntot ∧ root≤b ∧ √S/(2√(Ntot−b))<1 ∧ √(S·Ntot)≤b` · rate | `SahaEquilibrium.sahaIter_tendsto` — geometric convergence to `sahaEquilibriumNe S Ntot` |
+| `C10` damped_iter | `∀s Sₛ>0 ∧ Ntotₛ>0` · rate `1−lam` | `SahaEquilibrium.dampedMultiElementIter_tendsto` — **UNCONDITIONAL** convergence at `1−lam<1`, canonical `lam=1/(1+∑Ntot/S)` |
+| `C12` known_tau | `0 ≤ τ` · `τ` | `SelfAbsorption.lineIntensity_eq_selfAbsorbedIntensity_div` — exact thin recovery `I_thin=I_meas/SA(τ)` |
+| `C13` sa_distinct | `0 < w₂ ∧ w₂ < w₁` · gap `w₁−w₂` | `CurveOfGrowth.cogRatio_injOn` — curve-of-growth ratio injective ⇒ N resolved without source scale |
+| `C14` alias_budget | `0 ≤ δ ∧ δ < 1` · amp `δ/(1−δ)` | `AtomicDataPerturbation.classicDensity_aliasing_error` — `\|N̂−N\| ≤ N·δ/(1−δ)` (**A\***: δ ASSUMED, not measured, R2) |
+
+**Four rejection tests** (mirroring `docs/integration/cflibs_certificates.py`, honest-refusal side):
+`C1` flat energies `E=[1,1]` (`SSₑ=0`); `C2` collinear `E=[0,1]`, `s=[0,2]` (det `=0`); `C10`
+nonpositive Saha factor `S=[0,1]` (fails `0<Sₛ`); `C14` `δ=1` (fails `δ<1`). Each has
+`verdict:false`; the checker recomputes `false` and would flag any predicate that wrongly accepts.
+Verified non-vacuous: tampering any positive/negative verdict or a decisive value fails the checker.
 
 ## Why multi-element (and why a single family is insufficient)
 

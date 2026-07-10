@@ -174,6 +174,90 @@ def starkDensity (w nRef width : Float) : Float := nRef * width / (2.0 * w)
 the constant is kept out of the fixture so values stay in the lossless formatter range. -/
 def mcWhirterShape (T dE : Float) : Float := Float.sqrt T * dE ^ 3
 
+-- ### Runtime-certificate predicate mirrors (mirror of `CflibsFormal/Certificates.lean`)
+
+/-- Centered sum of squares `SSₓ = Σ_k (x_k − x̄)²` (mirror of `∑ k, (E k − mean E)^2`, the
+`OLS.designNormalMatrix` energy spread that gates C1/C3 and enters C2). -/
+def ssq (x : Vec) : Float :=
+  let xb := mean x
+  x.foldl (fun acc xk => acc + (xk - xb) * (xk - xb)) 0.0
+
+/-- Centered cross term `S_xy = Σ_k (x_k − x̄)(y_k − ȳ)` (mirror of the joint-design off-diagonal
+`∑ k, (E k − mean E)*(s k − mean s)` in C2). -/
+def crossSum (x y : Vec) : Float :=
+  let xb := mean x
+  let yb := mean y
+  (x.zip y).foldl (fun acc p => acc + (p.1 - xb) * (p.2 - yb)) 0.0
+
+/-- Mirror of `CflibsFormal.sahaEquilibriumNe`: the closed-form single-element two-stage electron
+density `(−S + √(S² + 4·S·Ntot))/2` — the fixed point the C9 iteration converges to. -/
+def sahaEquilibriumNe (S Ntot : Float) : Float :=
+  (-S + Float.sqrt (S * S + 4.0 * S * Ntot)) / 2.0
+
+/-- C1/C3 `energySpreadCert`/`conditioningCert`: verdict `0 < SSₑ`, value `SSₑ`. -/
+def certEnergySpread (E : Vec) : Bool × Float := let s := ssq E; (s > 0.0, s)
+
+/-- C2 `jointRankCert`: verdict `0 < SSₑ·SSₛ − S_Es²`, value the joint Gram determinant. -/
+def certJointRank (E s : Vec) : Bool × Float :=
+  let ces := crossSum E s
+  let det := ssq E * ssq s - ces * ces
+  (det > 0.0, det)
+
+/-- C4 `slopeBudgetCert`: verdict `eps²·n ≤ tauBeta²·SSₑ`, value the slack `rhs − lhs`. -/
+def certSlopeBudget (eps tauBeta ssE n : Float) : Bool × Float :=
+  let lhs := eps * eps * n
+  let rhs := tauBeta * tauBeta * ssE
+  (lhs <= rhs, rhs - lhs)
+
+/-- C5 `tempBudgetCert`: verdict `kB·T̂·B ≤ tauT`, value the slack `tauT − lhs`. -/
+def certTempBudget (kBv THat B tauT : Float) : Bool × Float :=
+  let lhs := kBv * THat * B
+  (lhs <= tauT, tauT - lhs)
+
+/-- C6 `compBudgetCert`: verdict `(n+1)·delta ≤ tauC·Ŝ`, value the slack `rhs − lhs`. -/
+def certCompBudget (delta tauC shat n : Float) : Bool × Float :=
+  let lhs := (n + 1.0) * delta
+  let rhs := tauC * shat
+  (lhs <= rhs, rhs - lhs)
+
+/-- C7 `mcWhirterCert`: verdict `C·√T·ΔE³ ≤ nₑ`, value the McWhirter margin `nₑ − lhs`. -/
+def certMcWhirter (cc t dE ne : Float) : Bool × Float :=
+  let lhs := cc * Float.sqrt t * dE ^ 3
+  (lhs <= ne, ne - lhs)
+
+/-- C9 `sahaIterCert`: verdict = all four clauses (`b<Ntot ∧ root≤b ∧ rate<1 ∧ √(S·Ntot)≤b`),
+value the contraction rate `√S/(2·√(Ntot−b))`. -/
+def certSahaIter (S Ntot b : Float) : Bool × Float :=
+  let root := sahaEquilibriumNe S Ntot
+  let rate := if b < Ntot then Float.sqrt S / (2.0 * Float.sqrt (Ntot - b)) else 2.0
+  let ok := (b < Ntot) && (root <= b) && (rate < 1.0) && (Float.sqrt (S * Ntot) <= b)
+  (ok, rate)
+
+/-- C10 `dampedIterCert`: verdict = all `Sₛ>0 ∧ Ntotₛ>0`, value the proven convergence rate
+`1 − lam` with the canonical `lam = 1/(1 + Σ Ntotₛ/Sₛ)` (finite only when the verdict holds). -/
+def certDampedIter (S Ntot : Vec) : Bool × Float :=
+  let posS := S.foldl (fun acc s => acc && (s > 0.0)) true
+  let posN := Ntot.foldl (fun acc nt => acc && (nt > 0.0)) true
+  let ok := posS && posN
+  let value := if ok then
+      let sumRatio := (Ntot.zip S).foldl (fun acc p => acc + p.1 / p.2) 0.0
+      1.0 - 1.0 / (1.0 + sumRatio)
+    else 0.0
+  (ok, value)
+
+/-- C12 `knownTauCert`: verdict `0 ≤ tau`, value `tau`. -/
+def certKnownTau (tau : Float) : Bool × Float := (tau >= 0.0, tau)
+
+/-- C13 `saDistinctCert`: verdict `0 < w₂ ∧ w₂ < w₁`, value the width gap `w₁ − w₂`. -/
+def certSaDistinct (w₁ w₂ : Float) : Bool × Float :=
+  ((0.0 < w₂) && (w₂ < w₁), w₁ - w₂)
+
+/-- C14 `aliasBudgetCert` (A*): verdict `0 ≤ delta ∧ delta < 1`, value the error amplification
+`delta/(1 − delta)` (finite only when `delta < 1`). REFUSAL: `delta` is ASSUMED, not measured. -/
+def certAliasBudget (delta : Float) : Bool × Float :=
+  let ok := (0.0 <= delta) && (delta < 1.0)
+  (ok, if delta < 1.0 then delta / (1.0 - delta) else 0.0)
+
 /-! ## JSON emission -/
 
 /-- 9-decimal fixed-point rendering via a scaled integer (Lean's `Float.toString` is lossy
@@ -190,6 +274,7 @@ def jNum (x : Float) : String :=
 def jVec (xs : Vec) : String := "[" ++ String.intercalate ", " (xs.toList.map jNum) ++ "]"
 def jField (k : String) (v : String) : String := "\"" ++ k ++ "\": " ++ v
 def jStr (s : String) : String := "\"" ++ s ++ "\""
+def jBool (b : Bool) : String := if b then "true" else "false"
 def jArrayOf (xs : Array String) : String := "[" ++ String.intercalate ", " xs.toList ++ "]"
 
 /-! ## Scenario 1 — ternary alloy -/
@@ -509,6 +594,120 @@ def starkScenario : String :=
     ++ ", " ++ jField "kind" (jStr "stark")
     ++ ", " ++ jField "constants" consts ++ ", " ++ jField "checks" checks ++ "}"
 
+/-! ## Scenario 6 — runtime certificates (the typed bridge, `CflibsFormal/Certificates.lean`) -/
+
+/-- Envelope for one certificate entry: id, name, wrapped guarantee theorem, the checkable
+predicate (as prose), the concrete `inputs`, the expected boolean `verdict`, and the decisive
+`value` (the number compared — a determinant, contraction rate, or budget margin). -/
+def jCert (id nm thm pred inputs : String) (verdict : Bool) (value : Float) : String :=
+  "{" ++ jField "id" (jStr id) ++ ", " ++ jField "name" (jStr nm) ++ ", "
+    ++ jField "theorem" (jStr thm) ++ ", " ++ jField "predicate" (jStr pred) ++ ", "
+    ++ jField "inputs" inputs ++ ", " ++ jField "verdict" (jBool verdict) ++ ", "
+    ++ jField "value" (jNum value) ++ "}"
+
+/-- The 12 certificate predicates of `Certificates.lean`, each on its non-vacuity witness data
+(the exact inputs of the Lean `example`s), plus the reference mirror's four rejection tests. Each
+entry mirrors its `def …Cert` 1:1 (same inequalities, same strictness); the Python checker
+recomputes the verdict + decisive value and must agree. -/
+def certificatesScenario : String :=
+  -- ===== positive cases (12 predicates on their Lean non-vacuity witnesses) =====
+  -- C1 — energy-spread rank gate; witness E = [0,1] ⇒ SSₑ = 1/2
+  let c1E : Vec := #[0.0, 1.0]
+  let (c1v, c1n) := certEnergySpread c1E
+  let c1 := jCert "C1" "energy_spread" "designNormalMatrix_det_ne_zero_iff" "0 < SSe"
+    ("{" ++ jField "E" (jVec c1E) ++ "}") c1v c1n
+  -- C2 — joint Saha–Boltzmann rank gate; witness E=[0,1,2], s=[0,0,1] ⇒ det = 1/3
+  let c2E : Vec := #[0.0, 1.0, 2.0]
+  let c2s : Vec := #[0.0, 0.0, 1.0]
+  let (c2v, c2n) := certJointRank c2E c2s
+  let c2 := jCert "C2" "joint_rank" "jointDesign_det_pos_iff" "0 < SSe*SSs - S_Es^2"
+    ("{" ++ jField "E" (jVec c2E) ++ ", " ++ jField "s" (jVec c2s) ++ "}") c2v c2n
+  -- C3 — Boltzmann-plot conditioning; same predicate/witness as C1 (distinct guarantee)
+  let (c3v, c3n) := certEnergySpread c1E
+  let c3 := jCert "C3" "conditioning" "boltzmannConditionNumber_ge_one" "0 < SSe"
+    ("{" ++ jField "E" (jVec c1E) ++ "}") c3v c3n
+  -- C4 — slope / energy-spread budget; witness eps=1, tauBeta=2, SSₑ=1/2, n=2 (tight, 2≤2)
+  let c4eps : Float := 1.0; let c4tb : Float := 2.0; let c4ss : Float := 0.5; let c4n : Float := 2.0
+  let (c4v, c4n') := certSlopeBudget c4eps c4tb c4ss c4n
+  let c4 := jCert "C4" "slope_budget" "maxPerLineError_sufficient" "eps^2 * n <= tauBeta^2 * SSe"
+    ("{" ++ jField "eps" (jNum c4eps) ++ ", " ++ jField "tauBeta" (jNum c4tb) ++ ", "
+      ++ jField "SSe" (jNum c4ss) ++ ", " ++ jField "n" (jNum c4n) ++ "}") c4v c4n'
+  -- C5 — temperature-error budget; witness kB=1, T̂=2, B=1/2, tauT=1 (tight, 1≤1)
+  let c5kB : Float := 1.0; let c5TH : Float := 2.0; let c5B : Float := 0.5; let c5tt : Float := 1.0
+  let (c5v, c5n) := certTempBudget c5kB c5TH c5B c5tt
+  let c5 := jCert "C5" "temp_budget" "temp_rel_error_le" "kB * THat * B <= tauT"
+    ("{" ++ jField "kB" (jNum c5kB) ++ ", " ++ jField "THat" (jNum c5TH) ++ ", "
+      ++ jField "B" (jNum c5B) ++ ", " ++ jField "tauT" (jNum c5tt) ++ "}") c5v c5n
+  -- C6 — composition budget; witness delta=1, tauC=2, Ŝ=2, n=2 (3≤4)
+  let c6d : Float := 1.0; let c6tc : Float := 2.0; let c6sh : Float := 2.0; let c6n : Float := 2.0
+  let (c6v, c6n') := certCompBudget c6d c6tc c6sh c6n
+  let c6 := jCert "C6" "comp_budget" "composition_target_sufficient" "(n+1)*delta <= tauC*Shat"
+    ("{" ++ jField "delta" (jNum c6d) ++ ", " ++ jField "tauC" (jNum c6tc) ++ ", "
+      ++ jField "Shat" (jNum c6sh) ++ ", " ++ jField "n" (jNum c6n) ++ "}") c6v c6n'
+  -- C7 — McWhirter LTE admissibility; witness C=1, T=1, ΔE=1, nₑ=2 (1≤2)
+  let c7C : Float := 1.0; let c7T : Float := 1.0; let c7dE : Float := 1.0; let c7ne : Float := 2.0
+  let (c7v, c7n) := certMcWhirter c7C c7T c7dE c7ne
+  let c7 := jCert "C7" "mcwhirter" "mcwhirter_iff_thermalizationLimit" "C * sqrt(T) * dE^3 <= ne"
+    ("{" ++ jField "C" (jNum c7C) ++ ", " ++ jField "T" (jNum c7T) ++ ", "
+      ++ jField "dE" (jNum c7dE) ++ ", " ++ jField "ne" (jNum c7ne) ++ "}") c7v c7n
+  -- C9 — inner Saha-iteration contraction; witness S=1, Ntot=3, b=2 ⇒ rate=1/2
+  let c9S : Float := 1.0; let c9Nt : Float := 3.0; let c9b : Float := 2.0
+  let (c9v, c9n) := certSahaIter c9S c9Nt c9b
+  let c9 := jCert "C9" "saha_iter" "sahaIter_tendsto"
+    "b < Ntot & sahaEquilibriumNe(S,Ntot) <= b & sqrt(S)/(2 sqrt(Ntot-b)) < 1 & sqrt(S*Ntot) <= b"
+    ("{" ++ jField "S" (jNum c9S) ++ ", " ++ jField "Ntot" (jNum c9Nt) ++ ", "
+      ++ jField "b" (jNum c9b) ++ "}") c9v c9n
+  -- C10 — damped multi-element contraction (UNCONDITIONAL); witness S=Ntot=[1,1] ⇒ rate 1−1/3
+  let c10S : Vec := #[1.0, 1.0]; let c10Nt : Vec := #[1.0, 1.0]
+  let (c10v, c10n) := certDampedIter c10S c10Nt
+  let c10 := jCert "C10" "damped_iter" "dampedMultiElementIter_tendsto"
+    "(all s, S[s] > 0) & (all s, Ntot[s] > 0)"
+    ("{" ++ jField "S" (jVec c10S) ++ ", " ++ jField "Ntot" (jVec c10Nt) ++ "}") c10v c10n
+  -- C12 — self-absorption exact correction (known τ); witness τ=1 (SA(1)=1−e⁻¹ ≠ 1)
+  let c12t : Float := 1.0
+  let (c12v, c12n) := certKnownTau c12t
+  let c12 := jCert "C12" "known_tau" "lineIntensity_eq_selfAbsorbedIntensity_div" "0 <= tau"
+    ("{" ++ jField "tau" (jNum c12t) ++ "}") c12v c12n
+  -- C13 — self-absorption identifiability; witness w₁=2, w₂=1 ⇒ 0 < 1 < 2
+  let c13w1 : Float := 2.0; let c13w2 : Float := 1.0
+  let (c13v, c13n) := certSaDistinct c13w1 c13w2
+  let c13 := jCert "C13" "sa_distinct" "cogRatio_injOn" "0 < w2 & w2 < w1"
+    ("{" ++ jField "w1" (jNum c13w1) ++ ", " ++ jField "w2" (jNum c13w2) ++ "}") c13v c13n
+  -- C14 — atomic-data aliasing budget (A*, REFUSAL: δ assumed not measured); witness δ=1/2
+  let c14d : Float := 0.5
+  let (c14v, c14n) := certAliasBudget c14d
+  let c14 := jCert "C14" "alias_budget" "classicDensity_aliasing_error" "0 <= delta & delta < 1"
+    ("{" ++ jField "delta" (jNum c14d) ++ "}") c14v c14n
+  -- ===== negative cases (the reference mirror's four rejection tests, docs/integration) =====
+  -- C1 flat energies ⇒ SSₑ = 0 ⇒ reject
+  let n1E : Vec := #[1.0, 1.0]
+  let (n1v, n1n) := certEnergySpread n1E
+  let n1 := jCert "C1" "energy_spread (reject: flat energies)" "designNormalMatrix_det_ne_zero_iff"
+    "0 < SSe" ("{" ++ jField "E" (jVec n1E) ++ "}") n1v n1n
+  -- C2 collinear E,s ⇒ det = 0 ⇒ reject
+  let n2E : Vec := #[0.0, 1.0]; let n2s : Vec := #[0.0, 2.0]
+  let (n2v, n2n) := certJointRank n2E n2s
+  let n2 := jCert "C2" "joint_rank (reject: collinear E,s)" "jointDesign_det_pos_iff"
+    "0 < SSe*SSs - S_Es^2" ("{" ++ jField "E" (jVec n2E) ++ ", " ++ jField "s" (jVec n2s) ++ "}")
+    n2v n2n
+  -- C10 nonpositive Saha factor ⇒ reject (value forced 0; convergence rate undefined)
+  let n10S : Vec := #[0.0, 1.0]; let n10Nt : Vec := #[1.0, 1.0]
+  let (n10v, n10n) := certDampedIter n10S n10Nt
+  let n10 := jCert "C10" "damped_iter (reject: nonpositive S)" "dampedMultiElementIter_tendsto"
+    "(all s, S[s] > 0) & (all s, Ntot[s] > 0)"
+    ("{" ++ jField "S" (jVec n10S) ++ ", " ++ jField "Ntot" (jVec n10Nt) ++ "}") n10v n10n
+  -- C14 δ=1 ⇒ reject (amplification would diverge; value forced 0)
+  let n14d : Float := 1.0
+  let (n14v, n14n) := certAliasBudget n14d
+  let n14 := jCert "C14" "alias_budget (reject: delta = 1)" "classicDensity_aliasing_error"
+    "0 <= delta & delta < 1" ("{" ++ jField "delta" (jNum n14d) ++ "}") n14v n14n
+  let certs := jArrayOf #[c1, c2, c3, c4, c5, c6, c7, c9, c10, c12, c13, c14, n1, n2, n10, n14]
+  "{" ++ jField "name" (jStr ("runtime certificates — the 12 predicates of CflibsFormal/"
+    ++ "Certificates.lean (the typed bridge, dossier 12 M3), each on its non-vacuity witness "
+    ++ "plus the reference mirror's rejection tests"))
+    ++ ", " ++ jField "kind" (jStr "certificates")
+    ++ ", " ++ jField "certificates" certs ++ "}"
+
 /-- Emit the fixtures as a JSON document. -/
 def render : String :=
   let header := jField "_about" (jStr ("Multi-element + alternative-estimator CF-LIBS regression "
@@ -520,7 +719,7 @@ def render : String :=
   "{\n  " ++ header ++ ",\n  " ++ jField "global" glob ++ ",\n  "
     ++ jField "scenarios"
         (jArrayOf #[alloyScenario, twoStageScenario, errorBudgetScenario, energyOrdinateScenario,
-          starkScenario])
+          starkScenario, certificatesScenario])
     ++ "\n}"
 
 def main : IO Unit := IO.println render
