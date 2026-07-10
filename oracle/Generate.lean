@@ -623,9 +623,8 @@ def certificatesScenario : String :=
   let c2 := jCert "C2" "joint_rank" "jointDesign_det_pos_iff" "0 < SSe*SSs - S_Es^2"
     ("{" ++ jField "E" (jVec c2E) ++ ", " ++ jField "s" (jVec c2s) ++ "}") c2v c2n
   -- C3 — Boltzmann-plot conditioning; same predicate/witness as C1 (distinct guarantee)
-  let (c3v, c3n) := certEnergySpread c1E
   let c3 := jCert "C3" "conditioning" "boltzmannConditionNumber_ge_one" "0 < SSe"
-    ("{" ++ jField "E" (jVec c1E) ++ "}") c3v c3n
+    ("{" ++ jField "E" (jVec c1E) ++ "}") c1v c1n
   -- C4 — slope / energy-spread budget; witness eps=1, tauBeta=2, SSₑ=1/2, n=2 (tight, 2≤2)
   let c4eps : Float := 1.0; let c4tb : Float := 2.0; let c4ss : Float := 0.5; let c4n : Float := 2.0
   let (c4v, c4n') := certSlopeBudget c4eps c4tb c4ss c4n

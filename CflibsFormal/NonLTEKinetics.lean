@@ -5,7 +5,6 @@ Authors: Brian Squires
 -/
 import Mathlib
 import CflibsFormal.ErrorBudget
-import CflibsFormal.PartialLTE
 
 /-!
 # CF-LIBS formalization — non-LTE departure coefficients and the departure error budget
@@ -42,7 +41,8 @@ Under non-LTE, `nₖᴺᴸᵀᴱ = bₖ · nₖᴸᵀᴱ`, so the Boltzmann-plot
 *per-line additive shift* `δₖ = log bₖ` (`nonlte_ordinate_shift`, an EXACT `log_mul` identity).
 That is precisely the abstract per-line ordinate perturbation `εₖ` of the heteroscedastic
 `ErrorBudget` chain. A bounded departure `|bₖ − 1| ≤ δ_b` gives `|log bₖ| ≤ δ_b/(1 − δ_b)`
-(`abs_log_departure_le`, via the promoted `ErrorBudget.log_lip_floor`), and the *entire existing*
+(`abs_log_departure_le`, the `a = 1` instance of `Analysis.abs_log_ratio_le`), and the *entire
+existing*
 `ErrorBudget` machinery then fires verbatim with `εₖ := |log bₖ|`:
 
 ```
@@ -258,20 +258,18 @@ theorem nonlte_ordinate_shift {g nLTE : ℝ} (b : ℝ) (hnLTE : 0 < nLTE) (hg : 
   ring
 
 /-- **A bounded departure gives a bounded log-ordinate perturbation** (`PURE-MATH`). If
-`|b − 1| ≤ δ_b` with `0 ≤ δ_b < 1` then `|log b| ≤ δ_b/(1 − δ_b)`, via the positive-floor
-Lipschitz bound `ErrorBudget.log_lip_floor` applied with `a = b`, `b = 1`, `c = 1 − δ_b`
-(`log 1 = 0`). The near-LTE floor `1 − δ_b > 0` is load-bearing. -/
-theorem abs_log_departure_le {b δb : ℝ} (hδ0 : 0 ≤ δb) (hδ1 : δb < 1) (hb : |b - 1| ≤ δb) :
+`|b − 1| ≤ δ_b` with `0 ≤ δ_b < 1` then `|log b| ≤ δ_b/(1 − δ_b)`: the `a = 1, a' = b`
+instance of the shared log-ratio transfer bound `abs_log_ratio_le` (`Analysis.lean`) —
+the same idiom `Alt/OLSAtomicDataPerturbation` uses for its `|log(A/A')|` bound
+(`|log(1/b)| = |log b|`). The near-LTE floor `1 − δ_b > 0` is load-bearing. `_hδ0` is
+carried for caller-side API symmetry (nonnegativity is derivable from `hb`). -/
+theorem abs_log_departure_le {b δb : ℝ} (_hδ0 : 0 ≤ δb) (hδ1 : δb < 1) (hb : |b - 1| ≤ δb) :
     |Real.log b| ≤ δb / (1 - δb) := by
-  have hc : 0 < 1 - δb := by linarith
-  have habs := abs_le.mp hb
-  have hlb : 1 - δb ≤ b := by linarith [habs.1]
-  have hub : 1 - δb ≤ 1 := by linarith
-  have hlip := log_lip_floor hc hlb hub
-  rw [Real.log_one, sub_zero] at hlip
-  refine hlip.trans ?_
-  rw [div_eq_mul_inv, div_eq_mul_inv]
-  exact mul_le_mul_of_nonneg_right hb (inv_nonneg.mpr hc.le)
+  have hbpos : 0 < b := by
+    have := (abs_le.mp hb).1
+    linarith
+  have h := abs_log_ratio_le one_pos hbpos hδ1 (by rwa [mul_one])
+  rwa [one_div, Real.log_inv, abs_neg] at h
 
 /-- **Non-LTE temperature error budget, temperature leg** (`REDUCED`; Cristoforetti 2010). A
 per-line departure `bₖ` shifts the Boltzmann ordinate by `log bₖ` (`hshift`, from

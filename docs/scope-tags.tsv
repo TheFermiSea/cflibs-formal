@@ -354,7 +354,6 @@ ErrorBudget.lean	composition_target_sufficient	REDUCED	Tognoni 2010
 ErrorBudget.lean	olsIntercept_stable_hetero	REDUCED	Tognoni 2010
 ErrorBudget.lean	combinedSlope_offset_lipschitz	REDUCED	Aguilera & Aragón 2007
 ErrorBudget.lean	combinedSlopeTempUpdate_lipschitz	REDUCED	Aguilera & Aragón 2007
-ErrorBudget.lean	log_lip_floor	PURE-MATH	—
 NonLTEKinetics.lean	two_level_balance	REDUCED	Griem 1997
 NonLTEKinetics.lean	departureCoeff_pos	PURE-MATH	—
 NonLTEKinetics.lean	departureCoeff_le_one	PURE-MATH	—

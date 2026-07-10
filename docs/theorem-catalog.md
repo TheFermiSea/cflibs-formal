@@ -5,7 +5,7 @@
 > (the integrity spine) + citation from `docs/scope-tags.tsv`; the docs-sync CI gate fails if
 > any result is untagged, so a new theorem cannot land without declaring its epistemic status.
 
-**Scope-tag mix** (467 results): **EXACT** 138 · **REDUCED** 122 · **APPROXIMATION** 8 · **PURE-MATH** 199
+**Scope-tag mix** (466 results): **EXACT** 138 · **REDUCED** 122 · **APPROXIMATION** 8 · **PURE-MATH** 198
 
 `EXACT` = exact identity faithfully encoding the cited physics · `REDUCED` = valid dimensionless/lumped-factor form · `APPROXIMATION` = documented idealization / limiting case · `PURE-MATH` = infrastructure lemma, no physical claim. Classification cross-checked against `reviews/literature-validity-audit.md`.
 
@@ -417,7 +417,6 @@
 - `REDUCED` · `temp_rel_error_hetero` — Composed heteroscedastic noise ⇒ relative temperature error (gap #5, temperature leg).  _[Tognoni 2010]_
 - `REDUCED` · `olsIntercept_stable_hetero` — Intercept sensitivity, HETEROSCEDASTIC (per-line budget, centered convention).  _[Tognoni 2010]_
 - `REDUCED` · `combinedSlope_offset_lipschitz` — Offset→slope sensitivity of the combined Saha–Boltzmann slope (`REDUCED`; Aguilera & Aragón 2007).  _[Aguilera & Aragón 2007]_
-- `PURE-MATH` · `log_lip_floor` — `log`-Lipschitz on a positive floor (`PURE-MATH`).
 - `REDUCED` · `combinedSlopeTempUpdate_lipschitz` — `T`-leg Lipschitz constant of the outer CF-LIBS loop (`REDUCED`; Aguilera & Aragón 2007).  _[Aguilera & Aragón 2007]_
 
 ## `ForwardMap.lean`  (CflibsFormal)

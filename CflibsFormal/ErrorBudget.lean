@@ -529,7 +529,7 @@ theorem combinedSlope_offset_lipschitz [Nonempty ι] (E y s : ι → ℝ) {offCo
 /-- **`log`-Lipschitz on a positive floor** (`PURE-MATH`). For `0 < c ≤ a, b`,
 `|log a − log b| ≤ |a − b| / c`, from `log t ≤ t − 1`. Private helper for the density→
 temperature leg. -/
-theorem log_lip_floor {c a b : ℝ} (hc : 0 < c) (ha : c ≤ a) (hb : c ≤ b) :
+private theorem log_lip_floor {c a b : ℝ} (hc : 0 < c) (ha : c ≤ a) (hb : c ≤ b) :
     |Real.log a - Real.log b| ≤ |a - b| / c := by
   have hap : 0 < a := hc.trans_le ha
   have hbp : 0 < b := hc.trans_le hb

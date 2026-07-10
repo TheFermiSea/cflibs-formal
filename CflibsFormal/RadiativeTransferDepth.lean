@@ -99,27 +99,35 @@ theorem rtEmergent_two (Score Sshell τc τs : ℝ) :
   simp only [rtEmergent, List.foldl_cons, List.foldl_nil, rtStep, emergentIntensity]
   ring
 
+/-- Shared telescoping identity for a single zone: `S·(1−e^{−T₀})·e^{−τ} + S·(1−e^{−τ})
+= S·(1−e^{−(T₀+τ)})` — the algebra both directional step bounds rest on. -/
+private theorem rtStep_telescope (S T₀ τ : ℝ) :
+    S * (1 - Real.exp (-T₀)) * Real.exp (-τ) + S * (1 - Real.exp (-τ))
+      = S * (1 - Real.exp (-(T₀ + τ))) := by
+  have hadd : Real.exp (-(T₀ + τ)) = Real.exp (-T₀) * Real.exp (-τ) := by
+    rw [← Real.exp_add]; congr 1; ring
+  rw [hadd]; ring
+
+/-- Nonnegativity of the single-zone fold weights `e^{−τ}` and `1 − e^{−τ}` for `0 ≤ τ`. -/
+private theorem rtStep_weights_nonneg {τ : ℝ} (hτ : 0 ≤ τ) :
+    (0 : ℝ) ≤ Real.exp (-τ) ∧ (0 : ℝ) ≤ 1 - Real.exp (-τ) :=
+  ⟨(Real.exp_pos _).le, by
+    have : Real.exp (-τ) ≤ 1 := Real.exp_le_one_iff.mpr (by linarith)
+    linarith⟩
+
 /-- Single-zone upper step: if the accumulator is below the `Smax` slab of depth `T₀`, one more
-zone (source `≤ Smax`, depth `≥ 0`) keeps it below the `Smax` slab of depth `T₀ + z.2`. The
-telescoping identity `(1 − e^{−T₀})·e^{−τ} + (1 − e^{−τ}) = 1 − e^{−(T₀+τ)}`. -/
+zone (source `≤ Smax`, depth `≥ 0`) keeps it below the `Smax` slab of depth `T₀ + z.2`, by
+`rtStep_telescope` and the weight nonnegativity. -/
 private theorem rtStep_le {Smax I₀ T₀ : ℝ} (z : ℝ × ℝ)
     (hI : I₀ ≤ Smax * (1 - Real.exp (-T₀))) (hS : z.1 ≤ Smax) (hτ : 0 ≤ z.2) :
     rtStep I₀ z ≤ Smax * (1 - Real.exp (-(T₀ + z.2))) := by
   unfold rtStep
-  have he0 : (0 : ℝ) ≤ Real.exp (-z.2) := (Real.exp_pos _).le
-  have he1 : (0 : ℝ) ≤ 1 - Real.exp (-z.2) := by
-    have : Real.exp (-z.2) ≤ 1 := Real.exp_le_one_iff.mpr (by linarith)
-    linarith
+  obtain ⟨he0, he1⟩ := rtStep_weights_nonneg hτ
   have h1 : I₀ * Real.exp (-z.2) ≤ Smax * (1 - Real.exp (-T₀)) * Real.exp (-z.2) :=
     mul_le_mul_of_nonneg_right hI he0
   have h2 : z.1 * (1 - Real.exp (-z.2)) ≤ Smax * (1 - Real.exp (-z.2)) :=
     mul_le_mul_of_nonneg_right hS he1
-  have htel : Smax * (1 - Real.exp (-T₀)) * Real.exp (-z.2) + Smax * (1 - Real.exp (-z.2))
-      = Smax * (1 - Real.exp (-(T₀ + z.2))) := by
-    have hadd : Real.exp (-(T₀ + z.2)) = Real.exp (-T₀) * Real.exp (-z.2) := by
-      rw [← Real.exp_add]; congr 1; ring
-    rw [hadd]; ring
-  linarith [h1, h2, htel]
+  linarith [h1, h2, rtStep_telescope Smax T₀ z.2]
 
 /-- Single-zone lower step (mirror of `rtStep_le`): needs no sign hypothesis on `Smin`, only the
 nonnegativity of the weights `e^{−τ}` and `1 − e^{−τ}`. -/
@@ -127,20 +135,12 @@ private theorem rtStep_ge {Smin I₀ T₀ : ℝ} (z : ℝ × ℝ)
     (hI : Smin * (1 - Real.exp (-T₀)) ≤ I₀) (hS : Smin ≤ z.1) (hτ : 0 ≤ z.2) :
     Smin * (1 - Real.exp (-(T₀ + z.2))) ≤ rtStep I₀ z := by
   unfold rtStep
-  have he0 : (0 : ℝ) ≤ Real.exp (-z.2) := (Real.exp_pos _).le
-  have he1 : (0 : ℝ) ≤ 1 - Real.exp (-z.2) := by
-    have : Real.exp (-z.2) ≤ 1 := Real.exp_le_one_iff.mpr (by linarith)
-    linarith
+  obtain ⟨he0, he1⟩ := rtStep_weights_nonneg hτ
   have h1 : Smin * (1 - Real.exp (-T₀)) * Real.exp (-z.2) ≤ I₀ * Real.exp (-z.2) :=
     mul_le_mul_of_nonneg_right hI he0
   have h2 : Smin * (1 - Real.exp (-z.2)) ≤ z.1 * (1 - Real.exp (-z.2)) :=
     mul_le_mul_of_nonneg_right hS he1
-  have htel : Smin * (1 - Real.exp (-T₀)) * Real.exp (-z.2) + Smin * (1 - Real.exp (-z.2))
-      = Smin * (1 - Real.exp (-(T₀ + z.2))) := by
-    have hadd : Real.exp (-(T₀ + z.2)) = Real.exp (-T₀) * Real.exp (-z.2) := by
-      rw [← Real.exp_add]; congr 1; ring
-    rw [hadd]; ring
-  linarith [h1, h2, htel]
+  linarith [h1, h2, rtStep_telescope Smin T₀ z.2]
 
 /-- Generalized-accumulator upper invariant: fold from any accumulator below the `Smax` slab of any
 depth `T₀` stays below the `Smax` slab of depth `T₀ + Σ τₖ`. -/
