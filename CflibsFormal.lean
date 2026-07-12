@@ -1,3 +1,4 @@
+import CflibsFormal.Aitchison
 import CflibsFormal.Alt.CSigma
 import CflibsFormal.Alt.CSigmaCurveOfGrowth
 import CflibsFormal.Alt.GaussMarkov
@@ -49,4 +50,5 @@ import CflibsFormal.SpatialForward
 import CflibsFormal.StarkBroadening
 import CflibsFormal.StarkShift
 import CflibsFormal.TemporalEvolution
+import CflibsFormal.TwoDCOS
 import CflibsFormal.VoigtWidth

@@ -5,9 +5,23 @@
 > (the integrity spine) + citation from `docs/scope-tags.tsv`; the docs-sync CI gate fails if
 > any result is untagged, so a new theorem cannot land without declaring its epistemic status.
 
-**Scope-tag mix** (466 results): **EXACT** 138 · **REDUCED** 122 · **APPROXIMATION** 8 · **PURE-MATH** 198
+**Scope-tag mix** (478 results): **EXACT** 138 · **REDUCED** 122 · **APPROXIMATION** 8 · **PURE-MATH** 210
 
 `EXACT` = exact identity faithfully encoding the cited physics · `REDUCED` = valid dimensionless/lumped-factor form · `APPROXIMATION` = documented idealization / limiting case · `PURE-MATH` = infrastructure lemma, no physical claim. Classification cross-checked against `reviews/literature-validity-audit.md`.
+
+## `Aitchison.lean`  (CflibsFormal)
+*2DCOS-LIBS formalization — Aitchison compositional identities*
+
+**Definitions**
+- `closure` — Aitchison closure operator `C(x) k = x k / ∑ⱼ x j`: re-normalize a vector onto the simplex by dividing by its total.
+- `softmax` — Softmax map `softmax v k = exp(v k) / ∑ⱼ exp(v j)`.
+- `clr` — Centered log-ratio `clr(x) k = log(x k) − (∑ⱼ log(x j)) / D`, with `D = |ι|` the number of components.
+
+**Results**
+- `PURE-MATH` · `closure_sum_one` — Closure normalization.
+- `PURE-MATH` · `softmax_sum_one` — Softmax normalization.
+- `PURE-MATH` · `softmax_log_eq_closure` — The C3 identity (audit-critical).
+- `PURE-MATH` · `clr_sum_zero` — clr sums to zero.
 
 ## `Alt/CSigma.lean`  (CflibsFormal.Alt)
 *the C-sigma (Cσ) single-line method (alternative estimator)*
@@ -979,6 +993,24 @@
 - `REDUCED` · `temporal_saha_composition_gate_independent` — Cross-gate Saha composition invariance (HEADLINE — thin corollary).  _[Tognoni 2010]_
 - `REDUCED` · `mem_lteWindow_thermalized` — Applicability: gate in the LTE window ⇒ thermalized.  _[Cristoforetti 2010]_
 - `PURE-MATH` · `mcwhirter_requirement_antitone` — McWhirter requirement falls as the plasma cools.
+
+## `TwoDCOS.lean`  (CflibsFormal)
+*2DCOS-LIBS formalization — Noda two-dimensional correlation algebra*
+
+**Definitions**
+- `hilbertNoda` — The Hilbert–Noda kernel `N : Matrix (Fin m) (Fin m) ℝ`: `Nⱼₖ = 0` on the diagonal and `1/(π·(k−j))` off it (Noda 2000).
+- `syncMatrix` — The synchronous 2DCOS matrix `Φ = (1/(m−1))·Y Yᵀ` (Noda 1993): the temporal cross-covariance of the `n` channel traces over `m` gate-delays.
+- `asyncMatrix` — The asynchronous 2DCOS matrix `Ψ = (1/(m−1))·Y N Yᵀ` (Noda 1993, 2000), where `N` is the Hilbert–Noda kernel `hilbertNoda m`: the out-of-phase (Hilbert- tran…
+
+**Results**
+- `PURE-MATH` · `hilbertNoda_transpose_neg` — Skew-symmetry of the Hilbert–Noda kernel, `Nᵀ = −N` (Noda 1993, 2000).
+- `PURE-MATH` · `syncMatrix_symm` — The synchronous map is symmetric, `Φᵀ = Φ` (Noda 1993).
+- `PURE-MATH` · `syncMatrix_diag_eq_variance` — Diagonal of the synchronous map = temporal variance.
+- `PURE-MATH` · `syncMatrix_diag_nonneg` — The synchronous auto-power is nonnegative for `m ≥ 2`: `0 ≤ Φ a a`.
+- `PURE-MATH` · `asyncMatrix_antisymm` — The asynchronous map is antisymmetric, `Ψᵀ = −Ψ` (Noda 1993, 2000).
+- `PURE-MATH` · `asyncMatrix_diag_zero` — Zero-diagonal law: `Ψ a a = 0` for every channel `a` (Noda 1993).
+- `PURE-MATH` · `skew_quadForm_zero` — Skew quadratic form vanishes.
+- `PURE-MATH` · `asyncMatrix_singleDriver_zero` — Single common driver ⇒ vanishing asynchronous map.
 
 ## `VoigtWidth.lean`  (CflibsFormal)
 *the Voigt FWHM combination (Olivero–Longbothum)*

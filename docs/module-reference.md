@@ -8,6 +8,7 @@ One row per module under `CflibsFormal/`. *Base* = imports no `CflibsFormal` mod
 
 | Module | Namespace | Results | Defs | Base | Lit | Role |
 |---|---|--:|--:|:--:|:--:|---|
+| `Aitchison.lean` | `CflibsFormal` | 4 | 3 | ✓ | ✓ | 2DCOS-LIBS formalization — Aitchison compositional identities |
 | `Alt/CSigma.lean` | `CflibsFormal.Alt` | 17 | 10 | – | – | the C-sigma (Cσ) single-line method (alternative estimator) |
 | `Alt/CSigmaCurveOfGrowth.lean` | `CflibsFormal.Alt` | 7 | 2 | – | ✓ | The Cσ curve of growth — self-absorption droop below the universal line |
 | `Alt/GaussMarkov.lean` | `CflibsFormal.Alt` | 7 | 1 | – | ✓ | Gauss–Markov optimality (BLUE) for the OLS Boltzmann-plot slope |
@@ -59,6 +60,7 @@ One row per module under `CflibsFormal/`. *Base* = imports no `CflibsFormal` mod
 | `StarkBroadening.lean` | `CflibsFormal` | 7 | 4 | – | ✓ | Stark broadening + the McWhirter LTE criterion |
 | `StarkShift.lean` | `CflibsFormal` | 9 | 3 | ✓ | ✓ | the Stark line-shift electron-density diagnostic |
 | `TemporalEvolution.lean` | `CflibsFormal` | 8 | 7 | – | ✓ | time-resolved (gate-delayed) recovery |
+| `TwoDCOS.lean` | `CflibsFormal` | 8 | 3 | ✓ | ✓ | 2DCOS-LIBS formalization — Noda two-dimensional correlation algebra |
 | `VoigtWidth.lean` | `CflibsFormal` | 7 | 1 | ✓ | ✓ | the Voigt FWHM combination (Olivero–Longbothum) |
-| **52 modules** | | **466** | **164** | | | |
+| **54 modules** | | **478** | **170** | | | |
 

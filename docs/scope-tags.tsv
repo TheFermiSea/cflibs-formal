@@ -1,4 +1,8 @@
 # module	name	scope	citation   (curated; the authoritative scope classification consumed by scripts/gen_docs.py)
+Aitchison.lean	closure_sum_one	PURE-MATH	—
+Aitchison.lean	softmax_sum_one	PURE-MATH	—
+Aitchison.lean	softmax_log_eq_closure	PURE-MATH	—
+Aitchison.lean	clr_sum_zero	PURE-MATH	—
 Boltzmann.lean	boltzmannFactor_pos	PURE-MATH	—
 Boltzmann.lean	partitionFunction_pos	PURE-MATH	—
 Boltzmann.lean	population_sum	EXACT	Boltzmann
@@ -465,3 +469,15 @@ Certificates.lean	dampedIter_certificate_sound	REDUCED	Saha–Eggert (Griem)
 Certificates.lean	knownTau_certificate_sound	EXACT	Gornushkin 1999
 Certificates.lean	saDistinct_certificate_sound	EXACT	Cristoforetti–Tognoni 2013
 Certificates.lean	aliasBudget_certificate_sound	REDUCED	Tognoni 2010
+TwoDCOS.lean	hilbertNoda_transpose_neg	PURE-MATH	—
+TwoDCOS.lean	syncMatrix_symm	PURE-MATH	—
+TwoDCOS.lean	syncMatrix_diag_eq_variance	PURE-MATH	—
+TwoDCOS.lean	syncMatrix_diag_nonneg	PURE-MATH	—
+TwoDCOS.lean	asyncMatrix_antisymm	PURE-MATH	—
+TwoDCOS.lean	asyncMatrix_diag_zero	PURE-MATH	—
+TwoDCOS.lean	skew_quadForm_zero	PURE-MATH	—
+TwoDCOS.lean	asyncMatrix_singleDriver_zero	PURE-MATH	—
+Aitchison.lean	closure_sum_one	PURE-MATH	—
+Aitchison.lean	softmax_sum_one	PURE-MATH	—
+Aitchison.lean	softmax_log_eq_closure	PURE-MATH	—
+Aitchison.lean	clr_sum_zero	PURE-MATH	—
