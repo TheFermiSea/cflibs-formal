@@ -5,7 +5,7 @@
 > (the integrity spine) + citation from `docs/scope-tags.tsv`; the docs-sync CI gate fails if
 > any result is untagged, so a new theorem cannot land without declaring its epistemic status.
 
-**Scope-tag mix** (478 results): **EXACT** 138 · **REDUCED** 122 · **APPROXIMATION** 8 · **PURE-MATH** 210
+**Scope-tag mix** (543 results): **EXACT** 144 · **REDUCED** 135 · **APPROXIMATION** 9 · **PURE-MATH** 255
 
 `EXACT` = exact identity faithfully encoding the cited physics · `REDUCED` = valid dimensionless/lumped-factor form · `APPROXIMATION` = documented idealization / limiting case · `PURE-MATH` = infrastructure lemma, no physical claim. Classification cross-checked against `reviews/literature-validity-audit.md`.
 
@@ -22,6 +22,22 @@
 - `PURE-MATH` · `softmax_sum_one` — Softmax normalization.
 - `PURE-MATH` · `softmax_log_eq_closure` — The C3 identity (audit-critical).
 - `PURE-MATH` · `clr_sum_zero` — clr sums to zero.
+
+## `AitchisonIsometry.lean`  (CflibsFormal)
+*Aitchison compositional data — a genuine isometric log-ratio (ilr) transform*
+
+**Definitions**
+- `sumLin` — The coordinate-sum functional `y ↦ ∑ i, y i` on `EuclideanSpace ℝ ι`, as an `ℝ`-linear map.
+- `hyperplane` — The clr-hyperplane `{y : EuclideanSpace ℝ ι | ∑ i, y i = 0}`, as the kernel of the coordinate-sum functional.
+- `clrE` — The clr coordinates, viewed as a point of `EuclideanSpace ℝ ι` (so norms are `L²`).
+- `ilrBasis` — An arbitrarily-chosen orthonormal basis of the (finite-dimensional) clr-hyperplane.
+- `ilr` — The Isometric Log-Ratio (ilr) transform: the clr coordinates read off in the orthonormal basis `ilrBasis` of the clr-hyperplane, a point of `EuclideanSpace ℝ…
+- `aitchisonDist` — The Aitchison distance `d_A(x, y) = ‖clr x − clr y‖` in the `L²` norm.
+
+**Results**
+- `PURE-MATH` · `clrE_mem` — `clr x` lands in the clr-hyperplane `∑ = 0` — this is `clr_sum_zero` transported to `EuclideanSpace`.
+- `PURE-MATH` · `ilr_isometry` — The ilr isometry (headline).
+- `PURE-MATH` · `ilr_inner` — ilr preserves inner products (companion corollary).
 
 ## `Alt/CSigma.lean`  (CflibsFormal.Alt)
 *the C-sigma (Cσ) single-line method (alternative estimator)*
@@ -482,6 +498,22 @@
 - `EXACT` · `electron_density_identifiability` — Target 3 — electron-density / stage-ratio identifiability via Saha.  _[Saha–Eggert (Griem)]_
 - `EXACT` · `temperature_ratio_near_degenerate` — Quantitative near-degeneracy — linear-in-`ΔE` temperature-conditioning bound.  _[Ciucci 1999]_
 
+## `IntervalEnclosure.lean`  (CflibsFormal)
+*a verified ε-ball enclosure for the OLS forward map*
+
+**Definitions**
+- `energyBox` — The energy box of sup-radius `B`: all energy vectors with `|Eₖ| ≤ B` for every line `k`.
+- `normalMap` — The Boltzmann-plot forward/design map, `E ↦ designNormalMatrix E`, presented as an entrywise function `Fin 2 → Fin 2 → ℝ` so that both source and target carr…
+
+**Results**
+- `PURE-MATH` · `normalMap_zero_zero` — —
+- `PURE-MATH` · `normalMap_zero_one` — —
+- `PURE-MATH` · `normalMap_one_zero` — —
+- `PURE-MATH` · `normalMap_one_one` — —
+- `PURE-MATH` · `normalMap_dist_le` — The explicit Lipschitz bound (real form).
+- `PURE-MATH` · `normalMap_lipschitzOnWith` — The Lipschitz bound, packaged.
+- `PURE-MATH` · `normalMap_epsilon_ball` — The ε-ball enclosure (the verification link).
+
 ## `Inverse.lean`  (CflibsFormal)
 *Part 6: the algorithm-agnostic inverse-problem framework*
 
@@ -506,6 +538,20 @@
 
 **Results**
 - `EXACT` · `joint_identifiability` — Joint (temperature, composition) identifiability — discharging the `hTratio` caveat.  _[Ciucci 1999]_
+
+## `LadenburgReiche.lean`  (CflibsFormal)
+*the sharp Ladenburg–Reiche asymptotic equivalent*
+
+**Definitions**
+- `lorentzianG` — The general Lorentzian profile of half-width `γ`.
+
+**Results**
+- `EXACT` · `equivWidth_lorentzian_isEquivalent` — The sharp Ladenburg–Reiche asymptotic (unit half-width), `IsEquivalent` form.  _[Ladenburg–Reiche 1913]_
+- `PURE-MATH` · `lorentzianG_pos` — The general Lorentzian is strictly positive for `γ > 0`.
+- `PURE-MATH` · `lorentzianG_one` — `lorentzianG 1` is the unit-width Lorentzian `lorentzian` of `EquivalentWidth.lean`.
+- `EXACT` · `equivWidth_lorentzianG_scaled` — Exact half-width rescaling of the equivalent width.  _[Gornushkin 1999]_
+- `EXACT` · `equivWidth_lorentzianG_sqrt_sharp` — The sharp constant at half-width `γ`: `equivWidth (lorentzianG γ) τ / √τ → 2√γ` as `τ → ∞`.  _[Ladenburg–Reiche 1913]_
+- `EXACT` · `equivWidth_lorentzianG_isEquivalent` — The sharp Ladenburg–Reiche asymptotic at half-width `γ`, `IsEquivalent` form.  _[Ladenburg–Reiche 1913]_
 
 ## `LeastSquaresFit.lean`  (CflibsFormal)
 *the ordinary-least-squares projection / feasibility inverse*
@@ -577,6 +623,23 @@
 - `EXACT` · `nonHomologousPair_ratio_temperature_dependent` — Contrast — invariance is a property OF the energy matching.  _[Ciucci 1999]_
 - `EXACT` · `homologousPair_ratio_perU_closed_form` — Per-species-`U` two-line ratio — closed form with the `U`-residual explicit.  _[Ciucci 1999]_
 - `REDUCED` · `homologousPair_ratio_perU_temperature_invariant` — Per-species-`U` homologous-pair temperature invariance (REDUCED).  _[Ciucci 1999]_
+
+## `MatrixIonizationCoupling.lean`  (CflibsFormal)
+*Coupling the ionization-suppression channel with the multi-element fixed point*
+
+**Results**
+- `PURE-MATH` · `coupledFixedPoint_lt_of_map_lt` — Strict comparative statics of an antitone fixed point (`PURE-MATH`).
+- `PURE-MATH` · `coupledFixedPoint_le_of_map_le` — Weak comparative statics of an antitone fixed point (`PURE-MATH`).
+- `PURE-MATH` · `multiElementIonized_le_of_Ntot_le` — Abundance domination (weak).
+- `PURE-MATH` · `multiElementIonized_lt_of_Ntot_lt` — Abundance domination (strict).
+- `PURE-MATH` · `multiElementIonized_le_of_S_le` — Saha-coefficient domination (weak).
+- `PURE-MATH` · `multiElementIonized_lt_of_S_lt` — Saha-coefficient domination (strict).
+- `REDUCED` · `coupledNe_lt_of_S_lt` — Ionization comparative statics — the headline (`REDUCED`; Saha–Eggert, Griem).  _[Saha–Eggert (Griem)]_
+- `REDUCED` · `coupledNe_le_of_S_le` — One-directional Saha-coefficient bound (`REDUCED`; Saha–Eggert, Griem).  _[Saha–Eggert (Griem)]_
+- `REDUCED` · `coupledNe_lt_of_Ntot_lt` — Abundance comparative statics (`REDUCED`; Saha–Eggert, Griem).  _[Saha–Eggert (Griem)]_
+- `REDUCED` · `coupledNe_le_of_Ntot_le` — One-directional abundance bound (`REDUCED`; Saha–Eggert, Griem).  _[Saha–Eggert (Griem)]_
+- `REDUCED` · `coupledNe_exists_lt_of_S_lt` — Unconditional existential headline (`REDUCED`; Saha–Eggert, Griem).  _[Saha–Eggert (Griem)]_
+- `REDUCED` · `envelope_ionization_matrix_shift` — Ionization-suppression matrix-shift envelope (`REDUCED` comparative statics + `EXACT` homologous invariance; Saha–Eggert/Griem, Aguilera & Aragón 2007, Ciucc…  _[Aguilera & Aragón 2007]_
 
 ## `MultiSpecies.lean`  (CflibsFormal)
 *Multi-species / multi-stage composition glue*
@@ -713,6 +776,35 @@
 - `PURE-MATH` · `det_jointDesignNormalMatrix` — THE closed-form determinant of the joint design.
 - `REDUCED` · `jointDesign_det_pos_iff` — THE rank gate for the joint Saha–Boltzmann design.  _[Aguilera & Aragón 2007]_
 
+## `OLSConditioning.lean`  (CflibsFormal)
+*quantitative conditioning of the Boltzmann-plot normal matrix*
+
+**Results**
+- `PURE-MATH` · `sym2x2_quadForm` — Quadratic form of a symmetric `2×2` matrix.
+- `PURE-MATH` · `sym2x2_coercive` — THE coercivity bound (lower Rayleigh bound = `λ_min ≥ Δ/t`).
+- `PURE-MATH` · `sym2x2_upper` — The upper Rayleigh bound (`λ_max ≤ t = trace M`).
+- `PURE-MATH` · `sym2x2_condition` — The condition-number bound `κ ≤ t²/Δ` (cross-multiplied to avoid division).
+- `PURE-MATH` · `designNormalMatrix_coercive` — Instantiation: the explicit Boltzmann-plot coercivity constant.
+
+## `OLSIdentifiability.lean`  (CflibsFormal)
+*n-line Boltzmann-plot identifiability (design-map injectivity)*
+
+**Definitions**
+- `boltzmannDesign` — The two-column Boltzmann-plot design matrix.
+
+**Results**
+- `PURE-MATH` · `boltzmannDesign_mulVec_apply` — The design map is the affine Boltzmann-plot ordinate.
+- `PURE-MATH` · `boltzmannDesign_mulVec_eq_zero` — Trivial kernel from two distinct energies.
+- `PURE-MATH` · `boltzmannDesign_mulVec_injective` — THE TARGET — the Boltzmann parameter → observation map is injective.
+- `PURE-MATH` · `boltzmann_params_unique` — Uniqueness of the recovered `(intercept, slope)`.
+- `PURE-MATH` · `boltzmannDesign_mulVec_not_injective_of_forall_eq` — Necessity of distinct energies (the degenerate direction).
+- `PURE-MATH` · `boltzmannDesign_mulVec_injective_iff` — Exact characterization: injective ⟺ two energies differ.
+- `PURE-MATH` · `exists_distinct_iff_pos_var` — Distinct energies ⟺ positive energy variance.
+- `PURE-MATH` · `boltzmannDesign_mulVec_injective_iff_pos_var` — Injective ⟺ positive energy variance.
+- `PURE-MATH` · `boltzmannDesign_mulVec_injective_iff_det` — Injective ⟺ full column rank of the design (nonsingular normal matrix).
+- `PURE-MATH` · `twoLine_design_injective_of_distinct` — Two-line design injectivity from a distinct-energy pair.
+- `PURE-MATH` · `twoLine_boltzmannDesign_injective_of_hEdist` — The n-line map generalizes the two-line result on the same nondegeneracy.
+
 ## `OuterLoopModelB.lean`  (CflibsFormal)
 *the outer temperature iteration, Model B headline (Frontier 04)*
 
@@ -741,6 +833,14 @@
 - `REDUCED` · `partitionFunction_two_point_bound` — Two-point partition-function bound — the `U_s(T)` sensitivity leg (`REDUCED`, Tognoni 2010).  _[Tognoni 2010]_
 - `REDUCED` · `partitionFunction_lipschitz_temp` — Lipschitz-in-`T` partition-function bound (`REDUCED`, Tognoni 2010).  _[Tognoni 2010]_
 - `REDUCED` · `partitionFunction_relative_error_temp` — Relative partition-function error from a temperature error (`REDUCED`, Tognoni 2010).  _[Tognoni 2010]_
+
+## `ProfiledUnimodality.lean`  (CflibsFormal)
+*strict unimodality of the profiled temperature objective*
+
+**Results**
+- `REDUCED` · `profiledResidual_two_strictUnimodalOn` — Two-line strict unimodality of the profiled objective in `T` (REDUCED, Ciucci 1999).  _[Ciucci 1999]_
+- `REDUCED` · `profiledResidual_two_Tstar_isStrictMin` — Unique minimizer / no spurious local minimum (REDUCED, Ciucci 1999).  _[Ciucci 1999]_
+- `REDUCED` · `profiledResidual_two_strictUnimodal_onManifold` — On-manifold strict unimodality about the true temperature `T₀` (REDUCED, Ciucci 1999).  _[Ciucci 1999]_
 
 ## `RadiativeTransferDepth.lean`  (CflibsFormal)
 *depth-structured radiative transfer (the N-zone stack)*
@@ -789,6 +889,13 @@
 - `PURE-MATH` · `electronDensity_antitone` — Density diagnostic is injective.
 - `EXACT` · `log_sahaFactor` — Saha-plot log identity.  _[Saha–Eggert (Griem)]_
 - `PURE-MATH` · `chargeNeutrality_two_stage` — Charge neutrality, two-stage form.
+
+## `SahaContraction.lean`  (CflibsFormal)
+*Damped Saha closure iteration converges to the *unique* equilibrium*
+
+**Results**
+- `REDUCED` · `dampedMultiElementIter_converges_to_equilibrium` — Damped closure iteration converges to the unique equilibrium electron density (`REDUCED`; Saha–Eggert, Griem) — *the equilibrium capstone*.  _[Saha–Eggert (Griem)]_
+- `REDUCED` · `dampedIter_single_converges_to_sahaEquilibriumNe` — Single-species damped iteration converges to the closed-form root (`REDUCED`; Saha–Eggert, Griem).  _[Saha–Eggert (Griem)]_
 
 ## `SahaEquilibrium.lean`  (CflibsFormal)
 *Coupled Saha–closure–charge self-consistency (reduced core)*
@@ -1011,6 +1118,35 @@
 - `PURE-MATH` · `asyncMatrix_diag_zero` — Zero-diagonal law: `Ψ a a = 0` for every channel `a` (Noda 1993).
 - `PURE-MATH` · `skew_quadForm_zero` — Skew quadratic form vanishes.
 - `PURE-MATH` · `asyncMatrix_singleDriver_zero` — Single common driver ⇒ vanishing asynchronous map.
+
+## `TwoDCOSOrder.lean`  (CflibsFormal)
+*2DCOS-LIBS formalization — the sequential-order (lead/lag) sign algebra*
+
+**Definitions**
+- `B` — The Noda cross-form `B m u v = u ⬝ᵥ (N *ᵥ v) = ∑ⱼₖ uⱼ Nⱼₖ vₖ`, the scalar bilinear form of the Hilbert–Noda kernel `N = hilbertNoda m`.
+
+**Results**
+- `PURE-MATH` · `B_eq_sum` — Unfolded form: `B m u v = ∑ⱼ ∑ₖ uⱼ · Nⱼₖ · vₖ`.
+- `PURE-MATH` · `B_antisymm` — Antisymmetry of the Noda cross-form, `B m u v = − B m v u`.
+- `PURE-MATH` · `B_add_left` — Additivity of `B` in the left argument.
+- `PURE-MATH` · `B_smul_left` — Homogeneity of `B` in the left argument.
+- `PURE-MATH` · `B_add_right` — Additivity of `B` in the right argument.
+- `PURE-MATH` · `B_smul_right` — Homogeneity of `B` in the right argument.
+- `PURE-MATH` · `B_smul_smul` — Dynamic-weight scaling.
+- `PURE-MATH` · `B_selfZero` — Self-value vanishes, `B m u u = 0`: the zero-diagonal law of the asynchronous map, specialized to the cross-form.
+- `PURE-MATH` · `B_stepDelay_eq` — The cross-form on the rising step vs its one-gate-delayed copy evaluates to the explicit value `1/π`.
+- `PURE-MATH` · `B_stepDelay_pos` — Definite positive sign of the ordered pair.
+- `PURE-MATH` · `B_stepDelay_rev_neg` — Sign flip under order reversal.
+
+## `VoigtErrorEnclosure.lean`  (CflibsFormal)
+*a non-circular error enclosure for the Voigt FWHM*
+
+**Results**
+- `EXACT` · `voigtFWHM_ge_max` — Lower sandwich rail (proved outright).  _[Olivero–Longbothum 1977]_
+- `EXACT` · `voigtFWHM_le_olUpper` — Sharp upper rail (proved outright).  _[Olivero–Longbothum 1977]_
+- `APPROXIMATION` · `voigtFWHM_naive_upper_false` — Real finding (proved).  _[Olivero–Longbothum 1977]_
+- `REDUCED` · `voigtFWHM_true_enclosure` — Conditional error enclosure (main result).  _[Olivero–Longbothum 1977]_
+- `REDUCED` · `voigtFWHM_true_enclosure_clean` — Clean-constant enclosure.  _[Olivero–Longbothum 1977]_
 
 ## `VoigtWidth.lean`  (CflibsFormal)
 *the Voigt FWHM combination (Olivero–Longbothum)*

@@ -481,3 +481,68 @@ Aitchison.lean	closure_sum_one	PURE-MATH	—
 Aitchison.lean	softmax_sum_one	PURE-MATH	—
 Aitchison.lean	softmax_log_eq_closure	PURE-MATH	—
 Aitchison.lean	clr_sum_zero	PURE-MATH	—
+AitchisonIsometry.lean	clrE_mem	PURE-MATH	—
+AitchisonIsometry.lean	ilr_isometry	PURE-MATH	—
+AitchisonIsometry.lean	ilr_inner	PURE-MATH	—
+TwoDCOSOrder.lean	B_eq_sum	PURE-MATH	—
+TwoDCOSOrder.lean	B_antisymm	PURE-MATH	—
+TwoDCOSOrder.lean	B_add_left	PURE-MATH	—
+TwoDCOSOrder.lean	B_smul_left	PURE-MATH	—
+TwoDCOSOrder.lean	B_add_right	PURE-MATH	—
+TwoDCOSOrder.lean	B_smul_right	PURE-MATH	—
+TwoDCOSOrder.lean	B_smul_smul	PURE-MATH	—
+TwoDCOSOrder.lean	B_selfZero	PURE-MATH	—
+TwoDCOSOrder.lean	B_stepDelay_eq	PURE-MATH	—
+TwoDCOSOrder.lean	B_stepDelay_pos	PURE-MATH	—
+TwoDCOSOrder.lean	B_stepDelay_rev_neg	PURE-MATH	—
+OLSConditioning.lean	sym2x2_quadForm	PURE-MATH	—
+OLSConditioning.lean	sym2x2_coercive	PURE-MATH	—
+OLSConditioning.lean	sym2x2_upper	PURE-MATH	—
+OLSConditioning.lean	sym2x2_condition	PURE-MATH	—
+OLSConditioning.lean	designNormalMatrix_coercive	PURE-MATH	—
+OLSIdentifiability.lean	boltzmannDesign_mulVec_apply	PURE-MATH	—
+OLSIdentifiability.lean	boltzmannDesign_mulVec_eq_zero	PURE-MATH	—
+OLSIdentifiability.lean	boltzmannDesign_mulVec_injective	PURE-MATH	—
+OLSIdentifiability.lean	boltzmann_params_unique	PURE-MATH	—
+OLSIdentifiability.lean	boltzmannDesign_mulVec_not_injective_of_forall_eq	PURE-MATH	—
+OLSIdentifiability.lean	boltzmannDesign_mulVec_injective_iff	PURE-MATH	—
+OLSIdentifiability.lean	exists_distinct_iff_pos_var	PURE-MATH	—
+OLSIdentifiability.lean	boltzmannDesign_mulVec_injective_iff_pos_var	PURE-MATH	—
+OLSIdentifiability.lean	boltzmannDesign_mulVec_injective_iff_det	PURE-MATH	—
+OLSIdentifiability.lean	twoLine_design_injective_of_distinct	PURE-MATH	—
+OLSIdentifiability.lean	twoLine_boltzmannDesign_injective_of_hEdist	PURE-MATH	—
+SahaContraction.lean	dampedMultiElementIter_converges_to_equilibrium	REDUCED	Saha–Eggert (Griem)
+SahaContraction.lean	dampedIter_single_converges_to_sahaEquilibriumNe	REDUCED	Saha–Eggert (Griem)
+MatrixIonizationCoupling.lean	coupledFixedPoint_lt_of_map_lt	PURE-MATH	—
+MatrixIonizationCoupling.lean	coupledFixedPoint_le_of_map_le	PURE-MATH	—
+MatrixIonizationCoupling.lean	multiElementIonized_le_of_Ntot_le	PURE-MATH	—
+MatrixIonizationCoupling.lean	multiElementIonized_lt_of_Ntot_lt	PURE-MATH	—
+MatrixIonizationCoupling.lean	multiElementIonized_le_of_S_le	PURE-MATH	—
+MatrixIonizationCoupling.lean	multiElementIonized_lt_of_S_lt	PURE-MATH	—
+MatrixIonizationCoupling.lean	coupledNe_lt_of_S_lt	REDUCED	Saha–Eggert (Griem)
+MatrixIonizationCoupling.lean	coupledNe_le_of_S_le	REDUCED	Saha–Eggert (Griem)
+MatrixIonizationCoupling.lean	coupledNe_lt_of_Ntot_lt	REDUCED	Saha–Eggert (Griem)
+MatrixIonizationCoupling.lean	coupledNe_le_of_Ntot_le	REDUCED	Saha–Eggert (Griem)
+MatrixIonizationCoupling.lean	coupledNe_exists_lt_of_S_lt	REDUCED	Saha–Eggert (Griem)
+MatrixIonizationCoupling.lean	envelope_ionization_matrix_shift	REDUCED	Aguilera & Aragón 2007
+ProfiledUnimodality.lean	profiledResidual_two_strictUnimodalOn	REDUCED	Ciucci 1999
+ProfiledUnimodality.lean	profiledResidual_two_Tstar_isStrictMin	REDUCED	Ciucci 1999
+ProfiledUnimodality.lean	profiledResidual_two_strictUnimodal_onManifold	REDUCED	Ciucci 1999
+LadenburgReiche.lean	equivWidth_lorentzian_isEquivalent	EXACT	Ladenburg–Reiche 1913
+LadenburgReiche.lean	equivWidth_lorentzianG_sqrt_sharp	EXACT	Ladenburg–Reiche 1913
+LadenburgReiche.lean	equivWidth_lorentzianG_isEquivalent	EXACT	Ladenburg–Reiche 1913
+LadenburgReiche.lean	lorentzianG_pos	PURE-MATH	—
+LadenburgReiche.lean	lorentzianG_one	PURE-MATH	—
+LadenburgReiche.lean	equivWidth_lorentzianG_scaled	EXACT	Gornushkin 1999
+VoigtErrorEnclosure.lean	voigtFWHM_ge_max	EXACT	Olivero–Longbothum 1977
+VoigtErrorEnclosure.lean	voigtFWHM_le_olUpper	EXACT	Olivero–Longbothum 1977
+VoigtErrorEnclosure.lean	voigtFWHM_naive_upper_false	APPROXIMATION	Olivero–Longbothum 1977
+VoigtErrorEnclosure.lean	voigtFWHM_true_enclosure	REDUCED	Olivero–Longbothum 1977
+VoigtErrorEnclosure.lean	voigtFWHM_true_enclosure_clean	REDUCED	Olivero–Longbothum 1977
+IntervalEnclosure.lean	normalMap_zero_zero	PURE-MATH	—
+IntervalEnclosure.lean	normalMap_zero_one	PURE-MATH	—
+IntervalEnclosure.lean	normalMap_one_zero	PURE-MATH	—
+IntervalEnclosure.lean	normalMap_one_one	PURE-MATH	—
+IntervalEnclosure.lean	normalMap_dist_le	PURE-MATH	—
+IntervalEnclosure.lean	normalMap_lipschitzOnWith	PURE-MATH	—
+IntervalEnclosure.lean	normalMap_epsilon_ball	PURE-MATH	—

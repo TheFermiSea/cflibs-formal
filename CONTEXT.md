@@ -209,13 +209,16 @@ Gates 1–4 are automated in CI (`.github/workflows/lean_action_ci.yml`).
 
 ## Status
 
-54 modules, 478 axiom-clean named results (theorem/lemma) + 170 defs (counts via `scripts/stats.sh`).
-Three automated CI gates: axiom-cleanliness (`tools/`), style/structure lint (`runLinter`), and the
-import-hygiene check (`scripts/stats.sh`).
-Adversarially validated (verdict: sound-with-minor-fixes, zero blockers; all findings fixed).
-A whole-corpus **literature-validity audit** (`reviews/literature-validity-audit.md`) classified all
-186 defs+theorems against the peer-reviewed CF-LIBS literature: 69 faithful / 33 reduced / 5 idealized
-/ 78 pure-math, **0 divergent, 0 unverified citations, 1 minor docstring over-reach (fixed)**.
+64 modules, 543 axiom-clean named results (theorem/lemma) + 181 defs (counts via `scripts/stats.sh`).
+CI gates: axiom-cleanliness (`tools/`), style/structure lint (`runLinter`), docs-sync + scope-tag
+completeness (`scripts/gen-docs.sh`), import-hygiene (`scripts/stats.sh`), and the epistemic-drift
+scope-consistency guard (`scripts/check-scope-consistency.sh`).
+The original **~186-result corpus** was adversarially validated (verdict: sound-with-minor-fixes,
+zero blockers; all findings fixed) and given a whole-corpus **literature-validity audit**
+(`reviews/literature-validity-audit.md`): 69 faithful / 33 reduced / 5 idealized / 78 pure-math,
+**0 divergent, 0 unverified citations, 1 minor docstring over-reach (fixed)**. Subsequent additions
+to the current 543-result corpus (the frontier and architectural-review deepening sweeps) are
+individually author-plus-independent-audit reviewed rather than re-covered by that one-time audit.
 A numerical regression oracle (`oracle/`) bridges the verified spec to the numerical pipeline
 (CF-LIBS-improved) — multi-element + the alternative estimators (OLS, self-absorption, Saha
 nₑ) + the derived error-budget thresholds, each fixture instantiating a proven theorem.

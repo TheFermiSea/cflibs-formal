@@ -57,6 +57,12 @@ jobs:
         run: |
           ./scripts/gen-docs.sh
           git diff --exit-code -- docs/module-reference.md docs/theorem-catalog.md
+      # Epistemic-drift gate: fail if a module with an EXACT result transitively depends on a
+      # PURE-approximation module (an exact claim resting only on approximate physics). Mixed-tag
+      # dependencies are advisory warnings only — module granularity cannot prove per-theorem
+      # over-reach. Complements the scope-tag-completeness check in the docs-sync gate above.
+      - name: Scope-consistency gate
+        run: ./scripts/check-scope-consistency.sh
       # API-docs publishing (doc-gen4 HTML -> GitHub Pages) is DISABLED on purpose: this is a
       # PRIVATE spec, and Pages on a private repo is public by default, so this step would expose
       # it. The HTML reference can still be built on demand (doc-gen4, see leanprover/doc-gen4). To

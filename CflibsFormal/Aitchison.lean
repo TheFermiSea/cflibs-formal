@@ -32,8 +32,8 @@ Per `docs/2dcos/ERRATA.md`, the unsound "Model A" dynamic-temperature-integratio
 composition claim and "Model B" standardless/electron-density-free quantification
 are NOT formalized here — they are not valid mathematics. Only the true
 compositional algebra (closure / softmax / clr) is stated. A genuine ILR
-round-trip and isometry (needing an explicit orthonormal SBP/Helmert basis in
-`ℝ^(D−1)`) is recorded as an open target, not asserted.
+isometry (via an orthonormal basis of the clr-hyperplane) is now proved
+separately in `CflibsFormal.AitchisonIsometry` (`ilr_isometry`), not here.
 
 ## Literature
 
