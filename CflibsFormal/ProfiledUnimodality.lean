@@ -61,24 +61,9 @@ namespace CflibsFormal
 open Finset Real
 open scoped BigOperators
 
-/-- Two-point difference identity for the ratio residual `Φ(t) = (o₁ − o₀·t)²/(1 + t²)`:
-`Φ(t₂) − Φ(t₁) = −(t₂ − t₁)·(u₁·v₂ + u₂·v₁)/((1+t₁²)(1+t₂²))` with `u_i = o₁ − o₀·t_i`,
-`v_i = o₀ + o₁·t_i`. Pure algebra (`field_simp` + `ring`); the discrete "derivative" whose sign
-drives the unimodality below. -/
-private lemma ratioResidual_diff (o0 o1 t1 t2 : ℝ) :
-    profiledRatioResidual o0 o1 t2 - profiledRatioResidual o0 o1 t1
-      = -(t2 - t1) * ((o1 - o0 * t1) * (o0 + o1 * t2)
-                      + (o1 - o0 * t2) * (o0 + o1 * t1))
-        / ((1 + t1 ^ 2) * (1 + t2 ^ 2)) := by
-  unfold profiledRatioResidual
-  have ha : (1 : ℝ) + t1 ^ 2 ≠ 0 := by positivity
-  have hb : (1 : ℝ) + t2 ^ 2 ≠ 0 := by positivity
-  field_simp
-  ring
-
 /-- Below the apex: with both `v`-terms positive, `u₁ > 0` and `u₂ ≥ 0`, the ratio residual strictly
-decreases as `t` increases (`t₁ < t₂ ⟹ Φ(t₂) < Φ(t₁)`). From `ratioResidual_diff`: the numerator
-`u₁v₂ + u₂v₁ > 0` and `t₂ − t₁ > 0` make the difference negative. -/
+decreases as `t` increases (`t₁ < t₂ ⟹ Φ(t₂) < Φ(t₁)`). From `profiledRatioResidual_diff`:
+the numerator `u₁v₂ + u₂v₁ > 0` and `t₂ − t₁ > 0` make the difference negative. -/
 private lemma ratioResidual_lt_below (o0 o1 t1 t2 : ℝ)
     (hv1 : 0 < o0 + o1 * t1) (hv2 : 0 < o0 + o1 * t2)
     (hu1 : 0 < o1 - o0 * t1) (hu2 : 0 ≤ o1 - o0 * t2) (hlt : t1 < t2) :
@@ -87,7 +72,7 @@ private lemma ratioResidual_lt_below (o0 o1 t1 t2 : ℝ)
   have hnum : 0 < (o1 - o0 * t1) * (o0 + o1 * t2) + (o1 - o0 * t2) * (o0 + o1 * t1) :=
     add_pos_of_pos_of_nonneg (mul_pos hu1 hv2) (mul_nonneg hu2 hv1.le)
   have hdiff : profiledRatioResidual o0 o1 t2 - profiledRatioResidual o0 o1 t1 < 0 := by
-    rw [ratioResidual_diff]
+    rw [profiledRatioResidual_diff]
     apply div_neg_of_neg_of_pos _ hden
     nlinarith [mul_pos (sub_pos.mpr hlt) hnum]
   linarith
@@ -103,7 +88,7 @@ private lemma ratioResidual_lt_above (o0 o1 t1 t2 : ℝ)
   have hnum : (o1 - o0 * t1) * (o0 + o1 * t2) + (o1 - o0 * t2) * (o0 + o1 * t1) < 0 := by
     nlinarith [mul_nonneg (neg_nonneg.mpr hu1) hv2.le, mul_pos (neg_pos.mpr hu2) hv1]
   have hdiff : 0 < profiledRatioResidual o0 o1 t2 - profiledRatioResidual o0 o1 t1 := by
-    rw [ratioResidual_diff]
+    rw [profiledRatioResidual_diff]
     apply div_pos _ hden
     nlinarith [mul_pos (sub_pos.mpr hlt) (neg_pos.mpr hnum)]
   linarith

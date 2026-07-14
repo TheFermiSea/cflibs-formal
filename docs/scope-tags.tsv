@@ -495,10 +495,10 @@ TwoDCOSOrder.lean	B_selfZero	PURE-MATH	—
 TwoDCOSOrder.lean	B_stepDelay_eq	PURE-MATH	—
 TwoDCOSOrder.lean	B_stepDelay_pos	PURE-MATH	—
 TwoDCOSOrder.lean	B_stepDelay_rev_neg	PURE-MATH	—
-OLSConditioning.lean	sym2x2_quadForm	PURE-MATH	—
-OLSConditioning.lean	sym2x2_coercive	PURE-MATH	—
-OLSConditioning.lean	sym2x2_upper	PURE-MATH	—
-OLSConditioning.lean	sym2x2_condition	PURE-MATH	—
+Analysis.lean	sym2x2_quadForm	PURE-MATH	—
+Analysis.lean	sym2x2_coercive	PURE-MATH	—
+Analysis.lean	sym2x2_upper	PURE-MATH	—
+Analysis.lean	sym2x2_condition	PURE-MATH	—
 OLSConditioning.lean	designNormalMatrix_coercive	PURE-MATH	—
 OLSIdentifiability.lean	boltzmannDesign_mulVec_apply	PURE-MATH	—
 OLSIdentifiability.lean	boltzmannDesign_mulVec_eq_zero	PURE-MATH	—
@@ -513,8 +513,8 @@ OLSIdentifiability.lean	twoLine_design_injective_of_distinct	PURE-MATH	—
 OLSIdentifiability.lean	twoLine_boltzmannDesign_injective_of_hEdist	PURE-MATH	—
 SahaContraction.lean	dampedMultiElementIter_converges_to_equilibrium	REDUCED	Saha–Eggert (Griem)
 SahaContraction.lean	dampedIter_single_converges_to_sahaEquilibriumNe	REDUCED	Saha–Eggert (Griem)
-MatrixIonizationCoupling.lean	coupledFixedPoint_lt_of_map_lt	PURE-MATH	—
-MatrixIonizationCoupling.lean	coupledFixedPoint_le_of_map_le	PURE-MATH	—
+Analysis.lean	coupledFixedPoint_lt_of_map_lt	PURE-MATH	—
+Analysis.lean	coupledFixedPoint_le_of_map_le	PURE-MATH	—
 MatrixIonizationCoupling.lean	multiElementIonized_le_of_Ntot_le	PURE-MATH	—
 MatrixIonizationCoupling.lean	multiElementIonized_lt_of_Ntot_lt	PURE-MATH	—
 MatrixIonizationCoupling.lean	multiElementIonized_le_of_S_le	PURE-MATH	—
@@ -546,3 +546,4 @@ IntervalEnclosure.lean	normalMap_one_one	PURE-MATH	—
 IntervalEnclosure.lean	normalMap_dist_le	PURE-MATH	—
 IntervalEnclosure.lean	normalMap_lipschitzOnWith	PURE-MATH	—
 IntervalEnclosure.lean	normalMap_epsilon_ball	PURE-MATH	—
+NonlinearLeastSquares.lean	profiledRatioResidual_diff	PURE-MATH	—
