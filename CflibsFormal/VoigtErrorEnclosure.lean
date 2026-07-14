@@ -95,6 +95,18 @@ lemma voigtFWHM_le_olUpper {wL wG : ℝ} (hwL : 0 ≤ wL) (hwG : 0 ≤ wG) :
   unfold voigtFWHM
   linarith
 
+/-- Sharp rational bounds on `√0.2166` (the OL cross-coefficient), reused by the enclosure
+theorems below: `0.4654 < √0.2166 < 0.46541`. -/
+private lemma sqrt_0_2166_bounds :
+    (0.4654 : ℝ) < Real.sqrt 0.2166 ∧ Real.sqrt 0.2166 < 0.46541 := by
+  refine ⟨?_, ?_⟩
+  · have h2 : Real.sqrt (0.4654 ^ 2) < Real.sqrt 0.2166 :=
+      Real.sqrt_lt_sqrt (by norm_num) (by norm_num)
+    rwa [Real.sqrt_sq (by norm_num : (0:ℝ) ≤ 0.4654)] at h2
+  · have h2 : Real.sqrt 0.2166 < Real.sqrt (0.46541 ^ 2) :=
+      Real.sqrt_lt_sqrt (by norm_num) (by norm_num)
+    rwa [Real.sqrt_sq (by norm_num : (0:ℝ) ≤ 0.46541)] at h2
+
 /-- **Real finding (proved).** The *naive* upper rail `voigtFWHM ≤ w_L + w_G` is FALSE. Witness:
 `(w_L, w_G) = (1, 0)` gives `voigtFWHM 1 0 = 0.5346 + √0.2166 > 1 = w_L + w_G`, because
 `√0.2166 > 0.4654` (as `0.4654² = 0.21659716 < 0.2166`). This is why the honest enclosure width
@@ -104,10 +116,7 @@ theorem voigtFWHM_naive_upper_false :
   intro h
   have hbad := h 1 0 (by norm_num) (le_refl 0)
   rw [voigt_lorentzian_limit (by norm_num : (0:ℝ) ≤ 1)] at hbad
-  have hs : (0.4654 : ℝ) < Real.sqrt 0.2166 := by
-    have h2 : Real.sqrt (0.4654 ^ 2) < Real.sqrt 0.2166 :=
-      Real.sqrt_lt_sqrt (by norm_num) (by norm_num)
-    rwa [Real.sqrt_sq (by norm_num : (0:ℝ) ≤ 0.4654)] at h2
+  have hs : (0.4654 : ℝ) < Real.sqrt 0.2166 := sqrt_0_2166_bounds.1
   simp only [mul_one] at hbad
   linarith
 
@@ -125,10 +134,7 @@ theorem voigtFWHM_true_enclosure {wL wG Ftrue : ℝ} (hwL : 0 ≤ wL) (hwG : 0 �
   have hmaxA : max wG wL ≤ voigtFWHM wL wG := voigtFWHM_ge_max hwL hwG
   have hAU : voigtFWHM wL wG ≤ (0.5346 + Real.sqrt 0.2166) * wL + wG :=
     voigtFWHM_le_olUpper hwL hwG
-  have hs : (0.4654 : ℝ) ≤ Real.sqrt 0.2166 := by
-    have h2 : Real.sqrt (0.4654 ^ 2) ≤ Real.sqrt 0.2166 :=
-      Real.sqrt_le_sqrt (by norm_num)
-    rwa [Real.sqrt_sq (by norm_num : (0:ℝ) ≤ 0.4654)] at h2
+  have hs : (0.4654 : ℝ) ≤ Real.sqrt 0.2166 := sqrt_0_2166_bounds.1.le
   have hFtrueU : Ftrue ≤ (0.5346 + Real.sqrt 0.2166) * wL + wG := by
     nlinarith [mul_nonneg (by linarith : (0:ℝ) ≤ Real.sqrt 0.2166 - 0.4654) hwL]
   have hmin : min wG wL = wG + wL - max wG wL := by
@@ -148,10 +154,7 @@ theorem voigtFWHM_true_enclosure_clean {wL wG Ftrue : ℝ} (hwL : 0 ≤ wL) (hwG
     (hlo : max wG wL ≤ Ftrue) (hhi : Ftrue ≤ wL + wG) :
     |voigtFWHM wL wG - Ftrue| ≤ min wG wL + 0.00001 * wL := by
   have h := voigtFWHM_true_enclosure hwL hwG hlo hhi
-  have hs : Real.sqrt 0.2166 < 0.46541 := by
-    have h2 : Real.sqrt 0.2166 < Real.sqrt (0.46541 ^ 2) :=
-      Real.sqrt_lt_sqrt (by norm_num) (by norm_num)
-    rwa [Real.sqrt_sq (by norm_num : (0:ℝ) ≤ 0.46541)] at h2
+  have hs : Real.sqrt 0.2166 < 0.46541 := sqrt_0_2166_bounds.2
   have hcorr : (0.5346 + Real.sqrt 0.2166 - 1) * wL ≤ 0.00001 * wL :=
     mul_le_mul_of_nonneg_right (by linarith) hwL
   linarith

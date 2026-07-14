@@ -119,11 +119,11 @@ example :
       = aitchisonDist (![1, 2, 4] : Fin 3 → ℝ) ![1, 1, 1] :=
   ilr_isometry _ _
 
-/-- **Non-triviality.** Both sides of the isometry are strictly positive on this datum:
-`(1, 2, 4)` and the neutral `(1, 1, 1)` have distinct clr coordinates, so the Aitchison
-distance — and hence, by `ilr_isometry`, `‖ilr x − ilr y‖` — is nonzero. This rules out a
-vacuous "isometry between zero-distance points". -/
-example : aitchisonDist (![1, 2, 4] : Fin 3 → ℝ) ![1, 1, 1] ≠ 0 := by
+/-- **Non-triviality (shared).** `(1, 2, 4)` and the neutral `(1, 1, 1)` have distinct clr
+coordinates, so their Aitchison distance is nonzero — ruling out a vacuous "isometry between
+zero-distance points". Backs the two non-vacuity witnesses below. -/
+private lemma aitchisonDist_neutral_ne_zero :
+    aitchisonDist (![1, 2, 4] : Fin 3 → ℝ) ![1, 1, 1] ≠ 0 := by
   rw [aitchisonDist, ne_eq, norm_eq_zero, sub_eq_zero]
   intro h
   have hclr : clr (![1, 2, 4] : Fin 3 → ℝ) = clr ![1, 1, 1] :=
@@ -136,19 +136,14 @@ example : aitchisonDist (![1, 2, 4] : Fin 3 → ℝ) ![1, 1, 1] ≠ 0 := by
     add_pos (Real.log_pos (by norm_num)) (Real.log_pos (by norm_num))
   nlinarith [h0, hpos]
 
+/-- **Non-triviality.** The Aitchison distance between `(1, 2, 4)` and the neutral `(1, 1, 1)`
+is nonzero (so the isometry is not between zero-distance points). -/
+example : aitchisonDist (![1, 2, 4] : Fin 3 → ℝ) ![1, 1, 1] ≠ 0 :=
+  aitchisonDist_neutral_ne_zero
+
 /-- The isometry combined with non-triviality: `‖ilr x − ilr y‖ ≠ 0` for `x = (1,2,4)`,
 `y = (1,1,1)` — the ilr images are genuinely distinct. -/
 example : ‖ilr (![1, 2, 4] : Fin 3 → ℝ) - ilr ![1, 1, 1]‖ ≠ 0 := by
-  rw [ilr_isometry]
-  rw [aitchisonDist, ne_eq, norm_eq_zero, sub_eq_zero]
-  intro h
-  have hclr : clr (![1, 2, 4] : Fin 3 → ℝ) = clr ![1, 1, 1] :=
-    (WithLp.linearEquiv 2 ℝ (Fin 3 → ℝ)).symm.injective h
-  have h0 := congrFun hclr 0
-  simp only [clr, Fin.sum_univ_three, Matrix.cons_val_zero, Matrix.cons_val_one,
-    Matrix.head_cons, Matrix.cons_val_two, Matrix.tail_cons, Fintype.card_fin, Real.log_one] at h0
-  have hpos : (0 : ℝ) < Real.log 2 + Real.log 4 :=
-    add_pos (Real.log_pos (by norm_num)) (Real.log_pos (by norm_num))
-  nlinarith [h0, hpos]
+  rw [ilr_isometry]; exact aitchisonDist_neutral_ne_zero
 
 end CflibsFormal
