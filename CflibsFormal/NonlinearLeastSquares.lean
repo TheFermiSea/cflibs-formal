@@ -1205,7 +1205,7 @@ noncomputable def profiledRatioResidual (obs0 obs1 t : ℝ) : ℝ := (obs1 - obs
 "derivative" of the Rayleigh-quotient residual: the sign of the difference is `−sign(t₂−t₁)·
 sign(u₁v₂+u₂v₁)`, which drives both the on-each-side monotonicity and the box uniqueness below,
 with no calculus. -/
-private lemma profiledRatioResidual_diff (obs0 obs1 t1 t2 : ℝ) :
+lemma profiledRatioResidual_diff (obs0 obs1 t1 t2 : ℝ) :
     profiledRatioResidual obs0 obs1 t2 - profiledRatioResidual obs0 obs1 t1
       = -(t2 - t1) * ((obs1 - obs0 * t1) * (obs0 + obs1 * t2)
                       + (obs1 - obs0 * t2) * (obs0 + obs1 * t1))
