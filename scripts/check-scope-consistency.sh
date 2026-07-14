@@ -130,7 +130,9 @@ for m in exact_modules:
                 # pure-approximation dependency under an EXACT claim = genuine over-reach
                 fails.append((m, d, import_path(m, d)))
         elif worst_rank(d) == RANK["REDUCED"]:
-            warns_reduced.append((m, d, import_path(m, d)))
+            # Path omitted on purpose: the REDUCED report is path-free (advisory + high-volume),
+            # so skip the O(V+E) import_path BFS that would just be discarded.
+            warns_reduced.append((m, d, None))
 
 # --- 4. report ------------------------------------------------------------------------------
 print("== scope-consistency (epistemic-drift guard) ==")
