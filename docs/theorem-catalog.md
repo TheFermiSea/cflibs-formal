@@ -5,7 +5,7 @@
 > (the integrity spine) + citation from `docs/scope-tags.tsv`; the docs-sync CI gate fails if
 > any result is untagged, so a new theorem cannot land without declaring its epistemic status.
 
-**Scope-tag mix** (543 results): **EXACT** 144 · **REDUCED** 135 · **APPROXIMATION** 9 · **PURE-MATH** 255
+**Scope-tag mix** (544 results): **EXACT** 144 · **REDUCED** 135 · **APPROXIMATION** 9 · **PURE-MATH** 256
 
 `EXACT` = exact identity faithfully encoding the cited physics · `REDUCED` = valid dimensionless/lumped-factor form · `APPROXIMATION` = documented idealization / limiting case · `PURE-MATH` = infrastructure lemma, no physical claim. Classification cross-checked against `reviews/literature-validity-audit.md`.
 
@@ -198,6 +198,12 @@
 - `PURE-MATH` · `abs_exp_sub_one_le` — Exponential perturbation bound.
 - `PURE-MATH` · `inv_kT_sub_le` — Inverse-temperature gap bound.
 - `PURE-MATH` · `abs_log_ratio_le` — Log-ratio transfer bound.
+- `PURE-MATH` · `sym2x2_quadForm` — Quadratic form of a symmetric `2×2` matrix.
+- `PURE-MATH` · `sym2x2_coercive` — THE coercivity bound (lower Rayleigh bound = `λ_min ≥ Δ/t`).
+- `PURE-MATH` · `sym2x2_upper` — The upper Rayleigh bound (`λ_max ≤ t = trace M`).
+- `PURE-MATH` · `sym2x2_condition` — The condition-number bound `κ ≤ t²/Δ` (cross-multiplied to avoid division).
+- `PURE-MATH` · `coupledFixedPoint_lt_of_map_lt` — Strict comparative statics of an antitone fixed point (`PURE-MATH`).
+- `PURE-MATH` · `coupledFixedPoint_le_of_map_le` — Weak comparative statics of an antitone fixed point (`PURE-MATH`).
 
 ## `AtomicDataPerturbation.lean`  (CflibsFormal)
 *the atomic-data perturbation channel*
@@ -628,8 +634,6 @@
 *Coupling the ionization-suppression channel with the multi-element fixed point*
 
 **Results**
-- `PURE-MATH` · `coupledFixedPoint_lt_of_map_lt` — Strict comparative statics of an antitone fixed point (`PURE-MATH`).
-- `PURE-MATH` · `coupledFixedPoint_le_of_map_le` — Weak comparative statics of an antitone fixed point (`PURE-MATH`).
 - `PURE-MATH` · `multiElementIonized_le_of_Ntot_le` — Abundance domination (weak).
 - `PURE-MATH` · `multiElementIonized_lt_of_Ntot_lt` — Abundance domination (strict).
 - `PURE-MATH` · `multiElementIonized_le_of_S_le` — Saha-coefficient domination (weak).
@@ -738,6 +742,7 @@
 - `EXACT` · `two_ratio_diff` — The two-line intensity-ratio difference is a scaled `Real.exp` difference.  _[Ciucci 1999]_
 - `EXACT` · `clean_residual_ratio` — On-manifold, the two-line profiled residual in the intensity-ratio coordinate.  _[Ciucci 1999]_
 - `REDUCED` · `profiledResidual_metric_bound` — —  _[Tognoni 2010]_
+- `PURE-MATH` · `profiledRatioResidual_diff` — Algebraic two-point difference identity for the ratio residual (pure `ring`).
 - `REDUCED` · `profiledResidual_two_strictAntiOn` — Strict decrease below the residual apex (REDUCED, Ciucci 1999).  _[Ciucci 1999]_
 - `REDUCED` · `profiledResidual_two_strictMonoOn` — Strict increase above the residual apex (REDUCED, Ciucci 1999).  _[Ciucci 1999]_
 - `PURE-MATH` · `profiledResidual_two_eq_ratio` — The off-manifold two-line profiled residual equals the ratio residual (PURE-MATH).
@@ -780,10 +785,6 @@
 *quantitative conditioning of the Boltzmann-plot normal matrix*
 
 **Results**
-- `PURE-MATH` · `sym2x2_quadForm` — Quadratic form of a symmetric `2×2` matrix.
-- `PURE-MATH` · `sym2x2_coercive` — THE coercivity bound (lower Rayleigh bound = `λ_min ≥ Δ/t`).
-- `PURE-MATH` · `sym2x2_upper` — The upper Rayleigh bound (`λ_max ≤ t = trace M`).
-- `PURE-MATH` · `sym2x2_condition` — The condition-number bound `κ ≤ t²/Δ` (cross-multiplied to avoid division).
 - `PURE-MATH` · `designNormalMatrix_coercive` — Instantiation: the explicit Boltzmann-plot coercivity constant.
 
 ## `OLSIdentifiability.lean`  (CflibsFormal)
