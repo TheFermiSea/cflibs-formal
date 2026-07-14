@@ -18,7 +18,7 @@ One row per module under `CflibsFormal/`. *Base* = imports no `CflibsFormal` mod
 | `Alt/OLSVariance.lean` | `CflibsFormal.Alt` | 7 | 1 | – | ✓ | the Gauss–Markov variance law for the OLS Boltzmann-plot slope |
 | `Alt/SelfAbsorbed.lean` | `CflibsFormal.Alt` | 5 | 1 | – | – | the self-absorption-corrected composition estimator (alternative) |
 | `Alt/StochasticBudget.lean` | `CflibsFormal.Alt` | 13 | 4 | – | ✓ | Chebyshev tail (concentration) bounds for the OLS slope and intercept |
-| `Analysis.lean` | `CflibsFormal` | 7 | 0 | ✓ | – | Shared analysis scaffolding |
+| `Analysis.lean` | `CflibsFormal` | 13 | 0 | ✓ | – | Shared analysis scaffolding |
 | `AtomicDataPerturbation.lean` | `CflibsFormal` | 8 | 4 | – | ✓ | the atomic-data perturbation channel |
 | `Boltzmann.lean` | `CflibsFormal` | 5 | 3 | ✓ | – | Part 1: the Boltzmann distribution |
 | `Certificates.lean` | `CflibsFormal` | 12 | 12 | – | ✓ | runtime certificates (the typed bridge) |
@@ -42,13 +42,13 @@ One row per module under `CflibsFormal/`. *Base* = imports no `CflibsFormal` mod
 | `LeastSquaresFit.lean` | `CflibsFormal` | 9 | 3 | – | – | the ordinary-least-squares projection / feasibility inverse |
 | `LineBroadening.lean` | `CflibsFormal` | 5 | 4 | ✓ | ✓ | line broadening (Doppler width + the Voigt Gaussian budget) |
 | `MatrixEffects.lean` | `CflibsFormal` | 22 | 7 | – | ✓ | matrix effects (completeness, ablation, ionization suppression) |
-| `MatrixIonizationCoupling.lean` | `CflibsFormal` | 12 | 0 | – | ✓ | Coupling the ionization-suppression channel with the multi-element fixed point |
+| `MatrixIonizationCoupling.lean` | `CflibsFormal` | 10 | 0 | – | ✓ | Coupling the ionization-suppression channel with the multi-element fixed point |
 | `MultiSpecies.lean` | `CflibsFormal` | 12 | 4 | – | – | Multi-species / multi-stage composition glue |
 | `NoiseToComposition.lean` | `CflibsFormal` | 5 | 2 | – | ✓ | the end-to-end noise → composition chain (gap #5, the composed bound) |
 | `NonLTEKinetics.lean` | `CflibsFormal` | 15 | 2 | – | ✓ | non-LTE departure coefficients and the departure error budget |
-| `NonlinearLeastSquares.lean` | `CflibsFormal` | 31 | 3 | – | ✓ | the nonlinear joint `(T, N)` least-squares inverse (existence leg) |
+| `NonlinearLeastSquares.lean` | `CflibsFormal` | 32 | 3 | – | ✓ | the nonlinear joint `(T, N)` least-squares inverse (existence leg) |
 | `OLS.lean` | `CflibsFormal` | 17 | 9 | ✓ | – | the ordinary-least-squares algebraic foundation |
-| `OLSConditioning.lean` | `CflibsFormal` | 5 | 0 | – | ✓ | quantitative conditioning of the Boltzmann-plot normal matrix |
+| `OLSConditioning.lean` | `CflibsFormal` | 1 | 0 | – | ✓ | quantitative conditioning of the Boltzmann-plot normal matrix |
 | `OLSIdentifiability.lean` | `CflibsFormal` | 11 | 1 | – | ✓ | n-line Boltzmann-plot identifiability (design-map injectivity) |
 | `OuterLoopModelB.lean` | `CflibsFormal` | 1 | 0 | – | – | the outer temperature iteration, Model B headline (Frontier 04) |
 | `PartialLTE.lean` | `CflibsFormal` | 6 | 2 | – | ✓ | the partial-LTE thermalization limit |
@@ -72,5 +72,5 @@ One row per module under `CflibsFormal/`. *Base* = imports no `CflibsFormal` mod
 | `TwoDCOSOrder.lean` | `CflibsFormal` | 11 | 1 | – | ✓ | 2DCOS-LIBS formalization — the sequential-order (lead/lag) sign algebra |
 | `VoigtErrorEnclosure.lean` | `CflibsFormal` | 5 | 0 | – | ✓ | a non-circular error enclosure for the Voigt FWHM |
 | `VoigtWidth.lean` | `CflibsFormal` | 7 | 1 | ✓ | ✓ | the Voigt FWHM combination (Olivero–Longbothum) |
-| **64 modules** | | **543** | **181** | | | |
+| **64 modules** | | **544** | **181** | | | |
 

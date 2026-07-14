@@ -6,6 +6,7 @@ Authors: Brian Squires
 import Mathlib
 import CflibsFormal.SahaEquilibrium
 import CflibsFormal.MatrixEffects
+import CflibsFormal.Analysis
 
 /-!
 # Coupling the ionization-suppression channel with the multi-element fixed point
@@ -89,39 +90,6 @@ envelope on explicit homologous-pair data.
 -/
 
 namespace CflibsFormal
-
-/-! ## Abstract monotone-fixed-point core
-
-The single order-theoretic input: an antitone lower map dominated pointwise by an upper map
-forces the corresponding fixed points to be ordered. No calculus, no continuity. -/
-
-/-- **Strict comparative statics of an antitone fixed point** (`PURE-MATH`).  If `f` is
-antitone on `[0, ∞)`, `x` is a fixed point of `f` and `y` a fixed point of `g` (both
-nonnegative), and `f` lies strictly below `g` at `y`, then `x < y`.  Proof: were `y ≤ x`,
-antitonicity gives `f x ≤ f y`, so `x = f x ≤ f y < g y = y ≤ x`, a contradiction. -/
-theorem coupledFixedPoint_lt_of_map_lt {f g : ℝ → ℝ}
-    (hf : AntitoneOn f (Set.Ici 0)) {x y : ℝ} (hx : 0 ≤ x) (hy : 0 ≤ y)
-    (hfx : x = f x) (hgy : y = g y) (hlt : f y < g y) : x < y := by
-  by_contra hc
-  rw [not_lt] at hc
-  have hmono : f x ≤ f y := hf (Set.mem_Ici.mpr hy) (Set.mem_Ici.mpr hx) hc
-  rw [← hfx] at hmono
-  rw [← hgy] at hlt
-  linarith
-
-/-- **Weak comparative statics of an antitone fixed point** (`PURE-MATH`).  Same hypotheses
-as `coupledFixedPoint_lt_of_map_lt` but with a non-strict domination `f y ≤ g y`, yielding
-`x ≤ y`.  The one-directional bound: pointwise domination of the closure map moves the fixed
-point in the matching direction. -/
-theorem coupledFixedPoint_le_of_map_le {f g : ℝ → ℝ}
-    (hf : AntitoneOn f (Set.Ici 0)) {x y : ℝ} (hx : 0 ≤ x) (hy : 0 ≤ y)
-    (hfx : x = f x) (hgy : y = g y) (hle : f y ≤ g y) : x ≤ y := by
-  by_contra hc
-  rw [not_le] at hc
-  have hmono : f x ≤ f y := hf (Set.mem_Ici.mpr hy) (Set.mem_Ici.mpr hx) hc.le
-  rw [← hfx] at hmono
-  rw [← hgy] at hle
-  linarith
 
 /-! ## Pointwise domination of the closure map under a parameter increase
 

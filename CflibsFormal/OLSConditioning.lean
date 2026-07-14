@@ -5,6 +5,7 @@ Authors: Brian Squires
 -/
 import Mathlib
 import CflibsFormal.OLS
+import CflibsFormal.Analysis
 
 /-!
 # CF-LIBS formalization — quantitative conditioning of the Boltzmann-plot normal matrix
@@ -54,78 +55,6 @@ open Matrix Finset Real
 open scoped BigOperators
 
 variable {ι : Type*} [Fintype ι]
-
-/-- **Quadratic form of a symmetric `2×2` matrix.** For `M = ![![a, b], ![b, d]]` and
-`v : Fin 2 → ℝ`, the Rayleigh numerator `v ⬝ᵥ (M *ᵥ v)` expands to
-`a·v₀² + 2b·v₀v₁ + d·v₁²`. Pure `dotProduct`/`mulVec` bookkeeping for `Fin 2`. -/
-theorem sym2x2_quadForm (a b d : ℝ) (v : Fin 2 → ℝ) :
-    v ⬝ᵥ (!![a, b; b, d] *ᵥ v) = a * v 0 ^ 2 + 2 * b * (v 0 * v 1) + d * v 1 ^ 2 := by
-  simp only [dotProduct, Matrix.mulVec, Fin.sum_univ_two, Matrix.cons_val',
-    Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.empty_val', Matrix.cons_val_fin_one,
-    Matrix.of_apply]
-  ring
-
-/-- **THE coercivity bound (lower Rayleigh bound = `λ_min ≥ Δ/t`).** For a symmetric
-`M = ![![a, b], ![b, d]]` with `a, d > 0`, `Δ := a·d − b² ≥ 0`, `t := a + d > 0`:
-
-  `(Δ/t) · (v₀² + v₁²) ≤ v ⬝ᵥ (M *ᵥ v)`   for all `v : Fin 2 → ℝ`.
-
-Proof by completing the square: `t·(v ⬝ᵥ M v) − Δ·(v₀²+v₁²) = (a·v₀+b·v₁)² + (b·v₀+d·v₁)²`,
-a sum of squares, so after dividing by `t > 0` the coercivity constant `Δ/t` bounds the
-Rayleigh quotient below. No spectral theory. (`_hΔ` documents the coercivity regime in which
-`Δ/t ≥ 0`; the inequality itself follows from `t > 0` alone.) -/
-theorem sym2x2_coercive (a b d : ℝ) (ha : 0 < a) (hd : 0 < d)
-    (_hΔ : 0 ≤ a * d - b ^ 2) (v : Fin 2 → ℝ) :
-    (a * d - b ^ 2) / (a + d) * (v 0 ^ 2 + v 1 ^ 2) ≤ v ⬝ᵥ (!![a, b; b, d] *ᵥ v) := by
-  have ht : 0 < a + d := by linarith
-  rw [sym2x2_quadForm, div_mul_eq_mul_div, div_le_iff₀ ht]
-  nlinarith [sq_nonneg (a * v 0 + b * v 1), sq_nonneg (b * v 0 + d * v 1)]
-
-/-- **The upper Rayleigh bound (`λ_max ≤ t = trace M`).** For a symmetric
-`M = ![![a, b], ![b, d]]` with `a, d > 0` and `Δ := a·d − b² ≥ 0`:
-
-  `v ⬝ᵥ (M *ᵥ v) ≤ t · (v₀² + v₁²)`   with `t = a + d`.
-
-Proof: `a·(t·(v₀²+v₁²) − v ⬝ᵥ M v) = (a·v₁ − b·v₀)² + Δ·v₀² ≥ 0`, so after dividing by
-`a > 0` the trace `t` bounds the Rayleigh quotient above. Together with `sym2x2_coercive`
-this brackets every eigenvalue in `[Δ/t, t]`. (`_hd` completes the symmetric `a, d > 0`
-setting; the proof divides by `a > 0`.) -/
-theorem sym2x2_upper (a b d : ℝ) (ha : 0 < a) (_hd : 0 < d)
-    (hΔ : 0 ≤ a * d - b ^ 2) (v : Fin 2 → ℝ) :
-    v ⬝ᵥ (!![a, b; b, d] *ᵥ v) ≤ (a + d) * (v 0 ^ 2 + v 1 ^ 2) := by
-  rw [sym2x2_quadForm]
-  nlinarith [sq_nonneg (a * v 1 - b * v 0), mul_nonneg hΔ (sq_nonneg (v 0)), ha]
-
-/-- **The condition-number bound `κ ≤ t²/Δ`** (cross-multiplied to avoid division). For a
-symmetric `M = ![![a, b], ![b, d]]` with `a, d > 0` and `Δ := a·d − b² > 0`, for *all* pairs
-of vectors `v, w`:
-
-  `Δ · (v ⬝ᵥ M v) · (w₀² + w₁²) ≤ t² · (w ⬝ᵥ M w) · (v₀² + v₁²)`   with `t = a + d`.
-
-Reading `R(v) := (v ⬝ᵥ M v)/(v₀²+v₁²)` as the Rayleigh quotient, this says `R(v)/R(w) ≤ t²/Δ`
-for all nonzero `v, w`: the spread of the Rayleigh quotient — hence the condition number
-`κ = λ_max/λ_min` — is bounded by `t²/Δ`. Chains the upper bound `R(v) ≤ t` (`sym2x2_upper`)
-with the lower bound `Δ·‖w‖² ≤ t·(w ⬝ᵥ M w)` (`sym2x2_coercive`). -/
-theorem sym2x2_condition (a b d : ℝ) (ha : 0 < a) (hd : 0 < d)
-    (hΔ : 0 < a * d - b ^ 2) (v w : Fin 2 → ℝ) :
-    (a * d - b ^ 2) * (v ⬝ᵥ (!![a, b; b, d] *ᵥ v)) * (w 0 ^ 2 + w 1 ^ 2)
-      ≤ (a + d) ^ 2 * (w ⬝ᵥ (!![a, b; b, d] *ᵥ w)) * (v 0 ^ 2 + v 1 ^ 2) := by
-  have ht : 0 < a + d := by linarith
-  have hnv : (0 : ℝ) ≤ v 0 ^ 2 + v 1 ^ 2 := by positivity
-  set Qv := v ⬝ᵥ (!![a, b; b, d] *ᵥ v) with hQvdef
-  set Qw := w ⬝ᵥ (!![a, b; b, d] *ᵥ w) with hQwdef
-  -- upper bound on `Qv`
-  have hup_v : Qv ≤ (a + d) * (v 0 ^ 2 + v 1 ^ 2) := by
-    rw [hQvdef]; exact sym2x2_upper a b d ha hd hΔ.le v
-  -- lower bound on `Qw`, cleared of the denominator: `Δ·‖w‖² ≤ t·Qw`
-  have hlo_w : (a * d - b ^ 2) * (w 0 ^ 2 + w 1 ^ 2) ≤ (a + d) * Qw := by
-    have hc := sym2x2_coercive a b d ha hd hΔ.le w
-    rw [← hQwdef, div_mul_eq_mul_div, div_le_iff₀ ht] at hc
-    linarith [hc]
-  have sA := mul_le_mul_of_nonneg_right (mul_le_mul_of_nonneg_left hup_v hΔ.le)
-    (by positivity : (0 : ℝ) ≤ w 0 ^ 2 + w 1 ^ 2)
-  have sB := mul_le_mul_of_nonneg_left hlo_w (mul_nonneg ht.le hnv)
-  nlinarith [sA, sB]
 
 /-- **Instantiation: the explicit Boltzmann-plot coercivity constant.** For the raw two-column
 normal matrix `designNormalMatrix E = ![![∑ Eₖ², ∑ Eₖ], ![∑ Eₖ, n]]` (`n = card ι`), whenever
