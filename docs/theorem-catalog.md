@@ -5,7 +5,7 @@
 > (the integrity spine) + citation from `docs/scope-tags.tsv`; the docs-sync CI gate fails if
 > any result is untagged, so a new theorem cannot land without declaring its epistemic status.
 
-**Scope-tag mix** (544 results): **EXACT** 144 · **REDUCED** 135 · **APPROXIMATION** 9 · **PURE-MATH** 256
+**Scope-tag mix** (544 results): **EXACT** 144 · **REDUCED** 135 · **APPROXIMATION** 11 · **PURE-MATH** 254
 
 `EXACT` = exact identity faithfully encoding the cited physics · `REDUCED` = valid dimensionless/lumped-factor form · `APPROXIMATION` = documented idealization / limiting case · `PURE-MATH` = infrastructure lemma, no physical claim. Classification cross-checked against `reviews/literature-validity-audit.md`.
 
@@ -85,8 +85,8 @@
 - `APPROXIMATION` · `csigma_curve_of_growth_thin` — Optically-thin limit (`τ = 0`).  _[Aragón & Aguilera 2014]_
 - `APPROXIMATION` · `csigma_curve_of_growth_le` — The droop is downward (non-strict).  _[Aragón & Aguilera 2014]_
 - `APPROXIMATION` · `csigma_curve_of_growth_lt` — The droop is strict for an actually thick line (`τ > 0`).  _[Aragón & Aguilera 2014]_
-- `PURE-MATH` · `csigma_curve_of_growth_tendsto_universal` — The droop vanishes continuously as `τ → 0⁺`.
-- `PURE-MATH` · `csigma_curve_of_growth_strictAntiOn` — The Cσ curve of growth is strictly antitone in optical depth.
+- `APPROXIMATION` · `csigma_curve_of_growth_tendsto_universal` — The droop vanishes continuously as `τ → 0⁺`.  _[Aragón & Aguilera 2014]_
+- `APPROXIMATION` · `csigma_curve_of_growth_strictAntiOn` — The Cσ curve of growth is strictly antitone in optical depth.  _[Aragón & Aguilera 2014]_
 - `APPROXIMATION` · `csigma_curve_of_growth_density_droop` — The density droop (the σ cross-section weighting, `N`-coupled).  _[Aragón & Aguilera 2014]_
 
 ## `Alt/GaussMarkov.lean`  (CflibsFormal.Alt)

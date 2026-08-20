@@ -61,7 +61,7 @@ not a faithful LIBS profile: it is a PURE-MATH integral evaluation, never claime
 ## Literature
 
 I. B. Gornushkin et al., "Curve of growth methodology applied to laser-induced plasma emission
-spectroscopy," *Spectrochim. Acta B* **54** (1999) 1207 — the homogeneous-slab radiative-transfer
+spectroscopy," *Spectrochim. Acta B* **54** (1999) 491 — the homogeneous-slab radiative-transfer
 kernel `S·(1 − e^{−τ})` these zones stack. R. D. Cowan, G. H. Dieke, "Self-Absorption of Spectrum
 Lines," *Rev. Mod. Phys.* **20** (1948) 418 — the two-layer (non-isothermal) treatment the `N = 2`
 base case and the `N`-zone sandwich generalize. The formal-solution integral form is standard

@@ -217,7 +217,7 @@ The original **~186-result corpus** was adversarially validated (verdict: sound-
 zero blockers; all findings fixed) and given a whole-corpus **literature-validity audit**
 (`reviews/literature-validity-audit.md`): 69 faithful / 33 reduced / 5 idealized / 78 pure-math,
 **0 divergent, 0 unverified citations, 1 minor docstring over-reach (fixed)**. Subsequent additions
-to the current 543-result corpus (the frontier and architectural-review deepening sweeps) are
+to the current 544-result corpus (the frontier and architectural-review deepening sweeps) are
 individually author-plus-independent-audit reviewed rather than re-covered by that one-time audit.
 A numerical regression oracle (`oracle/`) bridges the verified spec to the numerical pipeline
 (CF-LIBS-improved) — multi-element + the alternative estimators (OLS, self-absorption, Saha

@@ -14,7 +14,7 @@ dimensional homogeneity.
 
 ## Status
 
-35 modules · 241 axiom-clean theorems/lemmas · 107 defs (run `scripts/stats.sh` for live counts).
+64 modules · 544 axiom-clean theorems/lemmas · 181 defs (run `scripts/stats.sh` for live counts).
 Axiom-clean invariant: every declaration depends only on `{propext, Classical.choice, Quot.sound}`.
 
 ## Layout
@@ -24,7 +24,7 @@ Axiom-clean invariant: every declaration depends only on `{propext, Classical.ch
 | `CflibsFormal/` | The spec: shared core (`namespace CflibsFormal`) + alternative estimators (`CflibsFormal/Alt/`, `namespace CflibsFormal.Alt`) |
 | `CONTEXT.md` | Architecture, domain glossary, design decisions, modeling scope, verification discipline |
 | `AGENTS.md` | Operational brief for coding agents (gates, conventions, non-negotiables) |
-| `docs/` | Module reference, theorem catalog (scope-tagged + cited), glossary, architecture, ADRs, dependency graph |
+| `docs/` | Module reference, theorem catalog (scope-tagged + cited), dependency graph |
 | `oracle/` | Float-mirror regression oracle bridging the spec to the Python pipeline |
 | `tools/`, `upstream/`, `scripts/`, `reviews/` | Vendored axiom-audit; physlib upstream seed; stats/CI helpers; audit archive |
 

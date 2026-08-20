@@ -60,8 +60,9 @@ inversion: rather than reading a slope off a hand-drawn Boltzmann plot, the algo
 misfit between the measured spectrum and the LTE forward model over the physical parameters. The
 existence theorem here is that fit **restricted to a compact physical box**
 `[Tmin,Tmax]×[Nmin,Nmax]` — the bounded search region every practical solver imposes — so the EVT
-guarantees the minimizer the solver reports is a genuine minimizer, not an artifact of early
-stopping. The `0` on-manifold residual is the noise-free consistency check: the true parameters are
+guarantees a global minimizer of the box-restricted objective exists — the search target is
+well-defined; the solver's convergence to it is not formalized here. The `0` on-manifold residual
+is the noise-free consistency check: the true parameters are
 a global optimum of the fit (cf. the linear analogue `Alt.olsBoltzmann_forward_feasible`, Tognoni
 et al. 2010). The forward model and the intensity Boltzmann-plot identity it fits are Ciucci et al.
 (1999) / Tognoni et al. (2010) (see `ForwardMap.lean`).
@@ -1067,7 +1068,9 @@ The trapping bound localizes the noisy minimizer to a `Φ_clean`-sublevel neighb
 that is upgraded to an explicit **metric** neighborhood in the temperature itself. On a box, the
 intensity-ratio coordinate is a bi-Lipschitz image of `T` (via `temp_exp_diff_lower`), so the
 `Φ_clean` control transfers to a bound `(sensitivity)²·(T−T₀)² ≤ 6·(1+Rmax²)·∑ηₖ²`, i.e.
-`|T−T₀| ≤ C·√(∑ηₖ²)` with `C` an explicit box constant. -/
+`|T−T₀| ≤ C·√(∑ηₖ²)` with `C` an explicit box constant. This metric reading requires **distinct
+energies** `E 0 ≠ E 1`: the sensitivity coefficient is `0` when `E 0 = E 1`, and there the bound
+(`profiledResidual_metric_bound`) is trivially satisfied with **no temperature localization**. -/
 
 /-- The two-line intensity-ratio difference is a scaled `Real.exp` difference. -/
 lemma two_ratio_diff {kB Fcal T T0 : ℝ} {g E A : Fin 2 → ℝ}

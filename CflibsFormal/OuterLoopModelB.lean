@@ -29,7 +29,10 @@ by the runtime-checkable product certificate `L₁·L₂ < 1`.
 **Why "Model B".** ("Model B" is this repo's own Frontier-04 designation for the
 non-degenerate loop built on the combined Saha–Boltzmann slope of Aguilera & Aragón 2007 —
 the paper itself does not use the name; it is defined here by contrast with the refuted
-"Model A" single-stage loop.) The single-stage two-line temperature is composition-independent
+"Model A" single-stage loop.) This proven Frontier-04 "Model B" is UNRELATED to the refuted
+2DCOS "Model B" (the nₑ-elimination / "standardless" method audited unsound and removed; see
+`docs/2dcos/ERRATA.md`) — the name collision is coincidental. The single-stage two-line
+temperature is composition-independent
 (`ForwardMap.temperature_from_two_lines`), so a `T`-leg built from it is a *constant* map and
 the outer loop would be degenerate (`L = 0`, headline true-but-vacuous). The combined
 Saha–Boltzmann slope is `n_e`-dependent through the Saha offset (non-degeneracy witnessed in

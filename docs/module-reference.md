@@ -61,8 +61,8 @@ One row per module under `CflibsFormal/`. *Base* = imports no `CflibsFormal` mod
 | `SahaEquilibrium.lean` | `CflibsFormal` | 34 | 6 | – | ✓ | Coupled Saha–closure–charge self-consistency (reduced core) |
 | `SahaInverse.lean` | `CflibsFormal` | 3 | 2 | – | ✓ | Part 6: coupling Saha into the inverse problem |
 | `SahaStability.lean` | `CflibsFormal` | 11 | 1 | – | ✓ | Part 2b: stability of the `n_e` diagnostic |
-| `SelfAbsorption.lean` | `CflibsFormal` | 10 | 3 | – | – | self-absorption / optical-thickness-aware forward map |
-| `SelfAbsorptionInverse.lean` | `CflibsFormal` | 5 | 1 | – | – | Self-absorption coupled into the inverse problem — identifiability preserved vs. lost |
+| `SelfAbsorption.lean` | `CflibsFormal` | 10 | 3 | – | ✓ | self-absorption / optical-thickness-aware forward map |
+| `SelfAbsorptionInverse.lean` | `CflibsFormal` | 5 | 1 | – | ✓ | Self-absorption coupled into the inverse problem — identifiability preserved vs. lost |
 | `SelfReversal.lean` | `CflibsFormal` | 4 | 1 | ✓ | ✓ | self-reversal (the two-zone line dip) |
 | `SpatialForward.lean` | `CflibsFormal` | 11 | 4 | ✓ | ✓ | spatially-resolved (discrete Abel / onion-peeling) forward model |
 | `StarkBroadening.lean` | `CflibsFormal` | 7 | 4 | – | ✓ | Stark broadening + the McWhirter LTE criterion |

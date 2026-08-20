@@ -1,5 +1,10 @@
 # Full-codebase literature validation — 2026-07-09
 
+> **FROZEN SNAPSHOT (2026-07-09).** This audit covers the then-48-module corpus (412 named
+> results); it is NOT updated to the current 64-module state. Modules added since are covered by
+> per-result author-plus-independent-audit review (see `CONTEXT.md` Status), not by this one-time
+> audit.
+
 *Machine-assisted audit of all 48 modules (412 named results) against the published CF-LIBS
 literature. Eight domain validators (independent LLM agents, read-only) each deep-checked every
 physics-bearing (EXACT / REDUCED / APPROXIMATION) result in their module group — statement

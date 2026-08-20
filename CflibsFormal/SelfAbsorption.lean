@@ -39,6 +39,14 @@ We prove:
 * `lineIntensity_eq_selfAbsorbedIntensity_div` — the **exact curve-of-growth correction**:
   with a known `τ`, dividing the measured intensity by `SA(τ)` recovers the optically-thin
   intensity exactly, which feeds the existing Boltzmann-plot inversion unchanged.
+
+## Literature
+
+Gornushkin, Anzano, King, Smith, Omenetto, Winefordner, "Curve of growth methodology applied
+to laser-induced plasma emission spectroscopy", *Spectrochimica Acta Part B* **54** (1999)
+491–503 — the homogeneous-slab curve-of-growth relation `I = S·(1 − exp(−τ))` from which the
+escape factor `SA(τ) = (1 − exp(−τ))/τ`, its `SA ∈ (0, 1]` dimming bound, and the
+bias-direction theorem here are derived.
 -/
 
 namespace CflibsFormal
@@ -145,9 +153,10 @@ theorem selfAbsorptionFactor_tendsto_one :
   ring
 
 /-- **Bias-direction theorem (non-strict).** A self-absorbed line is measured at or below
-its optically-thin value: `I_meas ≤ I_thin`. Hence neglecting self-absorption
-underestimates the inferred upper-level population and therefore biases the extracted
-CF-LIBS composition DOWNWARD — the dominant failure mode for concentrated alloy /
+its optically-thin value: `I_meas ≤ I_thin`. Hence neglecting self-absorption biases the
+inferred upper-level population DOWNWARD, and hence the extracted composition of any
+*differentially* self-absorbed species (a factor common to all species cancels in the
+scale-invariant closure) — the dominant failure mode for concentrated alloy /
 high-entropy-alloy lines. -/
 theorem selfAbsorbedIntensity_le_lineIntensity [Nonempty ι] {kB T N Fcal : ℝ}
     {g E A : ι → ℝ} (hg : ∀ k, 0 < g k) (hN : 0 < N) (hFcal : 0 < Fcal)
@@ -159,7 +168,10 @@ theorem selfAbsorbedIntensity_le_lineIntensity [Nonempty ι] {kB T N Fcal : ℝ}
 
 /-- **Bias-direction theorem (strict).** For any *actually* optically-thick line
 (`τ > 0`) the downward bias is strict: `I_meas < I_thin`. Self-absorption is never
-benign — it always reduces the measured intensity and must be corrected. -/
+benign — it always reduces the measured intensity and must be corrected, biasing the
+inferred upper-level population DOWNWARD, and hence the extracted composition of any
+*differentially* self-absorbed species (a factor common to all species cancels in the
+scale-invariant closure). -/
 theorem selfAbsorbedIntensity_lt_lineIntensity [Nonempty ι] {kB T N Fcal : ℝ}
     {g E A : ι → ℝ} (hg : ∀ k, 0 < g k) (hN : 0 < N) (hFcal : 0 < Fcal)
     (hA : ∀ k, 0 < A k) (k : ι) {tau : ℝ} (htau : 0 < tau) :

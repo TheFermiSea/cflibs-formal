@@ -43,6 +43,12 @@ We prove:
 Two index types appear: `κ` (species/stages, from `Closure.lean`) and `ι` (energy levels,
 from `Boltzmann.lean` / `ForwardMap.lean`). The estimator is a pure function of the
 observations `(Imeas, tau)` and NEVER takes the true density `N` (or composition) as input.
+
+**REDUCED model.** `SA(τ) = (1 − exp(−τ))/τ` is the line-center / flat-profile escape factor
+inherited from the radiative-transfer slab kernel `SelfAbsorption.slabIntensity`; the recovery
+is EXACT only as a left-inverse of THIS reduced model — itself a reduction of the full
+profile-integrated Aragón–Aguilera curve of growth (the slope-½ Lorentz-wing branch is out of
+scope) — and `τ` is assumed exactly known.
 -/
 
 namespace CflibsFormal.Alt

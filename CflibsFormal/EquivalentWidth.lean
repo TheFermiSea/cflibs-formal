@@ -58,7 +58,7 @@ square-root regimes) are standard radiative transfer — e.g. D. Mihalas, *Stell
 2nd ed., W. H. Freeman (1978), the curve-of-growth treatment. In the calibration-free LIBS
 setting the curve of growth `I = S·(1 - exp(-τ))` is Gornushkin, I. B.; Anzano, J. M.; King,
 L. A.; Smith, B. W.; Omenetto, N.; Winefordner, J. D. "Curve of growth methodology applied to
-laser-induced plasma emission analysis," *Spectrochimica Acta Part B* **54** (1999) 491–503
+laser-induced plasma emission spectroscopy," *Spectrochimica Acta Part B* **54** (1999) 491–503
 (the `cogIntensity` kernel of `CurveOfGrowth.lean`); the multi-line / Cσ curve-of-growth
 correction is formalized in the sibling `Alt/CSigmaCurveOfGrowth` (Aragón & Aguilera). The
 slope-½ damping-wing branch deferred here is governed by the classical Ladenburg–Reiche

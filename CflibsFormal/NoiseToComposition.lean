@@ -353,9 +353,10 @@ example :
 
 /-- The headline `noise_to_composition` applies: all its hypotheses — the Boltzmann-plot slope
 identifications fixing `T = 1 ≠ T̂ = 2/3`, the temperature box, positive nondegenerate atomic data,
-the worst-case exp-channel smallness, and the uniform envelope `Φ = 0` — are jointly satisfiable, so
-the
-composed end-to-end bound is non-vacuously instantiable. -/
+the worst-case exp-channel smallness, and the uniform envelope `Φ = 0` — are jointly satisfiable.
+This is a single-species (`Fin 1`) instance, so the composition LHS is structurally `0` and the
+headline bound is not numerically exercised by this witness; the preceding temperature-gap witness
+does state a concrete inequality. -/
 example : True := by
   have _h := noise_to_composition (kB := 1) (Tmin := 1 / 2) (Tmax := 2) (T := 1) (That := 2 / 3)
     (Fcal := 1) (Φ := 0) (Nmax := 4) (ET := nvN2cET) (yT := nvN2cYt) (yHatT := nvN2cYhat)

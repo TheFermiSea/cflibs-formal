@@ -172,9 +172,9 @@ theorem chord_profile_identifiable {N : ℕ} (G : ChordGeometry N)
 
 /-- The single-zone homogeneous model (`N = 1`) obtained by **instantiating the
 general spatial identifiability** at `N = 1`. This documents that the
-inhomogeneous formalization strictly generalizes every single-zone module in the
-repo: the homogeneous case is the `1×1` specialization, not an independently
-proved scalar-injectivity fact. -/
+inhomogeneous formalization strictly generalizes the single-zone spatial-homogeneity
+ASSUMPTION shared by the other modules (1 shell → N shells): the homogeneous case is the
+`1×1` specialization, not an independently proved scalar-injectivity fact. -/
 theorem singleZone_identifiable (G : ChordGeometry 1)
     {eps eps' : Fin 1 → ℝ}
     (h : chordIntensity G.L eps = chordIntensity G.L eps') :

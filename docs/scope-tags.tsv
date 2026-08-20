@@ -319,8 +319,8 @@ Alt/CSigmaCurveOfGrowth.lean	csigma_curve_of_growth_droop	APPROXIMATION	Aragón 
 Alt/CSigmaCurveOfGrowth.lean	csigma_curve_of_growth_thin	APPROXIMATION	Aragón & Aguilera 2014
 Alt/CSigmaCurveOfGrowth.lean	csigma_curve_of_growth_le	APPROXIMATION	Aragón & Aguilera 2014
 Alt/CSigmaCurveOfGrowth.lean	csigma_curve_of_growth_lt	APPROXIMATION	Aragón & Aguilera 2014
-Alt/CSigmaCurveOfGrowth.lean	csigma_curve_of_growth_tendsto_universal	PURE-MATH	—
-Alt/CSigmaCurveOfGrowth.lean	csigma_curve_of_growth_strictAntiOn	PURE-MATH	—
+Alt/CSigmaCurveOfGrowth.lean	csigma_curve_of_growth_tendsto_universal	APPROXIMATION	Aragón & Aguilera 2014
+Alt/CSigmaCurveOfGrowth.lean	csigma_curve_of_growth_strictAntiOn	APPROXIMATION	Aragón & Aguilera 2014
 Alt/CSigmaCurveOfGrowth.lean	csigma_curve_of_growth_density_droop	APPROXIMATION	Aragón & Aguilera 2014
 Alt/LeastSquares.lean	olsIntercept_of_forward	REDUCED	Ciucci 1999
 Alt/LeastSquares.lean	olsDensity_recovers	REDUCED	Ciucci 1999
@@ -477,10 +477,6 @@ TwoDCOS.lean	asyncMatrix_antisymm	PURE-MATH	—
 TwoDCOS.lean	asyncMatrix_diag_zero	PURE-MATH	—
 TwoDCOS.lean	skew_quadForm_zero	PURE-MATH	—
 TwoDCOS.lean	asyncMatrix_singleDriver_zero	PURE-MATH	—
-Aitchison.lean	closure_sum_one	PURE-MATH	—
-Aitchison.lean	softmax_sum_one	PURE-MATH	—
-Aitchison.lean	softmax_log_eq_closure	PURE-MATH	—
-Aitchison.lean	clr_sum_zero	PURE-MATH	—
 AitchisonIsometry.lean	clrE_mem	PURE-MATH	—
 AitchisonIsometry.lean	ilr_isometry	PURE-MATH	—
 AitchisonIsometry.lean	ilr_inner	PURE-MATH	—

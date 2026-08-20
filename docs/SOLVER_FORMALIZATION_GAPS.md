@@ -127,8 +127,10 @@ strict solver would step outside the verified envelope.
    `sahaIter_contraction` (one-step contraction with explicit ratio `√S/(2√(Ntot−b))`),
    `sahaIter_geometric_error` (`qⁿ` decay), `sahaIter_tendsto` (full convergence to the
    root) — under explicit, satisfiable interval conditions (witnessed at `S=1, Ntot=2,
-   b=3/2, q=√2/2`). Still open: the outer T-iteration and the multi-element coupled
-   iteration's convergence.
+   b=3/2, q=√2/2`). The multi-element coupled iteration's convergence is now ✅ closed
+   (2026-07-09): `dampedMultiElementIter_tendsto` (the unconditional damped Krasnoselskii–Mann
+   map) and `multiElementIonized_iter_tendsto` (the literal direct iteration, via the monotone
+   even/odd subsequence argument). Still open: the outer T-iteration.
 
 7. **Multi-species per-U generalization.** ✅ **Addressed** in `MultiSpecies.lean`
    (2026-07-02): `deNormalizedDensityPerU` / `lineIntensityPerU` with genuinely

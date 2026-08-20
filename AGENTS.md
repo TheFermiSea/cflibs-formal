@@ -21,7 +21,7 @@ changes here as improving measurement accuracy.
 - **Toolchain:** Lean `v4.31.0` + mathlib `v4.31.0` (`lake`). Pinned — do not `lake update`.
 - **Everything is dimensionless** (bare `ℝ`); an additive `Dimensions.lean` layer machine-checks
   homogeneity separately.
-- 35 modules under `CflibsFormal/` (+ `Alt/`); see `docs/module-reference.md` for the index and
+- 64 modules under `CflibsFormal/` (+ `Alt/`); see `docs/module-reference.md` for the index and
   `docs/theorem-catalog.md` for every result with its scope tag + citation.
 
 ## The four non-negotiables (a change that breaks any of these is wrong)
@@ -34,8 +34,10 @@ changes here as improving measurement accuracy.
 3. **Dimensionless `ℝ` core.** The inverse-problem layer is bare `ℝ`; dimensional rigor lives in
    the additive `Dimensions.lean` layer, which must not be wired into the core.
 4. **Honest scoping is the cardinal rule.** A docstring must not claim more than its theorem
-   proves. Mark **EXACT** vs **REDUCED** vs **APPROXIMATION** vs **OUT-OF-SCOPE** honestly. A green
-   proof of a vacuous, tautological, or physically-wrong statement is *worthless* — the whole point
+   proves. Mark **EXACT** vs **REDUCED** vs **APPROXIMATION** vs **PURE-MATH** honestly (the scope
+   tags in `docs/scope-tags.tsv`; "out of scope" stays a prose docstring caveat, not a scope tag). A
+   green proof of a vacuous, tautological, or physically-wrong statement is *worthless* — the whole
+   point
    of this repo. Audit the *statement*, not just the compile. Every physics module carries a
    `## Literature` docstring with **verified** citations; verify constants, signs, and inequality
    directions against the literature *before* formalizing — never guess.

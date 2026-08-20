@@ -38,6 +38,14 @@ We prove the two-sided result:
 Reuses `SelfAbsorption` and `Identifiability` verbatim; nothing is reproven. The only new
 algebraic helper is `lineIntensity_smul_left` (the `N`-linearity of the forward map), the
 root of the density/self-absorption degeneracy.
+
+## Literature
+
+Bulajic, Corsi, Cristoforetti, Legnaioli, Palleschi, Salvetti, Tognoni, "A procedure for
+correcting self-absorption in calibration-free LIBS", *Spectrochimica Acta Part B* **57**
+(2002) 339 — the known-`τ` curve-of-growth correction that recovers the optically-thin
+intensity (the PRESERVED case here); the LOST case records the single-line `N · SA(τ)`
+degeneracy that no correction can break without an independent `τ`.
 -/
 
 namespace CflibsFormal
