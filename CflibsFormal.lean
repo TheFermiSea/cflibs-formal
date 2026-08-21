@@ -19,12 +19,14 @@ import CflibsFormal.CompositionRobustness
 import CflibsFormal.Continuum
 import CflibsFormal.CurveOfGrowth
 import CflibsFormal.Dimensions
+import CflibsFormal.DoubletChannel
 import CflibsFormal.EquivalentWidth
 import CflibsFormal.ErrorBudget
 import CflibsFormal.ForwardMap
 import CflibsFormal.ForwardMapEnergy
 import CflibsFormal.HydrogenStark
 import CflibsFormal.Identifiability
+import CflibsFormal.InhomogeneityBias
 import CflibsFormal.IntervalEnclosure
 import CflibsFormal.Inverse
 import CflibsFormal.JointConvergence
@@ -42,6 +44,7 @@ import CflibsFormal.NonlinearLeastSquares
 import CflibsFormal.OLS
 import CflibsFormal.OLSConditioning
 import CflibsFormal.OLSIdentifiability
+import CflibsFormal.OpticalDepth
 import CflibsFormal.OracleAnchors
 import CflibsFormal.OuterLoopModelB
 import CflibsFormal.PartialLTE
@@ -60,6 +63,7 @@ import CflibsFormal.SelfAbsorptionInverse
 import CflibsFormal.SelfReversal
 import CflibsFormal.SpatialForward
 import CflibsFormal.StarkBroadening
+import CflibsFormal.StarkOpacityGuard
 import CflibsFormal.StarkShift
 import CflibsFormal.TemporalEvolution
 import CflibsFormal.TwoDCOS

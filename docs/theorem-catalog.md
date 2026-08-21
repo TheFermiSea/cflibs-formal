@@ -5,7 +5,7 @@
 > (the integrity spine) + citation from `docs/scope-tags.tsv`; the docs-sync CI gate fails if
 > any result is untagged, so a new theorem cannot land without declaring its epistemic status.
 
-**Scope-tag mix** (567 results): **EXACT** 146 · **REDUCED** 137 · **APPROXIMATION** 11 · **PURE-MATH** 273
+**Scope-tag mix** (641 results): **EXACT** 146 · **REDUCED** 171 · **APPROXIMATION** 13 · **PURE-MATH** 311
 
 `EXACT` = exact identity faithfully encoding the cited physics · `REDUCED` = valid dimensionless/lumped-factor form · `APPROXIMATION` = documented idealization / limiting case · `PURE-MATH` = infrastructure lemma, no physical claim. Classification cross-checked against `reviews/literature-validity-audit.md`.
 
@@ -398,6 +398,36 @@
 - `PURE-MATH` · `siToCgs_energy` — Energy converts J → erg by `10⁷`.
 - `PURE-MATH` · `siToCgs_numberDensity` — Number density converts m⁻³ → cm⁻³ by `10⁻⁶`.
 
+## `DoubletChannel.lean`  (CflibsFormal)
+*The doublet channel — the second observable that breaks the `N`–`τ` alias*
+
+**Definitions**
+- `doubletRatio` — The doublet (multiplet-pair) intensity ratio.
+
+**Results**
+- `PURE-MATH` · `doubletRatio_eq_cogRatio` — The doublet ratio is the curve-of-growth ratio `cogRatio` at opacities `(r, 1)`: the doublet channel introduces no new function, only a normalization of the…
+- `PURE-MATH` · `doubletRatio_eq_inv_cogRatio` — Reciprocal form: `doubletRatio r τ = (cogRatio 1 r τ)⁻¹`.
+- `PURE-MATH` · `doublet_denom_pos` — Positivity of the weaker line's emergent factor: `0 < 1 - exp(-τ)` for `τ > 0`.
+- `PURE-MATH` · `cogRatio_pos` — Positivity of the curve-of-growth ratio on the physical domain.
+- `PURE-MATH` · `doubletRatio_pos` — The doublet ratio is a positive observable for `r > 0`, `τ > 0` — so its logarithm is defined and it can be compared to a measured intensity ratio.
+- `REDUCED` · `one_lt_doubletRatio` — The doublet ratio is genuinely informative.  _[Gornushkin 1999]_
+- `REDUCED` · `doubletRatio_eq_measured_ratio` — `F`-cancellation (the calibration-free content).  _[Gornushkin 1999]_
+- `REDUCED` · `doubletRatio_scale_invariant` — The observable does not depend on the source scale at all.  _[Gornushkin 1999]_
+- `PURE-MATH` · `slab_second_eq_mul_ratio` — The stronger member's intensity is the weaker member's intensity times the doublet ratio: `I₂ = I₁ · ρ(τ)`.
+- `PURE-MATH` · `doubletRatio_strictAntiOn` — Strict antitonicity for the stronger line (`r > 1`).
+- `PURE-MATH` · `doubletRatio_strictMonoOn` — Strict monotonicity for the weaker line (`0 < r < 1`).
+- `REDUCED` · `doubletRatio_injOn` — Injectivity of the doublet channel on the physical domain.  _[Gornushkin 1999]_
+- `REDUCED` · `doubletRatio_determines_tau` — The ratio determines the optical depth.  _[Gornushkin 1999]_
+- `REDUCED` · `doublet_determines_columnDensity` — The ratio determines the column density.  _[Gornushkin 1999]_
+- `REDUCED` · `doublet_identifies_columnDensity_calibration_free` — Calibration-free identifiability of the column density (headline).  _[Gornushkin 1999]_
+- `REDUCED` · `single_line_tau_alias` — Why the second line is needed: the one-line alias, in slab variables.  _[Gornushkin 1999]_
+- `REDUCED` · `doublet_exact_fit` — The inversion always returns an answer — zero residual, by construction.  _[Gornushkin 1999]_
+- `REDUCED` · `doublet_residual_vacuous` — No residual exists (existential form).  _[Gornushkin 1999]_
+- `REDUCED` · `doublet_fit_unique` — The exact fit is unique.  _[Gornushkin 1999]_
+- `PURE-MATH` · `weighted_mean_strict_between` — Pure-algebra mediant lemma: a strictly positive weighted mean of two *distinct* reals lies strictly between them — in particular it lies in their unordered i…
+- `PURE-MATH` · `doubletRatio_continuousOn` — Continuity of the doublet-ratio curve on the physical domain — the analytic input to the intermediate-value step below.
+- `REDUCED` · `inhomogeneous_doublet_admits_exact_homogeneous_fit` — THE INVERSION CANNOT DETECT THAT ITS KERNEL IS WRONG.  _[Gornushkin 1999]_
+
 ## `EquivalentWidth.lean`  (CflibsFormal)
 *the equivalent-width curve of growth*
 
@@ -503,6 +533,49 @@
 - `EXACT` · `density_identifiability` — Target 2 — relative-density / composition identifiability.  _[Ciucci 1999]_
 - `EXACT` · `electron_density_identifiability` — Target 3 — electron-density / stage-ratio identifiability via Saha.  _[Saha–Eggert (Griem)]_
 - `EXACT` · `temperature_ratio_near_degenerate` — Quantitative near-degeneracy — linear-in-`ΔE` temperature-conditioning bound.  _[Ciucci 1999]_
+
+## `InhomogeneityBias.lean`  (CflibsFormal)
+*Inhomogeneity bias: the sign of the Boltzmann-plot error is a theorem*
+
+**Definitions**
+- `mixture` — Discrete Laplace transform of the positive measure with masses `w z` at abscissae `b z`: `M(E) = ∑ z, w z · exp (−(E · b z))`.
+- `logMixture` — The Boltzmann-plot ordinate of a mixed observation: `log` of the discrete Laplace transform.
+- `tiltWeight` — Exponentially tilted weight.
+- `tiltMean` — Tilted mean inverse temperature at the anchor energy `a`: `⟨b⟩_a = ∑ z, tiltWeight w b a z · b z`.
+- `secantAt` — Value at `E` of the straight line drawn through the two Boltzmann points `(E₁, y₁)` and `(E₂, y₂)`: the exact two-line CF-LIBS fit.
+- `apparentBeta` — Apparent inverse temperature from a line pair: `β_app = (y₁ − y₂)/(E₂ − E₁)`, the negated Boltzmann-plot slope.
+- `mixedLineIntensity` — Mixed line intensity.
+- `zoneWeight` — Zone `z`'s Boltzmann-plot mass `w z = Fcal · N z / U(T_z)`: its partition-normalized, calibration-absorbed column density.
+- `zoneBeta` — Zone `z`'s inverse temperature `b z = 1/(k_B T_z)`, the Laplace abscissa.
+
+**Results**
+- `PURE-MATH` · `mixture_pos` — The mixture is a strictly positive observable, so its `log` is genuine.
+- `PURE-MATH` · `tiltWeight_pos` — Tilted weights are strictly positive.
+- `PURE-MATH` · `tiltWeight_sum_one` — The tilted weights form a probability vector: they sum to one.
+- `PURE-MATH` · `tiltWeight_exponent_sum` — The tilted average of the linear exponent `−(E − a)·b` is `−(E − a)·⟨b⟩_a`.
+- `PURE-MATH` · `tiltWeight_mixture` — Reindexing the mixture through the tilt: `∑ z, p_a(z) · e^{−(E−a) b z} = M(E)/M(a)`.
+- `PURE-MATH` · `logMixture_zero` — At zero energy the mixture collapses to the total mass: `y(0) = log (∑ z, w z)`.
+- `PURE-MATH` · `logMixture_tangent_le` — The engine: the observed Boltzmann plot lies above its tangent homogeneous line.
+- `PURE-MATH` · `logMixture_tangent_lt` — Strict form of the engine.
+- `PURE-MATH` · `pairSlope_le_tiltMean` — The apparent inverse temperature is at most the tilted mean at the lower line.
+- `PURE-MATH` · `pairSlope_lt_tiltMean` — Strict version of `pairSlope_le_tiltMean` for a genuinely inhomogeneous mixture.
+- `PURE-MATH` · `tiltMean_le_pairSlope` — The mirror bound: the tilted mean at the UPPER line is a lower bound on `β_app`.
+- `PURE-MATH` · `pairSlope_pos` — The apparent inverse temperature of a positive-temperature mixture is positive.
+- `PURE-MATH` · `apparentTemperature_ge` — Reading the slope bound as a temperature bound.
+- `PURE-MATH` · `logMixture_secant_le` — The two-line secant, extrapolated below the fitted window, understates the plot.
+- `PURE-MATH` · `logMixture_secant_lt` — Strict version of `logMixture_secant_le` when the extrapolation is genuine (`E₀ < E₁`) and the mixture genuinely inhomogeneous.
+- `PURE-MATH` · `intercept_le_log_total` — The classical Boltzmann intercept is a guaranteed lower bound on the true log column density.
+- `PURE-MATH` · `pairSlope_antitone` — Convexity read on line pairs.
+- `PURE-MATH` · `pairSlope_strictAnti` — Strict version of `pairSlope_antitone`: for a genuinely inhomogeneous mixture the Boltzmann plot is *strictly* convex, so the two window temperatures never a…
+- `PURE-MATH` · `logMixture_homogeneous` — If every mixed state shares one inverse temperature `β`, the observed Boltzmann plot is exactly affine — the classical single-zone `ForwardMap.boltzmann_plot…
+- `PURE-MATH` · `tiltMean_homogeneous` — If every mixed state shares one inverse temperature `β`, the tilted mean collapses to `β` at every anchor energy.
+- `PURE-MATH` · `intercept_eq_log_total_homogeneous` — The intercept bound is sharp.
+- `PURE-MATH` · `apparentBeta_eq_homogeneous` — The temperature bound is sharp.
+- `REDUCED` · `zoneWeight_pos` — Zone masses are positive, so the mixture machinery applies.  _[Ciucci 1999]_
+- `REDUCED` · `mixed_boltzmann_ordinate` — The bridge.  _[Ciucci 1999]_
+- `REDUCED` · `mixed_intercept_le_log_column` — The headline bound, in observables.  _[Ciucci 1999]_
+- `REDUCED` · `mixed_apparentBeta_le_tiltMean` — The temperature bound, in observables.  _[Ciucci 1999]_
+- `REDUCED` · `mixed_apparentBeta_antitone` — The curvature sign, in observables.  _[Ciucci 1999]_
 
 ## `IntervalEnclosure.lean`  (CflibsFormal)
 *a verified ε-ball enclosure for the OLS forward map*
@@ -842,6 +915,34 @@
 - `PURE-MATH` · `twoLine_design_injective_of_distinct` — Two-line design injectivity from a distinct-energy pair.
 - `PURE-MATH` · `twoLine_boltzmannDesign_injective_of_hEdist` — The n-line map generalizes the two-line result on the same nondegeneracy.
 
+## `OpticalDepth.lean`  (CflibsFormal)
+*Optical depth bound to the plasma state — closing the free-`τ` gap*
+
+**Definitions**
+- `opticalDepth` — Line optical depth of a homogeneous LTE slab, bound to the plasma state: `τ = σ₀ · ℓ · n_l`, with `n_l = Boltzmann.population kB T N g E l` the LTE lower-lev…
+- `effectiveCrossSection` — Boltzmann-weighted line cross-section `σ_ℓ(T) = σ₀ · g_l · exp(−E_l/(k_B T)) / U(T)`: the line-center cross-section reduced by the LTE *fraction* of the spec…
+- `lteSourceStrength` — LTE line source strength `S = I_thin / τ`, written out in closed form: `S = Fcal · A_u · g_u · exp(−E_u/(k_B T)) / (σ₀ · ℓ · g_l · exp(−E_l/(k_B T)))`.
+- `thickLineIntensity` — State-coupled thick line intensity.
+
+**Results**
+- `PURE-MATH` · `opticalDepth_eq_linear` — `τ` is exactly linear in the total density: `τ = (σ_ℓ(T) · ℓ) · N`.
+- `PURE-MATH` · `opticalDepth_eq_csigma` — Bridge to the Cσ abscissa.
+- `PURE-MATH` · `effectiveCrossSection_pos` — The Boltzmann-weighted cross-section is positive: a positive line-center cross-section times a positive LTE lower-level fraction.
+- `PURE-MATH` · `lteSourceStrength_pos` — The LTE line source strength is positive given positive calibration, atomic data, cross-section and path length.
+- `REDUCED` · `opticalDepth_pos` — Positivity, DERIVED.  _[Gornushkin 1999]_
+- `REDUCED` · `opticalDepth_knownTauCert` — The C12 certificate is now discharged from physics, not assumed.  _[Gornushkin 1999]_
+- `REDUCED` · `opticalDepth_strictMono_density` — Strict monotonicity in density.  _[Gornushkin 1999]_
+- `REDUCED` · `lineIntensity_eq_source_mul_opticalDepth` — Emission = source × optical depth.  _[Gornushkin 1999]_
+- `REDUCED` · `lineIntensity_div_opticalDepth` — The source strength is the measured ratio `I_thin / τ`.  _[Gornushkin 1999]_
+- `REDUCED` · `opticalDepth_div_lineIntensity` — The temperature law of the absorption channel.  _[Gornushkin 1999]_
+- `REDUCED` · `opticalDepth_div_lineIntensity_strictAntiOn_temperature` — Hotter plasmas self-absorb less, relative to what they emit.  _[Gornushkin 1999]_
+- `REDUCED` · `thickLineIntensity_eq_slab` — Saturation law.  _[Gornushkin 1999]_
+- `REDUCED` · `thickLineIntensity_strictMonoOn` — The absorption channel is strictly monotone in density.  _[Gornushkin 1999]_
+- `REDUCED` · `thickLineIntensity_injOn` — THE PAYOFF — the absorption channel identifies the density.  _[Gornushkin 1999]_
+- `REDUCED` · `no_density_alias_of_boundOpticalDepth` — The single-line density alias cannot be reproduced.  _[Gornushkin 1999]_
+- `APPROXIMATION` · `csigma_density_droop_bound` — The Cσ density droop at a STATE-BOUND optical depth.  _[Aragón & Aguilera 2014]_
+- `APPROXIMATION` · `csigma_density_injOn` — Injectivity of the Cσ ordinate in the density, at a state-bound `τ`.  _[Aragón & Aguilera 2014]_
+
 ## `OuterLoopModelB.lean`  (CflibsFormal)
 *the outer temperature iteration, Model B headline (Frontier 04)*
 
@@ -1104,6 +1205,22 @@
 - `PURE-MATH` · `mcWhirterBound_mono_T` — McWhirter bound increases with temperature.
 - `PURE-MATH` · `mcWhirterBound_mono_dE` — McWhirter bound increases with the energy gap.
 - `EXACT` · `stark_saha_lte_consistent` — Stark–Saha LTE cross-check (conditional bundling).  _[Cristoforetti 2010]_
+
+## `StarkOpacityGuard.lean`  (CflibsFormal)
+*opacity guard for the Stark electron-density diagnostic*
+
+**Definitions**
+- `starkOpacityLteCert` — Repaired Stark/LTE certificate (opacity-aware).
+
+**Results**
+- `PURE-MATH` · `starkDensity_mono_width` — Monotonicity of the Stark diagnostic in the measured width.
+- `REDUCED` · `starkDensity_biased_high` — Bias direction of the Stark diagnostic under opacity broadening.  _[Griem 1974]_
+- `REDUCED` · `starkDensity_div_budget_le` — The opacity budget bounds the true density from below.  _[Griem 1974]_
+- `REDUCED` · `starkDensity_brackets_true` — Two-sided bracket for the true electron density.  _[Griem 1974]_
+- `REDUCED` · `stark_lte_gate_one_directional` — The shipped LTE gate is one-directional (NEGATIVE result).  _[Cristoforetti 2010]_
+- `REDUCED` · `starkOpacity_certificate_sound` — Soundness of the repaired certificate.  _[Cristoforetti 2010]_
+- `PURE-MATH` · `starkOpacityLteCert_imp_mcWhirterCert` — The repaired certificate is a tightening, not a weakening.
+- `REDUCED` · `stark_lte_gate_sound_of_opticallyThin` — A sufficient side condition that rescues the shipped gate.  _[Cristoforetti 2010]_
 
 ## `StarkShift.lean`  (CflibsFormal)
 *the Stark line-shift electron-density diagnostic*

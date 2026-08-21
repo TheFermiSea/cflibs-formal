@@ -29,12 +29,14 @@ One row per module under `CflibsFormal/`. *Base* = imports no `CflibsFormal` mod
 | `Continuum.lean` | `CflibsFormal` | 6 | 5 | ✓ | ✓ | the continuum background |
 | `CurveOfGrowth.lean` | `CflibsFormal` | 10 | 2 | – | ✓ | the curve of growth and multi-line self-absorption |
 | `Dimensions.lean` | `CflibsFormal` | 16 | 15 | ✓ | – | a dimensional-analysis layer |
+| `DoubletChannel.lean` | `CflibsFormal` | 22 | 1 | – | ✓ | The doublet channel — the second observable that breaks the `N`–`τ` alias |
 | `EquivalentWidth.lean` | `CflibsFormal` | 20 | 2 | ✓ | ✓ | the equivalent-width curve of growth |
 | `ErrorBudget.lean` | `CflibsFormal` | 19 | 2 | – | – | the error-propagation chain and DERIVED reliability thresholds |
 | `ForwardMap.lean` | `CflibsFormal` | 3 | 1 | – | – | Part 4: the optically-thin forward map |
 | `ForwardMapEnergy.lean` | `CflibsFormal` | 5 | 1 | – | ✓ | the energy-intensity forward map and convention equivalence |
 | `HydrogenStark.lean` | `CflibsFormal` | 4 | 2 | ✓ | ✓ | the hydrogen-line (Balmer) Stark electron-density diagnostic |
 | `Identifiability.lean` | `CflibsFormal` | 7 | 0 | – | – | Part 5: identifiability of the inverse problem |
+| `InhomogeneityBias.lean` | `CflibsFormal` | 27 | 9 | – | ✓ | Inhomogeneity bias: the sign of the Boltzmann-plot error is a theorem |
 | `IntervalEnclosure.lean` | `CflibsFormal` | 7 | 2 | – | ✓ | a verified ε-ball enclosure for the OLS forward map |
 | `Inverse.lean` | `CflibsFormal` | 3 | 6 | – | – | Part 6: the algorithm-agnostic inverse-problem framework |
 | `JointConvergence.lean` | `CflibsFormal` | 1 | 0 | – | ✓ | the joint `(T, n_e)` outer-loop contraction (Frontier) |
@@ -52,6 +54,7 @@ One row per module under `CflibsFormal/`. *Base* = imports no `CflibsFormal` mod
 | `OLS.lean` | `CflibsFormal` | 17 | 9 | ✓ | – | the ordinary-least-squares algebraic foundation |
 | `OLSConditioning.lean` | `CflibsFormal` | 1 | 0 | – | ✓ | quantitative conditioning of the Boltzmann-plot normal matrix |
 | `OLSIdentifiability.lean` | `CflibsFormal` | 11 | 1 | – | ✓ | n-line Boltzmann-plot identifiability (design-map injectivity) |
+| `OpticalDepth.lean` | `CflibsFormal` | 17 | 4 | – | ✓ | Optical depth bound to the plasma state — closing the free-`τ` gap |
 | `OracleAnchors.lean` | `CflibsFormal` | 0 | 0 | – | ✓ | oracle fixture anchors (machine-checked spec ↔ fixtures link) |
 | `OuterLoopModelB.lean` | `CflibsFormal` | 1 | 0 | – | – | the outer temperature iteration, Model B headline (Frontier 04) |
 | `PartialLTE.lean` | `CflibsFormal` | 6 | 2 | – | ✓ | the partial-LTE thermalization limit |
@@ -70,11 +73,12 @@ One row per module under `CflibsFormal/`. *Base* = imports no `CflibsFormal` mod
 | `SelfReversal.lean` | `CflibsFormal` | 4 | 1 | ✓ | ✓ | self-reversal (the two-zone line dip) |
 | `SpatialForward.lean` | `CflibsFormal` | 11 | 4 | ✓ | ✓ | spatially-resolved (discrete Abel / onion-peeling) forward model |
 | `StarkBroadening.lean` | `CflibsFormal` | 7 | 4 | – | ✓ | Stark broadening + the McWhirter LTE criterion |
+| `StarkOpacityGuard.lean` | `CflibsFormal` | 8 | 1 | – | ✓ | opacity guard for the Stark electron-density diagnostic |
 | `StarkShift.lean` | `CflibsFormal` | 9 | 3 | ✓ | ✓ | the Stark line-shift electron-density diagnostic |
 | `TemporalEvolution.lean` | `CflibsFormal` | 8 | 7 | – | ✓ | time-resolved (gate-delayed) recovery |
 | `TwoDCOS.lean` | `CflibsFormal` | 8 | 3 | ✓ | ✓ | 2DCOS-LIBS formalization — Noda two-dimensional correlation algebra |
 | `TwoDCOSOrder.lean` | `CflibsFormal` | 11 | 1 | – | ✓ | 2DCOS-LIBS formalization — the sequential-order (lead/lag) sign algebra |
 | `VoigtErrorEnclosure.lean` | `CflibsFormal` | 5 | 0 | – | ✓ | a non-circular error enclosure for the Voigt FWHM |
 | `VoigtWidth.lean` | `CflibsFormal` | 7 | 1 | ✓ | ✓ | the Voigt FWHM combination (Olivero–Longbothum) |
-| **68 modules** | | **567** | **185** | | | |
+| **72 modules** | | **641** | **200** | | | |
 

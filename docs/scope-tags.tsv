@@ -566,3 +566,77 @@ LineSelection.lean	radNoise_variance	PURE-MATH	—
 LineSelection.lean	radNoise_uncorr	PURE-MATH	—
 LineSelection.lean	nonvacuity_rademacher_values	PURE-MATH	—
 LineSelection.lean	nonvacuity_dOptimal_fires	PURE-MATH	—
+StarkOpacityGuard.lean	starkDensity_mono_width	PURE-MATH	—
+StarkOpacityGuard.lean	starkDensity_biased_high	REDUCED	Griem 1974
+StarkOpacityGuard.lean	starkDensity_div_budget_le	REDUCED	Griem 1974
+StarkOpacityGuard.lean	starkDensity_brackets_true	REDUCED	Griem 1974
+StarkOpacityGuard.lean	stark_lte_gate_one_directional	REDUCED	Cristoforetti 2010
+StarkOpacityGuard.lean	starkOpacity_certificate_sound	REDUCED	Cristoforetti 2010
+StarkOpacityGuard.lean	starkOpacityLteCert_imp_mcWhirterCert	PURE-MATH	—
+StarkOpacityGuard.lean	stark_lte_gate_sound_of_opticallyThin	REDUCED	Cristoforetti 2010
+OpticalDepth.lean	opticalDepth_eq_linear	PURE-MATH	—
+OpticalDepth.lean	opticalDepth_eq_csigma	PURE-MATH	—
+OpticalDepth.lean	effectiveCrossSection_pos	PURE-MATH	—
+OpticalDepth.lean	lteSourceStrength_pos	PURE-MATH	—
+OpticalDepth.lean	opticalDepth_pos	REDUCED	Gornushkin 1999
+OpticalDepth.lean	opticalDepth_knownTauCert	REDUCED	Gornushkin 1999
+OpticalDepth.lean	opticalDepth_strictMono_density	REDUCED	Gornushkin 1999
+OpticalDepth.lean	lineIntensity_eq_source_mul_opticalDepth	REDUCED	Gornushkin 1999
+OpticalDepth.lean	lineIntensity_div_opticalDepth	REDUCED	Gornushkin 1999
+OpticalDepth.lean	opticalDepth_div_lineIntensity	REDUCED	Gornushkin 1999
+OpticalDepth.lean	opticalDepth_div_lineIntensity_strictAntiOn_temperature	REDUCED	Gornushkin 1999
+OpticalDepth.lean	thickLineIntensity_eq_slab	REDUCED	Gornushkin 1999
+OpticalDepth.lean	thickLineIntensity_strictMonoOn	REDUCED	Gornushkin 1999
+OpticalDepth.lean	thickLineIntensity_injOn	REDUCED	Gornushkin 1999
+OpticalDepth.lean	no_density_alias_of_boundOpticalDepth	REDUCED	Gornushkin 1999
+OpticalDepth.lean	csigma_density_droop_bound	APPROXIMATION	Aragón & Aguilera 2014
+OpticalDepth.lean	csigma_density_injOn	APPROXIMATION	Aragón & Aguilera 2014
+DoubletChannel.lean	doubletRatio_eq_cogRatio	PURE-MATH	—
+DoubletChannel.lean	doubletRatio_eq_inv_cogRatio	PURE-MATH	—
+DoubletChannel.lean	doublet_denom_pos	PURE-MATH	—
+DoubletChannel.lean	cogRatio_pos	PURE-MATH	—
+DoubletChannel.lean	doubletRatio_pos	PURE-MATH	—
+DoubletChannel.lean	one_lt_doubletRatio	REDUCED	Gornushkin 1999
+DoubletChannel.lean	doubletRatio_eq_measured_ratio	REDUCED	Gornushkin 1999
+DoubletChannel.lean	doubletRatio_scale_invariant	REDUCED	Gornushkin 1999
+DoubletChannel.lean	slab_second_eq_mul_ratio	PURE-MATH	—
+DoubletChannel.lean	doubletRatio_strictAntiOn	PURE-MATH	—
+DoubletChannel.lean	doubletRatio_strictMonoOn	PURE-MATH	—
+DoubletChannel.lean	doubletRatio_injOn	REDUCED	Gornushkin 1999
+DoubletChannel.lean	doubletRatio_determines_tau	REDUCED	Gornushkin 1999
+DoubletChannel.lean	doublet_determines_columnDensity	REDUCED	Gornushkin 1999
+DoubletChannel.lean	doublet_identifies_columnDensity_calibration_free	REDUCED	Gornushkin 1999
+DoubletChannel.lean	single_line_tau_alias	REDUCED	Gornushkin 1999
+DoubletChannel.lean	doublet_exact_fit	REDUCED	Gornushkin 1999
+DoubletChannel.lean	doublet_residual_vacuous	REDUCED	Gornushkin 1999
+DoubletChannel.lean	doublet_fit_unique	REDUCED	Gornushkin 1999
+DoubletChannel.lean	weighted_mean_strict_between	PURE-MATH	—
+DoubletChannel.lean	doubletRatio_continuousOn	PURE-MATH	—
+DoubletChannel.lean	inhomogeneous_doublet_admits_exact_homogeneous_fit	REDUCED	Gornushkin 1999
+InhomogeneityBias.lean	mixture_pos	PURE-MATH	—
+InhomogeneityBias.lean	tiltWeight_pos	PURE-MATH	—
+InhomogeneityBias.lean	tiltWeight_sum_one	PURE-MATH	—
+InhomogeneityBias.lean	tiltWeight_exponent_sum	PURE-MATH	—
+InhomogeneityBias.lean	tiltWeight_mixture	PURE-MATH	—
+InhomogeneityBias.lean	logMixture_zero	PURE-MATH	—
+InhomogeneityBias.lean	logMixture_tangent_le	PURE-MATH	—
+InhomogeneityBias.lean	logMixture_tangent_lt	PURE-MATH	—
+InhomogeneityBias.lean	pairSlope_le_tiltMean	PURE-MATH	—
+InhomogeneityBias.lean	pairSlope_lt_tiltMean	PURE-MATH	—
+InhomogeneityBias.lean	tiltMean_le_pairSlope	PURE-MATH	—
+InhomogeneityBias.lean	pairSlope_pos	PURE-MATH	—
+InhomogeneityBias.lean	apparentTemperature_ge	PURE-MATH	—
+InhomogeneityBias.lean	logMixture_secant_le	PURE-MATH	—
+InhomogeneityBias.lean	logMixture_secant_lt	PURE-MATH	—
+InhomogeneityBias.lean	intercept_le_log_total	PURE-MATH	—
+InhomogeneityBias.lean	pairSlope_antitone	PURE-MATH	—
+InhomogeneityBias.lean	pairSlope_strictAnti	PURE-MATH	—
+InhomogeneityBias.lean	logMixture_homogeneous	PURE-MATH	—
+InhomogeneityBias.lean	tiltMean_homogeneous	PURE-MATH	—
+InhomogeneityBias.lean	intercept_eq_log_total_homogeneous	PURE-MATH	—
+InhomogeneityBias.lean	apparentBeta_eq_homogeneous	PURE-MATH	—
+InhomogeneityBias.lean	zoneWeight_pos	REDUCED	Ciucci 1999
+InhomogeneityBias.lean	mixed_boltzmann_ordinate	REDUCED	Ciucci 1999
+InhomogeneityBias.lean	mixed_intercept_le_log_column	REDUCED	Ciucci 1999
+InhomogeneityBias.lean	mixed_apparentBeta_le_tiltMean	REDUCED	Ciucci 1999
+InhomogeneityBias.lean	mixed_apparentBeta_antitone	REDUCED	Ciucci 1999
