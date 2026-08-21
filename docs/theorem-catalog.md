@@ -5,7 +5,7 @@
 > (the integrity spine) + citation from `docs/scope-tags.tsv`; the docs-sync CI gate fails if
 > any result is untagged, so a new theorem cannot land without declaring its epistemic status.
 
-**Scope-tag mix** (544 results): **EXACT** 144 · **REDUCED** 135 · **APPROXIMATION** 11 · **PURE-MATH** 254
+**Scope-tag mix** (547 results): **EXACT** 146 · **REDUCED** 136 · **APPROXIMATION** 11 · **PURE-MATH** 254
 
 `EXACT` = exact identity faithfully encoding the cited physics · `REDUCED` = valid dimensionless/lumped-factor form · `APPROXIMATION` = documented idealization / limiting case · `PURE-MATH` = infrastructure lemma, no physical claim. Classification cross-checked against `reviews/literature-validity-audit.md`.
 
@@ -956,6 +956,14 @@
 - `REDUCED` · `sahaBoltzmann_plot` — Saha–Boltzmann plot.  _[Yalcin 1999]_
 - `EXACT` · `sahaBoltzmann_shift_eq_log_saha` — Saha–Boltzmann shift equals the log Saha factor.  _[Yalcin 1999]_
 - `EXACT` · `saha_joint_identifiability` — Joint identifiability of `(T, n_e)` from the Saha–Boltzmann plot.  _[Yalcin 1999]_
+
+## `SahaRangeEnclosure.lean`  (CflibsFormal)
+*an a-priori Saha `S(T)`-range enclosure (Frontier 04)*
+
+**Results**
+- `EXACT` · `sahaFactor_mem_Icc` — Saha-factor range enclosure (EXACT, Saha–Eggert (Griem)).  _[Saha–Eggert (Griem)]_
+- `EXACT` · `electronDensityFromRatio_mem_Icc` — Density-reader range enclosure (EXACT, Saha–Eggert (Griem)).  _[Saha–Eggert (Griem)]_
+- `REDUCED` · `outerLoop_contracts_apriori` — The CF-LIBS outer temperature loop contracts — a-priori density invariance (`REDUCED`; Aguilera & Aragón 2007, Model B; Saha–Eggert (Griem)).  _[Aguilera & Aragón 2007]_
 
 ## `SahaStability.lean`  (CflibsFormal)
 *Part 2b: stability of the `n_e` diagnostic*

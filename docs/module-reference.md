@@ -60,6 +60,7 @@ One row per module under `CflibsFormal/`. *Base* = imports no `CflibsFormal` mod
 | `SahaContraction.lean` | `CflibsFormal` | 2 | 0 | – | ✓ | Damped Saha closure iteration converges to the *unique* equilibrium |
 | `SahaEquilibrium.lean` | `CflibsFormal` | 34 | 6 | – | ✓ | Coupled Saha–closure–charge self-consistency (reduced core) |
 | `SahaInverse.lean` | `CflibsFormal` | 3 | 2 | – | ✓ | Part 6: coupling Saha into the inverse problem |
+| `SahaRangeEnclosure.lean` | `CflibsFormal` | 3 | 0 | – | ✓ | an a-priori Saha `S(T)`-range enclosure (Frontier 04) |
 | `SahaStability.lean` | `CflibsFormal` | 11 | 1 | – | ✓ | Part 2b: stability of the `n_e` diagnostic |
 | `SelfAbsorption.lean` | `CflibsFormal` | 10 | 3 | – | ✓ | self-absorption / optical-thickness-aware forward map |
 | `SelfAbsorptionInverse.lean` | `CflibsFormal` | 5 | 1 | – | ✓ | Self-absorption coupled into the inverse problem — identifiability preserved vs. lost |
@@ -72,5 +73,5 @@ One row per module under `CflibsFormal/`. *Base* = imports no `CflibsFormal` mod
 | `TwoDCOSOrder.lean` | `CflibsFormal` | 11 | 1 | – | ✓ | 2DCOS-LIBS formalization — the sequential-order (lead/lag) sign algebra |
 | `VoigtErrorEnclosure.lean` | `CflibsFormal` | 5 | 0 | – | ✓ | a non-circular error enclosure for the Voigt FWHM |
 | `VoigtWidth.lean` | `CflibsFormal` | 7 | 1 | ✓ | ✓ | the Voigt FWHM combination (Olivero–Longbothum) |
-| **64 modules** | | **544** | **181** | | | |
+| **65 modules** | | **547** | **181** | | | |
 

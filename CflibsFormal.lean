@@ -50,6 +50,7 @@ import CflibsFormal.Saha
 import CflibsFormal.SahaContraction
 import CflibsFormal.SahaEquilibrium
 import CflibsFormal.SahaInverse
+import CflibsFormal.SahaRangeEnclosure
 import CflibsFormal.SahaStability
 import CflibsFormal.SelfAbsorption
 import CflibsFormal.SelfAbsorptionInverse
