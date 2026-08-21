@@ -546,3 +546,4 @@ NonlinearLeastSquares.lean	profiledRatioResidual_diff	PURE-MATH	—
 SahaRangeEnclosure.lean	sahaFactor_mem_Icc	EXACT	Saha–Eggert (Griem)
 SahaRangeEnclosure.lean	electronDensityFromRatio_mem_Icc	EXACT	Saha–Eggert (Griem)
 SahaRangeEnclosure.lean	outerLoop_contracts_apriori	REDUCED	Aguilera & Aragón 2007
+JointConvergence.lean	jointConvergence	REDUCED	Aguilera & Aragón 2007

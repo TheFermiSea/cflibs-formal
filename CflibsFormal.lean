@@ -27,6 +27,7 @@ import CflibsFormal.HydrogenStark
 import CflibsFormal.Identifiability
 import CflibsFormal.IntervalEnclosure
 import CflibsFormal.Inverse
+import CflibsFormal.JointConvergence
 import CflibsFormal.JointIdentifiability
 import CflibsFormal.LadenburgReiche
 import CflibsFormal.LeastSquaresFit
@@ -40,6 +41,7 @@ import CflibsFormal.NonlinearLeastSquares
 import CflibsFormal.OLS
 import CflibsFormal.OLSConditioning
 import CflibsFormal.OLSIdentifiability
+import CflibsFormal.OracleAnchors
 import CflibsFormal.OuterLoopModelB
 import CflibsFormal.PartialLTE
 import CflibsFormal.PartitionLipschitz

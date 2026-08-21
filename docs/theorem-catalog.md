@@ -5,7 +5,7 @@
 > (the integrity spine) + citation from `docs/scope-tags.tsv`; the docs-sync CI gate fails if
 > any result is untagged, so a new theorem cannot land without declaring its epistemic status.
 
-**Scope-tag mix** (547 results): **EXACT** 146 · **REDUCED** 136 · **APPROXIMATION** 11 · **PURE-MATH** 254
+**Scope-tag mix** (548 results): **EXACT** 146 · **REDUCED** 137 · **APPROXIMATION** 11 · **PURE-MATH** 254
 
 `EXACT` = exact identity faithfully encoding the cited physics · `REDUCED` = valid dimensionless/lumped-factor form · `APPROXIMATION` = documented idealization / limiting case · `PURE-MATH` = infrastructure lemma, no physical claim. Classification cross-checked against `reviews/literature-validity-audit.md`.
 
@@ -535,6 +535,12 @@
 - `EXACT` · `general_identifiability` — General identifiability — the central theorem.  _[Ciucci 1999]_
 - `PURE-MATH` · `sound_estimators_agree` — Cross-method agreement bridge.
 - `REDUCED` · `rawCompositionEstimator_sound` — Soundness of the raw estimator (constant-`emit` case).  _[Ciucci 1999]_
+
+## `JointConvergence.lean`  (CflibsFormal)
+*the joint `(T, n_e)` outer-loop contraction (Frontier)*
+
+**Results**
+- `REDUCED` · `jointConvergence` — The CF-LIBS joint `(T, n_e)` outer loop contracts (`REDUCED`; Aguilera & Aragón 2007, Model B; Saha–Eggert (Griem)).  _[Aguilera & Aragón 2007]_
 
 ## `JointIdentifiability.lean`  (CflibsFormal)
 *Part 7: joint (temperature, composition) identifiability*
