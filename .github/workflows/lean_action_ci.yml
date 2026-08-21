@@ -24,6 +24,13 @@ jobs:
       # home-rolled axioms — including through imports — which grep cannot). Tool vendored in tools/.
       - name: Axiom-cleanliness gate
         run: lake exe axiom-audit --root CflibsFormal
+      # Epistemic-drift gate (declaration-granular): fail if any EXACT-tagged declaration
+      # transitively USES an APPROXIMATION-tagged declaration (constant-level, via the kernel env).
+      # The authoritative epistemic-scope gate — closes the mixed-module false-negative the
+      # module-level scripts/check-scope-consistency.sh below cannot. AxiomAudit machinery; needs the
+      # built env, so it runs after lean-action.
+      - name: Scope-consistency gate (declaration-granular)
+        run: lake exe scope-check
       # Upstream-seed gate: the SahaUpstream lib (the self-contained physlib seed) is not in
       # defaultTargets, so build + axiom-audit it explicitly to keep the "axiom-audited separately"
       # claim in lakefile.toml true.
@@ -57,11 +64,12 @@ jobs:
         run: |
           ./scripts/gen-docs.sh
           git diff --exit-code -- docs/module-reference.md docs/theorem-catalog.md
-      # Epistemic-drift gate: fail if a module with an EXACT result transitively depends on a
-      # PURE-approximation module (an exact claim resting only on approximate physics). Mixed-tag
-      # dependencies are advisory warnings only — module granularity cannot prove per-theorem
-      # over-reach. Complements the scope-tag-completeness check in the docs-sync gate above.
-      - name: Scope-consistency gate
+      # Epistemic-drift ADVISORY (module-level): a fast, build-free companion to the authoritative
+      # declaration-granular `scope-check` gate above. It also surfaces EXACT-on-REDUCED and
+      # EXACT-on-mixed dependencies as advisory warnings (module granularity cannot prove per-theorem
+      # over-reach — that is what scope-check does), and still FAILs on an EXACT-on-PURE-approximation
+      # module.
+      - name: Scope-consistency advisory (module-level)
         run: ./scripts/check-scope-consistency.sh
       # API-docs publishing (doc-gen4 HTML -> GitHub Pages) is DISABLED on purpose: this is a
       # PRIVATE spec, and Pages on a private repo is public by default, so this step would expose

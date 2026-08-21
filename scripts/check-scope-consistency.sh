@@ -1,5 +1,11 @@
 #!/usr/bin/env bash
-# Epistemic-drift CI guard for cflibs-formal.
+# Epistemic-drift ADVISORY for cflibs-formal (module-level, build-free).
+#
+# The AUTHORITATIVE per-declaration gate is `lake exe scope-check` (tools/ScopeCheck.lean): it walks
+# the actual constant-use graph and FAILs iff an EXACT-tagged declaration transitively USES an
+# APPROXIMATION-tagged one — closing this script's mixed-module blind spot. This script is the fast,
+# build-free companion: it works on the module import graph + tag tallies and additionally surfaces
+# EXACT-on-REDUCED / EXACT-on-mixed dependencies as advisory warnings.
 #
 # An EXACT result claims to faithfully encode the cited physics. If such a result rests on a
 # dependency whose ONLY physical content is an APPROXIMATION (a documented idealization / limiting

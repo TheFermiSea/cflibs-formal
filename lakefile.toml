@@ -38,6 +38,16 @@ srcDir = "tools"
 root = "Main"
 supportInterpreter = true
 
+# Declaration-granularity epistemic-drift gate (a strengthening of
+# scripts/check-scope-consistency.sh). `lake exe scope-check` fails if any EXACT-tagged
+# declaration in docs/scope-tags.tsv transitively USES an APPROXIMATION-tagged declaration
+# (constant-level, via the kernel env). Reuses the AxiomAudit lib; run after `lake build`.
+[[lean_exe]]
+name = "scope-check"
+srcDir = "tools"
+root = "ScopeCheck"
+supportInterpreter = true
+
 # Numerical regression-oracle generator: a computable Float MIRROR of the verified forward
 # map + classic inversion (NOT part of the verified spec; see oracle/README.md). Emits
 # fixtures instantiating the proven theorems. `lake exe oracle-fixtures > oracle/fixtures.json`.
