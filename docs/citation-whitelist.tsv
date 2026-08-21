@@ -1,0 +1,81 @@
+# cflibs-formal — CITATION WHITELIST (curated; consumed by scripts/check-citations.sh)
+#
+# Columns:  citation <TAB> status <TAB> year <TAB> evidence / provenance
+#
+# WHAT A ROW MEANS.  A row records the EPISTEMIC STATUS of a citation string used in
+# docs/scope-tags.tsv column 4 or in a `## Literature` docstring.  A row is NOT a proof that the
+# paper exists: only the `status` field says what was actually done, and only VERIFIED/CORRECTED
+# mean a primary source was opened.  See .claude/skills/citation-integrity/SKILL.md for the rule
+# of evidence and the procedure that promotes a row.
+#
+# status vocabulary (mirrors the skill's four outcomes, plus two bookkeeping values):
+#   VERIFIED     — primary source OPENED and the specific claimed sentence/equation LOCATED.
+#                  Evidence column must name how it was opened (DOI/arXiv id/page+equation).
+#   CORRECTED    — as VERIFIED, but the metadata in the repo was wrong and has been fixed.
+#                  Evidence column must state the correction.
+#   AUDIT-VETTED — a prior repo-wide audit recorded this source as checked against the primary
+#                  literature (docs/literature-validation.md 2026-07-09: "0 unverified
+#                  citations"; reviews/literature-validity-audit.md).  The source was NOT
+#                  re-opened when this file was seeded (2026-08-21).  Treat as sanctioned for
+#                  continued use, but NOT as first-hand evidence for a NEW claim: a new
+#                  constant/sign/inequality attributed to one of these still needs the source
+#                  opened and the row promoted to VERIFIED with a located equation.
+#   UNVERIFIED   — the string is in use somewhere in the repo, but NO primary-source check is on
+#                  record.  Acknowledged so that check-citations.sh does not report it as a new
+#                  unknown — it is still reported, loudly, as unverified.  Never silently passes.
+#   SUSPECT      — searched for and not found, or found to be internally inconsistent.  Must not
+#                  be used to support any claim.  (No rows currently.)
+#   CONVENTION   — a law/convention/equation NAME, not a bibliographic reference.  Nothing to
+#                  open; the underlying textbook citation lives in the module docstring.
+#
+# COUNT NOTE (do not silently "fix" this).  docs/literature-validation.md §"Citation-whitelist
+# clarification (L8)" describes the sanctioned set as "the 16-source core + six vetted
+# extensions" = 22.  The distinct citation strings actually present in docs/scope-tags.tsv
+# column 4 number 23.  The membership of "the 16" is nowhere enumerated in this repo, so it has
+# NOT been reconstructed here; the CORE/EXTENSION split below marks only the six extensions that
+# document names explicitly.  The discrepancy is recorded, not resolved.
+#
+# SEEDING PROVENANCE (2026-08-21).  Rows 1-23 are the distinct non-empty values of
+# docs/scope-tags.tsv column 4 at seeding time, statused AUDIT-VETTED because the 2026-07-09
+# whole-corpus audit covered exactly that column and reported zero unverified citations.  Rows
+# 24+ are sources named ONLY in `## Literature` prose (never in scope-tags.tsv); they were
+# transcribed from the repo docstrings, not from the papers, and are statused UNVERIFIED.
+#
+# TO ADD A ROW: run the citation-integrity skill first.  Do not add a row you have not opened
+# unless you status it UNVERIFIED and say so.
+#
+# citation	status	year	evidence / provenance
+Aguilera & Aragón 2007	AUDIT-VETTED	2007	scope-tags core; "Multi-element Saha-Boltzmann and Boltzmann plots in laser-induced plasmas", Spectrochim. Acta B 62 (2007) 378 — audit 2026-07-09 confirmed the +χ abscissa shift and Saha-bracket ordinate correction
+Aitchison 1986	AUDIT-VETTED	1986	vetted extension named in docs/literature-validation.md L8; The Statistical Analysis of Compositional Data, Chapman & Hall (1986)
+Aitken 1935	AUDIT-VETTED	1935	scope-tags core; Proc. Roy. Soc. Edinburgh 55 (1935) 42-48 (generalized least squares)
+Aragón & Aguilera 2008	AUDIT-VETTED	2008	scope-tags core; wavelength-ordinate Boltzmann bridge / LIBS deconvolution practice — audit 2026-07-09 judged the attribution defensible as framed
+Aragón & Aguilera 2014	AUDIT-VETTED	2014	scope-tags core; JQSRT 149 (2014) 90-102, the Cσ method. NOTE: docs/2dcos/adversarial-critique.md §6 records that a FABRICATED "Corsi et al. (2000) Cσ graphs" reference had lifted this paper's title — this row is the correct attribution
+Boltzmann	CONVENTION	—	law name (Boltzmann population distribution), not a bibliographic reference; textbook citation lives in the module docstring
+Bulajic 2002	AUDIT-VETTED	2002	scope-tags core; Spectrochim. Acta B 57 (2002) 339, self-absorption correction procedure for CF-LIBS
+Ciucci 1999	AUDIT-VETTED	1999	scope-tags core (the single most-used citation: 55 rows / 14 modules); Ciucci, Corsi, Palleschi, Rastelli, Salvetti, Tognoni, Applied Spectroscopy 53 (1999) 960-964 — the founding CF-LIBS paper. Audit 2026-07-09 confirmed the Boltzmann-plot ordinate ln(I/(gA)), slope -1/(k_B T), and the intercept-borne concentration against this paper
+Cowan–Dieke 1948	AUDIT-VETTED	1948	vetted extension named in docs/literature-validation.md L8 (self-reversal)
+Cremers & Radziemski 2013	AUDIT-VETTED	2013	vetted extension named in docs/literature-validation.md L8 (LIBS handbook)
+Cristoforetti 2010	AUDIT-VETTED	2010	scope-tags core; LTE-validity criteria beyond McWhirter for transient plasmas
+Cristoforetti–Tognoni 2013	AUDIT-VETTED	2013	scope-tags core; Spectrochim. Acta B 79-80 (2013) 63, columnar density from self-absorbed lines
+Gigosos 2003	AUDIT-VETTED	2003	vetted extension named in docs/literature-validation.md L8 (hydrogen Stark computer simulations)
+Gornushkin 1999	AUDIT-VETTED	1999	scope-tags core; Spectrochim. Acta B 54 (1999) 491-503, curve-of-growth methodology
+Griem 1974	AUDIT-VETTED	1974	scope-tags core; Spectral Line Broadening by Plasmas. DISTINCT from "Griem 1997" — see that row
+Griem 1997	AUDIT-VETTED	1997	scope-tags core; Principles of Plasma Spectroscopy. DISTINCT from "Griem 1974": two different books by the same author, NOT a typo pair. check-citations.sh flags them as similar; that flag is a false positive and is expected
+Ladenburg–Reiche 1913	AUDIT-VETTED	1913	vetted extension named in docs/literature-validation.md L8; classical absorption-theory W/√τ → 2 constant (accepted fix 5 of the 2026-07-09 audit, replacing a mis-attribution to Gornushkin 1999)
+McWhirter 1965	AUDIT-VETTED	1965	scope-tags core; the 1.6e12 · T^(1/2) · (ΔE)^3 LTE criterion — audit 2026-07-09 confirmed prefactor and shape verbatim
+Olivero–Longbothum 1977	AUDIT-VETTED	1977	scope-tags core; Voigt FWHM coefficients 0.5346 / 0.2166 — audit 2026-07-09 confirmed exact
+Parigger 2016	AUDIT-VETTED	2016	vetted extension named in docs/literature-validation.md L8 (spatial / Abel inversion)
+Saha–Eggert (Griem)	CONVENTION	—	equation name with a parenthetical source pointer (Griem, Principles of Plasma Spectroscopy); not a standalone bibliographic reference
+Tognoni 2010	AUDIT-VETTED	2010	scope-tags core; Spectrochim. Acta B 65 (2010) 1-14, CF-LIBS state of the art
+Yalcin 1999	AUDIT-VETTED	1999	scope-tags core; plasma-parameter / LTE diagnostics
+Aragón & Aguilera (IntechOpen, n.d.)	UNVERIFIED	—	prose-only (Alt/CSigmaCurveOfGrowth.lean): "Optically Thick Laser-Induced Plasmas in Spectroscopic Analysis", IntechOpen. NO YEAR given in the docstring — unresolvable by year, and cited for material the module marks OUT OF SCOPE. Needs opening or removal
+Borduchi, Milori, Villas-Boas 2022	UNVERIFIED	2022	prose-only (MatrixEffects.lean): Spectrochim. Acta B (2022), residual matrix effects in CF-LIBS. No volume/page in the docstring
+Draper & Smith 1998	UNVERIFIED	1998	prose-only (Alt/GaussMarkov.lean, Alt/OLSVariance.lean, Alt/StochasticBudget.lean): Applied Regression Analysis, 3rd ed., Wiley-Interscience (1998), Ch. 1-2. Standard textbook, cited for a standard result
+Golub & Pereyra 1973	UNVERIFIED	1973	prose-only (ProfiledUnimodality.lean, NonlinearLeastSquares.lean, OLS.lean, OLSConditioning.lean): origin of variable projection (VARPRO). Added as accepted fix 8 of the 2026-07-09 audit, but that audit's scope was scope-tags column 4, so no primary-source record exists here
+Thouin et al. 2023 (EPJ Appl. Phys.)	UNVERIFIED	2023	prose-only (ForwardMapEnergy.lean): docstring says Thouin, Benmouffok, Freton, Gonzalez, EPJ Appl. Phys. 98 (2023) 65 (art. ap230072). CONFLICT: reviews/literature-validity-audit.md records the SAME module's primary source as "Khelladi et al., EPJ Appl. Phys. 101 (2023) ap230072" — different first author AND different volume for the same article number. One of the two is wrong; unresolvable offline. MUST be opened and reconciled before either is relied on
+Kiefer & Wolfowitz 1960	UNVERIFIED	1960	prose-only (LineSelection.lean): equivalence theory of optimal design, Canadian Journal of Mathematics 12 (1960) 363-366. Cited as "design-theoretic ancestry" for a PURE-MATH module (scope-tags citation is "—"), so nothing physical rests on it; still unopened
+Konjević & Roberts 1976	UNVERIFIED	1976	prose-only (StarkShift.lean): J. Phys. Chem. Ref. Data 5 (1976) 209-257, critical review of Stark widths/shifts for non-hydrogenic atoms (docstring notes continuations 1984/1990/2002)
+Mihalas 1978	UNVERIFIED	1978	prose-only (EquivalentWidth.lean, RadiativeTransferDepth.lean): Stellar Atmospheres, 2nd ed., W. H. Freeman (1978), curve-of-growth treatment
+Noda 1993	UNVERIFIED	1993	prose-only (TwoDCOS.lean, TwoDCOSOrder.lean): Appl. Spectrosc. 47 (1993) 1329, generalized 2DCOS. This is the CORRECTED form per docs/2dcos/adversarial-critique.md Appendix B (the source drafts carried a DOI resolving to the wrong paper). Highest-priority row to promote to VERIFIED: the repo's worst citation failure ("Noda Wronskian") was an invented result attributed to this author
+Noda 2000	UNVERIFIED	2000	prose-only (TwoDCOS.lean, TwoDCOSOrder.lean): Appl. Spectrosc. 54 (2000) 994, Hilbert-transform determination of 2D correlation spectra. Same priority note as Noda 1993
+Saha 1920	UNVERIFIED	1920	prose-only (SahaContraction.lean): M. Saha, "Ionization in the solar chromosphere", Phil. Mag. 40 (1920) 472

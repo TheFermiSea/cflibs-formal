@@ -42,6 +42,7 @@ One row per module under `CflibsFormal/`. *Base* = imports no `CflibsFormal` mod
 | `LadenburgReiche.lean` | `CflibsFormal` | 6 | 1 | – | ✓ | the sharp Ladenburg–Reiche asymptotic equivalent |
 | `LeastSquaresFit.lean` | `CflibsFormal` | 9 | 3 | – | – | the ordinary-least-squares projection / feasibility inverse |
 | `LineBroadening.lean` | `CflibsFormal` | 5 | 4 | ✓ | ✓ | line broadening (Doppler width + the Voigt Gaussian budget) |
+| `LineSelection.lean` | `CflibsFormal` | 19 | 4 | – | ✓ | D-optimal line selection for the Boltzmann plot |
 | `MatrixEffects.lean` | `CflibsFormal` | 22 | 7 | – | ✓ | matrix effects (completeness, ablation, ionization suppression) |
 | `MatrixIonizationCoupling.lean` | `CflibsFormal` | 10 | 0 | – | ✓ | Coupling the ionization-suppression channel with the multi-element fixed point |
 | `MultiSpecies.lean` | `CflibsFormal` | 12 | 4 | – | – | Multi-species / multi-stage composition glue |
@@ -75,5 +76,5 @@ One row per module under `CflibsFormal/`. *Base* = imports no `CflibsFormal` mod
 | `TwoDCOSOrder.lean` | `CflibsFormal` | 11 | 1 | – | ✓ | 2DCOS-LIBS formalization — the sequential-order (lead/lag) sign algebra |
 | `VoigtErrorEnclosure.lean` | `CflibsFormal` | 5 | 0 | – | ✓ | a non-circular error enclosure for the Voigt FWHM |
 | `VoigtWidth.lean` | `CflibsFormal` | 7 | 1 | ✓ | ✓ | the Voigt FWHM combination (Olivero–Longbothum) |
-| **67 modules** | | **548** | **181** | | | |
+| **68 modules** | | **567** | **185** | | | |
 

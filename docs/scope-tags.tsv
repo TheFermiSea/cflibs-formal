@@ -547,3 +547,22 @@ SahaRangeEnclosure.lean	sahaFactor_mem_Icc	EXACT	Saha–Eggert (Griem)
 SahaRangeEnclosure.lean	electronDensityFromRatio_mem_Icc	EXACT	Saha–Eggert (Griem)
 SahaRangeEnclosure.lean	outerLoop_contracts_apriori	REDUCED	Aguilera & Aragón 2007
 JointConvergence.lean	jointConvergence	REDUCED	Aguilera & Aragón 2007
+LineSelection.lean	energySpread_nonneg	PURE-MATH	—
+LineSelection.lean	energySpreadCert_iff	PURE-MATH	—
+LineSelection.lean	slopeVariance_le_of_spread_ge	PURE-MATH	—
+LineSelection.lean	slopeVariance_le_iff_spread_le	PURE-MATH	—
+LineSelection.lean	slopeVariance_lt_of_spread_lt	PURE-MATH	—
+LineSelection.lean	exists_dOptimal_lineSet	PURE-MATH	—
+LineSelection.lean	spreadOn_eq	PURE-MATH	—
+LineSelection.lean	slopeVariance_le_of_spreadOn_ge	PURE-MATH	—
+LineSelection.lean	exists_dOptimal_subset	PURE-MATH	—
+LineSelection.lean	nonvacuity_energySpread_values	PURE-MATH	—
+LineSelection.lean	nonvacuity_variance_ratio_nine	PURE-MATH	—
+LineSelection.lean	nonvacuity_wider_pair_strictly_better	PURE-MATH	—
+LineSelection.lean	fairCoins_integral	PURE-MATH	—
+LineSelection.lean	radNoise_memLp	PURE-MATH	—
+LineSelection.lean	radNoise_mean	PURE-MATH	—
+LineSelection.lean	radNoise_variance	PURE-MATH	—
+LineSelection.lean	radNoise_uncorr	PURE-MATH	—
+LineSelection.lean	nonvacuity_rademacher_values	PURE-MATH	—
+LineSelection.lean	nonvacuity_dOptimal_fires	PURE-MATH	—

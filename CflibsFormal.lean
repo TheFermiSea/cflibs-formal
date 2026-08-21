@@ -32,6 +32,7 @@ import CflibsFormal.JointIdentifiability
 import CflibsFormal.LadenburgReiche
 import CflibsFormal.LeastSquaresFit
 import CflibsFormal.LineBroadening
+import CflibsFormal.LineSelection
 import CflibsFormal.MatrixEffects
 import CflibsFormal.MatrixIonizationCoupling
 import CflibsFormal.MultiSpecies

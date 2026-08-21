@@ -5,7 +5,7 @@
 > (the integrity spine) + citation from `docs/scope-tags.tsv`; the docs-sync CI gate fails if
 > any result is untagged, so a new theorem cannot land without declaring its epistemic status.
 
-**Scope-tag mix** (548 results): **EXACT** 146 · **REDUCED** 137 · **APPROXIMATION** 11 · **PURE-MATH** 254
+**Scope-tag mix** (567 results): **EXACT** 146 · **REDUCED** 137 · **APPROXIMATION** 11 · **PURE-MATH** 273
 
 `EXACT` = exact identity faithfully encoding the cited physics · `REDUCED` = valid dimensionless/lumped-factor form · `APPROXIMATION` = documented idealization / limiting case · `PURE-MATH` = infrastructure lemma, no physical claim. Classification cross-checked against `reviews/literature-validity-audit.md`.
 
@@ -599,6 +599,36 @@
 - `EXACT` · `doppler_recovers` — Doppler thermometry is exact.  _[Griem 1997]_
 - `PURE-MATH` · `gaussQuadrature_comm` — Gaussian quadrature is symmetric in its two contributions.
 - `EXACT` · `deconvolveGaussian_quadrature` — Deconvolution exactly inverts quadrature.  _[Aragón & Aguilera 2008]_
+
+## `LineSelection.lean`  (CflibsFormal)
+*D-optimal line selection for the Boltzmann plot*
+
+**Definitions**
+- `energySpread` — The D-optimality objective for a candidate line set: the upper-level energy spread `SS_E = ∑ₖ (Eₖ − Ē)²` of the candidate's energies.
+- `spreadOn` — The energy spread of a chosen SUBSET `S` of the measured line pool.
+- `fairCoins` — The fair four-point sample space: uniform probability on `Bool × Bool` (two fair coins).
+- `radNoise` — The Rademacher noise pair: `ε₀` reads the first coin and `ε₁` the second, each `±1`.
+
+**Results**
+- `PURE-MATH` · `energySpread_nonneg` — The energy spread is a sum of squares, hence nonnegative.
+- `PURE-MATH` · `energySpreadCert_iff` — The selection objective and the well-posedness gate are the same number.
+- `PURE-MATH` · `slopeVariance_le_of_spread_ge` — THE LINE-SELECTION COMPARISON.
+- `PURE-MATH` · `slopeVariance_le_iff_spread_le` — The energy spread is an EXACT ranking criterion, not merely a sufficient one.
+- `PURE-MATH` · `slopeVariance_lt_of_spread_lt` — Strict form: strictly more spread ⇒ strictly less variance.
+- `PURE-MATH` · `exists_dOptimal_lineSet` — THE D-OPTIMALITY THEOREM: the argmax of the energy spread is the argmin of the slope variance.
+- `PURE-MATH` · `spreadOn_eq` — The subset objective in closed Finset form: `spreadOn E S = ∑_{k ∈ S} (Eₖ − (∑_{j ∈ S} Eⱼ)/|S|)²` — the ordinary energy spread computed over the selected lin…
+- `PURE-MATH` · `slopeVariance_le_of_spreadOn_ge` — Subset line selection: the wider-spread subset wins, whatever the cardinalities.
+- `PURE-MATH` · `exists_dOptimal_subset` — D-optimal SUBSET selection.
+- `PURE-MATH` · `nonvacuity_energySpread_values` — Non-vacuity — the two candidate line sets are genuinely different and both admissible.
+- `PURE-MATH` · `nonvacuity_variance_ratio_nine` — Non-vacuity — the wider pair wins by exactly a factor of nine.
+- `PURE-MATH` · `nonvacuity_wider_pair_strictly_better` — Non-vacuity — the strict comparison fires on explicit data.
+- `PURE-MATH` · `fairCoins_integral` — Integration against `fairCoins` is the plain four-point average.
+- `PURE-MATH` · `radNoise_memLp` — Every `radNoise k` is square-integrable (a bounded function on a finite probability space).
+- `PURE-MATH` · `radNoise_mean` — The Rademacher noise is centered: `𝔼[εₖ] = 0`.
+- `PURE-MATH` · `radNoise_variance` — The Rademacher noise is homoscedastic with `σ = 1`: `Var(εₖ) = 1²`.
+- `PURE-MATH` · `radNoise_uncorr` — The two coins are uncorrelated: `cov(ε₀, ε₁) = 0` — the classical Gauss–Markov hypothesis.
+- `PURE-MATH` · `nonvacuity_rademacher_values` — Non-vacuity — the whole comparison is realized, with numbers, on a real probability space carrying real noise.
+- `PURE-MATH` · `nonvacuity_dOptimal_fires` — Non-vacuity — the D-optimality theorem fires on a genuine probability measure with genuine noise.
 
 ## `MatrixEffects.lean`  (CflibsFormal)
 *matrix effects (completeness, ablation, ionization suppression)*

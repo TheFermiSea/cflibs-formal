@@ -209,7 +209,7 @@ Gates 1–4 are automated in CI (`.github/workflows/lean_action_ci.yml`).
 
 ## Status
 
-67 modules, 548 axiom-clean named results (theorem/lemma) + 181 defs (counts via `scripts/stats.sh`).
+68 modules, 567 axiom-clean named results (theorem/lemma) + 181 defs (counts via `scripts/stats.sh`).
 CI gates: axiom-cleanliness (`tools/`), style/structure lint (`runLinter`), docs-sync + scope-tag
 completeness (`scripts/gen-docs.sh`), import-hygiene (`scripts/stats.sh`), and the epistemic-drift
 scope-consistency guard (`scripts/check-scope-consistency.sh`).
@@ -217,8 +217,82 @@ The original **~186-result corpus** was adversarially validated (verdict: sound-
 zero blockers; all findings fixed) and given a whole-corpus **literature-validity audit**
 (`reviews/literature-validity-audit.md`): 69 faithful / 33 reduced / 5 idealized / 78 pure-math,
 **0 divergent, 0 unverified citations, 1 minor docstring over-reach (fixed)**. Subsequent additions
-to the current 548-result corpus (the frontier and architectural-review deepening sweeps) are
+to the current 567-result corpus (the frontier and architectural-review deepening sweeps) are
 individually author-plus-independent-audit reviewed rather than re-covered by that one-time audit.
 A numerical regression oracle (`oracle/`) bridges the verified spec to the numerical pipeline
 (CF-LIBS-improved) — multi-element + the alternative estimators (OLS, self-absorption, Saha
 nₑ) + the derived error-budget thresholds, each fixture instantiating a proven theorem.
+
+## Metrology & traceability
+
+"Calibration-free" is a *metrological traceability claim*. Convention lock: `docs/conventions.md`.
+
+**The measurand, per module.** The VIM (JCGM 200) wants the quantity *intended* to be measured,
+specified finely enough that its value is unique to the required uncertainty. "Composition" is not a
+measurand.
+
+| module | measurand |
+| --- | --- |
+| `Classic`, `CompositionIdentifiability` | number fraction `C_s = N_s/∑_t N_t` of species `s` in the single homogeneous emitting zone, at the state `(T, n_e)` the gate samples |
+| `Boltzmann`, `ForwardMap` | the *excitation* temperature of one species' LTE level distribution over the fitted line set — not a kinetic or ionization temperature |
+| `Saha`, `StarkBroadening`, `HydrogenStark` | `n_e` in that zone, from a stage ratio (Saha) or a line width (Stark) — two different measurands, coinciding only under LTE |
+| `TemporalEvolution` | `C_s` **at gate delay `t`**, of the diluted state `ρ(t)·N₀`; soundness is per-gate, cross-gate invariance a corollary of `hDilute`, not evidence for it |
+| `SpatialForward` | the per-shell emissivity `ε(r_j)` of `N` shells; single-zone is the `N = 1` case |
+| `MatrixEffects` | the **sub**composition over the detected set `D`; absolute fractions inflate by `1/(1−m)` |
+
+The last three rows carry the content: the single-zone measurand is a spatial *and* temporal average
+over a plasma that is neither homogeneous nor stationary. That averaging is definitional, not
+instrumental.
+
+**Where the chain terminates: atomic data, not SI.** `Classic.classic_calibration_free` proves the
+instrument constant `Fcal` cancels under closure, for *all* data — so no matrix-matched standard and
+no SI-traceable radiometric scale enters. What replaces them is the tabulated `(g_k, A_ki, E_k)` and
+`U_s(T)`, reaching every recovered density through `AtomicDataPerturbation.responseFactor`
+`ρ = g_u·A_u·exp(−E_u/k_BT)/U(T)` — literature values with their own (often unstated) uncertainty
+and no unbroken chain of calibrations to the SI. Plainly: **results here are traceable to
+atomic-data tabulations, not to the SI.** "Calibration-free" means free of a calibration *standard*,
+not free of external reference data.
+
+**Identifiability = absence of definitional uncertainty.** The VIM's *definitional uncertainty* —
+the component due to the finite detail of the measurand's definition — is a floor: an ambiguous
+measurand specification cannot be rescued by better instrumentation alone. The identifiability
+theorems say that floor is zero under stated nondegeneracy:
+`Identifiability.temperature_identifiability` (distinct upper-level energies ⇒ `T` unique),
+`JointIdentifiability.joint_identifiability` and
+`CompositionIdentifiability.compositionIdentifiable` (equal observations force equal `(T, C)`, no
+assumed ratio — the state-to-data map is injective). The converses are the *positive* case:
+`temperature_degeneracy` / `temperature_not_identifiable_of_degenerate` exhibit two positive
+temperatures with identical observations, and `temperature_ratio_near_degenerate` bounds the
+approach (signal `O(ΔE)`), making the runtime "small `ΔE` ⇒ refuse" gate metrologically correct
+rather than merely cautious. Caveat: these are *conditional* zero-floor results, for the measurand
+as the model defines it. Real definitional uncertainty lives in the gap between that measurand and
+the plasma — the last rows above — and no injectivity theorem touches it.
+
+**The bubble under the carpet.** Closure does not eliminate the calibration constant's uncertainty;
+it **relocates** it. `classic_calibration_free` is the elimination; `classicDensity_aliasing` is
+where it reappears — inverting with wrong atomic data returns *exactly* `N̂ = N·ρ_true/ρ_wrong`. The
+budget line that read `Fcal` now reads `(g, A, E, U)`, sized by `classicDensity_aliasing_error`
+(`|N̂−N| ≤ N·δ/(1−δ)`), `..._error_channels`, `..._error_energy`, and carried to composition by
+`classicComposition_atomicData_error`; `classicDensity_temperature_aliasing` is the same shape for a
+wrong recovered `T`. `AtomicDataPerturbation` proves this relocation but never names it: **closure
+buys standard-independence at the price of an atomic-data-dominated budget, and
+`classicDensity_aliasing` is the exchange rate.** Hence the already-enforced hard refusal on missing
+atomic data — the bias is finite, plausible, and has no self-diagnosing signature.
+
+**Deterministic worst-case, not linearized GUM propagation — deliberate.** JCGM 100 (GUM)
+propagates `u_c² = ∑(∂f/∂x_i)²u_i²`; JCGM 101 directs abandoning that when the model is
+significantly non-linear or the output far from normal. CF-LIBS is the textbook instance — `T`
+enters as `exp(−E/k_BT)`, the inverse is a log-slope, Saha carries `T^{3/2}·exp(−χ/k_BT)`, and
+composition is a ratio of those; a sensitivity-coefficient table would approximate an approximation.
+`ErrorBudget` instead propagates deterministic worst-case envelopes — `olsSlope_stable_l1` (sharp
+ℓ¹), `olsSlope_stable_l2_sq` (Cauchy–Schwarz), the exact `temp_rel_error_eq`, and the inverted
+thresholds `requiredEnergySpread_sufficient` / `maxPerLineError_sufficient`. No linearization is
+taken anywhere: the reductions live in the hypotheses (lumped `δ`), never in the algebra. **This is
+a strength and should be presented as one.** The statistical layer stays separate —
+`Alt/OLSVariance` (`Var β̂ = σ²/SS_E`), `Alt/GaussMarkov` (BLUE), `Alt/StochasticBudget`
+(Chebyshev, sub-Gaussian tails) — and `olsSlope_chebyshev` is distribution-free, so it is *not* a
+coverage factor: a GUM expanded uncertainty `U = k·u_c` with `k = 2` presumes approximate normality.
+Do not print a `k` beside it. **Rule: never mix worst-case and RSS philosophies in one table.** An
+ℓ¹ envelope from `olsSlope_stable_l1` and a `σ/√SS_E` from `olsSlope_variance_eq` answer different
+questions (guaranteed bound vs. standard deviation); summing or row-comparing them yields a number
+that is neither. One philosophy per table, labelled.
