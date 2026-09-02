@@ -11,9 +11,11 @@
 # COST (measured 2026-09-02 on this corpus, LEAN_NUM_THREADS=1): ~42 s and ~2.6 GB peak RSS PER
 # MODULE, dominated by loading the Mathlib environment. Two invocations that are NOT safe:
 #   * `leanchecker` with no module   → checks EVERY .olean on the search path (Lean + Mathlib).
-#   * `leanchecker CflibsFormal`     → resolved as the package: 72 parallel Mathlib-sized
-#                                       environments; OOM-killed (exit 137) on a 64 GB machine.
-# So this script always runs PER MODULE with a bounded worker pool and one thread each.
+#   * `leanchecker CflibsFormal` with the DEFAULT thread count → OOM-killed (exit 137) after ~7 min
+#     on a 64 GB machine. OBSERVED, not inferred: the same root aggregator module replays fine at
+#     ~1.3 GB when pinned to LEAN_NUM_THREADS=1 (it is just the heaviest module — it imports all
+#     72 others), so the hazard is the multi-threaded environment load, not the module itself.
+# So this script always runs PER MODULE with a bounded worker pool and ONE thread each.
 #
 # USAGE
 #   scripts/kernel-replay.sh --changed <git-base>   modules whose .lean changed since <git-base>

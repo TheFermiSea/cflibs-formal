@@ -21,7 +21,7 @@ changes here as improving measurement accuracy.
 - **Toolchain:** Lean `v4.33.1` + mathlib `v4.33.1` (`lake`). Pinned — do not `lake update`.
 - **Everything is dimensionless** (bare `ℝ`); an additive `Dimensions.lean` layer machine-checks
   homogeneity separately.
-- 64 modules under `CflibsFormal/` (+ `Alt/`); see `docs/module-reference.md` for the index and
+- 72 modules under `CflibsFormal/` (+ `Alt/`) — count via `scripts/stats.sh`; see `docs/module-reference.md` for the index and
   `docs/theorem-catalog.md` for every result with its scope tag + citation.
 
 ## The four non-negotiables (a change that breaks any of these is wrong)
