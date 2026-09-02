@@ -48,6 +48,7 @@ changes here as improving measurement accuracy.
 lake build                                          # 1. green build (clean re-elaboration)
 lake exe axiom-audit --root CflibsFormal            # 2. axiom-clean (exit 0)
 lake exe runLinter CflibsFormal                     # 3. style/structure lint ("Linting passed")
+scripts/kernel-replay.sh --changed origin/main      # 3b. independent kernel replay (leanchecker) of changed modules
 ./scripts/stats.sh                                  # 4. import hygiene + counts (exit 0)
 lake exe oracle-fixtures > /tmp/f.json \
   && diff -u oracle/fixtures.json /tmp/f.json \
@@ -55,7 +56,7 @@ lake exe oracle-fixtures > /tmp/f.json \
 # upstream seed (separate lean_lib, not in defaultTargets):
 lake build SahaUpstream && lake exe axiom-audit --root SahaUpstream
 ```
-Gates 1–4 (+ oracle + upstream) are the CI in `.github/workflows/lean_action_ci.yml`. Gate 5 of
+Gates 1–4 (+ oracle + upstream + kernel replay of changed modules; weekly full sweep) are the CI in `.github/workflows/lean_action_ci.yml`. Gate 5 of
 the *discipline* — a faithfulness/statement audit — is human/agent judgment, not automated.
 
 **Trust nothing self-reported.** If a subagent/tool says "green + axiom-clean," re-run the gates

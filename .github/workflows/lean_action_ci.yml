@@ -18,6 +18,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0   # full history: the kernel-replay step diffs against a base commit
       - uses: leanprover/lean-action@v1
       # Axiom-cleanliness gate: fail CI if any declaration in CflibsFormal depends on an axiom
       # outside {propext, Classical.choice, Quot.sound} (catches sorry/admit, native_decide, and
@@ -31,6 +33,25 @@ jobs:
       # built env, so it runs after lean-action.
       - name: Scope-consistency gate (declaration-granular)
         run: lake exe scope-check
+      # Kernel-replay gate: re-check every module this change touched with the toolchain's
+      # built-in `leanchecker`. `lake build` and axiom-audit trust the .olean files as stored; the
+      # kernel replay does not (rejects stale/corrupted/hand-forged oleans). Per module ~42 s and
+      # ~2.6 GB, so only CHANGED modules run here; the weekly workflow sweeps all of them.
+      - name: Kernel-replay gate (changed modules)
+        env:
+          LEAN_NUM_THREADS: "1"
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            git fetch --no-tags origin "${{ github.base_ref }}"
+            BASE="$(git merge-base "origin/${{ github.base_ref }}" HEAD)"
+          elif [ -n "${{ github.event.before }}" ] && [ "${{ github.event.before }}" != "0000000000000000000000000000000000000000" ] \
+               && git rev-parse --verify --quiet "${{ github.event.before }}^{commit}" >/dev/null; then
+            BASE="${{ github.event.before }}"
+          else
+            BASE="HEAD~1"
+          fi
+          echo "kernel-replay base: $BASE"
+          KERNEL_REPLAY_JOBS=2 ./scripts/kernel-replay.sh --changed "$BASE"
       # Upstream-seed gate: the SahaUpstream lib (the self-contained physlib seed) is not in
       # defaultTargets, so build + axiom-audit it explicitly to keep the "axiom-audited separately"
       # claim in lakefile.toml true.

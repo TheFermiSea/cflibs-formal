@@ -12,10 +12,11 @@ identifiability / reliability theorems are dimensionally trivial and want plain-
 `field_simp`/`ring`/`log`/`exp`, not measure theory.
 
 physlib is an **upstream target for our forward Saha physics, not a dependency.** Verified state
-(2026-06-23, via `gh`):
+(2026-06-23, via `gh`; **re-verified 2026-09-02 — see the Update section at the end**):
 
-- physlib is **actively maintained** but on **Lean v4.30.0** (we are v4.31.0) — depending on it
-  forces a downgrade of our mathlib.
+- physlib is **actively maintained** and on **Lean v4.33.0** (we are v4.31.0; re-verified
+  2026-09-02) — depending on it would force an **upgrade** of our toolchain and mathlib, and it
+  pulls doc-gen4 plus five more packages (13 in its manifest).
 - Its statistical mechanics is **measure-theoretic and unit-aware**: even
   `CanonicalEnsemble/Finite.lean`'s discrete `Z = ∑ᵢ exp(−βEᵢ)` carries `[MeasurableSpace ι]` and a
   `Temperature` units type — heavier than our needs for the inverse-problem layer.
@@ -82,7 +83,7 @@ physlib **welcomes AI-assisted PRs**, but with hard human-accountability rules (
 - Finish checklist: import into `Physlib.lean` (sorted), `lake exe cache get` then `lake build`,
   `lake exe lint_all`, `./scripts/lint-style.sh` (commit first — it reads committed state),
   spell-check words in `scripts/MetaPrograms/spellingWords.txt`. **Single-concept PR**, atomic
-  commits, **DCO sign-off**.
+  commits, **`Co-authored-by:` trailer (physlib AGENTS.md; **not** a DCO sign-off)**.
 
 ## 5. Prerequisites, triggers, and steps
 
@@ -104,7 +105,7 @@ b. **Brian opens a physlib issue/discussion** proposing the Saha contribution to
 c. Prototype `Saha/Basic.lean` against a physlib checkout — unit-aware, on top of their PF /
    translational / Temperature API.
 d. Run physlib's gates (lake build, `lint_all`, `lint-style`, alpha linters if under `PhyslibAlpha`).
-e. **Brian opens the PR** (single concept, atomic commits, DCO sign-off) and drives review.
+e. **Brian opens the PR** (single concept, atomic commits, `Co-authored-by:` trailer (physlib AGENTS.md; **not** a DCO sign-off)) and drives review.
 f. *Optional, much later:* once merged and physlib reaches 4.31+, reconsider whether cflibs-formal
    should *depend* on physlib's Saha (letting us delete our forward Saha and keep only the inverse
    layer) — a separate future decision.
@@ -120,7 +121,51 @@ f. *Optional, much later:* once merged and physlib reaches 4.31+, reconsider whe
 
 ## 7. Watch-items
 
-- Track physlib's `lean-toolchain` (v4.30.0 as of 2026-06-23) and any new `StatisticalMechanics`
+- Track physlib's `lean-toolchain` (v4.33.0 as of 2026-09-02; roughly monthly bump cadence) and any new `StatisticalMechanics`
   ionization / grand-canonical / Saha work — re-scout before acting.
 - The minimal-Saha extraction (trigger 2) is the one piece of prep worth doing on our side ahead of
   time; everything else waits for Brian's go-ahead.
+
+## Update — re-scout of 2026-09-02 (supersedes the numbers above where they differ)
+
+Three independent scouts (physlib main, `PhyslibAlpha/`, ecosystem survey) re-verified the
+premises of this plan against physlib HEAD `a4ba9ef9` (2026-09-02T10:49Z):
+
+- **Toolchain: physlib is on Lean/mathlib v4.33.0** (bumps: v4.31 on 06-25, v4.32 on 07-21,
+  v4.33 on 08-17 — roughly monthly). We are on v4.31.0. Depending on physlib means an **upgrade**,
+  not the downgrade stated above. It also uses the **module system** (`module` /
+  `public import` in all 719 files); anything we contribute must be written that way with
+  specific imports — `import Mathlib` is rejected by its redundant-import lint.
+- **Saha / ionization equilibrium is still absent** — 0 hits for Saha, ioniz, grand canonical,
+  chemical potential, plasma, spectroscopy, radiative, optical depth, oscillator strength across
+  the tree, 413 commits since 2026-05-01, all PRs and all 144 issues. `SahaUpstream` remains a
+  clean additive contribution.
+- **Landing zone: `PhyslibAlpha/StatisticalMechanics/Saha/Basic.lean`, not core `Physlib/`.**
+  PhyslibAlpha (created 2026-06-09, PR #1159) is the explicit incubator for new, large, or
+  AI-assisted material: "one-look" review (every Alpha PR inspected was approved with the single
+  word "Approved", 0–2 day merge, one reviewer), no maintenance promise (a break after a toolchain
+  bump is *recorded*, not fixed — we would own re-greening), and **zero precedent so far of
+  material graduating from Alpha to core** (demotions into Alpha do occur, e.g. #1608). Alpha has
+  no `StatisticalMechanics/` directory yet; new top-level areas are accepted when they mirror
+  where the material would live in core.
+- **API facts that reshape the port.** physlib's `CanonicalEnsemble.partitionFunction_of_fintype`
+  is `∑ᵢ exp(−βEᵢ)` over individual microstates with **no degeneracy weights** — our
+  g-weighted `U(T)` needs either a `Σ k, Fin (g k)` carrier or a bridging lemma (the one question
+  the reviewer is on record asking: "how does this relate to other partition functions we have").
+  There is **no thermal de Broglie / translational partition function** (`IdealGas.partitionZ_eq`
+  has mass normalised to 1 and no `h`), so `thermalBracket` would be new. Only **`Constants.ℏ`**
+  exists (no `h`; write `h = 2π·ℏ`); **no electron-mass constant**; `Constants.kB : ℝ` is a fixed
+  numeral, not a parameter; `Temperature` wraps `ℝ≥0` (allows `T = 0`; the `PositiveTemperature`
+  refactor #976 is stalled). The bare-ℝ-β precedent to cite is
+  `mathematicalPartitionFunctionBetaReal` (Finite.lean) and #1409's `partitionFunctionBetaReal`.
+- **Process facts.** Commit trailer is `Co-authored-by: Claude …` (AGENTS.md), **not** DCO.
+  An `API-map.yaml` is expected for a new area (`docs/API_MAP_GUIDE.md`; CI linter). AI-POLICY.md
+  binds: a human vouches for every line and personally verifies every reference; all reviewer
+  communication is human. Open the pre-PR Zulip `#Physlib` thread specifically on
+  bare-ℝ-β vs `Temperature.β` / `Constants.kB` / `Constants.ℏ`.
+- **What to absorb from physlib (ideas only, no dependency):** its `Exponent` type is a
+  reducible-ℚ wrapper so `L^(1/2) · L^(1/2) = L` closes by `rfl`; port that idea plus
+  `CommGroup`/`Pow` instances and `single` generators into `CflibsFormal/Dimensions.lean`
+  (~50–80 mathlib-only lines) so `sahaFactor_dim`-style homogeneity closes by `rfl`/`decide`.
+  physlib's full `Units` layer is self-described "experimental" and churned four times in
+  Jul–Aug 2026; its default basis is charge-based LTMCT, not ISQ.

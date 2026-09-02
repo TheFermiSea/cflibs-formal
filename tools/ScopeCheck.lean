@@ -62,9 +62,9 @@ partial def cflibsDeps (c : Name) : DepM NameSet := do
   return acc
 
 /-- Parse `docs/scope-tags.tsv` into a short-name → tag map (canonical tags only). -/
-def parseTags : IO (Lean.RBMap String String compare) := do
+def parseTags : IO (Std.TreeMap String String) := do
   let content ← IO.FS.readFile "docs/scope-tags.tsv"
-  let mut m : Lean.RBMap String String compare := .empty
+  let mut m : Std.TreeMap String String := .empty
   for line in content.splitOn "\n" do
     match line.splitOn "\t" with
     | _ :: name :: t :: _ =>
@@ -86,7 +86,7 @@ def main : IO UInt32 := do
     let mut fails : Array (String × Array String) := #[]
     for i in [0:exactDecls.size] do
       let approx : Array String := perDecl[i]!.toArray.filterMap fun d =>
-        if tag.find? (shortName d) == some "APPROXIMATION" then some (freshStr d) else none
+        if tag.get? (shortName d) == some "APPROXIMATION" then some (freshStr d) else none
       if !approx.isEmpty then
         fails := fails.push (freshStr exactDecls[i]!, approx)
     return (fails, exactDecls.size)
