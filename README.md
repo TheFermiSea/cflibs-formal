@@ -30,7 +30,7 @@ Axiom-clean invariant: every declaration depends only on `{propext, Classical.ch
 
 ## Build & verify
 
-Requires the pinned toolchain (`lean-toolchain`: `leanprover/lean4:v4.31.0`) and mathlib `v4.31.0`,
+Requires the pinned toolchain (`lean-toolchain`: `leanprover/lean4:v4.33.1`) and mathlib `v4.33.1`,
 fetched by `lake`:
 
 ```bash

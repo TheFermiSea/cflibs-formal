@@ -82,7 +82,7 @@ theorem residual_sum_zero [Nonempty ι] (E y : ι → ℝ) :
 orthogonal to the centered energies: `∑ₖ (Eₖ − Ē)·(olsSlope·Eₖ + olsIntercept − yₖ) = 0`. This
 is stationarity of `rss` in the slope `m`; it needs the nonzero energy spread `hvar` (the OLS
 slope's denominator) to cancel. -/
-theorem residual_centered_dot_zero [Nonempty ι] (E y : ι → ℝ)
+theorem residual_centered_dot_zero (E y : ι → ℝ)
     (hvar : 0 < ∑ k, (E k - mean E) ^ 2) :
     ∑ k, (E k - mean E) * (olsSlope E y * E k + olsIntercept E y - y k) = 0 := by
   have hcongr : ∀ k ∈ Finset.univ,

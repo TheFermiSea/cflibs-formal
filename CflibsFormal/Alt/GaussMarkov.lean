@@ -153,7 +153,7 @@ theorem linEstimator_variance (a E : ι → ℝ) (α β σ : ℝ) (ε : ι → �
 the OLS noise gain is `∑wₖ² = 1/SS_E` (`OLS.olsSlope_noise_gain`), the cross term is
 `∑wₖaₖ = (∑(Eₖ−Ē)aₖ)/SS_E = 1/SS_E` (using both constraints), so `∑wₖ(aₖ−wₖ) = 0` and hence
 `∑aₖ² = ∑wₖ² + ∑(aₖ−wₖ)² ≥ ∑wₖ²`. Pure Finset algebra — no probability. -/
-theorem weight_sq_ge_noiseGain [Nonempty ι] (a E : ι → ℝ)
+theorem weight_sq_ge_noiseGain (a E : ι → ℝ)
     (hvar : 0 < ∑ k, (E k - mean E) ^ 2)
     (ha0 : ∑ k, a k = 0)
     (ha1 : ∑ k, a k * E k = 1) :

@@ -255,7 +255,7 @@ neutral-observe + Saha-complete + normalize recovery at gate `t` returns exactly
 (`gateSahaTotalDensity_eq`, with `n_e t` cancelling), and the shared dilution
 `ρ t` then cancels in the closure (`composition_smul_invariant`). This and
 `gateSahaTotalDensity_eq` are the substantive results of the module. -/
-theorem temporal_saha_composition_invariant [Nonempty ι] [Nonempty σ]
+theorem temporal_saha_composition_invariant [Nonempty ι]
     {kB me h Fcal : ℝ} {T ne ρ : ℝ → ℝ} {N0 chi : σ → ℝ} {nI nII : σ → ℝ → ℝ}
     {gI EI AI : σ → ι → ℝ} {uI : σ → ι} {gII EII : σ → κ → ℝ}
     (hgI : ∀ s k, 0 < gI s k) (hFcal : 0 < Fcal) (hAI : ∀ s, 0 < AI s (uI s))
@@ -282,7 +282,7 @@ recover `composition N0` (the true composition is gate-invariant *because*
 substantive per-gate soundness — `n_e(t)` cancelling via Saha, `ρ(t)` cancelling
 in closure — lives in `gateSahaTotalDensity_eq` and the invariant theorem.
 Distinctness `t₁ ≠ t₂` is NOT a hypothesis. -/
-theorem temporal_saha_composition_gate_independent [Nonempty ι] [Nonempty σ]
+theorem temporal_saha_composition_gate_independent [Nonempty ι]
     {kB me h Fcal : ℝ} {T ne ρ : ℝ → ℝ} {N0 chi : σ → ℝ} {nI nII : σ → ℝ → ℝ}
     {gI EI AI : σ → ι → ℝ} {uI : σ → ι} {gII EII : σ → κ → ℝ}
     (hgI : ∀ s k, 0 < gI s k) (hFcal : 0 < Fcal) (hAI : ∀ s, 0 < AI s (uI s))
@@ -307,7 +307,7 @@ meaningful* — McWhirter being necessary, not sufficient. -/
 theorem mem_lteWindow_thermalized {ΔE : ℝ} {T ne : ℝ → ℝ} {t : ℝ}
     (hT : 0 < T t) (hΔE : 0 ≤ ΔE) (hne : 0 ≤ ne t) (ht : t ∈ lteWindow ΔE T ne) :
     thermalized 1.6e12 (T t) (ne t) ΔE := by
-  rw [lteWindow, Set.mem_setOf_eq] at ht
+  rw [lteWindow, Set.mem_ofPred_eq] at ht
   exact (lteValid_iff_thermalized hT hΔE hne).mp ht
 
 /-- **McWhirter requirement falls as the plasma cools.** Between two gates with

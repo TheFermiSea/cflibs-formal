@@ -14,8 +14,9 @@ identifiability / reliability theorems are dimensionally trivial and want plain-
 physlib is an **upstream target for our forward Saha physics, not a dependency.** Verified state
 (2026-06-23, via `gh`; **re-verified 2026-09-02 — see the Update section at the end**):
 
-- physlib is **actively maintained** and on **Lean v4.33.0** (we are v4.31.0; re-verified
-  2026-09-02) — depending on it would force an **upgrade** of our toolchain and mathlib, and it
+- physlib is **actively maintained** and on **Lean v4.33.0** (we were v4.31.0 when re-verified
+  2026-09-02, and bumped to v4.33.1 the same day) — depending on it no longer forces a toolchain
+  change, but it
   pulls doc-gen4 plus five more packages (13 in its manifest).
 - Its statistical mechanics is **measure-theoretic and unit-aware**: even
   `CanonicalEnsemble/Finite.lean`'s discrete `Z = ∑ᵢ exp(−βEᵢ)` carries `[MeasurableSpace ι]` and a
@@ -132,8 +133,9 @@ Three independent scouts (physlib main, `PhyslibAlpha/`, ecosystem survey) re-ve
 premises of this plan against physlib HEAD `a4ba9ef9` (2026-09-02T10:49Z):
 
 - **Toolchain: physlib is on Lean/mathlib v4.33.0** (bumps: v4.31 on 06-25, v4.32 on 07-21,
-  v4.33 on 08-17 — roughly monthly). We are on v4.31.0. Depending on physlib means an **upgrade**,
-  not the downgrade stated above. It also uses the **module system** (`module` /
+  v4.33 on 08-17 — roughly monthly). We were on v4.31.0 at re-verification and are on **v4.33.1**
+  since 2026-09-02, so the toolchain gap is closed (it was an **upgrade**, not the downgrade
+  stated above). It also uses the **module system** (`module` /
   `public import` in all 719 files); anything we contribute must be written that way with
   specific imports — `import Mathlib` is rejected by its redundant-import lint.
 - **Saha / ionization equilibrium is still absent** — 0 hits for Saha, ioniz, grand canonical,

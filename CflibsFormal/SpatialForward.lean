@@ -138,7 +138,7 @@ nonzero. This is the linear-algebraic heart that makes the discrete Abel
 inversion well-posed. -/
 theorem chordGeometry_det_ne_zero {N : ℕ} (G : ChordGeometry N) :
     G.L.det ≠ 0 := by
-  rw [Matrix.det_of_upperTriangular G.upper]
+  rw [Matrix.det_of_isUpperTriangular G.upper]
   exact Finset.prod_ne_zero_iff.mpr (fun i _ => (G.diag_pos i).ne')
 
 /-- The path-length matrix is invertible. Over the field `ℝ`, `IsUnit` of the
@@ -266,7 +266,7 @@ noncomputable def onionPeel {N : ℕ} (G : ChordGeometry N) (I : Fin N → ℝ) 
 recovery, from `L⁻¹(L·ε) = ε` with `L` invertible (`chordGeometry_isUnit`). -/
 theorem onionPeel_chordIntensity {N : ℕ} (G : ChordGeometry N) (eps : Fin N → ℝ) :
     onionPeel G (chordIntensity G.L eps) = eps := by
-  letI := (chordGeometry_isUnit G).invertible
+  let := (chordGeometry_isUnit G).invertible
   exact Matrix.inv_mulVec_eq_vec rfl
 
 /-- The recovery is genuinely *inside-out*: `L⁻¹` is upper-triangular, so the
@@ -275,7 +275,7 @@ intensities `Iⱼ` for `j ≥ i` (the shells at or outside radius `i`) — exact
 physical peeling order (outermost shell first). -/
 theorem onionPeel_blockTriangular {N : ℕ} (G : ChordGeometry N) :
     (G.L⁻¹).BlockTriangular id := by
-  letI := (chordGeometry_isUnit G).invertible
+  let := (chordGeometry_isUnit G).invertible
   exact Matrix.blockTriangular_inv_of_blockTriangular G.upper
 
 /-- **One-shell perturbation inequality.** Applying `peeling_identity` to two
@@ -426,7 +426,7 @@ theorem peeling_amplification_iSup {N : ℕ} (G : ChordGeometry N) (eps eps' : F
     |eps i - eps' i|
       ≤ (⨆ k, |chordIntensity G.L eps k - chordIntensity G.L eps' k|) / peelDiagFloor G
           * ∑ k ∈ Finset.range (N - i.val), peelCouplingRatio G ^ k := by
-  haveI : Nonempty (Fin N) := ⟨i⟩
+  have : Nonempty (Fin N) := ⟨i⟩
   have hell_pos : 0 < peelDiagFloor G := by
     obtain ⟨i₀, hi₀⟩ := Finite.exists_min (fun k => G.L k k)
     have heq : peelDiagFloor G = G.L i₀ i₀ :=
@@ -475,7 +475,7 @@ opaque factor legible as `(1/ℓ)·∑ρ^k`. The norm here is the *elementary* �
 norm (`Matrix.linfty_opNorm_mulVec`), distinct from the L²/spectral operator norm. -/
 theorem peeling_condition_linfty {N : ℕ} (G : ChordGeometry N) (eps eps' : Fin N → ℝ) :
     ‖eps - eps'‖ ≤ ‖G.L⁻¹‖ * ‖chordIntensity G.L eps - chordIntensity G.L eps'‖ := by
-  letI := (chordGeometry_isUnit G).invertible
+  let := (chordGeometry_isUnit G).invertible
   have hΔ : chordIntensity G.L eps - chordIntensity G.L eps'
       = G.L.mulVec (eps - eps') := by
     simp [chordIntensity, Matrix.mulVec_sub]

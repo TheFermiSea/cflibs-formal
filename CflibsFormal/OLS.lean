@@ -202,8 +202,8 @@ theorem det_designNormalMatrix [Nonempty ι] (E : ι → ℝ) :
         Finset.sum_congr rfl (fun k _ => by ring)]
     rw [Finset.sum_add_distrib, Finset.sum_sub_distrib, ← Finset.mul_sum,
       Finset.sum_const, Finset.card_univ, nsmul_eq_mul]
-  unfold designNormalMatrix
   rw [Matrix.det_fin_two]
+  unfold designNormalMatrix
   simp only [Matrix.cons_val_zero, Matrix.cons_val_one]
   rw [hexp]
   unfold mean
@@ -243,14 +243,14 @@ design. -/
 private def nvDmE11 : Fin 2 → ℝ := ![1, 1]
 
 example : (designNormalMatrix nvDmE01).det = 1 := by
-  unfold designNormalMatrix nvDmE01
   rw [Matrix.det_fin_two]
+  unfold designNormalMatrix nvDmE01
   simp only [Matrix.cons_val_zero, Matrix.cons_val_one, Fin.sum_univ_two, Fintype.card_fin]
   norm_num
 
 example : (designNormalMatrix nvDmE11).det = 0 := by
-  unfold designNormalMatrix nvDmE11
   rw [Matrix.det_fin_two]
+  unfold designNormalMatrix nvDmE11
   simp only [Matrix.cons_val_zero, Matrix.cons_val_one, Fin.sum_univ_two, Fintype.card_fin]
   norm_num
 
@@ -510,7 +510,7 @@ noncomputable def jointDesignNormalMatrix (E s : ι → ℝ) : Matrix (Fin 3) (F
 /-- Expansion helper: `∑ₖ (fₖ − f̄)² = ∑ fₖ² − 2·f̄·∑fₖ + n·f̄²`. Same shape as the helper used
 inline in `det_designNormalMatrix`; isolated here because the joint proof needs it for both
 `E` and `s`. -/
-private theorem sq_expand [Nonempty ι] (f : ι → ℝ) :
+private theorem sq_expand (f : ι → ℝ) :
     ∑ k, (f k - mean f) ^ 2
       = (∑ k, f k ^ 2) - 2 * mean f * (∑ k, f k) + (Fintype.card ι : ℝ) * mean f ^ 2 := by
   rw [show (∑ k, (f k - mean f) ^ 2)
@@ -520,7 +520,7 @@ private theorem sq_expand [Nonempty ι] (f : ι → ℝ) :
     Finset.sum_const, Finset.card_univ, nsmul_eq_mul]
 
 /-- Cross-term expansion helper: `∑ₖ (Eₖ − Ē)(sₖ − s̄) = ∑ Eₖsₖ − Ē·∑sₖ − s̄·∑Eₖ + n·Ē·s̄`. -/
-private theorem cross_expand [Nonempty ι] (E s : ι → ℝ) :
+private theorem cross_expand (E s : ι → ℝ) :
     ∑ k, (E k - mean E) * (s k - mean s)
       = (∑ k, E k * s k) - mean E * (∑ k, s k) - mean s * (∑ k, E k)
         + (Fintype.card ι : ℝ) * mean E * mean s := by
@@ -544,8 +544,8 @@ theorem det_jointDesignNormalMatrix [Nonempty ι] (E s : ι → ℝ) :
           - (∑ k, (E k - mean E) * (s k - mean s)) ^ 2) := by
   have hcard : (Fintype.card ι : ℝ) ≠ 0 := Nat.cast_ne_zero.mpr Fintype.card_ne_zero
   rw [sq_expand E, sq_expand s, cross_expand E s]
-  unfold jointDesignNormalMatrix
   rw [Matrix.det_fin_three]
+  unfold jointDesignNormalMatrix
   simp only [Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val_two,
     Matrix.head_cons, Matrix.tail_cons]
   unfold mean
@@ -566,7 +566,7 @@ private theorem complete_square_expand (a b : ι → ℝ) (t : ℝ) :
 `a b : ι → ℝ` (no centering, no hypothesis). Proof: if `∑a² = 0` then `a ≡ 0` so both sides
 vanish; otherwise complete the square with `t₀ = (∑ab)/(∑a²)`: `(∑a²)·∑(t₀a−b)² = (∑a²)(∑b²) −
 (∑ab)²`, and the left side is a nonnegative times a sum of squares. -/
-private theorem sq_mul_sq_sub_sq_sum_nonneg [Nonempty ι] (a b : ι → ℝ) :
+private theorem sq_mul_sq_sub_sq_sum_nonneg (a b : ι → ℝ) :
     0 ≤ (∑ k, a k ^ 2) * (∑ k, b k ^ 2) - (∑ k, a k * b k) ^ 2 := by
   rcases eq_or_lt_of_le (Finset.sum_nonneg (fun k (_ : k ∈ univ) => sq_nonneg (a k)))
     with hSa | hSa
@@ -595,7 +595,7 @@ case `a ≡ 0` (witness `(c,d) = (1,0)`). Pure algebra: the `≠ 0` branch is `c
 again, reading off `t₀·aₖ = bₖ` from a vanishing sum of squares; the `⇐` branch is a direct
 computation once `d ≠ 0` lets you solve `b = (c/d)·a`, and `d = 0` is impossible together with
 `a ≢ 0` and `c ≠ 0`, `c·a ≡ 0`. -/
-private theorem sq_mul_sq_sub_sq_eq_zero_iff [Nonempty ι] (a b : ι → ℝ) :
+private theorem sq_mul_sq_sub_sq_eq_zero_iff (a b : ι → ℝ) :
     (∑ k, a k ^ 2) * (∑ k, b k ^ 2) = (∑ k, a k * b k) ^ 2
       ↔ ∃ c d : ℝ, (c, d) ≠ (0, 0) ∧ ∀ k, c * a k = d * b k := by
   rcases eq_or_lt_of_le (Finset.sum_nonneg (fun k (_ : k ∈ univ) => sq_nonneg (a k)))

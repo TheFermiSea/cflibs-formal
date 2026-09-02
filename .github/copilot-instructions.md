@@ -1,6 +1,6 @@
 # Copilot instructions — cflibs-formal
 
-`cflibs-formal` is a **machine-verified Lean 4 + mathlib `v4.31.0`** specification of
+`cflibs-formal` is a **machine-verified Lean 4 + mathlib `v4.33.1`** specification of
 calibration-free LIBS (CF-LIBS): the forward plasma-emission model, the inverse
 composition-recovery problem, and the identifiability/reliability theorems that say *when and why*
 the inversion is well-posed. When reviewing, judge changes as a **formal-methods reviewer**, not a

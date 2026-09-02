@@ -728,7 +728,7 @@ Proof: variable-projection minimality (`profiledDensity_isMinOn_Nsection`) bound
 residual of `obs` measured at the *other* profiled density `N̂_obs'(T)`; the elementary split
 `(x−obs)² ≤ 2(x−obs')² + 2(obs'−obs)²` summed over lines finishes. No distinct-energy hypothesis is
 needed, so the bound holds for every line set. -/
-theorem profiledResidual_stability_in_obs [Nonempty ι] {kB Fcal T : ℝ} {g E A obs obs' : ι → ℝ}
+theorem profiledResidual_stability_in_obs {kB Fcal T : ℝ} {g E A obs obs' : ι → ℝ}
     (hc : 0 < ∑ k, (lineIntensity kB T 1 Fcal g E A k) ^ 2) :
     nlObjective kB Fcal g E A obs (T, profiledDensity kB Fcal g E A obs T)
       ≤ 2 * nlObjective kB Fcal g E A obs' (T, profiledDensity kB Fcal g E A obs' T)
@@ -769,7 +769,7 @@ the clean forward spectrum, whose profiled residual at `T₀` is exactly `0`
 "small `L²` noise ⇒ small residual at the truth" — the *value* half of the near-manifold picture;
 the *argmin* half (that `T₀` strictly out-competes far temperatures) is
 `profiledResidual_true_strict_lt` below. -/
-theorem profiledResidual_nearManifold_bound [Nonempty ι] {kB Fcal T0 N0 : ℝ}
+theorem profiledResidual_nearManifold_bound {kB Fcal T0 N0 : ℝ}
     {g E A obs η : ι → ℝ}
     (hc : 0 < ∑ k, (lineIntensity kB T0 1 Fcal g E A k) ^ 2)
     (hobs : ∀ k, obs k = lineIntensity kB T0 N0 Fcal g E A k + η k) :
@@ -815,7 +815,7 @@ neighborhood-uniqueness theorem: temperatures with clean gap `≤ 6‖η‖²` a
 would need the heavy perturbation machinery). Proof: `profiledResidual_stability_in_obs`
 (clean vs noisy) gives `Φ_clean(T) ≤ 2·Φ_obs(T) + 2∑ηₖ²` and `profiledResidual_nearManifold_bound`
 gives `Φ_obs(T₀) ≤ 2∑ηₖ²`; the gap hypothesis closes the strict inequality by linear arithmetic. -/
-theorem profiledResidual_true_strict_lt [Nonempty ι] {kB Fcal T0 N0 T : ℝ} {g E A obs η : ι → ℝ}
+theorem profiledResidual_true_strict_lt {kB Fcal T0 N0 T : ℝ} {g E A obs η : ι → ℝ}
     (hc0 : 0 < ∑ k, (lineIntensity kB T0 1 Fcal g E A k) ^ 2)
     (hcT : 0 < ∑ k, (lineIntensity kB T 1 Fcal g E A k) ^ 2)
     (hobs : ∀ k, obs k = lineIntensity kB T0 N0 Fcal g E A k + η k)
@@ -898,7 +898,7 @@ local minimizer of the noisy `Φ_obs` — under generic noise the minimizer shif
 (2) The *metric* refinement `|T − T₀| ≤ C·√(∑ηₖ²)` and strict-convexity uniqueness of the minimizer
 *within* the neighborhood need the Rayleigh-quotient curvature/Hessian route (heavy, and flagged
 as a trap in the frontier dossier); they remain open. -/
-theorem profiledResidual_minimizer_trapped [Nonempty ι] {kB Fcal T0 N0 T : ℝ} {g E A obs η : ι → ℝ}
+theorem profiledResidual_minimizer_trapped {kB Fcal T0 N0 T : ℝ} {g E A obs η : ι → ℝ}
     (hc0 : 0 < ∑ k, (lineIntensity kB T0 1 Fcal g E A k) ^ 2)
     (hcT : 0 < ∑ k, (lineIntensity kB T 1 Fcal g E A k) ^ 2)
     (hobs : ∀ k, obs k = lineIntensity kB T0 N0 Fcal g E A k + η k)

@@ -262,8 +262,8 @@ theorem slopeVariance_le_of_spreadOn_ge (E : ι → ℝ) (S T : Finset ι)
     (hhom : ∀ k, variance (ε k) μ = σ ^ 2) :
     variance (betaHat (fun k : S => E k.1) α β (fun k : S => ε k.1)) μ
       ≤ variance (betaHat (fun k : T => E k.1) α β (fun k : T => ε k.1)) μ := by
-  haveI := hS.to_subtype
-  haveI := hT.to_subtype
+  have := hS.to_subtype
+  have := hT.to_subtype
   have hSvar : variance (betaHat (fun k : S => E k.1) α β (fun k : S => ε k.1)) μ
       = σ ^ 2 / spreadOn E S :=
     olsSlope_variance_eq _ α β σ _ hSpos (fun k => hL2 k.1)
@@ -401,7 +401,7 @@ theorem radNoise_uncorr (i j : Fin 2) (hij : i ≠ j) :
     covariance (radNoise i) (radNoise j) fairCoins = 0 := by
   rw [covariance_eq_sub (radNoise_memLp i) (radNoise_memLp j), radNoise_mean, radNoise_mean]
   fin_cases i <;> fin_cases j <;>
-    simp_all only [Nat.reduceAdd, Fin.zero_eta, Fin.isValue, Fin.mk_one, ne_eq,
+    simp_all only [Fin.zero_eta, Fin.isValue, Fin.mk_one, ne_eq,
       not_true_eq_false, zero_ne_one, one_ne_zero, not_false_eq_true] <;>
     (rw [fairCoins_integral]; simp [radNoise, Fintype.sum_prod_type])
 

@@ -117,7 +117,7 @@ estimator (temperature-matching is load-bearing — unlike `Fcal`, which provabl
 Boltzmann-plot slope on the same data, by `classic_temperature_correct`. The full
 slope→density→closure pipeline is `classic_temperature_correct` (slope ⇒ `T`) composed with
 this theorem (`T` ⇒ composition); they are not yet combined into a single statement. -/
-theorem classic_sound [Nonempty ι] [Nonempty κ] {kB T Fcal : ℝ}
+theorem classic_sound [Nonempty ι] {kB T Fcal : ℝ}
     {N : κ → ℝ} {g E A : κ → ι → ℝ} {u : κ → ι}
     (hg : ∀ s k, 0 < g s k) (hFcal : 0 < Fcal) (hA : ∀ s, 0 < A s (u s))
     (_hN : 0 < totalDensity N) (s : κ) :
@@ -132,7 +132,7 @@ theorem classic_sound [Nonempty ι] [Nonempty κ] {kB T Fcal : ℝ}
 
 /-- **Normalization corollary.** The recovered compositions sum to one, exercising
 the positivity of the total density through `composition_sum_one`. -/
-theorem classic_sound_sum_one [Nonempty ι] [Nonempty κ] {kB T Fcal : ℝ}
+theorem classic_sound_sum_one [Nonempty ι] {kB T Fcal : ℝ}
     {N : κ → ℝ} {g E A : κ → ι → ℝ} {u : κ → ι}
     (hg : ∀ s k, 0 < g s k) (hFcal : 0 < Fcal) (hA : ∀ s, 0 < A s (u s))
     (hN : 0 < totalDensity N) :
@@ -165,7 +165,7 @@ absolute scale. Scaling `Fcal` by `c` scales every `classicDensity` by `1/c`, an
 `Fcal`, `A`, `g`, or the partition function is needed): the unknown common scale cancels
 even in degenerate/zero cases, given only `c ≠ 0`. This is the defining CF-LIBS property
 — no external calibration standard enters. -/
-theorem classic_calibration_free [Nonempty ι] [Nonempty κ] {kB T Fcal c : ℝ}
+theorem classic_calibration_free {kB T Fcal c : ℝ}
     {g E A : κ → ι → ℝ} {u : κ → ι} {I : κ → ℝ}
     (hc : c ≠ 0) (s : κ) :
     classicComposition kB T (c * Fcal) g E A u I s

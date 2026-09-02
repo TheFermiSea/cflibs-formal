@@ -101,7 +101,7 @@ variable {κ : Type*} [Fintype κ]
 denominator `SS_E`, so the numerator sum splits). These three helpers are the algebraic
 lever behind the EXACT identity `olsDensity_aliasing_A`. -/
 
-private theorem mean_add [Nonempty ι] (f h : ι → ℝ) :
+private theorem mean_add (f h : ι → ℝ) :
     mean (fun k => f k + h k) = mean f + mean h := by
   unfold mean
   rw [Finset.sum_add_distrib, add_div]

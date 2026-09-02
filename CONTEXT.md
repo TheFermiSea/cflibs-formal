@@ -148,8 +148,9 @@ the peer-reviewed primary sources.
 
 2. **mathlib-only; physlib is an upstream target, not a dependency (re-confirmed 2026-06-23).**
    Current `gh`-verified state of `leanprover-community/physlib` (renamed PhysLean + Lean-QuantumInfo):
-   actively maintained but pinned to Lean **v4.30.0** (we are v4.31.0 — depending forces a
-   downgrade); its statistical mechanics is **measure-theoretic and unit-aware** (even
+   actively maintained but pinned to Lean **v4.30.0** (we were v4.31.0 — depending would have
+   forced a downgrade; as of 2026-09-02 physlib is on v4.33.0 and we are on v4.33.1, see
+   `docs/upstream-physlib-plan.md`); its statistical mechanics is **measure-theoretic and unit-aware** (even
    `CanonicalEnsemble/Finite` carries `MeasurableSpace` + a `Temperature` units type), heavier than
    our needs for the dimensionally-trivial inverse-problem layer; and it has `StatisticalMechanics` /
    `Thermodynamics` / `Units` / `translational` physics **but still no Saha/ionization** (0 code

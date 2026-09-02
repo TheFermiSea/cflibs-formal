@@ -18,7 +18,7 @@ by atomic data and plasma modeling, not by this spec. So we invest in *provable 
 soundness, identifiability, error bounds, honest scope — never in curve-fitting. Do not pitch
 changes here as improving measurement accuracy.
 
-- **Toolchain:** Lean `v4.31.0` + mathlib `v4.31.0` (`lake`). Pinned — do not `lake update`.
+- **Toolchain:** Lean `v4.33.1` + mathlib `v4.33.1` (`lake`). Pinned — do not `lake update`.
 - **Everything is dimensionless** (bare `ℝ`); an additive `Dimensions.lean` layer machine-checks
   homogeneity separately.
 - 64 modules under `CflibsFormal/` (+ `Alt/`); see `docs/module-reference.md` for the index and

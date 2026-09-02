@@ -406,7 +406,7 @@ theorem temp_tail_transfer [Nonempty ι] (E : ι → ℝ) (α β σ : ℝ) (ε :
   have hsub : {ω | epsT ≤ |tempHat kB E α (1 / (kB * T)) ε ω - T|}
       ⊆ {ω | δ ≤ |betaHat E α (1 / (kB * T)) ε ω - 1 / (kB * T)|} := by
     intro ω hω
-    simp only [Set.mem_setOf_eq] at hω ⊢
+    simp only [Set.mem_ofPred_eq] at hω ⊢
     rw [hδdef]
     exact temp_slope_event_subset hkB hT hepsT
       (by simpa only [tempHat, tempOfSlope] using hω)
@@ -492,7 +492,7 @@ theorem density_tail_species [Nonempty ι] (E : ι → ℝ) (α β σ U Fcal τ 
   have hsub : {ω | τ ≤ |densityHat E α β U Fcal ε ω - Real.exp α * U / Fcal|}
       ⊆ {ω | Real.log (1 + τ / (Real.exp α * U / Fcal)) ≤ |alphaHat E α β ε ω - α|} := by
     intro ω hω
-    simp only [Set.mem_setOf_eq] at hω ⊢
+    simp only [Set.mem_ofPred_eq] at hω ⊢
     exact density_event_subset hU hFcal hτ (by simpa only [densityHat] using hω)
   refine (measure_mono hsub).trans ?_
   exact alphaHat_chebyshev E α β σ (Real.log (1 + τ / (Real.exp α * U / Fcal))) ε
@@ -590,7 +590,7 @@ theorem olsSlope_subGaussian_tail [Nonempty ι] (E : ι → ℝ) (α β : ℝ) (
   have hw2 : ∑ k, (olsWeight E k) ^ 2 = 1 / (∑ k, (E k - mean E) ^ 2) := by
     simp only [olsWeight]; exact olsSlope_noise_gain E hvar
   have hterm : ∀ k, ((⟨(olsWeight E k) ^ 2, sq_nonneg _⟩ * c : NNReal) : ℝ)
-      = (olsWeight E k) ^ 2 * (c : ℝ) := fun k => by rw [NNReal.coe_mul]; rfl
+      = (olsWeight E k) ^ 2 * (c : ℝ) := fun k => NNReal.coe_mul _ _
   have hCcoe : ((∑ k, (⟨(olsWeight E k) ^ 2, sq_nonneg _⟩ * c : NNReal)) : ℝ)
       = (c : ℝ) / (∑ k, (E k - mean E) ^ 2) := by
     push_cast [hterm]; rw [← Finset.sum_mul, hw2]; ring
@@ -605,7 +605,7 @@ theorem olsSlope_subGaussian_tail [Nonempty ι] (E : ι → ℝ) (α β : ℝ) (
       = {ω | δ ≤ ∑ k, olsWeight E k * ε k ω}
           ∪ {ω | δ ≤ -(∑ k, olsWeight E k * ε k ω)} := by
     ext ω
-    simp only [Set.mem_setOf_eq, Set.mem_union]
+    simp only [Set.mem_ofPred_eq, Set.mem_union]
     rw [olsSlope_estimator_eq E α β ε hvar,
       show β + (∑ k, olsWeight E k * ε k ω) - β = ∑ k, olsWeight E k * ε k ω from by ring]
     exact le_abs

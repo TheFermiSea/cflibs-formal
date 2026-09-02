@@ -154,7 +154,7 @@ per-species line vector, no `N` input), the OLS estimator returns the TRUE compo
 `C_s = N_s / ∑ N`. Assembles `olsDensity_recovers` pointwise then `Closure.composition`;
 soundness is the assembly. Realizes the multi-line least-squares CF-LIBS intercept method of
 Tognoni et al. (2010). -/
-theorem leastSquares_sound [Nonempty ι] [Nonempty κ] {kB T Fcal : ℝ}
+theorem leastSquares_sound [Nonempty ι] {kB T Fcal : ℝ}
     {N : κ → ℝ} {g E A : κ → ι → ℝ}
     (hg : ∀ s k, 0 < g s k) (hN : ∀ s, 0 < N s) (hFcal : 0 < Fcal)
     (hA : ∀ s k, 0 < A s k)
@@ -182,7 +182,7 @@ identity and is NOT claimed off the fixpoint: on noisy/perturbed intensities the
 estimators genuinely DISAGREE — OLS averages all lines while classic uses one — and that
 robustness-to-noise is the entire reason to prefer the OLS variant. (`hNtot` is forwarded to
 `classic_sound`, whose total-density hypothesis is unused.) -/
-theorem leastSquares_agrees_classic [Nonempty ι] [Nonempty κ] {kB T Fcal : ℝ}
+theorem leastSquares_agrees_classic [Nonempty ι] {kB T Fcal : ℝ}
     {N : κ → ℝ} {g E A : κ → ι → ℝ} {u : κ → ι}
     (hg : ∀ s k, 0 < g s k) (hN : ∀ s, 0 < N s) (hFcal : 0 < Fcal)
     (hA : ∀ s k, 0 < A s k) (hNtot : 0 < totalDensity N)
