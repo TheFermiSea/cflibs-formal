@@ -93,7 +93,7 @@ function only of `(Imeas, tau)`, never of `N`, yet it recovers the true composit
 — the central physics content, false for the naive classic estimator on the same thick
 data. Reuses `SelfAbsorption.lineIntensity_eq_selfAbsorbedIntensity_div` (the exact
 correction) and `Classic.classicDensity_recovers` (the inversion) verbatim. -/
-theorem selfAbsorbed_sound [Nonempty ι] [Nonempty κ] {kB T Fcal : ℝ}
+theorem selfAbsorbed_sound [Nonempty ι] {kB T Fcal : ℝ}
     {N : κ → ℝ} {g E A : κ → ι → ℝ} {u : κ → ι} {tau : κ → ℝ}
     (hg : ∀ s k, 0 < g s k) (hFcal : 0 < Fcal) (hA : ∀ s, 0 < A s (u s))
     (htau : ∀ s, 0 ≤ tau s) (s : κ) :

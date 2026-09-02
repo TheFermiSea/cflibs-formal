@@ -506,7 +506,7 @@ theorem zoneWeight_pos [Nonempty ι] {kB Fcal : ℝ} {T N : ζ → ℝ} {g E : �
 Laplace transform: `log (I_k /(g_k A_k)) = logMixture (zoneWeight …) (zoneBeta …) (E k)`.
 Everything in the pure-math core therefore applies verbatim to observed CF-LIBS spectra of an
 inhomogeneous plasma. -/
-theorem mixed_boltzmann_ordinate [Nonempty ι] [Nonempty ζ] {kB Fcal : ℝ} {T N : ζ → ℝ}
+theorem mixed_boltzmann_ordinate [Nonempty ι] {kB Fcal : ℝ} {T N : ζ → ℝ}
     {g E A : ι → ℝ} (hkB : 0 < kB) (hT : ∀ z, 0 < T z) (hg : ∀ k, 0 < g k)
     (hA : ∀ k, 0 < A k) (k : ι) :
     Real.log (mixedLineIntensity kB T N Fcal g E A k / (g k * A k))

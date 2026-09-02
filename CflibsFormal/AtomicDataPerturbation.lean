@@ -372,7 +372,7 @@ composition corollary the end-to-end module consumes. -/
 level `k0` gives `g_{k0}·exp(−E_{k0}/(k_B·Tmin)) ≤ U(T)`: with `Eₖ ≥ 0` the `k0` Boltzmann factor
 is minimised at `Tmin`, and a single term is ≤ the whole (nonnegative) sum. This is the `U`-floor
 the temperature-error bound divides by. Private helper. -/
-private lemma partitionFunction_floor [Nonempty ι] {kB Tmin T : ℝ} {g E : ι → ℝ}
+private lemma partitionFunction_floor {kB Tmin T : ℝ} {g E : ι → ℝ}
     (hkB : 0 < kB) (hTmin : 0 < Tmin) (hT : Tmin ≤ T)
     (hg : ∀ k, 0 < g k) (hE : ∀ k, 0 ≤ E k) (k0 : ι) :
     g k0 * Real.exp (-E k0 / (kB * Tmin)) ≤ partitionFunction kB T g E := by

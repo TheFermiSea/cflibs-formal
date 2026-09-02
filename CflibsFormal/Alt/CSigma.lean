@@ -196,7 +196,7 @@ composition `C_s = N_s / ∑ N`. The measurement step recovers each offset
 (`csigmaOffset_of_lineIntensity`) and `csigmaDensity` inverts it
 (`csigma_density_offset`), so the recovered density vector equals `N` pointwise. The
 estimator never sees `N` — only the intensities. -/
-theorem csigma_sound [Nonempty ι] [Nonempty κ] {kB T Fcal : ℝ}
+theorem csigma_sound [Nonempty ι] {kB T Fcal : ℝ}
     {N : κ → ℝ} {g E A : κ → ι → ℝ} {u : κ → ι}
     (hg : ∀ s k, 0 < g s k) (hN : ∀ s, 0 < N s) (hFcal : 0 < Fcal)
     (hA : ∀ s, 0 < A s (u s)) (s : κ) :
@@ -223,7 +223,7 @@ the C-sigma estimator — run on the genuine forward-model spectrum — agrees w
 routes agreement through both sides equalling the true composition `composition N`; the
 *literal* identity against `CflibsFormal.Classic.classicComposition` on the same observed
 spectrum is `csigma_agrees_classic` below. -/
-theorem csigma_agrees_of_sound [Nonempty ι] [Nonempty κ] {kB T Fcal : ℝ}
+theorem csigma_agrees_of_sound [Nonempty ι] {kB T Fcal : ℝ}
     {N : κ → ℝ} {g E A : κ → ι → ℝ} {u : κ → ι}
     (hg : ∀ s k, 0 < g s k) (hN : ∀ s, 0 < N s) (hFcal : 0 < Fcal)
     (hA : ∀ s, 0 < A s (u s))
@@ -285,7 +285,7 @@ packaging). This theorem is just that unconditional identity applied to the (pos
 forward spectrum. The genuine same-spectrum agreement between *structurally different*
 estimators is the OLS-vs-classic one (`Alt.leastSquares_agrees_classic`), where the two
 differ off the noise-free fixpoint. -/
-theorem csigma_agrees_classic [Nonempty ι] [Nonempty κ] {kB T Fcal : ℝ}
+theorem csigma_agrees_classic [Nonempty ι] {kB T Fcal : ℝ}
     {N : κ → ℝ} {g E A : κ → ι → ℝ} {u : κ → ι}
     (hg : ∀ s k, 0 < g s k) (hN : ∀ s, 0 < N s) (hFcal : 0 < Fcal)
     (hA : ∀ s, 0 < A s (u s)) (s : κ) :

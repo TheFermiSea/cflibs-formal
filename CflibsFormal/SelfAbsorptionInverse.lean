@@ -149,7 +149,7 @@ itself defeat *composition* identifiability. Only the PRESERVED side
 (`thick_composition_identifiability`) operates at the composition level; a genuine
 composition-level LOST theorem (different `trueComposition` from equal `thickObserve` via
 per-species `τ`) is left as follow-up. -/
-theorem selfAbsorption_breaks_identifiability {ι : Type*} [Fintype ι] [Nonempty ι]
+theorem selfAbsorption_breaks_identifiability {ι : Type*} [Fintype ι]
     (kB T Fcal : ℝ) (g E A : ι → ℝ) (u : ι) (N : ℝ) (hN : 0 < N) :
     ∃ (N₁ N₂ tau₁ tau₂ : ℝ), 0 ≤ tau₁ ∧ 0 ≤ tau₂ ∧ N₁ ≠ N₂ ∧
       selfAbsorbedIntensity kB T N₁ Fcal g E A u tau₁

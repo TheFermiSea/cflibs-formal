@@ -80,8 +80,8 @@ theorem designNormalMatrix_coercive [Nonempty ι] (E : ι → ℝ)
       = (Fintype.card ι : ℝ) * ∑ k, (E k - mean E) ^ 2 := by
     have h1 : (designNormalMatrix E).det
         = (∑ k, E k ^ 2) * (Fintype.card ι : ℝ) - (∑ k, E k) ^ 2 := by
-      unfold designNormalMatrix
       rw [Matrix.det_fin_two]
+      unfold designNormalMatrix
       simp only [Matrix.cons_val_zero, Matrix.cons_val_one]
       ring
     rw [← h1, det_designNormalMatrix]
