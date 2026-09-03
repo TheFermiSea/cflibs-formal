@@ -640,3 +640,39 @@ InhomogeneityBias.lean	mixed_boltzmann_ordinate	REDUCED	Ciucci 1999
 InhomogeneityBias.lean	mixed_intercept_le_log_column	REDUCED	Ciucci 1999
 InhomogeneityBias.lean	mixed_apparentBeta_le_tiltMean	REDUCED	Ciucci 1999
 InhomogeneityBias.lean	mixed_apparentBeta_antitone	REDUCED	Ciucci 1999
+DifferentialEstimator.lean	differentialRatio_eq_density_ratio	EXACT	Ciucci 1999
+DifferentialEstimator.lean	differentialRatio_immune_to_atomicData	EXACT	Ciucci 1999
+DifferentialEstimator.lean	classic_biased_differential_exact	EXACT	Ciucci 1999
+DifferentialEstimator.lean	logDifferentialRatio_affine_in_E	EXACT	Ciucci 1999
+DifferentialEstimator.lean	differentialSlope_eq_neg_dbeta	EXACT	Ciucci 1999
+DifferentialEstimator.lean	differentialSlope_two_lines	EXACT	Ciucci 1999
+DifferentialEstimator.lean	differentialRatio_error_bound	REDUCED	Aguilera & Aragón 2007
+DifferentialEstimator.lean	differentialRatio_selfAbsorption_residual	EXACT	—
+DifferentialEstimator.lean	differentialRatio_selfAbsorption_cancels_iff	EXACT	—
+DifferentialEstimator.lean	differentialRatio_selfAbsorbed_matched	EXACT	—
+DifferentialEstimator.lean	differentialComposition_exact_of_matched	EXACT	Ciucci 1999
+FisherLineSelection.lean	fisherInfoSlope_nonneg	PURE-MATH	—
+FisherLineSelection.lean	fisherInfoSlope_pos	PURE-MATH	—
+FisherLineSelection.lean	crlb_slope	PURE-MATH	—
+FisherLineSelection.lean	olsSlope_attains_crlb	PURE-MATH	—
+FisherLineSelection.lean	spreadOn_nonneg	PURE-MATH	—
+FisherLineSelection.lean	spreadOn_empty	PURE-MATH	—
+FisherLineSelection.lean	sum_sub_finsetMean	PURE-MATH	—
+FisherLineSelection.lean	sum_sq_sub_eq_spreadOn_add	PURE-MATH	—
+FisherLineSelection.lean	spreadOn_insert	PURE-MATH	—
+FisherLineSelection.lean	spreadOn_insert_ge	PURE-MATH	—
+FisherLineSelection.lean	spreadOn_mono	PURE-MATH	—
+FisherLineSelection.lean	fisherInfo_insert_ge	PURE-MATH	—
+FisherLineSelection.lean	crlb_insert_le	PURE-MATH	—
+FisherLineSelection.lean	spreadOn_insert_eq_iff	PURE-MATH	—
+FisherLineSelection.lean	spreadOn_insert_lt_iff	PURE-MATH	—
+FisherLineSelection.lean	no_gain_iff	PURE-MATH	—
+FisherLineSelection.lean	nonvacuity_far_line	PURE-MATH	—
+FisherLineSelection.lean	nonvacuity_line_at_mean	PURE-MATH	—
+FisherLineSelection.lean	nonvacuity_crlb_attained	PURE-MATH	—
+EvaluatorSoundness.lean	hardGateBundle_implies_noise_to_composition_hyps	PURE-MATH	—
+EvaluatorSoundness.lean	hardGateBundle_of_certificates_report	PURE-MATH	—
+EvaluatorSoundness.lean	gateCore_composition_error_le	REDUCED	Tognoni 2010
+EvaluatorSoundness.lean	hardGateBundle_composition_error_le	REDUCED	Tognoni 2010
+EvaluatorSoundness.lean	hardGateBundle_slope_error_le	REDUCED	Tognoni 2010
+EvaluatorSoundness.lean	hardGateBundle_thermalizationLimit	REDUCED	Cristoforetti 2010

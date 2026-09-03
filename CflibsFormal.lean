@@ -18,10 +18,13 @@ import CflibsFormal.CompositionIdentifiability
 import CflibsFormal.CompositionRobustness
 import CflibsFormal.Continuum
 import CflibsFormal.CurveOfGrowth
+import CflibsFormal.DifferentialEstimator
 import CflibsFormal.Dimensions
 import CflibsFormal.DoubletChannel
 import CflibsFormal.EquivalentWidth
 import CflibsFormal.ErrorBudget
+import CflibsFormal.EvaluatorSoundness
+import CflibsFormal.FisherLineSelection
 import CflibsFormal.ForwardMap
 import CflibsFormal.ForwardMapEnergy
 import CflibsFormal.HydrogenStark

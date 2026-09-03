@@ -5,7 +5,7 @@
 > (the integrity spine) + citation from `docs/scope-tags.tsv`; the docs-sync CI gate fails if
 > any result is untagged, so a new theorem cannot land without declaring its epistemic status.
 
-**Scope-tag mix** (641 results): **EXACT** 146 · **REDUCED** 171 · **APPROXIMATION** 13 · **PURE-MATH** 311
+**Scope-tag mix** (677 results): **EXACT** 156 · **REDUCED** 176 · **APPROXIMATION** 13 · **PURE-MATH** 332
 
 `EXACT` = exact identity faithfully encoding the cited physics · `REDUCED` = valid dimensionless/lumped-factor form · `APPROXIMATION` = documented idealization / limiting case · `PURE-MATH` = infrastructure lemma, no physical claim. Classification cross-checked against `reviews/literature-validity-audit.md`.
 
@@ -360,6 +360,26 @@
 - `PURE-MATH` · `cogRatio_strictAntiOn` — Multi-line, unknown-scale identifiability (monotonicity).
 - `EXACT` · `cogRatio_injOn` — Multi-line, unknown-scale identifiability (injectivity).  _[Cristoforetti–Tognoni 2013]_
 
+## `DifferentialEstimator.lean`  (CflibsFormal)
+*the reference-differenced (line-by-line) estimator*
+
+**Definitions**
+- `differentialRatio` — The differential (reference-differenced) estimator.
+- `differentialComposition` — Differential composition from a reference of KNOWN composition.
+
+**Results**
+- `EXACT` · `differentialRatio_eq_density_ratio` — EXACT line-by-line cancellation (matched `T`, `Fcal`).  _[Ciucci 1999]_
+- `EXACT` · `differentialRatio_immune_to_atomicData` — EXACT immunity to atomic-data error — the contrast with `classicDensity_aliasing`.  _[Ciucci 1999]_
+- `EXACT` · `classic_biased_differential_exact` — EXACT: the classic reader is actually biased, the differential one is not.  _[Ciucci 1999]_
+- `EXACT` · `logDifferentialRatio_affine_in_E` — EXACT: the differential Boltzmann plot (unmatched temperatures).  _[Ciucci 1999]_
+- `EXACT` · `differentialSlope_eq_neg_dbeta` — EXACT: OLS on the differential Boltzmann plot recovers `−Δβ`.  _[Ciucci 1999]_
+- `EXACT` · `differentialSlope_two_lines` — EXACT two-line differential slope.  _[Ciucci 1999]_
+- `REDUCED` · `differentialRatio_error_bound` — REDUCED first-order error bound for an unmatched temperature.  _[Aguilera & Aragón 2007]_
+- `EXACT` · `differentialRatio_selfAbsorption_residual` — EXACT self-absorption residual — the honest non-cancellation.
+- `EXACT` · `differentialRatio_selfAbsorption_cancels_iff` — EXACT: the residual cancels iff the optical depths match.
+- `EXACT` · `differentialRatio_selfAbsorbed_matched` — EXACT: matched optical depth restores the clean ratio.
+- `EXACT` · `differentialComposition_exact_of_matched` — EXACT composition recovery under matched `(T, Fcal, τ)`.  _[Ciucci 1999]_
+
 ## `Dimensions.lean`  (CflibsFormal)
 *a dimensional-analysis layer*
 
@@ -484,6 +504,51 @@
 - `REDUCED` · `olsIntercept_stable_hetero` — Intercept sensitivity, HETEROSCEDASTIC (per-line budget, centered convention).  _[Tognoni 2010]_
 - `REDUCED` · `combinedSlope_offset_lipschitz` — Offset→slope sensitivity of the combined Saha–Boltzmann slope (`REDUCED`; Aguilera & Aragón 2007).  _[Aguilera & Aragón 2007]_
 - `REDUCED` · `combinedSlopeTempUpdate_lipschitz` — `T`-leg Lipschitz constant of the outer CF-LIBS loop (`REDUCED`; Aguilera & Aragón 2007).  _[Aguilera & Aragón 2007]_
+
+## `EvaluatorSoundness.lean`  (CflibsFormal)
+*evaluator soundness (what passing the hard certificate gate buys)*
+
+**Definitions**
+- `hardGateBundle` — The unconditional HARD gate (`certificate_gate.py`, `HARD_CERTIFICATES_DEFAULT` minus the `None`-gated C2/C9/C10/C13, plus the physical box and the protocol…
+- `conditionalGateClauses` — The `None`-gated HARD clauses — C2 (joint rank, only when ≥ 2 ion stages are used), C9 (Saha iteration, only when `saha_iter` is reported), C10 (damped multi…
+- `gateCoreForComposition` — The sub-conjunction of `hardGateBundle` that `noise_to_composition` consumes.
+- `envelopeCert` — Envelope certificate — the `hΦ0`, `hsmallmax`, `henvmax` hypotheses of `noise_to_composition`, stated at the noise-derived worst-case gap `dmax = noiseTempGa…
+- `aprioriBracket` — A-priori bracket on the unknown truth — NOT runtime-checkable.
+
+**Results**
+- `PURE-MATH` · `hardGateBundle_implies_noise_to_composition_hyps` — The hard gate discharges exactly the `gateCoreForComposition` hypotheses of `noise_to_composition` — C1 (as `hvarT`), the box on the reported `T̂`, the proto…
+- `PURE-MATH` · `hardGateBundle_of_certificates_report` — The gate is implied by the individual certificate verdicts as the companion's `evaluate_certificates` reports them: the Python `all_passed` on the unconditio…
+- `REDUCED` · `gateCore_composition_error_le` — Composition error under the core clauses (REDUCED, Tognoni 2010).  _[Tognoni 2010]_
+- `REDUCED` · `hardGateBundle_composition_error_le` — HEADLINE — what passing the hard gate formally buys (REDUCED, Tognoni 2010).  _[Tognoni 2010]_
+- `REDUCED` · `hardGateBundle_slope_error_le` — C4 buys a slope (inverse-temperature) precision certificate, not a composition bound.  _[Tognoni 2010]_
+- `REDUCED` · `hardGateBundle_thermalizationLimit` — C7 buys LTE admissibility of the reported state, not a composition bound.  _[Cristoforetti 2010]_
+
+## `FisherLineSelection.lean`  (CflibsFormal)
+*Fisher information, the Cramér–Rao bound, and "adding a line never hurts"*
+
+**Definitions**
+- `fisherInfoSlope` — Fisher information for the Boltzmann-plot slope, `I(β) = SS_E/σ²`, in the Gaussian linear model `yₖ = α + β Eₖ + εₖ` with `εₖ ~ N(0, σ²)` i.i.d.
+
+**Results**
+- `PURE-MATH` · `fisherInfoSlope_nonneg` — The Fisher information is nonnegative: a nonnegative sum of squares over a square.
+- `PURE-MATH` · `fisherInfoSlope_pos` — The Fisher information is strictly positive under the spread gate (`0 < SS_E`, the pipeline's C1 certificate `energySpreadCert_iff`) and nondegenerate noise…
+- `PURE-MATH` · `crlb_slope` — The Cramér–Rao lower bound for the slope: `σ²/SS_E = I(β)⁻¹`.
+- `PURE-MATH` · `olsSlope_attains_crlb` — OLS attains the Cramér–Rao bound — OLS is efficient.
+- `PURE-MATH` · `spreadOn_nonneg` — The subset spread is a sum of squares, hence nonnegative.
+- `PURE-MATH` · `spreadOn_empty` — The spread of the empty selection is `0`.
+- `PURE-MATH` · `sum_sub_finsetMean` — The centered sum over a nonempty selected set vanishes: `∑_{j∈S} (Eⱼ − Ē_S) = 0`.
+- `PURE-MATH` · `sum_sq_sub_eq_spreadOn_add` — The parallel-axis (variational) identity for the subset spread.
+- `PURE-MATH` · `spreadOn_insert` — THE ONE-PASS VARIANCE UPDATE — the exact gain from adding a line.
+- `PURE-MATH` · `spreadOn_insert_ge` — Adding a line never decreases the energy spread.
+- `PURE-MATH` · `spreadOn_mono` — Monotonicity under inclusion: a superset of lines never has less spread.
+- `PURE-MATH` · `fisherInfo_insert_ge` — Adding a line never decreases the Fisher information of the selected sub-design (`fisherInfoSlope` of the restriction of `E` to the selected lines).
+- `PURE-MATH` · `crlb_insert_le` — Adding a line never increases the Cramér–Rao bound.
+- `PURE-MATH` · `spreadOn_insert_eq_iff` — The no-gain criterion.
+- `PURE-MATH` · `spreadOn_insert_lt_iff` — Strict gain iff off the mean.
+- `PURE-MATH` · `no_gain_iff` — `no_gain_iff` — a candidate line carries zero slope information iff its energy equals the current mean.
+- `PURE-MATH` · `nonvacuity_far_line` — Non-vacuity — a far line strictly increases the spread, by exactly the predicted amount.
+- `PURE-MATH` · `nonvacuity_line_at_mean` — Non-vacuity — a line at the current mean adds nothing.
+- `PURE-MATH` · `nonvacuity_crlb_attained` — Non-vacuity — the Cramér–Rao bound is attained, with numbers, on a genuine probability space.
 
 ## `ForwardMap.lean`  (CflibsFormal)
 *Part 4: the optically-thin forward map*
