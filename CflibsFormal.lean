@@ -16,6 +16,7 @@ import CflibsFormal.Classic
 import CflibsFormal.Closure
 import CflibsFormal.CompositionIdentifiability
 import CflibsFormal.CompositionRobustness
+import CflibsFormal.ConformalCoverage
 import CflibsFormal.Continuum
 import CflibsFormal.CurveOfGrowth
 import CflibsFormal.DifferentialEstimator

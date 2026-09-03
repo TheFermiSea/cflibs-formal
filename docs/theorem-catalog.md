@@ -5,7 +5,7 @@
 > (the integrity spine) + citation from `docs/scope-tags.tsv`; the docs-sync CI gate fails if
 > any result is untagged, so a new theorem cannot land without declaring its epistemic status.
 
-**Scope-tag mix** (677 results): **EXACT** 156 · **REDUCED** 176 · **APPROXIMATION** 13 · **PURE-MATH** 332
+**Scope-tag mix** (680 results): **EXACT** 156 · **REDUCED** 176 · **APPROXIMATION** 13 · **PURE-MATH** 335
 
 `EXACT` = exact identity faithfully encoding the cited physics · `REDUCED` = valid dimensionless/lumped-factor form · `APPROXIMATION` = documented idealization / limiting case · `PURE-MATH` = infrastructure lemma, no physical claim. Classification cross-checked against `reviews/literature-validity-audit.md`.
 
@@ -322,6 +322,17 @@
 - `PURE-MATH` · `composition_abs_sub_le` — HEADLINE per-fraction stability bound.
 - `PURE-MATH` · `composition_abs_sub_le_bound` — The headline bound restated in terms of the named `compositionErrorBound`, giving downstream callers a single clean symbol for the per-element error budget.
 - `PURE-MATH` · `composition_dist_vector_le` — WHOLE-VECTOR error bound.
+
+## `ConformalCoverage.lean`  (CflibsFormal)
+*split-conformal coverage (the refuse-to-report gate)*
+
+**Definitions**
+- `ExchangeableRank` — The exchangeability hypothesis, stated explicitly.
+
+**Results**
+- `PURE-MATH` · `card_le_card_covered` — The `k`-th smallest score covers at least `k` of the scores.
+- `PURE-MATH` · `conformal_coverage_fraction` — The covered fraction is at least `1 − α`.
+- `PURE-MATH` · `conformal_coverage_of_exchangeable` — Split-conformal marginal coverage.
 
 ## `Continuum.lean`  (CflibsFormal)
 *the continuum background*

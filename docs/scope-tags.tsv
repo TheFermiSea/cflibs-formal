@@ -676,3 +676,6 @@ EvaluatorSoundness.lean	gateCore_composition_error_le	REDUCED	Tognoni 2010
 EvaluatorSoundness.lean	hardGateBundle_composition_error_le	REDUCED	Tognoni 2010
 EvaluatorSoundness.lean	hardGateBundle_slope_error_le	REDUCED	Tognoni 2010
 EvaluatorSoundness.lean	hardGateBundle_thermalizationLimit	REDUCED	Cristoforetti 2010
+ConformalCoverage.lean	card_le_card_covered	PURE-MATH	—
+ConformalCoverage.lean	conformal_coverage_fraction	PURE-MATH	—
+ConformalCoverage.lean	conformal_coverage_of_exchangeable	PURE-MATH	—
