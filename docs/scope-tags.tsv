@@ -679,3 +679,74 @@ EvaluatorSoundness.lean	hardGateBundle_thermalizationLimit	REDUCED	Cristoforetti
 ConformalCoverage.lean	card_le_card_covered	PURE-MATH	—
 ConformalCoverage.lean	conformal_coverage_fraction	PURE-MATH	—
 ConformalCoverage.lean	conformal_coverage_of_exchangeable	PURE-MATH	—
+OpticalDepthBridge.lean	thickLineIntensity_eq_cogIntensity	REDUCED	Gornushkin 1999
+OpticalDepthBridge.lean	boundSelfAbsorptionFactor_strictAntiOn_density	REDUCED	Gornushkin 1999
+OpticalDepthBridge.lean	thickLineIntensity_lt_lineIntensity_of_pos_density	APPROXIMATION	Gornushkin 1999
+OpticalDepthBridge.lean	effectiveCrossSection_lt_of_energy_lt	REDUCED	Boltzmann
+OpticalDepthBridge.lean	lteSourceStrength_ratio_calibration_free	PURE-MATH	—
+OpticalDepthBridge.lean	thickLineIntensity_ratio_eq_source_mul_cogRatio	REDUCED	Gornushkin 1999
+OpticalDepthBridge.lean	thickLineIntensity_ratio_strictAntiOn_density	REDUCED	Cristoforetti–Tognoni 2013
+OpticalDepthBridge.lean	thickLineIntensity_ratio_injOn_density	REDUCED	Cristoforetti–Tognoni 2013
+OpticalDepthBridge.lean	boundOpticalDepth_lumped_alias	REDUCED	Gornushkin 1999
+OpacityBroadening.lean	emergentProfile_half_iff	REDUCED	Gornushkin 1999
+OpacityBroadening.lean	coreHalfLevel_lt_half	REDUCED	Gornushkin 1999
+OpacityBroadening.lean	coreHalfLevel_le_half	REDUCED	Gornushkin 1999
+OpacityBroadening.lean	halfSA_le_coreHalfLevel	REDUCED	Gornushkin 1999
+OpacityBroadening.lean	coreHalfLevel_pos	REDUCED	Gornushkin 1999
+OpacityBroadening.lean	coreHalfLevel_strictAntiOn	REDUCED	Gornushkin 1999
+OpacityBroadening.lean	halfWidth_broadens	REDUCED	Gornushkin 1999
+OpacityBroadening.lean	halfWidth_mono_tau	REDUCED	Gornushkin 1999
+OpacityBroadening.lean	lorentzShape_zero	PURE-MATH	—
+OpacityBroadening.lean	lorentzShape_hwhm	PURE-MATH	—
+OpacityBroadening.lean	lorentzShape_strictAntiOn	PURE-MATH	—
+OpacityBroadening.lean	lorentzShape_widthRatio	REDUCED	Griem 1974
+OpacityBroadening.lean	one_lt_lorentzWidthRatio	REDUCED	Griem 1974
+OpacityBroadening.lean	kOpacOf_zero	REDUCED	Gornushkin 1999
+OpacityBroadening.lean	one_le_kOpacOf	REDUCED	Gornushkin 1999
+OpacityBroadening.lean	lorentzWidthRatio_le_kOpacOf	REDUCED	Griem 1974
+OpacityBroadening.lean	kOpacOf_strictMonoOn	REDUCED	Gornushkin 1999
+OpacityBroadening.lean	kOpacOf_le_of_le	REDUCED	Gornushkin 1999
+OpacityBroadening.lean	kOpacOf_tendsto_one	REDUCED	Gornushkin 1999
+OpacityBroadening.lean	lorentzWidthRatio_tendsto_one	REDUCED	Griem 1974
+OpacityBroadening.lean	stark_widthObs_le_budget	REDUCED	Griem 1974
+OpacityBroadening.lean	starkOpacity_certificate_sound_of_tau	REDUCED	Cristoforetti 2010
+OpacityBroadening.lean	starkOpacity_certificate_sound_of_tau_le	REDUCED	Cristoforetti 2010
+OpacityBroadening.lean	flatProfile_intensity_saturates_width_does_not	REDUCED	Gornushkin 1999
+OpacityBroadening.lean	kOpacOf_two_bounds	REDUCED	Gornushkin 1999
+OpacityBroadening.lean	lorentzWidthRatio_two_bounds	REDUCED	Griem 1974
+OpacityBroadening.lean	lorentzWidthRatio_two_lower	REDUCED	Griem 1974
+ConditionNumber.lean	boltzmannConditionNumber_eq_of_spread_le	PURE-MATH	—
+ConditionNumber.lean	card_div_spread_le_conditionNumber	PURE-MATH	—
+ConditionNumber.lean	conditionNumber_le_of_spread_floor	PURE-MATH	—
+ConditionNumber.lean	conditionNumber_antitone_of_spread	PURE-MATH	—
+ConditionNumber.lean	conditionNumber_disagrees_with_dOptimality	PURE-MATH	—
+ConditionNumber.lean	olsSlope_error_le_sqrt_conditionNumber	REDUCED	Tognoni 2010
+ConditionNumber.lean	olsFit_error_sq_le_conditionNumber	REDUCED	Tognoni 2010
+ConditionNumber.lean	temp_rel_error_le_sqrt_conditionNumber	REDUCED	Tognoni 2010
+ConditionNumber.lean	conditionCeiling_of_requiredEnergySpread	PURE-MATH	—
+ConditionNumber.lean	conditionRoute_slope_target	REDUCED	Tognoni 2010
+ConditionNumber.lean	nonvacuity_conditionNumber_value	PURE-MATH	—
+ConditionNumber.lean	nonvacuity_slope_error_values	PURE-MATH	—
+ConditionNumber.lean	nonvacuity_slope_error_fires	PURE-MATH	—
+ConditionNumber.lean	nonvacuity_fit_error_values	PURE-MATH	—
+ConditionNumber.lean	nonvacuity_fit_error_fires	PURE-MATH	—
+ProfiledTUniqueness.lean	profiledResidual_eq_rayleigh	PURE-MATH	—
+ProfiledTUniqueness.lean	twoLevelResidual_diff	PURE-MATH	—
+ProfiledTUniqueness.lean	profiledResidual_twoLevel_eq	PURE-MATH	—
+ProfiledTUniqueness.lean	profiledResidual_twoLevel_strictUnimodalOn	REDUCED	Ciucci 1999
+ProfiledTUniqueness.lean	profiledResidual_twoLevel_Tstar_isStrictMin	REDUCED	Ciucci 1999
+ProfiledTUniqueness.lean	profiledResidual_twoLevel_strictUnimodal_onManifold	REDUCED	Ciucci 1999
+ProfiledTUniqueness.lean	joint_twoLevel_box_isStrictMin	REDUCED	Tognoni 2010
+ProfiledTUniqueness.lean	joint_twoLevel_box_minimizer_unique	REDUCED	Tognoni 2010
+ProfiledTUniqueness.lean	joint_two_box_isStrictMin	REDUCED	Tognoni 2010
+ProfiledTUniqueness.lean	joint_two_box_minimizer_unique	REDUCED	Tognoni 2010
+HeteroAtomicData.lean	relTransfer_mono	PURE-MATH	—
+HeteroAtomicData.lean	heteroSlopeBound_le_global	PURE-MATH	—
+HeteroAtomicData.lean	heteroSlopeBound_const	PURE-MATH	—
+HeteroAtomicData.lean	olsSlope_aliasing_A	EXACT	Tognoni 2010
+HeteroAtomicData.lean	olsSlope_aliasing_A_hetero	REDUCED	Tognoni 2010
+HeteroAtomicData.lean	olsSlope_aliasing_A_global	REDUCED	Tognoni 2010
+HeteroAtomicData.lean	temp_rel_error_atomicData_hetero	REDUCED	Tognoni 2010
+HeteroAtomicData.lean	heteroSlopeBound_lt_global_witness	PURE-MATH	—
+HeteroAtomicData.lean	nvP_heteroSlopeBound_value	PURE-MATH	—
+HeteroAtomicData.lean	nvP_slope_bias_eq_log	EXACT	Tognoni 2010

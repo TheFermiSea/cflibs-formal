@@ -26,6 +26,7 @@ One row per module under `CflibsFormal/`. *Base* = imports no `CflibsFormal` mod
 | `Closure.lean` | `CflibsFormal` | 6 | 2 | – | – | Closure of species composition |
 | `CompositionIdentifiability.lean` | `CflibsFormal` | 3 | 1 | – | – | multi-line / many-element composition identifiability |
 | `CompositionRobustness.lean` | `CflibsFormal` | 5 | 1 | – | – | Whole-composition-vector error propagation |
+| `ConditionNumber.lean` | `CflibsFormal` | 15 | 0 | – | ✓ | the condition number as an ERROR-AMPLIFICATION factor |
 | `ConformalCoverage.lean` | `CflibsFormal` | 3 | 1 | ✓ | ✓ | split-conformal coverage (the refuse-to-report gate) |
 | `Continuum.lean` | `CflibsFormal` | 6 | 5 | ✓ | ✓ | the continuum background |
 | `CurveOfGrowth.lean` | `CflibsFormal` | 10 | 2 | – | ✓ | the curve of growth and multi-line self-absorption |
@@ -38,6 +39,7 @@ One row per module under `CflibsFormal/`. *Base* = imports no `CflibsFormal` mod
 | `FisherLineSelection.lean` | `CflibsFormal` | 19 | 1 | – | ✓ | Fisher information, the Cramér–Rao bound, and "adding a line never hurts" |
 | `ForwardMap.lean` | `CflibsFormal` | 3 | 1 | – | – | Part 4: the optically-thin forward map |
 | `ForwardMapEnergy.lean` | `CflibsFormal` | 5 | 1 | – | ✓ | the energy-intensity forward map and convention equivalence |
+| `HeteroAtomicData.lean` | `CflibsFormal` | 10 | 2 | – | ✓ | PER-LINE heterogeneous atomic-data error in the Boltzmann-plot SLOPE |
 | `HydrogenStark.lean` | `CflibsFormal` | 4 | 2 | ✓ | ✓ | the hydrogen-line (Balmer) Stark electron-density diagnostic |
 | `Identifiability.lean` | `CflibsFormal` | 7 | 0 | – | – | Part 5: identifiability of the inverse problem |
 | `InhomogeneityBias.lean` | `CflibsFormal` | 27 | 9 | – | ✓ | Inhomogeneity bias: the sign of the Boltzmann-plot error is a theorem |
@@ -58,11 +60,14 @@ One row per module under `CflibsFormal/`. *Base* = imports no `CflibsFormal` mod
 | `OLS.lean` | `CflibsFormal` | 17 | 9 | ✓ | – | the ordinary-least-squares algebraic foundation |
 | `OLSConditioning.lean` | `CflibsFormal` | 1 | 0 | – | ✓ | quantitative conditioning of the Boltzmann-plot normal matrix |
 | `OLSIdentifiability.lean` | `CflibsFormal` | 11 | 1 | – | ✓ | n-line Boltzmann-plot identifiability (design-map injectivity) |
+| `OpacityBroadening.lean` | `CflibsFormal` | 27 | 5 | – | ✓ | opacity broadening: a DERIVED budget for the Stark opacity guard |
 | `OpticalDepth.lean` | `CflibsFormal` | 17 | 4 | – | ✓ | Optical depth bound to the plasma state — closing the free-`τ` gap |
+| `OpticalDepthBridge.lean` | `CflibsFormal` | 9 | 0 | – | ✓ | Wiring the state-bound optical depth into the free-`τ` corpus |
 | `OracleAnchors.lean` | `CflibsFormal` | 0 | 0 | – | ✓ | oracle fixture anchors (machine-checked spec ↔ fixtures link) |
 | `OuterLoopModelB.lean` | `CflibsFormal` | 1 | 0 | – | – | the outer temperature iteration, Model B headline (Frontier 04) |
 | `PartialLTE.lean` | `CflibsFormal` | 6 | 2 | – | ✓ | the partial-LTE thermalization limit |
 | `PartitionLipschitz.lean` | `CflibsFormal` | 3 | 0 | – | ✓ | the `U_s(T)` partition-function Lipschitz leg (gap #5) |
+| `ProfiledTUniqueness.lean` | `CflibsFormal` | 10 | 1 | – | ✓ | `T`-uniqueness of the profiled fit, and the joint `(T, N)` corollary |
 | `ProfiledUnimodality.lean` | `CflibsFormal` | 3 | 0 | – | ✓ | strict unimodality of the profiled temperature objective |
 | `RadiativeTransferDepth.lean` | `CflibsFormal` | 7 | 3 | – | ✓ | depth-structured radiative transfer (the N-zone stack) |
 | `Robustness.lean` | `CflibsFormal` | 5 | 2 | – | – | Robustness / error-propagation bounds |
@@ -84,5 +89,5 @@ One row per module under `CflibsFormal/`. *Base* = imports no `CflibsFormal` mod
 | `TwoDCOSOrder.lean` | `CflibsFormal` | 11 | 1 | – | ✓ | 2DCOS-LIBS formalization — the sequential-order (lead/lag) sign algebra |
 | `VoigtErrorEnclosure.lean` | `CflibsFormal` | 5 | 0 | – | ✓ | a non-circular error enclosure for the Voigt FWHM |
 | `VoigtWidth.lean` | `CflibsFormal` | 7 | 1 | ✓ | ✓ | the Voigt FWHM combination (Olivero–Longbothum) |
-| **76 modules** | | **680** | **209** | | | |
+| **81 modules** | | **751** | **217** | | | |
 

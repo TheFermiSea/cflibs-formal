@@ -5,7 +5,7 @@
 > (the integrity spine) + citation from `docs/scope-tags.tsv`; the docs-sync CI gate fails if
 > any result is untagged, so a new theorem cannot land without declaring its epistemic status.
 
-**Scope-tag mix** (680 results): **EXACT** 156 · **REDUCED** 176 · **APPROXIMATION** 13 · **PURE-MATH** 335
+**Scope-tag mix** (751 results): **EXACT** 158 · **REDUCED** 221 · **APPROXIMATION** 14 · **PURE-MATH** 358
 
 `EXACT` = exact identity faithfully encoding the cited physics · `REDUCED` = valid dimensionless/lumped-factor form · `APPROXIMATION` = documented idealization / limiting case · `PURE-MATH` = infrastructure lemma, no physical claim. Classification cross-checked against `reviews/literature-validity-audit.md`.
 
@@ -323,6 +323,26 @@
 - `PURE-MATH` · `composition_abs_sub_le_bound` — The headline bound restated in terms of the named `compositionErrorBound`, giving downstream callers a single clean symbol for the per-element error budget.
 - `PURE-MATH` · `composition_dist_vector_le` — WHOLE-VECTOR error bound.
 
+## `ConditionNumber.lean`  (CflibsFormal)
+*the condition number as an ERROR-AMPLIFICATION factor*
+
+**Results**
+- `PURE-MATH` · `boltzmannConditionNumber_eq_of_spread_le` — Closed form on the spread-starved branch.
+- `PURE-MATH` · `card_div_spread_le_conditionNumber` — `n / SS_E ≤ κ` unconditionally.
+- `PURE-MATH` · `conditionNumber_le_of_spread_floor` — A spread floor is a condition-number ceiling.
+- `PURE-MATH` · `conditionNumber_antitone_of_spread` — On the spread-starved branch, D-optimal = best-conditioned.
+- `PURE-MATH` · `conditionNumber_disagrees_with_dOptimality` — Honest converse witness: off the branch the two criteria genuinely disagree.
+- `REDUCED` · `olsSlope_error_le_sqrt_conditionNumber` — HEADLINE (REDUCED).  _[Tognoni 2010]_
+- `REDUCED` · `olsFit_error_sq_le_conditionNumber` — The fitted parameter pair (REDUCED).  _[Tognoni 2010]_
+- `REDUCED` · `temp_rel_error_le_sqrt_conditionNumber` — Temperature channel (REDUCED).  _[Tognoni 2010]_
+- `PURE-MATH` · `conditionCeiling_of_requiredEnergySpread` — The existing spread threshold IS a condition-number ceiling.
+- `REDUCED` · `conditionRoute_slope_target` — The `κ` route reaches the same conclusion (REDUCED).  _[Tognoni 2010]_
+- `PURE-MATH` · `nonvacuity_conditionNumber_value` — Non-vacuity part 1: the condition number is a concrete number `> 1`.
+- `PURE-MATH` · `nonvacuity_slope_error_values` — Non-vacuity part 2: both sides of the headline bound are nonzero and distinct.
+- `PURE-MATH` · `nonvacuity_slope_error_fires` — Non-vacuity part 3: the headline theorem fires on this data.
+- `PURE-MATH` · `nonvacuity_fit_error_values` — Non-vacuity for the fitted-pair bound: the hypotheses are jointly satisfiable and both channels are live.
+- `PURE-MATH` · `nonvacuity_fit_error_fires` — Non-vacuity part 4: the fitted-pair theorem fires on this data.
+
 ## `ConformalCoverage.lean`  (CflibsFormal)
 *split-conformal coverage (the refuse-to-report gate)*
 
@@ -584,6 +604,25 @@
 - `REDUCED` · `lineIntensityEnergy_mul_lam` — The wavelength factor cancels the photon-energy factor.  _[Ciucci 1999]_
 - `EXACT` · `boltzmann_plot_intensity_wavelength` — Wavelength-form Boltzmann plot.  _[Aragón & Aguilera 2008]_
 - `EXACT` · `temperature_from_two_lines_wavelength` — Temperature from two lines, wavelength form.  _[Aragón & Aguilera 2008]_
+
+## `HeteroAtomicData.lean`  (CflibsFormal)
+*PER-LINE heterogeneous atomic-data error in the Boltzmann-plot SLOPE*
+
+**Definitions**
+- `heteroSlopeBound` — Heterogeneous (per-line) slope-error constant.
+- `globalSlopeBound` — Global (single-`δ`) slope-error constant.
+
+**Results**
+- `PURE-MATH` · `relTransfer_mono` — The relative-error transfer `δ ↦ δ/(1 − δ)` is monotone below `1`.
+- `PURE-MATH` · `heteroSlopeBound_le_global` — The heterogeneous constant is never worse than the global one.
+- `PURE-MATH` · `heteroSlopeBound_const` — The global constant is EXACTLY the constant-`δ` special case.
+- `EXACT` · `olsSlope_aliasing_A` — EXACT aliasing identity for the fitted SLOPE (A-channel).  _[Tognoni 2010]_
+- `REDUCED` · `olsSlope_aliasing_A_hetero` — HETEROGENEOUS atomic-data slope bound (the main result).  _[Tognoni 2010]_
+- `REDUCED` · `olsSlope_aliasing_A_global` — The GLOBAL lumped-`δ` bound, recovered as a corollary.  _[Tognoni 2010]_
+- `REDUCED` · `temp_rel_error_atomicData_hetero` — Per-line atomic-data error ⇒ relative TEMPERATURE error.  _[Tognoni 2010]_
+- `PURE-MATH` · `heteroSlopeBound_lt_global_witness` — NON-VACUITY / strict-improvement witness (the point of the whole module).
+- `PURE-MATH` · `nvP_heteroSlopeBound_value` — The physical witness's bound is genuinely non-zero: `heteroSlopeBound = 3/2`, so the preceding `example` is not a vacuous `|·| ≤ 0` statement.
+- `EXACT` · `nvP_slope_bias_eq_log` — The physical witness's slope bias is NOT zero — the `example` above is bracketed by two non-zero numbers, `0 < |Δβ| = |log (2/3)| ≤ 3/2`, not a `0 ≤ 3/2` col…  _[Tognoni 2010]_
 
 ## `HydrogenStark.lean`  (CflibsFormal)
 *the hydrogen-line (Balmer) Stark electron-density diagnostic*
@@ -991,6 +1030,45 @@
 - `PURE-MATH` · `twoLine_design_injective_of_distinct` — Two-line design injectivity from a distinct-energy pair.
 - `PURE-MATH` · `twoLine_boltzmannDesign_injective_of_hEdist` — The n-line map generalizes the two-line result on the same nondegeneracy.
 
+## `OpacityBroadening.lean`  (CflibsFormal)
+*opacity broadening: a DERIVED budget for the Stark opacity guard*
+
+**Definitions**
+- `emergentProfile` — Emergent line profile of a homogeneous slab.
+- `coreHalfLevel` — Half-maximum level of the emergent profile, expressed on the intrinsic shape.
+- `lorentzShape` — Peak-normalized Lorentzian shape of half-width-at-half-maximum `γ`: `ψ(x) = γ²/(γ² + x²)`, so `ψ(0) = 1` and `ψ(γ) = 1/2`.
+- `lorentzWidthRatio` — Exact Lorentzian broadening ratio.
+- `kOpacOf` — THE DERIVED OPACITY BUDGET.
+
+**Results**
+- `REDUCED` · `emergentProfile_half_iff` — The half-maximum condition, transported to the intrinsic shape.  _[Gornushkin 1999]_
+- `REDUCED` · `coreHalfLevel_lt_half` — Core saturation strictly lowers the half-maximum level.  _[Gornushkin 1999]_
+- `REDUCED` · `coreHalfLevel_le_half` — `h(τ) ≤ 1/2`, the non-strict form of `coreHalfLevel_lt_half`.  _[Gornushkin 1999]_
+- `REDUCED` · `halfSA_le_coreHalfLevel` — The escape factor bounds the half-maximum level from below: `SA(τ)/2 ≤ h(τ)`, with `SA` the already-formalized `SelfAbsorption.selfAbsorptionFactor` `(1 − ex…  _[Gornushkin 1999]_
+- `REDUCED` · `coreHalfLevel_pos` — The half-maximum level is strictly positive at every finite optical depth: the emergent profile really does have half-maximum points on the intrinsic shape's…  _[Gornushkin 1999]_
+- `REDUCED` · `coreHalfLevel_strictAntiOn` — The half-maximum level falls strictly with optical depth.  _[Gornushkin 1999]_
+- `REDUCED` · `halfWidth_broadens` — Opacity broadens the line — for ANY peaked shape.  _[Gornushkin 1999]_
+- `REDUCED` · `halfWidth_mono_tau` — The observed half-width is monotone nondecreasing in the optical depth — again for ANY strictly decreasing shape.  _[Gornushkin 1999]_
+- `PURE-MATH` · `lorentzShape_zero` — The Lorentzian shape is peak-normalized: `ψ(0) = 1`.
+- `PURE-MATH` · `lorentzShape_hwhm` — `γ` is the intrinsic half-width at half-maximum of the Lorentzian shape.
+- `PURE-MATH` · `lorentzShape_strictAntiOn` — The Lorentzian shape is strictly decreasing away from line centre.
+- `REDUCED` · `lorentzShape_widthRatio` — The broadening ratio names its own witness.  _[Griem 1974]_
+- `REDUCED` · `one_lt_lorentzWidthRatio` — Broadening is strict at every positive optical depth: `1 < R(τ)`.  _[Griem 1974]_
+- `REDUCED` · `kOpacOf_zero` — In the optically thin limit the budget is exactly `1`: no width correction.  _[Gornushkin 1999]_
+- `REDUCED` · `one_le_kOpacOf` — The budget never shrinks a line: `1 ≤ kOpacOf τ` for `τ ≥ 0`.  _[Gornushkin 1999]_
+- `REDUCED` · `lorentzWidthRatio_le_kOpacOf` — The budget dominates the exact broadening ratio: `R(τ) ≤ kOpacOf τ`.  _[Griem 1974]_
+- `REDUCED` · `kOpacOf_strictMonoOn` — The budget is strictly increasing in the optical depth (inherited from the strict antitonicity of the escape factor, `SelfAbsorption.selfAbsorptionFactor_str…  _[Gornushkin 1999]_
+- `REDUCED` · `kOpacOf_le_of_le` — Monotone (non-strict) form of `kOpacOf_strictMonoOn`: a larger optical-depth CEILING gives a larger, still sound, budget.  _[Gornushkin 1999]_
+- `REDUCED` · `kOpacOf_tendsto_one` — The budget is asymptotically exact in the thin limit: `kOpacOf τ → 1` as `τ → 0⁺`, by continuity of `√(2/· − 1)` at `SA → 1` (`SelfAbsorption.selfAbsorptionF…  _[Gornushkin 1999]_
+- `REDUCED` · `lorentzWidthRatio_tendsto_one` — The exact Lorentzian half-width returns to the intrinsic one as `τ → 0⁺`.  _[Griem 1974]_
+- `REDUCED` · `stark_widthObs_le_budget` — The width budget in FWHM form.  _[Griem 1974]_
+- `REDUCED` · `starkOpacity_certificate_sound_of_tau` — THE SELF-CONTAINED STARK/LTE CERTIFICATE.  _[Cristoforetti 2010]_
+- `REDUCED` · `starkOpacity_certificate_sound_of_tau_le` — The usable interface: a `τ` UPPER BOUND suffices.  _[Cristoforetti 2010]_
+- `REDUCED` · `flatProfile_intensity_saturates_width_does_not` — A flat-topped line saturates in intensity but does NOT broaden.  _[Gornushkin 1999]_
+- `REDUCED` · `kOpacOf_two_bounds` — The derived budget at `τ = 2` is a genuine, finite, non-trivial factor: `1 ≤ kOpacOf 2 ≤ 2`.  _[Gornushkin 1999]_
+- `REDUCED` · `lorentzWidthRatio_two_bounds` — The EXACT Lorentzian broadening at `τ = 2` is strictly inside the derived budget: `1 < R(2) ≤ kOpacOf 2 ≤ 2`.  _[Griem 1974]_
+- `REDUCED` · `lorentzWidthRatio_two_lower` — Sharpened lower end of the `τ = 2` bracket: `1.5 ≤ R(2)`.  _[Griem 1974]_
+
 ## `OpticalDepth.lean`  (CflibsFormal)
 *Optical depth bound to the plasma state — closing the free-`τ` gap*
 
@@ -1018,6 +1096,20 @@
 - `REDUCED` · `no_density_alias_of_boundOpticalDepth` — The single-line density alias cannot be reproduced.  _[Gornushkin 1999]_
 - `APPROXIMATION` · `csigma_density_droop_bound` — The Cσ density droop at a STATE-BOUND optical depth.  _[Aragón & Aguilera 2014]_
 - `APPROXIMATION` · `csigma_density_injOn` — Injectivity of the Cσ ordinate in the density, at a state-bound `τ`.  _[Aragón & Aguilera 2014]_
+
+## `OpticalDepthBridge.lean`  (CflibsFormal)
+*Wiring the state-bound optical depth into the free-`τ` corpus*
+
+**Results**
+- `REDUCED` · `thickLineIntensity_eq_cogIntensity` — Bridge identity: bound `τ` ⇒ curve of growth.  _[Gornushkin 1999]_
+- `REDUCED` · `boundSelfAbsorptionFactor_strictAntiOn_density` — The escape factor is strictly decreasing in the DENSITY.  _[Gornushkin 1999]_
+- `APPROXIMATION` · `thickLineIntensity_lt_lineIntensity_of_pos_density` — The bias-direction theorem, at the bound `τ`.  _[Gornushkin 1999]_
+- `REDUCED` · `effectiveCrossSection_lt_of_energy_lt` — A lower-lying lower level absorbs more strongly.  _[Boltzmann]_
+- `PURE-MATH` · `lteSourceStrength_ratio_calibration_free` — The source-strength ratio is calibration- and opacity-free.
+- `REDUCED` · `thickLineIntensity_ratio_eq_source_mul_cogRatio` — The measured two-line ratio is a known multiple of the source-free `cogRatio`.  _[Gornushkin 1999]_
+- `REDUCED` · `thickLineIntensity_ratio_strictAntiOn_density` — THE TWO-LINE PAYOFF, at the bound `τ`.  _[Cristoforetti–Tognoni 2013]_
+- `REDUCED` · `thickLineIntensity_ratio_injOn_density` — Injectivity of the measured two-line ratio in the density.  _[Cristoforetti–Tognoni 2013]_
+- `REDUCED` · `boundOpticalDepth_lumped_alias` — Binding `τ` to `(T, N)` does NOT by itself break the density alias.  _[Gornushkin 1999]_
 
 ## `OuterLoopModelB.lean`  (CflibsFormal)
 *the outer temperature iteration, Model B headline (Frontier 04)*
@@ -1047,6 +1139,24 @@
 - `REDUCED` · `partitionFunction_two_point_bound` — Two-point partition-function bound — the `U_s(T)` sensitivity leg (`REDUCED`, Tognoni 2010).  _[Tognoni 2010]_
 - `REDUCED` · `partitionFunction_lipschitz_temp` — Lipschitz-in-`T` partition-function bound (`REDUCED`, Tognoni 2010).  _[Tognoni 2010]_
 - `REDUCED` · `partitionFunction_relative_error_temp` — Relative partition-function error from a temperature error (`REDUCED`, Tognoni 2010).  _[Tognoni 2010]_
+
+## `ProfiledTUniqueness.lean`  (CflibsFormal)
+*`T`-uniqueness of the profiled fit, and the joint `(T, N)` corollary*
+
+**Definitions**
+- `twoLevelResidual` — Two-level profiled residual as a function of the Boltzmann ratio `t`.
+
+**Results**
+- `PURE-MATH` · `profiledResidual_eq_rayleigh` — VARPRO residual in Rayleigh form (PURE-MATH).
+- `PURE-MATH` · `twoLevelResidual_diff` — Algebraic two-point difference identity for the two-level residual (PURE-MATH, pure `ring`).
+- `PURE-MATH` · `profiledResidual_twoLevel_eq` — Two-energy-group reduction of the density-profiled residual (PURE-MATH).
+- `REDUCED` · `profiledResidual_twoLevel_strictUnimodalOn` — Strict unimodality of the profiled objective in `T`, `m` lines at two energies (REDUCED, Ciucci 1999).  _[Ciucci 1999]_
+- `REDUCED` · `profiledResidual_twoLevel_Tstar_isStrictMin` — `Tstar` is the strict profiled-`T` minimizer on the box (`m` lines, two energies; REDUCED, Ciucci 1999).  _[Ciucci 1999]_
+- `REDUCED` · `joint_twoLevel_box_isStrictMin` — Strict joint `(T, N)` minimum (`m` lines, two energies; REDUCED, Tognoni 2010).  _[Tognoni 2010]_
+- `REDUCED` · `joint_twoLevel_box_minimizer_unique` — Uniqueness of the joint `(T, N)` minimizer (`m` lines, two energies; REDUCED, Tognoni 2010).  _[Tognoni 2010]_
+- `REDUCED` · `joint_two_box_isStrictMin` — Strict joint `(T, N)` minimum, two lines (REDUCED, Tognoni 2010).  _[Tognoni 2010]_
+- `REDUCED` · `joint_two_box_minimizer_unique` — Uniqueness of the joint `(T, N)` minimizer, two lines (REDUCED, Tognoni 2010).  _[Tognoni 2010]_
+- `REDUCED` · `profiledResidual_twoLevel_strictUnimodal_onManifold` — On-manifold strict unimodality about the true temperature (`m` lines, two energies; REDUCED, Ciucci 1999).  _[Ciucci 1999]_
 
 ## `ProfiledUnimodality.lean`  (CflibsFormal)
 *strict unimodality of the profiled temperature objective*

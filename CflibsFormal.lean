@@ -16,6 +16,7 @@ import CflibsFormal.Classic
 import CflibsFormal.Closure
 import CflibsFormal.CompositionIdentifiability
 import CflibsFormal.CompositionRobustness
+import CflibsFormal.ConditionNumber
 import CflibsFormal.ConformalCoverage
 import CflibsFormal.Continuum
 import CflibsFormal.CurveOfGrowth
@@ -28,6 +29,7 @@ import CflibsFormal.EvaluatorSoundness
 import CflibsFormal.FisherLineSelection
 import CflibsFormal.ForwardMap
 import CflibsFormal.ForwardMapEnergy
+import CflibsFormal.HeteroAtomicData
 import CflibsFormal.HydrogenStark
 import CflibsFormal.Identifiability
 import CflibsFormal.InhomogeneityBias
@@ -48,11 +50,14 @@ import CflibsFormal.NonlinearLeastSquares
 import CflibsFormal.OLS
 import CflibsFormal.OLSConditioning
 import CflibsFormal.OLSIdentifiability
+import CflibsFormal.OpacityBroadening
 import CflibsFormal.OpticalDepth
+import CflibsFormal.OpticalDepthBridge
 import CflibsFormal.OracleAnchors
 import CflibsFormal.OuterLoopModelB
 import CflibsFormal.PartialLTE
 import CflibsFormal.PartitionLipschitz
+import CflibsFormal.ProfiledTUniqueness
 import CflibsFormal.ProfiledUnimodality
 import CflibsFormal.RadiativeTransferDepth
 import CflibsFormal.Robustness
