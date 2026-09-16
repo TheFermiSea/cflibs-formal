@@ -35,6 +35,7 @@ See the source-pinned [reuse assessment](02-library-reuse.md).
 | [05 — Module disposition](05-module-disposition.md) | Every current Lean module accounted for; supporting artifacts |
 | [06 — Proof and physics contracts](06-proof-and-physics-contracts.md) | Statement review, conventions, non-vacuity, trust, and oracle limits |
 | [07 — Migration roadmap](07-migration-roadmap.md) | Ordered, bounded changes and completion criteria |
+| [10 — Implementation decisions](10-implementation-decisions.md) | Concrete dependency cuts, contract sets, and decisions for the first cycle |
 | [Execution handbook](execution/README.md) | Step-by-step procedures, checks, stop conditions, recovery |
 | [09 — Source gap register](09-gap-register.md) | Comment anchors and missing proof obligations |
 | [Validation record](08-validation-record.md) | What this planning pass actually checked |
@@ -48,5 +49,7 @@ The user-requested broader physics emphasis is reflected in the proposed domain 
 research priorities. It does not authorize silently changing these implementation constraints.
 
 This is a specification, not an assertion that the migration or external proof audits have run.
-Milestones are dependency ordered, not calendar estimates. Preserve the private repository's
+Milestones are dependency ordered, not calendar estimates. Start implementation with the
+[F0 verification repair](execution/05-verification-repair.md), then the
+[bounded first migration](execution/06-first-migration.md). Preserve the private repository's
 publication boundary: this work does not deploy documentation or submit upstream contributions.

@@ -74,3 +74,21 @@ review, and physical assumption review. No blanket boilerplate-reduction percent
 The F0–F6 migration and all six gap resolutions are future work. Citation verification and the
 existing advisory warnings remain open; this pass does not relabel or waive them. The accompanying
 source comments preserve these boundaries without introducing unfinished theorem declarations.
+
+## Final planning review after `d91cd3e`
+
+This follow-up changes planning documents only. The six source gap annotations, all Lean content,
+verification tools, dependency pins, scope/citation data, and fixtures remain as committed in
+`d91cd3e`. The proof results above describe that earlier source validation; no new proof-audit or
+kernel-replay claim is made for this documentation-only pass.
+
+The review re-read current imports and relevant statements and corrected the proposed placement of
+`LineSelection`, `FisherLineSelection`, `StarkOpacityGuard`, and the unresolved `Closure` import.
+It specified full-name metadata resolution and negative regression cases for F0, bounded the first
+move to Boltzmann/ForwardMap, and distinguished the existing reading path from a composed proof of
+composition recovery using an estimated temperature.
+
+Final documentation checks: 18 plan documents, 146 local links, four shell example blocks checked
+with `bash -n`, and all 81 module inventory entries with their generated-parser result counts.
+`gen-docs.sh` passed with no generated-reference changes; `git diff --check` passed. External-library
+research remains the source-pinned survey recorded above; no new compatibility claim is introduced.

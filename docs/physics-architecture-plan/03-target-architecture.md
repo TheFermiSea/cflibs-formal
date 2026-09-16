@@ -29,7 +29,7 @@ CflibsFormal/
     Identifiability/      # Recoverability and rank conditions for specified models
     Estimators/           # Classic and alternative estimators with explicit model choice
     Stability/            # Deterministic perturbation and composition bounds
-    Statistics/           # Probability assumptions, variance, coverage
+    Statistics/           # Probability assumptions, variance, coverage, experimental design
     Algorithms/           # Iteration/convergence of inference procedures
   Applications/
     CFLIBS/               # End-to-end conditional chains and certificates
@@ -59,7 +59,7 @@ flowchart BT
   A -. specification correspondence .-> O[Float oracle and Python companion]
 ```
 
-An arrow means the upper consumer may depend on the lower provider. Dimensions may reuse scalar
+A solid arrow runs from a provider to a consumer that may import it. Dimensions may reuse scalar
 formulas for an audit if the design calls for it; the inverse core must never depend on dimensional
 types. An oracle comparison is a correspondence check, not a theorem dependency or proof extraction.
 
@@ -69,9 +69,13 @@ types. An oracle comparison is a correspondence check, not a theorem dependency 
 4. Statistics must expose the probability-space and noise hypotheses separately from deterministic
    finite-data algebra. Shared algebra belongs below both.
 5. Different estimators share physical definitions; they do not copy Saha, emission, or closure.
-6. The eventual topic aggregators should support a plasma/radiation reading path without pulling in
+6. Line-selection variance and Fisher-information results belong to Inference/Statistics, with
+   generic spread algebra in Math/Regression. Physical diagnostic interpretation does not justify
+   importing statistics or application certificate wrappers into Physics. See the
+   [concrete dependency cuts](10-implementation-decisions.md).
+7. The eventual topic aggregators should support a plasma/radiation reading path without pulling in
    `Alt.StochasticBudget`, conformal coverage, or application certificates.
-7. During migration, legacy module paths are thin import shims. New modules never depend on shims.
+8. During migration, legacy module paths are thin import shims. New modules never depend on shims.
    Keep an explicit removal condition; a permanent second implementation is not compatibility.
 
 ## A readable physical module
@@ -102,6 +106,11 @@ functions without changing the underlying dimensionless inverse model.
 | Thermometry | `Identifiability`, `OLSIdentifiability`, `Classic` | Diagnostic assumptions before estimator implementation |
 | Element composition | `Closure`, `Classic`, `SahaInverse` | Composition basis and ion-stage completeness made explicit |
 | Application gate | `Certificates`, `EvaluatorSoundness` | A documented hypothesis ledger, downstream of all preceding layers |
+
+This is a reading map, not a proof that every result is composed into one capstone. In particular,
+`Classic.classic_sound` uses a supplied temperature; its thermometry result is a separate leg.
+The [first-migration recipe](execution/06-first-migration.md) bounds the initial code move to two
+modules and then migrates a selected consumer.
 
 Preserve all exported types and names through the first slice. The initial goal is that a reader
 can follow this chain without opening optimizer, correlation, or statistics files.

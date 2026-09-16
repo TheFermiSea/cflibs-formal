@@ -30,6 +30,10 @@ profile truncation bounds, units conversions, and material mass fractions are pr
 [physics priorities](04-physics-priorities.md); they have not all been verified absent throughout the
 entire environment. Keep that distinction when adding more source annotations.
 
+For GAP-05/06, use the [F0 repair specification](execution/05-verification-repair.md), including
+negative regression cases. Those tooling repairs precede structural moves; GAP-01–04 remain
+separately prioritized mathematical work.
+
 ## Closing a gap
 
 1. Inspect current mathlib and the pinned candidates in [library reuse](02-library-reuse.md).

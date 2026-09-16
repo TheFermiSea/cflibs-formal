@@ -4,6 +4,8 @@
 
 ## F0 — Baseline, consumers, and model decisions
 
+Detailed contracts and required regression cases: [F0 repair specification](05-verification-repair.md).
+
 **Entry:** accepted organizational scope; unchanged pinned toolchain; known starting revision.
 
 ### Steps
@@ -36,7 +38,8 @@ only this phase's experimental files; retain baseline logs and unresolved findin
 
 ## F1 — Finite populations to observed lines: first vertical slice
 
-**Entry:** F0; exact ownership list and consumer map for the slice.
+**Entry:** F0 accepted with complete scope resolution; exact ownership list and consumer map.
+Use the [two-module first-migration recipe](06-first-migration.md), then its consumer follow-up.
 
 ### Steps
 

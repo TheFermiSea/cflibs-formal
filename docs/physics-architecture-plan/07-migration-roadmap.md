@@ -21,8 +21,10 @@ experiment after F0, never a reason to block all mathlib-only cleanup.
 
 ## Suggested reviewable change sequence
 
-1. Baseline records and a physics reading guide; repair inventory tooling in its own change if needed.
-2. One finite-population/emission slice moved with import shims, existing names, and unchanged proofs.
+1. Baseline records and a physics reading guide; repair GAP-05/06 using the
+   [F0 specification](execution/05-verification-repair.md) before structural migration.
+2. The [two-module first slice](execution/06-first-migration.md), followed by a selected consumer;
+   use import shims, existing names, and unchanged proofs.
 3. One mathlib adapter replacement with an exact old/new statement comparison.
 4. Plasma closure split into physical equilibrium and algorithmic convergence.
 5. Radiation/profile/diagnostic split; preserve supplied versus derived boundaries.
@@ -35,6 +37,9 @@ These are proposed change boundaries, not completed work. Parallel implementatio
 where declaration ownership and imports are disjoint; shared public definitions have one owner.
 
 ## Completion criteria
+
+F0–F5 define organizational completion. F6 is separately accepted scientific work; its deferred
+gaps do not prevent the organizational refactor finishing if claims remain honestly scoped.
 
 The refactor is complete when a physicist can locate each prioritized law, its assumptions, its
 proven consequences, and its diagnostic consumers; mathematical helpers have justified homes;

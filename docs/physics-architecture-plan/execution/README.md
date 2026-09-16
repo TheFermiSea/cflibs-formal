@@ -10,6 +10,8 @@ gap comments only. Run commands from the formal repository root in a dedicated w
 | [Working rules and gate protocol](01-working-rules.md) | Before every change; proof/API/metadata protection |
 | [F0–F2: baseline, first slice, reuse](02-foundation-phases.md) | Establish evidence and prove the migration pattern |
 | [F3–F6: domain migration and science](03-domain-phases.md) | Reorganize remaining work, retire safely, fill real gaps |
+| [F0 verification repair](05-verification-repair.md) | Precise scope-resolution contract and required failure tests |
+| [First migration](06-first-migration.md) | Two-module move and consumer follow-up with acceptance evidence |
 | [Review and recovery](04-review-and-recovery.md) | Change receipts, failure handling, rollback, external trials |
 
 ## Common phase discipline

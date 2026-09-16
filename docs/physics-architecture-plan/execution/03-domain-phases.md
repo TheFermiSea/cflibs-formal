@@ -13,7 +13,10 @@
    not import iteration convergence merely to expose charge balance.
 2. Organize radiation by emitted observable, opacity, transfer, and profile/width model. Preserve
    `RadiativeTransferDepth`'s discrete and continuous content; mark source functions that are supplied.
-3. Organize diagnostics around what a measured quantity identifies: temperature, electron density,
+3. Apply the [documented dependency cuts](../10-implementation-decisions.md): split
+   `LineSelection`/`FisherLineSelection` between mathematical design algebra and inference statistics,
+   and keep certificate-specific `StarkOpacityGuard` material in Applications. Then organize
+   physical diagnostics around what a measured quantity identifies: temperature, electron density,
    optical depth, or a model-validity restriction. Preserve rank and positivity preconditions.
 4. Keep `Dimensions` independently auditable. If changing its representation, first prove the
    four-field/exponent-function equivalence as a separate F2-style change.

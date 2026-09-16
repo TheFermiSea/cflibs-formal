@@ -63,12 +63,14 @@ change callers before retiring the representation. Check `[simp]` attributes, re
 instances, notation scopes, coercions, and reducibility separately.
 
 **Namespace and audit coverage:** tools currently assume the `CflibsFormal` prefix. Keep that prefix
-through the first migration. If a future extraction changes it, update axiom-audit roots and
+through the first migration. Within it, retain full nested names such as `CflibsFormal.Classic`;
+a common prefix alone does not repair GAP-05. If a future extraction changes it, update axiom-audit roots and
 `ScopeCheck.isCflibs` before trusting results; ensure moved constants cannot evade inspection.
 
 **Imports and metadata:** a moved file needs its new import path, root/topic coverage, scope-tag
 module key, generated references, and oracle/upstream consumers updated together. Source parsers
-can miss declaration forms. Reconcile metadata with the environment when changing namespaces,
+can miss declaration forms. Follow the [F0 resolution contract](execution/05-verification-repair.md) before moving ownership.
+Reconcile metadata with the environment when changing namespaces,
 visibility, or declaration syntax. Do not hide untagged declarations behind private/protected forms.
 
 **Axiom policy:** audit the complete chosen declaration closure. A source grep cannot establish it.

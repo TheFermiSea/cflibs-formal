@@ -6,6 +6,7 @@ Baseline: `5daee7c41b3c10e96cff982041a0020dc162a2cf`. All **81** source modules 
 accounted for below. Counts follow the existing documentation parser (751 named results), not the
 line-regex stats total or an environment census. Targets name proposed responsibility groups;
 individual sections may need different destinations after declaration-level dependency analysis.
+The [dependency-cut decisions](10-implementation-decisions.md) specify the known mixed modules.
 
 **Default disposition is preserve and reorganize.** No module is approved for deletion by this
 inventory. A leaf in the module import graph is not unused: the root exposes it, external Lean
@@ -28,7 +29,7 @@ clients may use its constants, and the Python/documentation correspondence may d
 | [Boltzmann](../../CflibsFormal/Boltzmann.lean) | 5 | `Physics/Atomic` | Preserve weighted finite-level API; compare physlib representations before any replacement. |
 | [Certificates](../../CflibsFormal/Certificates.lean) | 12 | `Applications/CFLIBS` | Retain model-specific results and public names; move after consumer and assumption review. |
 | [Classic](../../CflibsFormal/Classic.lean) | 5 | `Applications/CFLIBS` | Retain model-specific results and public names; move after consumer and assumption review. |
-| [Closure](../../CflibsFormal/Closure.lean) | 6 | `Math/Composition` | Retain model-specific results and public names; move after consumer and assumption review. |
+| [Closure](../../CflibsFormal/Closure.lean) | 6 | `Math/Composition` | Resolve its current Boltzmann import before accepting the Math boundary; preserve closure invariance and public names. |
 | [CompositionIdentifiability](../../CflibsFormal/CompositionIdentifiability.lean) | 3 | `Inference/Identifiability` | Retain model-specific results and public names; move after consumer and assumption review. |
 | [CompositionRobustness](../../CflibsFormal/CompositionRobustness.lean) | 5 | `Inference/Stability` | Retain model-specific results and public names; move after consumer and assumption review. |
 | [ConditionNumber](../../CflibsFormal/ConditionNumber.lean) | 15 | `Math/Regression` | Retain model-specific results and public names; move after consumer and assumption review. |
@@ -41,7 +42,7 @@ clients may use its constants, and the Python/documentation correspondence may d
 | [EquivalentWidth](../../CflibsFormal/EquivalentWidth.lean) | 20 | `Physics/Radiation` | Separate profile-independent integral properties from profile-specific models. |
 | [ErrorBudget](../../CflibsFormal/ErrorBudget.lean) | 19 | `Inference/Stability` | Retain model-specific results and public names; move after consumer and assumption review. |
 | [EvaluatorSoundness](../../CflibsFormal/EvaluatorSoundness.lean) | 6 | `Applications/CFLIBS` | Retain model-specific results and public names; move after consumer and assumption review. |
-| [FisherLineSelection](../../CflibsFormal/FisherLineSelection.lean) | 19 | `Physics/Diagnostics` | Keep physical design criterion; do not imply a proved general Cramer-Rao bound. |
+| [FisherLineSelection](../../CflibsFormal/FisherLineSelection.lean) | 19 | `Inference/Statistics` + `Math/Regression` | Separate spread updates from information/variance results; no claim of a proved general Cramer-Rao bound. |
 | [ForwardMap](../../CflibsFormal/ForwardMap.lean) | 3 | `Physics/Radiation` | Retain model-specific results and public names; move after consumer and assumption review. |
 | [ForwardMapEnergy](../../CflibsFormal/ForwardMapEnergy.lean) | 5 | `Physics/Radiation` | Retain model-specific results and public names; move after consumer and assumption review. |
 | [HeteroAtomicData](../../CflibsFormal/HeteroAtomicData.lean) | 10 | `Inference/Stability` | Retain model-specific results and public names; move after consumer and assumption review. |
@@ -55,7 +56,7 @@ clients may use its constants, and the Python/documentation correspondence may d
 | [LadenburgReiche](../../CflibsFormal/LadenburgReiche.lean) | 6 | `Physics/Radiation` | Retain model-specific results and public names; move after consumer and assumption review. |
 | [LeastSquaresFit](../../CflibsFormal/LeastSquaresFit.lean) | 9 | `Math/Regression` | Retain model-specific results and public names; move after consumer and assumption review. |
 | [LineBroadening](../../CflibsFormal/LineBroadening.lean) | 5 | `Physics/Radiation` | Separate supplied width algebra from future convolution derivation; GAP-01. |
-| [LineSelection](../../CflibsFormal/LineSelection.lean) | 19 | `Physics/Diagnostics` | Retain model-specific results and public names; move after consumer and assumption review. |
+| [LineSelection](../../CflibsFormal/LineSelection.lean) | 19 | `Inference/Statistics` + `Math/Regression` | Split spread algebra, probability comparisons, and application certificate equivalence; see document 10. |
 | [MatrixEffects](../../CflibsFormal/MatrixEffects.lean) | 22 | `Inference/Stability` | Retain model-specific results and public names; move after consumer and assumption review. |
 | [MatrixIonizationCoupling](../../CflibsFormal/MatrixIonizationCoupling.lean) | 10 | `Physics/Plasma` | Retain model-specific results and public names; move after consumer and assumption review. |
 | [MultiSpecies](../../CflibsFormal/MultiSpecies.lean) | 12 | `Applications/CFLIBS` | Retain model-specific results and public names; move after consumer and assumption review. |
@@ -87,7 +88,7 @@ clients may use its constants, and the Python/documentation correspondence may d
 | [SelfReversal](../../CflibsFormal/SelfReversal.lean) | 4 | `Physics/Radiation` | Retain model-specific results and public names; move after consumer and assumption review. |
 | [SpatialForward](../../CflibsFormal/SpatialForward.lean) | 11 | `Physics/Radiation` | Retain model-specific results and public names; move after consumer and assumption review. |
 | [StarkBroadening](../../CflibsFormal/StarkBroadening.lean) | 7 | `Physics/Diagnostics` | Retain model-specific results and public names; move after consumer and assumption review. |
-| [StarkOpacityGuard](../../CflibsFormal/StarkOpacityGuard.lean) | 8 | `Physics/Diagnostics` | Retain model-specific results and public names; move after consumer and assumption review. |
+| [StarkOpacityGuard](../../CflibsFormal/StarkOpacityGuard.lean) | 8 | `Physics/Diagnostics` + `Applications/CFLIBS` | Extract physical inequalities; keep certificate predicates and gate implications downstream. |
 | [StarkShift](../../CflibsFormal/StarkShift.lean) | 9 | `Physics/Diagnostics` | Retain model-specific results and public names; move after consumer and assumption review. |
 | [TemporalEvolution](../../CflibsFormal/TemporalEvolution.lean) | 8 | `Applications/TimeResolved` | Keep per-gate soundness and common-dilution assumptions explicit. |
 | [TwoDCOS](../../CflibsFormal/TwoDCOS.lean) | 8 | `Applications/Correlation` | Retain proven correlation identities independently of invalid historical monograph. |
