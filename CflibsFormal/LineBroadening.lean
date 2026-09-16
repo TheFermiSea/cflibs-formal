@@ -92,6 +92,15 @@ theorem doppler_recovers {lam kB T m c : ℝ}
 
 /-! ## B. The Gaussian width budget (quadrature) and deconvolution -/
 
+/-
+Formalization gap GAP-01 (docs/physics-architecture-plan/09-gap-register.md):
+The width algebra below does not prove the Gaussian convolution identity. A future
+bridge should define normalized profiles with positive standard deviations, prove
+integrability and the convolution formula, and derive FWHM from the half-maximum
+condition before identifying the result with gaussQuadrature. Zero-width limits need
+separate treatment. This must not imply exact Lorentzian extraction from a Voigt width.
+-/
+
 /-- **Gaussian widths add in quadrature.** Two Gaussian profiles convolve to a Gaussian whose
 variance is the sum, so the FWHMs combine as `√(w₁² + w₂²)` — e.g. the total Gaussian width from
 the instrument and the thermal Doppler contributions. -/

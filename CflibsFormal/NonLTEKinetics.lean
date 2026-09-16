@@ -93,6 +93,15 @@ open scoped BigOperators
 
 variable {ι : Type*} [Fintype ι]
 
+/-
+Formalization gap GAP-04 (docs/physics-architecture-plan/09-gap-register.md):
+This reduced steady-state model does not establish time-dependent relaxation to LTE.
+A future kinetics extension needs a specified rate matrix, population conservation,
+positivity preservation, existence of trajectories, and detailed-balance hypotheses.
+Only then connect its equilibrium to the departure coefficient and, where justified,
+the Boltzmann populations. McWhirter alone must not discharge these obligations.
+-/
+
 /-! ## The two-level departure coefficient (M1) -/
 
 /-- **Two-level departure coefficient** `b₂ = R₂₁/(R₂₁ + A₂₁)`: the fraction of the LTE upper-level

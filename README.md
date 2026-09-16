@@ -12,6 +12,13 @@ peer-reviewed literature and audited so that the *statement* faithfully encodes 
 physics. Everything is dimensionless (bare `ℝ`); a separate additive layer machine-checks
 dimensional homogeneity.
 
+## Architecture planning
+
+The [physics-first refactoring plan](docs/physics-architecture-plan/README.md) audits the current
+library, assesses reusable Lean projects, and gives phased execution guides. It is a proposal;
+the accompanying source edits are comment-only annotations of four missing proof bridges and
+two verification-tooling gaps.
+
 ## Status
 
 64 modules · 544 axiom-clean theorems/lemmas · 181 defs (run `scripts/stats.sh` for live counts).

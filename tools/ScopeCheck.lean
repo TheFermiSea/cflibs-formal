@@ -61,6 +61,15 @@ partial def cflibsDeps (c : Name) : DepM NameSet := do
   modify (·.insert c acc)
   return acc
 
+/-
+Formalization gap GAP-05 (docs/physics-architecture-plan/09-gap-register.md):
+The lookup below drops the module key and main silently filters unresolved names.
+Resolve scope rows to actual fully qualified declarations, including Alt and nested
+namespaces, and fail closed on missing or ambiguous rows. Compare resolved counts to
+the curated rows before reporting complete scope coverage; preserve the current
+EXACT-to-APPROXIMATION dependency check after fixing name resolution.
+-/
+
 /-- Parse `docs/scope-tags.tsv` into a short-name → tag map (canonical tags only). -/
 def parseTags : IO (Std.TreeMap String String) := do
   let content ← IO.FS.readFile "docs/scope-tags.tsv"

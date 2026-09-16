@@ -129,6 +129,15 @@ theorem conformal_coverage_fraction (s : Fin N → ℝ) (α : ℝ) (k : Fin N)
 
 /-! ## Exchangeability: the hypothesis that is carried, never discharged -/
 
+/-
+Formalization gap GAP-03 (docs/physics-architecture-plan/09-gap-register.md):
+ExchangeableRank below assumes the probability-to-counting bridge. To obtain a theorem
+from probabilistic exchangeability, introduce random scores on a probability space,
+measurability and permutation-invariance hypotheses, then prove marginal coverage with
+the calibration/test split, ties, and rank endpoint cases handled explicitly. Do not
+assume that the realized covered fraction equals a fixed marginal probability.
+-/
+
 /-- **The exchangeability hypothesis, stated explicitly.**
 
 `ExchangeableRank s k p` says: the probability `p` that the *test* score is covered by the

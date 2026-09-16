@@ -17,6 +17,11 @@ echo "== Named results (theorem/lemma) and definitions per module =="
 total_results=0
 total_defs=0
 while IFS= read -r f; do
+  # GAP-06 (docs/physics-architecture-plan/09-gap-register.md): this line regex also
+  # counts prose beginning with "theorem " inside comments (ConformalCoverage).
+  # Reconcile source statistics with parsed declarations / the Lean environment
+  # before using these totals as a migration coverage gate; do not alter proofs
+  # or scope rows just to make the two counters agree.
   read -r n d < <(awk '
     /^(@\[[^]]*\][ \t]*)?(theorem|lemma) / { r++ }
     /^(noncomputable[ \t]+)?def /          { x++ }

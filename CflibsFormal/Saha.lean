@@ -55,6 +55,15 @@ lemma thermalBracket_pos {kB T me h : ℝ}
     mul_pos (mul_pos (mul_pos (mul_pos (by norm_num) Real.pi_pos) hme) hkB) hT
   exact div_pos hnum (pow_pos hh 2)
 
+/-
+Formalization gap GAP-02 (docs/physics-architecture-plan/09-gap-register.md):
+The expression below is the supplied equilibrium law, not a microscopic derivation.
+A future statistical-mechanics bridge must derive the translational partition factor,
+chemical-equilibrium relation, and electron spin factor under explicit ideal-gas/LTE
+assumptions, and prove equality with sahaFactor using the same energy-zero and h
+conventions. Existing algebraic consequences remain conditional on the supplied law.
+-/
+
 /-- **Saha factor** `S(T)`: the full right-hand side of the Saha equation
 *excluding* the electron density `n_e` and the stage population ratio.  With
 `U_z = partitionFunction kB T gZ EZ`, `U_{z+1} = partitionFunction kB T gZ1 EZ1`:
