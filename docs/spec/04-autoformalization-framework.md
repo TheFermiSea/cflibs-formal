@@ -213,8 +213,11 @@ Three VMs `infer-01/02/03`, one **Tesla V100S 32 GB** each (Volta, sm_70: fp16 o
 FlashAttention-2 kernels), 36 vCPU, 251 GB DDR4, 100 Gb/s InfiniBand, 3.6 TB free under `/mnt/models`.
 Serving stack is **llama.cpp** (`/opt/llama.cpp-master` build 10326 on all nodes; `/opt/llama.cpp-flashnext`
 build 10674 on infer-03), one `llm-server@<model>` unit per node, launch scripts `/usr/local/bin/run-<model>`,
-fleet conformance asserted by `/root/verify-node.sh` (must stay byte-identical across nodes). Measured
-constants that bound any plan (from the fleet memory notes, not re-derived):
+fleet conformance asserted by `/root/verify-node.sh` (must stay byte-identical across nodes; it checks
+driver, GPU, IB, `/mnt/models` mount, llama.cpp build flags, vCPU and NUMA counts — it does **not**
+inspect `run-*` scripts). The "approved node-spec plan" file a fleet memory note points at no longer
+exists on disk; the operative provisioning artifacts are the `run-<model>` launcher template and
+`verify-node.sh`. Measured constants that bound any plan (from the fleet memory notes, not re-derived):
 
 - Decode of any model larger than 32 GB is **DRAM-bound at ~92 GB/s** (STREAM Triad, interleaved); a
   6.5B-active MoE at Q4 moves ~4 GB/token, so expect **~20–25 tok/s** single-node; at Q6_K ~15 tok/s.
@@ -276,8 +279,10 @@ the Qwen control, which the dry run will price in rounds and wall-clock.
 
 ### 10.4 Deployment plan for the Worker (Phase 0; do not touch a node before the advisor gate)
 
-1. **Node:** one node only (the GPU is exclusive; the Qwen control stays on another node). Use the node
-   whose `llm-server@qwen38` is idle; keep the other two unchanged.
+1. **Node:** one node only (the GPU is exclusive). Survey of 2026-09-20: `llm-server@qwen38` was
+   inactive and the GPU idle on all three nodes, each runs two GitHub Actions runners for the companion,
+   RAM in use 26–36 GB of 251. **Worker = infer-02** (7.5 TB free, lowest RAM use); **control = infer-01**
+   (start `llm-server@qwen38` there for the dry run); infer-03 untouched.
 2. **Weights:** `GZGavinZhao/Leanstral-1.5-119B-A6B-GGUF` → `/mnt/models/Leanstral-1.5/` (Q6_K, 98 GB,
    primary per "quality beats tok/s"; Q4_K_M, 72 GB, speed fallback). Both fit 251 GB RAM. Download at
    the fleet's 11–32 MB/s takes 1–2.5 h per file; verify sha256 against the Hub.
@@ -289,7 +294,11 @@ the Qwen control, which the dry run will price in rounds and wall-clock.
    Chat template comes from the GGUF; tool calls need `--jinja`; `reasoning_content` is the reasoning
    field OpenProver's `HFClient` already reads.
 4. **Service:** `systemctl start llm-server@leanstral`; then `/root/verify-node.sh` on all three nodes
-   must stay byte-identical (the script asserts `numactl` in every `run-*`).
+   must stay byte-identical (it does not read `run-*`, so the `numactl --interleave=all` prefix is checked
+   by eye against the `run-deepseek` template). Before OpenProver, smoke-test one chat completion with a
+   `tools` array and a reasoning prompt through `curl`: `tool_calls` must parse and `reasoning_content`
+   must be populated under `--jinja` on build 10326; if not, rsync the flashnext worktree build (10674)
+   from infer-03 and retry. Start with `-ncmoe` at the full layer count so the server comes up, then lower.
 5. **Measure** with `tools/bench_model_aba.py` (cache-busted): decode tok/s at Q6_K and Q4_K_M, prefill,
    and a 5-theorem smoke test through OpenProver on sorry'd copies. Record in spec 06. Only then decide
    Q6 vs Q4 and whether the two-node RPC experiment is worth a day.
