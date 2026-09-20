@@ -51,15 +51,17 @@ spec is published for reading only.
 - **What may not change without a decision by the repo owner:** the four non-negotiables; a scope tag
   from REDUCED/APPROXIMATION up to EXACT; adding any dependency; the refusals list in `06-milestones.md`.
 
-### Decisions pending (owner's call; the spec proceeds under the stated default)
+### Decisions (made by the repo owner on 2026-09-20)
 
-| # | Decision | Default assumed here | Where it matters |
+| # | Decision | Decided | Where it matters |
 |---|---|---|---|
-| D1 | Instrument model: abstract kernel with the companion's Gaussian IRF as first instance, vs. Gaussian-only | abstract kernel | `03` §3.2 |
-| D2 | Where the stoichiometry corollaries live: `MatrixEffects.lean` vs. `TemporalEvolution.lean` | `MatrixEffects.lean` | `03` §4 |
-| D3 | Whether to run the Frontier 02/07 dry run (costs a budget, has ground truth) before the cascade | yes | `04` §8, `06` Phase 0 |
-| D4 | Budget ceilings per phase | as listed in `06` | `06` |
-| D5 | Whether to submit the Saha seed to PhyslibAlpha in this cycle or defer | defer to Phase 5 | `04` §7.8, `docs/upstream-physlib-plan.md` |
+| D1 | Instrument model | Abstract kernel with the companion's Gaussian IRF as the first instance | `03` §3.2 |
+| D2 | Where the stoichiometry corollaries live | `MatrixEffects.lean` | `03` §4 |
+| D3 | Frontier 02/07 dry run before the cascade | Yes, both frontiers | `04` §8, `06` Phase 0 |
+| D4 | Budget ceilings per phase | As listed in `06` ($150 / $300 / $200 / $300 / $100) | `06` |
+| D5 | Physlib upstream | **Not this cycle.** No PhyslibAlpha submission until the instrument and profile modules exist; Phase 5 item 6 is parked | `04` §7.8, `06` Phase 5, `docs/upstream-physlib-plan.md` |
+
+Also decided: the Phase-0 reviewer-agent change and the tooling install (`.mcp.json` for `lean-lsp-mcp`, the `lean4-skills` plugin) land on this branch; Phase 0's red team is run immediately.
 
 ### Change log
 

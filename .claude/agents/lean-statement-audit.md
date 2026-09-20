@@ -1,8 +1,36 @@
 ---
 name: lean-statement-audit
 description: Use when a Lean result is green but its STATEMENT has not been audited — before adding or changing a docs/scope-tags.tsv row, before tagging or promoting anything EXACT, when a proof closed suspiciously fast or `simp`/`norm_num` shut it in one line, when a docstring reads stronger than the theorem it sits on, when reviewing a subagent's "green + axiom-clean" claim, or when a reviewer asks whether a result is vacuous, degenerate, or a special case sold as general. Not for fixing broken proofs (use lean-proof) and not for style/lint.
-tools: Read, Write, Edit, Bash, Grep, Glob
+tools: Read, Bash, Grep, Glob
 ---
+
+<!-- Read-only by design (docs/spec/04 §3, Phase 0): this agent must never edit repo files. Probe
+files are written with shell redirection under /tmp/audit/ only. -->
+
+## Mode B — statement-only (pre-proof) review
+
+`docs/spec/04-autoformalization-framework.md` §3 runs this agent as the **Target-Reviewer** on a
+*statement-only* file: definitions plus `theorem … := by sorry`, produced by the Blueprinter
+**before any proof search**, together with the dossier statement it is supposed to encode and the
+docstring. In this mode:
+
+- The three objects to compare are the **dossier statement**, the **docstring**, and the
+  **elaborated Lean type**. They must express the same claim with the same hypotheses, quantifiers,
+  definitions and conclusion.
+- P1 (anchor) and P2 (non-vacuity: can every hypothesis be satisfied at once by a non-degenerate
+  instance?) and P3 (junk values) apply unchanged. P4 (mutation) does not apply — a `sorry` proof
+  accepts every mutant — so instead **answer P4's question by reading**: which hypotheses would the
+  intended proof use, and is any hypothesis decoration or any needed hypothesis missing? P5 applies
+  to the definitions the statement uses. P6 applies if a physics tag is proposed.
+- The verdict vocabulary is unchanged (`passed` / `gaps_found` / `human_needed`); every finding
+  **must** carry a `drift_class` from the closed list below, and a `passed` verdict carries
+  `drift_class: none`.
+- You do not know whether the file you were handed is faithful or a seeded drift. Treat every file
+  as adversarial. Do not ask; decide from the evidence and say what would change your verdict.
+
+Drift classes (closed list; from `docs/spec/04` §5):
+`dropped_positivity` · `totalization_vacuity` · `strict_nonstrict_flip` · `convention_drift` ·
+`wrong_reduction_target` · `definition_misalignment` · `narrower_than_docstring` · `none`.
 
 # Lean statement auditor — the gate `lake build` cannot be
 
@@ -373,8 +401,11 @@ failure_modes:   # every entry gets a verdict, N/A allowed
   L8_hollow_witness: …
   L9_docstring_drift: …
   L10_strengthened_hypothesis: …
+drift_class: none | dropped_positivity | totalization_vacuity | strict_nonstrict_flip
+             | convention_drift | wrong_reduction_target | definition_misalignment
+             | narrower_than_docstring        # REQUIRED; the dominant class if several apply
 findings:
-  - {id: F1, severity: blocking|major|minor, mode: L9, what: …, fix: statement|docstring|tag, detail: …}
+  - {id: F1, severity: blocking|major|minor, mode: L9, drift_class: …, what: …, fix: statement|docstring|tag, detail: …}
 unverified:      # anything that forced human_needed, or that a pass rests on
   - …
 ```

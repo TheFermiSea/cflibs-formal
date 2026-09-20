@@ -6,7 +6,7 @@ criteria; nothing advances on a self-report.
 
 ## Phase 0 — Harness readiness (gate for everything)
 - **Entry:** the draft PR carrying this spec is open and the owner has signed off on decisions D1–D5
-  in the README table; `lean-lsp-mcp` and `lean4-skills` installed; worktree workflow tested.
+  in the README table (done 2026-09-20); `lean-lsp-mcp` and `lean4-skills` installed; worktree workflow tested.
 - **Work:** make `lean-statement-audit` read-only (drop `Write, Edit`) and add the drift-class field to its
   report; then red-team it (04 §5) on S3, L2, K2, stoichiometry; record
   `docs/spec/redteam/<date>.md`. Frontier 02/07 dry run (04 §8.2) with ground truth.
@@ -53,7 +53,8 @@ Ordered by value / cost from 04 §7; each is its own PR.
 3. `scripts/vacuity-check.sh` (04 §7.4) — medium.
 4. `scripts/check-literature-parity.sh` (04 §7.3) — medium.
 5. Disprove-first Worker step (04 §7.5) — low.
-6. PhyslibAlpha PR for the Saha seed, then the cascade (04 §7.8) — high; needs the tool-independence
+6. PhyslibAlpha PR for the Saha seed, then the cascade (04 §7.8) — **parked by decision D5: not this
+   cycle**; revisit only after the instrument and profile modules exist, with the tool-independence
    framing Physlib requires and a re-read of `docs/upstream-physlib-plan.md` triggers.
 7. Public physics-drift dataset (04 §7.9) — after 1 and 3 exist.
 

@@ -161,7 +161,7 @@ certificate that bounds the distance to the true fixed point from a residual the
 Extend the pattern to the outer loop (`outerLoop_contracts` gate) and to conformal coverage. Cost:
 medium; this is where the spec "pays rent."
 
-### 7.8 Agent-driven upstream into PhyslibAlpha
+### 7.8 Agent-driven upstream into PhyslibAlpha (parked by decision D5: not this cycle)
 Physlib now has a lighter-review tier that accepts AI-generated contributions and requires tool
 independence. The Saha–Eggert seed (`upstream/SahaUpstream.lean`) and, once landed, the cascade are
 single-concept PRs of the right shape. Run the harness with Physlib's conventions (unit-aware
