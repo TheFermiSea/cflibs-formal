@@ -392,6 +392,25 @@ the Qwen control, which the dry run will price in rounds and wall-clock.
    the lead: axiom-clean, statement identical) but could not return it. Fix: `--answer-reserve 12288`
    on every run (no code change); a server-side `--reasoning-budget` is the fallback if thinking
    still overruns. Attempt history per test is kept under the run directory's `old/`.
+   **Smoke-test tally (final, 2026-09-20; 45-min caps, `--answer-reserve 12288`, both nodes at
+   `-t 30`, nodes idle except where noted).**
+
+   | # | statement | result | evidence |
+   |---|---|---|---|
+   | 1 | `lorentzianG_pos` (local def) | **proved**, 23.5 min | lead re-check: axiom-clean, statement identical |
+   | 2 | `composition_sum_one` (local defs) | **proved**, 36 min, 3rd attempt | lead re-check: axiom-clean, statement identical; attempts 1–2 had a passing `lean_verify` but hit the 600 s / 4096-token caps |
+   | 3 | K2 `pixelSignal_injective_iff` (repo defs) | not proved, 93 min over two attempts | 11 failed `lean_verify`; recurring `typeclass instance problem is stuck` in the Worker's rewrites of the `Matrix` setup; `lean_search` found `LinearMap.ker_eq_bot` but the one-line proof was never assembled |
+   | 4 | ST `composition_of_preservesStoichiometry` | not proved, 56 min | 11 failed attempts on the target; the two "passed" checks were lemma probes (`div_eq_zero_iff` etc.), not the theorem |
+   | 5 | L2 `lorentzianProfile_integral` | not proved, 59 min | Worker never wrote a Lean file: 10 turns re-issuing the same two `lean_search` queries (`integral_add_right_eq_self`, `IsAddRightInvariant volume`), a search loop the harness does not break |
+
+   Reading: the loop closes end to end (planner ↔ Worker ↔ `lean_verify` ↔ verifier ↔ submit) and the
+   Worker preserves statements verbatim, but within a 45-minute cap at ~12 tok/s Leanstral closes only
+   the algebraic one-liners; the three spec-level targets need either more rounds, a decomposition by
+   the planner (none was attempted: every run spawned a single worker), or a loop-breaker on repeated
+   tool calls. A CI job was active on infer-03 during the end of test 2 and the start of test 5. Phase
+   0's Worker exit criterion ("closes both frozen frontier statements within the round cap") is
+   therefore not yet met and the Frontier 02/07 dry run should follow the owner's decision on node
+   isolation.
    Smoke test 1/5 (`lorentzianG_pos`, restated with a local def so recall of the repo lemma is not
    available; 2026-09-20): three launches were needed before the loop ran, each a harness defect now
    fixed by `tools/openprover/patch_local_alias.py` (Claude CLI ≥ 2.1 JSON shape; headless TUI
