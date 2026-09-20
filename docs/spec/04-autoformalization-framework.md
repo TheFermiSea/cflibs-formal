@@ -22,7 +22,7 @@ theorems it closed.
 |---|---|---|
 | Orchestrator / Lead / Blueprinter / Target-Reviewer | Claude Code on the owner's subscription (decision D8) | the roles where statement faithfulness is judged; the only paid inference |
 | Worker model | **Leanstral 1.5 (119B-A6B, Apache-2.0)** served by llama.cpp on one infer-0x node, Q6_K primary / Q4_K_M speed fallback (decision D6; evidence in §10) | local proof search; zero marginal dollars |
-| Worker harness | **OpenProver** (MIT, `pip install openprover`, `--headless --autonomous --lean-project . --lean-theorem <file>`, `lean_verify` = `lake env lean`), patched so a worker alias binds to the local llama-server endpoint (decision D7; §10.4). Comparison arm: Mistral Vibe with a local `api_base` if a headless mode exists; fallback: Pi agent via RPC | drives the local Worker with Lean tools and reports the exact compiler output |
+| Worker harness | **OpenProver** (MIT, `pip install openprover`, `--headless --autonomous --lean-project . --lean-theorem <file>`, `lean_verify` = `lake env lean`), patched so a worker alias binds to the local llama-server endpoint (decision D7; §10.4). Comparison arm: Mistral Vibe in programmatic mode (`vibe -p <prompt> --agent lean --yolo --max-turns N --output json`) with a local `api_base`; fallback: Pi agent via RPC | drives the local Worker with Lean tools and reports the exact compiler output |
 | Lean tools | `lean-lsp-mcp` (goals, diagnostics, hover, `leansearch`, `loogle`) and the `lean4-skills` plugin — *to install in Phase 0* (no `.mcp.json` in the repo and no `lean-lsp` server configured as of 2026-09-20; only the `lean@leanprover` plugin is installed); the `lean:lean-proof` plugin skill is already available | the "Prover with Lean tools" pattern of Numina-Lean-Agent / Ax-Prover / Ilin |
 | Checking | `lake env lean <file>` only (never `lake build` from a worker); `#print axioms`; `scripts/mutate-check.sh`; `scripts/prereg.sh`; `lake exe axiom-audit`; `lake exe runLinter`; `scripts/stats.sh`; `scripts/kernel-replay.sh` | the gates |
 | Review | `.claude/agents/lean-statement-audit.md` (adversarial statement auditor; read-only only after the Phase-0 change that drops its `Write, Edit` tools); `.claude/skills/citation-integrity` | the Target-Reviewer and literature gate |
@@ -92,10 +92,17 @@ at least four drifted variants:
 
 Blinding: the variants are authored by the lead or by a separate agent, never by the reviewer's own
 session; the reviewer receives them unlabeled, in shuffled order, one file each, and its verdicts are
-compared with the labels only afterwards. Pass criterion: every drifted variant is flagged with the
-correct class and the faithful one is accepted, over two independent runs. Record the run in `docs/spec/redteam/<date>.md`. **If the reviewer fails,
-that is the finding; no pilot proceeds.** Repeat the red team whenever the reviewer prompt or model
-changes.
+compared with the labels only afterwards. Pass criterion: every drifted variant is flagged
+(`gaps_found`) with the seeded class as its dominant `drift_class` **or** as a secondary finding, and
+every faithful one is accepted (`passed`), over two independent runs. Labels carry **two** classes per
+variant, the *edit* (what was changed) and the *mechanism* (why the statement breaks, e.g. Lean's
+`x / 0 = 0`), because the two can have different names in the table above and a reviewer that names
+the edit and reports the mechanism as a secondary finding, with the refutation executed, has done its
+job. (Amended 2026-09-20 after the first run: the original one-label rule scored 10/12 on both models
+for that reason; see `docs/spec/redteam/2026-09-20.md`.) Record the run in `docs/spec/redteam/<date>.md`.
+**If the reviewer fails, that is the finding; no pilot proceeds.** Repeat the red team whenever the
+reviewer prompt or model changes. Ask the reviewer to leave its probe files in place so a verdict can be
+replayed.
 
 ## 6. Budgets and metrics
 
@@ -262,7 +269,7 @@ the Qwen control, which the dry run will price in rounds and wall-clock.
 | Framework | What it is | Open? Local backend? | Lean pin / interface | Verdict |
 |---|---|---|---|---|
 | **OpenProver** (Kripner & Straka, arXiv 2607.09217; `pip install openprover` 1.0.1, MIT) | Planner–Worker–Verifier with whiteboard + repository, inspired by Aletheia; runs on an existing project with sorries; `--headless`, `--autonomous`, `--planner-model`/`--worker-model`, `--provider-url`, `--lean-worker-tools`, `--max-time` | Yes. Planner defaults to the `claude` CLI (the owner's subscription); local workers through an OpenAI-compatible `HFClient`. **Model aliases are hard-coded** (`sonnet`, `opus`, `minimax-m2.5` via vLLM, `leanstral` via Mistral's hosted API) | `lean_verify` = `lake env lean <file>` in the given project — the repo's own rule; MCP server for Claude workers | **Default harness (D7)**, with a ~20-line patch adding a `leanstral-local` alias → `HFClient(base_url=<llama-server>/v1, tool-capable)` and a context-length entry |
-| Mistral Vibe (`vibe --agent lean`) | Leanstral's native harness and RL environment; `~/.vibe/agents/lean.toml` with `api_base` to a local server; lean-lsp-mcp supported | Yes / yes | tool calls; interactive TUI; **no headless mode found in the docs** (`--yolo` only auto-approves) | Comparison arm if `vibe --help` reveals a scripted mode; otherwise not drivable by the Lead |
+| Mistral Vibe (`vibe --agent lean`) | Leanstral's native harness and RL environment; `~/.vibe/agents/lean.toml` with `api_base` to a local server; lean-lsp-mcp supported | Yes / yes | tool calls; TUI **and a programmatic mode** (verified 2026-09-20 from `vibe --help`: `-p/--prompt`, `--agent`, `--yolo`, `--max-turns`, `--max-price`, `--output {text,json,streaming}`) | Comparison arm: drivable by the Lead one theorem per call; measured in the dry run against the OpenProver arm |
 | Pi agent (installed skill) | minimal terminal harness; custom OpenAI-compatible providers per tool; RPC/JSON modes; pi-mcp-adapter | Yes / yes | any, via bash + MCP | Fallback if OpenProver's patch proves awkward |
 | **APOLLO** (Ospanov, Farnia, Yousefzadeh; NeurIPS 2025; github aziksh-ospanov/APOLLO, MIT) | model-agnostic repair loop: syntax fixer → sub-lemma isolation via Lean → `linarith`/`norm_num`/`ring`/`field_simp` solvers → low top-K LLM on remaining goals; 84.9% miniF2F for sub-8B models with < 100 samples | Yes / whole-proof prover models | **Lean 4.17.0 REPL bundled**; `ApolloRepair(code, lemma_name, config)` | Right idea (the repo's own tactic stack is its solver set) but pinned to 4.17 and a REPL; harvest the pattern (Phase 5 §7.4/§7.5), do not adopt the code |
 | **Hilbert** (Apple, arXiv 2509.22819) | reasoner LLM + prover LLM + retriever + verifier, recursive decomposition | Yes / OpenAI-compatible endpoints for both LLMs | kimina-lean-server | Repo marked "not in active development"; fork at Rose-STL-Lab. Not adopted |
@@ -288,8 +295,13 @@ the Qwen control, which the dry run will price in rounds and wall-clock.
    the fleet's 11–32 MB/s takes 1–2.5 h per file; verify sha256 against the Hub.
 3. **Launcher:** `/usr/local/bin/run-leanstral` in the exact shape of `run-deepseek` (the MoE template):
    `numactl --interleave=all /opt/llama.cpp-master/build/bin/llama-server -m … -ngl 999 -ncmoe <N>
-   -fa on -t 36 --no-op-offload -b 4096 -ub 1024 --load-mode mlock -c 65536 --jinja --metrics
-   --host 0.0.0.0 --port 8082`, `-ncmoe` tuned so that non-expert weights + shared experts + KV fit
+   -fa off -t 36 --no-op-offload -b 4096 -ub 1024 --load-mode mlock -c 65536 --jinja --metrics
+   --host 0.0.0.0 --port 8082` (`-fa off` is forced: with `-fa on`, build 10326 loads and then aborts
+   at the first compute with `CUDA error: invalid argument` in `ggml_cuda_flash_attn_ext_mma_f16_case`
+   on sm_70 for `mistral4`, observed 2026-09-20, log kept as `/var/log/llm-leanstral.log.crash1-fa-on`;
+   the other launchers on infer-02, `run-qwen38` and `run-glm53`, use `-fa on` without incident, so
+   this was not seen with those models; an MLA-specific cause is plausible but not established),
+   `-ncmoe` tuned so that non-expert weights + shared experts + KV fit
    32 GB (overflow fails at context creation, not at load). No speculation flags until measured.
    Chat template comes from the GGUF; tool calls need `--jinja`; `reasoning_content` is the reasoning
    field OpenProver's `HFClient` already reads.

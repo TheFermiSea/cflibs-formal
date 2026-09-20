@@ -84,7 +84,7 @@ Ordered by value / cost from 04 §7; each is its own PR.
 
 | Phase | Status | Spend | Notes |
 |---|---|---|---|
-| 0 | not started | — | |
+| 0 | in progress | reviewer track: 32 subagent invocations (~2 M tokens, subscription); Worker track: infer-02 dedicated | Reviewer track **done** 2026-09-20: two blinded runs (default model, `sonnet`), 4/4 faithful accepted, 12/12 drifts flagged, 0 false accepts/rejects, 16/16 cross-run agreement; class criterion amended (edit-or-mechanism), see `redteam/2026-09-20.md`. Worker track: Leanstral 1.5 Q6_K on infer-02 (`llm-server@leanstral`, port 8082, `-fa off` after an sm_70 crash); OpenProver 1.0.1 patched (`tools/openprover/`); smoke test and dry run pending |
 | 1 | not started | — | |
 | 2 | not started | — | |
 | 3 | not started | — | |

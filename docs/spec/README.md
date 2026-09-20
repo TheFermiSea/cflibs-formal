@@ -1,4 +1,4 @@
-# cflibs-formal — Development Specification (v0.3, 2026-09-20)
+# cflibs-formal — Development Specification (v0.4, 2026-09-20)
 
 This directory is the **working specification** for the next phase of `cflibs-formal`. It replaces the
 two Google-Docs drafts ("Lean 4 Scientific Autoformalization", "Revised Architectural Blueprint:
@@ -62,7 +62,7 @@ spec is published for reading only.
 | D5 | Physlib upstream | **Not this cycle.** No PhyslibAlpha submission until the instrument and profile modules exist; Phase 5 item 6 is parked | `04` §7.8, `06` Phase 5, `docs/upstream-physlib-plan.md` |
 
 | D6 | Worker model | **Leanstral 1.5 (119B-A6B, Apache-2.0)** on llama.cpp, Q6_K primary / Q4_K_M speed fallback; Qwen3.8-27B as the dry-run control; whole-proof provers (Pythagoras, OProver) held in reserve as repair-loop samplers. Rule: prefer an agentic model over a Mathlib-pinned one | `04` §10 |
-| D7 | Worker harness | **OpenProver** (MIT) with a vendored patch binding a local worker alias to the llama-server endpoint; Claude planner; Mistral Vibe as comparison arm only if headless; Pi as fallback | `04` §10.3–10.4 |
+| D7 | Worker harness | **OpenProver** (MIT) with a vendored patch binding a local worker alias to the llama-server endpoint; Claude planner; Mistral Vibe (programmatic `-p` mode, verified) as comparison arm; Pi as fallback | `04` §10.3–10.4 |
 | D8 | Role split | Local model = Worker only; Claude subscription = Lead, Blueprinter, Target-Reviewer, red team (the roles that judge faithfulness) | `04` §3 |
 
 Also decided: the Phase-0 reviewer-agent change and the tooling install (`.mcp.json` for `lean-lsp-mcp`, the `lean4-skills` plugin) land on this branch; Phase 0's red team is run immediately with Claude as reviewer; the Worker deployment (04 §10.4) proceeds in parallel and is gated by an advisor review before any node is touched. Budgets (D4) are re-expressed in rounds and node-hours because the Worker's marginal dollar cost is near zero.
@@ -75,6 +75,7 @@ Also decided: the Phase-0 reviewer-agent change and the tooling install (`.mcp.j
 | v0.1.1 | 2026-09-20 | S7 reduction statement: added `0 < ne` (load-bearing); acceptance wording for reductions corrected. (The `0 < S s 0` added at the same time was found unnecessary in v0.2 and removed.) |
 | v0.2 | 2026-09-20 | Deep review pass: mathlib lemma names verified and pinned (`LinearMap.ker_eq_bot`, `integral_sub_right_eq_self` via `to_additive`, Chebyshev lemma names), S4 hypotheses stated, S5/S6/S8 binders (incl. `[Nonempty κ]`) and S9 index-type design corrected, S7's unnecessary `S`-positivity removed, `λ` identifiers renamed `lam`, Gershgorin cited for K4, K3 injectivity dropped, L1 weakened to `0 ≤ γ`, G4 Doppler binding added, third stoichiometry theorem dropped, worktree/olean and reviewer-vocabulary/tooling facts corrected, prereg audit scoping and runLinter invocation corrected, red-team blinding and dry-run contamination control added, maintenance and decisions sections added; independently audited (21 findings, all applied); the draft PR that carries this spec was opened with this version |
 | v0.2.1 | 2026-09-20 | Consistency: G3/G4 rows in the scope-tag table (05 §3) aligned with 03; S9 grade B in the prereg draft; reviewer-agent row in 04 §2 no longer calls it read-only before the Phase-0 change |
+| v0.4 | 2026-09-20 | Phase-0 reviewer track complete: blinded red team run twice (default model, `sonnet`) on 16 variants, record and variants in `redteam/2026-09-20{.md,/}`; pass criterion in 04 §5 amended to edit-or-mechanism class with the reason recorded; Mistral Vibe programmatic mode verified (`vibe -p`), D7 and 04 §10.3 corrected; Worker deployed on infer-02 with `-fa off` (sm_70 flash-attention crash recorded in 04 §10.4); Phase 0 status row updated |
 | v0.3 | 2026-09-20 | Owner decisions D1–D5 recorded; Worker moved to local models on the infer-0x fleet (D6–D8): model and framework survey with the Mathlib-pin selection rule (04 §10), deployment plan under the node spec, OpenProver as harness, budgets in rounds/node-hours; Phase-0 reviewer agent made read-only with a drift-class field; lean-lsp-mcp and lean4-skills installed |
 
 ## One-paragraph summary of the plan

@@ -1,0 +1,88 @@
+{
+  "v01": {
+    "variant": "S3_Zone",
+    "drift_class": "narrower_than_docstring",
+    "target": "S3"
+  },
+  "v02": {
+    "variant": "K2_faithful",
+    "drift_class": "none",
+    "target": "K2"
+  },
+  "v03": {
+    "variant": "K2_vecMul",
+    "drift_class": "definition_misalignment",
+    "target": "K2"
+  },
+  "v04": {
+    "variant": "K2_imp",
+    "drift_class": "narrower_than_docstring",
+    "target": "K2"
+  },
+  "v05": {
+    "variant": "ST_nosum",
+    "drift_class": "dropped_positivity",
+    "target": "ST"
+  },
+  "v06": {
+    "variant": "ST_guard",
+    "drift_class": "totalization_vacuity",
+    "target": "ST",
+    "edit_class": "definition_misalignment",
+    "mechanism_class": "totalization_vacuity",
+    "note": "two-class labels added 2026-09-20 after both runs (04 §5 amendment); drift_class is the seeded label used for the strict score"
+  },
+  "v07": {
+    "variant": "S3_flip",
+    "drift_class": "strict_nonstrict_flip",
+    "target": "S3"
+  },
+  "v08": {
+    "variant": "S3_faithful",
+    "drift_class": "none",
+    "target": "S3"
+  },
+  "v09": {
+    "variant": "K2_transpose",
+    "drift_class": "wrong_reduction_target",
+    "target": "K2"
+  },
+  "v10": {
+    "variant": "ST_faithful",
+    "drift_class": "none",
+    "target": "ST"
+  },
+  "v11": {
+    "variant": "S3_Ici",
+    "drift_class": "totalization_vacuity",
+    "target": "S3",
+    "edit_class": "dropped_positivity",
+    "mechanism_class": "totalization_vacuity",
+    "note": "two-class labels added 2026-09-20 after both runs (04 §5 amendment); drift_class is the seeded label used for the strict score"
+  },
+  "v12": {
+    "variant": "L2_faithful",
+    "drift_class": "none",
+    "target": "L2"
+  },
+  "v13": {
+    "variant": "L2_ne",
+    "drift_class": "dropped_positivity",
+    "target": "L2"
+  },
+  "v14": {
+    "variant": "L2_sq",
+    "drift_class": "definition_misalignment",
+    "target": "L2"
+  },
+  "v15": {
+    "variant": "S3_dropN",
+    "drift_class": "dropped_positivity",
+    "target": "S3"
+  },
+  "v16": {
+    "variant": "L2_half",
+    "drift_class": "narrower_than_docstring",
+    "target": "L2"
+  }
+}
