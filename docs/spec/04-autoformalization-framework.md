@@ -399,10 +399,15 @@ the Qwen control, which the dry run will price in rounds and wall-clock.
    |---|---|---|---|
    | 1 | `lorentzianG_pos` (local def) | **proved**, 23.5 min | lead re-check: axiom-clean, statement identical |
    | 2 | `composition_sum_one` (local defs) | **proved**, 36 min, 3rd attempt | lead re-check: axiom-clean, statement identical; attempts 1–2 had a passing `lean_verify` but hit the 600 s / 4096-token caps |
-   | 3 | K2 `pixelSignal_injective_iff` (repo defs) | not proved, 93 min over two attempts | 11 failed `lean_verify`; recurring `typeclass instance problem is stuck` in the Worker's rewrites of the `Matrix` setup; `lean_search` found `LinearMap.ker_eq_bot` but the one-line proof was never assembled |
-   | 4 | ST `composition_of_preservesStoichiometry` | not proved, 56 min | 11 failed attempts on the target; the two "passed" checks were lemma probes (`div_eq_zero_iff` etc.), not the theorem |
+   | 3 | K2 `pixelSignal_injective_iff` (repo defs) | not proved; final attempt 93 min (earlier attempt 62 min) | 11 failed `lean_verify`, all on the target with the statement and definitions unchanged; recurring `typeclass instance problem is stuck` in the proof bodies; `lean_search` found `LinearMap.ker_eq_bot` but the one-line proof was never assembled |
+   | 4 | ST `composition_of_preservesStoichiometry` | not proved, 56 min | 12 `lean_verify` calls: only 3 were attempts on the target (all failed, statement unchanged); the other 9 were lemma probes (`div_eq_zero_iff`, `eq_div_iff_mul_eq`, …), two of which passed. Probe churn, not twelve wrong proofs |
    | 5 | L2 `lorentzianProfile_integral` | not proved, 59 min | Worker never wrote a Lean file: 10 turns re-issuing the same two `lean_search` queries (`integral_add_right_eq_self`, `IsAddRightInvariant volume`), a search loop the harness does not break |
 
+   Faithfulness check across every Worker Lean file of every attempt (32 files that contain a target
+   theorem): theorem signature and local definitions identical to the smoke source in 32/32; no
+   renamed, weakened or restated target. `--max-time` is a soft budget: an in-flight Worker call (up to
+   1800 s) and the closing discussion run past it, so the 45-min runs actually took 56, 59 and 93 min;
+   node-hour budgets (D4) must use wall-clock, not the cap.
    Reading: the loop closes end to end (planner ↔ Worker ↔ `lean_verify` ↔ verifier ↔ submit) and the
    Worker preserves statements verbatim, but within a 45-minute cap at ~12 tok/s Leanstral closes only
    the algebraic one-liners; the three spec-level targets need either more rounds, a decomposition by
