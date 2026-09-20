@@ -68,6 +68,7 @@ spec is published for reading only.
 | v0.1 | 2026-09-20 | Initial seven-file spec; blueprint audit; harness design |
 | v0.1.1 | 2026-09-20 | S7 reduction statement: added `0 < ne` (load-bearing); acceptance wording for reductions corrected. (The `0 < S s 0` added at the same time was found unnecessary in v0.2 and removed.) |
 | v0.2 | 2026-09-20 | Deep review pass: mathlib lemma names verified and pinned (`LinearMap.ker_eq_bot`, `integral_sub_right_eq_self` via `to_additive`, Chebyshev lemma names), S4 hypotheses stated, S5/S6/S8 binders (incl. `[Nonempty κ]`) and S9 index-type design corrected, S7's unnecessary `S`-positivity removed, `λ` identifiers renamed `lam`, Gershgorin cited for K4, K3 injectivity dropped, L1 weakened to `0 ≤ γ`, G4 Doppler binding added, third stoichiometry theorem dropped, worktree/olean and reviewer-vocabulary/tooling facts corrected, prereg audit scoping and runLinter invocation corrected, red-team blinding and dry-run contamination control added, maintenance and decisions sections added; independently audited (21 findings, all applied); the draft PR that carries this spec was opened with this version |
+| v0.2.1 | 2026-09-20 | Consistency: G3/G4 rows in the scope-tag table (05 §3) aligned with 03; S9 grade B in the prereg draft; reviewer-agent row in 04 §2 no longer calls it read-only before the Phase-0 change |
 
 ## One-paragraph summary of the plan
 

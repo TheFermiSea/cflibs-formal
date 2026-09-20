@@ -92,7 +92,8 @@ re-proof of `SahaEquilibrium`; scope-tag rows; `C15` and Scenario 7 (below).
 ### 1.7 Pre-registration draft (freeze before Lean)
 ```
 Intended module: CflibsFormal/SahaCascade.lean (does not exist)
-Predicted: S1,S2,S4,S6,S7 PURE-MATH/EXACT grade A; S3,S5,S8 PURE-MATH grade B; S9 EXACT.
+Predicted: S1,S2,S4,S6,S7 PURE-MATH/EXACT grade A; S3,S5,S8 PURE-MATH grade B; S9 EXACT grade B
+(dependent level-index family; see the S9 design point).
 Not predicted (exploratory if it appears): any convergence theorem for a cascade iteration; any
 statement about T-dependence of ne*.
 Disclosure of prior state: SahaEquilibrium.lean already proves the Z=1 theory listed in 01 §1.3;

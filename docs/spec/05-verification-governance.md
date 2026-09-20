@@ -33,7 +33,8 @@ is treated as no output.
 | Result type | Tag | Reason |
 |---|---|---|
 | PDF normalization, integrability, symmetry (ContinuousProfile) | PURE-MATH | no physical constant enters |
-| Profile ↔ FWHM parameter binding (G3) | EXACT | encodes the cited definition of Doppler width |
+| Gaussian half-maximum identity (G3) | PURE-MATH | no physical constant enters |
+| Doppler binding `dopplerFWHM = 2√(2 ln 2)·σ_D` (G4) | EXACT (Griem 1974) | encodes the cited definition of the Doppler width |
 | Voigt := convolution | PURE-MATH definition; docstring caveat that O–L is APPROXIMATION | no FWHM equality is claimed |
 | Cascade fraction identities, antitonicity, fixed point | PURE-MATH | algebra over `S`, `Ntot` |
 | Cascade with `S` bound to `sahaFactor` (S9) | EXACT (Saha–Eggert, Griem 1997) | faithful to the cited law |
