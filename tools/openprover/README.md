@@ -37,6 +37,14 @@ the Qwen3-Embedding-0.6B model into `~/.lean_explore` (3.0 GB, version 20260714 
 this took about 15 minutes and is not counted against `--max-time`. Budget 5 GB of disk before the
 first run. Headless stdout is block-buffered when redirected; read `<run_dir>/trace.log` instead.
 
+`fleet/run-leanstral.infer-02` and `fleet/run-leanstral.infer-03` are copies of the launchers installed
+as `/usr/local/bin/run-leanstral` on the two Worker nodes (Q6_K on both; `-t 30`, `-fa off`,
+`-ncmoe 36`, thinking forced). Install with `cp` + `chmod 755`, then `/root/verify-node.sh`.
+
+A Worker node is only usable while nothing else runs on it: the fleet's CI runners (`ghrunner`)
+collapse decode from ~11–14 tok/s to ~1.5 tok/s at `-t 36`; the launchers run `-t 30` for that
+reason, and a run's log should record `pgrep -u ghrunner -f pytest` at start and end.
+
 The Worker endpoint runs with `--chat-template-kwargs '{"reasoning_effort":"high"}'` because
 `HFClient` sends no per-request template kwargs and Leanstral's template defaults to no thinking.
 
@@ -44,6 +52,10 @@ The Worker endpoint runs with `--chat-template-kwargs '{"reasoning_effort":"high
 `<url>/v1/chat/completions`, so a `/v1` suffix yields HTTP 404 on every worker call (observed
 2026-09-20). The headless TUI in 1.0.1 also lacks `_sync_step_log_line`, which crashes the first
 spawn; the patch adds a no-op.
+
+The patch also raises the worker/verifier HTTP timeout from 600 s to 1800 s: at ~12 tok/s with
+thinking on, a verifier pass can exceed 10 minutes, and smoke test 2 lost both verifier passes to the
+600 s limit while its Lean proof had already passed `lean_verify`.
 
 Never point the endpoint at a global proxy or shell rc: the base URL lives only in this command /
 the saved `run_config.toml` of a run (global rule: per-tool base URLs only).

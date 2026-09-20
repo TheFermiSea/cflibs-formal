@@ -341,6 +341,46 @@ the Qwen control, which the dry run will price in rounds and wall-clock.
    `GZGavinZhao/Leanstral-1.5-119B-A6B-GGUF`, commit `929d4958`; Q6_K 97,669,011,200 bytes, sha256
    `96d9b908…691c58`; Q4_K_M 72,159,246,080 bytes, sha256 `8d7bdbfa…2b902`; both verified after
    download. Each OpenProver run names its node in `--provider-url`; no load balancer.
+   **Shared-node finding (2026-09-20, supersedes the single-number throughput claims above).** Both
+   Worker nodes run two GitHub Actions runners for `CF-LIBS-improved` (`/opt/ghrunner/actions-runner`
+   and `…-b`, agents `infer-0x`/`infer-0x-b`), whose pytest jobs ran nearly back to back through the
+   afternoon (`_diag/Worker_*.log`: 12:38, 12:57, 13:56, 14:45, 15:25, 16:48, 17:30, 17:49, 18:10 UTC).
+   Decode is DRAM-bound and the launcher takes all 36 vCPUs, so a co-tenant using one or two cores
+   collapses it: with a pytest job running, both nodes measured 1.4–1.7 tok/s (Q6_K on infer-02,
+   Q4_K_M on infer-03); with that job paused (`SIGSTOP`, then resumed) infer-02 went to 4.7 tok/s
+   while a 98 GB `rsync` was still reading its disk, and to 10.7 tok/s once the copy had finished.
+   This, not the quantization or the harness, is why smoke test 2 lost both verifier passes to the
+   600 s timeout and why the cumulative decode rate inside OpenProver runs read 2.6 tok/s.
+   Same-node comparison on infer-03 with no co-tenant (`bench_cachebust.py`, 150-token answers):
+
+   | file | decode tok/s | prefill tok/s |
+   |---|---|---|
+   | Q4_K_M (default repack) | 12.9 | 82 |
+   | Q4_K_M (`--no-repack`) | 4.2–5.8 (noisy; copy finishing) | 78 |
+   | Q6_K | 10.5 | 71 |
+
+   So Q4_K_M is ~20 % faster than Q6_K and the earlier 1.5 tok/s reading on it was entirely the
+   co-tenants. Decision: quality > tok/s (owner rule), so **Q6_K stays on both nodes**; Q4_K_M is kept
+   on infer-03's disk as `run-leanstral.q4`. Operational rule that follows: a Worker measurement or
+   run is valid only if no CI job was active on that node during it (check
+   `pgrep -u ghrunner -f pytest`); the CI runners' placement on the Worker nodes is an owner decision
+   (options: move the runners, or pin them with a cpuset and leave llama-server thread headroom; the
+   `-t 30` headroom experiment is recorded next).
+   **Thread-headroom experiment (infer-03, Q6_K, 2026-09-20).** Two pure-CPU hog processes
+   (`python3 -c 'while True: pass'`) stand in for a CI job:
+
+   | `-t` | co-tenant | decode tok/s | prefill tok/s |
+   |---|---|---|---|
+   | 36 | two busy cores | 1.4 | 40 |
+   | 30 | two busy cores | 11.4 | 49 |
+   | 30 | none | 14.1 | 71 |
+   | 36 | none | 10.5 | 71 |
+
+   With every vCPU claimed, one preempted thread stalls llama.cpp's per-token barrier for all the
+   others; six threads of headroom removes the cliff and is faster even on an idle node. Both
+   launchers now run `-t 30`. The fleet's other launchers (`run-qwen38`, `run-glm53`, `run-frontis`,
+   `run-flashnext`) still carry `-t 36` and share the same CI runners; that is the owner's call, but the
+   same cliff should be assumed until measured.
    Smoke test 1/5 (`lorentzianG_pos`, restated with a local def so recall of the repo lemma is not
    available; 2026-09-20): three launches were needed before the loop ran, each a harness defect now
    fixed by `tools/openprover/patch_local_alias.py` (Claude CLI ≥ 2.1 JSON shape; headless TUI

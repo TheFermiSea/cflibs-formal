@@ -55,3 +55,13 @@ patch(hl, [
     ('    def cleanup(self):\n        pass\n',
      '    def cleanup(self):\n        pass\n\n    def _sync_step_log_line(self, step_idx: int):\n        pass  # prover.py calls this on spawn; 1.0.1 only implements it on the curses TUI\n'),
 ])
+# Worker/verifier HTTP calls: 1.0.1 hard-codes urlopen(timeout=600) at four sites. A local MoE at
+# ~12 tok/s with reasoning_effort=high routinely needs more than 10 minutes per call (smoke test 2
+# lost both of its verifier passes to this timeout), so raise all of them to 30 minutes.
+_t = hf.read_text()
+if "timeout=1800" in _t:
+    print(f"already patched (timeouts): {hf}")
+else:
+    assert _t.count("urlopen(req, timeout=600)") == 4, "expected four 600 s urlopen sites in hf.py"
+    hf.write_text(_t.replace("urlopen(req, timeout=600)", "urlopen(req, timeout=1800)  # was 600; local Worker at ~12 tok/s"))
+    print(f"patched (timeouts): {hf}")

@@ -1,0 +1,34 @@
+#!/bin/bash
+# Leanstral 1.5 (119B-A6B MoE, Q6_K) on infer-02 — the cflibs-formal proof Worker endpoint.
+# Shape copied from run-deepseek (the fleet's MoE template); see docs/spec/04 §10.4 in cflibs-formal.
+#
+#   MoE, 128 experts / 4 active, 6.5B activated per token. Decode is DRAM-bound (~92 GB/s measured):
+#   expect ~15 tok/s at Q6_K, ~20-25 at Q4_K_M. numactl --interleave=all is mandatory (+35% decode).
+#   -ngl 999 -ncmoe N   non-expert weights + shared experts + KV on the V100S; N routed-expert layers
+#                       on CPU. Overflow fails at CONTEXT CREATION, not at load: start high, lower until
+#                       it fails, back off one.
+#   -fa off             -fa on aborts on sm_70 at first compute (CUDA 'invalid argument' in
+#                       ggml_cuda_flash_attn_ext_mma_f16_case, b10326, 2026-09-20); no -ctk/-ctv.
+#   -c 65536            OpenProver worker contexts are long (whiteboard + Lean feedback); 64k is the
+#                       starting point, raise once KV headroom is measured.
+#   --jinja             required for the embedded Mistral chat template and tool-call parsing.
+#   -t 30               NOT 36: with all 36 vCPUs claimed, any co-tenant (the node's CI runner, an rsync)
+#                       stalls the thread barrier and decode drops ~8x (1.4 tok/s measured with two busy
+#                       cores at -t 36; 11.4 at -t 30; 14.1 idle at -t 30 vs 10.5 idle at -t 36, 2026-09-20).
+#                       --no-op-offload, --load-mode mlock, -b/-ub as on run-deepseek.
+#   No speculation flags until measured cache-busted with tools/bench_model_aba.py.
+#   Geometry (params.json): 36 layers, 128 routed experts x 4 active + 1 shared, expert_hidden 2048,
+#   MLA attention (kv_lora_rank 256). Routed experts ~2.6 GB/layer at Q6_K; everything else ~4 GB.
+#   -ncmoe 36 = all routed experts on CPU: 12.5 GB VRAM used, 12.5 tok/s decode / 59 tok/s prefill
+#   (cache-busted, tools/bench_cachebust.py, 2026-09-20). -ncmoe 30 (six expert layers on the card,
+#   27.7 GB VRAM) measured 10.5 tok/s decode / 70 tok/s prefill: decode LOST 16%, so 36 stays.
+#   --chat-template-kwargs reasoning_effort=high: the template defaults to 'none' (no [THINK] block,
+#   reasoning_content null); 'high' is the only other value it accepts. Set at the server so every
+#   client (OpenProver's HFClient sends no chat_template_kwargs) gets the thinking mode.
+#   Port 8082 (8081 = qwen38 and deepseek on their nodes).
+exec numactl --interleave=all /opt/llama.cpp-master/build/bin/llama-server \
+  -m /mnt/models/Leanstral-1.5/Leanstral-1.5-119B-A6B-Q6_K.gguf \
+  -ngl 999 -ncmoe 36 -fa off -t 30 \
+  --no-op-offload -b 4096 -ub 1024 --load-mode mlock \
+  -c 65536 --jinja --chat-template-kwargs '{"reasoning_effort":"high"}' --metrics --alias leanstral \
+  --host 0.0.0.0 --port 8082 "$@"
