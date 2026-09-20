@@ -57,7 +57,8 @@ is treated as no output.
 
 1. Pre-registration is `PASS FROZEN` and predates the Lean file (`prereg.sh audit`).
 2. The Target-Reviewer verdict on the frozen statement is recorded and FAITHFUL.
-3. Reduction theorems (S7, E1) close by `rfl`/`simp`, not by re-proving.
+3. Reduction theorems (S7, E1) close by unfolding plus their stated lemma route, with no hypotheses
+   beyond those in the frozen statement; they must not re-prove the theorem they reduce to.
 4. Mutants listed in the acceptance section are all killed; the run log is attached.
 5. `#print axioms` on each headline theorem, pasted.
 6. Docstring claims ≤ theorem; scope tag matches the table in §3; `## Literature` uses the whitelist.

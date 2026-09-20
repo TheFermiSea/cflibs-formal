@@ -20,7 +20,7 @@ it has a unique positive solution.
 
 ```
 /-- Π_{j<z} S j : neutral→stage-z Saha product (dimensionless in the ℝ core). -/
-def sahaStageProduct (S : ℕ → ℝ) : ℕ → ℝ
+noncomputable def sahaStageProduct (S : ℕ → ℝ) : ℕ → ℝ
   | 0     => 1
   | z + 1 => sahaStageProduct S z * S z
 
@@ -50,7 +50,7 @@ Convention lock (add to `docs/conventions.md` §Saha): `S z` is the Saha factor 
 | S4 | `speciesCharge_lt_Z_mul_Ntot : speciesCharge … ne < Z * Ntot` and `0 < speciesCharge … ne` | PURE-MATH | A |
 | S5 | `cascade_exists_pos_fixedPoint : ∃ ne, 0 < ne ∧ ne = totalIonizedCharge Z S Ntot ne` | PURE-MATH | B |
 | S6 | `cascade_pos_fixedPoint_unique` | PURE-MATH | A given S3 |
-| S7 | `totalIonizedCharge_Z_one : (∀ s, Z s = 1) → totalIonizedCharge Z S Ntot ne = multiElementIonized (fun s => S s 0) Ntot ne` | EXACT (reduction) | A |
+| S7 | `totalIonizedCharge_Z_one : 0 < ne → (∀ s, 0 < S s 0) → (∀ s, Z s = 1) → totalIonizedCharge Z S Ntot ne = multiElementIonized (fun s => S s 0) Ntot ne` — both positivity hypotheses are load-bearing: at `ne = 0` Lean's totalized division makes the LHS `0` while the RHS is `∑ Ntot` | EXACT (reduction) | A |
 | S8 | `cascade_residual_enclosure : 0 < x → \|x − ne*\| ≤ \|x − totalIonizedCharge Z S Ntot x\|` | PURE-MATH | B |
 | S9 | Physics binding: with `S s z := sahaFactor kB T me h (χ s z) (g s z) (E s z) (g s (z+1)) (E s (z+1))`, S5/S6 give the unique LTE charge-neutral `n_e` at fixed `T` | EXACT (Saha–Eggert) | A |
 
@@ -78,8 +78,10 @@ any "Saha cascade" paper from memory; if one is wanted, route through `citation-
 
 ### 1.6 Acceptance
 Green; `#print axioms` clean; `mutate-check.sh` kills: `<` → `≤` in S3, drop `0 < ne`, drop
-`1 ≤ Z`, `x − Q x` → `Q x − x` in S8; S7 typechecks *definitionally* (`rfl` or `simp` only) so the
-reduction is not a re-proof; scope-tag rows; `C15` and Scenario 7 (below).
+`1 ≤ Z`, `x − Q x` → `Q x − x` in S8, drop `0 < ne` in S7 (must fail: the totalized `ne = 0` case
+breaks the identity); S7 closes by unfolding plus the §1.4 route (`Finset.sum_range_succ`, `field_simp`)
+with no hypotheses beyond those in the frozen statement, so the reduction is a computation, not a
+re-proof of `SahaEquilibrium`; scope-tag rows; `C15` and Scenario 7 (below).
 
 ### 1.7 Pre-registration draft (freeze before Lean)
 ```
