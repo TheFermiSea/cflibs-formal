@@ -381,6 +381,17 @@ the Qwen control, which the dry run will price in rounds and wall-clock.
    launchers now run `-t 30`. The fleet's other launchers (`run-qwen38`, `run-glm53`, `run-frontis`,
    `run-flashnext`) still carry `-t 36` and share the same CI runners; that is the owner's call, but the
    same cliff should be assumed until measured.
+   **Answer-reserve finding (smoke tests 2–5, first attempts, 2026-09-20).** With the nodes idle and
+   the 1800 s timeout in place, all four remaining smoke tests still ended `not_proved`, and the
+   archived worker calls show the same shape every time: `finish_reason: length` at exactly 4096
+   completion tokens with empty content and 11–18 k characters of `reasoning_content`. OpenProver's
+   `HFClient` sets the per-call `max_tokens` to `--answer-reserve` (default 4096) for OpenAI-style
+   backends, and Leanstral's thinking alone uses 3–4.5 k tokens, so the answer never fits; the
+   "Phase 2" retry ("your response was cut off") re-thinks and hits the cap again. In the test-2
+   rerun the Worker had already produced a correct proof that passed `lean_verify` (re-verified by
+   the lead: axiom-clean, statement identical) but could not return it. Fix: `--answer-reserve 12288`
+   on every run (no code change); a server-side `--reasoning-budget` is the fallback if thinking
+   still overruns. Attempt history per test is kept under the run directory's `old/`.
    Smoke test 1/5 (`lorentzianG_pos`, restated with a local def so recall of the repo lemma is not
    available; 2026-09-20): three launches were needed before the loop ran, each a harness defect now
    fixed by `tools/openprover/patch_local_alias.py` (Claude CLI ≥ 2.1 JSON shape; headless TUI

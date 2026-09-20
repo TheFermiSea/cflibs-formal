@@ -28,7 +28,7 @@ for f in lakefile.toml lean-toolchain lake-manifest.json .lake; do ln -sfn "$R/$
   --planner-model sonnet --worker-model leanstral-local \
   --provider-url http://10.0.0.27:8082 \
   --lean-project "$P" --lean-theorem <statement-only .lean file> --theorem <dossier .md> \
-  --max-time 2h
+  --answer-reserve 12288 --max-time 2h
 ```
 
 First run with `--lean-project` (which auto-enables the worker tools) installs `lean-explore`,
@@ -52,6 +52,10 @@ The Worker endpoint runs with `--chat-template-kwargs '{"reasoning_effort":"high
 `<url>/v1/chat/completions`, so a `/v1` suffix yields HTTP 404 on every worker call (observed
 2026-09-20). The headless TUI in 1.0.1 also lacks `_sync_step_log_line`, which crashes the first
 spawn; the patch adds a no-op.
+
+`--answer-reserve 12288` is mandatory with Leanstral: the flag is also the per-call `max_tokens` for
+OpenAI-style workers, and the default 4096 is consumed by thinking alone (every failed smoke-test turn
+ended `finish_reason: length` at 4096 completion tokens with empty content).
 
 The patch also raises the worker/verifier HTTP timeout from 600 s to 1800 s: at ~12 tok/s with
 thinking on, a verifier pass can exceed 10 minutes, and smoke test 2 lost both verifier passes to the
