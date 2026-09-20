@@ -16,15 +16,15 @@ statement that a seeded-drift red team would have caught, and cannot weaken a pr
 without a recorded Refiner note.** If either happens, the harness has failed, regardless of how many
 theorems it closed.
 
-## 2. Tool stack (all available today)
+## 2. Tool stack (available today unless marked *to install in Phase 0*)
 
 | Layer | Tool | Role |
 |---|---|---|
 | Agent | Claude Code (the tool this repo has been developed with) | general coding agent; model-swappable |
-| Lean tools | `lean-lsp-mcp` (goals, diagnostics, hover, `leansearch`, `loogle`) + the `lean4-skills` plugin; in-repo `lean:lean-proof` skill | the "Prover with Lean tools" pattern of Numina-Lean-Agent / Ax-Prover / Ilin |
+| Lean tools | `lean-lsp-mcp` (goals, diagnostics, hover, `leansearch`, `loogle`) and the `lean4-skills` plugin — *to install in Phase 0* (no `.mcp.json` in the repo and no `lean-lsp` server configured as of 2026-09-20; only the `lean@leanprover` plugin is installed); the `lean:lean-proof` plugin skill is already available | the "Prover with Lean tools" pattern of Numina-Lean-Agent / Ax-Prover / Ilin |
 | Checking | `lake env lean <file>` only (never `lake build` from a worker); `#print axioms`; `scripts/mutate-check.sh`; `scripts/prereg.sh`; `lake exe axiom-audit`; `lake exe runLinter`; `scripts/stats.sh`; `scripts/kernel-replay.sh` | the gates |
 | Review | `.claude/agents/lean-statement-audit.md` (read-only adversarial statement auditor); `.claude/skills/citation-integrity` | the Target-Reviewer and literature gate |
-| Isolation | `git worktree` per worker; `EnterWorktree` in Claude Code | LeanMarathon/AutoformBot worker isolation |
+| Isolation | `git worktree` per worker for *edits*; typechecking runs from the lead checkout (`cd <lead repo root> && lake env lean <absolute path to the worktree file>`), because `.lake` is gitignored and a fresh worktree has no oleans — this is the pattern `scripts/mutate-check.sh` already uses. A worker's new file may import only modules already built in the lead's `.lake` | LeanMarathon/AutoformBot worker isolation |
 | Literature | `asta papers`, NotebookLM MCP, arXiv fetch | grounding for `## Literature` |
 | Outside closers (optional, gated) | Aristotle, SorryDB participants | lemma closing and, more usefully, **disproving** false lemmas |
 
@@ -35,12 +35,19 @@ theorems it closed.
    `sorry`, and a LaTeX-level proof sketch in the dossier. Never writes tactics.
 2. **Target-Reviewer.** The `lean-statement-audit` agent, run **read-only** on the statement-only file
    *before any proof search*. Compares three objects: the dossier statement, the docstring, the Lean
-   type. Verdict: FAITHFUL / DRIFT (with the drift class) / VACUOUS / NARROWER-THAN-DOCSTRING. A DRIFT
-   verdict returns the file to the Blueprinter. This is LeanMarathon's Target-Reviewer with this repo's
+   type. Verdicts use the agent's own vocabulary (`passed` / `gaps_found` / `human_needed`,
+   `.claude/agents/lean-statement-audit.md:105–117`), with the drift class named in the report body
+   (dropped positivity, totalization vacuity, strict/non-strict flip, convention drift, wrong reduction
+   target, definition misalignment, narrower than docstring). `gaps_found` returns the file to the
+   Blueprinter. Two Phase-0 fixes to the agent file are required before it can serve: its frontmatter
+   currently grants `Write, Edit`, which must be removed so the reviewer is read-only, and its report
+   template must carry the drift-class field. This is LeanMarathon's Target-Reviewer with this repo's
    scope-tag vocabulary.
 3. **Worker.** One theorem per worktree. May add private lemmas. May **not** add hypotheses to a
    preregistered statement, change a definition, raise `maxHeartbeats`, or touch `docs/`. Stopping rule:
-   N failed rounds (default 12) or budget. Reports the exact `lake env lean` output, never a summary.
+   N failed rounds per theorem, where N = ⌊module round budget / number of statements⌋ with a floor of 3
+   (so 9 cascade statements under the 40-round module budget give N = 4), or the module budget.
+   Reports the exact `lake env lean` output, never a summary.
 4. **Refiner.** May change the blueprint (split a lemma, add a hypothesis) only with a written
    note `docs/preregistrations/<file>.md § Deviations`, which re-triggers the Target-Reviewer.
 5. **Lead (human or lead agent).** Runs every gate personally; trusts no self-report; commits.
@@ -49,15 +56,16 @@ theorems it closed.
 
 ```
 DOSSIER ──► PREREG (prereg.sh freeze) ──► STATEMENT FILE (sorry) ──► TARGET-REVIEW
-   ▲                                                                       │ DRIFT
+   ▲                                                                  │ gaps_found
    └───────────────────── Refiner note + re-review ◄───────────────────────┘
-                                                                           │ FAITHFUL
+                                                                           │ passed
                                                                            ▼
                                  WORKER (worktree, lake env lean, budget) ──► green?
                                                                            │ yes
                                                                            ▼
    MUTATE-CHECK ──► AXIOM-AUDIT ──► RUNLINTER ──► STATS ──► ORACLE DIFF ──► SCOPE-TAG ROW
-   ──► GEN-DOCS ──► PREREG AUDIT (PASS FROZEN) ──► STATEMENT AUDIT (final) ──► COMMIT
+   ──► GEN-DOCS ──► PREREG AUDIT (`prereg.sh audit --results <module>.lean`, reports `PASS  FROZEN`)
+   ──► STATEMENT AUDIT (final) ──► COMMIT
 ```
 
 Any red at any gate returns to the Worker, never skips forward. A statement that only closes after a
@@ -75,13 +83,15 @@ at least four drifted variants:
 | Dropped positivity | remove `0 < ne`, `0 < γ`, `0 < Ntot` | Ilin (hypothesis creep), Faults paper |
 | Totalization vacuity | a ratio that is `0` when the denominator is `0`; `Finset.sum` over an empty range; `ne ^ z` at `ne = 0` | LeanMarathon Target-Reviewer catches |
 | Strict/non-strict flip | `StrictAntiOn` → `AntitoneOn`; `<` → `≤` | this repo's mutate-check |
-| Convention drift | `log₁₀` for `Real.log`; `λ⁻¹` for `λ⁻³`; Saha bracket sign; `ℕ` exponent where `ℝ` power was meant | `docs/conventions.md` §1–§4 |
+| Convention drift | `log₁₀` for `Real.log` (§1); wrong partition normalization or ground-level reference (§2); `g` folded into `A` (§3); `f` for `A` (§4); thermal-bracket unit mismatch (§6); `λ⁻¹` for `λ⁻³` in the ordinate (§7); `ℕ` exponent where `ℝ` power was meant | `docs/conventions.md` §1–§4, §6, §7 |
 | Wrong reduction target | S7 reducing to `sahaEquilibriumNe` instead of `multiElementIonized` | blueprint audit 01 §1.3 |
 | Definition misalignment | `ContDiff ℝ ⊤` for `C^∞`; `Real.sqrt` of a possibly negative argument; `Finset.range Z` vs `range (Z+1)` | Ilin, Faults paper |
 | Narrower than docstring | docstring says "all stages", statement fixes `Z = 2` | this repo's scope audit |
 
-Pass criterion: every drifted variant is flagged with the correct class and the faithful one is accepted,
-over two independent runs. Record the run in `docs/spec/redteam/<date>.md`. **If the reviewer fails,
+Blinding: the variants are authored by the lead or by a separate agent, never by the reviewer's own
+session; the reviewer receives them unlabeled, in shuffled order, one file each, and its verdicts are
+compared with the labels only afterwards. Pass criterion: every drifted variant is flagged with the
+correct class and the faithful one is accepted, over two independent runs. Record the run in `docs/spec/redteam/<date>.md`. **If the reviewer fails,
 that is the finding; no pilot proceeds.** Repeat the red team whenever the reviewer prompt or model
 changes.
 
@@ -128,7 +138,9 @@ The Faults-in-Benchmarking paper's checkers (unsatisfiable hypotheses, counterex
 `mutate-check.sh`. Implement as `scripts/vacuity-check.sh`: for each new theorem, generate a probe file
 that (i) tries `exact absurd` / `omega` / `positivity` / `nlinarith` on the hypotheses alone to derive
 `False`, (ii) flags `/`, `-` on `ℕ`, `Real.sqrt`, `Real.log` applied to unconstrained arguments, (iii)
-runs `runLinter unusedArguments`. mathlib-only, no new dependency. Cost: medium.
+runs `lake exe runLinter CflibsFormal.<Module>` and greps the output for `unusedArguments` (the
+Batteries `runLinter` takes module names only, not a linter selector; `#lint only unusedArguments` in
+a probe file is the alternative). mathlib-only, no new dependency. Cost: medium.
 
 ### 7.5 Disprove-first
 Ilin's project used Aristotle to *disprove* 28 false conjectures before proving the true ones. Add a
@@ -163,10 +175,13 @@ This is the one place this repo can push the autoformalization literature rather
 ## 8. Pilots (in order)
 
 1. **Reviewer red team** (§5) on S3, L2, K2 and the stoichiometry corollary. Gate for everything below.
-2. **Frontier 02/07 dry run** on already-closed theorems: hand the harness the dossier text of
-   `sahaFactor_strictMonoOn_temp` and `equivWidth_lorentzian_sqrt_sharp` *without* the Lean, and
-   measure whether it reproduces the preregistered statements faithfully and closes them within budget.
-   Ground truth exists, so this is the only pilot with a known answer.
+2. **Frontier 02/07 dry run** on already-closed theorems: `sahaFactor_strictMonoOn_temp` and
+   `equivWidth_lorentzian_sqrt_sharp`. This pilot measures the **Worker** (proof closing within budget),
+   not statement faithfulness: the statement is given, and the red team in §5 is the faithfulness test.
+   To keep it uncontaminated, give the Worker a *copy* of the module with every proof body replaced by
+   `sorry` and the private lemmas removed, typechecked against the lead's built `.lake` (checking out an
+   older commit would need a full rebuild, since `.lake` is gitignored); the dossier text may be supplied. Ground truth exists, so
+   this is the only pilot with a known answer.
 3. **SahaCascade** (03 §1) as the first live module.
 4. **ContinuousProfile** (03 §2), then **SpectrometerForward** (03 §3).
 

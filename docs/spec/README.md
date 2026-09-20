@@ -1,4 +1,4 @@
-# cflibs-formal — Development Specification (v0.1, 2026-09-20)
+# cflibs-formal — Development Specification (v0.2, 2026-09-20)
 
 This directory is the **working specification** for the next phase of `cflibs-formal`. It replaces the
 two Google-Docs drafts ("Lean 4 Scientific Autoformalization", "Revised Architectural Blueprint:
@@ -35,6 +35,39 @@ spec is published for reading only.
 3. Dimensionless `ℝ` core; `Dimensions.lean` is additive and never wired into the core.
 4. Honest scoping: the statement is audited, not just the compile. A green proof of the wrong
    statement is worthless.
+
+## How this spec is maintained (it is a living document)
+
+- **Where it lives.** `docs/spec/` on branch `docs/formalization-spec`, tracked by a **draft PR** that
+  stays open as the mutable guide. Discussion happens in PR review comments; agreed changes land as
+  commits on the branch. The PR is never merged as-is; when a phase completes, the durable parts
+  (module docstrings, `docs/frontiers/*` dossiers, `docs/conventions.md`, `CONTEXT.md`) are updated on
+  `main` through their own PRs, and the spec's status table is updated here.
+- **Versioning.** Bump the version in this file's title and add a line to the change log below whenever
+  a statement, tag prediction, budget, or decision changes. Never edit a frozen pre-registration; write a
+  deviation note instead (`scripts/prereg.sh` header explains why).
+- **Drive copies.** The Google-Docs copies ("cflibs-formal spec 00..06") are read-only snapshots and go
+  stale; the branch is canonical. Re-export after a version bump if the Docs copies are being read.
+- **What may not change without a decision by the repo owner:** the four non-negotiables; a scope tag
+  from REDUCED/APPROXIMATION up to EXACT; adding any dependency; the refusals list in `06-milestones.md`.
+
+### Decisions pending (owner's call; the spec proceeds under the stated default)
+
+| # | Decision | Default assumed here | Where it matters |
+|---|---|---|---|
+| D1 | Instrument model: abstract kernel with the companion's Gaussian IRF as first instance, vs. Gaussian-only | abstract kernel | `03` §3.2 |
+| D2 | Where the stoichiometry corollaries live: `MatrixEffects.lean` vs. `TemporalEvolution.lean` | `MatrixEffects.lean` | `03` §4 |
+| D3 | Whether to run the Frontier 02/07 dry run (costs a budget, has ground truth) before the cascade | yes | `04` §8, `06` Phase 0 |
+| D4 | Budget ceilings per phase | as listed in `06` | `06` |
+| D5 | Whether to submit the Saha seed to PhyslibAlpha in this cycle or defer | defer to Phase 5 | `04` §7.8, `docs/upstream-physlib-plan.md` |
+
+### Change log
+
+| Version | Date | Change |
+|---|---|---|
+| v0.1 | 2026-09-20 | Initial seven-file spec; blueprint audit; harness design |
+| v0.1.1 | 2026-09-20 | S7 reduction statement: added `0 < ne` (load-bearing); acceptance wording for reductions corrected. (The `0 < S s 0` added at the same time was found unnecessary in v0.2 and removed.) |
+| v0.2 | 2026-09-20 | Deep review pass: mathlib lemma names verified and pinned (`LinearMap.ker_eq_bot`, `integral_sub_right_eq_self` via `to_additive`, Chebyshev lemma names), S4 hypotheses stated, S5/S6/S8 binders (incl. `[Nonempty κ]`) and S9 index-type design corrected, S7's unnecessary `S`-positivity removed, `λ` identifiers renamed `lam`, Gershgorin cited for K4, K3 injectivity dropped, L1 weakened to `0 ≤ γ`, G4 Doppler binding added, third stoichiometry theorem dropped, worktree/olean and reviewer-vocabulary/tooling facts corrected, prereg audit scoping and runLinter invocation corrected, red-team blinding and dry-run contamination control added, maintenance and decisions sections added; independently audited (21 findings, all applied); the draft PR that carries this spec was opened with this version |
 
 ## One-paragraph summary of the plan
 

@@ -3,7 +3,9 @@
 ## 1. As-is (verified against the tree at `5daee7c`)
 
 **Scale.** 81 modules (73 core + 8 `Alt/`), 751 axiom-clean named results, 217 defs; 12 runtime
-certificates; 6 oracle scenarios; 751 scope-tag rows.
+certificates; 6 oracle scenarios; 751 scope-tag rows. Counts are `scripts/gen-docs.sh`'s; `scripts/stats.sh`
+prints 752 because its regex also matches a docstring line beginning "theorem says" in
+`ConformalCoverage.lean:88` (a tool bug to fix, not a missing result).
 
 **Layers (bottom to top).** Every arrow is an import; the DAG is acyclic by construction.
 
@@ -43,8 +45,9 @@ mathlib
 **The two bridges to the numerical pipeline** (`../CF-LIBS-improved`):
 - *Oracle:* `oracle/Generate.lean` mirrors Lean ℝ definitions in `Float`, emits `fixtures.json`;
   `check_fixtures.py` re-checks it; the companion vendors the certificates scenario byte-for-byte.
-- *Certificates:* `Certificates.lean` defines `…Cert : Prop` as pure float arithmetic plus a
-  soundness theorem `cert → guarantee`; the companion's `certificate_gate.py` evaluates them as hard
+- *Certificates:* `Certificates.lean` defines `…Cert : Prop` as an exact-ℝ arithmetic predicate plus a
+  soundness theorem `cert → guarantee`, mirrored in float by `check_fixtures.py` and the companion
+  (the header's R6 caveat: near a threshold the float verdict may disagree with the ℝ one); the companion's `certificate_gate.py` evaluates them as hard
   in-loop rejects during algorithm search.
 
 ## 2. Target architecture (this spec)
