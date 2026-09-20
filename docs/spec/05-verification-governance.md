@@ -49,8 +49,9 @@ is treated as no output.
 - No `set_option maxHeartbeats` above the default without a comment stating why and a Refiner note.
 - No hypothesis may be added to a frozen statement; Refiner deviations are written to the
   pre-registration file and re-trigger the statement review.
-- Output of an external closer (Aristotle, SorryDB, any API prover) is accepted only after local
-  `axiom-audit` and kernel replay; its provenance is recorded in the commit message.
+- Output of any non-Lead prover — the local Worker model, an external closer (Aristotle, SorryDB, any
+  API prover) — is accepted only after local `axiom-audit` and kernel replay; its provenance (model,
+  quant, harness version, round count) is recorded in the commit message.
 - Every new headline theorem ships with a `nonvacuity_*` instance and an oracle row (04 §7.2).
 - A `sorry`-bearing statement file may exist only in a worktree, never on a branch pushed to `origin`.
 

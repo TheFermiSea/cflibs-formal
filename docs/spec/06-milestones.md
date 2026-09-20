@@ -1,17 +1,25 @@
 # 06 — Milestones, budgets, deferrals
 
-Budgets follow the 2026 cost data (a research-theorem-sized formalization: order $200–$700 in agent
-spend, 2–4 days wall clock, provided mathlib has the prerequisites). Each phase has entry and exit
-criteria; nothing advances on a self-report.
+Budgets are in Worker rounds, wall-clock and node-hours (decision D4 as re-expressed after D6: the
+Worker runs on the owner's infer-0x fleet at near-zero marginal cost; the subscription pays only for
+orchestration and review). The 2026 literature's $200–$700 per research theorem is the external
+reference the round caps were derived from. Each phase has entry and exit criteria; nothing advances
+on a self-report.
 
 ## Phase 0 — Harness readiness (gate for everything)
 - **Entry:** the draft PR carrying this spec is open and the owner has signed off on decisions D1–D5
   in the README table (done 2026-09-20); `lean-lsp-mcp` and `lean4-skills` installed; worktree workflow tested.
-- **Work:** make `lean-statement-audit` read-only (drop `Write, Edit`) and add the drift-class field to its
-  report; then red-team it (04 §5) on S3, L2, K2, stoichiometry; record
-  `docs/spec/redteam/<date>.md`. Frontier 02/07 dry run (04 §8.2) with ground truth.
-- **Exit:** reviewer passes two independent red-team runs; dry run reproduces both frozen statements
-  faithfully. If the reviewer fails: stop, fix, re-run. Budget: $150, 3 days.
+- **Work (two parallel tracks):**
+  - *Reviewer track (Claude):* `lean-statement-audit` made read-only with the drift-class field (done
+    2026-09-20); blinded red team (04 §5) on S3, L2, K2, stoichiometry; record `docs/spec/redteam/<date>.md`.
+  - *Worker track (local):* deploy Leanstral 1.5 per 04 §10.4 on one idle infer node (advisor gate before
+    touching it); `verify-node.sh` byte-identical on all three; cache-busted throughput at Q6_K and Q4_K_M;
+    vendor and patch OpenProver; 5-theorem smoke test on sorry'd copies; then the Frontier 02/07 dry run
+    (04 §8.2) as an A/B against the Qwen3.8-27B control.
+- **Exit:** reviewer passes two independent red-team runs; the Worker closes both frozen frontier
+  statements within the round cap on at least one quant; throughput and closure rate recorded here.
+  If the reviewer fails: stop, fix, re-run. Budget: 3 days wall-clock, one node dedicated; subscription
+  spend for orchestration only.
 
 ## Phase 1 — `SahaCascade.lean` (P0)
 - **Entry:** Phase 0 exit; pre-registration frozen (03 §1.7); a new §8 Saha-stage convention added to `docs/conventions.md`.
@@ -19,14 +27,14 @@ criteria; nothing advances on a self-report.
 - **Exit:** all acceptance items in 03 §1.6; C15 and Scenario 7(a); scope-tag rows; CONTEXT counts.
 - **Deferred inside the phase:** any cascade *iteration* convergence; T-dependence of `ne*`. Both get
   their own dossier later (they compound Frontiers 02–04).
-- Budget: $300, 4 days.
+- Budget: 40 Worker rounds per module, 4 days wall-clock, one node.
 
 ## Phase 2 — `ContinuousProfile.lean` (P1)
 - **Entry:** Phase 1 exit (not a logical dependency, a sequencing choice); pre-registration frozen.
 - **Work:** L1–L3, G1–G4, E1 (A); V1–V2 (B). Docstring caveat V3.
 - **Exit:** 03 §2.5; `Dimensions.lean` rows for `φ` and `∫ φ`; scope-tag rows.
 - **Refused:** Faddeeva / complex error function representation; any Voigt FWHM equality.
-- Budget: $200, 3 days.
+- Budget: 40 Worker rounds, 3 days wall-clock, one node.
 
 ## Phase 3 — `SpectrometerForward.lean` (P2)
 - **Entry:** Phase 2 exit; pre-registration frozen; the companion's `InstrumentModel` parameters read
@@ -35,7 +43,7 @@ criteria; nothing advances on a self-report.
 - **Exit:** 03 §3.5; C16 and Scenario 7(b–c); `Dimensions.lean` kernel row.
 - **Deferred:** condition number of `K` (new frontier dossier, mirrors Frontier 06); self-absorbed
   pixel model (depends on Frontier 09).
-- Budget: $300, 4 days.
+- Budget: 40 Worker rounds, 4 days wall-clock, one node.
 
 ## Phase 4 — Stoichiometry corollaries, integration, docs (P3–P6)
 - **Work:** the two theorems of 03 §4 in `MatrixEffects.lean`; Scenario 7 completed and vendored
@@ -44,7 +52,7 @@ criteria; nothing advances on a self-report.
   the deferred items.
 - **Exit:** all gates green on `main`; a short `reviews/` note recording the statement audits of
   Phases 1–3.
-- Budget: $100, 2 days.
+- Budget: 2 days wall-clock (no Worker rounds; docs and oracle work).
 
 ## Phase 5 — Faithfulness tooling and upstream (the boundary-pushing part)
 Ordered by value / cost from 04 §7; each is its own PR.
