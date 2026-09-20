@@ -227,11 +227,16 @@ renaming of boltzmannDesign_mulVec_injective_iff.
 def preservesStoichiometry {κ} (C N : κ → ℝ) : Prop :=
   ∀ s₁ s₂, C s₂ ≠ 0 → N s₁ / N s₂ = C s₁ / C s₂
 
-theorem preservesStoichiometry_iff_smul [Nonempty κ] (hC : ∀ s, 0 < C s) :
+theorem preservesStoichiometry_iff_smul (hC : ∃ s, C s ≠ 0) :
     preservesStoichiometry C N ↔ ∃ c ≠ 0, N = fun s => c * C s                    -- PURE-MATH, A
-theorem composition_of_preservesStoichiometry (hC) (hsum : ∑ s, C s = 1) (h : preservesStoichiometry C N) :
+theorem composition_of_preservesStoichiometry (hsum : ∑ s, C s = 1) (h : preservesStoichiometry C N) :
     composition N = C                                                              -- EXACT, A
 ```
+No positivity hypothesis on `C` and no `[Nonempty κ]`: `∑ C = 1` supplies a coordinate `s₀` with
+`C s₀ ≠ 0`; the predicate at `s₂ = s₀` forces `N s₀ ≠ 0` (else every `C s₁` would be `0`) and
+`N = (N s₀ / C s₀) • C`, so `composition_smul_invariant` closes it. An earlier draft carried
+`∀ s, 0 < C s`; it was decorative (the red-team pre-check of 2026-09-20 caught it), and a hypothesis
+the proof never uses is a docstring over-claim.
 A third theorem tying the cascade's per-species totals to this predicate was considered and dropped:
 `Ntot s` is an *input* of `SahaCascade`, so "`Σ_z N_{s,z} = Ntot s`" is S1 restated, and stating it in
 `MatrixEffects.lean` would pull `SahaCascade` into that module's import cone for no content.
