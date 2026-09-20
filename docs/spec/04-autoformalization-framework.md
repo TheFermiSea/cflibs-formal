@@ -189,7 +189,7 @@ This is the one place this repo can push the autoformalization literature rather
 2. **Frontier 02/07 dry run** on already-closed theorems: `sahaFactor_strictMonoOn_temp` and
    `equivWidth_lorentzian_sqrt_sharp`, run as an A/B: **Leanstral 1.5 (Q6_K, then Q4_K_M)** against the
    **Qwen3.8-27B control** already on the fleet, same harness, same round cap, cache-busted prompts
-   (`tools/bench_model_aba.py` discipline: repeated prompts inflate llama.cpp speculation and lie).
+   (`tools/bench_cachebust.py` discipline: repeated prompts inflate llama.cpp speculation and lie).
    This pilot measures the **Worker** (proof closing within budget),
    not statement faithfulness: the statement is given, and the red team in §5 is the faithfulness test.
    To keep it uncontaminated, give the Worker a *copy* of the module with every proof body replaced by
@@ -233,7 +233,7 @@ exists on disk; the operative provisioning artifacts are the `run-<model>` launc
   (+50–99% measured on a 36 GB model); a 72 GB Q4_K_M does not fit 64 GB, so RPC is a Phase-0
   experiment, not a design input.
 - Repeated-prompt benchmarks inflate throughput by feeding llama.cpp's n-gram/MTP speculation; use
-  `tools/bench_model_aba.py` (cache-busted) for every measurement.
+  `tools/bench_cachebust.py` (cache-busted) for every measurement.
 - Owner's standing constraints: **Q4 is the quantization floor; quality beats tok/s; provision only via
   the node-spec pattern and re-run `verify-node.sh` on all three nodes afterwards.**
 - Already on disk: `Qwen3.8-27B` Q6_K (22 GB, the fleet default, ~54 tok/s on novel prompts),
@@ -311,11 +311,43 @@ the Qwen control, which the dry run will price in rounds and wall-clock.
    `tools` array and a reasoning prompt through `curl`: `tool_calls` must parse and `reasoning_content`
    must be populated under `--jinja` on build 10326; if not, rsync the flashnext worktree build (10674)
    from infer-03 and retry. Start with `-ncmoe` at the full layer count so the server comes up, then lower.
-5. **Measure** with `tools/bench_model_aba.py` (cache-busted): decode tok/s at Q6_K and Q4_K_M, prefill,
+   Thinking mode (verified 2026-09-20): Leanstral 1.5's embedded template accepts only
+   `reasoning_effort ∈ {none, high}` and defaults to `none`, under which no `[THINK]` block is emitted
+   and `reasoning_content` is null; with `high` the server returns a populated `reasoning_content`
+   (3.8 k characters on a one-line `nlinarith` theorem) and the tool-call path works (`finish_reason`
+   `tool_calls`, arguments parsed). The launcher therefore passes
+   `--chat-template-kwargs '{"reasoning_effort":"high"}'`, because OpenProver's `HFClient` sends no
+   per-request template kwargs. The rsync-the-newer-build fallback was not needed.
+   Measurements (Q6_K, `tools/bench_cachebust.py`, 400-token answers, `cache_n = 0`, 2026-09-20):
+
+   | `-ncmoe` | VRAM used | decode tok/s | prefill tok/s |
+   |---|---|---|---|
+   | 36 (all routed experts on CPU) | 12.5 GB | 12.5 | 59 |
+   | 30 (six expert layers on the V100S) | 27.7 GB | 10.5 | 70 |
+
+   Moving experts onto the card slowed decode by 16 % and left no KV headroom, so the service runs
+   with `-ncmoe 36`; the Q4_K_M comparison is the remaining speed axis. `verify-node.sh` passes on
+   infer-01 and infer-02; on infer-03 it reports two pre-existing failures (`run-flashnext` and its
+   backup lack `numactl`), not touched by this work. OpenProver writes its scratch directory inside
+   `--lean-project` and its run log under `runs/` relative to the cwd; both are pointed at a scratch
+   Lean project that symlinks the repo's `lakefile.toml`, `lean-toolchain`, `lake-manifest.json` and
+   `.lake` (`tools/openprover/README.md`), so nothing lands in the repository tree.
+   Smoke test 1/5 (`lorentzianG_pos`, restated with a local def so recall of the repo lemma is not
+   available; 2026-09-20): three launches were needed before the loop ran, each a harness defect now
+   fixed by `tools/openprover/patch_local_alias.py` (Claude CLI ≥ 2.1 JSON shape; headless TUI
+   missing `_sync_step_log_line`; `--provider-url` must be the server root). The successful run:
+   `proved` in 23.5 min wall-clock, 4 planner steps (9 Claude CLI calls, 13.1 k output tokens,
+   nominal $2.54 on the subscription), one Worker with 3 turns (152 s, 268 s, 369 s; first
+   `lean_verify` failed, second passed), verifier pass 345 s. The statement was preserved
+   character-for-character and the proof is an explicit `div_pos`/`add_pos_of_nonneg_of_pos`/
+   `mul_pos` chain; re-verified by the lead with `lake env lean` and `#print axioms`.
+5. **Measure** with `tools/bench_cachebust.py` (cache-busted; written 2026-09-20 because the
+   `bench_model_aba.py` this plan first cited does not exist anywhere on the fleet or in the owner's
+   repositories, verified by `find` on all three nodes): decode tok/s at Q6_K and Q4_K_M, prefill,
    and a 5-theorem smoke test through OpenProver on sorry'd copies. Record in spec 06. Only then decide
    Q6 vs Q4 and whether the two-node RPC experiment is worth a day.
 6. **OpenProver patch:** fork `openprover` 1.0.1 into `tools/openprover/` (MIT; vendored like
    `axiom-audit`), add `leanstral-local` to `model_choices`, `HF_MODEL_MAP`, `VLLM_MODELS` (tool-capable),
-   `MODEL_CONTEXT_LENGTHS`, default `--provider-url http://<node>:8082/v1`; keep the planner on `sonnet`/`opus`.
+   `MODEL_CONTEXT_LENGTHS`, default `--provider-url http://<node>:8082` (server root; the client appends `/v1`)`; keep the planner on `sonnet`/`opus`.
 7. **Endpoint isolation:** the base URL is set only in the OpenProver run config and the Worker skill,
    never globally (global rule: per-tool base URLs only; no proxies).
