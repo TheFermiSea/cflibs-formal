@@ -398,6 +398,18 @@ the Qwen control, which the dry run will price in rounds and wall-clock.
    the lead: axiom-clean, statement identical) but could not return it. Fix: `--answer-reserve 12288`
    on every run (no code change); a server-side `--reasoning-budget` is the fallback if thinking
    still overruns. Attempt history per test is kept under the run directory's `old/`.
+   **Frontier 02/07 dry run launched (2026-09-21 06:49 local; D10 4 h cap, D11 Leanstral only).**
+   Inputs are `tools/openprover/dryrun/DRY02.lean` (infer-02) and `DRY07.lean` (infer-03), built
+   from the repo's own docstring and statement, verbatim, in a fresh `DryRun` namespace with a single
+   `sorry`, plus the frontier dossiers as the informal statement. Contamination control as
+   implemented, which is stricter than §8.2's "copy of the module with proofs replaced by sorry":
+   OpenProver fills *every* `sorry` in the theorem file, so the module's own sorry'd lemmas cannot be
+   left as usable facts; the files therefore import only the target module's *upstream* modules
+   (02: `Saha`, `PartitionLipschitz`, `Analysis`; 07: Mathlib only, with `equivWidth` and `lorentzian`
+   re-declared), the harness forbids `import` in the proof it assembles, and `lean_search` indexes
+   Mathlib only, so the ground-truth proofs and the modules' helper lemmas are unreachable. The task
+   is thus harder than the original proofs had it (those built helper lemmas first); the docstrings
+   name helper lemmas that do not exist in the Worker's world, which is a hint, not a shortcut.
    **Smoke-test tally (final, 2026-09-20; 45-min caps, `--answer-reserve 12288`, both nodes at
    `-t 30`, nodes idle except where noted).**
 
