@@ -221,8 +221,14 @@ resonance lines are strongly self-absorbed).
   hits, not LIBS-specific, UNVERIFIED as LIBS). A 2025 Plasma Sources Sci. Technol. paper inverts
   a time-integrated Hα profile for `n_e(t)` (named by the notebook; UNVERIFIED). The notebook,
   restricted to peer-reviewed sources, finds no joint composition + `T`-distribution fit to a
-  time-integrated LIBS spectrum. Frame any work here as transfer from the x-ray result, not
-  invention.
+  time-integrated LIBS spectrum. Paper Finder agent (2026-09-21, 38 ranked results, thread
+  `2026-09-21-c4-temperature-distribution`): "No papers were found that jointly fit both composition
+  and temperature distribution from time-integrated LIBS spectra, which likely reflects a gap in the
+  LIBS literature rather than a search failure"; the top matches are solar/x-ray differential
+  emission measure inversions (e.g. corpus 119301790, 252762450, 247839410) and one LIBS-adjacent
+  precedent, a 2023 Eur. Phys. J. Appl. Phys. study interpreting Boltzmann-plot temperatures from
+  spatially integrated oxygen lines of a non-uniform plasma (corpus 264392447; UNVERIFIED beyond the
+  agent's summary). Frame any work here as transfer from the DEM/x-ray results, not invention.
 - **Lean-formalizable claim.** Convexity of the mixture Boltzmann plot (PURE-MATH, Jensen on
   log-sum-exp) and the slope bracket (EXACT); first-order insensitivity of `N_a/N_b` to `w` when
   `E_k` coverage matches (REDUCED, with the mismatch term explicit). The convexity test is a
