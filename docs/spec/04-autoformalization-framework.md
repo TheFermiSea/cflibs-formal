@@ -410,6 +410,35 @@ the Qwen control, which the dry run will price in rounds and wall-clock.
    Mathlib only, so the ground-truth proofs and the modules' helper lemmas are unreachable. The task
    is thus harder than the original proofs had it (those built helper lemmas first); the docstrings
    name helper lemmas that do not exist in the Worker's world, which is a hint, not a shortcut.
+   **Frontier 02/07 dry run — result (2026-09-21, 4 h cap, Leanstral Q6_K on both nodes, `-t 30`,
+   runners pinned, no CI job active at start or end of either run).** Both `not_proved`; wall-clock
+   4 h 03 min (02) and 4 h 18 min (07); planner 35 and 25 Claude CLI calls (nominal $10.2 and $9.9).
+
+   *Frontier 02* (`sahaFactor_strictMonoOn_temp`, upstream imports only): the planner decomposed the
+   theorem into exactly the three helper lemmas the repository's own proof uses
+   (`thermalBracket_strictMono`, `partitionFunction_mono_temp`, `partitionFunction_upper_growth`),
+   the Worker proved all three by step 5 (1 h 54 min) and they were stored as a helper item; the lead
+   re-verified each with `lake env lean` and `#print axioms` (standard three axioms; statements
+   match the repo's). The final assembly step then failed on harness limits, not Lean: the assembly
+   worker thought for 25 min to `finish_reason: length` with no tool call (the 12 288-token reserve
+   consumed by reasoning), its Phase-2 retry and the verifier each hit the 1 800 s timeout, and the
+   cap expired. The ground truth was one `linarith` assembly away.
+
+   *Frontier 07* (`equivWidth_lorentzian_sqrt_sharp`, Mathlib only, `equivWidth`/`lorentzian`
+   re-declared): eleven Worker turns over six planner steps, 63 `lean_search` calls and **zero**
+   `lean_verify` calls; the Worker never wrote a Lean file. This is the search-loop pathology of
+   smoke test 5 at full scale: on an analysis-heavy target (dominated convergence + a rescaling
+   identity) Leanstral keeps querying Mathlib lemma names instead of attempting a proof, and
+   nothing in OpenProver breaks the loop.
+
+   Reading and follow-ups: (i) decomposition into helper lemmas works and is the way the Worker
+   closes non-trivial statements; (ii) two harness rules are missing and should be patched before
+   the next run: a server-side `--reasoning-budget` (e.g. 6 144 tokens) so a Worker turn always
+   emits an answer, and a planner/worker rule that a turn with no `lean_verify` after two
+   `lean_search` calls must attempt a proof; (iii) budget accounting: the two runs cost ~8.4
+   node-hours and ~$20 nominal planner spend for zero closed frontier theorems, so the Phase-0 Worker
+   exit criterion (both frontiers within the cap) is not met and the Qwen control arm (D11) is
+   deferred until (ii) is in place.
    **Smoke-test tally (final, 2026-09-20; 45-min caps, `--answer-reserve 12288`, both nodes at
    `-t 30`, nodes idle except where noted).**
 
