@@ -366,6 +366,12 @@ the Qwen control, which the dry run will price in rounds and wall-clock.
    `pgrep -u ghrunner -f pytest`); the CI runners' placement on the Worker nodes is an owner decision
    (options: move the runners, or pin them with a cpuset and leave llama-server thread headroom; the
    `-t 30` headroom experiment is recorded next).
+   **Pinning applied (D9, 2026-09-21).** On both nodes: `systemctl set-property <runner unit>
+   AllowedCPUs=32-35` for the two `actions.runner.TheFermiSea-CF-LIBS-improved.*` services and
+   `AllowedCPUs=0-31` for `llm-server@leanstral` (also as `/etc/systemd/system/llm-server@.service.d/
+   cpuset.conf`), verified through `cpuset.cpus.effective` and `Cpus_allowed_list` of the live
+   processes. Memory-bandwidth contention from a CI job remains (expected ~20 % from the two-hog
+   experiment); the barrier-stall cliff is gone.
    **Thread-headroom experiment (infer-03, Q6_K, 2026-09-20).** Two pure-CPU hog processes
    (`python3 -c 'while True: pass'`) stand in for a CI job:
 
