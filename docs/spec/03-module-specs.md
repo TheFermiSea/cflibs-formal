@@ -333,7 +333,15 @@ residual = C_missing" was an overstatement and is corrected by these statements.
 
 ### 7.3 Acceptance and gates
 
-Statement audit (Mode B, three independent reviewers, 2026-09-21) before any Worker run; scope tags
+Statement audit (Mode B, three independent reviewers, 2026-09-21): **all three `passed`, `drift_class:
+none`**, with docstring-level findings applied to the files (identities are sign-free; guards are used
+only as `≠ 0`; shared-partition-function scope; unused imports removed; the closure-bias right-hand side
+is `Nu`-invariant, so its content is `closureEstimate = N s / ∑ N` and the inflation dressing already
+exists as `MatrixEffects.recoveredComposition_eq_inflation` — the eventual module states
+`closureEstimate_eq_composition` and derives the bias from there). Each reviewer also produced an
+axiom-clean proof as a probe, so the three statements are known provable before the Worker sees
+them; those probe proofs stay outside the Worker's world (`/tmp/aud-*`, not indexed by `lean_search`).
+Files: `tools/openprover/dryrun/C3_*.lean` with dossiers `C3_*.md`. Before any Worker run; scope tags
 EXACT with citation Tognoni 2010 (+ Abbass 2016 in the module docstring); non-vacuity witnesses
 `κ = Fin 2`, `Fcal ≠ 1`, `Nu·Ru ≠ 0`; acceptance mutants: drop `hne` (division by zero makes the
 estimator `0`), replace `N s * R s` by `N s` in neutrality (statement false), drop the `Nu·Ru` term
