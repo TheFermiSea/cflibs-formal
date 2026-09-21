@@ -280,3 +280,63 @@ the scenario as it does the certificates scenario.
 
 Note on numbering: C8 and C11 are unused in `Certificates.lean`; keep C15/C16 as the blueprint proposed
 and do not back-fill.
+
+## 7. `Alt/NeutralityScale.lean` — the calibration factor from charge neutrality (C3, owner-directed 2026-09-21)
+
+**Origin.** Candidate C3 of `docs/research/first-principles-alternatives.md`: classic CF-LIBS removes the
+unknown instrument factor `Fcal` by closure (`∑ C = 1`); charge neutrality is a second absolute
+equation whose left side a Stark width measures independently of `Fcal`. Prior art: Abbass, Ahmed,
+Ahmed & Baig, Plasma Chem. Plasma Process. 36 (2016) 1287 ("electron density conservation" CF-LIBS,
+Pb–Sn, Saha-derived `n_e`); Tognoni et al. 2010 on closure failing when elements are missing. What is
+new here is the exact statement of what neutrality buys with a *measured* `n_e` and what an undetected
+species does to each normalization. Chosen by the owner as the first *real* target for the local
+Worker (decision D12) rather than the SahaCascade module of §1.
+
+### 7.1 Model and definitions (reuse only)
+
+Single shared `T`, one neutral line per species `s : κ`, singly ionized stages; `N s` neutral density,
+`R s` the Saha stage ratio `n_ion/N` (positive, supplied), `ne` the measured electron density.
+`I s := lineIntensity kB T (N s) Fcal g E A (emit s)` (ForwardMap, verbatim); `unitI s :=
+lineIntensity kB T 1 1 g E A (emit s)`, the per-unit line factor; linearity `I s = Fcal · N s · unitI s`
+follows from `population kB T N g E k = N * g k * boltzmannFactor kB T (E k) / partitionFunction kB T g E`.
+Neutrality is the existing `chargeNeutrality (fun _ => 1) (fun s => N s * R s) ne` (Saha.lean).
+
+```
+noncomputable def neutralityScale (I unitI R : κ → ℝ) (ne : ℝ) : ℝ := (∑ s, I s * R s / unitI s) / ne
+noncomputable def closureEstimate (I unitI : κ → ℝ) (s : κ) : ℝ := (I s / unitI s) / ∑ t, I t / unitI t
+```
+
+### 7.2 Statements (three files, one `sorry` each; typecheck against the built `.lake` 2026-09-21)
+
+```
+theorem neutralityScale_eq_Fcal (hne : 0 < ne) (hunit : ∀ s, 0 < unitI s)
+    (hneut : chargeNeutrality (fun _ : κ => (1:ℝ)) (fun s => N s * R s) ne) :
+    neutralityScale I unitI R ne = Fcal                                   -- EXACT, grade A
+theorem neutralityScale_undetected (hne : 0 < ne) (hunit : ∀ s, 0 < unitI s)
+    (hneut : ne = (∑ s, N s * R s) + Nu * Ru) :
+    neutralityScale I unitI R ne = Fcal * (1 - Nu * Ru / ne)               -- EXACT, grade A
+theorem closureEstimate_bias (hFcal : 0 < Fcal) (hNu : 0 ≤ Nu) (hsum : 0 < ∑ t, N t)
+    (hunit : ∀ s, 0 < unitI s) (s : κ) :
+    closureEstimate I unitI s = (N s / (∑ t, N t + Nu)) / (1 - Nu / (∑ t, N t + Nu))  -- EXACT, grade A
+```
+(`I`, `unitI` written out as the `lineIntensity` expressions in the files; see
+`tools/openprover/dryrun/C3_*.lean` once landed.)
+
+**Physics content, stated honestly.** Neutrality counts *charge*: the second theorem says the
+estimator is off by the undetected species' charge fraction `Nu·Ru/ne`, not its mass fraction, so it
+is nearly blind to the high-ionization-energy elements CF-LIBS typically misses (H, O, N, C are mostly
+neutral at LIBS temperatures) — the good news is that the scale is then nearly unbiased; the
+limitation is that neutrality alone cannot report those elements' mass fraction as a deficit, which
+needs an independent total-density scale (out of scope here). The third theorem makes "closure fails
+when elements are missing" exact: the bias factor is `1/(1 − Cu)`. The memo's earlier phrase "closure
+residual = C_missing" was an overstatement and is corrected by these statements.
+
+### 7.3 Acceptance and gates
+
+Statement audit (Mode B, three independent reviewers, 2026-09-21) before any Worker run; scope tags
+EXACT with citation Tognoni 2010 (+ Abbass 2016 in the module docstring); non-vacuity witnesses
+`κ = Fin 2`, `Fcal ≠ 1`, `Nu·Ru ≠ 0`; acceptance mutants: drop `hne` (division by zero makes the
+estimator `0`), replace `N s * R s` by `N s` in neutrality (statement false), drop the `Nu·Ru` term
+(reduces to theorem 1). Worker runs: Leanstral (infer-03) and the Qwen3.8-27B control (infer-01),
+same harness, 60-min caps, each theorem its own run; the lead re-verifies every returned proof
+(`lake env lean`, `#print axioms`, signature diff) before it can enter `Alt/NeutralityScale.lean`.

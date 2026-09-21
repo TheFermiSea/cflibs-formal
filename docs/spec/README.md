@@ -65,6 +65,7 @@ spec is published for reading only.
 | D7 | Worker harness | **OpenProver** (MIT) with a vendored patch binding a local worker alias to the llama-server endpoint; Claude planner; Mistral Vibe (programmatic `-p` mode, verified) as comparison arm; Pi as fallback | `04` §10.3–10.4 |
 | D9 | CI runners on the Worker nodes | **Pin, don't move** (2026-09-21): the two `actions.runner.TheFermiSea-CF-LIBS-improved.*` services on infer-02/03 are pinned to vCPUs 32–35 and `llm-server@` to 0–31 via `systemctl set-property` + a drop-in; launchers at `-t 30` | `04` §10.4 |
 | D10 | Dry-run wall-clock cap | **4 hours per frontier statement** (`--max-time 4h`; the cap is soft, budget in wall-clock) | `04` §8.2, `06` Phase 0 |
+| D12 | First real Worker target | **`Alt/NeutralityScale.lean` (candidate C3)** ahead of SahaCascade: three EXACT statements (neutrality scale = Fcal; undetected-species charge-fraction bias; closure bias `1/(1−Cu)`), run on Leanstral and the Qwen control after Mode B audit (2026-09-21) | `03` §7 |
 | D11 | Dry-run A/B order | **Leanstral only first**, one frontier per node; the Qwen3.8-27B control arm follows once a Leanstral result exists | `04` §8.2 |
 | D8 | Role split | Local model = Worker only; Claude subscription = Lead, Blueprinter, Target-Reviewer, red team (the roles that judge faithfulness) | `04` §3 |
 
