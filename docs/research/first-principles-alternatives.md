@@ -97,7 +97,19 @@ resonance lines are strongly self-absorbed).
   estimator that takes the ground-state column densities as the *primary* composition observable,
   supplies `T` from saturated cores rather than from excited-line plots, and states its
   identifiability and error amplification (the `2ε` above). The damping-wing form is the corner
-  this repository is uniquely placed to state exactly.
+  this repository is uniquely placed to state exactly. Paper Finder agent (2026-09-21, thread
+  `2026-09-21-c1-column-density`, 20 ranked results after a narrowed follow-up; the first, broader
+  query exhausted the agent's time budget): "No single paper was found that fully integrates all
+  requested aspects (quantification from ground-state column density, Planck-limited temperature,
+  and Saha-Boltzmann quantification) in one workflow." Additional prior art it surfaced: Fu, Ni,
+  Wang, Jia & Dong, Plasma Sci. Technol. (2018), DOI 10.1088/2058-6272/aaead6, is a *review* of
+  CF-LIBS accuracy improvements (full text checked: Boltzmann/Saha–Boltzmann frameworks with
+  self-absorption corrections; no Planck-peak thermometry, columnar density not used for composition
+  on its own; the agent's summary over-credited it); the 2021 Anal. Chim. Acta paper above is
+  "CF-LIBS with columnar density and standard reference line (CD-SRL)", i.e. columnar density
+  for quantification *with* a reference line, not strictly standardless; Rezaei, InTech chapter
+  (2016), DOI 10.5772/61941, reviews curve-of-growth analysis and a "three lines" optically thick
+  method giving temperature and Al density (see C2).
 - **Lean-formalizable claim.** In the damping regime, `N_a/N_b` is an explicit function of
   `(W_a, W_b, f_a, f_b, γ_a, γ_b)` (EXACT within the slab model, from Frontier 07 plus
   `CurveOfGrowth`), with a REDUCED bound `|δN/N| ≤ 2|δW/W| + |δγ/γ|` and a stated non-identifiability
