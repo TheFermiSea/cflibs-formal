@@ -144,7 +144,15 @@ resonance lines are strongly self-absorbed).
   normalization in C-sigma (Aragón & Aguilera 2014); a Planck-function self-absorption method,
   JAAS 2023, DOI 10.1039/d2ja00352j (UNVERIFIED title, from the notebook's source URL). Two-colour
   pyrometry of *line cores* in a laser plasma: no LIBS-specific result surfaced (queries in the
-  appendix); the web hits were surface pyrometry. Treat as open but low value for this target.
+  appendix); the web hits were surface pyrometry. Nearest prior art found by the Paper Finder
+  agent (2026-09-21): the "three lines method" reviewed in Rezaei, InTech chapter (2016), DOI
+  10.5772/61941, attributed there to Rezaei & Tavassoli, J. Anal. At. Spectrom. (2014; UNVERIFIED
+  beyond the chapter's citation): ratios of the peak intensities of three optically thick lines,
+  with the plasma length from shadowgraphy and a measured electron density, solved on contour
+  plots for `T`, the Al density and the instrument factor. That is a saturated-line *ratio*
+  method with atomic data, not atomic-data-free two-colour pyrometry, and the chapter (full text
+  checked) does not use the Planck ceiling as a thermometer. Treat C2 as open but low value for
+  this target.
 - **Lean-formalizable claim.** `T ↦ B_λ1(T)/B_λ2(T)` is strictly monotone for `λ1 ≠ λ2`
   (PURE-MATH), hence two saturated cores identify `T`; plus the dilution statement: convolution with
   a unit-area kernel lowers a peak, so the pyrometric `T` is a *lower bound* (EXACT within the
