@@ -313,6 +313,83 @@ resonance lines are strongly self-absorbed).
 None of this changes the project's rule that accuracy claims are made only against certified
 compositions on held-out spectra with the boring baseline run first.
 
+## 5. What the Asta agents added (2026-09-21)
+
+Three Asta tools were run after the memo's first version; each is a different kind of evidence.
+
+### 5.1 Paper Finder agent (novelty negatives)
+
+Per-candidate verdicts are folded into §2 above. Net effect on the ranking: C3's core is occupied
+(Abbass et al. 2016), C4's LIBS gap is confirmed with the DEM literature as template, C1's assembly
+remains unpublished with the 2013/2019/2021/2024 column-density papers as prior art, and C2's nearest
+neighbour is a three-line saturated-ratio method, not pyrometry.
+
+### 5.2 Theorizer (literature-grounded theories with novelty scores)
+
+`asta generate-theories literature-theory-generation`, novelty-focused, 40 papers requested, 36
+retrieved, eight theories with sixteen "laws" (falsifiable if-then predictions), each scored on six
+novelty dimensions. Two caveats before any of it is used. First, the mission statement named C1–C4,
+and all eight theories are restatements of those four, so the run cannot be read as independent
+confirmation that they are the right candidates. Second, the 36-paper set does not contain the
+prior art the Paper Finder found (Abbass 2016; Cristoforetti & Tognoni 2013; the CD-SB papers), so
+its "Genuinely New" labels on the neutrality and column-density laws are not reliable; they are
+"new relative to a corpus that missed the relevant papers". What survives is three predictions
+with concrete, testable thresholds that the memo did not contain:
+
+- **A density window for neutrality closure.** Neutrality with a Stark `n_e` should beat
+  sum-to-unity only when `n_e` lies in roughly `3×10^16`–`3×10^17 cm⁻³` (Stark measurable, ions
+  present, LTE plausible); below it the Saha leverage vanishes, above it opacity dominates. The
+  numbers are the model's, not derived, but the window is the right shape for the identifiability
+  statement in C3 and gives the certificate a runtime precondition.
+- **Narrow-window equivalent-width ratios.** Taking the two resonance lines of C1 within the same
+  few-nanometre window makes their equivalent-width ratio insensitive to the *relative* spectral
+  response as well as to `F`, which even ratio methods otherwise need. That is a genuine refinement
+  of C1's line-selection rule.
+- **A wing-dominance classifier.** `W / Δλ_FWHM ≥ 2` as the operational test that a self-absorbed
+  line is in the damping-wing regime where C1's √τ law applies and the ratio is temperature-
+  insensitive; `< 1` as the flat-curve regime where it is not. The thresholds are unverified, but
+  the classifier is exactly the "recover/defeat" boundary the Lean statement needs, and it is a
+  measurable quantity.
+
+The full export (theories, novelty assessments, extraction tables, `citations.bib`) is under
+`.asta/theories/export/` (gitignored).
+
+### 5.3 AutoDiscovery (data-driven, Bayesian surprise) on the SuperCam calibration library
+
+Run `8e781522-ba41-4a80-aa84-02edff0dd9dc`, 20 experiments (20 credits), on a table derived from the
+NASA PDS SuperCam laboratory LIBS library (Anderson et al. 2022): 1,193 base spectra of 334 certified
+geological standards, 37 strong lines, per-line continuum, net peak, net area, FWHM, shape factor
+`area/(peak·FWHM)` and peak-over-continuum, plus per-spectrometer sums (`supercam_features.py`,
+session scratchpad; the SuperCam channel spacing of ~0.05 nm and instrument FWHM of ~0.15–0.3 nm
+bound what widths can show). Thirteen experiments were "surprising", all in the negative direction
+(the prior that a calibration-free observable tracks composition fell), and five confirmed their
+hypothesis. The results that bear on the candidates:
+
+| finding | evidence (AutoDiscovery's own analysis, reviewed as faithfully executed) | bears on |
+|---|---|---|
+| Resonance-line **width keeps tracking concentration where intensity saturates** | K I 766.49: above 4 wt% K2O, FWHM `r = 0.82` vs net peak `0.66` (Steiger `Z = 4.0`); Na I 589.00 above 5 wt% Na2O: peak slope collapses to 1.5 %/wt%, FWHM keeps 8.6 %/wt%; Ca I 422.67 above 15 wt% CaO: peak `ρ = −0.20` (turnover), FWHM `ρ = +0.59` | C1's width channel is real on this data |
+| **Doublet ratio as a calibration-free optical-depth observable** | Ca II 393.37/396.85 falls from 1.71 (<2 wt% CaO) to 1.39 (>10 wt%), `ρ = −0.78`, distance-invariant; Mg II 279.55/280.27 saturates already below 2 wt% MgO | the self-absorption gate every candidate needs; matches `CurveOfGrowth`'s source-free ratio |
+| **Dimensionless observables are distance-invariant**, raw intensities are not | decay exponent with standoff `−0.01` for shape/width features vs `−0.53` for spectrometer sums; zero-shot transfer 1.5 m → 4.25 m: FeOT `R²` from `−7.05` (raw) to `+0.29` (dimensionless) | the `F`-independence claim of §1, measured |
+| **Shape factor is not a generic self-absorption classifier** | works for Mg I 285.21 (ROC-AUC 0.89) but inverts for Ca II 393.37 (0.14); Fe lines show mixed signs | C1's "shape" proxy is line-specific; use widths and doublet ratios, not shape |
+| **Instrument broadening dominates widths** for Si I 288, Fe I 404 at geological concentrations | width flat across bulk oxide levels; net area still shows saturating-plateau behaviour (ΔBIC +74 Si, +362 Ca) | C1 needs resolved lines: alkalis and Ca yes, Si/Fe no at this resolution |
+| **Peak-over-continuum is worse than net area** | continuum scaling differs between the three spectrometers; `log(area ratio)` Na/K predicts `log(Na2O/K2O)` with `r = 0.89`, peak/continuum ratio `r = −0.46` | continuum-normalized observables are not a free lunch |
+
+Two cautions. The table was built for exploration, not measurement: line windows are fixed, blends
+are not handled, and widths at the instrument limit are noisy. And AutoDiscovery's hypotheses are
+generated and judged by a model; the code was reviewed as faithful to each plan, but no result here
+has been reproduced independently. The three confirmations are consistent with each other and with
+the physics in C1, which is why they are worth a proper test on the companion's certified alloy
+spectra, where the resonance lines are far thicker than in geological standards.
+
+### 5.4 Net change to the recommendation
+
+C3 stays first, now explicitly as "the residual and the identifiability of Abbass-style neutrality
+closure with a Stark density", with the density window as its precondition. C1 gains an empirical
+leg: on real calibrated data the width channel works where intensities fail, the doublet ratio
+supplies the gate, and dimensionless observables transfer across geometry. Its first test should be
+widths and equivalent widths of the alkali and Ca resonance lines against certified values, with
+the wing-dominance classifier computed alongside, before any alloy work.
+
 ## Appendix A. Search record (so the negatives are auditable)
 
 Update 2026-09-21 (after `asta login`): the Asta Paper Finder agent (`asta literature interactive`,
