@@ -28,6 +28,7 @@ cli = pathlib.Path(importlib.import_module("openprover.cli").__file__)
 hf = pathlib.Path(importlib.import_module("openprover.llm.hf").__file__)
 cl = pathlib.Path(importlib.import_module("openprover.llm.claude").__file__)
 hl = pathlib.Path(importlib.import_module("openprover.tui.headless").__file__)
+pr = pathlib.Path(importlib.import_module("openprover.prover").__file__)
 
 patch(cli, [
     ('    model_choices = ["sonnet", "opus", "minimax-m2.5", "leanstral"]',
@@ -65,3 +66,57 @@ else:
     assert _t.count("urlopen(req, timeout=600)") == 4, "expected four 600 s urlopen sites in hf.py"
     hf.write_text(_t.replace("urlopen(req, timeout=600)", "urlopen(req, timeout=1800)  # was 600; local Worker at ~12 tok/s"))
     print(f"patched (timeouts): {hf}")
+# Worker loop rules (from the 2026-09-21 dry run): (a) a search-loop breaker — after two consecutive
+# turns whose only tool calls were lean_search, the next turn is offered lean_verify only and told
+# so (Frontier 07: 63 searches, zero verifications in 4 h); (b) a hard cap on Worker turns, reusing
+# the existing "context nearly full — wrapping up" path (DRY07 ran eleven turns).
+patch(pr, [
+    ('        call_idx = 0\n        conversation_id = None  # Mistral stateful conversation\n',
+     '        call_idx = 0\n        conversation_id = None  # Mistral stateful conversation\n'
+     '        search_only_streak = 0  # cflibs patch: consecutive turns that only called lean_search\n'
+     '        WORKER_MAX_TURNS = 12  # cflibs patch: hard cap on worker turns\n'),
+    ('                if msg_chars > max_input_chars:\n                    logger.warning(\n                        "[%s] context nearly full (%d chars > %d limit) — forcing output",',
+     '                if msg_chars > max_input_chars or call_idx >= WORKER_MAX_TURNS:\n                    logger.warning(\n                        "[%s] context nearly full or turn cap (%d chars > %d limit) — forcing output",'),
+    ('                resp = self.worker_llm.chat(\n                    messages=messages,\n                    tools=WORKER_TOOLS,\n                    label=f"{worker_id}_turn_{call_idx}",',
+     '                if search_only_streak >= 2:  # cflibs patch: break the search loop\n'
+     '                    logger.info("[%s] %d search-only turns — withholding lean_search", worker_id, search_only_streak)\n'
+     '                    messages.append({"role": "user", "content": (\n'
+     '                        "You have searched twice without verifying anything. Stop searching. "\n'
+     '                        "Write the complete Lean 4 file now, using the lemma names you already found, "\n'
+     '                        "and call lean_verify on it. lean_search is unavailable this turn.")})\n'
+     '                    turn_tools = [t for t in WORKER_TOOLS if t.get("function", {}).get("name") != "lean_search"]\n'
+     '                else:\n'
+     '                    turn_tools = WORKER_TOOLS\n'
+     '                resp = self.worker_llm.chat(\n                    messages=messages,\n                    tools=turn_tools,\n                    label=f"{worker_id}_turn_{call_idx}",'),
+    ('                    assistant_msg["tool_calls"] = resp["tool_calls"]\n                    messages.append(assistant_msg)\n',
+     '                    assistant_msg["tool_calls"] = resp["tool_calls"]\n                    messages.append(assistant_msg)\n'
+     '                    _names = {tc["function"]["name"] for tc in resp["tool_calls"]}  # cflibs patch\n'
+     '                    search_only_streak = search_only_streak + 1 if _names == {"lean_search"} else 0\n'),
+])
+# Second local worker alias for the control arm (D11): Qwen3.8-27B Q6_K on infer-01 (run-qwen38, port
+# 8081, no --alias, so the served model id is the GGUF path). Context entry kept conservative.
+QALIAS, QSERVED, QCTX = "qwen38-local", "/mnt/models/Qwen3.8-27B/Qwen3.8-27B-Q6_K.gguf", 65536
+_c = cli.read_text()
+if QALIAS in _c:
+    print(f"already patched (qwen alias): {cli}")
+else:
+    reps = [
+        (f'"leanstral", "{ALIAS}"]', f'"leanstral", "{ALIAS}", "{QALIAS}"]'),
+        (f'        "{ALIAS}": "{SERVED_NAME}",  # llama-server --alias {SERVED_NAME} on the infer-0x fleet\n',
+         f'        "{ALIAS}": "{SERVED_NAME}",  # llama-server --alias {SERVED_NAME} on the infer-0x fleet\n        "{QALIAS}": "{QSERVED}",  # run-qwen38 on infer-01 (control arm)\n'),
+        (f'VLLM_MODELS = {{"minimax-m2.5", "{ALIAS}"}}', f'VLLM_MODELS = {{"minimax-m2.5", "{ALIAS}", "{QALIAS}"}}'),
+        (f'non_claude_models = {{"minimax-m2.5", "leanstral", "{ALIAS}"}}', f'non_claude_models = {{"minimax-m2.5", "leanstral", "{ALIAS}", "{QALIAS}"}}'),
+        (f'"{ALIAS}": "Leanstral 1.5 (local llama.cpp)"}}', f'"{ALIAS}": "Leanstral 1.5 (local llama.cpp)", "{QALIAS}": "Qwen3.8-27B (local llama.cpp)"}}'),
+    ]
+    for o, n in reps:
+        assert _c.count(o) == 1, f"qwen alias: pattern not found or not unique: {o[:60]!r}"
+        _c = _c.replace(o, n)
+    cli.write_text(_c); print(f"patched (qwen alias): {cli}")
+_h = hf.read_text()
+if QSERVED in _h:
+    print(f"already patched (qwen ctx): {hf}")
+else:
+    o = f'    "{SERVED_NAME}": {CTX},  # Leanstral 1.5 Q6_K via llama-server -c {CTX} (run-leanstral)\n'
+    assert _h.count(o) == 1
+    hf.write_text(_h.replace(o, o + f'    "{QSERVED}": {QCTX},  # Qwen3.8-27B Q6_K, run-qwen38 -c 131072 (4 unified slots); conservative\n'))
+    print(f"patched (qwen ctx): {hf}")

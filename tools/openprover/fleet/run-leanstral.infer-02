@@ -25,10 +25,15 @@
 #   --chat-template-kwargs reasoning_effort=high: the template defaults to 'none' (no [THINK] block,
 #   reasoning_content null); 'high' is the only other value it accepts. Set at the server so every
 #   client (OpenProver's HFClient sends no chat_template_kwargs) gets the thinking mode.
+#   --reasoning-budget 8192: caps [THINK] so an answer/tool call always follows (verified on b10326:
+#   budget 512 cut the thought and the proof + tool call still arrived). Pair with OpenProver
+#   --answer-reserve 16384 (per-call max_tokens) so ~8k tokens remain for the answer. The dry run
+#   of 2026-09-21 lost its assembly turn to a 12288-token thought with empty content.
 #   Port 8082 (8081 = qwen38 and deepseek on their nodes).
 exec numactl --interleave=all /opt/llama.cpp-master/build/bin/llama-server \
   -m /mnt/models/Leanstral-1.5/Leanstral-1.5-119B-A6B-Q6_K.gguf \
   -ngl 999 -ncmoe 36 -fa off -t 30 \
   --no-op-offload -b 4096 -ub 1024 --load-mode mlock \
-  -c 65536 --jinja --chat-template-kwargs '{"reasoning_effort":"high"}' --metrics --alias leanstral \
+  -c 65536 --jinja --chat-template-kwargs '{"reasoning_effort":"high"}' --reasoning-budget 8192 \
+  --metrics --alias leanstral \
   --host 0.0.0.0 --port 8082 "$@"

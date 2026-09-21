@@ -4,6 +4,9 @@ Decision D7 (`docs/spec/README.md`); design in `docs/spec/04-autoformalization-f
 
 - Upstream: `openprover` 1.0.1 (MIT, Kripner & Straka, arXiv 2607.09217). Not vendored as source;
   installed into a scratch venv and patched by `patch_local_alias.py`.
+- The patch adds a second worker alias, `qwen38-local`, for the Qwen3.8-27B control arm on infer-01
+  (`run-qwen38`, port 8081; the served model id is the GGUF path because that launcher has no
+  `--alias`). Invoke with `--worker-model qwen38-local --provider-url http://10.0.0.26:8081`.
 - The patch adds one worker alias, `leanstral-local`, bound to the OpenAI-compatible llama.cpp
   endpoint on the infer-0x fleet (`/usr/local/bin/run-leanstral`, `--alias leanstral`, port 8082).
   The planner stays on the Claude CLI (the owner's subscription).
@@ -28,7 +31,7 @@ for f in lakefile.toml lean-toolchain lake-manifest.json .lake; do ln -sfn "$R/$
   --planner-model sonnet --worker-model leanstral-local \
   --provider-url http://10.0.0.27:8082 \
   --lean-project "$P" --lean-theorem <statement-only .lean file> --theorem <dossier .md> \
-  --answer-reserve 12288 --max-time 2h
+  --answer-reserve 16384 --max-time 2h
 ```
 
 First run with `--lean-project` (which auto-enables the worker tools) installs `lean-explore`,
@@ -53,7 +56,14 @@ The Worker endpoint runs with `--chat-template-kwargs '{"reasoning_effort":"high
 2026-09-20). The headless TUI in 1.0.1 also lacks `_sync_step_log_line`, which crashes the first
 spawn; the patch adds a no-op.
 
-`--answer-reserve 12288` is mandatory with Leanstral: the flag is also the per-call `max_tokens` for
+Two worker-loop rules were added to the patch after the 2026-09-21 dry run: a **search-loop
+breaker** (after two consecutive turns whose only tool calls were `lean_search`, the next turn is
+offered `lean_verify` only and told to write the file) and a **turn cap** (`WORKER_MAX_TURNS = 12`,
+routed through the existing forced-output path). On the server side every Leanstral launcher
+carries `--reasoning-budget 8192` so a turn always ends in an answer or a tool call; pair it with
+`--answer-reserve 16384`.
+
+`--answer-reserve` (16384 with the reasoning budget; 12288 was used before it) is mandatory with Leanstral: the flag is also the per-call `max_tokens` for
 OpenAI-style workers, and the default 4096 is consumed by thinking alone (every failed smoke-test turn
 ended `finish_reason: length` at 4096 completion tokens with empty content).
 
