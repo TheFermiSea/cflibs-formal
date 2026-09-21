@@ -359,8 +359,8 @@ The full export (theories, novelty assessments, extraction tables, `citations.bi
 Run `8e781522-ba41-4a80-aa84-02edff0dd9dc`, 20 experiments (20 credits), on a table derived from the
 NASA PDS SuperCam laboratory LIBS library (Anderson et al. 2022): 1,193 base spectra of 334 certified
 geological standards, 37 strong lines, per-line continuum, net peak, net area, FWHM, shape factor
-`area/(peak·FWHM)` and peak-over-continuum, plus per-spectrometer sums (`supercam_features.py`,
-session scratchpad; the SuperCam channel spacing of ~0.05 nm and instrument FWHM of ~0.15–0.3 nm
+`area/(peak·FWHM)` and peak-over-continuum, plus per-spectrometer sums (`docs/research/supercam_features.py`
+and `supercam_autodiscovery_metadata.json`, run from the companion repo root; the SuperCam channel spacing of ~0.05 nm and instrument FWHM of ~0.15–0.3 nm
 bound what widths can show). Thirteen experiments were "surprising", all in the negative direction
 (the prior that a calibration-free observable tracks composition fell), and five confirmed their
 hypothesis. The results that bear on the candidates:

@@ -82,6 +82,12 @@ Also decided: the Phase-0 reviewer-agent change and the tooling install (`.mcp.j
 | v0.4 | 2026-09-20 | Phase-0 reviewer track complete: blinded red team run twice (default model, `sonnet`) on 16 variants, record and variants in `redteam/2026-09-20{.md,/}`; pass criterion in 04 §5 amended to edit-or-mechanism class with the reason recorded; Mistral Vibe programmatic mode verified (`vibe -p`), D7 and 04 §10.3 corrected; Worker deployed on infer-02 with `-fa off` (sm_70 flash-attention crash recorded in 04 §10.4); Phase 0 status row updated |
 | v0.3 | 2026-09-20 | Owner decisions D1–D5 recorded; Worker moved to local models on the infer-0x fleet (D6–D8): model and framework survey with the Mathlib-pin selection rule (04 §10), deployment plan under the node spec, OpenProver as harness, budgets in rounds/node-hours; Phase-0 reviewer agent made read-only with a drift-class field; lean-lsp-mcp and lean4-skills installed |
 
+## Research memos (outside the spec proper)
+
+- `docs/research/first-principles-alternatives.md` — exploration of novel, first-principles composition
+  methods beyond CF-LIBS/C-sigma (2026-09-21), with the Asta Paper Finder / Theorizer / AutoDiscovery
+  evidence and the reproducible SuperCam feature script beside it.
+
 ## One-paragraph summary of the plan
 
 The physics roadmap adds four capabilities the current spec lacks: a **Z-stage ionization cascade**

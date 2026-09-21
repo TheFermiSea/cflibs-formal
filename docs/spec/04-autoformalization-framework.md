@@ -415,14 +415,20 @@ the Qwen control, which the dry run will price in rounds and wall-clock.
    4 h 03 min (02) and 4 h 18 min (07); planner 35 and 25 Claude CLI calls (nominal $10.2 and $9.9).
 
    *Frontier 02* (`sahaFactor_strictMonoOn_temp`, upstream imports only): the planner decomposed the
-   theorem into exactly the three helper lemmas the repository's own proof uses
-   (`thermalBracket_strictMono`, `partitionFunction_mono_temp`, `partitionFunction_upper_growth`),
-   the Worker proved all three by step 5 (1 h 54 min) and they were stored as a helper item; the lead
-   re-verified each with `lake env lean` and `#print axioms` (standard three axioms; statements
-   match the repo's). The final assembly step then failed on harness limits, not Lean: the assembly
-   worker thought for 25 min to `finish_reason: length` with no tool call (the 12 288-token reserve
-   consumed by reasoning), its Phase-2 retry and the verifier each hit the 1 800 s timeout, and the
-   cap expired. The ground truth was one `linarith` assembly away.
+   theorem into the three helper lemmas the repository's own proof uses, *as named in the target's
+   docstring* (`thermalBracket_strictMono`, `partitionFunction_mono_temp`,
+   `partitionFunction_upper_growth`); the Worker proved all three by 2 h 06 min and they were stored
+   as a helper item. Lead re-check: each file typechecks with `lake env lean` against the upstream
+   modules only and `#print axioms` gives the standard three; a signature diff against
+   `SahaStability.lean` shows the first two identical up to namespace qualification and explicit
+   `{ι} [Fintype ι]` binders, and the third stating the same bound with the exponent written as
+   `chi/(kB·T1) − chi/(kB·T2)` instead of `chi·(1/(kB·T1) − 1/(kB·T2))`, equal by `ring`. The final
+   assembly step then failed on harness limits, not Lean: the assembly worker's single turn ran
+   25 min to `finish_reason: length` at exactly 12 288 completion tokens, 34 k characters of
+   reasoning and empty content (from the archived call), its Phase-2 retry and the verifier each hit
+   the 1 800 s timeout, and the cap expired. The remaining step is the assembly the repository's
+   docstring describes (`log_sahaFactor` at both temperatures, then `Real.log_lt_log_iff` and
+   `linarith`).
 
    *Frontier 07* (`equivWidth_lorentzian_sqrt_sharp`, Mathlib only, `equivWidth`/`lorentzian`
    re-declared): eleven Worker turns over six planner steps, 63 `lean_search` calls and **zero**
