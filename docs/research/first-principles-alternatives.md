@@ -163,13 +163,28 @@ resonance lines are strongly self-absorbed).
   neutral and ion lines sampling different zones (Tognoni et al. 2010 name the Saha-versus-Stark
   `n_e` mismatch as a diagnostic of exactly this); time integration averages `n_e(t)` and the
   Saha balance differently.
-- **Literature status: open.** The 75-source notebook, restricted to peer-reviewed sources,
-  returns no paper that uses neutrality as the normalization or reports a missing-element deficit;
+- **Literature status: core occupied, the residual is open (revised 2026-09-21 after the Asta
+  Paper Finder agent run).** Abbass, Ahmed, Ahmed & Baig, Plasma Chem. Plasma Process. 36 (2016)
+  1287, DOI 10.1007/s11090-016-9729-y, compare a Boltzmann-intercept CF-LIBS with an "electron
+  density conservation" CF-LIBS on Pb–Sn alloys, in which "elemental compositions are determined
+  by comparing the experimentally measured number density with the theoretical results obtained by
+  CF-LIBS", and find the conservation method "more appropriate"; their `n_e` comes from the
+  Saha–Boltzmann equation, not from a Stark width, and the sample is a binary alloy where neutrality
+  and closure are two equations for two unknowns. Wala, Polek, Harilal, Jones & Phillips,
+  Spectrochim. Acta B (2025), DOI 10.1016/j.sab.2025.107142 (arXiv 2503.01185), use neutrality to
+  bound `n_e` from ion column densities measured by laser *absorption* and compare with Stark values.
+  The Paper Finder agent's narrative: "No papers were found that fully implement ... using the
+  discrepancy between closure-normalized and neutrality-normalized results ... to detect or quantify
+  missing elements", five candidates, top relevance 0.78 (Wala), the Abbass paper at 0.48. So what
+  remains open is narrower than first stated: neutrality with a *Stark* `n_e` as the absolute scale
+  for a multi-element sample, the closure residual as a signed missing-element estimate, and the
+  identifiability statement. The 75-source notebook, restricted to peer-reviewed sources, likewise
+  returns no paper that reports a missing-element deficit;
   Tognoni, Cristoforetti, Legnaioli & Palleschi, Spectrochim. Acta B 65 (2010) 1 use the
   Saha/Stark `n_e` consistency only as a diagnostic and state that closure fails when elements are
   missing. Forward simulators impose neutrality (a 2023 RSC Adv. forward model was named by the
   notebook; UNVERIFIED), inverse solvers do not. Web queries on this vocabulary returned nothing
-  relevant. This is the cleanest open candidate found.
+  relevant. Still the cleanest open candidate found, with the 2016 paper as the required prior-art citation.
 - **Lean-formalizable claim.** In the existing `Inverse`/`CompositionIdentifiability` setting: the
   composition and `F` are identifiable from `(intensities, Stark n_e)` *without* the closure
   hypothesis (EXACT), and with an undetected species the closure-normalized estimate is biased by
@@ -245,7 +260,7 @@ resonance lines are strongly self-absorbed).
 
 | candidate | novelty (literature) | physical justification | applicability to time-integrated alloy spectra | Lean target cost |
 |---|---|---|---|---|
-| C3 neutrality normalization / missing-element deficit | open | strong (an exact conservation law replacing an assumption) | high | low: extends `CompositionIdentifiability` |
+| C3 neutrality normalization / missing-element deficit | core occupied (Abbass 2016); residual, Stark scale and identifiability open | strong (an exact conservation law replacing an assumption) | high | low: extends `CompositionIdentifiability` |
 | C1 widths-and-ceiling column-density estimator | parts occupied, assembly open | strong; error doubling is explicit | high, two known risks | medium: Frontier 07 + `CurveOfGrowth` |
 | C4 `T`-distribution inversion | adjacent template | strong for the necessary conditions; weak for the full inversion | direct | low for the convexity test; high for the inversion |
 | C5 cooling-trajectory model | open | plausible | unknown identifiability | high |
@@ -274,7 +289,16 @@ compositions on held-out spectra with the boring baseline run first.
 
 ## Appendix A. Search record (so the negatives are auditable)
 
-Tools that worked: NotebookLM notebook "CF-LIBS: Calibration-Free LIBS" (75 sources), three
+Update 2026-09-21 (after `asta login`): the Asta Paper Finder agent (`asta literature interactive`,
+criteria extraction + verification loop) was run on C3, C1 and C4 with thread directories under
+`.asta/literature/threads/2026-09-21-*` (gitignored; per-criterion relevance judgements kept there);
+three `asta literature find --mode diligent` one-shot searches returned only generic CF-LIBS
+application papers (max relevance 0.64, no criterion satisfied). The Theorizer
+(`asta generate-theories literature-theory-generation`, novelty-focused, 40 papers) and an
+AutoDiscovery run on a reduced SuperCam calibration table were launched the same day; their
+outputs are reported in §5 once complete.
+
+Tools that worked (2026-09-20 sweep): NotebookLM notebook "CF-LIBS: Calibration-Free LIBS" (75 sources), three
 queries, the third restricted to peer-reviewed sources; web search (nine queries); publisher /
 PubMed / OSTI / ADS pages for the citations above. Tools that did not: the Asta CLI (`asta papers
 snippet-search`) failed with `Token refresh failed: invalid_grant` and needs `asta login`; the
