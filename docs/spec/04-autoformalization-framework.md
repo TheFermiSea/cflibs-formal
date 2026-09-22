@@ -91,18 +91,31 @@ at least four drifted variants:
 | Narrower than docstring | docstring says "all stages", statement fixes `Z = 2` | this repo's scope audit |
 
 Blinding: the variants are authored by the lead or by a separate agent, never by the reviewer's own
-session; the reviewer receives them unlabeled, in shuffled order, one file each, and its verdicts are
-compared with the labels only afterwards. Pass criterion: every drifted variant is flagged
-(`gaps_found`) with the seeded class as its dominant `drift_class` **or** as a secondary finding, and
-every faithful one is accepted (`passed`), over two independent runs. Labels carry **two** classes per
-variant, the *edit* (what was changed) and the *mechanism* (why the statement breaks, e.g. Lean's
-`x / 0 = 0`), because the two can have different names in the table above and a reviewer that names
-the edit and reports the mechanism as a secondary finding, with the refutation executed, has done its
-job. (Amended 2026-09-20 after the first run: the original one-label rule scored 10/12 on both models
-for that reason; see `docs/spec/redteam/2026-09-20.md`.) Record the run in `docs/spec/redteam/<date>.md`.
-**If the reviewer fails, that is the finding; no pilot proceeds.** Repeat the red team whenever the
-reviewer prompt or model changes. Ask the reviewer to leave its probe files in place so a verdict can be
-replayed.
+session; the reviewer receives them unlabeled, in shuffled order, one file each, in an isolated
+per-variant directory it is told not to search outside of (explicitly including
+`docs/spec/redteam/` itself — a run-3 reviewer found and cited a prior run's recorded answer for
+its own variant, a mild blinding leak closed by this instruction), and its verdicts are compared
+with the labels only afterwards. **Reviewer output schema (standing as of 2026-09-22, not a
+one-off amendment):** the artifact carries two REQUIRED top-level classes, `edit_class` (the
+literal change that produced the drift) and `mechanism_class` (why the resulting statement is
+wrong or weaker, e.g. Lean's `x / 0 = 0` making a domain point junk); they may be equal when the
+edit is its own mechanism. Pass criterion: every drifted variant is flagged (`gaps_found`) with
+`edit_class` matching the label's `edit_class` and `mechanism_class` matching either the label's
+`mechanism_class` or its `edit_class`; every faithful one is accepted (`passed`). Labels are
+pre-decided with both fields set **independently**, not defaulted equal — a run-3 gap (`v03`)
+traced to a label whose `mechanism_class` was defaulted to its `edit_class` without separate
+analysis, which then scored a reviewer's more precise, evidence-backed mechanism as a miss.
+
+History: run 1 (2026-09-20, one label per variant) scored 10/12 on the strict rule, on the same
+two variants in run 2 as well. Rather than repeat the red team, the lead amended the pass rule
+after seeing the results — a defensible fix (both models named the same alternative label with an
+executed refutation) but a post-hoc one. The owner was given three ways to close that out and chose
+the clean one: change the schema, re-run all sixteen fresh on one model. Run 3 (2026-09-22,
+`sonnet`, this schema) scored 4/4 faithful, 12/12 flagged, 11/12 strict two-class, 12/12 loose (any
+overlap either direction) — see `docs/spec/redteam/2026-09-22.md`. Record every run in
+`docs/spec/redteam/<date>.md`. **If the reviewer fails, that is the finding; no pilot proceeds.**
+Repeat the red team whenever the reviewer prompt or model changes. Ask the reviewer to leave its
+probe files in place so a verdict can be replayed.
 
 ## 6. Budgets and metrics
 
