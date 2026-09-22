@@ -2,27 +2,42 @@
   "v01": {
     "variant": "S3_Zone",
     "drift_class": "narrower_than_docstring",
-    "target": "S3"
+    "target": "S3",
+    "edit_class": "narrower_than_docstring",
+    "mechanism_class": "narrower_than_docstring",
+    "note_run3": "two-class labels pre-decided 2026-09-21 before run 3 (edit = change made; mechanism = why wrong); v14 mechanism convention_drift (half-width convention γ vs γ²)"
   },
   "v02": {
     "variant": "K2_faithful",
     "drift_class": "none",
-    "target": "K2"
+    "target": "K2",
+    "edit_class": "none",
+    "mechanism_class": "none",
+    "note_run3": "two-class labels pre-decided 2026-09-21 before run 3 (edit = change made; mechanism = why wrong); v14 mechanism convention_drift (half-width convention γ vs γ²)"
   },
   "v03": {
     "variant": "K2_vecMul",
     "drift_class": "definition_misalignment",
-    "target": "K2"
+    "target": "K2",
+    "edit_class": "definition_misalignment",
+    "mechanism_class": "definition_misalignment",
+    "note_run3": "two-class labels pre-decided 2026-09-21 before run 3 (edit = change made; mechanism = why wrong); v14 mechanism convention_drift (half-width convention γ vs γ²)"
   },
   "v04": {
     "variant": "K2_imp",
     "drift_class": "narrower_than_docstring",
-    "target": "K2"
+    "target": "K2",
+    "edit_class": "narrower_than_docstring",
+    "mechanism_class": "narrower_than_docstring",
+    "note_run3": "two-class labels pre-decided 2026-09-21 before run 3 (edit = change made; mechanism = why wrong); v14 mechanism convention_drift (half-width convention γ vs γ²)"
   },
   "v05": {
     "variant": "ST_nosum",
     "drift_class": "dropped_positivity",
-    "target": "ST"
+    "target": "ST",
+    "edit_class": "dropped_positivity",
+    "mechanism_class": "dropped_positivity",
+    "note_run3": "two-class labels pre-decided 2026-09-21 before run 3 (edit = change made; mechanism = why wrong); v14 mechanism convention_drift (half-width convention γ vs γ²)"
   },
   "v06": {
     "variant": "ST_guard",
@@ -30,27 +45,39 @@
     "target": "ST",
     "edit_class": "definition_misalignment",
     "mechanism_class": "totalization_vacuity",
-    "note": "two-class labels added 2026-09-20 after both runs (04 §5 amendment); drift_class is the seeded label used for the strict score"
+    "note_run3": "two-class labels pre-decided 2026-09-21 before run 3 (edit = change made; mechanism = why wrong); v14 mechanism convention_drift (half-width convention γ vs γ²)"
   },
   "v07": {
     "variant": "S3_flip",
     "drift_class": "strict_nonstrict_flip",
-    "target": "S3"
+    "target": "S3",
+    "edit_class": "strict_nonstrict_flip",
+    "mechanism_class": "strict_nonstrict_flip",
+    "note_run3": "two-class labels pre-decided 2026-09-21 before run 3 (edit = change made; mechanism = why wrong); v14 mechanism convention_drift (half-width convention γ vs γ²)"
   },
   "v08": {
     "variant": "S3_faithful",
     "drift_class": "none",
-    "target": "S3"
+    "target": "S3",
+    "edit_class": "none",
+    "mechanism_class": "none",
+    "note_run3": "two-class labels pre-decided 2026-09-21 before run 3 (edit = change made; mechanism = why wrong); v14 mechanism convention_drift (half-width convention γ vs γ²)"
   },
   "v09": {
     "variant": "K2_transpose",
     "drift_class": "wrong_reduction_target",
-    "target": "K2"
+    "target": "K2",
+    "edit_class": "wrong_reduction_target",
+    "mechanism_class": "wrong_reduction_target",
+    "note_run3": "two-class labels pre-decided 2026-09-21 before run 3 (edit = change made; mechanism = why wrong); v14 mechanism convention_drift (half-width convention γ vs γ²)"
   },
   "v10": {
     "variant": "ST_faithful",
     "drift_class": "none",
-    "target": "ST"
+    "target": "ST",
+    "edit_class": "none",
+    "mechanism_class": "none",
+    "note_run3": "two-class labels pre-decided 2026-09-21 before run 3 (edit = change made; mechanism = why wrong); v14 mechanism convention_drift (half-width convention γ vs γ²)"
   },
   "v11": {
     "variant": "S3_Ici",
@@ -58,31 +85,46 @@
     "target": "S3",
     "edit_class": "dropped_positivity",
     "mechanism_class": "totalization_vacuity",
-    "note": "two-class labels added 2026-09-20 after both runs (04 §5 amendment); drift_class is the seeded label used for the strict score"
+    "note_run3": "two-class labels pre-decided 2026-09-21 before run 3 (edit = change made; mechanism = why wrong); v14 mechanism convention_drift (half-width convention γ vs γ²)"
   },
   "v12": {
     "variant": "L2_faithful",
     "drift_class": "none",
-    "target": "L2"
+    "target": "L2",
+    "edit_class": "none",
+    "mechanism_class": "none",
+    "note_run3": "two-class labels pre-decided 2026-09-21 before run 3 (edit = change made; mechanism = why wrong); v14 mechanism convention_drift (half-width convention γ vs γ²)"
   },
   "v13": {
     "variant": "L2_ne",
     "drift_class": "dropped_positivity",
-    "target": "L2"
+    "target": "L2",
+    "edit_class": "dropped_positivity",
+    "mechanism_class": "dropped_positivity",
+    "note_run3": "two-class labels pre-decided 2026-09-21 before run 3 (edit = change made; mechanism = why wrong); v14 mechanism convention_drift (half-width convention γ vs γ²)"
   },
   "v14": {
     "variant": "L2_sq",
     "drift_class": "definition_misalignment",
-    "target": "L2"
+    "target": "L2",
+    "edit_class": "definition_misalignment",
+    "mechanism_class": "convention_drift",
+    "note_run3": "two-class labels pre-decided 2026-09-21 before run 3 (edit = change made; mechanism = why wrong); v14 mechanism convention_drift (half-width convention γ vs γ²)"
   },
   "v15": {
     "variant": "S3_dropN",
     "drift_class": "dropped_positivity",
-    "target": "S3"
+    "target": "S3",
+    "edit_class": "dropped_positivity",
+    "mechanism_class": "dropped_positivity",
+    "note_run3": "two-class labels pre-decided 2026-09-21 before run 3 (edit = change made; mechanism = why wrong); v14 mechanism convention_drift (half-width convention γ vs γ²)"
   },
   "v16": {
     "variant": "L2_half",
     "drift_class": "narrower_than_docstring",
-    "target": "L2"
+    "target": "L2",
+    "edit_class": "narrower_than_docstring",
+    "mechanism_class": "narrower_than_docstring",
+    "note_run3": "two-class labels pre-decided 2026-09-21 before run 3 (edit = change made; mechanism = why wrong); v14 mechanism convention_drift (half-width convention γ vs γ²)"
   }
 }

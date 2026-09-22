@@ -22,9 +22,15 @@ docstring. In this mode:
   accepts every mutant — so instead **answer P4's question by reading**: which hypotheses would the
   intended proof use, and is any hypothesis decoration or any needed hypothesis missing? P5 applies
   to the definitions the statement uses. P6 applies if a physics tag is proposed.
-- The verdict vocabulary is unchanged (`passed` / `gaps_found` / `human_needed`); every finding
-  **must** carry a `drift_class` from the closed list below, and a `passed` verdict carries
-  `drift_class: none`.
+- The verdict vocabulary is unchanged (`passed` / `gaps_found` / `human_needed`). The artifact
+  **must** carry two top-level classes from the closed list below: `edit_class`, the *change*
+  that produced the drift as you would describe it to the author (what was dropped, flipped,
+  restated or narrowed), and `mechanism_class`, *why* the statement is wrong or weaker (e.g. a
+  totalized `x / 0 = 0` making a domain point junk). They coincide when the edit is its own
+  mechanism. A `passed` verdict carries `none` for both. Every finding carries a `drift_class`
+  (the class of that finding). Changed 2026-09-21 after the first red team: a reviewer that
+  names the edit and reports the mechanism, or the reverse, has done its job, and the two
+  fields let the benchmark score both.
 - You do not know whether the file you were handed is faithful or a seeded drift. Treat every file
   as adversarial. Do not ask; decide from the evidence and say what would change your verdict.
 
@@ -401,9 +407,12 @@ failure_modes:   # every entry gets a verdict, N/A allowed
   L8_hollow_witness: …
   L9_docstring_drift: …
   L10_strengthened_hypothesis: …
-drift_class: none | dropped_positivity | totalization_vacuity | strict_nonstrict_flip
-             | convention_drift | wrong_reduction_target | definition_misalignment
-             | narrower_than_docstring        # REQUIRED; the dominant class if several apply
+edit_class: none | dropped_positivity | totalization_vacuity | strict_nonstrict_flip
+            | convention_drift | wrong_reduction_target | definition_misalignment
+            | narrower_than_docstring        # REQUIRED; the change that produced the drift
+mechanism_class: none | dropped_positivity | totalization_vacuity | strict_nonstrict_flip
+            | convention_drift | wrong_reduction_target | definition_misalignment
+            | narrower_than_docstring        # REQUIRED; why it is wrong; may equal edit_class
 findings:
   - {id: F1, severity: blocking|major|minor, mode: L9, drift_class: …, what: …, fix: statement|docstring|tag, detail: …}
 unverified:      # anything that forced human_needed, or that a pass rests on
