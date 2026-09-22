@@ -337,14 +337,45 @@ Statement audit (Mode B, three independent reviewers, 2026-09-21): **all three `
 none`**, with docstring-level findings applied to the files (identities are sign-free; guards are used
 only as `≠ 0`; shared-partition-function scope; unused imports removed; the closure-bias right-hand side
 is `Nu`-invariant, so its content is `closureEstimate = N s / ∑ N` and the inflation dressing already
-exists as `MatrixEffects.recoveredComposition_eq_inflation` — the eventual module states
-`closureEstimate_eq_composition` and derives the bias from there). Each reviewer also produced an
-axiom-clean proof as a probe, so the three statements are known provable before the Worker sees
-them; those probe proofs stay outside the Worker's world (`/tmp/aud-*`, not indexed by `lean_search`).
-Files: `tools/openprover/dryrun/C3_*.lean` with dossiers `C3_*.md`. Before any Worker run; scope tags
-EXACT with citation Tognoni 2010 (+ Abbass 2016 in the module docstring); non-vacuity witnesses
-`κ = Fin 2`, `Fcal ≠ 1`, `Nu·Ru ≠ 0`; acceptance mutants: drop `hne` (division by zero makes the
-estimator `0`), replace `N s * R s` by `N s` in neutrality (statement false), drop the `Nu·Ru` term
-(reduces to theorem 1). Worker runs: Leanstral (infer-03) and the Qwen3.8-27B control (infer-01),
-same harness, 60-min caps, each theorem its own run; the lead re-verifies every returned proof
-(`lake env lean`, `#print axioms`, signature diff) before it can enter `Alt/NeutralityScale.lean`.
+exists as `MatrixEffects.recoveredComposition_eq_inflation` — noted as a follow-up architectural
+reuse, not a landing blocker). Each reviewer also produced an axiom-clean proof as a probe, so the
+three statements are known provable before the Worker sees them; those probe proofs stay outside
+the Worker's world (`/tmp/aud-*`, not indexed by `lean_search`). Files:
+`tools/openprover/dryrun/C3_*.lean` with dossiers `C3_*.md`. Scope tags EXACT with citations
+Abbass 2016 / Tognoni 2010 / Ciucci 1999; non-vacuity witnesses `κ = Fin 2`, `Fcal ≠ 1`,
+`Nu·Ru ≠ 0`; acceptance mutants recorded in the audit transcripts: drop `hne` (division by zero
+makes the estimator `0`), replace `N s * R s` by `N s` in neutrality (statement false), drop the
+`Nu·Ru` term (reduces to theorem 1), `Nu = −∑ N` (breaks the closure-bias identity).
+
+### 7.4 Worker result (2026-09-21–22, decision D12) — **PR #6, `feat/neutrality-scale`, landed on `main`**
+
+Both local models ran all three audited statements, same harness, 60-minute caps each, after the
+two harness fixes from the Frontier 02/07 dry run (§10.4: server-side `--reasoning-budget 8192`,
+`--answer-reserve 16384`; OpenProver search-loop breaker + 12-turn cap).
+
+| statement | Qwen3.8-27B (infer-01) | Leanstral 1.5 Q6_K (infer-03) |
+|---|---|---|
+| `neutralityScale_eq_Fcal` | **proved**, 23 min, 18 planner calls | not proved, 7 failed `lean_verify` |
+| `neutralityScale_undetected` | **proved**, 42 min, 40 planner calls | not proved, running to cap |
+| `closureEstimate_bias` | **proved**, 50 min (after two silent SIGKILLs of the Qwen service, unrelated to the proof — see below) | not proved, running to cap |
+
+**3/3 for Qwen, 0/3 for Leanstral** — the opposite of the owner's stated expectation going in.
+Every Qwen proof was independently re-verified by the lead before landing: `lake env lean`,
+`#print axioms` (the standard three), and a full statement/definition diff against the audited
+files (identical). Qwen's route in each case matched the reviewers' own probe proofs: a
+`lineIntensity_linear`/`_ratio` helper by `unfold; ring`, then `Finset.mul_sum` + `field_simp`.
+Leanstral's failures on this target are consistent with its performance on the algebraic smoke
+tests (2/5, both one-liners) and the Frontier 02 dry run (proved three helper lemmas by
+decomposition, lost the assembly to harness limits): it can decompose and prove short lemmas but
+has not closed a multi-step `field_simp`/`Finset` assembly in this campaign.
+
+Incident: the Qwen `systemd` service was killed twice with no error logged and no OOM record
+between the second and third runs; root cause was `systemctl set-property` for CPU pinning not
+persisting across a service restart, silently returning the instance to all 36 threads (not itself
+fatal) — the actual SIGKILL sender was not identified. Fix applied: re-pin after every restart;
+open follow-up to make the pin a persistent drop-in instead of a transient `set-property`.
+
+Landed as `CflibsFormal/Alt/NeutralityScale.lean`, gates green (`lake build`, `axiom-audit`,
+`runLinter`, `stats.sh`, oracle regression, `check-citations.sh`/`check-scope-consistency.sh`
+advisory clean), `docs/scope-tags.tsv` +5 EXACT rows, auto docs regenerated — on a fresh branch off
+`main` (`docs/formalization-spec` carries no Lean, per its own contract), PR #6.
