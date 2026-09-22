@@ -750,3 +750,8 @@ HeteroAtomicData.lean	temp_rel_error_atomicData_hetero	REDUCED	Tognoni 2010
 HeteroAtomicData.lean	heteroSlopeBound_lt_global_witness	PURE-MATH	—
 HeteroAtomicData.lean	nvP_heteroSlopeBound_value	PURE-MATH	—
 HeteroAtomicData.lean	nvP_slope_bias_eq_log	EXACT	Tognoni 2010
+Alt/NeutralityScale.lean	neutralityScale_eq_Fcal	EXACT	Abbass 2016
+Alt/NeutralityScale.lean	neutralityScale_undetected	EXACT	Abbass 2016
+Alt/NeutralityScale.lean	closureEstimate_bias	EXACT	Tognoni 2010
+Alt/NeutralityScale.lean	lineIntensity_linear	EXACT	Ciucci 1999
+Alt/NeutralityScale.lean	lineIntensity_ratio	EXACT	Ciucci 1999
