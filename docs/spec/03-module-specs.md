@@ -347,7 +347,7 @@ Abbass 2016 / Tognoni 2010 / Ciucci 1999; non-vacuity witnesses `κ = Fin 2`, `F
 makes the estimator `0`), replace `N s * R s` by `N s` in neutrality (statement false), drop the
 `Nu·Ru` term (reduces to theorem 1), `Nu = −∑ N` (breaks the closure-bias identity).
 
-### 7.4 Worker result (2026-09-21–22, decision D12) — **PR #6, `feat/neutrality-scale`, landed on `main`**
+### 7.4 Worker result (2026-09-21–22, decision D12) — **PR #6, `feat/neutrality-scale`, open (CI green), not merged**
 
 Both local models ran all three audited statements, same harness, 60-minute caps each, after the
 two harness fixes from the Frontier 02/07 dry run (§10.4: server-side `--reasoning-budget 8192`,
@@ -412,7 +412,48 @@ persisting across a service restart, silently returning the instance to all 36 t
 fatal) — the actual SIGKILL sender was not identified. Fix applied: re-pin after every restart;
 open follow-up to make the pin a persistent drop-in instead of a transient `set-property`.
 
-Landed as `CflibsFormal/Alt/NeutralityScale.lean`, gates green (`lake build`, `axiom-audit`,
+Written as `CflibsFormal/Alt/NeutralityScale.lean`, gates green (`lake build`, `axiom-audit`,
 `runLinter`, `stats.sh`, oracle regression, `check-citations.sh`/`check-scope-consistency.sh`
 advisory clean), `docs/scope-tags.tsv` +5 EXACT rows, auto docs regenerated — on a fresh branch off
-`main` (`docs/formalization-spec` carries no Lean, per its own contract), PR #6.
+`main` (`docs/formalization-spec` carries no Lean, per its own contract), PR #6 — open, CI green,
+awaiting the owner's merge (earlier drafts of this section and the v0.4.2 change log said "landed on
+`main`"; it has not been merged).
+
+### 7.5 Leanstral matched rerun (2026-09-22–23) — **3/3 proved**
+
+Same three audited statements, same OpenProver harness and Claude `sonnet` planner, after the
+serving corrections of 04 §10.4 (Mistral's 1.5 chat template, card sampling, reasoning budget
+equal to Qwen's, Worker usage summed over all turns) and with an equal-*token* budget
+(`--max-tokens 150000`; Qwen's largest full-count total was ~125k) instead of a wall-clock cap.
+Every proof re-verified by the lead: `lake env lean`, `#print axioms` (the standard three), no
+`sorry`/`admit`/`native_decide`, imports and local definitions and the theorem statement identical
+to the audited file after whitespace normalisation.
+
+| statement | Qwen3.8-27B (§7.4) | Leanstral 1.5, first run (§7.4) | Leanstral 1.5, matched rerun |
+|---|---|---|---|
+| `neutralityScale_eq_Fcal` | proved, 20 min | not proved | **proved**: Lean proof verified at step 4, 42.5k tokens, 4 h 34 min (infer-03, pinned and balanced) |
+| `neutralityScale_undetected` | proved, 40 min, ~99k tokens | not proved | **proved**: verified at step 4, ≤ 96k tokens, 4 h 54 min (infer-03, vCPUs unpinned for most of the run) |
+| `closureEstimate_bias` | proved, 47 min, ~125k tokens | not proved | **Lean proof complete and verified** at step 9, 72k tokens, ~8 h 30 min (infer-02, model split 10/21/31/31 GB across NUMA nodes); the harness run was then killed by the lead's 9 h wall-clock guard while writing the informal proof, so OpenProver recorded `not_proved` |
+
+Reading. (1) The first run's 0/3 was the serving setup, not the model: under matched settings
+Leanstral closes all three, at a token cost equal to or below Qwen's. (2) Wall-clock is the real
+gap: 4.5–8.5 h against 20–47 min. Leanstral's routed experts run on CPU (decode 8–15 tok/s, prefill
+60–140 tok/s against Qwen's fully GPU-resident ~41 tok/s), and every agent turn re-prefills a long
+prompt. Two fleet faults found during this rerun inflated the times further (04 §10.4, "Fleet
+fixes"): infer-03 decoded at ~5 tok/s until its vCPUs were pinned, infer-02 at 4–6 tok/s until the
+model was reloaded evenly across NUMA nodes (15–16 tok/s after, short context). (3) Behaviour:
+Leanstral explores before it attempts — long `lean_search` runs under OpenProver, and under Mistral
+Vibe (below) long `find`/`read_file` runs with no compile. The search-loop breaker matters more for
+it than for Qwen. (4) Scope of the evidence: three algebraic statements from one family, with a
+Claude planner doing much of the decomposition in both arms. It shows both Workers close this
+class; it does not rank them on harder targets.
+
+Mistral Vibe arm (D7; in progress). `vibe -p --agent lean-local` (Vibe 2.25.7, the model card's
+local-server configuration, `system_prompt_id = "lean"`) in a `bwrap` sandbox holding the Lean
+project's build (minus every `NeutralityScale` artifact) and, from the second attempt on, the
+repository's sources as of this branch (which has no `NeutralityScale.lean`). First attempt, no
+sources: 2 h 11 min of `find`/`read_file` (96 and 30 calls), no compile, no edit — stopped as a
+sandbox artifact. Second attempt on `neutralityScale_eq_Fcal`: ended after 2 h 51 min when Vibe's
+own HTTP client timed out (1800 s) on an auto-compaction request, with the working file's
+conclusion line deleted (the edit would have failed the statement check); API timeout raised to
+7200 s for later runs.
