@@ -60,10 +60,19 @@ Two worker-loop rules were added to the patch after the 2026-09-21 dry run: a **
 breaker** (after two consecutive turns whose only tool calls were `lean_search`, the next turn is
 offered `lean_verify` only and told to write the file) and a **turn cap** (`WORKER_MAX_TURNS = 12`,
 routed through the existing forced-output path). On the server side every Leanstral launcher
-carries `--reasoning-budget 8192` so a turn always ends in an answer or a tool call; pair it with
-`--answer-reserve 16384`.
+carries `--reasoning-budget 16384` (8192 until 2026-09-22; now equal to the Qwen control's) so a turn
+always ends in an answer or a tool call; pair it with `--answer-reserve 24576`.
 
-`--answer-reserve` (16384 with the reasoning budget; 12288 was used before it) is mandatory with Leanstral: the flag is also the per-call `max_tokens` for
+Three more patches since 2026-09-22 (spec 04 §10.4): **per-model sampling** (`MODEL_SAMPLING` in
+`llm/hf.py`: Leanstral gets its card's temperature 1.0 with top-p 1, top-k off, min-p 0; other models
+keep OpenProver's 0.6/0.95); **Worker usage summed over all turns** (1.0.1 reported only the last
+turn, so `--max-tokens` budgets undercounted); and the patch script's idempotency guard now also
+recognises a first pattern that later patches extended. The Leanstral launchers serve Mistral's
+1.5 chat template via `--chat-template-file`, not the GGUF's embedded 2603 one, which rejects a user
+message after a tool result; the llama.cpp-compatible copy is
+`fleet/leanstral-1.5.chat_template.llamacpp.jinja`.
+
+`--answer-reserve` (24576 with the 16k reasoning budget; 12288 was used before any budget) is mandatory with Leanstral: the flag is also the per-call `max_tokens` for
 OpenAI-style workers, and the default 4096 is consumed by thinking alone (every failed smoke-test turn
 ended `finish_reason: length` at 4096 completion tokens with empty content).
 

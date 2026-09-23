@@ -458,6 +458,35 @@ the Qwen control, which the dry run will price in rounds and wall-clock.
    node-hours and ~$20 nominal planner spend for zero closed frontier theorems, so the Phase-0 Worker
    exit criterion (both frontiers within the cap) is not met and the Qwen control arm (D11) is
    deferred until (ii) is in place.
+   **Harness rules in place (2026-09-21).** Both follow-ups of (ii) are implemented in
+   `tools/openprover/patch_local_alias.py`: after two consecutive `lean_search`-only turns the next
+   turn is offered `lean_verify` only and told to write the file, and Worker turns are capped at 12;
+   the Leanstral launchers carried `--reasoning-budget 8192` with `--answer-reserve 16384`. Rerun of
+   smoke test 5 (L2) under the breaker: 5 `lean_verify` calls and 3 withheld searches, against 0
+   verifications in 22 searches unpatched.
+   **Leanstral serving corrections (2026-09-22, after the C3 A/B, 03 §7.4).** The owner asked
+   whether the right model was installed. It was (GZGavinZhao's Q6_K GGUF of
+   `mistralai/Leanstral-1.5-119B-A6B`, the update of `Leanstral-2603`), but the A/B had been run with
+   Leanstral under settings that disadvantaged it, and one outright defect:
+
+   | setting | before | now | why |
+   |---|---|---|---|
+   | chat template | GGUF-embedded 2603 template (5.7 kB) | Mistral's 1.5 `chat_template.jinja`, one edit for llama.cpp (`tools/openprover/fleet/leanstral-1.5.chat_template.llamacpp.jinja`) | the 2603 template 500s on a user message after a tool result (the breaker's message; 4 failed calls in C3); the official one 500s on every tool result under llama.cpp's Jinja (a macro call omits `support_thinking`) until that argument is passed |
+   | `--reasoning-budget` | 8192 | 16384 | equal to the Qwen control's |
+   | `--answer-reserve` | 16384 | 24576 | room for an answer after a full 16k thought |
+   | sampling | temperature 0.6, top-p 0.95 (hard-coded for every model) + llama-server's top-k 40, min-p 0.05 | temperature 1.0, top-p 1, top-k off, min-p 0 | Mistral's card and its reference vLLM client; Qwen keeps OpenProver's 0.6/0.95 |
+   | budget | `--max-time 60m` | `--max-tokens 150000` | equal *tokens*, not wall-clock: Qwen's largest full-count total was 125k |
+   | usage accounting | last Worker turn only | all turns | `_run_worker_multi_turn` returned only the final turn's `usage`, so token budgets undercounted Worker output |
+
+   Checked on both nodes before any run: `/props` serves the new template; a tool call returns
+   `finish_reason: tool_calls` with reasoning; the sequence system → user → assistant(tool call) →
+   tool → user now returns 200 (500 before); `/slots` shows temperature 1.0, top-p 1, top-k 0,
+   min-p 0 on a request sent through the patched client. Context stays at 65536: without flash
+   attention (sm_70) the KQ buffer grows with `n_ctx`, and the client's context entry for both models
+   is 65536 anyway. Not changed: OpenProver still drops prior-turn reasoning from the history, which
+   the 1.5 template would render (llama.cpp suggests `--reasoning-preserve`); at 16k tokens a turn it
+   would exhaust 64k context in four turns. The Mistral Vibe arm remains the test of Leanstral in its
+   own harness.
    **Smoke-test tally (final, 2026-09-20; 45-min caps, `--answer-reserve 12288`, both nodes at
    `-t 30`, nodes idle except where noted).**
 

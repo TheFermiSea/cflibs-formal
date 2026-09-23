@@ -25,15 +25,26 @@
 #   --chat-template-kwargs reasoning_effort=high: the template defaults to 'none' (no [THINK] block,
 #   reasoning_content null); 'high' is the only other value it accepts. Set at the server so every
 #   client (OpenProver's HFClient sends no chat_template_kwargs) gets the thinking mode.
-#   --reasoning-budget 8192: caps [THINK] so an answer/tool call always follows (verified on b10326:
+#   --reasoning-budget 16384: caps [THINK] so an answer/tool call always follows (verified on b10326:
 #   budget 512 cut the thought and the proof + tool call still arrived). Pair with OpenProver
-#   --answer-reserve 16384 (per-call max_tokens) so ~8k tokens remain for the answer. The dry run
-#   of 2026-09-21 lost its assembly turn to a 12288-token thought with empty content.
+#   --answer-reserve 24576 (per-call max_tokens) so ~8k tokens remain for the answer. The dry run
+#   of 2026-09-21 lost its assembly turn to a 12288-token thought with empty content. Was 8192 until
+#   2026-09-22; raised to match the Qwen3.8-27B control (run-qwen38 has 16384) for a fair A/B.
+#   --chat-template-file: the GGUF (GZGavinZhao quant) embeds Leanstral-2603's older 5.7 kB template,
+#   which raise_exception()s on a user message after a tool result ("roles must alternate") -- four
+#   HTTP 500s during the C3 runs of 2026-09-21, triggered by OpenProver's search-loop breaker. Use
+#   Mistral's current 1.5 template (12792 B, sha256 7a5a4bc3...b357, from
+#   mistralai/Leanstral-1.5-119B-A6B), which allows tool->user and merges same-role runs -- with one
+#   edit: its tool-message render_content() call omits the support_thinking argument, which Python
+#   Jinja tolerates and llama.cpp's engine rejects ("Not enough arguments", HTTP 500 on every tool
+#   result); the .llamacpp copy passes support_thinking=false (sha256 a938e960...01b3). Copy in the
+#   repo: tools/openprover/fleet/leanstral-1.5.chat_template.llamacpp.jinja.
 #   Port 8082 (8081 = qwen38 and deepseek on their nodes).
 exec numactl --interleave=all /opt/llama.cpp-master/build/bin/llama-server \
   -m /mnt/models/Leanstral-1.5/Leanstral-1.5-119B-A6B-Q6_K.gguf \
   -ngl 999 -ncmoe 36 -fa off -t 30 \
   --no-op-offload -b 4096 -ub 1024 --load-mode mlock \
-  -c 65536 --jinja --chat-template-kwargs '{"reasoning_effort":"high"}' --reasoning-budget 8192 \
+  -c 65536 --jinja --chat-template-file /mnt/models/Leanstral-1.5/official/chat_template.llamacpp.jinja \
+  --chat-template-kwargs '{"reasoning_effort":"high"}' --reasoning-budget 16384 \
   --metrics --alias leanstral \
   --host 0.0.0.0 --port 8082 "$@"

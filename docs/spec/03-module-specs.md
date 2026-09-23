@@ -384,17 +384,27 @@ A/B was not symmetric, and every asymmetry favored Qwen:
 | chat template | model's own | the GGUF's embedded **2603** template (5.7 kB), not 1.5's current 12.8 kB one | 1.5's `chat_template.jinja` |
 | agent harness | OpenProver (drops prior-turn reasoning) | same | Mistral Vibe (`LEAN.md` system prompt); 1.5's template re-injects prior reasoning |
 
-The throughput gap alone gives Qwen roughly 3–4× the tokens per run under an equal wall-clock cap;
-two of the three Leanstral runs ended at the cap. The run logs show it: Leanstral reached only
-3–4 planner steps per hour (step 3 of `neutralityScale_eq_Fcal` at 42 min; Qwen reached the same
-step and proved it at 21 min), and its three `lean_verify — ok` results were definition probes, not
-the target. Separately, the infer-03 `llama-server` segfaulted in `libggml-cpu`
-(`2026-09-22T03:19:38Z`, `status=11/SEGV`) in the final minutes of the third run, after 4 h of
-uptime; cause not investigated, and it has to be before that node is trusted again. A fair rerun needs an equal *token* budget (or a
-proportionally longer cap), equal reasoning budget, temperature 1.0 for Leanstral, and 1.5's official
-template via `--chat-template-file`. The D7 Mistral Vibe arm, the harness Leanstral was trained for,
-has still not been run. Until then, what this table shows is "Qwen closes these under OpenProver at
-Qwen's settings", not "Qwen is the better Worker".
+What the logs support, and what they do not:
+
+- **Throughput mattered on the first statement only.** Summed over every Worker and verifier call,
+  Leanstral generated 12k / 33k / 42k output tokens on the three statements; Qwen used 38k / 25k /
+  86k to prove them. On `neutralityScale_undetected` Leanstral had *more* tokens than Qwen needed
+  and still failed, so speed alone does not explain the result. Leanstral decoded at 8–12 tok/s
+  (falling as context grew) and reached only 3–4 planner steps per hour; its three
+  `lean_verify — ok` results were definition probes, not the target.
+- **Four Worker calls failed outright on a template defect.** The GGUF's embedded 2603 template
+  `raise_exception()`s when a user message follows a tool result ("roles must alternate"), which is
+  exactly what the OpenProver search-loop breaker sends. The infer-03 server log records four
+  HTTP 500s: two in the second run, two in the third. Qwen's template accepts that sequence.
+- **Per-turn thinking cap half of Qwen's, temperature not the card's.** As in the table above.
+- **The infer-03 crash was at shutdown.** The segfault in `libggml-cpu` (`2026-09-22T03:19:38Z`,
+  `status=11/SEGV`) follows "Received second interrupt, terminating immediately" in the server log:
+  an external interrupt during the last minutes of the third run, most likely from the lead's own
+  Q4 benchmark job. It is a teardown crash, not an inference crash; recorded, not chased further.
+
+Until a matched rerun, what the table shows is "Qwen closes these under OpenProver at Qwen's
+settings", not "Qwen is the better Worker". The D7 Mistral Vibe arm (the harness Leanstral was
+trained for) has still not been run.
 
 Incident: the Qwen `systemd` service was killed twice with no error logged and no OOM record
 between the second and third runs; root cause was `systemctl set-property` for CPU pinning not

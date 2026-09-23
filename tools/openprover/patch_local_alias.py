@@ -17,7 +17,9 @@ ALIAS, SERVED_NAME, CTX = "leanstral-local", "leanstral", 65536
 
 def patch(path: pathlib.Path, pairs):
     s = path.read_text()
-    if pairs[0][1] in s:
+    # The first `old` disappears once patched; its `new` may not survive verbatim, because later
+    # patches (the qwen alias) extend the same lines.
+    if pairs[0][1] in s or pairs[0][0] not in s:
         print(f"already patched: {path}"); return
     for old, new in pairs:
         assert s.count(old) == 1, f"{path}: pattern not found or not unique: {old[:60]!r}"
@@ -120,3 +122,63 @@ else:
     assert _h.count(o) == 1
     hf.write_text(_h.replace(o, o + f'    "{QSERVED}": {QCTX},  # Qwen3.8-27B Q6_K, run-qwen38 -c 131072 (4 unified slots); conservative\n'))
     print(f"patched (qwen ctx): {hf}")
+
+# Per-model sampling (2026-09-22). HFClient hard-codes temperature 0.6 / top_p 0.95 at all three request
+# sites -- Qwen3-family thinking-mode settings. Mistral's Leanstral card recommends temperature 1.0 and
+# its reference client sends nothing else (vLLM defaults: top_p 1, top_k off, min_p 0); llama-server's
+# own defaults (top_k 40, min_p 0.05) would otherwise apply, so they are sent explicitly. Models not in
+# the table keep OpenProver's original values, so the Qwen control arm is unchanged.
+_h = hf.read_text()
+if "def _sampling(" in _h:
+    print(f"already patched (sampling): {hf}")
+else:
+    anchor = "# Per-read timeout for streaming responses (seconds)."
+    assert _h.count(anchor) == 1
+    _h = _h.replace(anchor, '''MODEL_SAMPLING = {
+    "leanstral": {"temperature": 1.0, "top_p": 1.0, "top_k": 0, "min_p": 0.0},  # Mistral model card
+}
+
+
+def _sampling(model: str) -> dict:
+    return MODEL_SAMPLING.get(model, {"temperature": 0.6, "top_p": 0.95})
+
+
+''' + anchor)
+    n = 0
+    for ind in (" " * 16, " " * 12):
+        old = f'{ind}"temperature": 0.6,\n{ind}"top_p": 0.95,\n'
+        n += _h.count(old)
+        _h = _h.replace(old, f'{ind}**_sampling(self.model),\n')
+    assert n == 3, f"sampling: expected 3 request sites, found {n}"
+    hf.write_text(_h); print(f"patched (sampling): {hf}")
+
+# Budget accounting (2026-09-22). _run_worker_multi_turn returns only the LAST turn's `raw`, so
+# _track_output_tokens (and step meta.toml) saw one turn of a 12-turn worker: --max-tokens budgets
+# silently undercounted Worker output. Sum usage over every turn and return it in `raw["usage"]`.
+_p = pr.read_text()
+if "total_out_tokens" in _p:
+    print(f"already patched (usage sum): {pr}")
+else:
+    o = '        total_cost = 0.0\n        total_duration = 0\n        call_idx = 0\n'
+    assert _p.count(o) == 1
+    _p = _p.replace(o, '        total_cost = 0.0\n        total_duration = 0\n'
+                       '        total_out_tokens = total_in_tokens = 0  # cflibs patch: usage over all turns\n'
+                       '        call_idx = 0\n')
+    a = _p.index("    def _run_worker_multi_turn(")
+    b = _p.index("\n    def ", a + 10)
+    head, body, tail = _p[:a], _p[a:b], _p[b:]
+    n = 0
+    for ind in (" " * 20, " " * 16):
+        o = f'\n{ind}total_duration += resp["duration_ms"]\n'  # leading \n: 16 spaces is a suffix of 20
+        n += body.count(o)
+        body = body.replace(o, o + f'{ind}_u = (resp.get("raw") or {{}}).get("usage") or {{}}  # cflibs patch\n'
+                              f'{ind}total_out_tokens += _u.get("completion_tokens", 0) or 0\n'
+                              f'{ind}total_in_tokens += _u.get("prompt_tokens", 0) or 0\n')
+    assert n == 3, f"usage sum: expected 3 accumulation sites, found {n}"
+    _p = head + body + tail
+    o = '                "duration_ms": total_duration,\n                "raw": resp["raw"],\n'
+    assert _p.count(o) == 1
+    _p = _p.replace(o, '                "duration_ms": total_duration,\n'
+                       '                "raw": {**(resp["raw"] or {}), "usage": {"prompt_tokens": total_in_tokens,\n'
+                       '                        "completion_tokens": total_out_tokens}},  # cflibs patch\n')
+    pr.write_text(_p); print(f"patched (usage sum): {pr}")
