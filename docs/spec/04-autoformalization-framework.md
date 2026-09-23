@@ -487,6 +487,19 @@ the Qwen control, which the dry run will price in rounds and wall-clock.
    the 1.5 template would render (llama.cpp suggests `--reasoning-preserve`); at 16k tokens a turn it
    would exhaust 64k context in four turns. The Mistral Vibe arm remains the test of Leanstral in its
    own harness.
+   **Fleet fixes (2026-09-23, PVE hosts pve1–3).** (1) infer-01 was down because pve1 was rebooted
+   from its console at 17:59 on 2026-09-22 and VM 610 had `onboot: 0`; started, and `onboot: 1` set
+   on 610/611/612. (2) infer-03's vCPUs had never been pinned (affinity 0-39 on all 36 vCPU threads,
+   while guest memory is `policy=bind` per host node): the VM predates the fixed `pin-vcpus.sh`
+   hookscript, which runs only at `post-start`. Ran the hook live; decode on a C3 turn went from
+   5.2–5.4 tok/s before to 11.4–11.8 tok/s after (live `tg_3s`, different turns, so indicative).
+   (3) Inside infer-02 the Leanstral weights sat 10/21/31/31 GB across the four guest NUMA nodes
+   (page cache from earlier GGUF loads filled nodes 0–1, so `numactl --interleave=all` could not
+   place pages there), with decode at 4–6 tok/s; infer-03 had 23/25/23/24 GB. A systemd drop-in
+   (`fleet/llm-server@.service.d-dropcache.conf`) now drops clean page cache before every model
+   load on all three nodes. Left as found: cocoindex-server (pve1 CT 300) cannot start because its
+   GPU (Quadro T1000) is now passed through to VM 900 and pve1's pinned kernel 6.17.13 has no NVIDIA
+   module (DKMS built only for 7.0.14): an owner change on 2026-09-22, not a fault.
    **Smoke-test tally (final, 2026-09-20; 45-min caps, `--answer-reserve 12288`, both nodes at
    `-t 30`, nodes idle except where noted).**
 
