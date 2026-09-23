@@ -448,12 +448,23 @@ it than for Qwen. (4) Scope of the evidence: three algebraic statements from one
 Claude planner doing much of the decomposition in both arms. It shows both Workers close this
 class; it does not rank them on harder targets.
 
-Mistral Vibe arm (D7; in progress). `vibe -p --agent lean-local` (Vibe 2.25.7, the model card's
-local-server configuration, `system_prompt_id = "lean"`) in a `bwrap` sandbox holding the Lean
-project's build (minus every `NeutralityScale` artifact) and, from the second attempt on, the
-repository's sources as of this branch (which has no `NeutralityScale.lean`). First attempt, no
-sources: 2 h 11 min of `find`/`read_file` (96 and 30 calls), no compile, no edit — stopped as a
-sandbox artifact. Second attempt on `neutralityScale_eq_Fcal`: ended after 2 h 51 min when Vibe's
-own HTTP client timed out (1800 s) on an auto-compaction request, with the working file's
-conclusion line deleted (the edit would have failed the statement check); API timeout raised to
-7200 s for later runs.
+Mistral Vibe arm (D7) — **0/3, harness-limited.** `vibe -p --agent lean-local` (Vibe 2.25.7, the
+model card's local-server configuration, `system_prompt_id = "lean"`, `--reasoning-preserve` on the
+server) in a `bwrap` sandbox holding the Lean project's build (minus every `NeutralityScale`
+artifact) and, from the second attempt on, the repository's sources as of this branch (which has no
+`NeutralityScale.lean`). A first attempt without sources spent 2 h 11 min on 96 `find` and 30
+`read_file` calls with no compile and no edit, and was stopped as a sandbox artifact. With sources:
+
+| statement | wall-clock | completion tokens (server counter) | outcome |
+|---|---|---|---|
+| `neutralityScale_eq_Fcal` | 2 h 51 min | 44k | Vibe's HTTP client timed out (1800 s) on an auto-compaction request; the working file had the theorem's conclusion line deleted |
+| `neutralityScale_undetected` | 3 h 34 min | 48k | same timeout (now 7200 s) on auto-compaction; file unchanged |
+| `closureEstimate_bias` | 3 h 53 min | 32k | same; file unchanged |
+
+Every run ended the same way: Vibe summarises its history once the context passes its compaction
+threshold (48k tokens here, for a 64k server context), and at local decode speed that summary
+request outlives any reasonable client timeout. Before reaching it, Leanstral spent its turns
+reading sources (`read_file`, `grep`) rather than compiling. So this arm measures Vibe's fit to a
+slow local server, not the model: Vibe is built for Mistral's hosted API (fast decode, 256k
+context, compaction at 168k). Not pursued further; OpenProver with the search-loop breaker is the
+harness that works for Leanstral on this fleet.
