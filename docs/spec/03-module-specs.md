@@ -369,6 +369,33 @@ tests (2/5, both one-liners) and the Frontier 02 dry run (proved three helper le
 decomposition, lost the assembly to harness limits): it can decompose and prove short lemmas but
 has not closed a multi-step `field_simp`/`Finset` assembly in this campaign.
 
+**Caveat (2026-09-22, owner question "is it the right model?"): the Leanstral 0/3 is not a
+model-quality verdict.** The weights are correct: `GZGavinZhao/Leanstral-1.5-119B-A6B-GGUF`
+Q6_K, byte size identical to the Hub file, sha256 checked at download; Leanstral 1.5 is Mistral's
+update *of* `Leanstral-2603` (the Hub's `base_model` tag), so 1.5 is the newer of the two. But the
+A/B was not symmetric, and every asymmetry favored Qwen:
+
+| setting | Qwen3.8-27B | Leanstral 1.5 | Mistral's card |
+|---|---|---|---|
+| server `--reasoning-budget` | 16384 | 8192 | `max_tokens` 32000 in its example |
+| server context | 131072 | 65536 | ≤ 200k |
+| decode throughput under the same 60-min wall-clock cap | ~41 tok/s (dense, fully on GPU) | ~10–14 tok/s (MoE, experts on CPU) | — |
+| temperature | 0.6 (OpenProver `HFClient` hard-codes it) | 0.6 (same) | **1.0** |
+| chat template | model's own | the GGUF's embedded **2603** template (5.7 kB), not 1.5's current 12.8 kB one | 1.5's `chat_template.jinja` |
+| agent harness | OpenProver (drops prior-turn reasoning) | same | Mistral Vibe (`LEAN.md` system prompt); 1.5's template re-injects prior reasoning |
+
+The throughput gap alone gives Qwen roughly 3–4× the tokens per run under an equal wall-clock cap;
+two of the three Leanstral runs ended at the cap. The run logs show it: Leanstral reached only
+3–4 planner steps per hour (step 3 of `neutralityScale_eq_Fcal` at 42 min; Qwen reached the same
+step and proved it at 21 min), and its three `lean_verify — ok` results were definition probes, not
+the target. Separately, the infer-03 `llama-server` segfaulted in `libggml-cpu`
+(`2026-09-22T03:19:38Z`, `status=11/SEGV`) in the final minutes of the third run, after 4 h of
+uptime; cause not investigated, and it has to be before that node is trusted again. A fair rerun needs an equal *token* budget (or a
+proportionally longer cap), equal reasoning budget, temperature 1.0 for Leanstral, and 1.5's official
+template via `--chat-template-file`. The D7 Mistral Vibe arm, the harness Leanstral was trained for,
+has still not been run. Until then, what this table shows is "Qwen closes these under OpenProver at
+Qwen's settings", not "Qwen is the better Worker".
+
 Incident: the Qwen `systemd` service was killed twice with no error logged and no OOM record
 between the second and third runs; root cause was `systemctl set-property` for CPU pinning not
 persisting across a service restart, silently returning the instance to all 36 threads (not itself
