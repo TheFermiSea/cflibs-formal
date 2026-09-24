@@ -1,0 +1,264 @@
+{
+  "total": 40,
+  "offset": 0,
+  "next": 8,
+  "data": [
+    {
+      "paperId": "5a9d7b3c3642d8a57bf69468d07242ea9670f024",
+      "externalIds": {
+        "MAG": "2202595776",
+        "DOI": "10.1088/0953-4075/48/11/115701",
+        "CorpusId": 123795403
+      },
+      "title": "Electron density determination of aluminium laser-induced plasma",
+      "venue": "",
+      "year": 2015,
+      "citationCount": 18,
+      "authors": [
+        {
+          "authorId": "12775822",
+          "name": "D. M. Surmick"
+        },
+        {
+          "authorId": "2816975",
+          "name": "C. Parigger"
+        }
+      ]
+    },
+    {
+      "paperId": "6e95811f41aea11b41f63cd0b4a444305ae83e46",
+      "externalIds": {
+        "MAG": "2180837850",
+        "DOI": "10.1063/1.4936251",
+        "CorpusId": 98844591
+      },
+      "title": "Axial- and radial-resolved electron density and excitation temperature of aluminum plasma induced by nanosecond laser: Effect of the ambient gas composition and pressure",
+      "venue": "",
+      "year": 2015,
+      "citationCount": 6,
+      "authors": [
+        {
+          "authorId": "92347062",
+          "name": "M. Dawood"
+        },
+        {
+          "authorId": "49047336",
+          "name": "A. Hamdan"
+        },
+        {
+          "authorId": "27082692",
+          "name": "J. Margot"
+        }
+      ]
+    },
+    {
+      "paperId": "d2f6deca7563d48ecdd9cf0b4e57aa3b4d9f5070",
+      "externalIds": {
+        "MAG": "282471054",
+        "DOI": "10.1088/0256-307X/32/3/035203",
+        "CorpusId": 118124597
+      },
+      "title": "Characterization of Femtosecond Laser-Induced Plasma under Low Pressure in Argon",
+      "venue": "",
+      "year": 2015,
+      "citationCount": 6,
+      "authors": [
+        {
+          "authorId": "2112823695",
+          "name": "Yu Cao"
+        },
+        {
+          "authorId": "2109321841",
+          "name": "Xiao-Liang Liu"
+        },
+        {
+          "authorId": "1806705677",
+          "name": "Wen-Duo Xian"
+        },
+        {
+          "authorId": "48904740",
+          "name": "Shao-Hua Sun"
+        },
+        {
+          "authorId": "2118253758",
+          "name": "Mingze Sun"
+        },
+        {
+          "authorId": "37971932",
+          "name": "P. Ding"
+        },
+        {
+          "authorId": "8064571",
+          "name": "Yan-Chao Shi"
+        },
+        {
+          "authorId": "7769565",
+          "name": "Zuo-Ye Liu"
+        },
+        {
+          "authorId": "33154035",
+          "name": "Bitao Hu"
+        }
+      ]
+    },
+    {
+      "paperId": "f5285957e3cc238bfb63d798468441409aedfb03",
+      "externalIds": {
+        "DOI": "10.1088/0256-307X/32/3/035203",
+        "CorpusId": 250888527
+      },
+      "title": "Characterization of Femtosecond Laser-Induced Plasma under Low Pressure in Argon",
+      "venue": "",
+      "year": 2015,
+      "citationCount": 0,
+      "authors": [
+        {
+          "authorId": "2112823695",
+          "name": "Yu Cao"
+        },
+        {
+          "authorId": "2109321841",
+          "name": "Xiao-Liang Liu"
+        },
+        {
+          "authorId": "1806705677",
+          "name": "Wen-Duo Xian"
+        },
+        {
+          "authorId": "48904740",
+          "name": "Shao-Hua Sun"
+        },
+        {
+          "authorId": "2118253758",
+          "name": "Mingze Sun"
+        },
+        {
+          "authorId": "37971932",
+          "name": "P. Ding"
+        },
+        {
+          "authorId": "8064571",
+          "name": "Yan-Chao Shi"
+        },
+        {
+          "authorId": "2261150056",
+          "name": "Zuo-Ye Liu"
+        },
+        {
+          "authorId": "2260174203",
+          "name": "Bi-Tao Hu"
+        }
+      ]
+    },
+    {
+      "paperId": "80aa63243b0a0341f7d398a8e6d6fd4925c801e0",
+      "externalIds": {
+        "CorpusId": 209844520
+      },
+      "title": "Atomic and molecular emission spectroscopy measurements for characterization of laser-induced plasma dynamics",
+      "venue": "",
+      "year": 2015,
+      "citationCount": 6,
+      "authors": [
+        {
+          "authorId": "2816975",
+          "name": "C. Parigger"
+        },
+        {
+          "authorId": "2882825",
+          "name": "Ghaneshwar Gautam"
+        },
+        {
+          "authorId": "37317515",
+          "name": "A. C. Woods"
+        },
+        {
+          "authorId": "12775822",
+          "name": "D. M. Surmick"
+        },
+        {
+          "authorId": "2152690",
+          "name": "J. Hornkohl"
+        }
+      ]
+    },
+    {
+      "paperId": "5759aa33ddbafa759ae8820a55e3e7be81120b11",
+      "externalIds": {
+        "MAG": "2213899007",
+        "DOI": "10.1088/0022-3727/48/32/325201",
+        "CorpusId": 101778618
+      },
+      "title": "Stark width measurements and Boltzmann plots of W I in nanosecond laser-induced plasmas",
+      "venue": "",
+      "year": 2015,
+      "citationCount": 30,
+      "authors": [
+        {
+          "authorId": "49018721",
+          "name": "D. Nishijima"
+        },
+        {
+          "authorId": "48455110",
+          "name": "R. Doerner"
+        }
+      ]
+    },
+    {
+      "paperId": "be58c3529e1a2a5aef9f1e4f13f3f9f6d0bd93cf",
+      "externalIds": {
+        "MAG": "1516235770",
+        "DOI": "10.1063/1.4926990",
+        "CorpusId": 94328151
+      },
+      "title": "Investigation of thermodynamic equilibrium in laser-induced aluminum plasma using the H\u03b1 line profiles and Thomson scattering spectra",
+      "venue": "",
+      "year": 2015,
+      "citationCount": 13,
+      "authors": [
+        {
+          "authorId": "79476172",
+          "name": "M. Cveji\u0107"
+        },
+        {
+          "authorId": "12534074",
+          "name": "K. Dzier\u017c\u0229ga"
+        },
+        {
+          "authorId": "93371036",
+          "name": "T. Pieta"
+        }
+      ]
+    },
+    {
+      "paperId": "31bb9698ed58cf9a1021185936ee64e7e2134cb9",
+      "externalIds": {
+        "MAG": "2030202062",
+        "DOI": "10.1007/S12043-014-0893-4",
+        "CorpusId": 121991842
+      },
+      "title": "Measurements of egg shell plasma parameters using laser-induced breakdown spectroscopy",
+      "venue": "",
+      "year": 2015,
+      "citationCount": 7,
+      "authors": [
+        {
+          "authorId": "10822512",
+          "name": "W. Luo"
+        },
+        {
+          "authorId": "150345524",
+          "name": "Xiao-Xia Zhao"
+        },
+        {
+          "authorId": "80980037",
+          "name": "Shu-Yuan Lv"
+        },
+        {
+          "authorId": "2217272056",
+          "name": "Hai-Yan Zhu"
+        }
+      ]
+    }
+  ]
+}

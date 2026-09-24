@@ -1,0 +1,247 @@
+{
+  "total": 39,
+  "offset": 0,
+  "next": 8,
+  "data": [
+    {
+      "paperId": "624cb607c3dfadc83f391f1db73f20ca95abd053",
+      "externalIds": {
+        "MAG": "841638186",
+        "DOI": "10.1016/J.SAB.2015.06.009",
+        "CorpusId": 45357433
+      },
+      "title": "Calibration-free analysis of immersed brass alloys using long-ns-duration pulse laser-induced breakdown spectroscopy with and without correction for nonstoichiometric ablation",
+      "venue": "",
+      "year": 2015,
+      "citationCount": 52,
+      "authors": [
+        {
+          "authorId": "48334905",
+          "name": "Tomoko Takahashi"
+        },
+        {
+          "authorId": "2050699",
+          "name": "B. Thornton"
+        },
+        {
+          "authorId": "2059204304",
+          "name": "K. Ohki"
+        },
+        {
+          "authorId": "46676889",
+          "name": "T. Sakka"
+        }
+      ]
+    },
+    {
+      "paperId": "7fbb53aad5f78fe17fccddc641c7c7c8330e8bb9",
+      "externalIds": {
+        "MAG": "2034640135",
+        "DOI": "10.1016/J.SAB.2015.02.004",
+        "CorpusId": 96201952
+      },
+      "title": "Calibration-free analysis of steel slag by laser-induced breakdown spectroscopy with combined UV and VIS spectra",
+      "venue": "",
+      "year": 2015,
+      "citationCount": 31,
+      "authors": [
+        {
+          "authorId": "115639487",
+          "name": "P. Kolmhofer"
+        },
+        {
+          "authorId": "2481188854",
+          "name": "S. Eschlb\u00f6ck-Fuchs"
+        },
+        {
+          "authorId": "97735904",
+          "name": "N. Huber"
+        },
+        {
+          "authorId": "2054171914",
+          "name": "R. R\u00f6\u00dfler"
+        },
+        {
+          "authorId": "144580192",
+          "name": "J. Heitz"
+        },
+        {
+          "authorId": "12706145",
+          "name": "J. Pedarnig"
+        }
+      ]
+    },
+    {
+      "paperId": "cbb8474fe166de3667b455c9da224967256e2aa6",
+      "externalIds": {
+        "MAG": "2062174987",
+        "DOI": "10.1039/C4RA10132D",
+        "CorpusId": 96975077
+      },
+      "title": "A single-beam-splitting technique combined with a calibration-free method for field-deployable applications using laser-induced breakdown spectroscopy",
+      "venue": "",
+      "year": 2015,
+      "citationCount": 13,
+      "authors": [
+        {
+          "authorId": "2153556105",
+          "name": "Mingjun Xu"
+        },
+        {
+          "authorId": "47360318",
+          "name": "Qing-Yu Lin"
+        },
+        {
+          "authorId": "2052595443",
+          "name": "Guang Yang"
+        },
+        {
+          "authorId": "8132121",
+          "name": "Tao-Ran Xu"
+        },
+        {
+          "authorId": "2009789780",
+          "name": "Tian-Long Zhang"
+        },
+        {
+          "authorId": null,
+          "name": "Xu Wang"
+        },
+        {
+          "authorId": "39567350",
+          "name": "Shuai Wang"
+        },
+        {
+          "authorId": "2076182472",
+          "name": "Fang Bian"
+        },
+        {
+          "authorId": "145659087",
+          "name": "Y. Duan"
+        }
+      ]
+    },
+    {
+      "paperId": "2cfebd38b2d83a0d0e141475ad8f4d82f3feaf20",
+      "externalIds": {
+        "MAG": "1895710920",
+        "DBLP": "conf/tsp/Garcia-MorenoGH15",
+        "DOI": "10.1109/TSP.2015.7296463",
+        "CorpusId": 16960693
+      },
+      "title": "Three-dimensional terrestrial reconstruction system: Calibration and error propagation approach",
+      "venue": "International Conference on Telecommunications and Signal Processing",
+      "year": 2015,
+      "citationCount": 0,
+      "authors": [
+        {
+          "authorId": "1403935374",
+          "name": "Angel-Iv\u00e1n Garc\u00eda-Moreno"
+        },
+        {
+          "authorId": "1402804711",
+          "name": "J. Gonz\u00e1lez-Barbosa"
+        },
+        {
+          "authorId": "1406554256",
+          "name": "J. Hurtado-Ramos"
+        },
+        {
+          "authorId": "1403982909",
+          "name": "F. Ornelas-Rodr\u00edguez"
+        }
+      ]
+    },
+    {
+      "paperId": "3f8708189d909bde5ddb1ae56c26b07a3fbfc14d",
+      "externalIds": {
+        "DBLP": "journals/cviu/GalegoJFBAG15",
+        "MAG": "607151331",
+        "DOI": "10.1016/j.cviu.2015.05.015",
+        "CorpusId": 8656439
+      },
+      "title": "Uncertainty analysis of the DLT-Lines calibration algorithm for cameras with radial distortion",
+      "venue": "Computer Vision and Image Understanding",
+      "year": 2015,
+      "citationCount": 10,
+      "authors": [
+        {
+          "authorId": "2839858",
+          "name": "Ricardo Galego"
+        },
+        {
+          "authorId": "2196394",
+          "name": "A. Jimenez"
+        },
+        {
+          "authorId": "143839228",
+          "name": "R. Ferreira"
+        },
+        {
+          "authorId": "145036494",
+          "name": "Alexandre Bernardino"
+        },
+        {
+          "authorId": "1400165226",
+          "name": "J. Andrade-Cetto"
+        },
+        {
+          "authorId": "32817024",
+          "name": "J. Gaspar"
+        }
+      ]
+    },
+    {
+      "paperId": "e2480c8e8f76edfeb4f253226d9fa0f6e8081065",
+      "externalIds": {
+        "MAG": "2202230267",
+        "DOI": "10.1016/J.GCA.2015.09.008",
+        "CorpusId": 97162967
+      },
+      "title": "Revised error propagation of 40 Ar/ 39 Ar data, including covariances",
+      "venue": "",
+      "year": 2015,
+      "citationCount": 20,
+      "authors": [
+        {
+          "authorId": "2499807",
+          "name": "P. Vermeesch"
+        }
+      ]
+    },
+    {
+      "paperId": "790b9abcf6caa8085e62b0c4a0e8b5a4cab61bc0",
+      "externalIds": {
+        "MAG": "3082772440",
+        "CorpusId": 59324468
+      },
+      "title": "Ar-Ar_Redux: rigorous error propagation of 40 Ar/ 39 Ar data, including covariances",
+      "venue": "",
+      "year": 2015,
+      "citationCount": 0,
+      "authors": [
+        {
+          "authorId": "2499807",
+          "name": "P. Vermeesch"
+        }
+      ]
+    },
+    {
+      "paperId": "45ad39e078b0effab5aebd983fbb5e8809162f7f",
+      "externalIds": {
+        "MAG": "2519334992",
+        "CorpusId": 63754742
+      },
+      "title": "Revised error propagation of Ar-40/Ar-39 data, including covariances",
+      "venue": "",
+      "year": 2015,
+      "citationCount": 1,
+      "authors": [
+        {
+          "authorId": "2499807",
+          "name": "P. Vermeesch"
+        }
+      ]
+    }
+  ]
+}

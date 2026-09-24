@@ -1,0 +1,208 @@
+{
+  "data": [
+    {
+      "score": 0.5418618455765702,
+      "paper": {
+        "corpusId": "250689992",
+        "title": "Apparent excitation temperature in laser-induced plasmas",
+        "authors": [
+          "J. A. Aguilera",
+          "C. Arag\u00f3n"
+        ],
+        "openAccessInfo": {
+          "license": null,
+          "status": "GOLD",
+          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://api.unpaywall.org/v2/10.1088/1742-6596/59/1/046?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.1088/1742-6596/59/1/046, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        }
+      },
+      "snippet": {
+        "text": "The asterisks indicate that the magnitudes are modified as follows: the left-hand side of the equation (the ordinate of the Saha-Boltzmann plot) includes the subtraction of a correction term that depends on the temperature and the electron density N e \n\nAlso, the upper level energies (the abscissas of the Saha-Boltzmann plot) have been modified by adding to them the ionization energy of the lower ionization stages, that is, the energy scale begins in the ground state of the neutral atom. For the z ions, the correction is \n\nwhere is the ionization energy of species k for isolated systems (eV) and is the correction of this quantity for interactions in the plasma. These modifications have only effect for ion lines (z 1) and are introduced in equation 1a in order to include the data of the different ionization stages in the Saha-Boltzmann plot. \n\nThe validity of the Saha-Boltzmann plot to obtain the local electronic temperature depends on the validity of the excitation (Boltzmann) and ionisation (Saha) equilibrium equations, which are satisfied in a plasma in local thermodynamic equilibrium (LTE). In the previous work [1], where the laser-induced plasmas were generated and detected in similar conditions, the hypothesis of the existence of LTE was supported by the experimental verification that, in local measurements, the values for the temperature deduced from Boltzmann plots obtained with neutral atom and ion emission lines were coincident among them within the experimental error, and also coincide with the temperature deduced from the Saha-Boltzmann plot. In the present work, the determination of the local temperature has been carried out using the Saha-Boltzmann plot, which provides more accurate results than the Boltzmann plot, due to the higher spread in the values of the energy levels of the neutral atom and ion emission lines involved. The Fe lines selected to obtain the plots were the same as those of the previous work [1], where they are listed with their spectroscopic data.",
+        "snippetKind": "body"
+      }
+    },
+    {
+      "score": 0.5002559383979552,
+      "paper": {
+        "corpusId": "276713081",
+        "title": "Improved Ionization Potential Depression Model Incorporating Dynamical Structure Factors and Electron Degeneracy for Non-Ideal Plasma Composition",
+        "authors": [
+          "Y. Seitkozhanov",
+          "K. Dzhumagulova",
+          "E. Shalenov"
+        ],
+        "openAccessInfo": {
+          "license": "CCBY",
+          "status": "GOLD",
+          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://pmc.ncbi.nlm.nih.gov/articles/PMC11941424, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        }
+      },
+      "snippet": {
+        "text": "The investigation of dense plasmas is critical to various scientific fields, including astrophysics, fusion energy research, materials science, high-energy density physics, planetary science, and nuclear physics. This exploration enhances our understanding of complex phenomena such as stellar evolution, energy production mechanisms, the behavior of materials under extreme conditions, planetary interiors, and nuclear reaction processes. Recent advancements in experimental techniques have significantly strengthened the ability to validate and refine theoretical models. These developments have amplified interest in thoroughly examining the thermodynamic, optical, and transport properties of dense plasmas to bridge the gap between experimental observations and theoretical predictions [1][2][3][4][5][6][7][8]. A key aspect of these investigations involves accurately modeling the ionization equilibrium within such plasmas, as this plays a crucial role in describing their behavior. There are numerous approaches for determining ionization equilibrium, broadly categorized into \"physical\" and \"chemical\" pictures. The physical picture is theoretically rigorous as it incorporates many-body Coulomb interactions among electrons and nuclei. However, this approach becomes mathematically and computationally challenging as plasma density rises, resulting in significant complexity in practical applications [9]. Methods such as finite-temperature density functional theory [10,11], classical molecular dynamics [12,13], and Monte Carlo simulations [14,15] are commonly used within this framework but are computationally intensive and can face limitations in highly coupled regimes. \n\nConversely, the chemical picture conceptualizes the ionization equilibrium in terms of chemical reactions, simplifying the mathematical treatment while retaining physical insight. This approach utilizes the Saha equation [16], which quantitatively links the degree of ionization to plasma temperature, pressure, and ionization energies of constituent particles. While highly effective for ideal plasmas, the Saha equation must be adapted for application to non-ideal, dense plasma conditions. In dense plasmas, non-ideal effects-primarily due to strong interparticle interactions-require corrections to the ionization energy. One significant effect is the reduction in ionization energy due to induced screening, known as ionization potential depression (IPD).",
+        "snippetKind": "body"
+      }
+    },
+    {
+      "score": 0.4933275277789406,
+      "paper": {
+        "corpusId": "257219271",
+        "title": "Review on laser-induced breakdown spectroscopy: methodology and technical developments",
+        "authors": [
+          "Jinto Thomas",
+          "Hem Chandra Joshi"
+        ],
+        "openAccessInfo": {
+          "license": null,
+          "status": "GREEN",
+          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://arxiv.org/abs/2302.13272, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        }
+      },
+      "snippet": {
+        "text": "Generalized curves of growth known as CSigma( C\u03c3) graphs which include several lines of various elements of same ionic stage were suggested by Aragon et al. for LIBS 93 .It is based on Saha, Boltzmann and radiative transfer equations under the assumption of local thermodynamic equilibrium (LTE).Further C-sigma graphs are based on the calculation of line cross section which allows estimation of self-absorption.",
+        "snippetKind": "body"
+      }
+    },
+    {
+      "score": 0.4764855196588306,
+      "paper": {
+        "corpusId": "278602099",
+        "title": "A possible correction of the Saha curve for non-equilibrium states",
+        "authors": [
+          "L. L. Sales",
+          "F. C. Carvalho",
+          "H. Souza"
+        ],
+        "openAccessInfo": {
+          "license": "CCBY",
+          "status": "GOLD",
+          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://arxiv.org/abs/2505.08972, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        }
+      },
+      "snippet": {
+        "text": "The interactions in the early Universe are primarily determined by electromagnetic reactions, which exhibit long-range interactions. In 2018, J.L. Cirto et al. investigated the Validity and Failure of the Boltzmann Weight in the context of long-and short-range interactions (\u03b1/d) for potentials of the type \u03a6(r) \u221d 1/r \u03b1 (\u03b1 \u2265 0) in a d-dimensional space [11]. Accordingly, for shortrange interactions (\u03b1/d > 1), numerical analysis indicates Maxwellians for the momenta and the Boltzmann weight for the energies. Nevertheless, for long-range interactions (\u03b1/d < 1), numerical analysis strongly suggests q-Gaussians for the time-averaged momenta, as well as q-exponential distributions for the Boltzmann weight, hence undoubtedly falling out of the scope of Boltzmann-Gibbs (BG) statistical mechanics. Since the Saha equation is proportional to the Boltzmann weight in the realm of BG statistics, it cannot accurately depict the physical phenomena in the presence of long-range interactions, such as electromagnetic interactions. Besides, the presence of long-range interactions or significant statistical correlations often drives the system away from equilibrium [12]. Since the BG statistics is not well-suited to describe such non-equilibrium scenarios, modifications to the Saha equation become necessary to incorporate effects that lie beyond the BG paradigm. \n\nThe Tsallis statistics is relevant in studying systems out of thermodynamic equilibrium that exhibit strong statistical correlations or long-range interactions [13]. In particular, several studies have shown that space plasmas often display non-Maxwellian velocity distributions that can be accurately described by q-Gaussian distributions (also called kappa distributions), which are typical of the S q -formalism [14]. This provides a robust physical motivation for exploring the role of non-extensive statistics in ionization-recombination processes. The limitations of the Saha equation have opened up a way to investigate its applicability in the early Universe under a generalized context. Motivated by this issue, we develop a strategy to correct the Saha ionization curve for primordial hydrogen recombination using Tsallis statistics [15].",
+        "snippetKind": "body"
+      }
+    },
+    {
+      "score": 0.46796208412721657,
+      "paper": {
+        "corpusId": "97549444",
+        "title": "Limits of Local Thermodynamic Equilibrium in Short Spaced Cesium Plasmas",
+        "authors": [
+          "H. Ciaa\u00dfen",
+          "C. Helrich"
+        ],
+        "openAccessInfo": {
+          "license": "CCBYNCND",
+          "status": "HYBRID",
+          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://api.unpaywall.org/v2/10.1515/zna-1973-0709?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.1515/zna-1973-0709, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        }
+      },
+      "snippet": {
+        "text": "Because of their role in inelastic processes, an accurate treatment of these high energy electrons is in any case necessary. The results presented in Fig. 2 may be compared with those of Norcross and Stone 8 obtained under the same assumptions, i. e. that the plasma is opti cally thin to the lines considered. Figure 2 indicates that at an electron temperature of 2000 \u00b0K Saha-Boltzmann equilibrium will exist between the levels 6P and 5D and between TP and 6D at an electron density of 1013cm-3 and between the levels 8P and 7D at 1012 cm-3. The results of Norcross and Stone are given in terms of reduced densities, f?(p), de fined as the ratio of the actual density, N (p), of the state p to the corresponding Saha density. If q{1) = g(m) for two states I and m, then they will be in relative Saha-Boltzmann equilibrium. That is N(l)/N(m) = (9l/gm) exp{ -(Em -Ei)jk where git m and Eit m are the corresponding statistical weights and ionization energies. From Fig. 3 of Ref. 7, we see that an electron temperature of 2000 \u00b0K and density of 1013 cm\"3, e(5D )/e(6P) =0.87 and o(6D)/e(7P) = 1.0 while at 1012 cm\"3, e(7D) /o(8P) = 1.0, in substantial agreement with our pre dictions. \n\nThe results of Fig. 2 are strictly valid only when the diffusion of excited states out of the volume is negligible. As indicated in Fig. 3, however, diffusion is important over a rather large range of electron temperatures and total pressures for plasma spacings ~ 0.25 mm. The effect of diffusion will be to raise the electron densities required to guarantee Saha-Boltzmann equilibrium. The densities given in Fig. 2 must, therefore, be considered minimal provided the plasma is optically thin.",
+        "snippetKind": "body"
+      }
+    },
+    {
+      "score": 0.46740231422023387,
+      "paper": {
+        "corpusId": "53339271",
+        "title": "Optically Thick Laser-Induced Plasmas in Spectroscopic Analysis",
+        "authors": [
+          "F. Rezaei"
+        ],
+        "openAccessInfo": {
+          "license": "CCBY",
+          "status": "HYBRID",
+          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://api.unpaywall.org/v2/10.5772/61941?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.5772/61941, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        }
+      },
+      "snippet": {
+        "text": "equation can be depicted. The intersection point of the asymptotes shows the following abscissa: As it is seen in Figure 4 the atomic line at 375.82 nm, which contains a higher value of the k t coefficient rather than the spectral line at 379.50 nm, exposes to a more intense self-absorption in the LIP experiment, which appears as a nonlinear COG curve at lower concentrations.Then, this group developed COG curves by introducing the CSigma graph [2], which comprises different lines of various elements in similar ionization states for LIBS technique. The method is based on the Saha, Boltzmann, and radiative transfer equations for plasmas in LTE condition. C\u03c3 graphs rely on the evaluation of cross-section of a line, i.e. \u03c3 l for each of the experimental results, by knowing the electron density, temperature, and the line atomic data. Then, they fitted the experimental C\u03c3 graphs to calculated curves and four parameters of \u03b2A (\u03b2 is the system instrumental factor equal to the multiplication of the spectral efficiency by the solid angle of detection and A is the transverse area of the plasma region in which the emission is detected), Nl (columnar density), T, N e could be determined for characterization of LIBS plasma for different ionic and neutral species. The details of the mathematical calculations are expressed in ref. [2].",
+        "snippetKind": "body"
+      }
+    },
+    {
+      "score": 0.45651448053506355,
+      "paper": {
+        "corpusId": "119065195",
+        "title": "Plasma Diagnostics Using K\u2010Line Emission Profiles of Silicon",
+        "authors": [
+          "Yi-Ling Chen",
+          "Andrea Sengebusch",
+          "Heidi Reinholz",
+          "Gerd Ropke"
+        ],
+        "openAccessInfo": {
+          "license": null,
+          "status": "GREEN",
+          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://arxiv.org/abs/1411.2631, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        }
+      },
+      "snippet": {
+        "text": "Plasma polarization is not only important to calculate the accurate emission line positions but also to determine the plasma composition itself. In contrast to  emission lines, a single level surrounded by plasma is shifted to higher energies, i.e. closer to the continuum. Depending on the plasma parameters this shift can be that large that the continuum is reached and the bound electron is set free (pressure ionization, Mott effect [2]). Hence, we obtain another free electron and a new ion species. In the following we will outline how we calculated the plasma composition taking into account the polarization shifts we determined within the ion sphere model. For more details see again [9,10]. \n\nAssuming a local thermal equilibrium, we apply Saha equations to determine the abundance of the different ion species, \n\n. \n\nHere we use a representation of the chemical potential of species c which is of the same form as the one for the classical ideal gas, \u00b5 c = k B T ln \n\nHowever, the internal partition function \u03c3 in c does not only contain the statistical weight but the particle interactions. Coupling the equations of successive ionization stages we obtain \n\nHere, m denotes the m-th ionization stage with respect to the uncharged atom (reference state). Accordingly, n (0) and n (m) are the densities of particles in these states. Keeping the total particle density fixed at the bulk value the following conservation laws are used to solve the system of Saha equations \n\nHere, we limit ourselves to a maximum number of ionization stages sufficient for temperatures we are interested in (T \u2264 180 eV) , i.e. the sum doesn't run until 18 but is considered up to the boron like ion Ar 13+ . \n\nLet us now consider the electronic partition function \u03c3 in e . As for the electrons no internal degrees of freedom have to be taken into account, we split the partition function into the ideal part represented by the statistical weight and a Boltzmann factor containing the interaction energy, \u03c3 in e = g e e \u2212\u2206e/k B T . \n\nAs we take into account different ionization stages the statistical weight of the m-th successive ionization step will add up to g m e = 2 m .",
+        "snippetKind": "body"
+      }
+    },
+    {
+      "score": 0.45282026912660756,
+      "paper": {
+        "corpusId": "56249100",
+        "title": "A CHEMICAL KINETICS NETWORK FOR LIGHTNING AND LIFE IN PLANETARY ATMOSPHERES",
+        "authors": [
+          "P. Rimmer",
+          "Christiane Helling"
+        ],
+        "openAccessInfo": {
+          "license": null,
+          "status": "BRONZE",
+          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://arxiv.org/abs/1510.07052, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        }
+      },
+      "snippet": {
+        "text": "A special set of three-body reactions are thermal ionization and three-body recombination re-actions, which proceed by the pair of equations (analogous to Eq's (7) and (8)):\n\nA + + e \u2212 + M \u2192 Z + M.\n\nFor which we again use published rates wherever possible for the ionization reactions, (Eq. (14)), but in many cases here use the simple approximation:\n\nwhere e = 4.9032 \u00d7 10 \u221210 esu is the elementary charge, k B = 1.38065 \u00d7 10 \u221216 erg/K is the Boltzmann constant, m e = 9.1084 \u00d7 10 \u221228 g is the mass of the electron, I is the ionization energy (here in units of erg) which we determine from the change in the Gibbs free energy for the reaction. k \u221e is then estimated from k 0 . Three-body recombination and ionization reactions have been well studied, and in many cases have well-characterized rate constants. Here we treat the three body recombinations as the reverse reactions for the collisional ionization reactions, but the studied rate coefficients for these reactions generally have a temperature dependence of T \u22124.5 , at least for T > 1 K (Hahn 1997). This creates a problem for reversibility. Using these rates will not allow us to reproduce chemical equilibrium for plasmas and this is largely because we are not properly treating the time-dependent plasma conditions in which these rates are often measured. Many of these rate constants may accurately describe the time to achieve an equilibrium electron density in a regime where a strong ionizing source has recently been removed from the environment.\n\nWith this in mind, we instead set the recombination rate constants such that, when dissociative recombination reactions are disabled, the Saha equation is upheld.\n\nThese reactions and rate coefficients are also given in Appendix A. The ionization reactions are labeled 'ti' and numbered 421-576. As with Section 2.2, the odd reactions are k 0 [cm 6 s \u22121 ] and the even numbers are k \u221e [cm 3 s \u22121 ].\n\nFinally, we include a series of dissociative recombination reactions, which take the form:\n\nThese",
+        "snippetKind": "body"
+      }
+    },
+    {
+      "score": 0.4503424404179213,
+      "paper": {
+        "corpusId": "118573976",
+        "title": "On various validity criteria for the configuration average in collisional\u2013radiative codes",
+        "authors": [
+          "Michel Poirier"
+        ],
+        "openAccessInfo": {
+          "license": null,
+          "status": "GREEN",
+          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://arxiv.org/abs/0802.0094, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        }
+      },
+      "snippet": {
+        "text": "The solution of the detailed system (II.1) with modified (microreversible) rates as discussed in subsection II C provides a useful accuracy check when comparison is made with Saha-Boltzmann. \n\nThis is illustrated for a 10-eV neon plasma in Table III. The average ionization degree is computed for the various rate systems detailed at the end of subsection II C. One observes that the \"collisional\", \"radiative\", and \"complete\" rate equations provide a Z * -value in close agreement with Saha-Boltzmann equation, usually agreeing within the nine digits, with a small degradation for large electron densities. It is essential to note that this N \u00d7 N (N = 4637) matrix inversion is performed with a remarkable accuracy, the Gauss elimination used resulting in a number of floating-point operations scaling as N 3 . In addition to the Z * comparison, the tests on the maximum population difference (e.g., max irregularities in autoionization and collisional ionization previously noticed [24] and therefore it does not detect accurately the CA-validity breakdown. However a safe way to control the CA validity is to compare the charge Z * all (and not Z * coll ) to Z * SB because the latter quantity is sensitive to irregularities in all kinds of processes. \n\nA comparison between detailed and CA results in a 30 eV-neon plasma is presented in Table V. For this temperature the CA approximation is acceptable in the whole density range investigated, the error varying from 3% to 1%. However, the energy criterion (II.4), though globally satisfied, does not give an accurate picture of the CA validity. For increasing density numbers, the CA approximation improves while the criterion (II.4) is less verified. While in this table the energy dispersion \u2206E \u03b1 is evaluated using configuration populations N \u03b1 derived from the CA-collisional-radiative solution, using N \u03b1 from Saha-Boltzmann equation would increase monotonically from 10 \u221210 eV to 5.7 eV in this density range. \n\nNevertheless in the 30-eV neon case, the ratio Z * all / Z * SB cannot provide a uniform test for CA validity.",
+        "snippetKind": "body"
+      }
+    },
+    {
+      "score": 0.44864724635210396,
+      "paper": {
+        "corpusId": "276713081",
+        "title": "Improved Ionization Potential Depression Model Incorporating Dynamical Structure Factors and Electron Degeneracy for Non-Ideal Plasma Composition",
+        "authors": [
+          "Y. Seitkozhanov",
+          "K. Dzhumagulova",
+          "E. Shalenov"
+        ],
+        "openAccessInfo": {
+          "license": "CCBY",
+          "status": "GOLD",
+          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://pmc.ncbi.nlm.nih.gov/articles/PMC11941424, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        }
+      },
+      "snippet": {
+        "text": "Accurate determination of plasma composition requires self-consistent solutions of the Saha equation under conditions where non-ideal and quantum effects become significant. The standard Saha equation [16] for ionization equilibrium can be written as follows [16]: \n\nwhere n i and U i are the number density and temperature-dependent partition function of the i-fold ionized state (with i = 0 representing neutral atoms), respectively. In this work, the partition functions have been approximated to be the statistical weights of the ground states. n e is the number density of free electrons. The effective ionization energy is given by \n\n, where I i is the ionization energy for the i-fold ionized state and \u2206I i is the ionization potential depression. Here, m e is the electron mass, k B is the Boltzmann constant, and T is the temperature. To find a self-consistent solution for the plasma's ionization state, the Saha equation is used in conjunction with the following conditions: Electroneutrality condition: \n\nConservation of nuclei: \n\nwhere Z max is the highest ionization stage achievable under the plasma conditions and n H is the number density of heavy particles (nuclei). These equations, together with the Saha equation, form a system of nonlinear algebraic equations. The solution to this system is obtained using the algorithm proposed by Zaghloul et al. [27]. Replacing number densities with the relative fractions (\u03b1 i = n i n H ) of ions with charge i and ionization degree (\u03b1 e = n e n H ), Equations ( 1)-( 3) can be reformulated as follows: \n\nThe recurrence relation comes out of Equation (4): \n\nSubstituting ( 7) into (6), we can obtain the following expression for \u03b1 0 : \n\nSubstituting this relation with the recurrence relation (7) into Equation ( 5), one can derive a transcendental equation for \u03b1 e : \n\nSolving this transcendental equation for \u03b1 e allows us to determine the plasma composition by substituting back into Equations ( 7) and ( 8) to find each \u03b1 i .",
+        "snippetKind": "body"
+      }
+    }
+  ],
+  "retrievalVersion": "pa1-v1"
+}

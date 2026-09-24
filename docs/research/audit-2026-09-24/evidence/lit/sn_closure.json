@@ -1,0 +1,181 @@
+{
+  "data": [
+    {
+      "score": 0.3692796299333985,
+      "paper": {
+        "corpusId": "125615417",
+        "title": "Ion parallel closures",
+        "authors": [
+          "J. Ji",
+          "Hankyu Q. Lee",
+          "E. Held"
+        ],
+        "openAccessInfo": {
+          "license": null,
+          "status": "GREEN",
+          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://arxiv.org/abs/1906.09219, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        }
+      },
+      "snippet": {
+        "text": "The simple fitted kernel (35) with the coefficients (36) is tested for AZ The kernel yields accurate closures within 5% errors for \u0125h and \u03c0\u03c0 and within 20% errors for \u0125\u03c0 and \u03c0h . The errors greater than 10% for \u0125\u03c0 and \u03c0h occur at small closure values only. Since the major contribution to closures are from the diagonal elements \u0125h and \u03c0\u03c0 , the total closures computed from the fitted kernels (35) are expected to be accurate to within 10% error in most cases.",
+        "snippetKind": "body"
+      }
+    },
+    {
+      "score": 0.3477340648054843,
+      "paper": {
+        "corpusId": "15183763",
+        "title": "Diffraction-geometry refinement in the DIALS framework",
+        "authors": [
+          "D. Waterman",
+          "G. Winter",
+          "R. Gildea",
+          "J. Parkhurst",
+          "A. Brewster",
+          "N. Sauter",
+          "G. Evans"
+        ],
+        "openAccessInfo": {
+          "license": "CCBY",
+          "status": "HYBRID",
+          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://pmc.ncbi.nlm.nih.gov/articles/PMC4822564, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        }
+      },
+      "snippet": {
+        "text": "Nonlinear least-squares minimization algorithms provide an estimated covariance matrix between all parameters, V p , as the inverted normal matrix from the final step of refinement. We are interested in converting this into errors in terms of the elements of the vector or matrix models for the beam, crystal and detector. We start by selecting only the rows and columns of V p corresponding to parameters of the particular model of interest. For illustration here the model for the crystal unit cell is used with state B, but the working is equivalent for any of the models. The covariance matrix of parameters of the unitcell model is here denoted V p B and we wish to propagate errors to the elements of B. The standard first-order approximation is used to do so (Arras, 1998), but the model state B, which is a matrix rather than a vector, is first 'flattened' to choose the order of rows and columns in V p B . Any ordering of elements could be used to do this, but we use row-major order. The covariance matrix of elements of B is then given by \n\nwhere J p B is the Jacobian with elements @B i /@p j , which are elements of the derivatives of the model state with respect to its parameterization. The variances of elements of B can then be obtained by taking the diagonal of V B and reversing the row-major order flattening operation. This procedure is sufficient for reporting errors in models in terms of their model state elements rather than the particular parameterizations that were chosen in refinement. However, for the example we have chosen, unit-cell parameterization, we prefer to propagate errors further so that we can report standard deviations in terms of the real-space unit-cell parameters.",
+        "snippetKind": "body"
+      }
+    },
+    {
+      "score": 0.3403529627954415,
+      "paper": {
+        "corpusId": "54583908",
+        "title": "Chemical U-Th-Pb geochronology: A precise explicit approximation of the age equation and associated errors",
+        "authors": [
+          "G. S\u0103b\u0103u"
+        ],
+        "openAccessInfo": {
+          "license": "CCBYNCND",
+          "status": "HYBRID",
+          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://api.unpaywall.org/v2/10.2478/s13386-012-0007-3?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.2478/s13386-012-0007-3, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        }
+      },
+      "snippet": {
+        "text": "The error propagation through all stages of the age calculation and optimization was traced by quadratic summation, a basic and widespread procedure (e. g. Bevington and Robinson, 2003), applied stepwise for the successively calculated quantities. All covariance terms were considered to equal 0, an assumption also made by Pyle et al. (2005) for the calculation of the standard deviations of the elemental k-ratios, and implicitly accepted in relevant literature (e. g. Lisowiec, 2006). The errors of the counting ratios directly propagate in the computation of element concentrations. The input standard errors of the measured elements are derived from the counting statistics during the microprobe analysis, recorded in the output of the probe and assumed to be corrected for identified up-stream systematic errors. Throughout the successive steps of error calculation, though covariance cannot be explicitly formulated, the correlation of the errors is accounted for during the recurrent emergence of some terms of the calculation and their associated errors. \n\nThe standard error of t 1 expressed in Ma results by propagating the elemental and decay-constant errors through formula (2.9) and applying a proportionality coefficient (4.1). \n\nThe partial derivatives used in the formula are listed in Appendix 2. For the U-Pb-only system the standard error is calculated in a similar way starting from formula (2.8). \n\nThe standard errors of f U and f U UTh , which are formulated as polynomial functions of t 1 , are calculated from the standard error of t 1 by ignoring the comparatively negligible errors of the polynomial coefficients: \n\n\u03c3 U/Th is calculated by propagating the standard errors of the two elements: \n\nThe standard error of f UTh = f(f U UTh , t 1 , U/Th) is calculated by propagating the standard errors of the three variables through the appropriate expression of f UTh . For instance, given the f UTh equation using a fourth degree polynomial of U/Th, \n\nwhere: \n\n(4.5) \n\nThe corresponding expresion of f UTh and its partial derivatives for all of the alternative formulations of the U/Th-and t 1 -dependence of the segment ratio are given in Appendix 1.",
+        "snippetKind": "body"
+      }
+    },
+    {
+      "score": 0.3394477146821915,
+      "paper": {
+        "corpusId": "92988622",
+        "title": "CHARMed PyMca, Part I: A Protocol for Improved Inter\u2010laboratory Reproducibility in the Quantitative ED\u2010XRF Analysis of Copper Alloys",
+        "authors": [
+          "A. Heginbotham",
+          "V. A. Sol\u00e9"
+        ],
+        "openAccessInfo": {
+          "license": "CCBY",
+          "status": "HYBRID",
+          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://api.unpaywall.org/v2/10.1111/ARCM.12282?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.1111/ARCM.12282, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        }
+      },
+      "snippet": {
+        "text": "The error of prediction from the calibration and the instrumental reproducibility error can be considered independent and additive. Therefore, given that they are scaled to the same confidence interval, the accepted method for propagating the two errors is to take the square root of the sum of the squared errors (de Vries and Vrebos, 2002). In the vast majority of cases, the instrumental error is significantly smaller than the error of prediction and will contribute less than 5% to the overall error associated with a calibrated result. With short acquisition times and low count rates (e.g. 45 live seconds at 6000 cps), the contribution of instrumental error for some minor elements can rise to as much as 30% of the total. \n\nFormulating a method for applying the propagated error model to the results of new analyses can be accomplished in several ways. A very convenient method that maintains good precision is to simply calculate the propagated error, as described above, for the predicted result of each of the CHARM calibration samples. It is the author's experience that a second order regression will invariably closely fit a line to these points (with R 2 values of 0.99 and above) and the resulting regression equation can be used to estimate the overall error for any calibrated result in the calibration range. Figure 3 illustrates the overall error model for copper based on a CHARMed PyMca calibration for an Olympus Delta spectrometer. In this figure, for each predicted (calibrated) result derived from the initial XRF measurements of the copper CHARM set, the difference from the certified value (residual) is plotted as a diamond; the combined error (at 95% confidence) for each result, calculated according to the formulas outlined above, is plotted as an X. An excellent approximation of the error for any future result (dashed line) can be made based on the simple quadratic formula derived from the regression of the calculated error points.",
+        "snippetKind": "body"
+      }
+    },
+    {
+      "score": 0.33826811357982267,
+      "paper": {
+        "corpusId": "124795878",
+        "title": "Shell-model calculation of neutrinoless double- \u03b2 decay of Ge 76",
+        "authors": [
+          "R. Sen'kov",
+          "M. Horoi"
+        ],
+        "openAccessInfo": {
+          "license": null,
+          "status": "GREEN",
+          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://arxiv.org/abs/1512.06157, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        }
+      },
+      "snippet": {
+        "text": "Data is taken from Ref. [28] here and below the sum over the repeated indexes 1,2,3, and 4 is assumed. In this running nonclosure approach, the NMEs defined by Eq. ( 6) depend on the cutoff parameter N , they reach the exact values (4) when N \u2192 \u221e: \n\n. Success of the running nonlcosure approach is defined by the convergence properties of M 0\u03bd \u03b1 (N ) as a function of N . Another way to proceed in this situation is to use the closure approximation. In the closure approximation the energies of intermediate states are replaced by a constant value as \n\nwhere E is the closure energy. Values of E from Ref. [26] are frequently used. \n\nWe introduce two forms of the closure approximation: the closure (or pure closure) and the running closure approximations [11]. The running closure NMEs is presented similarly to the running nonclosure nuclear matrix elements (6): \n\nM 0\u03bd \u03b1 (N ) depend on both the state cutoff parameter N and on the closure energy E , when N \u2192 \u221e the running closure NMEs reach their closure values \n\nwhere we could remove the sum over intermediate states in Eq. ( 8) using the completeness relation |\u03ba \u03ba| = \u00ce. Equation ( 9) presents the standard closure approximation -the simplest and commonly used method for 0\u03bd\u03b2\u03b2 decay NMEs calculations. The closure NMEs (9) depend on the closure energy E which is not known and can not be calculated, which brings an uncertainty of about 10% in the NMEs (see, for example, [10,11,25]). In some cases, for example, the 0\u03bd\u03b2\u03b2 decay of 48 Ca, the running nonclosure NMEs converge pretty fast and matrix elements can be computed within the standard shell model approach [10]. However the running nonclosure approach cannot be directly used for the heavier cases, such as 0\u03bd\u03b2\u03b2 decay of 82 Se and 76 Ge, where only a few hundred intermediate states can be calculated. \n\nTo resolve this problem the mixed (or just nonclosure) method was introduced [10,11]. The mixed NMEs are presented as the following combination of the running nonclosure, closure, and running closure NMEs",
+        "snippetKind": "body"
+      }
+    },
+    {
+      "score": 0.3339324807629888,
+      "paper": {
+        "corpusId": "282064428",
+        "title": "Learning interpretable closures for thermal radiation transport in optically-thin media using WSINDy",
+        "authors": [
+          "D. Messenger",
+          "B. Southworth",
+          "Hans Hammer",
+          "L. Chacon"
+        ],
+        "openAccessInfo": {
+          "license": null,
+          "status": null,
+          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://arxiv.org/abs/2510.11840, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        }
+      },
+      "snippet": {
+        "text": "A surprising benefit of the proposed weak-form-based methodology is that numerical issues such as particle noise and ray effects have minor effects on the resulting closure. In fact, we find that the learned closure can be used to provide an approximation to highresolution moment quantities that is comparable to or better than that of the lower resolution quantities, even if the latter are used to train the closure model. In this way, optically thin WSINDy closures for TRT have the potential to increase the accuracy of high fidelity simulations. \n\nTo study this, we compare the use of low-resolution (M \u2126 = 8) training data as above to high-resolution training data, defined as high fidelity simulations with M \u2126 = 48 polar angles. As a reference point, Figure 4 depicts the performance of the closure model (middle row) in comparison with the low-res data (top row) at parameters (\u03b3, T 3 in ) = (10 9 , 10 9 ). The bottom row shows the relative L 1 error (err L 1 ,j ) and the relative integral error (err Int,j ) as functions of time. Ray effects manifest as a significant difference between the two error metrics, with the relative L 1 error on the order of 10% over the course of the time series (slightly lower for T ), while the integral error is closer to 2%. Particle noise contributes an additional portion to both error quantities, most notably in F . (Note that the largest errors occur at early times when the solution has not propagated far into the domain, i.e. the early-time errors arise from a small denominator). \n\nIn Figure 5, we instead learn the closure from high-resolution high-fidelity data at the same parameter values. Here we see that the relative L 1 error decreases significantly, as ray effects present smaller (yet more frequent) solution jumps. The overall error between the closure solution and training data clearly decreases with resolution, but more importantly, the closure solutions remain nearly identical (as can be seen by comparing the middle rows of 4 and 5), while the low-res and high-res high-fidelity solutions are quite different (recall Fig. 1). This indicates that the low-res closure solution is closer to the high-res high-fidelity solution than the low-res one.",
+        "snippetKind": "body"
+      }
+    },
+    {
+      "score": 0.326408932873914,
+      "paper": {
+        "corpusId": "278602153",
+        "title": "Fully analytical propagator for lunar satellite orbits in closed form",
+        "authors": [
+          "R. Mastroianni",
+          "E. Legnaro",
+          "Christos Efthymiopoulos"
+        ],
+        "openAccessInfo": {
+          "license": null,
+          "status": "GREEN",
+          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://arxiv.org/abs/2505.09241, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        }
+      },
+      "snippet": {
+        "text": "Note, however, that these errors do not affect the evolution of the semi-major axis, which is a constant of motion in mean as well as in proper elements. In synthesis, the error of the analytical propagation of the osculating elements (mapping A t 0 ,t , described in Eq. ( 47)) is dominated by the error in the transformation X p for all the elements except for the osculating value of the semi-major axis, for which the error is generated only by the transformation X . 9: Analytical (black line) versus numerical (with a cartesian propagator, red line) propagation of the osculating elements (a(t), e(t), i(t)) for four orbits with initial conditions similar to those of Fig. 3, but now in osculating elements \u2113(0) = 0, g(0) = \u22120.4 rad, h(0) = 0.7 rad, e(0) = 0.1, i(0) = 15 \u2022 , and semi-major axis corresponding to the group of panels a(0) = R + 500 km (top left), a(0) = R + 700 km (top right), a(0) = R + 900 km (bottom left), a(0) = R + 2000 km (bottom right). In each group of panels, the first row shows the comparison analytical versus numerical for the osculating value of the semi-major axis a(t) (left panel), and the corresponding relative error in log 10 scale (right panel), while the second and third rows show the same comparisons for the orbit's evolution of the osculating value of the eccentricity e(t) and inclination i(t) respectively. This analysis is verified through a direct comparison of orbits whose osculating elements are propagated fully analytically, through the mapping A t 0 ,t , or fully numerically, by a numerical integration of the equations of motion using Cartesian coordinates and velocities for the satellite's orbit. These numerical integrations have been made using the heyoka python library [1]. Figure 9 yields the relevant information.",
+        "snippetKind": "body"
+      }
+    },
+    {
+      "score": 0.3233998114674965,
+      "paper": {
+        "corpusId": "220978316",
+        "title": "Systems Biology Markup Language (SBML) Level 3 Package: Distributions, Version 1, Release 1",
+        "authors": [
+          "Lucian P. Smith",
+          "S. Moodie",
+          "Frank T. Bergmann",
+          "Colin S. Gillespie",
+          "Sarah M. Keating",
+          "Matthias K\u00f6nig",
+          "C. Myers",
+          "M. Swat",
+          "D. Wilkinson",
+          "M. Hucka"
+        ],
+        "openAccessInfo": {
+          "license": "CCBY",
+          "status": "GOLD",
+          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://pmc.ncbi.nlm.nih.gov/articles/PMC7756622, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        }
+      },
+      "snippet": {
+        "text": "It may be possible to propagate the error defined in Uncertainty elements through the mathematics defined in a simulation of the model. Be advised that this will be a complicated system, and may involve calculating partial derivates of equations that are not explicitly encoded. Many simulators choose instead to estimate the error through stochastic simulations. Either approach should be possible with a properly encoded distrib model.",
+        "snippetKind": "body"
+      }
+    }
+  ],
+  "retrievalVersion": "pa1-v1"
+}

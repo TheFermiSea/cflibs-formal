@@ -1,0 +1,49 @@
+{
+  "paperId": "72b49254946424a8bd31393b3bc2110b4690c68a",
+  "externalIds": {
+    "MAG": "1997956352",
+    "DOI": "10.1016/J.SAB.2013.05.016",
+    "CorpusId": 95631016
+  },
+  "title": "One-point calibration for calibration-free laser-induced breakdown spectroscopy quantitative analysis",
+  "venue": "",
+  "year": 2013,
+  "openAccessPdf": {
+    "url": "",
+    "status": "CLOSED",
+    "license": null,
+    "disclaimer": "Notice: The following paper fields have been elided by the publisher: {'abstract'}. Paper or abstract available at https://api.unpaywall.org/v2/10.1016/J.SAB.2013.05.016?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.1016/J.SAB.2013.05.016, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+  },
+  "journal": {
+    "name": "Spectrochimica Acta Part B: Atomic Spectroscopy",
+    "pages": "51-56",
+    "volume": "87"
+  },
+  "authors": [
+    {
+      "authorId": "91949158",
+      "name": "G. H. Cavalcanti"
+    },
+    {
+      "authorId": "2057062377",
+      "name": "D. V. Teixeira"
+    },
+    {
+      "authorId": "2315692",
+      "name": "S. Legnaioli"
+    },
+    {
+      "authorId": "2906844",
+      "name": "G. Lorenzetti"
+    },
+    {
+      "authorId": "1719249",
+      "name": "L. Pardini"
+    },
+    {
+      "authorId": "2638662",
+      "name": "V. Palleschi"
+    }
+  ],
+  "abstract": null
+}

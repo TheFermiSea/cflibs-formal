@@ -1,0 +1,335 @@
+{
+  "total": 215,
+  "offset": 0,
+  "next": 10,
+  "data": [
+    {
+      "paperId": "d11207e6ea8e3f2cc8dca2ab922feba4b1a47ceb",
+      "externalIds": {
+        "DOI": "10.1088/1361-6587/ad8b68",
+        "CorpusId": 273620602
+      },
+      "title": "The influence of continuum lowering on the equilibrium composition of plasma: case study of laser-induced plasma on a WC\u2013Cu target",
+      "venue": "Plasma Physics and Controlled Fusion",
+      "year": 2024,
+      "citationCount": 1,
+      "authors": [
+        {
+          "authorId": "2323979393",
+          "name": "Miroslav M. Risti\u0107"
+        },
+        {
+          "authorId": "2327747539",
+          "name": "Nikola Krstevski"
+        },
+        {
+          "authorId": "16937826",
+          "name": "D. Rankovi\u0107"
+        },
+        {
+          "authorId": "2210192403",
+          "name": "Milica Markovi\u0107"
+        },
+        {
+          "authorId": "2323978859",
+          "name": "Aleksandra \u0160aji\u0107"
+        },
+        {
+          "authorId": "2275485270",
+          "name": "Miroslav Kuzmanovi\u0107"
+        }
+      ]
+    },
+    {
+      "paperId": "285596b1b0d3a671a7c31560fed38179b5837cd7",
+      "externalIds": {
+        "DOI": "10.15407/ujpe71.2.173",
+        "CorpusId": 285819407
+      },
+      "title": "Laser-Induced Breakdown Spectroscopy Plasmas as a Testbed for Non-Equilibrium Plasma Modeling in High-Energy Physics Applications",
+      "venue": "Ukrainian Journal of Physics",
+      "year": 2026,
+      "citationCount": 0,
+      "authors": [
+        {
+          "authorId": "34795978",
+          "name": "N. Gomidze"
+        },
+        {
+          "authorId": "2353334159",
+          "name": "D. Jakobia"
+        },
+        {
+          "authorId": "2414692738",
+          "name": "M. Khajidhvili"
+        },
+        {
+          "authorId": "20720428",
+          "name": "L. Kalandadze"
+        },
+        {
+          "authorId": "31576926",
+          "name": "I. Jabnidze"
+        },
+        {
+          "authorId": "9265558",
+          "name": "K. Makharadze"
+        },
+        {
+          "authorId": "1671507187",
+          "name": "O. Nakashidze"
+        },
+        {
+          "authorId": "2259150747",
+          "name": "J. Shainidze"
+        }
+      ]
+    },
+    {
+      "paperId": "1371a2347985ce27abe4926e057ce07288515527",
+      "externalIds": {
+        "DOI": "10.1063/5.0278000",
+        "CorpusId": 280935855,
+        "PubMed": "40856227"
+      },
+      "title": "Extended line list for the B2\u03a3+-X2\u03a3+ band system of CaF for use in laser-induced plasma studies.",
+      "venue": "Journal of Chemical Physics",
+      "year": 2025,
+      "citationCount": 0,
+      "authors": [
+        {
+          "authorId": "2214428250",
+          "name": "Zi-Qiang Zhao"
+        },
+        {
+          "authorId": "2346731778",
+          "name": "Shilin Hou"
+        },
+        {
+          "authorId": "2145161742",
+          "name": "Yang Zhao"
+        },
+        {
+          "authorId": "2343221042",
+          "name": "Pingsai Chu"
+        },
+        {
+          "authorId": "2302516961",
+          "name": "Ye Tian"
+        }
+      ]
+    },
+    {
+      "paperId": "29a6c64cb107184ca23875df56434d5260fb369a",
+      "externalIds": {
+        "DOI": "10.1109/OMN/SBFotonIOPC58971.2023.10230914",
+        "CorpusId": 261434751
+      },
+      "title": "Ionization Model to Estimate the Density and Temperature Offs-Laser-Induced Plasmas in Air",
+      "venue": "International Conference on Optical MEMS and Nanophotonics",
+      "year": 2023,
+      "citationCount": 0,
+      "authors": [
+        {
+          "authorId": "66369163",
+          "name": "A. V. Zuffi"
+        },
+        {
+          "authorId": "2498437066",
+          "name": "J. R. D. dos Santos"
+        },
+        {
+          "authorId": "5322156",
+          "name": "R. Samad"
+        }
+      ]
+    },
+    {
+      "paperId": "008a0d244c1e4d711c105a21872687649bc01213",
+      "externalIds": {
+        "DBLP": "journals/sensors/MartusevichKEGNSS23",
+        "PubMedCentral": "9865220",
+        "DOI": "10.3390/s23020932",
+        "CorpusId": 255921113,
+        "PubMed": "36679728"
+      },
+      "title": "Spectroscopy of Laser-Induced Dielectric Breakdown Plasma in Mixtures of Air with Inert Gases Ar, He, Kr, and Xe",
+      "venue": "Italian National Conference on Sensors",
+      "year": 2023,
+      "citationCount": 2,
+      "authors": [
+        {
+          "authorId": "6885982",
+          "name": "A. Martusevich"
+        },
+        {
+          "authorId": "92061813",
+          "name": "R. Kornev"
+        },
+        {
+          "authorId": "2143235143",
+          "name": "A. Ermakov"
+        },
+        {
+          "authorId": "14727563",
+          "name": "I. Gornushkin"
+        },
+        {
+          "authorId": "2161160613",
+          "name": "V. Nazarov"
+        },
+        {
+          "authorId": "93436190",
+          "name": "L. Shabarova"
+        },
+        {
+          "authorId": "1741503297",
+          "name": "V. Shkrunin"
+        }
+      ]
+    },
+    {
+      "paperId": "f73ea8a465b3d56a4b40ffb17f78c0841b517d00",
+      "externalIds": {
+        "DOI": "10.1088/1555-6611/ad0cb3",
+        "CorpusId": 265435716
+      },
+      "title": "Impact of intensity error on temperature estimation in laser-induced breakdown spectroscopy: a numerical study",
+      "venue": "Laser physics",
+      "year": 2023,
+      "citationCount": 1,
+      "authors": [
+        {
+          "authorId": "2161390924",
+          "name": "Lekha Mary John"
+        },
+        {
+          "authorId": "144485479",
+          "name": "K. Anoop"
+        }
+      ]
+    },
+    {
+      "paperId": "612e51882feaa052dd6ef1a25812ef3f1ca9b4f9",
+      "externalIds": {
+        "DOI": "10.1117/12.3042039",
+        "CorpusId": 277226324
+      },
+      "title": "Preliminary results for calibration-free laser-induced breakdown spectroscopy (CF-LIBS) for the elemental analysis of biological samples",
+      "venue": "BiOS",
+      "year": 2025,
+      "citationCount": 6,
+      "authors": [
+        {
+          "authorId": "2481493312",
+          "name": "Edith B\u00f6hmer"
+        },
+        {
+          "authorId": "2351501935",
+          "name": "Laetitia S. Degelmann"
+        },
+        {
+          "authorId": "114139127",
+          "name": "D. Ni"
+        },
+        {
+          "authorId": "2274532040",
+          "name": "F. Kl\u00e4mpfl"
+        },
+        {
+          "authorId": "2274909445",
+          "name": "M. Schmidt"
+        }
+      ]
+    },
+    {
+      "paperId": "d62adca923ceee1a4e7f2bb01f025870240841ad",
+      "externalIds": {
+        "DOI": "10.1088/1757-899X/1221/1/012027",
+        "CorpusId": 247950953
+      },
+      "title": "Simulation of Optical Emission Spectra of Cu-Sn-Zn Alloy Plasmas for Laser-Induced Breakdown Spectroscopy Applications",
+      "venue": "IOP Conference Series: Materials Science and Engineering",
+      "year": 2022,
+      "citationCount": 3,
+      "authors": [
+        {
+          "authorId": "2161390223",
+          "name": "M. S. Suryan Sivadas"
+        },
+        {
+          "authorId": "2161390924",
+          "name": "Lekha Mary John"
+        },
+        {
+          "authorId": "144485479",
+          "name": "K. Anoop"
+        }
+      ]
+    },
+    {
+      "paperId": "abc1353e3bdfcd761b921fb13c1069189c79f03f",
+      "externalIds": {
+        "MAG": "3094383341",
+        "DOI": "10.1051/0004-6361/202039308",
+        "CorpusId": 226332852
+      },
+      "title": "Ionization potential depression and ionization balance in dense carbon plasma under solar and stellar interior conditions",
+      "venue": "Astronomy & Astrophysics",
+      "year": 2020,
+      "citationCount": 26,
+      "authors": [
+        {
+          "authorId": "6496894",
+          "name": "Jiao-Long Zeng"
+        },
+        {
+          "authorId": "2142844659",
+          "name": "Yongjun Li"
+        },
+        {
+          "authorId": "2148891697",
+          "name": "Yong Hou"
+        },
+        {
+          "authorId": "2107424135",
+          "name": "Cheng Gao"
+        },
+        {
+          "authorId": "49706751",
+          "name": "Jian-Min Yuan"
+        }
+      ]
+    },
+    {
+      "paperId": "0c51fc6f540166f9ca7ed1c45c2442d043614f39",
+      "externalIds": {
+        "MAG": "3002865616",
+        "DOI": "10.1051/0004-6361/201937235",
+        "CorpusId": 214104898
+      },
+      "title": "Screening potential and continuum lowering in a dense plasma under solar-interior conditions",
+      "venue": "Astronomy & Astrophysics",
+      "year": 2020,
+      "citationCount": 28,
+      "authors": [
+        {
+          "authorId": "6496894",
+          "name": "Jiao-Long Zeng"
+        },
+        {
+          "authorId": "2142844659",
+          "name": "Yongjun Li"
+        },
+        {
+          "authorId": "2107424135",
+          "name": "Cheng Gao"
+        },
+        {
+          "authorId": "49706751",
+          "name": "Jian-Min Yuan"
+        }
+      ]
+    }
+  ]
+}
