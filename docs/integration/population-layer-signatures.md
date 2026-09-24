@@ -1,6 +1,6 @@
 # Population-layer theorems: full signatures
 
-Companion to `m4-population-context.md`; generated from `main` at `fb1681d`, one entry per theorem.
+Companion to `m4-population-context.md` (v2); generated from `main` at `fb1681d`, one entry per theorem (155).
 
 ### `CflibsFormal.Alt.csigmaOffset_of_lineIntensity`
 
@@ -1613,6 +1613,55 @@ CflibsFormal.homologousPair_ratio_closed_form.{u_2} {ι : Type u_2} [Fintype ι]
 > temperature dependence of the ratio is the single Boltzmann exponential in the energy GAP
 > `E_t − E_s`. (Ciucci et al. 1999, the two-line Boltzmann ratio; here across two species.) 
 
+### `CflibsFormal.homologousPair_ratio_perU_closed_form`
+
+Module `CflibsFormal.MatrixEffects` · scope `EXACT`
+
+```lean
+CflibsFormal.homologousPair_ratio_perU_closed_form.{u_2} {ι : Type u_2} {kB T Ns Nt Fcal Us Ut : ℝ}
+  {g E A : ι → ℝ} (hg : ∀ (k : ι), 0 < g k) (hNt : 0 < Nt) (hFcal : 0 < Fcal)
+  (hA : ∀ (k : ι), 0 < A k) (hUs : 0 < Us) (hUt : 0 < Ut) (s t : ι) :
+  CflibsFormal.lineIntensityPerU kB T Ns Fcal Us g E A s /
+      CflibsFormal.lineIntensityPerU kB T Nt Fcal Ut g E A t =
+    Ns * g s * A s * Ut / (Nt * g t * A t * Us) * Real.exp ((E t - E s) / (kB * T))
+```
+
+> **Per-species-`U` two-line ratio — closed form with the `U`-residual explicit.** With
+> GENUINELY per-species partition functions `U_s, U_t` (each summed over its own species' internal
+> manifold, carried as `MultiSpecies.lineIntensityPerU` scalars) and per-species designated-line data
+> `(g_s, E_s, A_s)`, `(g_t, E_t, A_t)`, the intensity ratio is
+> `I_s/I_t = ((N_s·g_s·A_s·U_t)/(N_t·g_t·A_t·U_s)) · exp((E_t − E_s)/(k_B T))`.
+> Energy matching `E_s = E_t` collapses the exponential to `1`, leaving the ratio's ENTIRE residual
+> equal to the partition-function ratio `U_t/U_s` — the honest per-species form of the
+> homologous-pair identity (the shared-`U` `homologousPair_ratio_closed_form` is the case
+> `U_s = U_t`). **Scope EXACT** for the fixed-`T` identity; `U_s, U_t` are free positive inputs. 
+
+### `CflibsFormal.homologousPair_ratio_perU_temperature_invariant`
+
+Module `CflibsFormal.MatrixEffects` · scope `REDUCED`
+
+```lean
+CflibsFormal.homologousPair_ratio_perU_temperature_invariant.{u_2} {ι : Type u_2}
+  {kB T T' Ns Nt Fcal Us Ut : ℝ} {g E A : ι → ℝ} (hg : ∀ (k : ι), 0 < g k) (hNt : 0 < Nt)
+  (hFcal : 0 < Fcal) (hA : ∀ (k : ι), 0 < A k) (hUs : 0 < Us) (hUt : 0 < Ut) (s t : ι)
+  (hE : E s = E t) :
+  CflibsFormal.lineIntensityPerU kB T Ns Fcal Us g E A s /
+      CflibsFormal.lineIntensityPerU kB T Nt Fcal Ut g E A t =
+    CflibsFormal.lineIntensityPerU kB T' Ns Fcal Us g E A s /
+      CflibsFormal.lineIntensityPerU kB T' Nt Fcal Ut g E A t
+```
+
+> **Per-species-`U` homologous-pair temperature invariance (REDUCED).** In the per-species-`U`
+> forward model, a homologous pair (`E_s = E_t`) has a temperature-invariant intensity ratio
+> `I_s(T)/I_t(T) = I_s(T')/I_t(T')`, its common value the residual
+> `(N_s·g_s·A_s·U_t)/(N_t·g_t·A_t·U_s)`.
+> **REDUCED**, not EXACT: `MultiSpecies.lineIntensityPerU` carries each `U_s` as a per-shot scalar
+> INPUT, so varying `T` here holds `U_s, U_t` fixed. It therefore isolates the Boltzmann/exponential
+> temperature channel (killed exactly by energy matching) from the genuine per-species drift
+> `U_s(T)/U_t(T)`, which is the physical residual left OUT of scope (the shared-`U`
+> `homologousPair_ratio_temperature_invariant` is EXACT because there the single `U(T)` cancels
+> regardless of its `T`-dependence). 
+
 ### `CflibsFormal.homologousPair_ratio_temperature_invariant`
 
 Module `CflibsFormal.MatrixEffects` · scope `EXACT`
@@ -1752,6 +1801,25 @@ CflibsFormal.deNormalized_lineIntensity_ofPerU.{u_1} {ι : Type u_1} [Fintype ι
 > inversion is not an independent claim. (The original `deNormalized_lineIntensity` above is
 > retained verbatim for downstream importers.) 
 
+### `CflibsFormal.deNormalized_lineIntensity_perU`
+
+Module `CflibsFormal.MultiSpecies` · scope `EXACT`
+
+```lean
+CflibsFormal.deNormalized_lineIntensity_perU.{u_1} {ι : Type u_1} {kB T N Fcal Us : ℝ}
+  {g E A : ι → ℝ} (hg : ∀ (k : ι), 0 < g k) (hFcal : 0 < Fcal) (hA : ∀ (k : ι), 0 < A k)
+  (hUs : 0 < Us) (s : ι) :
+  CflibsFormal.deNormalizedDensityPerU kB T Fcal Us g E A s
+      (CflibsFormal.lineIntensityPerU kB T N Fcal Us g E A s) =
+    N
+```
+
+> **Per-species inversion identity.** De-normalizing species `s`'s per-`U` forward line
+> intensity recovers its number density `N` exactly, using the species' own partition function
+> `Us`. Genuine multi-element generalization of `deNormalized_lineIntensity`; note the proof
+> needs only `0 < Us` (a per-species positivity), and — unlike the shared-`U` version — no
+> `Nonempty ι` and no `0 < N`. 
+
 ### `CflibsFormal.density_ratio_from_intensities`
 
 Module `CflibsFormal.MultiSpecies` · scope `EXACT`
@@ -1795,6 +1863,30 @@ CflibsFormal.density_ratio_from_intensities_ofPerU.{u_1} {ι : Type u_1} [Fintyp
 > `Us = Ut = partitionFunction kB T g E`. Notably it needs neither `0 < Ns` nor `0 < Nt`,
 > which the per-`U` inversion made unnecessary. 
 
+### `CflibsFormal.density_ratio_from_intensities_perU`
+
+Module `CflibsFormal.MultiSpecies` · scope `EXACT`
+
+```lean
+CflibsFormal.density_ratio_from_intensities_perU.{u_1} {ι : Type u_1} {kB T Ns Nt Fcal Us Ut : ℝ}
+  {g E A : ι → ℝ} (hg : ∀ (k : ι), 0 < g k) (hFcal : 0 < Fcal) (hA : ∀ (k : ι), 0 < A k)
+  (hUs : 0 < Us) (hUt : 0 < Ut) (s t : ι) :
+  CflibsFormal.deNormalizedDensityPerU kB T Fcal Us g E A s
+        (CflibsFormal.lineIntensityPerU kB T Ns Fcal Us g E A s) /
+      CflibsFormal.deNormalizedDensityPerU kB T Fcal Ut g E A t
+        (CflibsFormal.lineIntensityPerU kB T Nt Fcal Ut g E A t) =
+    Ns / Nt
+```
+
+> **Per-species density-from-intensity bridge.** With *genuinely per-species* partition
+> functions `Us, Ut` (each summed over its own species' level manifold) and per-species
+> designated-line data `(g s, E s, A s)` / `(g t, E t, A t)`, at a common temperature `T` and
+> calibration `Fcal`, the ratio of the two species' `U`-de-normalized line intensities equals
+> the true density ratio `N_s / N_t`. Hence relative composition is fixed by the measured
+> intensities and per-species atomic data at known `T`, with no shared-`U` assumption. The
+> shared-`U` `density_ratio_from_intensities` is the special case `Us = Ut =
+> partitionFunction kB T g E` (`density_ratio_from_intensities_ofPerU`). 
+
 ### `CflibsFormal.lineIntensity_eq_lineIntensityPerU`
 
 Module `CflibsFormal.MultiSpecies` · scope `PURE-MATH`
@@ -1808,6 +1900,29 @@ CflibsFormal.lineIntensity_eq_lineIntensityPerU.{u_1} {ι : Type u_1} [Fintype �
 
 > **Shared-`U` forward map is the per-`U` forward map at `Us = partitionFunction kB T g E`.**
 > Definitional bridge (`rfl`) making `lineIntensity` a special case of `lineIntensityPerU`. 
+
+### `CflibsFormal.speciesComposition_ratio_from_intensities_perU`
+
+Module `CflibsFormal.MultiSpecies` · scope `EXACT`
+
+```lean
+CflibsFormal.speciesComposition_ratio_from_intensities_perU.{u_1} {ι : Type u_1} [Fintype ι]
+  {kB T Fcal Us Ut : ℝ} {g E A N : ι → ℝ} (hg : ∀ (k : ι), 0 < g k) (hFcal : 0 < Fcal)
+  (hA : ∀ (k : ι), 0 < A k) (hUs : 0 < Us) (hUt : 0 < Ut) (hD : CflibsFormal.totalDensity N ≠ 0)
+  (s t : ι) :
+  CflibsFormal.deNormalizedDensityPerU kB T Fcal Us g E A s
+        (CflibsFormal.lineIntensityPerU kB T (N s) Fcal Us g E A s) /
+      CflibsFormal.deNormalizedDensityPerU kB T Fcal Ut g E A t
+        (CflibsFormal.lineIntensityPerU kB T (N t) Fcal Ut g E A t) =
+    CflibsFormal.speciesComposition N s / CflibsFormal.speciesComposition N t
+```
+
+> **Relative composition from intensities (per-species `U`).** The elemental
+> number-fraction ratio `C_s / C_t` of two species equals the ratio of their per-`U`
+> de-normalized designated-line intensities — relative composition is fixed by the measured
+> intensities and per-species atomic data at known `T`, with genuinely per-species partition
+> functions `Us, Ut`. Combines `density_ratio_from_intensities_perU` with
+> `speciesComposition_ratio`. 
 
 ### `CflibsFormal.noise_to_density`
 
