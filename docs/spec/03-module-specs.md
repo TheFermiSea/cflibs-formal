@@ -347,7 +347,7 @@ Abbass 2016 / Tognoni 2010 / Ciucci 1999; non-vacuity witnesses `κ = Fin 2`, `F
 makes the estimator `0`), replace `N s * R s` by `N s` in neutrality (statement false), drop the
 `Nu·Ru` term (reduces to theorem 1), `Nu = −∑ N` (breaks the closure-bias identity).
 
-### 7.4 Worker result (2026-09-21–22, decision D12) — **PR #6, `feat/neutrality-scale`, open (CI green), not merged**
+### 7.4 Worker result (2026-09-21–22, decision D12) — **PR #6, `feat/neutrality-scale`, merged to `main` 2026-09-24 (`fb1681d`)**
 
 Both local models ran all three audited statements, same harness, 60-minute caps each, after the
 two harness fixes from the Frontier 02/07 dry run (§10.4: server-side `--reasoning-budget 8192`,
@@ -415,9 +415,9 @@ open follow-up to make the pin a persistent drop-in instead of a transient `set-
 Written as `CflibsFormal/Alt/NeutralityScale.lean`, gates green (`lake build`, `axiom-audit`,
 `runLinter`, `stats.sh`, oracle regression, `check-citations.sh`/`check-scope-consistency.sh`
 advisory clean), `docs/scope-tags.tsv` +5 EXACT rows, auto docs regenerated — on a fresh branch off
-`main` (`docs/formalization-spec` carries no Lean, per its own contract), PR #6 — open, CI green,
-awaiting the owner's merge (earlier drafts of this section and the v0.4.2 change log said "landed on
-`main`"; it has not been merged).
+`main` (`docs/formalization-spec` carries no Lean, per its own contract), PR #6, merged to `main` on
+2026-09-24 as `fb1681d` with the owner's go-ahead (an earlier draft of this section and the v0.4.2
+change log said "landed on `main`" two days before it was merged).
 
 ### 7.5 Leanstral matched rerun (2026-09-22–23) — **3/3 proved**
 

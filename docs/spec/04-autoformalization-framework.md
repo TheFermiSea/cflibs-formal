@@ -500,6 +500,17 @@ the Qwen control, which the dry run will price in rounds and wall-clock.
    load on all three nodes. Left as found: cocoindex-server (pve1 CT 300) cannot start because its
    GPU (Quadro T1000) is now passed through to VM 900 and pve1's pinned kernel 6.17.13 has no NVIDIA
    module (DKMS built only for 7.0.14): an owner change on 2026-09-22, not a fault.
+   **Continuous operation (D14, 2026-09-24).** All three nodes serve Qwen3.8-27B (`run-qwen38`,
+   port 8081, speculative decoding; 34–35 tok/s decode and a `lean_verify` tool call checked on each
+   node after the switch; Leanstral stopped, its launchers kept). A supervisor on ai-proxy
+   (`tools/openprover/queue/`, systemd unit `openprover-queue`, state in `~/.local/share/openprover`)
+   runs one OpenProver job per healthy node from a directory queue of audited statements, with an
+   equal-token budget per target, one retry, then park. Every candidate proof is re-checked by
+   `verify.py` (no escape hatches, import subset, verbatim definitions and signature, identical
+   `pp.all` elaborated type, clean compile, standard axioms); OpenProver's `proved` alone never
+   counts. Nothing is committed or opened as a PR by the loop. The Lean project is a `main`
+   worktree, so branch switches in the working checkout cannot change what the Worker compiles
+   against. First targets: Frontier 02 and 07 (the Phase-0 Worker exit criterion), 300k tokens each.
    **Smoke-test tally (final, 2026-09-20; 45-min caps, `--answer-reserve 12288`, both nodes at
    `-t 30`, nodes idle except where noted).**
 

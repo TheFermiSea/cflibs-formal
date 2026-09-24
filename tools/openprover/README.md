@@ -83,3 +83,7 @@ thinking on, a verifier pass can exceed 10 minutes, and smoke test 2 lost both v
 Never point the endpoint at a global proxy or shell rc: the base URL lives only in this command /
 the saved `run_config.toml` of a run (global rule: per-tool base URLs only).
 Worker output is accepted only after `lake exe axiom-audit` and kernel replay (`docs/spec/05` §4).
+
+Continuous operation: `queue/` holds the supervisor that runs this harness against a queue of
+audited statements on all three nodes, with independent re-verification of every proof
+(`queue/README.md`).
