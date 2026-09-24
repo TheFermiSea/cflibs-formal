@@ -14,15 +14,21 @@ Layout under $OPENPROVER_HOME (default ~/.local/share/openprover):
   status.json, supervisor.log
 
 target.json: {"theorem": "Fully.Qualified.name", "max_tokens": 150000, "max_attempts": 2,
-              "planner": "sonnet", "worker": "qwen38-local", "note": "..."}
+              "max_planner_usd": 30, "planner": "sonnet", "worker": "qwen38-local", "note": "..."}
 
 One run per healthy node. A node whose /health fails is restarted once over ssh; if it is still
-down it is skipped for 30 minutes. Every candidate (PROOF.lean and every stored Lean item of the
+down it is skipped for 30 minutes. Running jobs are watched too: a node that fails two consecutive
+health checks mid-run is restarted, and if that fails the run is terminated and requeued without
+charging an attempt; five consecutive failed planner calls (the Claude CLI refusing, e.g. at the
+subscription limit) terminate the run uncharged and pause all dispatch for 30 minutes (2026-09-24: a SLURM prolog killed a node's server and the planner kept
+spawning workers into a dead endpoint, ~$50 nominal). Each attempt is also capped by planner spend
+(`max_planner_usd`, default 30) and a 9 h wall clock. Every candidate (PROOF.lean and every stored Lean item of the
 run) goes through verify.py; OpenProver's own `proved` is never trusted on its own. Nothing is
 committed, pushed or opened as a PR: landing a verified proof is a human step.
 """
 import json
 import os
+import tomllib
 import shutil
 import subprocess
 import time
@@ -35,7 +41,10 @@ Q = HOME / "queue"
 RUNS, RESULTS = HOME / "runs", HOME / "results"
 VERIFY = Path(__file__).with_name("verify.py")
 POLL_S, WALL_S, NODE_BACKOFF_S = 30, 9 * 3600, 1800
-DEFAULTS = {"max_tokens": 150000, "max_attempts": 2, "planner": "sonnet", "worker": "qwen38-local"}
+DEFAULTS = {"max_tokens": 150000, "max_attempts": 2, "planner": "sonnet", "worker": "qwen38-local",
+            "max_planner_usd": 30.0}
+UNHEALTHY_POLLS = 2  # consecutive failed /health checks on a running job's node before acting
+PLANNER_ERR_STEPS = 5  # consecutive planner llm_error steps (e.g. subscription limit) before pausing
 
 
 def now() -> str:
@@ -71,6 +80,34 @@ def target_cfg(d: Path) -> dict:
     return {**DEFAULTS, **json.loads((d / "target.json").read_text())}
 
 
+def planner_usd(run_dir: Path) -> float:
+    total = 0.0
+    for f in run_dir.glob("steps/step_*/meta.toml"):
+        try:
+            total += tomllib.loads(f.read_text()).get("planner", {}).get("cost_usd", 0.0)
+        except (OSError, tomllib.TOMLDecodeError):
+            pass
+    return total
+
+
+def trailing_llm_errors(run_dir: Path) -> int:
+    """Consecutive most-recent steps whose planner call failed (status = "llm_error")."""
+    n = 0
+    for f in sorted(run_dir.glob("steps/step_*/meta.toml"), reverse=True):
+        try:
+            if tomllib.loads(f.read_text()).get("status") != "llm_error":
+                break
+        except (OSError, tomllib.TOMLDecodeError):
+            break
+        n += 1
+    return n
+
+
+def charged(d: Path) -> int:
+    f = d / "attempts_charged"
+    return int(f.read_text()) if f.exists() else 0
+
+
 def candidates(run_dir: Path) -> list[Path]:
     c = [run_dir / "PROOF.lean"] if (run_dir / "PROOF.lean").exists() else []
     return c + sorted((run_dir / "repo").rglob("*.lean")) if (run_dir / "repo").exists() else c
@@ -79,7 +116,7 @@ def candidates(run_dir: Path) -> list[Path]:
 def start(tid: str, node: dict) -> dict:
     d = Q / "running" / tid
     cfg = target_cfg(d)
-    attempt = len(list(RUNS.glob(f"{tid}-*"))) + 1
+    attempt = len([p for p in RUNS.glob(f"{tid}-*") if p.is_dir()]) + 1
     run_dir = RUNS / f"{tid}-{attempt}"
     cmd = [str(HOME / "venv/bin/openprover"), str(run_dir), "--headless", "--autonomous",
            "--planner-model", cfg["planner"], "--worker-model", cfg["worker"],
@@ -93,7 +130,7 @@ def start(tid: str, node: dict) -> dict:
                             start_new_session=True)
     log(f"{tid}: attempt {attempt} started on {node['name']} (pid {proc.pid})")
     return {"tid": tid, "node": node["name"], "proc": proc, "run_dir": run_dir, "attempt": attempt,
-            "started": time.time(), "cfg": cfg}
+            "started": time.time(), "cfg": cfg, "unhealthy": 0, "abort": None}
 
 
 def finish(job: dict) -> None:
@@ -133,10 +170,14 @@ def finish(job: dict) -> None:
     else:
         if reported == "proved":
             log(f"{tid}: FINDING - openprover reported proved but no candidate passed verify.py")
-        dest = "pending" if job["attempt"] < cfg["max_attempts"] else "parked"
+        n = charged(d)
+        if job["abort"] not in ("infra", "planner_down"):  # outages are not the target's fault
+            n += 1
+            (d / "attempts_charged").write_text(str(n))
+        dest = "pending" if n < cfg["max_attempts"] else "parked"
         shutil.move(str(d), Q / dest / tid)
-        log(f"{tid}: not verified (attempt {job['attempt']}, {hours:.1f} h, openprover said "
-            f"{reported!r}) -> {dest}")
+        log(f"{tid}: not verified (run {job['attempt']}, {n}/{cfg['max_attempts']} attempts charged, "
+            f"{hours:.1f} h, openprover said {reported!r}, abort={job['abort']}) -> {dest}")
 
 
 def write_status(jobs: dict, down: dict) -> None:
@@ -147,6 +188,55 @@ def write_status(jobs: dict, down: dict) -> None:
                                for n, t in down.items()},
           **{k: sorted(p.name for p in (Q / k).iterdir()) for k in ("pending", "done", "parked")}}
     (HOME / "status.json").write_text(json.dumps(st, indent=2))
+
+
+def tick(fleet: list, jobs: dict, down: dict) -> None:
+    """One supervisor poll: reap, watch and dispatch."""
+    for name, job in list(jobs.items()):
+        if job["proc"].poll() is not None:
+            finish(job)
+            del jobs[name]
+            continue
+        if job["abort"]:
+            continue  # already signalled; wait for the process to exit
+        node = next(n for n in fleet if n["name"] == name)
+        job["unhealthy"] = 0 if healthy(node) else job["unhealthy"] + 1
+        usd = planner_usd(job["run_dir"])
+        if time.time() - job["started"] > WALL_S:
+            job["abort"] = "wall"
+            log(f"{job['tid']}: wall-clock guard ({WALL_S // 3600} h) on {name}, terminating")
+        elif usd > job["cfg"]["max_planner_usd"]:
+            job["abort"] = "planner_budget"
+            log(f"{job['tid']}: planner spend ${usd:.2f} > ${job['cfg']['max_planner_usd']:.2f} "
+                f"on {name}, terminating")
+        elif trailing_llm_errors(job["run_dir"]) >= PLANNER_ERR_STEPS:
+            job["abort"] = "planner_down"
+            down["*"] = time.time() + NODE_BACKOFF_S
+            log(f"{job['tid']}: {PLANNER_ERR_STEPS}+ consecutive planner errors (Claude CLI; quota?), "
+                f"terminating (not charged) and pausing dispatch {NODE_BACKOFF_S // 60} min")
+        elif job["unhealthy"] >= UNHEALTHY_POLLS and not restart(node):
+            job["abort"] = "infra"
+            down[name] = time.time() + NODE_BACKOFF_S
+            log(f"{job['tid']}: {name} down mid-run and restart failed, terminating (not charged)")
+        if job["abort"]:
+            os.killpg(job["proc"].pid, 15)
+    if down.get("*", 0) > time.time():
+        return  # global pause (planner outage)
+    for node in fleet:
+        n = node["name"]
+        if n in jobs or down.get(n, 0) > time.time():
+            continue
+        pending = sorted((Q / "pending").iterdir(), key=lambda p: p.stat().st_mtime)
+        if not pending:
+            break
+        if not healthy(node) and not restart(node):
+            down[n] = time.time() + NODE_BACKOFF_S
+            log(f"{n}: still down, skipping for {NODE_BACKOFF_S // 60} min")
+            continue
+        down.pop(n, None)
+        tid = pending[0].name
+        shutil.move(str(pending[0]), Q / "running" / tid)
+        jobs[n] = start(tid, node)
 
 
 def main() -> None:
@@ -162,28 +252,7 @@ def main() -> None:
     down: dict[str, float] = {}
     log(f"supervisor up; fleet {[n['name'] for n in fleet]}")
     while True:
-        for name, job in list(jobs.items()):
-            if job["proc"].poll() is not None:
-                finish(job)
-                del jobs[name]
-            elif time.time() - job["started"] > WALL_S:
-                log(f"{job['tid']}: wall-clock guard ({WALL_S // 3600} h) on {name}, terminating")
-                os.killpg(job["proc"].pid, 15)
-        for node in fleet:
-            n = node["name"]
-            if n in jobs or down.get(n, 0) > time.time():
-                continue
-            pending = sorted((Q / "pending").iterdir(), key=lambda p: p.stat().st_mtime)
-            if not pending:
-                break
-            if not healthy(node) and not restart(node):
-                down[n] = time.time() + NODE_BACKOFF_S
-                log(f"{n}: still down, skipping for {NODE_BACKOFF_S // 60} min")
-                continue
-            down.pop(n, None)
-            tid = pending[0].name
-            shutil.move(str(pending[0]), Q / "running" / tid)
-            jobs[n] = start(tid, node)
+        tick(fleet, jobs, down)
         write_status(jobs, down)
         time.sleep(POLL_S)
 

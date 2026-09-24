@@ -63,7 +63,14 @@ cp tools/openprover/queue/*.py ~/.local/share/openprover/bin/   # deploy a chang
 ```
 
 A node whose `/health` fails is restarted once (`systemctl restart llm-server@qwen38` over ssh)
-and skipped for 30 minutes if it stays down. Each run is capped by its token budget and a 9 h
+and skipped for 30 minutes if it stays down; the same check runs on nodes with a job in flight
+(two failed polls → restart → otherwise terminate the run, requeue it uncharged). Five consecutive
+failed planner calls terminate the run uncharged and pause all dispatch for 30 minutes: the Claude
+planner shares the owner's subscription quota with interactive sessions and workflows, and at the
+limit OpenProver otherwise loops through instantly failing steps (292 of them on 2026-09-24).
+Each attempt is capped at `max_planner_usd` (default $30 nominal).
+Root cause of the mid-run node deaths before 2026-09-24: the cluster SLURM prolog killed
+llama-server on every job start (fixed; spec 04 §10.4). Each run is capped by its token budget and a 9 h
 wall-clock guard; after `max_attempts` unverified runs a target is parked with its run records.
 The Claude planner is the only paid part (subscription quota): C3 runs cost ~$2.5–8 nominal per
 target, so a busy day on three nodes is on the order of $50–100 nominal.
