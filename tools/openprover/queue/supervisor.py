@@ -31,6 +31,7 @@ import os
 import re
 import tomllib
 import shutil
+import signal
 import subprocess
 import time
 import urllib.request
@@ -243,6 +244,10 @@ def tick(fleet: list, jobs: dict, down: dict) -> None:
 
 
 def main() -> None:
+    # `systemctl stop/restart` signals the whole cgroup: without this, the loop can reap a job the
+    # stop just killed and charge it as a failed attempt (seen 2026-09-24 05:53). Exit at once;
+    # the next start requeues every running/ target uncharged.
+    signal.signal(signal.SIGTERM, lambda *_: os._exit(0))
     for k in ("pending", "running", "done", "parked"):
         (Q / k).mkdir(parents=True, exist_ok=True)
     RUNS.mkdir(exist_ok=True)
