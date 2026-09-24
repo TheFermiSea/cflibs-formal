@@ -5,3 +5,4 @@
 
 # Asta plugin state (literature threads, document index); curated findings go to docs/research/
 .asta/
+__pycache__/

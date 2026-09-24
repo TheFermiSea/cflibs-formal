@@ -148,7 +148,7 @@ def verify(cand_path: Path, audited_path: Path, thm: str, project: Path) -> dict
         rc, out = tc.compile(cand_raw, cmod, root)
         c["compile_rc"] = rc
         c["errors"] = [l for l in out.splitlines() if ": error" in l][:5]
-        c["sorry_warning"] = "declaration uses 'sorry'" in out
+        c["sorry_warning"] = bool(re.search(r"declaration uses [`'\"]sorry[`'\"]", out))  # 4.33 uses backticks
         if rc != 0 or c["errors"] or c["sorry_warning"]:
             return v
         rc, out = tc.run([tc.leanchecker, cmod], root)

@@ -62,7 +62,9 @@ each fails through the full verifier AND through the kernel/probe layers alone (
 bypassed), and that every genuine proof passed on the command line still passes. Run it after any
 change to `verify.py`. On 2026-09-24 it passed with the three C3 proofs and F02 as genuine
 controls (~4 min; kernel replay ~15 s per candidate). OpenProver reporting `proved` with no passing
-candidate is logged as a FINDING.
+candidate is logged as a FINDING. OpenProver's `proved` can mean only that its informal proof was
+accepted: F07 attempt 5 (2026-09-24) reported `proved` with no Lean file at all, and was correctly
+not verified.
 
 ## Operating it
 
