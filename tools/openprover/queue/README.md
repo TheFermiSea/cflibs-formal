@@ -44,14 +44,25 @@ is billed per PR and per push; batch).
 
 ## What "verified" means
 
-`verify.py` passes a candidate only if it has no `sorry`/`admit`/`native_decide`/`axiom`/
-`implemented_by`/`extern`/`unsafe`/kernel-skip options, imports nothing the audited file does not,
-keeps every audited definition and the theorem signature verbatim, has the same fully elaborated
-type for the theorem (`pp.all`, which catches shadowed names), compiles cleanly and depends only on
-`propext`, `Classical.choice`, `Quot.sound`. Falsified on 2026-09-23: it passes the three C3 proofs
-and rejects the `sorry` statement, a statement with its conclusion deleted, an added import of the
-answer module, and a shadowed definition (the last caught only by the elaborated-type check).
-OpenProver reporting `proved` with no passing candidate is logged as a FINDING.
+`verify.py` passes a candidate only if: (1) its text has no escape hatch or metaprogramming
+(`sorry`, `sorryAx`, `admit`, `native_decide`, `axiom`, `implemented_by`, `extern`, `unsafe`,
+kernel-skip options, `#`-commands, `run_cmd`/`run_elab`, `elab`/`macro`/`syntax`, `initialize`,
+`addDecl`/`doCheck`/`Environment`, `set_option` other than heartbeat/recursion limits); (2) it
+imports nothing the audited file does not; (3) it keeps every audited definition and the theorem
+signature verbatim; (4) it compiles as its own module and **`leanchecker` replays every
+declaration through the kernel**; (5) a probe file written by the verifier, importing the compiled
+candidate, reads the theorem's axioms (subset of `propext`, `Classical.choice`, `Quot.sound`) and
+its `pp.all` elaborated type (identical to the audited statement's, read the same way) between
+per-run random markers.
+
+The pre-2026-09-24 version parsed axioms and types from the candidate's own stdout and never ran
+the kernel; the deep audit (RF-07) forged three proofs of `(2:ℕ)+2=5` that it accepted. They are
+kept in `falsification/`, and `falsification/run.py <lean-project> [cand:stmt:thm ...]` asserts that
+each fails through the full verifier AND through the kernel/probe layers alone (text layer
+bypassed), and that every genuine proof passed on the command line still passes. Run it after any
+change to `verify.py`. On 2026-09-24 it passed with the three C3 proofs and F02 as genuine
+controls (~4 min; kernel replay ~15 s per candidate). OpenProver reporting `proved` with no passing
+candidate is logged as a FINDING.
 
 ## Operating it
 

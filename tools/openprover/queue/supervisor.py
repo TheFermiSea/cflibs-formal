@@ -28,6 +28,7 @@ committed, pushed or opened as a PR: landing a verified proof is a human step.
 """
 import json
 import os
+import re
 import tomllib
 import shutil
 import subprocess
@@ -116,7 +117,9 @@ def candidates(run_dir: Path) -> list[Path]:
 def start(tid: str, node: dict) -> dict:
     d = Q / "running" / tid
     cfg = target_cfg(d)
-    attempt = len([p for p in RUNS.glob(f"{tid}-*") if p.is_dir()]) + 1
+    used = [int(m.group(1)) for p in RUNS.glob(f"{tid}-*")
+            if (m := re.fullmatch(rf"{re.escape(tid)}-(\d+)(?:\.log)?", p.name))]
+    attempt = max(used, default=0) + 1  # never reuse a run dir: OpenProver would resume it
     run_dir = RUNS / f"{tid}-{attempt}"
     cmd = [str(HOME / "venv/bin/openprover"), str(run_dir), "--headless", "--autonomous",
            "--planner-model", cfg["planner"], "--worker-model", cfg["worker"],
