@@ -5,7 +5,7 @@
 > (the integrity spine) + citation from `docs/scope-tags.tsv`; the docs-sync CI gate fails if
 > any result is untagged, so a new theorem cannot land without declaring its epistemic status.
 
-**Scope-tag mix** (751 results): **EXACT** 158 · **REDUCED** 221 · **APPROXIMATION** 14 · **PURE-MATH** 358
+**Scope-tag mix** (756 results): **EXACT** 163 · **REDUCED** 221 · **APPROXIMATION** 14 · **PURE-MATH** 358
 
 `EXACT` = exact identity faithfully encoding the cited physics · `REDUCED` = valid dimensionless/lumped-factor form · `APPROXIMATION` = documented idealization / limiting case · `PURE-MATH` = infrastructure lemma, no physical claim. Classification cross-checked against `reviews/literature-validity-audit.md`.
 
@@ -119,6 +119,20 @@
 - `REDUCED` · `leastSquares_agrees_classic` — Same-spectrum agreement on the noise-free forward fixpoint.  _[Tognoni 2010]_
 - `REDUCED` · `olsBoltzmann_forward_feasible` — The noise-free forward spectrum is exactly least-squares-feasible.  _[Tognoni 2010]_
 - `REDUCED` · `olsBoltzmann_forward_feasible_at` — Feasibility form.  _[Tognoni 2010]_
+
+## `Alt/NeutralityScale.lean`  (CflibsFormal.Alt)
+*Neutrality scale — the calibration factor from charge neutrality instead of closure*
+
+**Definitions**
+- `neutralityScale` — Neutrality scale estimator.
+- `closureEstimate` — Closure estimator over the observed species: the per-unit-normalized intensities renormalized to sum to one, `(I s / unitI s) / ∑ t, I t / unitI t`.
+
+**Results**
+- `EXACT` · `lineIntensity_linear` — Linearity of the line intensity in density and calibration.  _[Ciucci 1999]_
+- `EXACT` · `lineIntensity_ratio` — The ratio form of `lineIntensity_linear`, guarded by positivity of the unit-point intensity.  _[Ciucci 1999]_
+- `EXACT` · `neutralityScale_eq_Fcal` — Exact recovery.  _[Abbass 2016]_
+- `EXACT` · `neutralityScale_undetected` — Undetected species.  _[Abbass 2016]_
+- `EXACT` · `closureEstimate_bias` — Closure bias from an undetected species.  _[Tognoni 2010]_
 
 ## `Alt/OLSAtomicDataPerturbation.lean`  (CflibsFormal.Alt)
 *per-line atomic-data error in the OLS density reader*
