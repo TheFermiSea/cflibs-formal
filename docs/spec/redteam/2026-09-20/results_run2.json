@@ -1,0 +1,103 @@
+{
+ "v01": {
+  "verdict": "gaps_found",
+  "drift_class": "narrower_than_docstring",
+  "model": "sonnet",
+  "evidence": "P1 no Z binder, speciesCharge 1; P6 general statement elaborates against same defs"
+ },
+ "v06": {
+  "verdict": "gaps_found",
+  "drift_class": "definition_misalignment",
+  "secondary": [
+   "totalization_vacuity"
+  ],
+  "model": "sonnet",
+  "evidence": "p3_counterexample: C=(1,0), N=(0,0) refutes; L2 HIT names totalized 0/0"
+ },
+ "v02": {
+  "verdict": "passed",
+  "drift_class": "none",
+  "model": "sonnet",
+  "evidence": "sorry discharged via LinearMap.ker_eq_bot, axiom-clean; box-indicator 1\u00d71 witness with kernel entry 1"
+ },
+ "v05": {
+  "verdict": "gaps_found",
+  "drift_class": "dropped_positivity",
+  "model": "sonnet",
+  "evidence": "P3 C=(2,0),N=(1,0) refutes; P3b C\u22610 vacuous predicate refutes"
+ },
+ "v04": {
+  "verdict": "gaps_found",
+  "drift_class": "narrower_than_docstring",
+  "model": "sonnet",
+  "evidence": "elaborated type is one implication; docstring/name promise iff; probe_p1 proves it in 3 lines"
+ },
+ "v03": {
+  "verdict": "gaps_found",
+  "drift_class": "definition_misalignment",
+  "model": "sonnet",
+  "evidence": "probe4: L=Fin 2, P=Fin 1 indicator kernel \u2014 RHS true, LHS false; pixelSignal computes the transpose"
+ },
+ "v08": {
+  "verdict": "passed",
+  "drift_class": "none",
+  "model": "sonnet",
+  "evidence": "type verbatim S3; P4 hS-drop counterexample executed; P2 Z=2 witness 1 > 4/7"
+ },
+ "v07": {
+  "verdict": "gaps_found",
+  "drift_class": "strict_nonstrict_flip",
+  "secondary": [],
+  "evidence": "P1 #check AntitoneOn vs source StrictAntiOn; P3c Z=0 AntitoneOn proved with no hypotheses; P3b Ici widening refuted (domain load-bearing)"
+ },
+ "v09": {
+  "verdict": "gaps_found",
+  "drift_class": "wrong_reduction_target",
+  "secondary": [],
+  "evidence": "probe2_counterexample: M\u22611 Fin2\u00d7Fin1, Injective true, ker transpose \u2260 \u22a5; probe3 realises M via pixelKernel indicator integral = 1"
+ },
+ "v10": {
+  "verdict": "passed",
+  "drift_class": "none",
+  "secondary": [],
+  "evidence": "p5_conclusion proves the literal statement axiom-clean; p4 shows hsum load-bearing (C\u22610 counterexample); p3 guard-on-C rejects N\u22610"
+ },
+ "v11": {
+  "verdict": "gaps_found",
+  "drift_class": "dropped_positivity",
+  "secondary": [
+   "totalization_vacuity"
+  ],
+  "evidence": "P1 Set.Ici 0 vs source/docstring Ioi 0; p3_junk proves \u00acStrictAntiOn at Z=1,S\u22611,Ntot=1 on Ici (f(0)=0<f(1)=1/2); L2 names totalization x/0=0 as the mechanism"
+ },
+ "v15": {
+  "verdict": "gaps_found",
+  "drift_class": "dropped_positivity",
+  "secondary": [],
+  "evidence": "P1 no 0<Ntot binder; p3_junk proves \u00acStrictAntiOn at Ntot=0 (constant zero); P5 repo precedent multiElementIonized_strictAntiOn uses hN"
+ },
+ "v16": {
+  "verdict": "gaps_found",
+  "drift_class": "narrower_than_docstring",
+  "secondary": [],
+  "evidence": "P1 elaborated type in Set.Ioi lam\u2080; p2_actual_value proves half-line integral = 1/2 via integral_add_compl + integral_comp_neg_Ioi + lorentzian_integral"
+ },
+ "v12": {
+  "verdict": "passed",
+  "drift_class": "none",
+  "secondary": [],
+  "evidence": "P1 type identical to L2; p2 proves \u03b3=1 instance via lorentzianG_one + lorentzian_integral; p3 \u03b3=0 gives \u222b=0, p3b \u03b3=\u22121 gives \u222b=\u22121 (h\u03b3 exactly right); p4 HWHM + shift at lam\u2080=3"
+ },
+ "v13": {
+  "verdict": "gaps_found",
+  "drift_class": "dropped_positivity",
+  "secondary": [],
+  "evidence": "P1 binder \u03b3 \u2260 0 vs source/docstring 0 < \u03b3; p_refute proves \u00ac(\u2200 \u03b3 lam\u2080, \u03b3\u22600 \u2192 \u222b = 1) with \u03b3=\u22121 (\u222b = \u22121)"
+ },
+ "v14": {
+  "verdict": "gaps_found",
+  "drift_class": "definition_misalignment",
+  "secondary": [],
+  "evidence": "probe1: file def feeds lorentzianG \u03b3^2; value at \u03b3=2 is 1/(4\u03c0) vs docstring 1/(2\u03c0); probe2/3 funext lorentzianProfile \u03b3 = lorentzianProfile (\u2212\u03b3) (sign erased)"
+ }
+}

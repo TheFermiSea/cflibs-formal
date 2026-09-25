@@ -1,0 +1,9 @@
+docs/research/audit-2026-09-24/evidence/frontier-mathlib/GLaw.lean:25:22: warning: This simp argument is unused:
+  LinearMap.sum_apply
+
+Hint: Omit it from the simp argument list.
+  [apply] simp [L]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+'AuditGLaw.weightedNoise_map_eq' depends on axioms: [propext, Classical.choice, Quot.sound]
+rc=0

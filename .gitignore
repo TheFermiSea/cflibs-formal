@@ -2,3 +2,7 @@
 
 # ast-grep Lean parser (build artifact — run .ast-grep/build-parser.sh)
 .ast-grep/parser/*.so
+
+# Asta plugin state (literature threads, document index); curated findings go to docs/research/
+.asta/
+__pycache__/

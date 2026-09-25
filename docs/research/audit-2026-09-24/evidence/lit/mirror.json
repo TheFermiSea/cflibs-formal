@@ -1,0 +1,222 @@
+{
+  "total": 30,
+  "offset": 0,
+  "next": 8,
+  "data": [
+    {
+      "paperId": "c3d0502c4de59b3700c2be706f7b353a7cfef64b",
+      "externalIds": {
+        "MAG": "2325021442",
+        "DOI": "10.11884/HPLPB201527.012002",
+        "CorpusId": 227666100
+      },
+      "title": "Self-absorption effect in nanosecond laser induced plasma emission spectrum",
+      "venue": "",
+      "year": 2015,
+      "citationCount": 0,
+      "authors": [
+        {
+          "authorId": "2108736155",
+          "name": "Jin-Zhong Chen"
+        },
+        {
+          "authorId": "2152453226",
+          "name": "Jing Wang"
+        },
+        {
+          "authorId": "47375440",
+          "name": "Rui-Min Ma"
+        },
+        {
+          "authorId": "2116327091",
+          "name": "Xu Li"
+        },
+        {
+          "authorId": "2155517940",
+          "name": "Ying Wang"
+        }
+      ]
+    },
+    {
+      "paperId": "fd30c703e9618479d4fa3aa4a003877a50b9445a",
+      "externalIds": {
+        "MAG": "2247946912",
+        "CorpusId": 139003429
+      },
+      "title": "Self Absorption of 394.4 and 396.15 nm Aluminum Transitions in Laser-Induced Plasma",
+      "venue": "",
+      "year": 2015,
+      "citationCount": 0,
+      "authors": [
+        {
+          "authorId": "12775822",
+          "name": "D. M. Surmick"
+        },
+        {
+          "authorId": "2816975",
+          "name": "C. Parigger"
+        }
+      ]
+    },
+    {
+      "paperId": "6ee9392610f457bb17842c0a51c284706014706a",
+      "externalIds": {
+        "MAG": "2612790190",
+        "CorpusId": 136179849
+      },
+      "title": "Self-Absorption Corrections for Aluminum Neutrals and Ions in Laser-Induced Plasma",
+      "venue": "",
+      "year": 2015,
+      "citationCount": 0,
+      "authors": [
+        {
+          "authorId": "12775822",
+          "name": "D. M. Surmick"
+        },
+        {
+          "authorId": "2816975",
+          "name": "C. Parigger"
+        }
+      ]
+    },
+    {
+      "paperId": "6e594010e8e4d8fabc63867029bea018c3bf5ab0",
+      "externalIds": {
+        "MAG": "2248751367",
+        "CorpusId": 138581734
+      },
+      "title": "Hydrogen \\textit{ Balmer} Series Self-Absorption Measurement in Laser-Induced Air Plasma",
+      "venue": "",
+      "year": 2015,
+      "citationCount": 0,
+      "authors": [
+        {
+          "authorId": "2882825",
+          "name": "Ghaneshwar Gautam"
+        },
+        {
+          "authorId": "2816975",
+          "name": "C. Parigger"
+        }
+      ]
+    },
+    {
+      "paperId": "a2598d7bcb59165d849f6a5c09eb8e20f497c068",
+      "externalIds": {
+        "MAG": "1968981286",
+        "DOI": "10.4236/OPJ.2015.53007",
+        "CorpusId": 38943681
+      },
+      "title": "Self-Absorption Effects on Electron Temperature-Measurements Utilizing Laser Induced Breakdown Spectroscopy (LIBS)-Techniques",
+      "venue": "",
+      "year": 2015,
+      "citationCount": 42,
+      "authors": [
+        {
+          "authorId": "40658417",
+          "name": "S. Mansour"
+        }
+      ]
+    },
+    {
+      "paperId": "5a9d7b3c3642d8a57bf69468d07242ea9670f024",
+      "externalIds": {
+        "MAG": "2202595776",
+        "DOI": "10.1088/0953-4075/48/11/115701",
+        "CorpusId": 123795403
+      },
+      "title": "Electron density determination of aluminium laser-induced plasma",
+      "venue": "",
+      "year": 2015,
+      "citationCount": 18,
+      "authors": [
+        {
+          "authorId": "12775822",
+          "name": "D. M. Surmick"
+        },
+        {
+          "authorId": "2816975",
+          "name": "C. Parigger"
+        }
+      ]
+    },
+    {
+      "paperId": "80aa63243b0a0341f7d398a8e6d6fd4925c801e0",
+      "externalIds": {
+        "CorpusId": 209844520
+      },
+      "title": "Atomic and molecular emission spectroscopy measurements for characterization of laser-induced plasma dynamics",
+      "venue": "",
+      "year": 2015,
+      "citationCount": 6,
+      "authors": [
+        {
+          "authorId": "2816975",
+          "name": "C. Parigger"
+        },
+        {
+          "authorId": "2882825",
+          "name": "Ghaneshwar Gautam"
+        },
+        {
+          "authorId": "37317515",
+          "name": "A. C. Woods"
+        },
+        {
+          "authorId": "12775822",
+          "name": "D. M. Surmick"
+        },
+        {
+          "authorId": "2152690",
+          "name": "J. Hornkohl"
+        }
+      ]
+    },
+    {
+      "paperId": "4ddb355ea36c1858fefd5d0fc584b9914da399ce",
+      "externalIds": {
+        "MAG": "2058501695",
+        "DOI": "10.1039/C4JA00470A",
+        "CorpusId": 96772049
+      },
+      "title": "A method for improving the accuracy of calibration-free laser-induced breakdown spectroscopy (CF-LIBS) using determined plasma temperature by genetic algorithm (GA)",
+      "venue": "",
+      "year": 2015,
+      "citationCount": 41,
+      "authors": [
+        {
+          "authorId": "2144063316",
+          "name": "Juan Dong"
+        },
+        {
+          "authorId": "2155277632",
+          "name": "Long Liang"
+        },
+        {
+          "authorId": "2049043939",
+          "name": "Jiao Wei"
+        },
+        {
+          "authorId": "48176448",
+          "name": "Hong-Sheng Tang"
+        },
+        {
+          "authorId": "2009789780",
+          "name": "Tian-Long Zhang"
+        },
+        {
+          "authorId": "47008635",
+          "name": "Xiao-Feng Yang"
+        },
+        {
+          "authorId": "2117843501",
+          "name": "Kang Wang"
+        },
+        {
+          "authorId": "2108839992",
+          "name": "Hua Li"
+        }
+      ]
+    }
+  ]
+}

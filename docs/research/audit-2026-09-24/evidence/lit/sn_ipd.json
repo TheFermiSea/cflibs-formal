@@ -1,0 +1,188 @@
+{
+  "data": [
+    {
+      "score": 0.5704691924052088,
+      "paper": {
+        "corpusId": "216076215",
+        "title": "Use of laser-induced break spectroscopy for the determination of major and trace elements in Zanthoxylum armatum",
+        "authors": [
+          "S. Shahida",
+          "Muhammad Imran Khan",
+          "Sadaf Azad",
+          "Nasar Ahmed",
+          "M. Lashari",
+          "M. Khraisheh",
+          "F. Almomani",
+          "S. Zafar"
+        ],
+        "openAccessInfo": {
+          "license": "CCBY",
+          "status": "HYBRID",
+          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://api.unpaywall.org/v2/10.1007/s42247-020-00095-0?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.1007/s42247-020-00095-0, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        }
+      },
+      "snippet": {
+        "text": "This method is commonly referred to Boltzmann plot method. Calibration-free LIBS (CF-LIBS) is utilized for the compositional analysis of sample material after measurement of electron number density and plasma temperature. It is a new technique used for quantitative analysis developed by Gomba and colleagues [30]. Optically thin plasma is one of the basic requirements of it. An important step of this method is the accurate determination of electron number density (Ne) and plasma temperature (T). Therefore, the incorporations of self-absorption corrections lead to more precise compositions and plasma temperature [31]. Boltzmann relation was used to link intensities of a spectral line between two energy levels as given below: \n\nwhere I represents the emission line intensity, F is for experimental factor used for collection efficiency, C s shows the composition of emitting species, P(T)  can be converted to the straight-line equation after taking logarithm on both sides as given below: \n\n] and an intercept of ln [ FC \u0455 P T \n\n\u00f0 \u00de ]. The experimental factor was determined following Eq. ( 5): \n\nwhere F stands for the experimental factor that can be determined by normalizing the concentration of all species to unity and can be used for the determination of neutral species., while the concentration of ionized species was determined by using the Saha-Boltzmann equation [32]. The electron number density of an element between two consecutive energy states is related according to the Saha-Boltzmann (Eq. ( 7)); \n\nwhere N e represents the electron number density of the plasma, n a z and n a z\u00fe1 stand for the electron densities of singly ionized and neutral species respectively, T ev shows the plasma temperature, X a z is for ionization energies, and U a z\u00fe1 and U a z represent the partition function. The sum of ionized and neutral species gives the total concentration of an element as per Eq. ( 7) [33] (Fig. 7) \n\nwhere C T is the total concentration of an element, and C I s and C II s represent the concentrations of neutral and ionized species.",
+        "snippetKind": "body"
+      }
+    },
+    {
+      "score": 0.532164241400453,
+      "paper": {
+        "corpusId": "284641163",
+        "title": "Atomic composition analysis of iron-based particles via single-shot LIBS and spectral fitting under fluctuating plasma conditions",
+        "authors": [
+          "Maximilian Dorscht",
+          "M. Stark",
+          "Nils Oberndorfer",
+          "B. B\u00f6hm",
+          "A. Weinmann",
+          "A. Dreizler",
+          "D. Geyer"
+        ],
+        "openAccessInfo": {
+          "license": "CCBY",
+          "status": "HYBRID",
+          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://api.unpaywall.org/v2/10.1088/1361-6501/ae34d1?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.1088/1361-6501/ae34d1, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        }
+      },
+      "snippet": {
+        "text": "For certain species in the higher ionization stages, such as Fe III, O II and N II, the intense emission lines that would be detectable in single-shot LIB spectra with the current setup are outside the wavelength range recorded by the spectrometer. Therefore, their relative number densities cannot be derived directly from spectral fitting, even though these values are necessary for calculating the particle O to Fe ratio. The relevance of these higher ionization stages is evident in figure 3. It shows the normalized number densities of Fe I, Fe II, Fe III, O I, O II, O III, N I, N II, and N III as a function of plasma excitation temperature at a constant free electron number density of 5.5 \u2022 10 17 cm \u22123 . These number densities are obtained using the Saha-Boltzmann equation given in equation (3.7) [35]. At typical plasma excitation temperatures of about 14 000 K, a substantial fraction of O and N are already present in the first ionization stage (O II, N II). Higher states (O III, N III) do not contribute to the total sum for the analyzed plasma conditions. For Fe, the transition from the neutral state (Fe I) to the singly (Fe II) and the doubly ionized states (Fe III) is clearly visible. \n\nThe elemental balance would be strongly biased if only the relative atomic number densities (Fe I, Fe II, O I, N I) derived directly from spectral fitting are considered. For instance, at 14 000 K, about 10 % of O and N atoms are already ionized, which leads to a significant underestimation of the total number densities. Therefore, the missing species-specific linear combination parameters for the higher ionization stages are determined using the Saha-Boltzmann equation (3.7) [35]: \n\nHere, N e is the free electron number density, m e the electron mass, h the Planck's constant and E ion,ele,i the ionization energy of element (ele) at stage i.",
+        "snippetKind": "body"
+      }
+    },
+    {
+      "score": 0.5280624315251313,
+      "paper": {
+        "corpusId": "274701379",
+        "title": "Rapid Determination of Ti in Quartz Using a Portable/Handheld Laser-Induced Breakdown Spectroscopy (LIBS) Instrumentation: A Case Study on Quartz Veinlets in Hornfels from Italy",
+        "authors": [
+          "Diego D\u00edaz Pace",
+          "A. Caggianelli",
+          "O. De Pascale",
+          "G. Senesi"
+        ],
+        "openAccessInfo": {
+          "license": null,
+          "status": "GOLD",
+          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://api.unpaywall.org/v2/10.3390/min14121257?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.3390/min14121257, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        }
+      },
+      "snippet": {
+        "text": "The plasma electron density and temperature were calculated by using the Saha-Boltzmann approach [11], employing a set of ten Mg I and Mg II selected spectral lines (Figure 2b) with energy levels in the range 4.422-8.864 eV and well-known transition probabilities (Table 1). For each veinlet position, the electron density was calculated by Equation (1) using the spatially integrated intensity ratios of the Mg I 285.21 nm and Mg II 279.55 nm-280.27 nm resonant lines at an estimated plasma temperature of 11,600 K, which is typical in LIBS experiments [4]. The obtained electron density was then employed for the construction of the Saha-Boltzmann plot to obtain the plasma temperature, and after that, the value of the electron density was iteratively recalculated (Figure 3). Representative Saha-Boltzmann plot obtained using Mg I-II lines (Table 1) for veinlet a at position #1a. The superscript * indicates the modified values for the abscissas and ordinates according to Ref. [11].",
+        "snippetKind": "body"
+      }
+    },
+    {
+      "score": 0.5253184121873516,
+      "paper": {
+        "corpusId": "98694971",
+        "title": "Relative Determination of Micronutrients of Different Species of Teff (Eragrestis) Seeds of Ethiopia Origin by Calibration Free Laser Induced Breakdown Spectroscopy Techniques",
+        "authors": [
+          "M.Dilbetigle Assefa",
+          "A. Chaubey",
+          "Awoke Taddess",
+          "A. Hibstie"
+        ],
+        "openAccessInfo": {
+          "license": "CCBY",
+          "status": "HYBRID",
+          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://api.unpaywall.org/v2/10.19026/AJFST.5.3266?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.19026/AJFST.5.3266, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        }
+      },
+      "snippet": {
+        "text": "The elemental composition analysis from the line intensities in a LIBS experiment becomes simple if the plasma is optically thin and is also in LTE. \n\nElectron densities of the plasma can be obtained by using two methods that is by measuring the broadening of the emission line of the spectrum and by Saha-Boltzmann equation. In this study both methods were used to confirm the existence of the LTE. The width of Stark broadening of well isolated spectra line of Calcium used to calculate the electron density of the plasma. The Stark line width \u2206\u03bb FWHM was extracted from the measured line width \u2206\u03bb observed by subtracting the instrumental line broadening \u2206\u03bb instrumental = 0.05 nm. The same element was taken into consideration for electron density measurement of the three samples at wavelength 422.67 nm of Ca I line. The three candidates' lines data points were fitted with Lorenztian fitting function using the origin software to determine Full Width Half Maximum \u03bb 1/2 (FWHM) as shown in Fig. 3. The Stark broadening of impact parameter (w) value is taken from NIST at electron temperature of 10000 K (Atomic spectra database). Substituting the value in the Eq. ( 3), the electron densities for Ca were determined for each sample and listed in the Table 1: \n\nSaha-boltzmann equation method for N e : Electron density of the plasma can be calculated from Saha-Boltzmann equation. It is formulated as: (Andrzej et al., 2006): \n\nwhere, I = Intensity from the experiment V = Ionization potential of the atomic species \n\nTable 2 shows the electron density calculated from Eq. ( 4) based on the emission lines of calcium element. Table 1 and 2 noticeably shows that the results from both methods gave approximately equal value. The small deviation is due to the uncertainty of the measured value from the experiment and NIST data. \n\nFinally the result from both methods clearly shows that LTE assumption is valid by comparing the result with criterion given by McWhiter of the lower limit of electron density for plasma will be in LTE (Cremers and Radziemski, 2006):",
+        "snippetKind": "body"
+      }
+    },
+    {
+      "score": 0.5167327070134929,
+      "paper": {
+        "corpusId": "233700001",
+        "title": "Using Mg/Ca Ratios from the Limpet Patella depressa Pennant, 1777 Measured by Laser-Induced Breakdown Spectroscopy (LIBS) to Reconstruct Paleoclimate",
+        "authors": [
+          "A. Garc\u00eda-Esc\u00e1rzaga",
+          "M. Mart\u00ednez-Minchero",
+          "A. Cobo",
+          "Igor Guti\u00e9rrez-Zugasti",
+          "A. Arrizabalaga",
+          "P. Roberts"
+        ],
+        "openAccessInfo": {
+          "license": "CCBY",
+          "status": "GOLD",
+          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://api.unpaywall.org/v2/10.3390/APP11072959?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.3390/APP11072959, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        }
+      },
+      "snippet": {
+        "text": "These decisions are dynamically made based on the particular signal to noise ratio of each emission peak, the quality of fit to a given peak function, or whether peak parameters are outliers in the Saha-Boltzmann plots or in the calculation of electron density. To reduce the variability of the concentrations determined across all the measurements of the sequences due to changes in the used emission lines, only the set of lines that were valid for all spatial points were considered here. This results in 16 lines of CaI, 5 of CaII and 6 of MgI being considered for the Saha-Boltzmann plots. As all MgII lines were discarded due to their high self-absorption, the concentration of ionized species was extrapolated using the Saha equilibrium equation [71]. The Matlab implementation of the CF-LIBS algorithm used in this work is openly available at github.com/acobo/CFLIBS. This procedure allowed us to obtain the relative concentration in mmol/mol units and provided significant advantages to the line ratio approach, decreasing LIBS-derived",
+        "snippetKind": "body"
+      }
+    },
+    {
+      "score": 0.5143426286034254,
+      "paper": {
+        "corpusId": "118437403",
+        "title": "Plasma diagnostics from self-absorbed doublet lines in laser-induced breakdown spectroscopy",
+        "authors": [
+          "C. D'Angelo",
+          "Mayra Garcimu\u00f1o",
+          "D. M. D\u00edaz Pace",
+          "G. Bertuccelli"
+        ],
+        "openAccessInfo": {
+          "license": null,
+          "status": "BRONZE",
+          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://api.unpaywall.org/v2/10.1016/J.JQSRT.2015.05.014?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.1016/J.JQSRT.2015.05.014, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        }
+      },
+      "snippet": {
+        "text": "Hence, since LTE holds, the number densities of the different ionization species (m \u00c0 3 ) can be calculated using the Saha equation ( 4). Namely, where S z \u00c0 1,z is the Saha equation ( 5) for the species z and z \u00c0 1. As an example, written in practical units, \n\nwith E 1 Mg I \u00bc7.646 eV. \n\nFig. 2 shows the relative number densities of the different ionization stages with respect to the total Mg density for a typical decreasing range of temperatures reached in LIBS experiments, calculated by employing Eqs. ( 6) and ( 7)- (9). It is observed that ionization stages higher than two do not contribute to the total Mg density. Moreover, for temperatures 40.8 eV the density of Mg II is larger than the density of Mg I, while the density of Mg III is small (o 6%). On the other hand, for temperatureso0.8 eV the density of Mg II is lower than the density of Mg I. \n\n(iv) In typical LIBS experiences, Stark broadening is the predominant mechanism that determines the Lorentzian contribution to line profiles [23]. It is proportional to the electron number density, namely, \n\nwhere w (nm) is the electron impact half width and N e Ref (m \u00c0 3 ) is a reference electron density, usually 10 22 or 10 23 m \u00c0 3 [26]. \n\nOur calculations employ the following home-made computer algorithm. The input parameters are the experimental line and its spectroscopic data. After that, a range of values for the plasma temperature (kT) and the total columnar density (N Mg l) are set by the user. Then, the line intensity profiles for the Mg transitions are calculated using Eqs. ( 1)- (11). The intrinsic line profiles are convoluted with the instrumental function of the monochromator. Finally, the results obtained for the simulated lines are their total intensity, peak intensity, and width, from which the corresponding theoretical ratios are computed as a function of kT and the product N Mg l.",
+        "snippetKind": "body"
+      }
+    },
+    {
+      "score": 0.5126556454261825,
+      "paper": {
+        "corpusId": "274701379",
+        "title": "Rapid Determination of Ti in Quartz Using a Portable/Handheld Laser-Induced Breakdown Spectroscopy (LIBS) Instrumentation: A Case Study on Quartz Veinlets in Hornfels from Italy",
+        "authors": [
+          "Diego D\u00edaz Pace",
+          "A. Caggianelli",
+          "O. De Pascale",
+          "G. Senesi"
+        ],
+        "openAccessInfo": {
+          "license": null,
+          "status": "GOLD",
+          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://api.unpaywall.org/v2/10.3390/min14121257?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.3390/min14121257, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        }
+      },
+      "snippet": {
+        "text": "The most commonly used approach for the determination of the temperature and the electron density of LIBS plasmas is the Saha-Boltzmann plot, which is based on the previous determination of the electron density via (i) the Stark broadening effect or (ii) the Saha-Boltzmann equation. In the former approach, the measurement of the Stark width of a selected spectral line with a known value of its broadening coefficient is required [11]. In the latter approach, the emission intensity ratio of two lines corresponding to successive ionization states of the same element is employed [12]. In most cases, the H \u03b1 Balmer emission line (at \u03bb \u03b1 = 656.28 nm) is selected as this line is, in general, well-isolated, free of self-absorption, and has a considerably larger Stark broadening than any other element. Although a proper measurement of the H \u03b1 line profile can be achieved even by using a spectrometer with a low spectral resolution, this line was not available for the spectral range of our system. Moreover, the spectral resolution of the spectrometer was about 0.18 nm, which is larger than the expected Stark widths of the other elements detected (~0.01 nm), thus preventing the use of the Stark broadening approach to determine the electron density. Therefore, the Saha-Boltzmann method was used from which the electron density was derived from the intensity ratio of two lines corresponding to atomic (I) and single-ionized species (II), according to the following equation [12]: \n\nwhere N e (m \u22123 ) is the electron number density, m e (kg) is the electron mass, h (J s) is the Planck's constant, k (J K \u22121 ) is the Boltzmann constant, T (K) is the temperature, I I (a.u.) and I II (a.u.) are the emission line intensities of the considered transitions, A ki (s \u22121 ) are the transition probabilities, g k (dimensionless) are the degeneracies of the upper energy levels, and E \u221e (eV) is the ionization energy of the neutral species.",
+        "snippetKind": "body"
+      }
+    },
+    {
+      "score": 0.492893089844737,
+      "paper": {
+        "corpusId": "279113514",
+        "title": "Optical Emission Spectroscopy of Zinc Oxide Doped Nickel Oxide to Calculate Plasma Parameters Using the Boltzmann Plot Method",
+        "authors": [
+          "Muna A. Issa",
+          "K. Aadim"
+        ],
+        "openAccessInfo": {
+          "license": "CCBY",
+          "status": "GOLD",
+          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://api.unpaywall.org/v2/10.30723/ijp.v23i2.1230?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.30723/ijp.v23i2.1230, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        }
+      },
+      "snippet": {
+        "text": "k ln( \n\nwhere A represents the probability of the occurring transition, I is the intensity, E is the excited state's energy in electron volts, and k is the Boltzmann constant. \n\nElectron density refers to the quantity of free electrons within a given volume. Determining electron density is possible via various reliable methods, such as Thomson scattering, microwave, and plasma spectroscopy. Within this laboratory context, utilizing the linear Stark broadening of spectral lines proves to be a reliable technique for determining electron density. The primary factors contributing to line broadening in LIBS plasmas are the Stark effect and Doppler width. The Doppler width is solely determined by the emitting species atomic mass and temperature. This broadening is not considered significant in this experiment because the hydrogen line's Doppler width employed typically falls within the range of 0.04 to 0.07 nm. Considered a form of pressure broadening, the Stark effect is caused by the interaction between adjacent particles and radiators. These interactions occur in plasmas due to ion collisions and, to a lesser degree, electron collisions. The primary factor contributing to the broadening of the hydrogen line is attributed to the Stark effect [17]. \n\nThe Saha-Boltzmann equation used consecutive ionization stages and spectral lines of a given element. The Saha-Boltzmann equation is typically expressed as in Eq. ( 2) [18] n e = I Z * I Z+1 * 6.04x10 21 (T \n\nwhere   * =   \u03bb , / ,  , , is the modified line intensity for the transition in stage Z,  +1 * : Modified line intensity for the transition in stage (Z+1),  ,+1 ,  , : Ionization energy for the states (K, Z+1) and (K, Z) respectively, \u03bb , : the wavelength of the k-i transitions. g K,Z : the statistical weight of the transition, A ki,z : denotes the ionization energy of the species in ionization stage Z, I Z : the change in wavelength of the transition from level-2 to level-1. \n\nThe calculation of the plasma frequency (fp) is carried out using Eq. ( 3) \n\nThe frequency is a fundamental characteristic of plasma entirely determined by plasma density.",
+        "snippetKind": "body"
+      }
+    }
+  ],
+  "retrievalVersion": "pa1-v1"
+}

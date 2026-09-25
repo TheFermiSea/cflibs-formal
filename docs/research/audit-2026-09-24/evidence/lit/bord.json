@@ -1,0 +1,100 @@
+{
+  "total": 3,
+  "offset": 0,
+  "data": [
+    {
+      "paperId": "7942315bca4765de5f690b2aaedb9382263b79c4",
+      "externalIds": {
+        "DOI": "10.1016/j.sab.2022.106561",
+        "CorpusId": 253297743
+      },
+      "title": "Reducing matrix effects on the quantification of Ca, Mg, and Fe in soybean leaf samples using calibration-free LIBS and one-point calibration",
+      "venue": "Spectrochimica Acta Part B - Atomic Spectroscopy",
+      "year": 2022,
+      "journal": {
+        "name": "Spectrochimica Acta Part B: Atomic Spectroscopy"
+      },
+      "authors": [
+        {
+          "authorId": "2099177463",
+          "name": "Lu\u00eds Carlos Leva Borduchi"
+        },
+        {
+          "authorId": "89328208",
+          "name": "D. Milori"
+        },
+        {
+          "authorId": "39003662",
+          "name": "M. C. Meyer"
+        },
+        {
+          "authorId": "1405425159",
+          "name": "P. Villas-Boas"
+        }
+      ]
+    },
+    {
+      "paperId": "5f19cb9c180736919fc3c0769c67106f6b50d961",
+      "externalIds": {
+        "DOI": "10.1039/d2ja00399f",
+        "CorpusId": 257608250
+      },
+      "title": "Application of one-point calibration LIBS for quantification of analytes in samples with distinct matrix characteristics: a case study with Hg",
+      "venue": "Journal of Analytical Atomic Spectrometry",
+      "year": 2023,
+      "journal": {
+        "name": "Journal of Analytical Atomic Spectrometry"
+      },
+      "authors": [
+        {
+          "authorId": null,
+          "name": "Luis Carlos Leva Borduchi"
+        },
+        {
+          "authorId": "14189944",
+          "name": "C. Menegatti"
+        },
+        {
+          "authorId": "89328208",
+          "name": "D. Milori"
+        },
+        {
+          "authorId": "1522012797",
+          "name": "H. Iz\u00e1rio"
+        },
+        {
+          "authorId": "1405425159",
+          "name": "P. Villas-Boas"
+        }
+      ]
+    },
+    {
+      "paperId": "2ac408604d547eea34eae4afb4e15a94f7b13091",
+      "externalIds": {
+        "MAG": "2971696143",
+        "DOI": "10.1016/j.sab.2019.105692",
+        "CorpusId": 202869893
+      },
+      "title": "One-point calibration of Saha-Boltzmann plot to improve accuracy and precision of quantitative analysis using laser-induced breakdown spectroscopy",
+      "venue": "Spectrochimica Acta Part B - Atomic Spectroscopy",
+      "year": 2019,
+      "journal": {
+        "name": "Spectrochimica Acta Part B: Atomic Spectroscopy"
+      },
+      "authors": [
+        {
+          "authorId": "2099177463",
+          "name": "Lu\u00eds Carlos Leva Borduchi"
+        },
+        {
+          "authorId": "89328208",
+          "name": "D. Milori"
+        },
+        {
+          "authorId": "1405425159",
+          "name": "P. Villas-Boas"
+        }
+      ]
+    }
+  ]
+}

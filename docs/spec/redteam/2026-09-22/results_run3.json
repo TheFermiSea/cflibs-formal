@@ -1,0 +1,101 @@
+{
+ "v04": {
+  "verdict": "gaps_found",
+  "edit_class": "narrower_than_docstring",
+  "mechanism_class": "narrower_than_docstring",
+  "evidence": "P1: elaborated type is a bare implication (ker=\u22a5 \u2192 Injective), not an Iff, despite the _iff name and docstring; reverse direction entirely missing"
+ },
+ "v06": {
+  "verdict": "gaps_found",
+  "edit_class": "definition_misalignment",
+  "mechanism_class": "totalization_vacuity",
+  "evidence": "P1: def preservesStoichiometry guards on N s\u2082 \u2260 0 not C s\u2082 \u2260 0; P3b: direct derivation of False from the elaborated theorem at \u03ba=Fin 1, C\u22611, N\u22610 (0/0=0 totalization)"
+ },
+ "v02": {
+  "verdict": "passed",
+  "edit_class": "none",
+  "mechanism_class": "none",
+  "evidence": "P2: proved outright via mulVecLin_apply + ker_eq_bot, axiom-clean; P4 mutant (ker\u2260\u22a5) fails as expected"
+ },
+ "v05": {
+  "verdict": "gaps_found",
+  "edit_class": "dropped_positivity",
+  "mechanism_class": "dropped_positivity",
+  "evidence": "P1: no hsum binder; P4-equiv: C=N=![2,2] proved as a genuine False-implying counterexample",
+  "incident": "reviewer read docs/spec/redteam/2026-09-20.md and cited its recorded label for this exact variant as corroborating precedent, alongside its own independent P4 counterexample proof -- a mild blinding leak, not the sole basis for the verdict"
+ },
+ "v01": {
+  "verdict": "gaps_found",
+  "edit_class": "narrower_than_docstring",
+  "mechanism_class": "narrower_than_docstring",
+  "evidence": "P1: no Z binder, speciesCharge hardcoded to 1; P4: the Z=1 instance is true but strictly narrower than the general claim"
+ },
+ "v03": {
+  "verdict": "gaps_found",
+  "edit_class": "definition_misalignment",
+  "mechanism_class": "convention_drift",
+  "evidence": "P4c: Fin1/Fin2 instance, genuine (non-junk) kernel entry proved via integral_indicator_const; LHS Injective proved true, RHS ker=\u22a5 proved false simultaneously (pixelSignal uses vecMul with swapped R/\u03c6 types = transpose of the RHS matrix)",
+  "note": "mechanism_class (convention_drift) differs from the pre-decided label (definition_misalignment, set by defaulting mechanism=edit with no independent re-derivation); edit_class matches. Under the strict scoring rule this is a class miss on mechanism, but the reviewer executed a concrete falsifying Lean instance and its convention_drift characterization (vecMul I M = M\u1d57.mulVec I) is arguably the more precise mechanism -- a taxonomy-boundary ambiguity, not evidence of reviewer error, structurally similar to the v06/v11 pattern from runs 1-2."
+ },
+ "v07": {
+  "verdict": "gaps_found",
+  "edit_class": "strict_nonstrict_flip",
+  "mechanism_class": "strict_nonstrict_flip",
+  "evidence": "P1: elaborated conclusion is AntitoneOn, not StrictAntiOn; P3: S\u22610 (violates hS) still satisfies AntitoneOn but would falsify StrictAntiOn"
+ },
+ "v10": {
+  "verdict": "passed",
+  "edit_class": "none",
+  "mechanism_class": "none",
+  "evidence": "P4_substitute: full axiom-clean proof of the statement as written, no sorry"
+ },
+ "v08": {
+  "verdict": "passed",
+  "edit_class": "none",
+  "mechanism_class": "none",
+  "evidence": "P1: elaborated type matches dossier verbatim; P2/P3: non-vacuous witness, all three hypotheses independently necessary via collapse counterexamples"
+ },
+ "v11": {
+  "verdict": "gaps_found",
+  "edit_class": "dropped_positivity",
+  "mechanism_class": "totalization_vacuity",
+  "evidence": "P1: domain is Set.Ici 0 not Set.Ioi 0; P3: \u00acStrictAntiOn proved directly, f(0)=0 < f(1)=1/2 (totalized 0/0=0 at ne=0)"
+ },
+ "v12": {
+  "verdict": "passed",
+  "edit_class": "none",
+  "mechanism_class": "none",
+  "evidence": "P4_by_reading: full axiom-clean proof via mathlib ProbabilityTheory.integral_cauchyPDFReal_eq_one; P3a/b: \u03b3=0 and \u03b3<0 both correctly excluded"
+ },
+ "v09": {
+  "verdict": "gaps_found",
+  "edit_class": "wrong_reduction_target",
+  "mechanism_class": "wrong_reduction_target",
+  "evidence": "P1: RHS uses .transpose.mulVecLin, not .mulVecLin; p_endtoend.lean proves Injective true and ker(transpose)\u2260\u22a5 simultaneously on a realized Fin2/Fin1 instance"
+ },
+ "v15": {
+  "verdict": "gaps_found",
+  "edit_class": "dropped_positivity",
+  "mechanism_class": "dropped_positivity",
+  "evidence": "P1: no 0<Ntot binder; P3: \u00acStrictAntiOn proved directly at Ntot=0 (constant zero function)"
+ },
+ "v13": {
+  "verdict": "gaps_found",
+  "edit_class": "dropped_positivity",
+  "mechanism_class": "dropped_positivity",
+  "evidence": "P1: hypothesis is \u03b3\u22600 not 0<\u03b3; P3: \u03b3=-1 derives False, \u222b = -1 \u2260 1"
+ },
+ "v14": {
+  "verdict": "gaps_found",
+  "edit_class": "definition_misalignment",
+  "mechanism_class": "definition_misalignment",
+  "evidence": "P4: lorentzianProfile calls lorentzianG(\u03b3^2) not lorentzianG(\u03b3); statement is true but for the wrong (\u03b3\u00b2 half-width) function -- flagged explicitly by the reviewer as the \"worthless green proof of the wrong statement\" case",
+  "note": "reviewer collapsed mechanism_class to edit_class (defensible: no distinct mechanism beyond the def substitution itself); scores as a hit under the pre-decided rule (m in {mechanism_class, edit_class})"
+ },
+ "v16": {
+  "verdict": "gaps_found",
+  "edit_class": "narrower_than_docstring",
+  "mechanism_class": "narrower_than_docstring",
+  "evidence": "P1: integral restricted to Set.Ioi lam\u2080; P3: proved < 1 for arbitrary \u03b3>0, lam\u2080 via cauchyPDFReal + integral_cauchyPDFReal_eq_one"
+ }
+}

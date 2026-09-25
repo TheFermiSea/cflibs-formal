@@ -1,0 +1,175 @@
+{
+  "data": [
+    {
+      "score": 0.6572957011372218,
+      "paper": {
+        "corpusId": "271414370",
+        "title": "Laser-Induced Breakdown Spectroscopy in Mineral Exploration and Ore Processing",
+        "authors": [
+          "Russell S. Harmon"
+        ],
+        "openAccessInfo": {
+          "license": null,
+          "status": "GOLD",
+          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://api.unpaywall.org/v2/10.3390/min14070731?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.3390/min14070731, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        }
+      },
+      "snippet": {
+        "text": "Analytical figures of merit for assessing the performance of a calibration include the coefficient of determination (R 2 ), the root mean square error (RSME), mean absolute error (MAE), and limit of quantification (LOQ). \n\nThe calibration-free LIBS method [29,30] is a conceptually different approach created to address the sample matrix issue. The premise for the CF-LIBS procedure is that the condition of local thermodynamic equilibrium is established everywhere within LIBS plasma. This permits calculation of the plasma internal characteristics from which the elemental composition of the sample can then be determined [89]. This procedure, which is capable of generating a semi-quantitative analysis without calibration standards, has been recently reviewed by [90] and is not discussed further here.",
+        "snippetKind": "body"
+      }
+    },
+    {
+      "score": 0.6572060066703637,
+      "paper": {
+        "corpusId": "271414370",
+        "title": "Laser-Induced Breakdown Spectroscopy in Mineral Exploration and Ore Processing",
+        "authors": [
+          "Russell S. Harmon"
+        ],
+        "openAccessInfo": {
+          "license": null,
+          "status": "GOLD",
+          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://api.unpaywall.org/v2/10.3390/min14070731?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.3390/min14070731, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        }
+      },
+      "snippet": {
+        "text": "Analytical figures of merit for assessing the performance of a calibration include the coefficient of determination (R 2 ), the root mean square error (RSME), mean absolute error (MAE), and limit of quantification (LOQ). \n\nThe calibration-free LIBS method [29,30] is a conceptually different approach created to address the sample matrix issue. The premise for the CF-LIBS procedure is that the condition of local thermodynamic equilibrium is established everywhere within LIBS plasma. This permits calculation of the plasma internal characteristics from which the elemental composition of the sample can then be determined [89]. This procedure, which is capable of generating a semi-quantitative analysis without calibration standards, has been recently reviewed by [90] and is not discussed further here.",
+        "snippetKind": "body"
+      }
+    },
+    {
+      "score": 0.6188623691205315,
+      "paper": {
+        "corpusId": "283057350",
+        "title": "Industrial Applications of Laser-Induced Breakdown Spectroscopy",
+        "authors": [
+          "Yoshihiro Deguchi",
+          "Zhenzhen Wang"
+        ],
+        "openAccessInfo": {
+          "license": "CCBY",
+          "status": "HYBRID",
+          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://api.unpaywall.org/v2/10.5772/61915?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.5772/61915, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        }
+      },
+      "snippet": {
+        "text": "The ultimate goal of LIBS technique is to provide a quantitative analysis with high precision and accuracy. Usually, a quantitative analysis begins with determining the response of a system for a given concentration or mass of the analyte of interest, which usually takes the form of a calibration curve. The calibration is usually strongly dependent on the analysis conditions, such as the stability of the laser pulse energy, the sample and sampling procedure, the physical and chemical properties of the sample, etc. The dependence of elemental signals of LIBS on the plasma temperature attributes to a very complex process in plasma. Several studies have reported the LTE condition of plasma in several types of plasmas [29]. The plasma temperature is a very important factor for the quantification of the LIBS measurement. There are several calibration methods to analyze the measured species quantitatively, including the traditional calibration method, internal calibration method, calibration-free method, etc. [30,31]. \n\nAs for the simple samples, the emission intensity of the measured species is linear with the species content under the ideal condition. The traditional calibration model is relatively simple and convenient. However, the influences of matrix effect and element interference are not considered in the model. The accuracy becomes worse when the complex samples are measured or the experimental parameters fluctuate. The internal calibration method is a commonly used spectral analysis model with strict conditions. The elements with the features of high content, low detection limit, and good stability are mainly selected as the internal calibration elements. Usually, the compositions of the calibration sample and measured sample are not entirely consistent. When the measured samples contain various elements, the accuracy will be affected due to the matrix effect. \n\nA new procedure is proposed for calibration-free quantitative elemental analysis of materials using LIBS technique. The method based on an algorithm developed and patented overcomes the matrix effects. The precise and accurate quantitative results on elemental composition of materials can be acquired without the use of calibration curves. Some applications of the method have been illustrated, e.g., the quantitative analysis of the composition of metallic alloys [32]. This model of CF-LIBS is applicable under the conditions of LTE and optically thin, as well as the assumed conditions without the element interference and self-absorption.",
+        "snippetKind": "body"
+      }
+    },
+    {
+      "score": 0.5646029037671328,
+      "paper": {
+        "corpusId": "252506278",
+        "title": "Intrinsic Performance of Monte Carlo Calibration-Free Algorithm for Laser-Induced Breakdown Spectroscopy",
+        "authors": [
+          "I. Gornushkin",
+          "T. V\u00f6lker"
+        ],
+        "openAccessInfo": {
+          "license": "CCBY",
+          "status": "GOLD",
+          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://pmc.ncbi.nlm.nih.gov/articles/PMC9573556, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        }
+      },
+      "snippet": {
+        "text": "Because of this, small errors at high concentrations are transformed into large errors at low concentrations. This disadvantage, however, is not inherent in single-point calibration methods that do not use such summation or use it only as part of the procedure [10][11][12][13][14]. Another source of error may be the inadequacy of the model of a homogeneous isothermal plasma to the parameters of a real plasma [17]. Errors can also arise due to uncertainties in spectroscopic parameters and experimental factors, such as neglecting the light-collection geometry [18]. Gornushkin et al. [19] studied the factors of optical density, plasma inhomogeneity, line overlap, noise, spectral resolution, electron density, and path length that affect the accuracy of quantitative analysis by CF-BP-LIBS. \n\nAnother group of methods belonging to the second category (direct problem) was proposed by the authors [20][21][22][23]. These methods are based on generating synthetic spectra by using the collision-dominated model of a homogeneous isothermal plasma in LTE (see, for example, Reference [21]) and comparing these spectra with experimental ones. Their advantage is that there are no requirements for optical thinness and deconvolution of overlapping lines; these effects are automatically accounted for when generating synthetic spectra. Yaroshchyk et al. [20] developed an automated standard-free LIBS method that allows for a fast multi-element analysis. The plasma spectrum was represented by a system of simultaneous algebraic equations, which were solved by using the singular value decomposition algorithm. Gornushkin et al. [21] developed a radiation dynamic model of the post breakdown laser plasma in which the problem of determining the concentration of elements was solved by a direct comparison of the calculated synthetic spectra with the experimental ones. Simulated annealing Monte Carlo optimization was used to determine the plasma temperature and density. In a subsequent paper, Herrera et al. [22] compared CF-BP-LIBS with simulated annealing Monte Carlo (MC-LIBS) by analyzing aluminum alloy samples ablated into vacuum. They found that the relative concentrations obtained with CF-BP and MC-LIBS were comparable in magnitude with relative errors of 30-250%.",
+        "snippetKind": "body"
+      }
+    },
+    {
+      "score": 0.5395690678115596,
+      "paper": {
+        "corpusId": "266754320",
+        "title": "CF-LIBS based elemental analysis of Saussurea simpsoniana medicinal plant: a study on roots, seeds, and leaves",
+        "authors": [
+          "A. Fayyaz",
+          "N. Ali",
+          "Z. A. Umar",
+          "H. Asghar",
+          "M. Waqas",
+          "R. Ahmed",
+          "R. Ali",
+          "M. A. Baig"
+        ],
+        "openAccessInfo": {
+          "license": null,
+          "status": "GOLD",
+          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://api.unpaywall.org/v2/10.1007/s44211-023-00480-9?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.1007/s44211-023-00480-9, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        }
+      },
+      "snippet": {
+        "text": "Calibration-free LIBS (CF-LIBS) is an alternative analytical method that differs from calibration-curve-based analysis [9][10][11][12][13][14]. CF-LIBS has found applications in alloy classification, production monitoring, and composition analysis [5,14]. Unlike calibration curve methods, CF-LIBS considers the matrix as an intrinsic component of the analytical problem rather than an external interference. It simultaneously analyzes both the matrix and the analyte, eliminating the requirement for matrix-matched standards [9]. For instance, Takahashi and Thornton [15] conducted a comprehensive analysis of quantitative techniques to address matrix effects and self-absorption in LIBS signals originating from solid materials. They pointed out that conventional calibration curves are susceptible to matrix effects, which arise from spectral, chemical, and physical factors. In LIBS, disparities in the chemical and physical characteristics of the target material induce matrix effects that influence the emitting intensities within the plasma. The parameters in CF-LIBS defined by the Boltzmann distribution law and Saha equation are employed assuming stoichiometric ablation to compensate for any matrix effect occurring within the plasma itself. Corsi et al. [16] compared CF-LIBS with calibration curves for the quantitative analysis of elements Au, Ag, and Cu in alloy samples under LTE conditions. Their research revealed that potential sources of variability in experimental data and uncertainties in temperature had minimal impact on the precision of CF-LIBS calculations. They demonstrated the advantageous nature of CF-LIBS in accounting for matrix effects. Additionally, Shah et al. [17] studied quantitative analysis of different elements such as Fe, Cr, Ni, Mn, and Si in steel alloys with relative errors below 5% by optimizing time delays to ensure both local thermal equilibrium (LTE) and optical thin condition. Therefore, the CF-LIBS technique requires extensive data processing and relies on certain assumptions such as the homogeneity and spatial stability of the analytical plasma, as well as LTE and stoichiometric ablation in optically thin plasma [9]. The self-absorption of emission lines during spectral data processing poses an additional challenge [9][10][11].",
+        "snippetKind": "body"
+      }
+    },
+    {
+      "score": 0.5227664240831056,
+      "paper": {
+        "corpusId": "265861807",
+        "title": "Application of Laser-Induced Breakdown Spectroscopy for Depth Profiling of Multilayer and Graded Materials",
+        "authors": [
+          "Agnieszka Kr\u00f3licka",
+          "Anna Maj",
+          "Grzegorz \u0141\u00f3j"
+        ],
+        "openAccessInfo": {
+          "license": "CCBY",
+          "status": "GOLD",
+          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://pmc.ncbi.nlm.nih.gov/articles/PMC10608262, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        }
+      },
+      "snippet": {
+        "text": "When experimental parameters change, the ratio of spectral line intensities is applied for calibration.This approach was presented for analysis of a thin solar cell film, where the In/Cu, Ga/In, and Se/In intensity ratios were used for calibration and finally concentration depth profiling [76].\n\nIn scenarios where traditional calibration is unfeasible, such as in remote-sensing applications in space missions, or when suitable standards are inaccessible or difficult to formulate (as in the analysis of unknown or complex materials), employing calibration-free LIBS (CF-LIBS) seems to be a promising solution.In CF-LIBS, the analyte concentration is calculated directly from the LIBS spectrum by relying on the physics of the laser-induced plasma.The method involves calculating the plasma temperature and electron density directly from the spectrum.These parameters, combined with atomic data, facilitate the determination of the analyte's concentration.However, the successful application of CF-LIBS necessitates the fulfillment of specific criteria: (i) congruent mass transfer from the solid to the plasma, (ii) local thermodynamic equilibrium within the plasma, (iii) spatially uniform plasma temperature and density distributions, and (iv) negligible self-absorption of spectral lines.If these conditions are met, then the measured line intensity is proportional to the emission coefficient [103].Utilizing an array of spectral lines corresponding to varied energy levels enables calculation of each sample element's concentration without conventional calibration.Achieving accurate relative concentrations with CF-LIBS is difficult due to various influencing factors, such as matrix effects, laser parameters, and experimental configurations.To mitigate these problems, several adaptations of CF-LIBS have been proposed [103].Recent review publications [104,105] provide a detailed discussion of foundational concepts, their influencing factors, analytical efficacy, and potential measurement uncertainties.\n\nAn interesting variant of CF-LIBS worth mentioning is the one-point calibration method.Using only one calibration point, it introduces an empirical correction to the purely theoretical CF-LIBS approach, helping to determine essential experimental and spectroscopic parameters, which are normally not easy to obtain [104].",
+        "snippetKind": "body"
+      }
+    },
+    {
+      "score": 0.5201042408054409,
+      "paper": {
+        "corpusId": "140418121",
+        "title": "Rapid sorting of aluminum alloys with handheld \u00b5LIBS analyzer",
+        "authors": [
+          "S. Piorek"
+        ],
+        "openAccessInfo": {
+          "license": "CCBYNCND",
+          "status": "HYBRID",
+          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://api.unpaywall.org/v2/10.1016/J.MATPR.2018.10.416?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.1016/J.MATPR.2018.10.416, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        }
+      },
+      "snippet": {
+        "text": "Handheld LIBS analyzers are calibrated using empirical approach. A set of alloys of well-known composition is measured and from the spectra obtained the intensities of elements are extracted. Next, the intensities are correlated with elemental concentrations to generate calibration curve for each analyte. The mass of material ablated by laser pulse and characteristics of resulting plasma vary considerably from pulse to pulse directly influencing the intensities of analytes. In order to minimize this effect, a ratio of analyte intensity to the intensity of matrix element is used to build calibration curve rather than the analyte intensity itself. The most robust calibration curves are obtained when intensity ratios are correlated with ratios of analyte concentration to that of the matrix element as shown by equation 1.   Alloys used for calibration must be representative of the unknown material to be tested and cover expected concentration ranges of analytes. If the calibration curve cannot be represented by equation of straight line additional, special composition alloys, must be procured to properly define the shape of calibration curve. In recent years a so called \"calibration free\" approach (CF-LIBS) has been proposed to alleviate the problem. It is based on application of theoretical, Saha-Boltzmann equation which ties spectral intensities of elements with their concentrations in plasma via plasma temperature [6]. The accuracy of this method in laboratory conditions for metals and alloys may be better than 1% relative but only for the matrix elements while for minor elements inaccuracy may be as much as 10 or even 20% relative. At present time it is impossible to implement it on handheld LIBS devices. Depending on analyte and alloy matrix, typical accuracy offered by empirically calibrated handheld LIBS analyzer varies from 5 to 10 % relative.",
+        "snippetKind": "body"
+      }
+    },
+    {
+      "score": 0.5111209657900275,
+      "paper": {
+        "corpusId": "270995992",
+        "title": "Analytical Techniques for Elemental Analysis: LIBS, LA-TOF-MS, EDX, PIXE, and XRF: A Review",
+        "authors": [
+          "M. Baig",
+          "A. Fayyaz",
+          "R. Ahmed",
+          "Z. A. Umar",
+          "H. Asghar",
+          "U. Liaqat",
+          "R. Hedwig",
+          "K. H. Kurniawan"
+        ],
+        "openAccessInfo": {
+          "license": "CCBY",
+          "status": "GOLD",
+          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://api.unpaywall.org/v2/10.53560/ppasa(61-2)676?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.53560/ppasa(61-2)676, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        }
+      },
+      "snippet": {
+        "text": "For the last couple of years, various LIBS research articles on elemental quantification analysis have been published using different LIBS techniques, such as Calibration Free-LIBS (CF-LIBS) including the Boltzmann plot technique, electron number-density conservation method, and Calibration Curve-LIBS (CC-LIBS) with ANN, univariate analysis, multiple linear-regression, PCA, PLS, and SVM [9,10,[16][17][18][19][20][21]. CF-LIBS was first proposed by Ciucci et al. [11] for the elemental study of metallic alloys and the estimation of the chemical composition of the atmosphere. They proposed a mathematical model explaining the physical conditions of the laser-produced plasmas to estimate chemical composition. With CF-LIBS, referenced samples or calibration curves are unnecessary, and effective avoidance of matrix effects is possible. The application of the CF-LIBS technique involves taking into account the following key assumptions: ensuring identical chemical composition between plasmas and samples (i.e., stoichiometric ablation), expecting particles within the plasma, when elevated in energy levels, to adhere to the Boltzmann distribution (i.e., locally in thermal equilibrium), ensuring that spectral lines are devoid of self-absorption (optically thin plasma), and recording spectra that include all elemental species. The CF-LIBS method has been applied to examine various samples, including alloys containing Al, C-Fe, Fe, and Cu, as well as diverse geological and raw materials such as sedimentary rocks, pigments found on Roman frescoes and parchments, meteorites, glass, soil, kidney stones, cement, coral skeletons, and human hair. Nevertheless, the precision and accuracy of the CF-LIBS technique still need improvement [12-15, 22, 23]. \n\nIn this review, analyses of various samples including geological ores containing rare earth metals, cement, and industrial alloys are presented.",
+        "snippetKind": "body"
+      }
+    }
+  ],
+  "retrievalVersion": "pa1-v1"
+}

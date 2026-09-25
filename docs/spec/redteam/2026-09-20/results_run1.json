@@ -1,0 +1,104 @@
+{
+ "v02": {
+  "verdict": "passed",
+  "drift_class": "none",
+  "model": "default",
+  "evidence": "P3 direct proof by rw [LinearMap.ker_eq_bot]; rfl; P2 both truth combinations exercised"
+ },
+ "v01": {
+  "verdict": "gaps_found",
+  "drift_class": "narrower_than_docstring",
+  "model": "default",
+  "evidence": "P1 #check: no Z binder, speciesCharge 1; P3d theorem inapplicable at Z=2"
+ },
+ "v03": {
+  "verdict": "gaps_found",
+  "drift_class": "definition_misalignment",
+  "model": "default",
+  "evidence": "ce_nondeg.lean proves \u00acstatement at 2 pixels \u00d7 1 line; mirror.lean shows LHS is K\u1d40 action (vecMul)"
+ },
+ "v05": {
+  "verdict": "gaps_found",
+  "drift_class": "dropped_positivity",
+  "model": "default",
+  "evidence": "p3_counter: C=N=(2,2) satisfies predicate, composition \u2260 C; stmt_false proved on Fin 2; p4_fixed proves source with hsum"
+ },
+ "v04": {
+  "verdict": "gaps_found",
+  "drift_class": "narrower_than_docstring",
+  "model": "default",
+  "evidence": "P1 elaborated type is one implication; docstring says iff; P3 source_iff provable"
+ },
+ "v06": {
+  "verdict": "gaps_found",
+  "drift_class": "definition_misalignment",
+  "secondary": [
+   "totalization_vacuity"
+  ],
+  "model": "default",
+  "evidence": "p1 #print: guard on N s\u2082; p3_counter: N\u22610, C=(1/2,1/2) refutes; F2 names totalization_vacuity as mechanism"
+ },
+ "v08": {
+  "verdict": "passed",
+  "drift_class": "none",
+  "model": "default",
+  "evidence": "P1 type identical to S3; P3 six hypothesis-drop counterexamples executed; P2 Z=1 and Z=2 witnesses"
+ },
+ "v07": {
+  "verdict": "gaps_found",
+  "drift_class": "strict_nonstrict_flip",
+  "model": "default",
+  "evidence": "P1 #check AntitoneOn vs source StrictAntiOn; P3 hZ/hN inert under AntitoneOn"
+ },
+ "v10": {
+  "verdict": "passed",
+  "drift_class": "none",
+  "model": "default",
+  "evidence": "p4_truth.lean proves the statement axiom-clean from hsum+h; J1 N\u22610 rejected by C-guard; J3 hsum load-bearing"
+ },
+ "v11": {
+  "verdict": "gaps_found",
+  "drift_class": "dropped_positivity",
+  "secondary": [
+   "totalization_vacuity"
+  ],
+  "model": "default",
+  "evidence": "p3_junk: example : False closes at ne=0 \u2208 Ici 0; p4_control: refutation rejected on Ioi variant"
+ },
+ "v12": {
+  "verdict": "passed",
+  "drift_class": "none",
+  "model": "default",
+  "evidence": "p4_truth proves the statement via cauchyPDFReal + integral_cauchyPDFReal_eq_one, axiom-clean; \u03b3=0 gives \u222b=0 so h\u03b3 load-bearing; HWHM check"
+ },
+ "v09": {
+  "verdict": "gaps_found",
+  "drift_class": "wrong_reduction_target",
+  "model": "default",
+  "evidence": "refute_fin0 / refute_concrete / refute_converse all axiom-clean: both directions of the iff false; faithful_general (no transpose) proves by ker_eq_bot"
+ },
+ "v15": {
+  "verdict": "gaps_found",
+  "drift_class": "dropped_positivity",
+  "model": "default",
+  "evidence": "P1 no 0<Ntot binder; P3a \u00acStrictAntiOn at Ntot=0 axiom-clean; P3b direction flips at Ntot<0"
+ },
+ "v13": {
+  "verdict": "gaps_found",
+  "drift_class": "dropped_positivity",
+  "model": "default",
+  "evidence": "p4: \u222b at \u03b3=\u22121 equals \u22121; p5: refute closes against the verbatim declaration"
+ },
+ "v14": {
+  "verdict": "gaps_found",
+  "drift_class": "definition_misalignment",
+  "model": "default",
+  "evidence": "#print shows lorentzianG (\u03b3^2); P5 peak at \u03b3=2 is 1/(4\u03c0) not 1/(2\u03c0); HWHM = \u03b3\u00b2; statement true for the wrong object"
+ },
+ "v16": {
+  "verdict": "gaps_found",
+  "drift_class": "narrower_than_docstring",
+  "model": "default",
+  "evidence": "p2_falsify: half-line integral = 1/2, False derived from the statement"
+ }
+}
