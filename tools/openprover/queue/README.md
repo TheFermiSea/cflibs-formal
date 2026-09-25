@@ -85,5 +85,10 @@ Each attempt is capped at `max_planner_usd` (default $30 nominal).
 Root cause of the mid-run node deaths before 2026-09-24: the cluster SLURM prolog killed
 llama-server on every job start (fixed; spec 04 §10.4). Each run is capped by its token budget and a 9 h
 wall-clock guard; after `max_attempts` unverified runs a target is parked with its run records.
-The Claude planner is the only paid part (subscription quota): C3 runs cost ~$2.5–8 nominal per
-target, so a busy day on three nodes is on the order of $50–100 nominal.
+The Claude planner is the only paid part (subscription quota). Until 2026-09-25 each headless
+`claude -p` planner call inherited the owner's Fable advisor from `~/.claude/settings.json`
+(`advisorModel`), and the advisor was 77% of the planner's $263 nominal over 2026-09-20..25 (~6% of
+the account's usage in that window). The key was removed on 2026-09-25, which leaves ~$0.3 of
+Sonnet per planner step. `--settings '{"advisorModel": null}'` does not turn the advisor off; only
+removing the key, or `--setting-sources project,local`, does (checked with a probe that asks the
+model to call the advisor).
