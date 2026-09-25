@@ -1,0 +1,34 @@
+{
+  "paperId": "a2ab6998ab7cde3e183bff439af83d5e2e587dbe",
+  "externalIds": {
+    "PubMedCentral": "9573556",
+    "DBLP": "journals/sensors/GornushkinV22",
+    "DOI": "10.3390/s22197149",
+    "CorpusId": 252506278,
+    "PubMed": "36236248"
+  },
+  "title": "Intrinsic Performance of Monte Carlo Calibration-Free Algorithm for Laser-Induced Breakdown Spectroscopy",
+  "venue": "Italian National Conference on Sensors",
+  "year": 2022,
+  "openAccessPdf": {
+    "url": "https://www.mdpi.com/1424-8220/22/19/7149/pdf?version=1663756465",
+    "status": "GOLD",
+    "license": "CCBY",
+    "disclaimer": "Notice: Paper or abstract available at https://pmc.ncbi.nlm.nih.gov/articles/PMC9573556, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+  },
+  "journal": {
+    "name": "Sensors (Basel, Switzerland)",
+    "volume": "22"
+  },
+  "authors": [
+    {
+      "authorId": "14727563",
+      "name": "I. Gornushkin"
+    },
+    {
+      "authorId": "96732144",
+      "name": "T. V\u00f6lker"
+    }
+  ],
+  "abstract": "The performance of the Monte Carlo (MC) algorithm for calibration-free LIBS was studied on the example of a simulated spectrum that mimics a metallurgical slag sample. The underlying model is that of a uniform, isothermal, and stationary plasma in local thermodynamical equilibrium. Based on the model, the algorithm generates from hundreds of thousands to several millions of simultaneous configurations of plasma parameters and the corresponding number of spectra. The parameters are temperature, plasma size, and concentrations of species. They are iterated until a cost function, which indicates a difference between synthetic and simulated slag spectra, reaches its minimum. After finding the minimum, the concentrations of species are read from the model and compared to the certified values. The algorithm is parallelized on a graphical processing unit (GPU) to reduce computational time. The minimization of the cost function takes several minutes on the GPU NVIDIA Tesla K40 card and depends on the number of elements to be iterated. The intrinsic accuracy of the MC calibration-free method is found to be around 1% for the eight elements tested. For a real experimental spectrum, however, the efficiency may turn out to be worse due to the idealistic nature of the model, as well as incorrectly chosen experimental conditions. Factors influencing the performance of the method are discussed."
+}

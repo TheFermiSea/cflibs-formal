@@ -1,0 +1,47 @@
+{
+  "paperId": "d11207e6ea8e3f2cc8dca2ab922feba4b1a47ceb",
+  "externalIds": {
+    "DOI": "10.1088/1361-6587/ad8b68",
+    "CorpusId": 273620602
+  },
+  "title": "The influence of continuum lowering on the equilibrium composition of plasma: case study of laser-induced plasma on a WC\u2013Cu target",
+  "venue": "Plasma Physics and Controlled Fusion",
+  "year": 2024,
+  "openAccessPdf": {
+    "url": "",
+    "status": null,
+    "license": null,
+    "disclaimer": "Notice: Paper or abstract available at https://api.unpaywall.org/v2/10.1088/1361-6587/ad8b68?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.1088/1361-6587/ad8b68, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+  },
+  "journal": {
+    "name": "Plasma Physics and Controlled Fusion",
+    "volume": "66"
+  },
+  "authors": [
+    {
+      "authorId": "2323979393",
+      "name": "Miroslav M. Risti\u0107"
+    },
+    {
+      "authorId": "2327747539",
+      "name": "Nikola Krstevski"
+    },
+    {
+      "authorId": "16937826",
+      "name": "D. Rankovi\u0107"
+    },
+    {
+      "authorId": "2210192403",
+      "name": "Milica Markovi\u0107"
+    },
+    {
+      "authorId": "2323978859",
+      "name": "Aleksandra \u0160aji\u0107"
+    },
+    {
+      "authorId": "2275485270",
+      "name": "Miroslav Kuzmanovi\u0107"
+    }
+  ],
+  "abstract": "The composition of the plasma obtained by laser ablation of cermet WC\u2013Cu is calculated under the assumption of local thermodynamic equilibrium. Special attention is paid to the effect of lowering the ionization potential, the influence of which in the Saha equations is reflected both through the exponential Boltzmann term and through the partition functions of atomic and ionic species present in the plasma. The effects of these two terms are separated and quantified. It has been shown that the correction to the partition functions due to the reduction of the ionization potential is of greater importance than the correction to the Boltzmann term at higher temperatures for atomic species. It is thus necessary for the precise determination of the plasma composition, especially at higher temperatures. The effect of lowering the ionization potential on different types of atoms as well as on different ionic states is analyzed. The change of the partition function due to the lowering of ionization energy also affects the concentration of single charged ions in an amount comparable to the correction of the Boltzmann term."
+}

@@ -1,0 +1,381 @@
+{
+  "total": 837,
+  "offset": 0,
+  "next": 10,
+  "data": [
+    {
+      "paperId": "72b49254946424a8bd31393b3bc2110b4690c68a",
+      "externalIds": {
+        "MAG": "1997956352",
+        "DOI": "10.1016/J.SAB.2013.05.016",
+        "CorpusId": 95631016
+      },
+      "title": "One-point calibration for calibration-free laser-induced breakdown spectroscopy quantitative analysis",
+      "venue": "",
+      "year": 2013,
+      "citationCount": 99,
+      "authors": [
+        {
+          "authorId": "91949158",
+          "name": "G. H. Cavalcanti"
+        },
+        {
+          "authorId": "2057062377",
+          "name": "D. V. Teixeira"
+        },
+        {
+          "authorId": "2315692",
+          "name": "S. Legnaioli"
+        },
+        {
+          "authorId": "2906844",
+          "name": "G. Lorenzetti"
+        },
+        {
+          "authorId": "1719249",
+          "name": "L. Pardini"
+        },
+        {
+          "authorId": "2638662",
+          "name": "V. Palleschi"
+        }
+      ]
+    },
+    {
+      "paperId": "60feb5e7d4ed20af266d3fe750cf8c9b5275dd7b",
+      "externalIds": {
+        "DOI": "10.2139/ssrn.4214104",
+        "CorpusId": 252195640
+      },
+      "title": "Accuracy Improvement for Minor Elements Determination Using Modified Self-Absorption Correction and One-Point Calibration in Calibration-Free Laser-Induced Breakdown Spectroscopy",
+      "venue": "Social Science Research Network",
+      "year": 2022,
+      "citationCount": 0,
+      "authors": [
+        {
+          "authorId": "2153011425",
+          "name": "Ning Zhang"
+        },
+        {
+          "authorId": "2117523284",
+          "name": "Qing Lu"
+        },
+        {
+          "authorId": "2167338276",
+          "name": "Tianxue Ou"
+        },
+        {
+          "authorId": "2142494644",
+          "name": "Chao Lv"
+        },
+        {
+          "authorId": "144279499",
+          "name": "Nan Zhao"
+        },
+        {
+          "authorId": "2109000717",
+          "name": "Jiaming Li"
+        },
+        {
+          "authorId": "16299301",
+          "name": "Kuo-Hu Li"
+        },
+        {
+          "authorId": "91055488",
+          "name": "Qing-Mao Zhang"
+        }
+      ]
+    },
+    {
+      "paperId": "11538e63680948bb6a43708643abc35f0220b807",
+      "externalIds": {
+        "DOI": "10.1039/d5ja00206k",
+        "CorpusId": 281862251
+      },
+      "title": "Multi-Elemental Determination in Soil Using Laser-Induced Breakdown Spectroscopy with Only One Internal Reference Element in One-Point Calibration",
+      "venue": "Journal of Analytical Atomic Spectrometry",
+      "year": 2025,
+      "citationCount": 1,
+      "authors": [
+        {
+          "authorId": "2287263647",
+          "name": "Nan Zhao"
+        },
+        {
+          "authorId": "2371157218",
+          "name": "Ze-Ren Luo"
+        },
+        {
+          "authorId": "2350365705",
+          "name": "Bin Wang"
+        },
+        {
+          "authorId": "2292255335",
+          "name": "Ruitao Lin"
+        },
+        {
+          "authorId": "2351418278",
+          "name": "Shaofeng Zheng"
+        },
+        {
+          "authorId": "2305521081",
+          "name": "Shixiang Ma"
+        },
+        {
+          "authorId": "16299301",
+          "name": "Kuo-Hu Li"
+        },
+        {
+          "authorId": "2369937799",
+          "name": "Er-Long Jiang"
+        },
+        {
+          "authorId": "2109000717",
+          "name": "Jiaming Li"
+        },
+        {
+          "authorId": "91055488",
+          "name": "Qing-Mao Zhang"
+        }
+      ]
+    },
+    {
+      "paperId": "206a0e59534d67f89d4559649bdadbbf55e0c856",
+      "externalIds": {
+        "MAG": "2802868168",
+        "DOI": "10.1177/0003702818770572",
+        "CorpusId": 4931207,
+        "PubMed": "29667843"
+      },
+      "title": "Standard Reference Line Combined with One-Point Calibration-Free Laser-Induced Breakdown Spectroscopy (CF-LIBS) to Quantitatively Analyze Stainless and Heat Resistant Steel",
+      "venue": "Applied Spectroscopy",
+      "year": 2018,
+      "citationCount": 11,
+      "authors": [
+        {
+          "authorId": "9089555",
+          "name": "Hong-Bo Fu"
+        },
+        {
+          "authorId": "2108883836",
+          "name": "Hua-Dong Wang"
+        },
+        {
+          "authorId": "47710494",
+          "name": "Jun-Wei Jia"
+        },
+        {
+          "authorId": "15419312",
+          "name": "Zhi-Bo Ni"
+        },
+        {
+          "authorId": "112884800",
+          "name": "F. Dong"
+        }
+      ]
+    },
+    {
+      "paperId": "35bd4f22a6f3a31aee830ca617c46fcdb607d045",
+      "externalIds": {
+        "DOI": "10.1364/ol.472224",
+        "CorpusId": 254331499,
+        "PubMed": "36563355"
+      },
+      "title": "Self-absorption correction method for one-point calibration laser-induced breakdown spectroscopy.",
+      "venue": "Optics Letters",
+      "year": 2022,
+      "citationCount": 4,
+      "authors": [
+        {
+          "authorId": "1720826218",
+          "name": "Zhen-Lin Hu"
+        },
+        {
+          "authorId": "15662788",
+          "name": "Jun-Fei Nie"
+        },
+        {
+          "authorId": "4821179",
+          "name": "Zhi-Yong Ouyang"
+        },
+        {
+          "authorId": "2109952292",
+          "name": "Deng Zhang"
+        },
+        {
+          "authorId": "2242010534",
+          "name": "Yuanchao Liu"
+        },
+        {
+          "authorId": "2903729",
+          "name": "Yan-Wu Chu"
+        },
+        {
+          "authorId": "95637811",
+          "name": "Lianbo Guo"
+        }
+      ]
+    },
+    {
+      "paperId": "08a063059d78c4672d1595a023fa62f5610231ba",
+      "externalIds": {
+        "DOI": "10.1364/oe.470059",
+        "CorpusId": 251940999,
+        "PubMed": "36242464"
+      },
+      "title": "Accurate elemental analysis with variant one-point calibration laser-induced breakdown spectroscopy capable of using analytical lines with unknown transition probabilities.",
+      "venue": "Optics Express",
+      "year": 2022,
+      "citationCount": 1,
+      "authors": [
+        {
+          "authorId": "2154875471",
+          "name": "Yu-Feng Li"
+        },
+        {
+          "authorId": "2109313268",
+          "name": "Yu-Qi Chen"
+        },
+        {
+          "authorId": "2119027708",
+          "name": "Shan-Shan Li"
+        },
+        {
+          "authorId": "2118521142",
+          "name": "Xueqin Huang"
+        }
+      ]
+    },
+    {
+      "paperId": "906730409d9f31e75cc74ef3c218051175506ac6",
+      "externalIds": {
+        "MAG": "3130135734",
+        "DOI": "10.1007/s00340-021-07579-9",
+        "CorpusId": 233967840
+      },
+      "title": "Quantitative analysis of titanium alloys using one-point calibration laser-induced breakdown spectroscopy",
+      "venue": "Applied physics B",
+      "year": 2021,
+      "citationCount": 10,
+      "authors": [
+        {
+          "authorId": "2397328329",
+          "name": "Hai Ran"
+        },
+        {
+          "authorId": "152462850",
+          "name": "Weina Tong"
+        },
+        {
+          "authorId": "145243042",
+          "name": "Ding Wu"
+        },
+        {
+          "authorId": "2035503768",
+          "name": "Zhong-Lin He"
+        },
+        {
+          "authorId": "94539350",
+          "name": "Harse Sattar"
+        },
+        {
+          "authorId": "35614025",
+          "name": "Cong Li"
+        },
+        {
+          "authorId": "10349893",
+          "name": "H. Ding"
+        }
+      ]
+    },
+    {
+      "paperId": "e734e44f0183d477d20a541836d9a74974a41e86",
+      "externalIds": {
+        "DOI": "10.24018/ejphysics.2023.5.6.286",
+        "CorpusId": 266481752
+      },
+      "title": "Analysis of Atmospheric Air Pollutants using Lichens as a Bio-monitor by Calibration Free-Laser Induced Breakdown Spectroscopy Technique",
+      "venue": "European Journal of Applied Physics",
+      "year": 2023,
+      "citationCount": 1,
+      "authors": [
+        {
+          "authorId": "108075516",
+          "name": "Dilbetigle Assefa Mamo"
+        },
+        {
+          "authorId": "2275931192",
+          "name": "A. K. Chaubey"
+        },
+        {
+          "authorId": "92917876",
+          "name": "Awoke Taddesse Hailu"
+        },
+        {
+          "authorId": "93703484",
+          "name": "A. Hibstie"
+        }
+      ]
+    },
+    {
+      "paperId": "2ac408604d547eea34eae4afb4e15a94f7b13091",
+      "externalIds": {
+        "MAG": "2971696143",
+        "DOI": "10.1016/j.sab.2019.105692",
+        "CorpusId": 202869893
+      },
+      "title": "One-point calibration of Saha-Boltzmann plot to improve accuracy and precision of quantitative analysis using laser-induced breakdown spectroscopy",
+      "venue": "Spectrochimica Acta Part B - Atomic Spectroscopy",
+      "year": 2019,
+      "citationCount": 25,
+      "authors": [
+        {
+          "authorId": "2099177463",
+          "name": "Lu\u00eds Carlos Leva Borduchi"
+        },
+        {
+          "authorId": "89328208",
+          "name": "D. Milori"
+        },
+        {
+          "authorId": "1405425159",
+          "name": "P. Villas-Boas"
+        }
+      ]
+    },
+    {
+      "paperId": "79a37e2ac8cc708655185adfa8639f16de638ab7",
+      "externalIds": {
+        "MAG": "3112130860",
+        "DOI": "10.1039/d0ja00398k",
+        "CorpusId": 230566106
+      },
+      "title": "Quantitative elemental analysis of aluminum alloys with one-point calibration high repetition rate laser-ablation spark-induced breakdown spectroscopy",
+      "venue": "Journal of Analytical Atomic Spectrometry",
+      "year": 2021,
+      "citationCount": 9,
+      "authors": [
+        {
+          "authorId": "2107946568",
+          "name": "Ya-Rui Wang"
+        },
+        {
+          "authorId": "2109313268",
+          "name": "Yu-Qi Chen"
+        },
+        {
+          "authorId": "152278464",
+          "name": "Run-Hua Li"
+        },
+        {
+          "authorId": "1980373",
+          "name": "Juan Kang"
+        },
+        {
+          "authorId": "1657480541",
+          "name": "Jiankui Gao"
+        }
+      ]
+    }
+  ]
+}

@@ -20,18 +20,22 @@ it proves that the **single scalar that ranks candidate line sets is the upper-l
   `SS_E = ∑ₖ (Eₖ − Ē)²`   (`energySpread`),
 
 and that ranking is *exact*, not heuristic: under the Gauss–Markov noise model of
-`Alt.OLSVariance` the recovered-slope variance is `σ²/SS_E`, a strictly decreasing function of
-`SS_E` alone. Nothing else about the candidate set — how many lines it has, where the lines sit,
-how their energies are distributed — enters the comparison. This is the one-parameter
+`Alt.OLSVariance` (one common noise variance `σ²` on every line) the recovered-slope variance is
+`σ²/SS_E`, a strictly decreasing function of `SS_E` alone. Nothing else about the candidate set —
+how many lines it has, where the lines sit, how their energies are distributed — enters the
+comparison. This is the one-parameter
 specialization of classical **D-optimal design** (maximize `det(XᵀX)`; for the centered
 straight-line design `det = n·SS_E`, see `OLS.det_centeredDesignNormalMatrix`).
 
 ## What is proven
 
 * `energySpread` — the design objective `SS_E = ∑ₖ (Eₖ − Ē)²`, with `energySpread_nonneg` and
-  `energySpreadCert_iff` (**the runtime gate the pipeline already checks, `Certificates.C1`, is
-  exactly positivity of this objective** — the selection criterion and the well-posedness
-  certificate are the same number).
+  `energySpreadCert_iff` (**the spec's C1 certificate, `Certificates.C1`, is exactly positivity of
+  this objective** — the selection criterion and the well-posedness certificate are the same
+  number). In the companion pipeline C1 is available only behind the `CFLIBS_CERTIFICATES` flag,
+  which is off by default, and its wiring pools lines across species, so it certifies the pooled
+  single-intercept design, not the per-element common-slope fit the solver runs; the pooled
+  spread can be positive while the within-element spread is zero (2026-09-24 audit, RF-16).
 * `slopeVariance_le_of_spread_ge` — **the monotone comparison.** If candidate set `A` has at least
   the energy spread of candidate set `B`, then `A`'s slope variance is at most `B`'s. Pick the
   wider spread.
@@ -83,8 +87,9 @@ line-selection rule. Whether a candidate line is *usable* (optically thin, unble
 
 Citation: **—** (pure mathematics). The design-theoretic ancestry is Kiefer & Wolfowitz's
 equivalence theory of optimal design (*Canadian Journal of Mathematics* **12** (1960) 363–366) and
-the Gauss–Markov slope-variance law of A. C. Aitken (*Proceedings of the Royal Society of
-Edinburgh* **55** (1935) 42–48), formalized in `Alt.OLSVariance` as `olsSlope_variance_eq`. The
+the homoscedastic Gauss–Markov slope-variance law, formalized in `Alt.OLSVariance` as
+`olsSlope_variance_eq` (A. C. Aitken, *Proceedings of the Royal Society of Edinburgh* **55**
+(1935) 42–48, gives its generalized, weighted form, which is not used here). The
 spectroscopic practice of choosing widely separated upper-level energies for the Boltzmann plot
 is folklore going back to the two-line method of R. D. Cowan and G. H. Dieke, "Self-Absorption of
 Spectrum Lines," *Reviews of Modern Physics* **20** (1948) 418–455.
@@ -126,10 +131,12 @@ noncomputable def energySpread (E : ι → ℝ) : ℝ := ∑ k, (E k - mean E) ^
 theorem energySpread_nonneg (E : ι → ℝ) : 0 ≤ energySpread E :=
   Finset.sum_nonneg fun _ _ => sq_nonneg _
 
-/-- **The selection objective and the well-posedness gate are the same number.** The pipeline's
-runtime rank gate `Certificates.energySpreadCert` (C1, the guard that certifies the Boltzmann
-normal matrix is nonsingular) is *definitionally* the statement that the D-optimality objective is
-positive. So a candidate line set is admissible exactly when its objective is nonzero, and among
+/-- **The selection objective and the well-posedness gate are the same number.** The spec's rank
+certificate `Certificates.energySpreadCert` (C1, which certifies that the single-intercept
+Boltzmann normal matrix is nonsingular) is *definitionally* the statement that the D-optimality
+objective is positive. (In the companion, C1 runs only behind the default-off
+`CFLIBS_CERTIFICATES` flag and is evaluated on lines pooled across species; see the module
+header.) So a candidate line set is admissible exactly when its objective is nonzero, and among
 admissible sets the ranking below applies. -/
 theorem energySpreadCert_iff (E : ι → ℝ) : energySpreadCert E ↔ 0 < energySpread E := Iff.rfl
 
@@ -146,7 +153,7 @@ recovered slope — hence a recovered temperature — of **at most the variance*
 *Experimental reading:* given two admissible sets of lines you could measure, choose the one whose
 upper-level energies are more widely spread; you cannot lose by doing so. Both candidates must pass
 the spread gate (`0 < energySpread`, i.e. at least two distinct upper-level energies), which is the
-pipeline's C1 certificate (`energySpreadCert_iff`).
+spec's C1 certificate (`energySpreadCert_iff`).
 
 This is the line-selection framing of `Alt.OLSVariance.olsSlope_variance_antitone`. -/
 theorem slopeVariance_le_of_spread_ge [Nonempty ι] (A B : ι → ℝ) (α β σ : ℝ) (ε : ι → Ω → ℝ)

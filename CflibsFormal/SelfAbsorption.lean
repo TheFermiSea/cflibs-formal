@@ -11,13 +11,14 @@ import CflibsFormal.Boltzmann
 /-!
 # Saha–Boltzmann formalization — self-absorption / optical-thickness-aware forward map
 
-The optically-thin `lineIntensity` (`ForwardMap.lean`) is the `τ → 0` limit of the true,
-optically-thick line emission. At finite optical depth `τ` the **measured** intensity is
+The optically-thin `lineIntensity` (`ForwardMap.lean`) is the `τ → 0` limit of self-absorbed
+line emission. This module models the **measured** intensity at optical depth `τ` as
 
   `I_meas = I_thin · SA(τ)`,   `SA(τ) = (1 - exp(-τ)) / τ`   (`τ > 0`),
 
-the curve-of-growth self-absorption factor, with continuous extension `SA 0 := 1`. This is
-the dominant reliability failure mode for concentrated alloy / high-entropy-alloy lines.
+the flat-profile (line-centre) self-absorption factor, with continuous extension
+`SA 0 := 1`. This is the dominant reliability failure mode for concentrated alloy /
+high-entropy-alloy lines.
 
 We prove:
 
@@ -27,18 +28,48 @@ We prove:
   recovers `ForwardMap` in the optically-thin limit (a strict generalization).
 * `selfAbsorbedIntensity_le_lineIntensity` / `selfAbsorbedIntensity_lt_lineIntensity` —
   the **bias-direction theorem**: a self-absorbed line is measured below its thin value,
-  so neglecting self-absorption biases the inferred upper-level population DOWNWARD — and
-  hence the extracted composition of any *differentially* self-absorbed species DOWNWARD
-  (a self-absorption factor common to ALL species cancels in the scale-invariant closure;
-  see `SelfAbsorptionInverse`).
-* `slabIntensity_eq_thin_mul_SA` — the **derivation** of `SA(τ)` from first principles:
-  the radiative-transfer slab intensity `S·(1-exp(-τ))` (defined independently of `SA`)
-  factors as the optically-thin emission `S·τ` times `SA(τ)`. With `slabIntensity_le_thin`
-  and `selfAbsorbedIntensity_eq_slab` this shows the multiplicative model used here is
-  exactly the radiative-transfer slab solution — `SA` is derived, not presupposed.
-* `lineIntensity_eq_selfAbsorbedIntensity_div` — the **exact curve-of-growth correction**:
-  with a known `τ`, dividing the measured intensity by `SA(τ)` recovers the optically-thin
-  intensity exactly, which feeds the existing Boltzmann-plot inversion unchanged.
+  so neglecting self-absorption biases the inferred upper-level population DOWNWARD. For the
+  extracted composition this suggests a downward bias for any *differentially* self-absorbed
+  species (a factor common to ALL species cancels in the scale-invariant closure; see
+  `SelfAbsorptionInverse`); that composition-level inference is an interpretation, not
+  formalized here. The direction holds for any nonnegative integrable profile
+  (`EquivalentWidth.equivWidth_le_thin`); the size `SA(τ)` of the shortfall is the
+  flat-profile value.
+* `slabIntensity_eq_thin_mul_SA` — the **derivation** of `SA(τ)` for one optical depth: the
+  radiative-transfer slab intensity `S·(1-exp(-τ))` (defined independently of `SA`) factors as
+  the optically-thin emission `S·τ` times `SA(τ)`. With `slabIntensity_le_thin` and
+  `selfAbsorbedIntensity_eq_slab` this shows the multiplicative model is the slab solution
+  applied to the whole line with a single `τ`. `SA` is derived, not presupposed — for a
+  rectangular profile or per frequency, not for the integrated intensity of a peaked line.
+* `lineIntensity_eq_selfAbsorbedIntensity_div` — the **model left-inverse**: dividing the
+  model's output at `τ` by `SA(τ)` returns the optically-thin `lineIntensity`, for every
+  `τ ≥ 0`. It is algebra on the model; it does not check that a given `τ` is the true optical
+  depth.
+
+## Scope — flat profile / line-centre escape factor (read before using)
+
+* **What is exact.** `slabIntensity S τ = S·(1 − exp(−τ))` is the formal solution of radiative
+  transfer for a homogeneous slab at ONE frequency, with `τ` the optical depth and `S` the
+  source function at that frequency. Integrated over a line it is exact only when `τ` is the
+  same at every frequency of the line, i.e. for a rectangular profile
+  (`EquivalentWidth.equivWidth_rectangular`).
+* **What is approximate.** `selfAbsorbedIntensity` multiplies the frequency-INTEGRATED
+  `lineIntensity` by `SA(τ)`. For a peaked profile `ψ` (peak `1`) with line-centre optical depth
+  `τ₀`, the integrated emergent intensity is `S·∫(1 − exp(−τ₀·ψ(x))) dx`, and its ratio to the
+  thin value `S·τ₀·∫ψ` is not `SA(τ₀)`. In the numerical probes of
+  `docs/research/audit-2026-09-24` (finding LF-01, reproduced by its verifier; scipy, not a
+  theorem of this repo) that ratio is larger, so dividing by `SA(τ₀)` over-corrects: by 1.41×
+  (Gaussian) and 1.85× (Lorentzian) at `τ₀ = 3`, and by 1.87× and 3.48× at `τ₀ = 10`. For a
+  Lorentzian the integrated deficit does not saturate at all
+  (`EquivalentWidth.equivWidth_lorentzian_sqrt_sharp`: `W(τ)/√τ → 2`), whereas the slab kernel
+  saturates at `S`.
+* **Tags.** `selfAbsorptionFactor` and `selfAbsorbedIntensity` carry the model tag
+  APPROXIMATION in `docs/scope-tags.tsv`. A theorem's own tag says how exactly it holds for
+  this model; its published tag is the weaker of the two (`docs/conventions.md` §8), so every
+  physics result stated over these definitions publishes APPROXIMATION. PURE-MATH rows (pure
+  algebra or analysis, with no physics claim) are exempt.
+* **`τ` is a free real.** Nothing here ties `τ` to the plasma state (`OpticalDepth` does), and
+  no bound is proved for the error of a correction made with an estimated `τ̂ ≠ τ`.
 
 ## Literature
 
@@ -56,17 +87,25 @@ open scoped BigOperators
 
 variable {ι : Type*} [Fintype ι]
 
-/-- **Curve-of-growth self-absorption factor** `SA(τ)`. For optical depth `τ > 0` the
-measured line is dimmed by `SA(τ) = (1 - exp(-τ)) / τ ∈ (0, 1]`; the optically-thin
-limit `τ → 0⁺` gives `SA → 1`, recovering the `ForwardMap` model. We take the
-continuous extension `SA 0 := 1` so the function is total. -/
+/-- **Flat-profile (line-centre) self-absorption factor** `SA(τ)`. For optical depth `τ > 0`,
+`SA(τ) = (1 - exp(-τ)) / τ ∈ (0, 1]` is the escaping fraction of a homogeneous slab with the
+SAME optical depth `τ` at every frequency of the line (a rectangular profile) — equivalently,
+the ratio of emergent to optically-thin intensity at a single frequency. The optically-thin
+limit `τ → 0⁺` gives `SA → 1`, recovering the `ForwardMap` model. We take the continuous
+extension `SA 0 := 1` so the function is total.
+
+Model tag APPROXIMATION: applied to the integrated intensity of a peaked profile with
+line-centre depth `τ`, it understates the escaping fraction (module scope block). -/
 noncomputable def selfAbsorptionFactor (tau : ℝ) : ℝ :=
   if tau = 0 then 1 else (1 - Real.exp (-tau)) / tau
 
-/-- **Optically-thick (self-absorbed) line intensity.** The measured intensity is the
-optically-thin `lineIntensity` (reused verbatim from `ForwardMap.lean`) multiplied by
-the curve-of-growth factor `SA(τ)`: `I_meas = I_thin · SA(τ)`. At `τ = 0` this equals
-`lineIntensity` exactly. -/
+/-- **Optically-thick (self-absorbed) line intensity — flat-profile model.** The measured
+intensity is modelled as the frequency-integrated optically-thin `lineIntensity` (reused
+verbatim from `ForwardMap.lean`) multiplied by the flat-profile factor `SA(τ)`:
+`I_meas = I_thin · SA(τ)`. At `τ = 0` this equals `lineIntensity` exactly.
+
+Model tag APPROXIMATION: the whole line is treated as one optical depth `τ`, which for a
+peaked profile overstates the dimming (module scope block). -/
 noncomputable def selfAbsorbedIntensity (kB T N Fcal : ℝ) (g E A : ι → ℝ) (k : ι)
     (tau : ℝ) : ℝ :=
   lineIntensity kB T N Fcal g E A k * selfAbsorptionFactor tau
@@ -154,10 +193,13 @@ theorem selfAbsorptionFactor_tendsto_one :
 
 /-- **Bias-direction theorem (non-strict).** A self-absorbed line is measured at or below
 its optically-thin value: `I_meas ≤ I_thin`. Hence neglecting self-absorption biases the
-inferred upper-level population DOWNWARD, and hence the extracted composition of any
-*differentially* self-absorbed species (a factor common to all species cancels in the
-scale-invariant closure) — the dominant failure mode for concentrated alloy /
-high-entropy-alloy lines. -/
+inferred upper-level population DOWNWARD. For the extracted composition this suggests a
+downward bias for any *differentially* self-absorbed species (a factor common to all species
+cancels in the scale-invariant closure); that composition-level inference is an interpretation,
+not formalized here — the dominant failure mode for concentrated alloy /
+high-entropy-alloy lines. The direction holds for any nonnegative integrable profile
+(`EquivalentWidth.equivWidth_le_thin`); the size of the shortfall, `SA(τ)`, is the
+flat-profile value. -/
 theorem selfAbsorbedIntensity_le_lineIntensity [Nonempty ι] {kB T N Fcal : ℝ}
     {g E A : ι → ℝ} (hg : ∀ k, 0 < g k) (hN : 0 < N) (hFcal : 0 < Fcal)
     (hA : ∀ k, 0 < A k) (k : ι) {tau : ℝ} (htau : 0 ≤ tau) :
@@ -169,9 +211,10 @@ theorem selfAbsorbedIntensity_le_lineIntensity [Nonempty ι] {kB T N Fcal : ℝ}
 /-- **Bias-direction theorem (strict).** For any *actually* optically-thick line
 (`τ > 0`) the downward bias is strict: `I_meas < I_thin`. Self-absorption is never
 benign — it always reduces the measured intensity and must be corrected, biasing the
-inferred upper-level population DOWNWARD, and hence the extracted composition of any
-*differentially* self-absorbed species (a factor common to all species cancels in the
-scale-invariant closure). -/
+inferred upper-level population DOWNWARD. For the extracted composition this suggests a
+downward bias for any *differentially* self-absorbed species (a factor common to all species
+cancels in the scale-invariant closure); that composition-level inference is an interpretation,
+not formalized here. -/
 theorem selfAbsorbedIntensity_lt_lineIntensity [Nonempty ι] {kB T N Fcal : ℝ}
     {g E A : ι → ℝ} (hg : ∀ k, 0 < g k) (hN : 0 < N) (hFcal : 0 < Fcal)
     (hA : ∀ k, 0 < A k) (k : ι) {tau : ℝ} (htau : 0 < tau) :
@@ -185,21 +228,24 @@ theorem selfAbsorbedIntensity_lt_lineIntensity [Nonempty ι] {kB T N Fcal : ℝ}
     linarith
   exact mul_lt_of_lt_one_right hI hSA
 
-/-- **Radiative-transfer slab intensity.** The emergent intensity from a uniform LTE
-slab with (frequency-integrated) source strength `S` and line optical depth `τ`, from
-the formal solution of radiative transfer for a homogeneous layer:
+/-- **Radiative-transfer slab intensity at one frequency.** The emergent intensity, at a
+frequency where a uniform LTE slab has source function `S` and optical depth `τ`, from the
+formal solution of radiative transfer for a homogeneous layer:
   `I_slab = S · (1 - exp(-τ))`.
-This is defined from radiative transfer ALONE — independently of `selfAbsorptionFactor` —
-so the curve-of-growth identity below is a *derived* fact, not a definitional one. In the
-optically-thin limit `τ → 0` it reduces to the first-order emission `S · τ`, the quantity
-identified with `lineIntensity`. -/
+Integrated over a line this is the line intensity only for a rectangular profile, where `τ` is
+the same at every frequency (`EquivalentWidth.equivWidth_rectangular`). It is defined from
+radiative transfer ALONE — independently of `selfAbsorptionFactor` — so the curve-of-growth
+identity below is a *derived* fact, not a definitional one. In the optically-thin limit
+`τ → 0` it reduces to the first-order emission `S · τ`, the quantity identified with
+`lineIntensity`. -/
 noncomputable def slabIntensity (S tau : ℝ) : ℝ :=
   S * (1 - Real.exp (-tau))
 
 /-- **Radiative-transfer dimming, derived.** The emergent slab intensity never exceeds
 the optically-thin first-order emission `S · τ`: `I_slab ≤ S · τ` for `S ≥ 0`, `τ ≥ 0`.
 Obtained directly from `1 - exp(-τ) ≤ τ` — it does NOT route through
-`selfAbsorptionFactor`, so it independently confirms the curve-of-growth saturation. -/
+`selfAbsorptionFactor`, so it independently confirms the curve-of-growth saturation (per
+frequency, or for a rectangular profile). -/
 theorem slabIntensity_le_thin {S tau : ℝ} (hS : 0 ≤ S) (_htau : 0 ≤ tau) :
     slabIntensity S tau ≤ S * tau := by
   unfold slabIntensity
@@ -212,22 +258,26 @@ theorem slabIntensity_le_thin {S tau : ℝ} (hS : 0 ≤ S) (_htau : 0 ≤ tau) :
 radiative-transfer slab intensity factors as the optically-thin emission `S · τ` times
 the self-absorption factor:
   `I_slab = (S · τ) · SA(τ)`.
-This DERIVES `selfAbsorptionFactor` as the genuine ratio of the emergent (thick) slab
-intensity to the optically-thin emission — the physical justification for the model
-`selfAbsorbedIntensity = lineIntensity · SA(τ)`. The proof is a real cancellation
-(`slabIntensity` is built from `exp`, never from `SA`), not `rfl`. -/
+This DERIVES `selfAbsorptionFactor` as the ratio of the emergent (thick) slab intensity to
+the optically-thin emission at ONE optical depth — per frequency, or for a rectangular
+profile. That is the justification for the model `selfAbsorbedIntensity = lineIntensity · SA(τ)`
+in that case only: for the integrated intensity of a peaked profile the ratio is a different
+escape factor, which the audit probes find larger (module scope block). The proof is a real
+cancellation (`slabIntensity` is built from `exp`, never from `SA`), not `rfl`. -/
 theorem slabIntensity_eq_thin_mul_SA {S tau : ℝ} (htau : 0 < tau) :
     slabIntensity S tau = (S * tau) * selfAbsorptionFactor tau := by
   unfold slabIntensity selfAbsorptionFactor
   rw [if_neg htau.ne']
   field_simp
 
-/-- **The model intensity IS a radiative-transfer slab intensity.** For `τ > 0`, the
+/-- **The model intensity is a slab intensity at a single optical depth.** For `τ > 0`, the
 self-absorbed line `selfAbsorbedIntensity = lineIntensity · SA(τ)` equals the emergent
 slab intensity `slabIntensity` whose optically-thin emission `S · τ` is the thin line
-`lineIntensity` (effective source strength `S = lineIntensity / τ`). This closes the loop:
-the multiplicative model used here is exactly the radiative-transfer slab solution, so
-`SA` is derived, not assumed. -/
+`lineIntensity` (effective source strength `S = lineIntensity / τ`). So the multiplicative
+model is the slab solution applied to the whole line with one optical depth `τ`: exact per
+frequency or for a rectangular profile, and the flat-profile approximation for the integrated
+intensity of a real, peaked line (module scope block). `SA` is derived for that case, not
+assumed; the identity says nothing about the profile. -/
 theorem selfAbsorbedIntensity_eq_slab {kB T N Fcal : ℝ} {g E A : ι → ℝ} (k : ι)
     {tau : ℝ} (htau : 0 < tau) :
     selfAbsorbedIntensity kB T N Fcal g E A k tau
@@ -237,15 +287,18 @@ theorem selfAbsorbedIntensity_eq_slab {kB T N Fcal : ℝ} {g E A : ι → ℝ} (
   rw [slabIntensity_eq_thin_mul_SA htau]
   field_simp
 
-/-- **Exact curve-of-growth correction (model left-inverse).** Dividing the self-absorbed
-measurement by the known `SA(τ)` recovers the optically-thin intensity exactly:
-`I_thin = I_meas / SA(τ)`. This is the left-inverse of the model
-`selfAbsorbedIntensity = lineIntensity · SA(τ)` — itself the genuine radiative-transfer
-slab solution (`slabIntensity_eq_thin_mul_SA` / `selfAbsorbedIntensity_eq_slab`), so the
-correction is physically derived, not merely definitional. It feeds the existing
-`boltzmann_plot_intensity` / `temperature_from_two_lines` inversion unchanged:
-self-absorption is exactly invertible given a known optical depth. Holds for all `τ ≥ 0`
-(at `τ = 0`, `SA = 1` and the correction is the identity). -/
+/-- **Model left-inverse of the flat-profile correction.** For every `τ ≥ 0`, dividing the
+model output `selfAbsorbedIntensity … τ` by `SA(τ)` returns `lineIntensity`:
+`I_thin = I_meas / SA(τ)`, with `I_meas` this model's value at the same `τ` (at `τ = 0`,
+`SA = 1` and the division is the identity). The proof is `mul_div_cancel_right₀` on the
+definition, so the statement is algebra on the model. Because it holds for EVERY `τ ≥ 0`, it
+does not certify that a given `τ` is the true optical depth: data corrected with an estimated
+`τ̂` return the thin intensity only if they were produced by this model at `τ̂`, and no error
+bound for `τ̂ ≠ τ` is proved here. On a real peaked line the correction also inherits the
+flat-profile over-correction (module scope block). Its output feeds the
+`boltzmann_plot_intensity` / `temperature_from_two_lines` inversion unchanged. Consumers:
+`Alt.selfAbsorbed_sound`, and the C12 certificate `Certificates.knownTau_certificate_sound`,
+whose predicate `knownTauCert τ := 0 ≤ τ` checks only nonnegativity. -/
 theorem lineIntensity_eq_selfAbsorbedIntensity_div {kB T N Fcal : ℝ}
     {g E A : ι → ℝ} (k : ι) {tau : ℝ} (htau : 0 ≤ tau) :
     lineIntensity kB T N Fcal g E A k

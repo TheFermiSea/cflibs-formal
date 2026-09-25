@@ -6,7 +6,10 @@ Authors: Brian Squires
 import Mathlib
 
 /-!
-# CF-LIBS formalization — split-conformal coverage (the refuse-to-report gate)
+# CF-LIBS formalization — the rank-counting step behind split-conformal coverage
+
+**What this module proves is a counting bound, not a coverage theorem.** No probability measure
+appears in any statement. Read the rest of this header with that in mind.
 
 The pipeline's reliability gates (`Certificates.lean`) are *sufficient conditions*: each certifies
 that a specific modelling premise holds, and each is only as good as the model it is stated in.
@@ -15,16 +18,20 @@ finite-sample: given calibration scores that are exchangeable with the test scor
 read off the calibration scores covers the test score with probability at least `1 − α`, whatever
 the underlying distribution and however wrong the forward model is. That is the one guarantee that
 survives simulator misspecification, which is why it is the right shape for a refuse-to-report
-gate: *report* when the conformal interval is narrow enough, *abstain* otherwise.
+gate: *report* when the conformal interval is narrow enough, *abstain* otherwise. No such gate
+exists yet on either side: the 2026-09-24 audit found the companion's conformal code exercised
+only by its tests.
 
-The companion pipeline implements exactly this (`cflibs/inversion/physics/conformal.py`,
-`split_conformal`): from `n` calibration nonconformity scores it returns the `k`-th **smallest**
-score with
+The companion pipeline's `split_conformal` (`cflibs/inversion/physics/conformal.py`) returns,
+from `n` calibration nonconformity scores, the `k`-th **smallest calibration** score with
 
   `k = ⌈(1 − α)·(n + 1)⌉`   (`conformal_rank`),
 
-deliberately in preference to an interpolating quantile. This module certifies the arithmetic that
-choice rests on.
+deliberately in preference to an interpolating quantile, and `+∞` when `k > n`. This module
+proves the counting fact that choice rests on, with one difference in the threshold: here it is
+the `k`-th smallest of **all** `N = n + 1` scores, the test score included. The bridge lemma (for
+`k ≤ n`, the test score is at most the `k`-th smallest calibration score iff it is at most the
+`k`-th smallest of all `N` scores) and the `k = n + 1` (`+∞`) branch are **not** proved here.
 
 ## What is proven, and what is assumed
 
@@ -36,23 +43,30 @@ mathematics:
    smallest, then *at least `k` of the `N` scores lie at or below it* — `card_le_card_covered`.
    Dividing by `N` and using `k = ⌈(1 − α)N⌉ ≥ (1 − α)N` gives
    `covered/N ≥ 1 − α` — `conformal_coverage_fraction`.
-2. **Exchangeability (assumed, not proved).** The step from "a fraction `≥ 1 − α` of the `N`
-   positions are covered" to "the *test* score is covered with probability `≥ 1 − α`" is exactly
-   the assumption that the test score is equally likely to occupy any of the `N` positions. That
-   is the exchangeability hypothesis, and it is a statement about the data-generating process, not
-   a theorem: it is stated here as `ExchangeableRank` and *carried*, never discharged.
-   `conformal_coverage_of_exchangeable` composes the two.
+2. **Exchangeability (not formalized).** The step from "a fraction `≥ 1 − α` of the `N`
+   positions are covered" to "the *test* score is covered with probability `≥ 1 − α`" uses the
+   assumption that the test score is equally likely to occupy any of the `N` positions. Under
+   that assumption the coverage probability is the *expected* covered fraction over the random
+   draw, and it is `≥ 1 − α` because the fraction is `≥ 1 − α` for every realization. None of
+   this is formalized: there is no measure, no random draw and no distinguished test index here.
+   `ExchangeableRank` is only a stand-in — it sets a real number `p` equal to the covered fraction
+   of one fixed score vector — so `conformal_coverage_of_exchangeable` is
+   `conformal_coverage_fraction` restated for any `p` equal to that fraction.
 
-So the honest reading is: **the rank arithmetic of `split_conformal` is correct; whether the
-guarantee applies to a given LIBS deployment is an empirical question about exchangeability.** For
-this pipeline that question has teeth — calibration spectra cluster by matrix and by instrument
-mode, so a per-matrix-class calibration set (or an explicit covariate-shift correction) is what
-makes the hypothesis defensible. Nothing here certifies that.
+So the honest reading is: **the counting step used in split-conformal coverage is correct for the
+all-scores threshold; the probabilistic step, and the bridge to `split_conformal`'s
+calibration-only threshold, are not proved; and whether the guarantee applies to a given LIBS
+deployment is an empirical question about exchangeability.** For this pipeline that question has
+teeth — calibration spectra cluster by matrix and by instrument mode, so a per-matrix-class
+calibration set (or an explicit covariate-shift correction) is what makes the hypothesis
+defensible. Nothing here certifies that.
 
 ## Literature and scope
 
 **Scope: PURE-MATH.** Every statement is finite combinatorics over a linear order; no
-spectroscopic quantity, no measure theory, no distributional assumption appears. Split conformal
+spectroscopic quantity, no measure theory, no distributional assumption appears. A measure-theoretic
+coverage theorem (permutation-invariant law on the `N` scores) is future work; mathlib has no
+exchangeability API to build it on. Split conformal
 prediction is due to Vovk, Gammerman & Shafer, *Algorithmic Learning in a Random World*, Springer
 (2005), and the split/inductive form used by the companion follows Lei, G'Sell, Rinaldo,
 Tibshirani & Wasserman, "Distribution-Free Predictive Inference for Regression", *JASA* **113**
@@ -62,15 +76,17 @@ Tibshirani & Wasserman, "Distribution-Free Predictive Inference for Regression",
 counting core below is proved from scratch).
 
 **Honest limitations.**
-* Coverage is **marginal**, not conditional: the guarantee is over the joint draw, not per
-  matrix class or per element. A per-class guarantee needs a per-class calibration set.
+* The coverage guarantee this counting step serves (itself not proved here) is **marginal**, not
+  conditional: it is over the joint draw, not per matrix class or per element. A per-class
+  guarantee needs a per-class calibration set.
 * The bound is one-sided. The companion's docstring notes the matching upper bound
   `≤ 1 − α + 1/(n+1)` for distinct scores; that direction is *not* proved here.
 * Ties are handled the conservative way: `card_le_card_covered` counts *at least* `k`, which is
   what the coverage direction needs; with ties the covered set can be strictly larger.
 * Nothing here says the conformal interval is *narrow*. A gate that abstains whenever the
-  interval is too wide is sound by this theorem and useless if it abstains always; usefulness is
-  an empirical property (the companion's coverage/width bookkeeping), not a theorem.
+  interval is too wide would be sound by the coverage theorem (once proved) and useless if it
+  abstains always; usefulness is an empirical property (the companion's coverage/width
+  bookkeeping), not a theorem.
 -/
 
 namespace CflibsFormal
@@ -108,9 +124,10 @@ theorem card_le_card_covered (s : Fin N → ℝ) (k : Fin N) :
 
 /-- **The covered fraction is at least `1 − α`.**
 
-With `N` exchangeable scores and the conformal rank `k = ⌈(1 − α)·N⌉` (the companion's
-`conformal_rank`, here as the zero-indexed `k` with `(k : ℕ) + 1 = ⌈(1 − α)·N⌉`), the fraction of
-positions whose score lies at or below the `k`-th smallest is at least `1 − α`.
+For any `N` real scores (no exchangeability or other assumption is used) and the conformal rank
+`k = ⌈(1 − α)·N⌉` (the companion's `conformal_rank`, here as the zero-indexed `k` with
+`(k : ℕ) + 1 = ⌈(1 − α)·N⌉`), the fraction of positions whose score lies at or below the `k`-th
+smallest of all `N` scores is at least `1 − α`.
 
 This is `card_le_card_covered` divided by `N`, together with `(1 − α)·N ≤ ⌈(1 − α)·N⌉`
 (`Nat.le_ceil`) — the *only* place the ceiling matters, and the reason `split_conformal` takes an
@@ -127,31 +144,36 @@ theorem conformal_coverage_fraction (s : Fin N → ℝ) (α : ℝ) (k : Fin N)
     _ ≤ (#{i | s i ≤ s (Tuple.sort s k)} : ℝ) := by
         exact_mod_cast card_le_card_covered s k
 
-/-! ## Exchangeability: the hypothesis that is carried, never discharged -/
+/-! ## A stand-in for exchangeability (not a probabilistic statement) -/
 
-/-- **The exchangeability hypothesis, stated explicitly.**
+/-- **A stand-in for the exchangeability step: `p` equals the covered fraction of one fixed score
+vector.**
 
-`ExchangeableRank s k p` says: the probability `p` that the *test* score is covered by the
-threshold `s (Tuple.sort s k)` equals the *fraction of positions* that are covered. This is the
-content of exchangeability — the test score is equally likely to occupy any of the `N` positions,
-so its chance of landing in the covered set is that set's relative size.
+`ExchangeableRank s k p` says only that the real number `p` equals the fraction of the `N`
+positions of the fixed vector `s` whose score is at or below the threshold `s (Tuple.sort s k)`.
+It is **not** exchangeability. No probability measure, random draw or test index appears. The
+intended reading is that `p` is the probability that the test score is covered. Under genuine
+exchangeability that probability is the *expected* covered fraction over the random draw, not
+the fraction for one realized `s`.
 
-It is a hypothesis about the data-generating process, **not** a theorem, and this module makes no
-attempt to derive it: in a LIBS deployment it is exactly the claim that a new spectrum is
+It is meant as a hypothesis about the data-generating process, and this module makes no attempt
+to derive it. In a LIBS deployment the underlying assumption is that a new spectrum is
 exchangeable with the calibration spectra, which matrix clustering and instrument drift can break.
-Stating it as a named predicate is the point — it keeps the assumption visible in every downstream
-statement instead of hiding inside a probabilistic model. -/
+Naming it keeps that assumption visible, but the predicate does not formalize it. -/
 def ExchangeableRank (s : Fin N → ℝ) (k : Fin N) (p : ℝ) : Prop :=
   p = (#{i | s i ≤ s (Tuple.sort s k)} : ℝ) / (N : ℝ)
 
-/-- **Split-conformal marginal coverage.** Under exchangeability, the conformal rank
-`k = ⌈(1 − α)N⌉` gives test-point coverage at least `1 − α`, distribution-free and finite-sample.
+/-- **Rank-counting bound: any `p` equal to the covered fraction is at least `1 − α`.** With the
+conformal rank `k = ⌈(1 − α)N⌉` and `ExchangeableRank s k p` (that is, `p` equals the covered
+fraction of the fixed score vector `s`), `1 − α ≤ p`.
 
-The mathematical content is `conformal_coverage_fraction`; `ExchangeableRank` is the bridge from
-a counting fact about the `N` positions to a probability about the test point, and it is supplied,
-not proved. This is the theorem behind the companion's `split_conformal`
-(`cflibs/inversion/physics/conformal.py`) and the guarantee a conformal refuse-to-report gate
-would rest on. -/
+This is `conformal_coverage_fraction` after rewriting with `hex`; it adds no probabilistic
+content. It is **not** split-conformal marginal coverage: no measure appears, `ExchangeableRank`
+is not exchangeability, and the threshold is the `k`-th smallest of all `N` scores rather than of
+the `n` calibration scores that the companion's `split_conformal`
+(`cflibs/inversion/physics/conformal.py`) uses. The coverage theorem a conformal refuse-to-report
+gate would rest on needs the probabilistic step and the calibration-threshold bridge, neither of
+which is proved here (see the module header). -/
 theorem conformal_coverage_of_exchangeable (s : Fin N → ℝ) (α p : ℝ) (k : Fin N)
     (hk : (k : ℕ) + 1 = ⌈(1 - α) * (N : ℝ)⌉₊) (hex : ExchangeableRank s k p) :
     1 - α ≤ p := by
@@ -160,10 +182,11 @@ theorem conformal_coverage_of_exchangeable (s : Fin N → ℝ) (α p : ℝ) (k :
 
 /-! ## Non-vacuity -/
 
-/-- Non-vacuity: five distinct scores, `α = 1/5`, so the conformal rank is
-`⌈(4/5)·5⌉ = 4` — the 4th smallest score, i.e. zero-indexed `k = 3`. The covered set is genuinely
-`{0, 1, 2, 3}`: four of the five positions, a covered fraction of `4/5 = 1 − α` exactly. Nothing
-degenerates — the threshold is an interior score, and the count is strictly less than `N`. -/
+/-- Non-vacuity of the rank hypothesis `hk`: with `N = 5` and `α = 1/5` the conformal rank is
+`⌈(4/5)·5⌉ = 4` — the 4th smallest score, i.e. zero-indexed `k = 3`. This example checks only that
+arithmetic; no scores appear in it. For five distinct scores the covered set would be the four
+smallest positions, a covered fraction of `4/5 = 1 − α`; the next example checks the count on
+explicit scores. -/
 example :
     ((3 : Fin 5) : ℕ) + 1 = ⌈(1 - (1 : ℝ) / 5) * (5 : ℝ)⌉₊ := by
   norm_num

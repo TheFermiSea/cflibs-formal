@@ -49,20 +49,30 @@ physics enters only through pointwise domination of the closure map:
 
 ## The envelope corollary
 
-`envelope_ionization_matrix_shift` couples all three channels at once. Introducing a more
-easily ionized species (a) raises the coupled `n_e` (`x < y`); (b) therefore **suppresses**
-a spectator element's ionization — its Saha ion density strictly drops,
+`envelope_ionization_matrix_shift` packages three conclusions in one statement. Introducing a
+more easily ionized species (a) raises the coupled `n_e` (`x < y`); (b) therefore
+**suppresses** a spectator element's ionization — its Saha ion density strictly drops,
 `sahaIonDensity Sspec Nspec y < sahaIonDensity Sspec Nspec x`
-(`sahaIonDensity_antitone` at the induced shift); yet (c) a **homologous line pair**
-(matched upper-level energies `E a = E b`, shared partition-function manifold) has an
-intensity ratio that is invariant across the box temperatures `Told, Tnew`
-(`MatrixEffects.homologousPair_ratio_temperature_invariant`). In this Boltzmann-only
-intensity encoding the homologous ratio depends on neither `T` nor `n_e`, so the induced
-`n_e` shift does **not** perturb the reported homologous subcomposition ratio — the matrix
-effect on that ratio is not merely bounded but *zero*, a fortiori bounded by the induced
-`n_e` shift. The genuine, nonzero matrix effect is the spectator ionization suppression in
-clause (b), whose sign and monotone dependence on the `n_e` shift are exactly what the
-comparative statics pins down.
+(`sahaIonDensity_antitone` at the induced shift). Clause (c) states that a **homologous line
+pair** (matched upper-level energies `E a = E b`, ONE shared level catalog and hence one
+partition function for both species) has an intensity ratio that is invariant across the box
+temperatures `Told, Tnew` (`MatrixEffects.homologousPair_ratio_temperature_invariant`).
+
+Clause (c) is **independent of (a) and (b)**. Its densities `Ns, Nt` and temperatures
+`Told, Tnew` are free binders with no link to `x, y, S, S', Ntot, Sspec, Nspec`, so (c) holds
+for whatever FIXED emitting-stage densities are supplied and says nothing about how those
+densities move when `n_e` goes from `x` to `y`. It does not show that the matrix shift leaves a
+homologous subcomposition unchanged, and for element totals read through neutral lines the
+shift does change it: the emitting densities are then `sahaNeutralDensity S_s Ntot_s n_e`, and
+their ratio
+`(Ntot_s/Ntot_t)·(S_t + n_e)/(S_s + n_e)` moves with `n_e` unless `S_s = S_t` (with
+`S_s = 1`, `S_t = 2`, equal totals: `3/2` at `n_e = 1`, `4/3` at `n_e = 2`). Clause (c) also
+rests on the shared-`U` reduction (REDUCED; the per-species residual `U_t/U_s` is explicit in
+`MatrixEffects.homologousPair_ratio_perU_closed_form`), and its temperature change is not
+propagated into the fixed-`T` Saha coefficients `S, S'` of (a). The proved, nonzero matrix
+effect is the spectator ionization suppression in clause (b), whose sign the comparative
+statics fixes. A bound on the homologous-ratio shift in terms of `|y − x|` and `|S_s − S_t|`
+(instantiating `Ns, Nt` as Saha neutral densities) is not formalized here.
 
 ## Non-circularity / non-vacuity
 
@@ -84,9 +94,10 @@ envelope on explicit homologous-pair data.
   Ionization balance: the Saha–Eggert equation (Griem, *Principles of Plasma Spectroscopy*).
   Electron-density coupling / ionization suppression: Aguilera & Aragón, *Spectrochim. Acta
   B* **62** (2007) 378.
-* The reused homologous-pair temperature invariance is `EXACT` (Ciucci et al., *Appl.
-  Spectrosc.* **53** (1999) 960; two-line Boltzmann ratio), carried over verbatim from
-  `MatrixEffects`.
+* The reused homologous-pair temperature invariance (Ciucci et al., *Appl. Spectrosc.* **53**
+  (1999) 960; two-line Boltzmann ratio), carried over verbatim from `MatrixEffects`, is
+  `REDUCED`: it is exact only in the shared-catalog model, where one partition function serves
+  both species (`U_s ≡ U_t`), and it holds at fixed emitting-stage densities.
 -/
 
 namespace CflibsFormal
@@ -267,29 +278,37 @@ theorem coupledNe_exists_lt_of_S_lt (S S' Ntot : ι → ℝ) (hS : ∀ s, 0 < S 
 
 end Physical
 
-/-! ## The envelope corollary — coupling all three channels
+/-! ## The envelope corollary — three conclusions in one statement
 
 Introducing a more easily ionized species (i) raises the coupled `n_e`, (ii) therefore
-suppresses a spectator element's ionization by the induced shift, while (iii) a homologous
-line pair keeps its intensity ratio invariant across the box temperatures. -/
+suppresses a spectator element's ionization by the induced shift. Alongside, and independent of
+(i)–(ii), (iii) a homologous line pair from one shared level catalog keeps its intensity ratio
+invariant across the box temperatures at fixed emitting-stage densities. -/
 
-/-- **Ionization-suppression matrix-shift envelope (`REDUCED` comparative statics + `EXACT`
-homologous invariance; Saha–Eggert/Griem, Aguilera & Aragón 2007, Ciucci et al. 1999).**
-Making one species strictly more easily ionized simultaneously yields:
+/-- **Ionization-suppression matrix-shift envelope (`REDUCED` comparative statics + `REDUCED`
+shared-`U` homologous invariance; Saha–Eggert/Griem, Aguilera & Aragón 2007, Ciucci et al.
+1999).** Making one species strictly more easily ionized yields (a) and (b); (c) is a separate
+conjunct:
 
-* `x < y` — the shared coupled electron density strictly increases;
-* `sahaIonDensity Sspec Nspec y < sahaIonDensity Sspec Nspec x` — a spectator element's ion
-  density strictly **drops**: its ionization is suppressed by exactly the induced `n_e`
-  shift (`sahaIonDensity_antitone` at `x < y`); this is the genuine, nonzero matrix effect,
-  whose sign is fixed by the comparative statics;
-* the **homologous-line-pair** intensity ratio (matched upper-level energies `E a = E b`,
-  shared partition-function manifold) is invariant across the box temperatures
-  `Told, Tnew` (`homologousPair_ratio_temperature_invariant`).
+* (a) `x < y` — the shared coupled electron density strictly increases;
+* (b) `sahaIonDensity Sspec Nspec y < sahaIonDensity Sspec Nspec x` — a spectator element's
+  ion density strictly **drops**: its ionization is suppressed by the induced `n_e` shift
+  (`sahaIonDensity_antitone` at `x < y`); this is the genuine, nonzero matrix effect, whose
+  sign is fixed by the comparative statics (`Sspec, Nspec` are not among the closure-map
+  species, so the spectator is a trace element that does not feed back into `n_e`);
+* (c) the **homologous-line-pair** intensity ratio (matched upper-level energies `E a = E b`,
+  one shared level catalog `g E A` and hence one partition function for both species) is
+  invariant across the box temperatures `Told, Tnew`
+  (`homologousPair_ratio_temperature_invariant`).
 
-In this Boltzmann-only intensity encoding the homologous ratio depends on neither `T` nor
-`n_e`, so the induced `n_e` shift leaves the reported homologous subcomposition ratio exactly
-unchanged (matrix effect zero, a fortiori bounded by the `n_e` shift); the physical residual
-lives entirely in the spectator ionization suppression above. -/
+*Scope of (c).* Clause (c) is independent of (a) and (b): `Ns, Nt, Told, Tnew` are free
+binders, unrelated to `x, y` or to the Saha data, so (c) holds for fixed emitting-stage
+densities and does not say how the homologous ratio responds to the `n_e` shift. It does not
+show a zero matrix effect on a homologous subcomposition. If `Ns, Nt` are the neutral densities
+`sahaNeutralDensity S_s Ntot_s n_e` of two elements with element totals `Ntot_s, Ntot_t`, their
+ratio `(Ntot_s/Ntot_t)·(S_t + n_e)/(S_s + n_e)` changes with `n_e` unless `S_s = S_t`. Clause
+(c) also inherits the shared-`U` reduction (`U_s ≡ U_t`); with per-species partition functions
+the residual is `U_t/U_s` (`homologousPair_ratio_perU_closed_form`). -/
 theorem envelope_ionization_matrix_shift {ι : Type*} [Fintype ι] [Nonempty ι]
     (S S' Ntot : ι → ℝ) (hS : ∀ s, 0 < S s) (hS' : ∀ s, 0 < S' s) (hN : ∀ s, 0 < Ntot s)
     (hmono : ∀ s, S s ≤ S' s) {s0 : ι} (hs0 : S s0 < S' s0)
@@ -349,8 +368,8 @@ The abundance witness above, promoted to a Saha-coefficient increase (`S = ![1]`
 `![2]`, abundance `![2]` fixed) so the strictly-more-ionizable hypothesis applies, together
 with a homologous line pair on a shared manifold (`Fin 2`, degeneracies `![2,5]`, MATCHED
 energies `![1,1]`, Einstein coefficients `![3,7]`) and a spectator element (`Sspec = Nspec =
-1`).  The coupled fixed points come from existence; the envelope then delivers all three
-coupled conclusions at once. -/
+1`).  The coupled fixed points come from existence; the envelope then delivers its three
+conclusions at once (the homologous clause at the fixed densities `4` and `6`). -/
 
 private def nvES : Fin 1 → ℝ := ![1]
 private def nvES' : Fin 1 → ℝ := ![2]

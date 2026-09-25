@@ -5,9 +5,15 @@
 > (the integrity spine) + citation from `docs/scope-tags.tsv`; the docs-sync CI gate fails if
 > any result is untagged, so a new theorem cannot land without declaring its epistemic status.
 
-**Scope-tag mix** (756 results): **EXACT** 163 · **REDUCED** 221 · **APPROXIMATION** 14 · **PURE-MATH** 358
+**Two axes, publish the weaker** (owner decision 2026-09-24; `docs/conventions.md` §8). A result's own tag is its **relation** tag: how exactly it holds for the model it is stated over. A tagged definition carries a **model** tag: how faithfully it encodes the physics. The **published** tag of a result is the weaker (`EXACT < REDUCED < APPROXIMATION`) of its own tag and the model tags of the `CflibsFormal` definitions in its statement (a definition without a row inherits the weakest model tag of the tagged definitions it is built from); `PURE-MATH` results are exempt. Computed from the kernel environment by `lake exe scope-check --write` (`docs/scope-published.tsv`).
 
-`EXACT` = exact identity faithfully encoding the cited physics · `REDUCED` = valid dimensionless/lumped-factor form · `APPROXIMATION` = documented idealization / limiting case · `PURE-MATH` = infrastructure lemma, no physical claim. Classification cross-checked against `reviews/literature-validity-audit.md`.
+A result shows `own → published` when the two differ (with the definitions that weakened it), and a single tag when they agree. A definition with its own row shows `model TAG`.
+
+**Own-tag mix** (756 results): **EXACT** 160 · **REDUCED** 227 · **APPROXIMATION** 4 · **PURE-MATH** 365
+
+**Published-tag mix** (756 results; 125 weakened by a model tag): **EXACT** 70 · **REDUCED** 256 · **APPROXIMATION** 65 · **PURE-MATH** 365
+
+`EXACT` = an exact theorem about the model it is stated over · `REDUCED` = exact only after a stated reduction (a dimensionless/lumped-factor form) · `APPROXIMATION` = the statement itself is approximate (documented idealization / limiting case) · `PURE-MATH` = infrastructure lemma, no physical claim. Classification cross-checked against `reviews/literature-validity-audit.md`.
 
 ## `Aitchison.lean`  (CflibsFormal)
 *2DCOS-LIBS formalization — Aitchison compositional identities*
@@ -55,39 +61,39 @@
 - `csigmaSahaUniversalOrdinate` — Universal Cσ ordinate (ionic stage).
 
 **Results**
-- `EXACT` · `csigma_master_line` — C-sigma master line.  _[Aguilera & Aragón 2007]_
-- `EXACT` · `csigma_master_line_indep_species` — Species independence, made explicit.  _[Aguilera & Aragón 2007]_
+- `EXACT → REDUCED` · `csigma_master_line` — C-sigma master line.  _[Aguilera & Aragón 2007]_  (via `lineIntensity`)
+- `EXACT → REDUCED` · `csigma_master_line_indep_species` — Species independence, made explicit.  _[Aguilera & Aragón 2007]_  (via `lineIntensity`)
 - `REDUCED` · `csigma_density_offset` — Inverse identity.  _[Aguilera & Aragón 2007]_
-- `EXACT` · `csigmaOffset_of_lineIntensity` — The measurement step recovers the true offset.  _[Aguilera & Aragón 2007]_
-- `EXACT` · `csigma_sound` — Soundness of the C-sigma estimator.  _[Aguilera & Aragón 2007]_
+- `EXACT → REDUCED` · `csigmaOffset_of_lineIntensity` — The measurement step recovers the true offset.  _[Aguilera & Aragón 2007]_  (via `lineIntensity`)
+- `EXACT → REDUCED` · `csigma_sound` — Soundness of the C-sigma estimator.  _[Aguilera & Aragón 2007]_  (via `lineIntensity`)
 - `PURE-MATH` · `sound_agree` — Abstract agreement bridge.
 - `PURE-MATH` · `csigma_agrees_of_sound` — Agreement via shared soundness (abstract classic estimator).
 - `PURE-MATH` · `csigmaDensity_offset_eq_classicDensity` — The C-sigma and classic density inverses are the SAME function (pointwise).
 - `PURE-MATH` · `csigmaComposition_eq_classicComposition` — The two estimators are the SAME function of the observations.
 - `PURE-MATH` · `csigma_agrees_classic` — Cross-method agreement on a measured spectrum (forward-data instance).
-- `EXACT` · `csigma_saha_master_line` — Cσ cross-stage master line (the Saha-coupled collapse).  _[Aragón & Aguilera 2014]_
-- `EXACT` · `csigma_cross_stage_collapse` — Neutral and ionic lines share one line.  _[Aragón & Aguilera 2014]_
-- `EXACT` · `csigma_master_olsSlope` — Multi-line temperature from the Cσ master line.  _[Aguilera & Aragón 2007]_
-- `EXACT` · `csigma_temperature_cross_stage` — Cross-stage two-line temperature (the Saha–Boltzmann diagnostic).  _[Aragón & Aguilera 2014]_
-- `EXACT` · `csigma_universal_line` — The Cσ universal line.  _[Aragón & Aguilera 2014]_
-- `EXACT` · `csigma_universal_indep_species` — Universal-line element independence.  _[Aragón & Aguilera 2014]_
-- `EXACT` · `csigma_saha_universal_line` — The universal line spans both stages.  _[Aragón & Aguilera 2014]_
+- `EXACT → REDUCED` · `csigma_saha_master_line` — Cσ cross-stage master line (the Saha-coupled collapse).  _[Aguilera & Aragón 2007]_  (via `lineIntensity`)
+- `EXACT → REDUCED` · `csigma_cross_stage_collapse` — Neutral and ionic lines share one line.  _[Aguilera & Aragón 2007]_  (via `lineIntensity`)
+- `EXACT → REDUCED` · `csigma_master_olsSlope` — Multi-line temperature from the Cσ master line.  _[Aguilera & Aragón 2007]_  (via `lineIntensity`)
+- `EXACT → REDUCED` · `csigma_temperature_cross_stage` — Cross-stage two-line temperature (the Saha–Boltzmann diagnostic).  _[Aguilera & Aragón 2007]_  (via `lineIntensity`)
+- `EXACT → REDUCED` · `csigma_universal_line` — The Cσ universal line.  _[Aragón & Aguilera 2014]_  (via `lineIntensity`)
+- `EXACT → REDUCED` · `csigma_universal_indep_species` — Universal-line element independence.  _[Aragón & Aguilera 2014]_  (via `lineIntensity`)
+- `EXACT → REDUCED` · `csigma_saha_universal_line` — The universal line spans both stages.  _[Aguilera & Aragón 2007]_  (via `lineIntensity`)
 
 ## `Alt/CSigmaCurveOfGrowth.lean`  (CflibsFormal.Alt)
 *The Cσ curve of growth — self-absorption droop below the universal line*
 
 **Definitions**
-- `csigmaOpticalDepth` — Cσ optical depth `τ = σ_ℓ · ℓ · C`: the line cross-section `σ_ℓ`, the absorption path length `ℓ`, and the absorber column scale `C` (the species number densi…
+- `model REDUCED` · `csigmaOpticalDepth` — Cσ optical depth `τ = σ_ℓ · ℓ · C`: the line cross-section `σ_ℓ`, the absorption path length `ℓ`, and the absorber column scale `C` (the species number densi…  _[Aragón & Aguilera 2014]_
 - `csigmaSelfAbsorbedUniversalOrdinate` — Self-absorbed Cσ universal ordinate.
 
 **Results**
-- `APPROXIMATION` · `csigma_curve_of_growth_droop` — The Cσ curve-of-growth droop identity (the BRIDGE).  _[Aragón & Aguilera 2014]_
-- `APPROXIMATION` · `csigma_curve_of_growth_thin` — Optically-thin limit (`τ = 0`).  _[Aragón & Aguilera 2014]_
-- `APPROXIMATION` · `csigma_curve_of_growth_le` — The droop is downward (non-strict).  _[Aragón & Aguilera 2014]_
-- `APPROXIMATION` · `csigma_curve_of_growth_lt` — The droop is strict for an actually thick line (`τ > 0`).  _[Aragón & Aguilera 2014]_
-- `APPROXIMATION` · `csigma_curve_of_growth_tendsto_universal` — The droop vanishes continuously as `τ → 0⁺`.  _[Aragón & Aguilera 2014]_
-- `APPROXIMATION` · `csigma_curve_of_growth_strictAntiOn` — The Cσ curve of growth is strictly antitone in optical depth.  _[Aragón & Aguilera 2014]_
-- `APPROXIMATION` · `csigma_curve_of_growth_density_droop` — The density droop (the σ cross-section weighting, `N`-coupled).  _[Aragón & Aguilera 2014]_
+- `EXACT → APPROXIMATION` · `csigma_curve_of_growth_droop` — The Cσ curve-of-growth droop identity (the BRIDGE).  _[Aragón & Aguilera 2014]_  (via `selfAbsorbedIntensity`, `selfAbsorptionFactor`)
+- `EXACT → APPROXIMATION` · `csigma_curve_of_growth_thin` — Optically-thin limit (`τ = 0`).  _[Aragón & Aguilera 2014]_  (via `selfAbsorbedIntensity`)
+- `EXACT → APPROXIMATION` · `csigma_curve_of_growth_le` — The droop is downward (non-strict).  _[Aragón & Aguilera 2014]_  (via `selfAbsorbedIntensity`)
+- `EXACT → APPROXIMATION` · `csigma_curve_of_growth_lt` — The droop is strict for an actually thick line (`τ > 0`).  _[Aragón & Aguilera 2014]_  (via `selfAbsorbedIntensity`)
+- `EXACT → APPROXIMATION` · `csigma_curve_of_growth_tendsto_universal` — The droop vanishes continuously as `τ → 0⁺`.  _[Aragón & Aguilera 2014]_  (via `selfAbsorbedIntensity`)
+- `EXACT → APPROXIMATION` · `csigma_curve_of_growth_strictAntiOn` — The Cσ curve of growth is strictly antitone in optical depth.  _[Aragón & Aguilera 2014]_  (via `selfAbsorbedIntensity`)
+- `EXACT → APPROXIMATION` · `csigma_curve_of_growth_density_droop` — The density droop (the σ cross-section weighting, `N`-coupled).  _[Aragón & Aguilera 2014]_  (via `selfAbsorbedIntensity`)
 
 ## `Alt/GaussMarkov.lean`  (CflibsFormal.Alt)
 *Gauss–Markov optimality (BLUE) for the OLS Boltzmann-plot slope*
@@ -100,9 +106,9 @@
 - `PURE-MATH` · `linEstimator_eq_unbiased` — Under the unbiasedness constraints the deterministic part collapses to `β`.
 - `PURE-MATH` · `linEstimator_expectation` — Expectation of a general linear estimator `𝔼[Tₐ] = α·(∑ₖaₖ) + β·(∑ₖaₖEₖ)`.
 - `PURE-MATH` · `linEstimator_unbiased_iff` — Unbiasedness characterization (an `iff`).
-- `EXACT` · `linEstimator_variance` — Variance of a general linear estimator `Var(Tₐ) = σ²·∑ₖaₖ²`.  _[Aitken 1935]_
+- `EXACT` · `linEstimator_variance` — Variance of a general linear estimator `Var(Tₐ) = σ²·∑ₖaₖ²`, under pairwise-uncorrelated noise with one common variance `σ²` on every line (`hhom`): the Gaus…  _[Gauss–Markov]_
 - `PURE-MATH` · `weight_sq_ge_noiseGain` — The deterministic algebraic core of Gauss–Markov optimality `∑ₖwₖ² ≤ ∑ₖaₖ²`, with `wₖ = olsWeight E k`, for ANY unbiased weights (`∑ₖaₖ = 0`, `∑ₖaₖEₖ = 1`).
-- `EXACT` · `ols_is_blue` — THE headline — OLS is the Best Linear Unbiased Estimator (BLUE) of the slope.  _[Aitken 1935]_
+- `REDUCED` · `ols_is_blue` — THE headline — under equal noise on every line, OLS is the Best Linear Unbiased Estimator (BLUE) of the slope.  _[Gauss–Markov]_
 
 ## `Alt/LeastSquares.lean`  (CflibsFormal.Alt)
 *the multi-line ordinary-least-squares Boltzmann-plot estimator*
@@ -128,11 +134,11 @@
 - `closureEstimate` — Closure estimator over the observed species: the per-unit-normalized intensities renormalized to sum to one, `(I s / unitI s) / ∑ t, I t / unitI t`.
 
 **Results**
-- `EXACT` · `lineIntensity_linear` — Linearity of the line intensity in density and calibration.  _[Ciucci 1999]_
-- `EXACT` · `lineIntensity_ratio` — The ratio form of `lineIntensity_linear`, guarded by positivity of the unit-point intensity.  _[Ciucci 1999]_
-- `EXACT` · `neutralityScale_eq_Fcal` — Exact recovery.  _[Abbass 2016]_
-- `EXACT` · `neutralityScale_undetected` — Undetected species.  _[Abbass 2016]_
-- `EXACT` · `closureEstimate_bias` — Closure bias from an undetected species.  _[Tognoni 2010]_
+- `EXACT → REDUCED` · `lineIntensity_linear` — Linearity of the line intensity in density and calibration.  _[Ciucci 1999]_  (via `lineIntensity`)
+- `EXACT → REDUCED` · `lineIntensity_ratio` — The ratio form of `lineIntensity_linear`, guarded by positivity of the unit-point intensity.  _[Ciucci 1999]_  (via `lineIntensity`)
+- `EXACT → REDUCED` · `neutralityScale_eq_Fcal` — Exact recovery.  _[Ciucci 1999]_  (via `lineIntensity`)
+- `EXACT → REDUCED` · `neutralityScale_undetected` — Undetected species.  _[Ciucci 1999]_  (via `lineIntensity`)
+- `EXACT → REDUCED` · `closureEstimate_bias` — Closure bias from an undetected species.  _[Tognoni 2010]_  (via `lineIntensity`)
 
 ## `Alt/OLSAtomicDataPerturbation.lean`  (CflibsFormal.Alt)
 *per-line atomic-data error in the OLS density reader*
@@ -142,8 +148,8 @@
 - `regCoef` — Regression coefficient of the TRUE energies `E` on the WRONG abscissa `E'`: `Cov(E',E)/Var(E') = (∑ₖ (E'ₖ − Ē')(Eₖ − Ē)) / (∑ₖ (E'ₖ − Ē')²)`.
 
 **Results**
-- `EXACT` · `olsDensity_aliasing_A` — EXACT aliasing identity, OLS density reader, A-channel.  _[Tognoni 2010]_
-- `REDUCED` · `olsDensity_aliasing_A_error` — REDUCED closed-form density-error bound, OLS reader, A-channel.  _[Tognoni 2010]_
+- `EXACT → REDUCED` · `olsDensity_aliasing_A` — EXACT aliasing identity, OLS density reader, A-channel.  _[Tognoni 2010]_  (via `lineIntensity`)
+- `REDUCED` · `olsDensity_aliasing_A_error` — REDUCED closed-form density-error bound, OLS reader, A-channel, centered energies only.  _[Tognoni 2010]_
 - `REDUCED` · `olsComposition_atomicData_error` — REDUCED composition corollary, OLS reader, A-channel.  _[Tognoni 2010]_
 - `EXACT` · `olsSlope_wrong_abscissa` — (M6a) EXACT wrong-abscissa slope identity.  _[Tognoni 2010]_
 - `EXACT` · `olsIntercept_wrong_abscissa` — (M6b) EXACT wrong-abscissa intercept identity.  _[Tognoni 2010]_
@@ -159,10 +165,10 @@
 - `PURE-MATH` · `olsSlope_estimator_eq` — Estimator = truth + weighted noise (pure pointwise algebra, no probability).
 - `PURE-MATH` · `expectation_const_add_weightedNoise` — Expectation of a constant plus independent weighted noise `𝔼[c + ∑ₖ wₖ·εₖ] = c`, for zero-mean L² noise.
 - `PURE-MATH` · `variance_const_add_weightedNoise` — Variance of a constant plus UNCORRELATED weighted noise `Var(c + ∑ₖ wₖ·εₖ) = σ²·∑ₖ wₖ²`, for pairwise-uncorrelated, homoscedastic L² noise.
-- `REDUCED` · `olsSlope_unbiased` — Unbiasedness `𝔼[β̂] = β`.  _[Aitken 1935]_
-- `EXACT` · `olsSlope_variance_noiseGain` — Slope variance as the noise gain `Var(β̂) = σ²·∑ₖ wₖ²`.  _[Aitken 1935]_
-- `EXACT` · `olsSlope_variance_eq` — THE headline — the Gauss–Markov slope-variance law `Var(β̂) = σ²/SS_E`.  _[Aitken 1935]_
-- `EXACT` · `olsSlope_variance_antitone` — Monotonicity — more energy spread ⇒ less slope variance.  _[Aitken 1935]_
+- `REDUCED` · `olsSlope_unbiased` — Unbiasedness `𝔼[β̂] = β`.  _[Gauss–Markov]_
+- `EXACT` · `olsSlope_variance_noiseGain` — Slope variance as the noise gain `Var(β̂) = σ²·∑ₖ wₖ²`.  _[Gauss–Markov]_
+- `EXACT` · `olsSlope_variance_eq` — THE headline — the Gauss–Markov slope-variance law `Var(β̂) = σ²/SS_E`.  _[Gauss–Markov]_
+- `EXACT` · `olsSlope_variance_antitone` — Monotonicity — more energy spread ⇒ less slope variance.  _[Gauss–Markov]_
 
 ## `Alt/SelfAbsorbed.lean`  (CflibsFormal.Alt)
 *the self-absorption-corrected composition estimator (alternative)*
@@ -172,10 +178,10 @@
 
 **Results**
 - `PURE-MATH` · `classicDensity_smul_intensity` — Linearity of the algebraic inverse in the intensity.
-- `EXACT` · `selfAbsorbed_sound` — Soundness even when lines are optically thick.  _[Bulajic 2002]_
-- `EXACT` · `selfAbsorbed_corrects_bias` — Bias-direction value theorem for the NAIVE classic estimator.  _[Bulajic 2002]_
-- `REDUCED` · `selfAbsorbed_eq_classic_corrected` — Relationship to classic — structural identity.  _[Bulajic 2002]_
-- `REDUCED` · `selfAbsorbed_eq_classic_thin` — Reduction to classic in the optically-thin limit.  _[Bulajic 2002]_
+- `EXACT → APPROXIMATION` · `selfAbsorbed_sound` — Soundness even when lines are optically thick.  _[Bulajic 2002]_  (via `selfAbsorbedIntensity`, `selfAbsorptionFactor`)
+- `EXACT → APPROXIMATION` · `selfAbsorbed_corrects_bias` — Bias-direction value theorem for the NAIVE classic estimator.  _[Bulajic 2002]_  (via `selfAbsorbedIntensity`)
+- `PURE-MATH` · `selfAbsorbed_eq_classic_corrected` — Relationship to classic — structural identity.
+- `PURE-MATH` · `selfAbsorbed_eq_classic_thin` — Reduction to classic in the optically-thin limit.
 
 ## `Alt/StochasticBudget.lean`  (CflibsFormal.Alt)
 *Chebyshev tail (concentration) bounds for the OLS slope and intercept*
@@ -189,17 +195,17 @@
 **Results**
 - `PURE-MATH` · `alphaHat_estimator_eq` — Intercept estimator = truth + weighted noise (pure pointwise algebra, no probability).
 - `PURE-MATH` · `betaHat_memLp_two` — `L²` membership of the OLS slope estimator `MemLp β̂ 2 μ`, the square-integrability that Chebyshev's inequality (`meas_ge_le_variance_div_sq`) requires.
-- `REDUCED` · `olsSlope_chebyshev` — Slope concentration — Chebyshev's inequality on `β̂`.  _[Aitken 1935]_
-- `REDUCED` · `alphaHat_unbiased` — Intercept unbiasedness `𝔼[α̂] = α`.  _[Aitken 1935]_
-- `EXACT` · `alphaHat_variance_eq` — THE classical intercept-variance law `Var(α̂) = σ²·(1/n + Ē²/SS_E)`, with `n = Fintype.card ι`, `Ē = mean E`, `SS_E = ∑ₖ (Eₖ − Ē)²`.  _[Aitken 1935]_
+- `REDUCED` · `olsSlope_chebyshev` — Slope concentration — Chebyshev's inequality on `β̂`.  _[Gauss–Markov]_
+- `REDUCED` · `alphaHat_unbiased` — Intercept unbiasedness `𝔼[α̂] = α`.  _[Gauss–Markov]_
+- `EXACT` · `alphaHat_variance_eq` — THE classical intercept-variance law `Var(α̂) = σ²·(1/n + Ē²/SS_E)`, with `n = Fintype.card ι`, `Ē = mean E`, `SS_E = ∑ₖ (Eₖ − Ē)²`.  _[Gauss–Markov]_
 - `PURE-MATH` · `alphaHat_memLp_two` — `L²` membership of the OLS intercept estimator `MemLp α̂ 2 μ`, the intercept twin of `betaHat_memLp_two`.
-- `REDUCED` · `alphaHat_chebyshev` — Intercept concentration — Chebyshev's inequality on `α̂`.  _[Aitken 1935]_
-- `PURE-MATH` · `temp_slope_event_subset` — —
-- `REDUCED` · `temp_tail_transfer` — —  _[Tognoni 2010]_
-- `PURE-MATH` · `density_event_subset` — —
-- `REDUCED` · `density_tail_species` — —  _[Tognoni 2010]_
-- `REDUCED` · `composition_tail_union` — —  _[Tognoni 2010]_
-- `REDUCED` · `olsSlope_subGaussian_tail` — —  _[Aitken 1935]_
+- `REDUCED` · `alphaHat_chebyshev` — Intercept concentration — Chebyshev's inequality on `α̂`.  _[Gauss–Markov]_
+- `PURE-MATH` · `temp_slope_event_subset` — Temperature miss ⇒ slope miss (deterministic event inclusion).
+- `REDUCED` · `temp_tail_transfer` — Temperature tail bound (Chebyshev; REDUCED).  _[Tognoni 2010]_
+- `PURE-MATH` · `density_event_subset` — Density miss ⇒ intercept miss (deterministic event inclusion).
+- `REDUCED` · `density_tail_species` — Per-species density tail bound (Chebyshev; REDUCED).  _[Tognoni 2010]_
+- `REDUCED` · `composition_tail_union` — Union bound over species for DENSITY deviations (not composition fractions).  _[Tognoni 2010]_
+- `REDUCED` · `olsSlope_subGaussian_tail` — Sub-Gaussian slope tail (REDUCED).
 
 ## `Analysis.lean`  (CflibsFormal)
 *Shared analysis scaffolding*
@@ -229,11 +235,11 @@
 - `recoveredDensityAtT` — Recovered per-species density at a wrong temperature.
 
 **Results**
-- `EXACT` · `classicDensity_aliasing` — EXACT aliasing identity.  _[Tognoni 2010]_
+- `EXACT → REDUCED` · `classicDensity_aliasing` — EXACT aliasing identity.  _[Tognoni 2010]_  (via `lineIntensity`)
 - `REDUCED` · `classicDensity_aliasing_error` — REDUCED lumped relative-error bound.  _[Tognoni 2010]_
 - `REDUCED` · `classicDensity_aliasing_error_channels` — REDUCED two-channel relative-error bound (`E' = E`).  _[Tognoni 2010]_
 - `REDUCED` · `classicComposition_atomicData_error` — REDUCED composition corollary.  _[Tognoni 2010]_
-- `EXACT` · `classicDensity_temperature_aliasing` — EXACT temperature-aliasing identity.  _[Tognoni 2010]_
+- `EXACT → REDUCED` · `classicDensity_temperature_aliasing` — EXACT temperature-aliasing identity.  _[Tognoni 2010]_  (via `lineIntensity`)
 - `REDUCED` · `classicDensity_aliasing_error_energy` — REDUCED energy-channel isolation (gap #2 residual).  _[Tognoni 2010]_
 - `REDUCED` · `classicDensity_temperature_aliasing_error` — REDUCED temperature-error bound.  _[Tognoni 2010]_
 - `REDUCED` · `classicComposition_temperature_error` — REDUCED composition corollary (temperature channel).  _[Tognoni 2010]_
@@ -259,30 +265,30 @@
 **Definitions**
 - `energySpreadCert` — C1 certificate.
 - `jointRankCert` — C2 certificate.
-- `conditioningCert` — C3 certificate.
+- `conditioningCert` — C3 certificate: C1's predicate verbatim.
 - `slopeBudgetCert` — C4 certificate.
 - `tempBudgetCert` — C5 certificate.
 - `compBudgetCert` — C6 certificate.
 - `mcWhirterCert` — C7 certificate.
 - `sahaIterCert` — C9 certificate.
-- `dampedIterCert` — C10 certificate.
-- `knownTauCert` — C12 certificate.
-- `saDistinctCert` — C13 certificate.
+- `dampedIterCert` — C10 certificate: positivity of `S` and of the absolute totals `Ntot`.
+- `knownTauCert` — C12 certificate: `0 ≤ τ`, nothing more.
+- `saDistinctCert` — C13 certificate: distinct positive opacity coefficients (not widths).
 - `aliasBudgetCert` — C14 certificate.
 
 **Results**
-- `REDUCED` · `energySpread_certificate_sound` — C1 soundness (thin re-export of `designNormalMatrix_det_ne_zero_iff`, `OLS.lean:220`).  _[Tognoni 2010]_
-- `REDUCED` · `jointRank_certificate_sound` — C2 soundness (thin re-export of `jointDesign_det_pos_iff`, `OLS.lean:683`).  _[Aguilera & Aragón 2007]_
-- `PURE-MATH` · `conditioning_certificate_sound` — C3 soundness (thin re-export of `boltzmannConditionNumber_ge_one` + `centeredScaledDesign_orthonormal`, `OLS.lean:341,471`).
-- `REDUCED` · `slopeBudget_certificate_sound` — C4 soundness (thin re-export of `maxPerLineError_sufficient`, `ErrorBudget.lean:244`).  _[Tognoni 2010]_
-- `REDUCED` · `tempBudget_certificate_sound` — C5 soundness (thin re-export of `temp_rel_error_le`, `ErrorBudget.lean:215`).  _[Tognoni 2010]_
-- `REDUCED` · `compBudget_certificate_sound` — C6 soundness (thin re-export of `composition_target_sufficient`, `ErrorBudget.lean:325`).  _[Tognoni 2010]_
-- `REDUCED` · `mcWhirter_certificate_sound` — C7 soundness (thin re-export of `mcwhirter_iff_thermalizationLimit`, `PartialLTE.lean:87`).  _[Cristoforetti 2010]_
-- `REDUCED` · `sahaIter_certificate_sound` — C9 soundness (thin re-export of `sahaIter_tendsto`, `SahaEquilibrium.lean:593`).  _[Saha–Eggert (Griem)]_
-- `REDUCED` · `dampedIter_certificate_sound` — C10 soundness (thin re-export of `dampedMultiElementIter_tendsto`, `SahaEquilibrium.lean:869`).  _[Saha–Eggert (Griem)]_
-- `EXACT` · `knownTau_certificate_sound` — C12 soundness (thin re-export of `lineIntensity_eq_selfAbsorbedIntensity_div`, `SelfAbsorption.lean:237`).  _[Gornushkin 1999]_
-- `EXACT` · `saDistinct_certificate_sound` — C13 soundness (thin re-export of `cogRatio_injOn`, `CurveOfGrowth.lean:254`).  _[Cristoforetti–Tognoni 2013]_
-- `REDUCED` · `aliasBudget_certificate_sound` — C14 soundness (thin re-export of `classicDensity_aliasing_error`, `AtomicDataPerturbation.lean:213`).  _[Tognoni 2010]_
+- `REDUCED` · `energySpread_certificate_sound` — C1 soundness: the single-intercept design is nonsingular (thin re-export of `CflibsFormal.designNormalMatrix_det_ne_zero_iff`).  _[Tognoni 2010]_
+- `REDUCED` · `jointRank_certificate_sound` — C2 soundness: the single-intercept joint design is identifiable (thin re-export of `CflibsFormal.jointDesign_det_pos_iff`).  _[Aguilera & Aragón 2007]_
+- `PURE-MATH` · `conditioning_certificate_sound` — C3 soundness: adds nothing to C1 (thin re-export of `CflibsFormal.boltzmannConditionNumber_ge_one` and `CflibsFormal.centeredScaledDesign_orthonormal`).
+- `REDUCED` · `slopeBudget_certificate_sound` — C4 soundness, conditional on a deterministic per-line error bound (thin re-export of `CflibsFormal.maxPerLineError_sufficient`).  _[Tognoni 2010]_
+- `REDUCED` · `tempBudget_certificate_sound` — C5 soundness, conditional on an assumed slope-error bound (thin re-export of `CflibsFormal.temp_rel_error_le`).  _[Tognoni 2010]_
+- `REDUCED` · `compBudget_certificate_sound` — C6 soundness, conditional on an assumed absolute density error (thin re-export of `CflibsFormal.composition_target_sufficient`).  _[Tognoni 2010]_
+- `REDUCED` · `mcWhirter_certificate_sound` — C7 soundness: McWhirter admissibility, necessary but not sufficient for LTE (thin re-export of `CflibsFormal.mcwhirter_iff_thermalizationLimit`).  _[Cristoforetti 2010]_
+- `REDUCED` · `sahaIter_certificate_sound` — C9 soundness: forward single-element Saha closure at known `Ntot` (thin re-export of `CflibsFormal.sahaIter_tendsto`).  _[Saha–Eggert (Griem)]_
+- `REDUCED` · `dampedIter_certificate_sound` — C10 soundness: forward charge-neutrality closure at known `Ntot`, not the inverse loop (thin re-export of `CflibsFormal.dampedMultiElementIter_tendsto`).  _[Saha–Eggert (Griem)]_
+- `PURE-MATH` · `knownTau_certificate_sound` — C12 soundness: a model identity, not a recovery guarantee (thin re-export of `CflibsFormal.lineIntensity_eq_selfAbsorbedIntensity_div`).
+- `REDUCED → APPROXIMATION` · `saDistinct_certificate_sound` — C13 soundness: flat-kernel pair-ratio injectivity (thin re-export of `CflibsFormal.cogRatio_injOn`).  _[Cristoforetti–Tognoni 2013]_  (via `cogRatio`)
+- `REDUCED` · `aliasBudget_certificate_sound` — C14 soundness, conditional on an assumed atomic-data error (thin re-export of `CflibsFormal.classicDensity_aliasing_error`).  _[Tognoni 2010]_
 
 ## `Classic.lean`  (CflibsFormal.Classic)
 *the classic calibration-free algorithm, assembled and sound*
@@ -292,8 +298,8 @@
 - `classicComposition` — Step (3): the full classic CF-LIBS composition estimator.
 
 **Results**
-- `EXACT` · `classicDensity_recovers` — Per-species soundness core.  _[Ciucci 1999]_
-- `EXACT` · `classic_sound` — Composition soundness of the classic algorithm (given the temperature).  _[Ciucci 1999]_
+- `EXACT → REDUCED` · `classicDensity_recovers` — Per-species soundness core.  _[Ciucci 1999]_  (via `lineIntensity`)
+- `EXACT → REDUCED` · `classic_sound` — Composition soundness of the classic algorithm (given the temperature).  _[Ciucci 1999]_  (via `lineIntensity`)
 - `PURE-MATH` · `classic_sound_sum_one` — Normalization corollary.
 - `REDUCED` · `classic_temperature_correct` — Temperature-correctness leg of soundness.  _[Ciucci 1999]_
 - `EXACT` · `classic_calibration_free` — Calibration-free property.  _[Ciucci 1999]_
@@ -321,8 +327,8 @@
 
 **Results**
 - `PURE-MATH` · `observeMulti_inl` — The non-anchor component of `observeMulti` is exactly the one-line `observe` observable, so all reasoning about per-species densities reduces to the existing…
-- `EXACT` · `compositionIdentifiable` — Multi-line / many-element composition identifiability — strengthening of `general_identifiability`.  _[Ciucci 1999]_
-- `EXACT` · `compositionIdentifiable_T` — Anchor-independence of the recovered temperature (value level).  _[Ciucci 1999]_
+- `EXACT → REDUCED` · `compositionIdentifiable` — Multi-line / many-element composition identifiability — strengthening of `general_identifiability`.  _[Ciucci 1999]_  (via `PlasmaParams`, `lineIntensity`)
+- `EXACT → REDUCED` · `compositionIdentifiable_T` — Anchor-independence of the recovered temperature (value level).  _[Ciucci 1999]_  (via `PlasmaParams`, `lineIntensity`)
 
 ## `CompositionRobustness.lean`  (CflibsFormal)
 *Whole-composition-vector error propagation*
@@ -358,52 +364,52 @@
 - `PURE-MATH` · `nonvacuity_fit_error_fires` — Non-vacuity part 4: the fitted-pair theorem fires on this data.
 
 ## `ConformalCoverage.lean`  (CflibsFormal)
-*split-conformal coverage (the refuse-to-report gate)*
+*the rank-counting step behind split-conformal coverage*
 
 **Definitions**
-- `ExchangeableRank` — The exchangeability hypothesis, stated explicitly.
+- `ExchangeableRank` — A stand-in for the exchangeability step: `p` equals the covered fraction of one fixed score vector.
 
 **Results**
 - `PURE-MATH` · `card_le_card_covered` — The `k`-th smallest score covers at least `k` of the scores.
 - `PURE-MATH` · `conformal_coverage_fraction` — The covered fraction is at least `1 − α`.
-- `PURE-MATH` · `conformal_coverage_of_exchangeable` — Split-conformal marginal coverage.
+- `PURE-MATH` · `conformal_coverage_of_exchangeable` — Rank-counting bound: any `p` equal to the covered fraction is at least `1 − α`.
 
 ## `Continuum.lean`  (CflibsFormal)
 *the continuum background*
 
 **Definitions**
-- `contEmissivity` — Continuum emissivity (Kramers/Biberman, dimensionless reduced form).
+- `contEmissivity` — Continuum emissivity (Kramers/Biberman-type, dimensionless reduced form).
 - `contEmissivitySingly` — Continuum emissivity in a singly-ionized plasma (`n_ion ≈ n_e`), so `ε ∝ n_e²·exp(-u)/√T`.
 - `totalIntensity` — Additive measured intensity at a line pixel: `I_meas = I_line + ε_cont`.
 - `subtractBaseline` — Baseline (continuum) subtraction: remove a fitted continuum level `eCont` from the measured intensity.
-- `lineToContRatio` — Line-to-continuum intensity ratio, reduced form `R_LC(T) = B·√T·exp(-a/T)`.
+- `lineToContRatio` — Reduced line-to-continuum ratio `R_LC(T) = B·√T·exp(-a/T)`, with `B > 0` and `a` held fixed.
 
 **Results**
 - `PURE-MATH` · `contEmissivity_pos` — The continuum emissivity is strictly positive for positive constant, densities, and temperature (the `exp` factor is positive for any reduced photon energy `…
 - `PURE-MATH` · `contEmissivitySingly_eq` — The singly-ionized continuum emissivity is the `n_ion := n_e` case of `contEmissivity`.
 - `PURE-MATH` · `contEmissivity_strictMono_ne` — The continuum brightens with electron density.
 - `PURE-MATH` · `lineToContRatio_pos` — The line-to-continuum ratio is strictly positive for positive `B` and temperature.
-- `EXACT` · `baseline_subtraction_exact` — Baseline subtraction is exact.  _[Cremers & Radziemski 2013]_
-- `REDUCED` · `lineToContRatio_strictMono_T` — The line-to-continuum ratio is a thermometer — in the regime `E_k ≥ hc/λ`.  _[Aragón & Aguilera 2008]_
+- `EXACT` · `baseline_subtraction_exact` — Baseline subtraction is exact when the subtracted level is the true continuum.  _[Cremers & Radziemski 2013]_
+- `PURE-MATH` · `lineToContRatio_strictMono_T` — The reduced ratio `B·√T·exp(-a/T)` is strictly increasing in `T` if `a ≥ 0`.
 
 ## `CurveOfGrowth.lean`  (CflibsFormal)
 *the curve of growth and multi-line self-absorption*
 
 **Definitions**
-- `cogIntensity` — Curve-of-growth (self-absorbed) line intensity.
-- `cogRatio` — Source-free curve-of-growth ratio.
+- `model APPROXIMATION` · `cogIntensity` — Curve-of-growth (self-absorbed) line intensity.  _[Gornushkin 1999]_
+- `model APPROXIMATION` · `cogRatio` — Source-free curve-of-growth ratio.  _[Gornushkin 1999]_
 
 **Results**
-- `EXACT` · `cogIntensity_slab_eq` — The curve-of-growth intensity is the radiative-transfer slab kernel.  _[Gornushkin 1999]_
-- `EXACT` · `cogIntensity_strictMono` — Single-line monotonicity in column density.  _[Cristoforetti–Tognoni 2013]_
-- `EXACT` · `cogIntensity_injective` — Single-line injectivity (column-density recovery).  _[Cristoforetti–Tognoni 2013]_
+- `PURE-MATH` · `cogIntensity_slab_eq` — The curve-of-growth intensity is the radiative-transfer slab kernel.
+- `REDUCED → APPROXIMATION` · `cogIntensity_strictMono` — Single-line monotonicity in column density.  _[Cristoforetti–Tognoni 2013]_  (via `cogIntensity`)
+- `REDUCED → APPROXIMATION` · `cogIntensity_injective` — Single-line injectivity (column-density recovery).  _[Cristoforetti–Tognoni 2013]_  (via `cogIntensity`)
 - `PURE-MATH` · `cogRatio_eq_intensity_ratio` — The common source scale cancels in the ratio.
 - `PURE-MATH` · `cog_denom_pos` — Positivity of the curve-of-growth denominator on `(0, ∞)`: for `w > 0`, `n > 0` we have `0 < 1 - exp(-(w·n))` (since `w·n > 0` makes `exp(-(w·n)) < 1`).
 - `PURE-MATH` · `exp_mul_one_sub_lt_one` — Key transcendental inequality: `exp x · (1 - x) < 1` for `x > 0`.
 - `PURE-MATH` · `cogSlope_strictAntiOn` — The per-line *slope function* `φ(x) = x / (exp x - 1)` is strictly antitone on `(0, ∞)`.
 - `PURE-MATH` · `cogRatio_deriv_num_neg` — The curve-of-growth ratio derivative numerator is negative on `(0, ∞)` for `w₁ > w₂ > 0`: `w₁ · exp(-(w₁·n)) · (1 - exp(-(w₂·n))) < (1 - exp(-(w₁·n))) · w₂ ·…
 - `PURE-MATH` · `cogRatio_strictAntiOn` — Multi-line, unknown-scale identifiability (monotonicity).
-- `EXACT` · `cogRatio_injOn` — Multi-line, unknown-scale identifiability (injectivity).  _[Cristoforetti–Tognoni 2013]_
+- `REDUCED → APPROXIMATION` · `cogRatio_injOn` — Multi-line, unknown-scale identifiability (injectivity) — flat kernel only.  _[Cristoforetti–Tognoni 2013]_  (via `cogRatio`)
 
 ## `DifferentialEstimator.lean`  (CflibsFormal)
 *the reference-differenced (line-by-line) estimator*
@@ -413,17 +419,17 @@
 - `differentialComposition` — Differential composition from a reference of KNOWN composition.
 
 **Results**
-- `EXACT` · `differentialRatio_eq_density_ratio` — EXACT line-by-line cancellation (matched `T`, `Fcal`).  _[Ciucci 1999]_
-- `EXACT` · `differentialRatio_immune_to_atomicData` — EXACT immunity to atomic-data error — the contrast with `classicDensity_aliasing`.  _[Ciucci 1999]_
-- `EXACT` · `classic_biased_differential_exact` — EXACT: the classic reader is actually biased, the differential one is not.  _[Ciucci 1999]_
-- `EXACT` · `logDifferentialRatio_affine_in_E` — EXACT: the differential Boltzmann plot (unmatched temperatures).  _[Ciucci 1999]_
-- `EXACT` · `differentialSlope_eq_neg_dbeta` — EXACT: OLS on the differential Boltzmann plot recovers `−Δβ`.  _[Ciucci 1999]_
-- `EXACT` · `differentialSlope_two_lines` — EXACT two-line differential slope.  _[Ciucci 1999]_
-- `REDUCED` · `differentialRatio_error_bound` — REDUCED first-order error bound for an unmatched temperature.  _[Aguilera & Aragón 2007]_
-- `EXACT` · `differentialRatio_selfAbsorption_residual` — EXACT self-absorption residual — the honest non-cancellation.
-- `EXACT` · `differentialRatio_selfAbsorption_cancels_iff` — EXACT: the residual cancels iff the optical depths match.
-- `EXACT` · `differentialRatio_selfAbsorbed_matched` — EXACT: matched optical depth restores the clean ratio.
-- `EXACT` · `differentialComposition_exact_of_matched` — EXACT composition recovery under matched `(T, Fcal, τ)`.  _[Ciucci 1999]_
+- `EXACT → REDUCED` · `differentialRatio_eq_density_ratio` — EXACT line-by-line cancellation (matched `T`, `Fcal`).  _[Ciucci 1999]_  (via `lineIntensity`)
+- `EXACT → REDUCED` · `differentialRatio_immune_to_atomicData` — EXACT immunity to atomic-data error — the contrast with `classicDensity_aliasing`.  _[Ciucci 1999]_  (via `lineIntensity`)
+- `EXACT → REDUCED` · `classic_biased_differential_exact` — EXACT: the classic reader is actually biased, the differential one is not.  _[Ciucci 1999]_  (via `lineIntensity`)
+- `EXACT → REDUCED` · `logDifferentialRatio_affine_in_E` — EXACT: the differential Boltzmann plot (unmatched temperatures).  _[Ciucci 1999]_  (via `lineIntensity`)
+- `EXACT → REDUCED` · `differentialSlope_eq_neg_dbeta` — EXACT: OLS on the differential Boltzmann plot recovers `−Δβ`.  _[Ciucci 1999]_  (via `lineIntensity`)
+- `EXACT → REDUCED` · `differentialSlope_two_lines` — EXACT two-line differential slope.  _[Ciucci 1999]_  (via `lineIntensity`)
+- `REDUCED` · `differentialRatio_error_bound` — REDUCED error bound, linear in the temperature mismatch.  _[Aguilera & Aragón 2007]_
+- `EXACT → APPROXIMATION` · `differentialRatio_selfAbsorption_residual` — EXACT self-absorption residual — the honest non-cancellation.  (via `selfAbsorbedIntensity`, `selfAbsorptionFactor`)
+- `EXACT → APPROXIMATION` · `differentialRatio_selfAbsorption_cancels_iff` — EXACT: the residual cancels iff the optical depths match.  (via `selfAbsorbedIntensity`)
+- `EXACT → APPROXIMATION` · `differentialRatio_selfAbsorbed_matched` — EXACT: matched optical depth restores the clean ratio.  (via `selfAbsorbedIntensity`)
+- `EXACT → APPROXIMATION` · `differentialComposition_exact_of_matched` — EXACT composition recovery under matched `(T, Fcal, τ)`.  _[Ciucci 1999]_  (via `selfAbsorbedIntensity`)
 
 ## `Dimensions.lean`  (CflibsFormal)
 *a dimensional-analysis layer*
@@ -467,7 +473,7 @@
 *The doublet channel — the second observable that breaks the `N`–`τ` alias*
 
 **Definitions**
-- `doubletRatio` — The doublet (multiplet-pair) intensity ratio.
+- `model APPROXIMATION` · `doubletRatio` — The doublet (multiplet-pair) intensity ratio.  _[Gornushkin 1999]_
 
 **Results**
 - `PURE-MATH` · `doubletRatio_eq_cogRatio` — The doublet ratio is the curve-of-growth ratio `cogRatio` at opacities `(r, 1)`: the doublet channel introduces no new function, only a normalization of the…
@@ -475,19 +481,19 @@
 - `PURE-MATH` · `doublet_denom_pos` — Positivity of the weaker line's emergent factor: `0 < 1 - exp(-τ)` for `τ > 0`.
 - `PURE-MATH` · `cogRatio_pos` — Positivity of the curve-of-growth ratio on the physical domain.
 - `PURE-MATH` · `doubletRatio_pos` — The doublet ratio is a positive observable for `r > 0`, `τ > 0` — so its logarithm is defined and it can be compared to a measured intensity ratio.
-- `REDUCED` · `one_lt_doubletRatio` — The doublet ratio is genuinely informative.  _[Gornushkin 1999]_
-- `REDUCED` · `doubletRatio_eq_measured_ratio` — `F`-cancellation (the calibration-free content).  _[Gornushkin 1999]_
+- `REDUCED → APPROXIMATION` · `one_lt_doubletRatio` — The doublet ratio is genuinely informative.  _[Gornushkin 1999]_  (via `doubletRatio`)
+- `REDUCED → APPROXIMATION` · `doubletRatio_eq_measured_ratio` — `F`-cancellation (the calibration-free content).  _[Gornushkin 1999]_  (via `doubletRatio`)
 - `REDUCED` · `doubletRatio_scale_invariant` — The observable does not depend on the source scale at all.  _[Gornushkin 1999]_
 - `PURE-MATH` · `slab_second_eq_mul_ratio` — The stronger member's intensity is the weaker member's intensity times the doublet ratio: `I₂ = I₁ · ρ(τ)`.
 - `PURE-MATH` · `doubletRatio_strictAntiOn` — Strict antitonicity for the stronger line (`r > 1`).
 - `PURE-MATH` · `doubletRatio_strictMonoOn` — Strict monotonicity for the weaker line (`0 < r < 1`).
-- `REDUCED` · `doubletRatio_injOn` — Injectivity of the doublet channel on the physical domain.  _[Gornushkin 1999]_
-- `REDUCED` · `doubletRatio_determines_tau` — The ratio determines the optical depth.  _[Gornushkin 1999]_
-- `REDUCED` · `doublet_determines_columnDensity` — The ratio determines the column density.  _[Gornushkin 1999]_
+- `REDUCED → APPROXIMATION` · `doubletRatio_injOn` — Injectivity of the doublet channel on the physical domain.  _[Gornushkin 1999]_  (via `doubletRatio`)
+- `REDUCED → APPROXIMATION` · `doubletRatio_determines_tau` — The ratio determines the optical depth.  _[Gornushkin 1999]_  (via `doubletRatio`)
+- `REDUCED → APPROXIMATION` · `doublet_determines_columnDensity` — The ratio determines the column density.  _[Gornushkin 1999]_  (via `doubletRatio`)
 - `REDUCED` · `doublet_identifies_columnDensity_calibration_free` — Calibration-free identifiability of the column density (headline).  _[Gornushkin 1999]_
 - `REDUCED` · `single_line_tau_alias` — Why the second line is needed: the one-line alias, in slab variables.  _[Gornushkin 1999]_
-- `REDUCED` · `doublet_exact_fit` — The inversion always returns an answer — zero residual, by construction.  _[Gornushkin 1999]_
-- `REDUCED` · `doublet_residual_vacuous` — No residual exists (existential form).  _[Gornushkin 1999]_
+- `REDUCED → APPROXIMATION` · `doublet_exact_fit` — The inversion always returns an answer — zero residual, by construction.  _[Gornushkin 1999]_  (via `doubletRatio`)
+- `REDUCED → APPROXIMATION` · `doublet_residual_vacuous` — No residual exists (existential form).  _[Gornushkin 1999]_  (via `doubletRatio`)
 - `REDUCED` · `doublet_fit_unique` — The exact fit is unique.  _[Gornushkin 1999]_
 - `PURE-MATH` · `weighted_mean_strict_between` — Pure-algebra mediant lemma: a strictly positive weighted mean of two *distinct* reals lies strictly between them — in particular it lies in their unordered i…
 - `PURE-MATH` · `doubletRatio_continuousOn` — Continuity of the doublet-ratio curve on the physical domain — the analytic input to the intermediate-value step below.
@@ -526,8 +532,8 @@
 *the error-propagation chain and DERIVED reliability thresholds*
 
 **Definitions**
-- `combinedSahaBoltzmannSlope` — Combined Saha–Boltzmann slope (Aguilera & Aragón 2007, Model B).
-- `combinedSlopeTempUpdate` — Combined Saha–Boltzmann temperature update (Model B `T`-leg): the outer loop's map from a density `n_e` to the recovered inverse-temperature-scaled value `1/…
+- `model REDUCED` · `combinedSahaBoltzmannSlope` — Combined Saha–Boltzmann slope (after Aguilera & Aragón 2007; this repo's Model B).  _[Aguilera & Aragón 2007]_
+- `combinedSlopeTempUpdate` — Combined Saha–Boltzmann temperature update (Model B `T`-leg): the outer loop's map from a density `n_e` to the recovered temperature `T′ = 1/(k_B·slope(n_e))…
 
 **Results**
 - `REDUCED` · `olsSlope_stable_l1` — N-line slope sensitivity (ℓ¹ worst-case bound).  _[Tognoni 2010]_
@@ -548,10 +554,10 @@
 - `REDUCED` · `temp_rel_error_hetero` — Composed heteroscedastic noise ⇒ relative temperature error (gap #5, temperature leg).  _[Tognoni 2010]_
 - `REDUCED` · `olsIntercept_stable_hetero` — Intercept sensitivity, HETEROSCEDASTIC (per-line budget, centered convention).  _[Tognoni 2010]_
 - `REDUCED` · `combinedSlope_offset_lipschitz` — Offset→slope sensitivity of the combined Saha–Boltzmann slope (`REDUCED`; Aguilera & Aragón 2007).  _[Aguilera & Aragón 2007]_
-- `REDUCED` · `combinedSlopeTempUpdate_lipschitz` — `T`-leg Lipschitz constant of the outer CF-LIBS loop (`REDUCED`; Aguilera & Aragón 2007).  _[Aguilera & Aragón 2007]_
+- `REDUCED` · `combinedSlopeTempUpdate_lipschitz` — `T`-leg Lipschitz constant of the Model-B outer loop (`REDUCED`; Aguilera & Aragón 2007).  _[Aguilera & Aragón 2007]_
 
 ## `EvaluatorSoundness.lean`  (CflibsFormal)
-*evaluator soundness (what passing the hard certificate gate buys)*
+*evaluator soundness (which hard-gate clauses feed which theorem)*
 
 **Definitions**
 - `hardGateBundle` — The unconditional HARD gate (`certificate_gate.py`, `HARD_CERTIFICATES_DEFAULT` minus the `None`-gated C2/C9/C10/C13, plus the physical box and the protocol…
@@ -564,9 +570,9 @@
 - `PURE-MATH` · `hardGateBundle_implies_noise_to_composition_hyps` — The hard gate discharges exactly the `gateCoreForComposition` hypotheses of `noise_to_composition` — C1 (as `hvarT`), the box on the reported `T̂`, the proto…
 - `PURE-MATH` · `hardGateBundle_of_certificates_report` — The gate is implied by the individual certificate verdicts as the companion's `evaluate_certificates` reports them: the Python `all_passed` on the unconditio…
 - `REDUCED` · `gateCore_composition_error_le` — Composition error under the core clauses (REDUCED, Tognoni 2010).  _[Tognoni 2010]_
-- `REDUCED` · `hardGateBundle_composition_error_le` — HEADLINE — what passing the hard gate formally buys (REDUCED, Tognoni 2010).  _[Tognoni 2010]_
+- `REDUCED` · `hardGateBundle_composition_error_le` — The composition bound under the hard gate (REDUCED, Tognoni 2010); vacuous at realistic parameters.  _[Tognoni 2010]_
 - `REDUCED` · `hardGateBundle_slope_error_le` — C4 buys a slope (inverse-temperature) precision certificate, not a composition bound.  _[Tognoni 2010]_
-- `REDUCED` · `hardGateBundle_thermalizationLimit` — C7 buys LTE admissibility of the reported state, not a composition bound.  _[Cristoforetti 2010]_
+- `REDUCED` · `hardGateBundle_thermalizationLimit` — C7 buys McWhirter admissibility of the reported state, not LTE and not a composition bound.  _[Cristoforetti 2010]_
 
 ## `FisherLineSelection.lean`  (CflibsFormal)
 *Fisher information, the Cramér–Rao bound, and "adding a line never hurts"*
@@ -576,9 +582,9 @@
 
 **Results**
 - `PURE-MATH` · `fisherInfoSlope_nonneg` — The Fisher information is nonnegative: a nonnegative sum of squares over a square.
-- `PURE-MATH` · `fisherInfoSlope_pos` — The Fisher information is strictly positive under the spread gate (`0 < SS_E`, the pipeline's C1 certificate `energySpreadCert_iff`) and nondegenerate noise…
-- `PURE-MATH` · `crlb_slope` — The Cramér–Rao lower bound for the slope: `σ²/SS_E = I(β)⁻¹`.
-- `PURE-MATH` · `olsSlope_attains_crlb` — OLS attains the Cramér–Rao bound — OLS is efficient.
+- `PURE-MATH` · `fisherInfoSlope_pos` — The Fisher information is strictly positive under the spread gate (`0 < SS_E`, the condition of the C1 certificate, `energySpreadCert_iff`) and nondegenerate…
+- `PURE-MATH` · `crlb_slope` — The closed form of the Gaussian-model Cramér–Rao bound for the slope, as algebra on the definition: `σ²/SS_E = (fisherInfoSlope E σ)⁻¹`.
+- `PURE-MATH` · `olsSlope_attains_crlb` — `Var(OLS slope) = (fisherInfoSlope E σ)⁻¹`: OLS attains `σ²/SS_E`, the Gaussian-model Fisher bound as defined (Fisher information is defined, not derived).
 - `PURE-MATH` · `spreadOn_nonneg` — The subset spread is a sum of squares, hence nonnegative.
 - `PURE-MATH` · `spreadOn_empty` — The spread of the empty selection is `0`.
 - `PURE-MATH` · `sum_sub_finsetMean` — The centered sum over a nonempty selected set vanishes: `∑_{j∈S} (Eⱼ − Ē_S) = 0`.
@@ -586,20 +592,20 @@
 - `PURE-MATH` · `spreadOn_insert` — THE ONE-PASS VARIANCE UPDATE — the exact gain from adding a line.
 - `PURE-MATH` · `spreadOn_insert_ge` — Adding a line never decreases the energy spread.
 - `PURE-MATH` · `spreadOn_mono` — Monotonicity under inclusion: a superset of lines never has less spread.
-- `PURE-MATH` · `fisherInfo_insert_ge` — Adding a line never decreases the Fisher information of the selected sub-design (`fisherInfoSlope` of the restriction of `E` to the selected lines).
-- `PURE-MATH` · `crlb_insert_le` — Adding a line never increases the Cramér–Rao bound.
+- `PURE-MATH` · `fisherInfo_insert_ge` — Adding a line never decreases the Fisher information, as defined here, under one common noise level `σ` for every line.
+- `PURE-MATH` · `crlb_insert_le` — Adding a line never increases the closed-form bound `σ²/SS_E`.
 - `PURE-MATH` · `spreadOn_insert_eq_iff` — The no-gain criterion.
 - `PURE-MATH` · `spreadOn_insert_lt_iff` — Strict gain iff off the mean.
 - `PURE-MATH` · `no_gain_iff` — `no_gain_iff` — a candidate line carries zero slope information iff its energy equals the current mean.
 - `PURE-MATH` · `nonvacuity_far_line` — Non-vacuity — a far line strictly increases the spread, by exactly the predicted amount.
 - `PURE-MATH` · `nonvacuity_line_at_mean` — Non-vacuity — a line at the current mean adds nothing.
-- `PURE-MATH` · `nonvacuity_crlb_attained` — Non-vacuity — the Cramér–Rao bound is attained, with numbers, on a genuine probability space.
+- `PURE-MATH` · `nonvacuity_crlb_attained` — Non-vacuity — `Var(β̂) = (fisherInfoSlope E σ)⁻¹` holds with numbers on a genuine probability space.
 
 ## `ForwardMap.lean`  (CflibsFormal)
 *Part 4: the optically-thin forward map*
 
 **Definitions**
-- `lineIntensity` — Integrated intensity of the optically-thin emission line for the bound-bound transition with upper level `k`: `I_{ki} = Fcal · A_k · n_k`, where `n_k = popul…
+- `model REDUCED` · `lineIntensity` — Integrated intensity of the optically-thin emission line for the bound-bound transition with upper level `k`: `I_{ki} = Fcal · A_k · n_k`, where `n_k = popul…  _[Ciucci 1999]_
 
 **Results**
 - `PURE-MATH` · `lineIntensity_pos` — Positivity of the observable.
@@ -630,13 +636,13 @@
 - `PURE-MATH` · `relTransfer_mono` — The relative-error transfer `δ ↦ δ/(1 − δ)` is monotone below `1`.
 - `PURE-MATH` · `heteroSlopeBound_le_global` — The heterogeneous constant is never worse than the global one.
 - `PURE-MATH` · `heteroSlopeBound_const` — The global constant is EXACTLY the constant-`δ` special case.
-- `EXACT` · `olsSlope_aliasing_A` — EXACT aliasing identity for the fitted SLOPE (A-channel).  _[Tognoni 2010]_
+- `EXACT → REDUCED` · `olsSlope_aliasing_A` — EXACT aliasing identity for the fitted SLOPE (A-channel).  _[Tognoni 2010]_  (via `lineIntensity`)
 - `REDUCED` · `olsSlope_aliasing_A_hetero` — HETEROGENEOUS atomic-data slope bound (the main result).  _[Tognoni 2010]_
 - `REDUCED` · `olsSlope_aliasing_A_global` — The GLOBAL lumped-`δ` bound, recovered as a corollary.  _[Tognoni 2010]_
 - `REDUCED` · `temp_rel_error_atomicData_hetero` — Per-line atomic-data error ⇒ relative TEMPERATURE error.  _[Tognoni 2010]_
 - `PURE-MATH` · `heteroSlopeBound_lt_global_witness` — NON-VACUITY / strict-improvement witness (the point of the whole module).
 - `PURE-MATH` · `nvP_heteroSlopeBound_value` — The physical witness's bound is genuinely non-zero: `heteroSlopeBound = 3/2`, so the preceding `example` is not a vacuous `|·| ≤ 0` statement.
-- `EXACT` · `nvP_slope_bias_eq_log` — The physical witness's slope bias is NOT zero — the `example` above is bracketed by two non-zero numbers, `0 < |Δβ| = |log (2/3)| ≤ 3/2`, not a `0 ≤ 3/2` col…  _[Tognoni 2010]_
+- `EXACT → REDUCED` · `nvP_slope_bias_eq_log` — The physical witness's slope bias is NOT zero — the `example` above is bracketed by two non-zero numbers, `0 < |Δβ| = |log (2/3)| ≤ 3/2`, not a `0 ≤ 3/2` col…  _[Tognoni 2010]_  (via `lineIntensity`)
 
 ## `HydrogenStark.lean`  (CflibsFormal)
 *the hydrogen-line (Balmer) Stark electron-density diagnostic*
@@ -655,13 +661,13 @@
 *Part 5: identifiability of the inverse problem*
 
 **Results**
-- `EXACT` · `lineIntensity_ratio_closed_form` — Two-line intensity-ratio closed form.  _[Ciucci 1999]_
-- `EXACT` · `temperature_identifiability` — Target 1 — temperature identifiability.  _[Ciucci 1999]_
-- `EXACT` · `temperature_degeneracy` — Degeneracy converse — equal energies make the ratio `T`-independent.  _[Ciucci 1999]_
-- `EXACT` · `temperature_not_identifiable_of_degenerate` — Degenerate pair ⇒ temperature NOT identifiable.  _[Ciucci 1999]_
-- `EXACT` · `density_identifiability` — Target 2 — relative-density / composition identifiability.  _[Ciucci 1999]_
+- `EXACT → REDUCED` · `lineIntensity_ratio_closed_form` — Two-line intensity-ratio closed form.  _[Ciucci 1999]_  (via `lineIntensity`)
+- `EXACT → REDUCED` · `temperature_identifiability` — Target 1 — temperature identifiability.  _[Ciucci 1999]_  (via `lineIntensity`)
+- `EXACT → REDUCED` · `temperature_degeneracy` — Degeneracy converse — equal energies make the ratio `T`-independent.  _[Ciucci 1999]_  (via `lineIntensity`)
+- `EXACT → REDUCED` · `temperature_not_identifiable_of_degenerate` — Degenerate pair ⇒ temperature NOT identifiable.  _[Ciucci 1999]_  (via `lineIntensity`)
+- `EXACT → REDUCED` · `density_identifiability` — Target 2 — relative-density / composition identifiability.  _[Ciucci 1999]_  (via `lineIntensity`)
 - `EXACT` · `electron_density_identifiability` — Target 3 — electron-density / stage-ratio identifiability via Saha.  _[Saha–Eggert (Griem)]_
-- `EXACT` · `temperature_ratio_near_degenerate` — Quantitative near-degeneracy — linear-in-`ΔE` temperature-conditioning bound.  _[Ciucci 1999]_
+- `EXACT → REDUCED` · `temperature_ratio_near_degenerate` — Quantitative near-degeneracy — linear-in-`ΔE` temperature-conditioning bound.  _[Ciucci 1999]_  (via `lineIntensity`)
 
 ## `InhomogeneityBias.lean`  (CflibsFormal)
 *Inhomogeneity bias: the sign of the Boltzmann-plot error is a theorem*
@@ -707,20 +713,20 @@
 - `REDUCED` · `mixed_apparentBeta_antitone` — The curvature sign, in observables.  _[Ciucci 1999]_
 
 ## `IntervalEnclosure.lean`  (CflibsFormal)
-*a verified ε-ball enclosure for the OLS forward map*
+*a Lipschitz bound on the OLS design normal matrix*
 
 **Definitions**
 - `energyBox` — The energy box of sup-radius `B`: all energy vectors with `|Eₖ| ≤ B` for every line `k`.
-- `normalMap` — The Boltzmann-plot forward/design map, `E ↦ designNormalMatrix E`, presented as an entrywise function `Fin 2 → Fin 2 → ℝ` so that both source and target carr…
+- `normalMap` — The Boltzmann-plot design normal-matrix map, `E ↦ designNormalMatrix E`, presented as an entrywise function `Fin 2 → Fin 2 → ℝ` so that both source and targe…
 
 **Results**
-- `PURE-MATH` · `normalMap_zero_zero` — —
-- `PURE-MATH` · `normalMap_zero_one` — —
-- `PURE-MATH` · `normalMap_one_zero` — —
-- `PURE-MATH` · `normalMap_one_one` — —
+- `PURE-MATH` · `normalMap_zero_zero` — The `(0,0)` entry of the normal matrix is `∑ₖ Eₖ²`.
+- `PURE-MATH` · `normalMap_zero_one` — The `(0,1)` entry of the normal matrix is `∑ₖ Eₖ`.
+- `PURE-MATH` · `normalMap_one_zero` — The `(1,0)` entry of the normal matrix is `∑ₖ Eₖ`.
+- `PURE-MATH` · `normalMap_one_one` — The `(1,1)` entry of the normal matrix is the line count `n = card ι`.
 - `PURE-MATH` · `normalMap_dist_le` — The explicit Lipschitz bound (real form).
 - `PURE-MATH` · `normalMap_lipschitzOnWith` — The Lipschitz bound, packaged.
-- `PURE-MATH` · `normalMap_epsilon_ball` — The ε-ball enclosure (the verification link).
+- `PURE-MATH` · `normalMap_epsilon_ball` — The ε-ball enclosure for the normal matrix.
 
 ## `Inverse.lean`  (CflibsFormal)
 *Part 6: the algorithm-agnostic inverse-problem framework*
@@ -732,17 +738,18 @@
 - `trueComposition` — The true composition of a parameter set: the closure number fractions `C s = N s / ∑ₜ N t` of the per-species densities, reusing `Closure.composition`.
 - `Sound` — Soundness of an estimator: on any observation vector that genuinely arises from the forward model applied to an *admissible* parameter set `p`, the estimator…
 - `rawCompositionEstimator` — A concrete composition estimator: normalize the raw observation vector by its own total, `est obs = composition obs`.
+- `model REDUCED` · `PlasmaParams` (structure) — Encoding of the parameters of a multi-species LTE plasma for the inverse problem.  _[Ciucci 1999]_
 
 **Results**
-- `EXACT` · `general_identifiability` — General identifiability — the central theorem.  _[Ciucci 1999]_
-- `PURE-MATH` · `sound_estimators_agree` — Cross-method agreement bridge.
+- `EXACT → REDUCED` · `general_identifiability` — General identifiability — the central theorem.  _[Ciucci 1999]_  (via `PlasmaParams`, `lineIntensity`)
+- `PURE-MATH` · `sound_estimators_agree` — Abstract agreement lemma.
 - `REDUCED` · `rawCompositionEstimator_sound` — Soundness of the raw estimator (constant-`emit` case).  _[Ciucci 1999]_
 
 ## `JointConvergence.lean`  (CflibsFormal)
 *the joint `(T, n_e)` outer-loop contraction (Frontier)*
 
 **Results**
-- `REDUCED` · `jointConvergence` — The CF-LIBS joint `(T, n_e)` outer loop contracts (`REDUCED`; Aguilera & Aragón 2007, Model B; Saha–Eggert (Griem)).  _[Aguilera & Aragón 2007]_
+- `REDUCED` · `jointConvergence` — The frozen-offset Model-B joint `(T, n_e)` outer loop contracts (`REDUCED`; Aguilera & Aragón 2007, Model B; Saha–Eggert (Griem)).  _[Aguilera & Aragón 2007]_
 
 ## `JointIdentifiability.lean`  (CflibsFormal)
 *Part 7: joint (temperature, composition) identifiability*
@@ -751,7 +758,7 @@
 - `observe` — Two-line observation / forward map.
 
 **Results**
-- `EXACT` · `joint_identifiability` — Joint (temperature, composition) identifiability — discharging the `hTratio` caveat.  _[Ciucci 1999]_
+- `EXACT → REDUCED` · `joint_identifiability` — Joint (temperature, composition) identifiability — discharging the `hTratio` caveat.  _[Ciucci 1999]_  (via `PlasmaParams`, `lineIntensity`)
 
 ## `LadenburgReiche.lean`  (CflibsFormal)
 *the sharp Ladenburg–Reiche asymptotic equivalent*
@@ -857,15 +864,15 @@
 - `EXACT` · `recoveredComposition_eq_inflation` — Recovered = true × inflation: `Ĉ_D s = C_s · (T/∑_{t∈D} n_t)`.  _[Tognoni 2010]_
 - `EXACT` · `composition_le_recoveredComposition` — Over-estimation of every detected element: `C_s ≤ Ĉ_D s`.  _[Tognoni 2010]_
 - `PURE-MATH` · `missingFraction_nonneg` — The missing fraction is nonnegative.
-- `EXACT` · `recoveredDensityOfSpectrum_eq` — The recovered-density vector of a forward spectrum equals the true densities `N` pointwise.  _[Ciucci 1999]_
-- `EXACT` · `recovered_ratio_from_intensities` — The recovered subcomposition from REAL forward intensities is the true ratio `N_s/N_t`, independent of the detected set `D`.  _[Aitchison 1986]_
+- `EXACT → REDUCED` · `recoveredDensityOfSpectrum_eq` — The recovered-density vector of a forward spectrum equals the true densities `N` pointwise.  _[Ciucci 1999]_  (via `lineIntensity`)
+- `EXACT → REDUCED` · `recovered_ratio_from_intensities` — The recovered subcomposition from REAL forward intensities is the true ratio `N_s/N_t`, independent of the detected set `D`.  _[Aitchison 1986]_  (via `lineIntensity`)
 - `PURE-MATH` · `sahaSplit_sum` — The two stages partition the element's total density: `n_neutral + n_ion = N_tot` (exact at any `n_e`).
 - `REDUCED` · `sahaSplit_saha` — The split is genuinely the Saha split: `n_ion·n_e/n_neutral = S`.  _[Aguilera & Aragón 2007]_
 - `REDUCED` · `sahaIonDensity_antitone` — Ionization suppression.  _[Aguilera & Aragón 2007]_
-- `EXACT` · `homologousPair_ratio_closed_form` — Cross-species two-line ratio — closed form (shared partition function).  _[Ciucci 1999]_
-- `EXACT` · `homologousPair_ratio_temperature_invariant` — THE per-shot-`T` deliverable — homologous-pair exact temperature invariance.  _[Ciucci 1999]_
-- `EXACT` · `nonHomologousPair_ratio_temperature_dependent` — Contrast — invariance is a property OF the energy matching.  _[Ciucci 1999]_
-- `EXACT` · `homologousPair_ratio_perU_closed_form` — Per-species-`U` two-line ratio — closed form with the `U`-residual explicit.  _[Ciucci 1999]_
+- `REDUCED` · `homologousPair_ratio_closed_form` — Cross-species two-line ratio — closed form (shared partition function).  _[Ciucci 1999]_
+- `REDUCED` · `homologousPair_ratio_temperature_invariant` — Homologous-pair temperature invariance in the shared-catalog model.  _[Ciucci 1999]_
+- `REDUCED` · `nonHomologousPair_ratio_temperature_dependent` — Contrast — invariance is a property OF the energy matching.  _[Ciucci 1999]_
+- `EXACT → REDUCED` · `homologousPair_ratio_perU_closed_form` — Per-species-`U` two-line ratio — closed form with the `U`-residual explicit.  _[Ciucci 1999]_  (via `lineIntensityPerU`)
 - `REDUCED` · `homologousPair_ratio_perU_temperature_invariant` — Per-species-`U` homologous-pair temperature invariance (REDUCED).  _[Ciucci 1999]_
 
 ## `MatrixIonizationCoupling.lean`  (CflibsFormal)
@@ -881,7 +888,7 @@
 - `REDUCED` · `coupledNe_lt_of_Ntot_lt` — Abundance comparative statics (`REDUCED`; Saha–Eggert, Griem).  _[Saha–Eggert (Griem)]_
 - `REDUCED` · `coupledNe_le_of_Ntot_le` — One-directional abundance bound (`REDUCED`; Saha–Eggert, Griem).  _[Saha–Eggert (Griem)]_
 - `REDUCED` · `coupledNe_exists_lt_of_S_lt` — Unconditional existential headline (`REDUCED`; Saha–Eggert, Griem).  _[Saha–Eggert (Griem)]_
-- `REDUCED` · `envelope_ionization_matrix_shift` — Ionization-suppression matrix-shift envelope (`REDUCED` comparative statics + `EXACT` homologous invariance; Saha–Eggert/Griem, Aguilera & Aragón 2007, Ciucc…  _[Aguilera & Aragón 2007]_
+- `REDUCED` · `envelope_ionization_matrix_shift` — Ionization-suppression matrix-shift envelope (`REDUCED` comparative statics + `REDUCED` shared-`U` homologous invariance; Saha–Eggert/Griem, Aguilera & Aragó…  _[Aguilera & Aragón 2007]_
 
 ## `MultiSpecies.lean`  (CflibsFormal)
 *Multi-species / multi-stage composition glue*
@@ -890,21 +897,21 @@
 - `speciesComposition` — Elemental/species composition vector: the number fraction of species `s`, `C s = N s / (∑_t N t)`.
 - `deNormalizedDensity` — Number density of species `s` recovered from its measured designated-line intensity `I` by dividing out the calibration `Fcal`, Einstein coefficient `A s`, d…
 - `deNormalizedDensityPerU` — Per-species de-normalized density reader.
-- `lineIntensityPerU` — Per-species forward line-emission model.
+- `model REDUCED` · `lineIntensityPerU` — Per-species forward line-emission model.  _[Ciucci 1999]_
 
 **Results**
 - `EXACT` · `speciesComposition_sum_one` — Multi-species closure.  _[Ciucci 1999]_
 - `EXACT` · `speciesComposition_mem_stdSimplex` — Multi-species closure as simplex membership.  _[Ciucci 1999]_
-- `EXACT` · `deNormalized_lineIntensity` — Inversion identity.  _[Ciucci 1999]_
-- `EXACT` · `density_ratio_from_intensities` — Density-from-intensity bridge.  _[Ciucci 1999]_
+- `EXACT → REDUCED` · `deNormalized_lineIntensity` — Inversion identity.  _[Ciucci 1999]_  (via `lineIntensity`)
+- `EXACT → REDUCED` · `density_ratio_from_intensities` — Density-from-intensity bridge.  _[Ciucci 1999]_  (via `lineIntensity`)
 - `PURE-MATH` · `deNormalizedDensity_eq_deNormalizedDensityPerU` — Shared-`U` reader is the per-`U` reader at `Us = partitionFunction kB T g E`.
 - `PURE-MATH` · `lineIntensity_eq_lineIntensityPerU` — Shared-`U` forward map is the per-`U` forward map at `Us = partitionFunction kB T g E`.
-- `EXACT` · `deNormalized_lineIntensity_perU` — Per-species inversion identity.  _[Ciucci 1999]_
-- `EXACT` · `deNormalized_lineIntensity_ofPerU` — Shared-`U` inversion identity as a special case of the per-`U` one.  _[Ciucci 1999]_
-- `EXACT` · `density_ratio_from_intensities_perU` — Per-species density-from-intensity bridge.  _[Ciucci 1999]_
-- `EXACT` · `density_ratio_from_intensities_ofPerU` — Shared-`U` ratio theorem as a special case of the per-`U` one.  _[Ciucci 1999]_
+- `EXACT → REDUCED` · `deNormalized_lineIntensity_perU` — Per-species inversion identity.  _[Ciucci 1999]_  (via `lineIntensityPerU`)
+- `EXACT → REDUCED` · `deNormalized_lineIntensity_ofPerU` — Shared-`U` inversion identity as a special case of the per-`U` one.  _[Ciucci 1999]_  (via `lineIntensity`)
+- `EXACT → REDUCED` · `density_ratio_from_intensities_perU` — Per-species density-from-intensity bridge.  _[Ciucci 1999]_  (via `lineIntensityPerU`)
+- `EXACT → REDUCED` · `density_ratio_from_intensities_ofPerU` — Shared-`U` ratio theorem as a special case of the per-`U` one.  _[Ciucci 1999]_  (via `lineIntensity`)
 - `PURE-MATH` · `speciesComposition_ratio` — Composition ratio equals density ratio.
-- `EXACT` · `speciesComposition_ratio_from_intensities_perU` — Relative composition from intensities (per-species `U`).  _[Ciucci 1999]_
+- `EXACT → REDUCED` · `speciesComposition_ratio_from_intensities_perU` — Relative composition from intensities (per-species `U`).  _[Ciucci 1999]_  (via `lineIntensityPerU`)
 
 ## `NoiseToComposition.lean`  (CflibsFormal)
 *the end-to-end noise → composition chain (gap #5, the composed bound)*
@@ -955,8 +962,8 @@
 **Results**
 - `PURE-MATH` · `nlObjective_continuousOn` — Continuity on the physical box.
 - `REDUCED` · `nlObjective_exists_min` — Existence of the joint minimizer (headline).  _[Tognoni 2010]_
-- `EXACT` · `nlObjective_onManifold_min` — On-manifold anchor.  _[Tognoni 2010]_
-- `EXACT` · `lineIntensity_linear_in_N` — Linearity of the forward map in the density `N` (EXACT).  _[Ciucci 1999]_
+- `EXACT → REDUCED` · `nlObjective_onManifold_min` — On-manifold anchor.  _[Tognoni 2010]_  (via `lineIntensity`)
+- `EXACT → REDUCED` · `lineIntensity_linear_in_N` — Linearity of the forward map in the density `N` (EXACT).  _[Ciucci 1999]_  (via `lineIntensity`)
 - `PURE-MATH` · `nlObjective_Nsection_decomposition` — `N`-section decomposition (PURE-MATH).
 - `PURE-MATH` · `profiledDensity_denom_pos` — Nondegeneracy of the profiled least squares.
 - `REDUCED` · `profiledDensity_isMinOn_Nsection` — `N`-section global minimality (headline, REDUCED).  _[Tognoni 2010]_
@@ -966,20 +973,20 @@
 - `PURE-MATH` · `nlObjective_eq_zero_iff` — Exact-fit characterization of a zero residual.
 - `PURE-MATH` · `profiledDensity_onManifold` — Profiled density recovers the true density on-manifold.
 - `PURE-MATH` · `profiledResidual_two_closed_form` — Two-line profiled-residual closed form (PURE-MATH).
-- `EXACT` · `profiledT_onManifold_unique` — On-manifold `T`-uniqueness for `m` lines (EXACT, Ciucci 1999).  _[Ciucci 1999]_
-- `EXACT` · `profiledT_two_onManifold_unique` — Two-line on-manifold `T`-uniqueness (EXACT, Ciucci 1999).  _[Ciucci 1999]_
-- `EXACT` · `joint_onManifold_unique` — Joint `(T, N)` on-manifold uniqueness (EXACT, Ciucci 1999).  _[Ciucci 1999]_
-- `EXACT` · `profiledT_offManifold_unique` — OFF-manifold `T`-uniqueness for `m` lines (EXACT, Ciucci 1999).  _[Ciucci 1999]_
-- `EXACT` · `profiledT_two_offManifold_unique` — Two-line OFF-manifold `T`-uniqueness (EXACT, Ciucci 1999).  _[Ciucci 1999]_
+- `EXACT → REDUCED` · `profiledT_onManifold_unique` — On-manifold `T`-uniqueness for `m` lines (EXACT, Ciucci 1999).  _[Ciucci 1999]_  (via `lineIntensity`)
+- `EXACT → REDUCED` · `profiledT_two_onManifold_unique` — Two-line on-manifold `T`-uniqueness (EXACT, Ciucci 1999).  _[Ciucci 1999]_  (via `lineIntensity`)
+- `EXACT → REDUCED` · `joint_onManifold_unique` — Joint `(T, N)` on-manifold uniqueness (EXACT, Ciucci 1999).  _[Ciucci 1999]_  (via `lineIntensity`)
+- `EXACT → REDUCED` · `profiledT_offManifold_unique` — Exact-fit `T`-uniqueness for `m` lines (EXACT, Ciucci 1999): at most one temperature fits `obs` exactly.  _[Ciucci 1999]_  (via `lineIntensity`)
+- `EXACT → REDUCED` · `profiledT_two_offManifold_unique` — Two-line exact-fit `T`-uniqueness (EXACT, Ciucci 1999).  _[Ciucci 1999]_  (via `lineIntensity`)
 - `REDUCED` · `profiledResidual_stability_in_obs` — Near-manifold stability of the profiled residual in the observation (REDUCED, Tognoni 2010).  _[Tognoni 2010]_
 - `REDUCED` · `profiledResidual_nearManifold_bound` — Near-manifold residual bound at the true temperature (REDUCED, Tognoni 2010).  _[Tognoni 2010]_
 - `REDUCED` · `profiledResidual_true_strict_lt` — Near-manifold strict domination by the true temperature (REDUCED, Tognoni 2010).  _[Tognoni 2010]_
 - `REDUCED` · `profiledResidual_minimizer_trapped` — Near-manifold minimizer localization / trapping (REDUCED, Tognoni 2010).  _[Tognoni 2010]_
 - `PURE-MATH` · `profiledResidual_of_orthogonal` — Profiled residual at an orthogonal observation (PURE-MATH).
-- `PURE-MATH` · `profiledResidual_not_injective_m3` — Off-manifold `T`-non-uniqueness for `m = 3` (EXACT, HONEST NEGATIVE result).
-- `EXACT` · `two_ratio_diff` — The two-line intensity-ratio difference is a scaled `Real.exp` difference.  _[Ciucci 1999]_
-- `EXACT` · `clean_residual_ratio` — On-manifold, the two-line profiled residual in the intensity-ratio coordinate.  _[Ciucci 1999]_
-- `REDUCED` · `profiledResidual_metric_bound` — —  _[Tognoni 2010]_
+- `PURE-MATH` · `profiledResidual_not_injective_m3` — Off-manifold `T`-non-uniqueness for `m = 3` (PURE-MATH, HONEST NEGATIVE result).
+- `EXACT → REDUCED` · `two_ratio_diff` — The two-line intensity-ratio difference is a scaled `Real.exp` difference.  _[Ciucci 1999]_  (via `lineIntensity`)
+- `EXACT → REDUCED` · `clean_residual_ratio` — On-manifold, the two-line profiled residual in the intensity-ratio coordinate.  _[Ciucci 1999]_  (via `lineIntensity`)
+- `REDUCED` · `profiledResidual_metric_bound` — Two-line metric localization of a noisy profiled-`T` minimizer (REDUCED, Tognoni 2010).  _[Tognoni 2010]_
 - `PURE-MATH` · `profiledRatioResidual_diff` — Algebraic two-point difference identity for the ratio residual (pure `ring`).
 - `REDUCED` · `profiledResidual_two_strictAntiOn` — Strict decrease below the residual apex (REDUCED, Ciucci 1999).  _[Ciucci 1999]_
 - `REDUCED` · `profiledResidual_two_strictMonoOn` — Strict increase above the residual apex (REDUCED, Ciucci 1999).  _[Ciucci 1999]_
@@ -1058,7 +1065,7 @@
 - `REDUCED` · `emergentProfile_half_iff` — The half-maximum condition, transported to the intrinsic shape.  _[Gornushkin 1999]_
 - `REDUCED` · `coreHalfLevel_lt_half` — Core saturation strictly lowers the half-maximum level.  _[Gornushkin 1999]_
 - `REDUCED` · `coreHalfLevel_le_half` — `h(τ) ≤ 1/2`, the non-strict form of `coreHalfLevel_lt_half`.  _[Gornushkin 1999]_
-- `REDUCED` · `halfSA_le_coreHalfLevel` — The escape factor bounds the half-maximum level from below: `SA(τ)/2 ≤ h(τ)`, with `SA` the already-formalized `SelfAbsorption.selfAbsorptionFactor` `(1 − ex…  _[Gornushkin 1999]_
+- `REDUCED → APPROXIMATION` · `halfSA_le_coreHalfLevel` — The escape factor bounds the half-maximum level from below: `SA(τ)/2 ≤ h(τ)`, with `SA` the already-formalized `SelfAbsorption.selfAbsorptionFactor` `(1 − ex…  _[Gornushkin 1999]_  (via `selfAbsorptionFactor`)
 - `REDUCED` · `coreHalfLevel_pos` — The half-maximum level is strictly positive at every finite optical depth: the emergent profile really does have half-maximum points on the intrinsic shape's…  _[Gornushkin 1999]_
 - `REDUCED` · `coreHalfLevel_strictAntiOn` — The half-maximum level falls strictly with optical depth.  _[Gornushkin 1999]_
 - `REDUCED` · `halfWidth_broadens` — Opacity broadens the line — for ANY peaked shape.  _[Gornushkin 1999]_
@@ -1068,18 +1075,18 @@
 - `PURE-MATH` · `lorentzShape_strictAntiOn` — The Lorentzian shape is strictly decreasing away from line centre.
 - `REDUCED` · `lorentzShape_widthRatio` — The broadening ratio names its own witness.  _[Griem 1974]_
 - `REDUCED` · `one_lt_lorentzWidthRatio` — Broadening is strict at every positive optical depth: `1 < R(τ)`.  _[Griem 1974]_
-- `REDUCED` · `kOpacOf_zero` — In the optically thin limit the budget is exactly `1`: no width correction.  _[Gornushkin 1999]_
-- `REDUCED` · `one_le_kOpacOf` — The budget never shrinks a line: `1 ≤ kOpacOf τ` for `τ ≥ 0`.  _[Gornushkin 1999]_
-- `REDUCED` · `lorentzWidthRatio_le_kOpacOf` — The budget dominates the exact broadening ratio: `R(τ) ≤ kOpacOf τ`.  _[Griem 1974]_
-- `REDUCED` · `kOpacOf_strictMonoOn` — The budget is strictly increasing in the optical depth (inherited from the strict antitonicity of the escape factor, `SelfAbsorption.selfAbsorptionFactor_str…  _[Gornushkin 1999]_
-- `REDUCED` · `kOpacOf_le_of_le` — Monotone (non-strict) form of `kOpacOf_strictMonoOn`: a larger optical-depth CEILING gives a larger, still sound, budget.  _[Gornushkin 1999]_
-- `REDUCED` · `kOpacOf_tendsto_one` — The budget is asymptotically exact in the thin limit: `kOpacOf τ → 1` as `τ → 0⁺`, by continuity of `√(2/· − 1)` at `SA → 1` (`SelfAbsorption.selfAbsorptionF…  _[Gornushkin 1999]_
+- `REDUCED → APPROXIMATION` · `kOpacOf_zero` — In the optically thin limit the budget is exactly `1`: no width correction.  _[Gornushkin 1999]_  (via `selfAbsorptionFactor`)
+- `REDUCED → APPROXIMATION` · `one_le_kOpacOf` — The budget never shrinks a line: `1 ≤ kOpacOf τ` for `τ ≥ 0`.  _[Gornushkin 1999]_  (via `selfAbsorptionFactor`)
+- `REDUCED → APPROXIMATION` · `lorentzWidthRatio_le_kOpacOf` — The budget dominates the exact broadening ratio: `R(τ) ≤ kOpacOf τ`.  _[Griem 1974]_  (via `selfAbsorptionFactor`)
+- `REDUCED → APPROXIMATION` · `kOpacOf_strictMonoOn` — The budget is strictly increasing in the optical depth (inherited from the strict antitonicity of the escape factor, `SelfAbsorption.selfAbsorptionFactor_str…  _[Gornushkin 1999]_  (via `selfAbsorptionFactor`)
+- `REDUCED → APPROXIMATION` · `kOpacOf_le_of_le` — Monotone (non-strict) form of `kOpacOf_strictMonoOn`: a larger optical-depth CEILING gives a larger, still sound, budget.  _[Gornushkin 1999]_  (via `selfAbsorptionFactor`)
+- `REDUCED → APPROXIMATION` · `kOpacOf_tendsto_one` — The budget is asymptotically exact in the thin limit: `kOpacOf τ → 1` as `τ → 0⁺`, by continuity of `√(2/· − 1)` at `SA → 1` (`SelfAbsorption.selfAbsorptionF…  _[Gornushkin 1999]_  (via `selfAbsorptionFactor`)
 - `REDUCED` · `lorentzWidthRatio_tendsto_one` — The exact Lorentzian half-width returns to the intrinsic one as `τ → 0⁺`.  _[Griem 1974]_
-- `REDUCED` · `stark_widthObs_le_budget` — The width budget in FWHM form.  _[Griem 1974]_
-- `REDUCED` · `starkOpacity_certificate_sound_of_tau` — THE SELF-CONTAINED STARK/LTE CERTIFICATE.  _[Cristoforetti 2010]_
-- `REDUCED` · `starkOpacity_certificate_sound_of_tau_le` — The usable interface: a `τ` UPPER BOUND suffices.  _[Cristoforetti 2010]_
+- `REDUCED → APPROXIMATION` · `stark_widthObs_le_budget` — The width budget in FWHM form.  _[Griem 1974]_  (via `selfAbsorptionFactor`)
+- `REDUCED → APPROXIMATION` · `starkOpacity_certificate_sound_of_tau` — THE SELF-CONTAINED STARK/LTE CERTIFICATE.  _[Cristoforetti 2010]_  (via `selfAbsorptionFactor`)
+- `REDUCED → APPROXIMATION` · `starkOpacity_certificate_sound_of_tau_le` — The usable interface: a `τ` UPPER BOUND suffices.  _[Cristoforetti 2010]_  (via `selfAbsorptionFactor`)
 - `REDUCED` · `flatProfile_intensity_saturates_width_does_not` — A flat-topped line saturates in intensity but does NOT broaden.  _[Gornushkin 1999]_
-- `REDUCED` · `kOpacOf_two_bounds` — The derived budget at `τ = 2` is a genuine, finite, non-trivial factor: `1 ≤ kOpacOf 2 ≤ 2`.  _[Gornushkin 1999]_
+- `REDUCED → APPROXIMATION` · `kOpacOf_two_bounds` — The derived budget at `τ = 2` is a genuine, finite, non-trivial factor: `1 ≤ kOpacOf 2 ≤ 2`.  _[Gornushkin 1999]_  (via `selfAbsorptionFactor`)
 - `REDUCED` · `lorentzWidthRatio_two_bounds` — The EXACT Lorentzian broadening at `τ = 2` is strictly inside the derived budget: `1 < R(2) ≤ kOpacOf 2 ≤ 2`.  _[Griem 1974]_
 - `REDUCED` · `lorentzWidthRatio_two_lower` — Sharpened lower end of the `τ = 2` bracket: `1.5 ≤ R(2)`.  _[Griem 1974]_
 
@@ -1087,7 +1094,7 @@
 *Optical depth bound to the plasma state — closing the free-`τ` gap*
 
 **Definitions**
-- `opticalDepth` — Line optical depth of a homogeneous LTE slab, bound to the plasma state: `τ = σ₀ · ℓ · n_l`, with `n_l = Boltzmann.population kB T N g E l` the LTE lower-lev…
+- `model REDUCED` · `opticalDepth` — Line optical depth of a homogeneous LTE slab, bound to the plasma state: `τ = σ₀ · ℓ · n_l`, with `n_l = Boltzmann.population kB T N g E l` the LTE lower-lev…  _[Gornushkin 1999]_
 - `effectiveCrossSection` — Boltzmann-weighted line cross-section `σ_ℓ(T) = σ₀ · g_l · exp(−E_l/(k_B T)) / U(T)`: the line-center cross-section reduced by the LTE *fraction* of the spec…
 - `lteSourceStrength` — LTE line source strength `S = I_thin / τ`, written out in closed form: `S = Fcal · A_u · g_u · exp(−E_u/(k_B T)) / (σ₀ · ℓ · g_l · exp(−E_l/(k_B T)))`.
 - `thickLineIntensity` — State-coupled thick line intensity.
@@ -1098,16 +1105,16 @@
 - `PURE-MATH` · `effectiveCrossSection_pos` — The Boltzmann-weighted cross-section is positive: a positive line-center cross-section times a positive LTE lower-level fraction.
 - `PURE-MATH` · `lteSourceStrength_pos` — The LTE line source strength is positive given positive calibration, atomic data, cross-section and path length.
 - `REDUCED` · `opticalDepth_pos` — Positivity, DERIVED.  _[Gornushkin 1999]_
-- `REDUCED` · `opticalDepth_knownTauCert` — The C12 certificate is now discharged from physics, not assumed.  _[Gornushkin 1999]_
+- `REDUCED` · `opticalDepth_knownTauCert` — The C12 predicate holds for a state-bound optical depth.  _[Gornushkin 1999]_
 - `REDUCED` · `opticalDepth_strictMono_density` — Strict monotonicity in density.  _[Gornushkin 1999]_
 - `REDUCED` · `lineIntensity_eq_source_mul_opticalDepth` — Emission = source × optical depth.  _[Gornushkin 1999]_
 - `REDUCED` · `lineIntensity_div_opticalDepth` — The source strength is the measured ratio `I_thin / τ`.  _[Gornushkin 1999]_
 - `REDUCED` · `opticalDepth_div_lineIntensity` — The temperature law of the absorption channel.  _[Gornushkin 1999]_
 - `REDUCED` · `opticalDepth_div_lineIntensity_strictAntiOn_temperature` — Hotter plasmas self-absorb less, relative to what they emit.  _[Gornushkin 1999]_
-- `REDUCED` · `thickLineIntensity_eq_slab` — Saturation law.  _[Gornushkin 1999]_
-- `REDUCED` · `thickLineIntensity_strictMonoOn` — The absorption channel is strictly monotone in density.  _[Gornushkin 1999]_
-- `REDUCED` · `thickLineIntensity_injOn` — THE PAYOFF — the absorption channel identifies the density.  _[Gornushkin 1999]_
-- `REDUCED` · `no_density_alias_of_boundOpticalDepth` — The single-line density alias cannot be reproduced.  _[Gornushkin 1999]_
+- `REDUCED → APPROXIMATION` · `thickLineIntensity_eq_slab` — Saturation law.  _[Gornushkin 1999]_  (via `selfAbsorbedIntensity`)
+- `REDUCED → APPROXIMATION` · `thickLineIntensity_strictMonoOn` — The absorption channel is strictly monotone in density.  _[Gornushkin 1999]_  (via `selfAbsorbedIntensity`)
+- `REDUCED → APPROXIMATION` · `thickLineIntensity_injOn` — THE PAYOFF — the absorption channel identifies the density.  _[Gornushkin 1999]_  (via `selfAbsorbedIntensity`)
+- `REDUCED → APPROXIMATION` · `no_density_alias_of_boundOpticalDepth` — The single-line density alias cannot be reproduced.  _[Gornushkin 1999]_  (via `selfAbsorbedIntensity`)
 - `APPROXIMATION` · `csigma_density_droop_bound` — The Cσ density droop at a STATE-BOUND optical depth.  _[Aragón & Aguilera 2014]_
 - `APPROXIMATION` · `csigma_density_injOn` — Injectivity of the Cσ ordinate in the density, at a state-bound `τ`.  _[Aragón & Aguilera 2014]_
 
@@ -1115,35 +1122,35 @@
 *Wiring the state-bound optical depth into the free-`τ` corpus*
 
 **Results**
-- `REDUCED` · `thickLineIntensity_eq_cogIntensity` — Bridge identity: bound `τ` ⇒ curve of growth.  _[Gornushkin 1999]_
-- `REDUCED` · `boundSelfAbsorptionFactor_strictAntiOn_density` — The escape factor is strictly decreasing in the DENSITY.  _[Gornushkin 1999]_
-- `APPROXIMATION` · `thickLineIntensity_lt_lineIntensity_of_pos_density` — The bias-direction theorem, at the bound `τ`.  _[Gornushkin 1999]_
+- `REDUCED → APPROXIMATION` · `thickLineIntensity_eq_cogIntensity` — Bridge identity: bound `τ` ⇒ curve of growth.  _[Gornushkin 1999]_  (via `cogIntensity`, `selfAbsorbedIntensity`)
+- `REDUCED → APPROXIMATION` · `boundSelfAbsorptionFactor_strictAntiOn_density` — The escape factor is strictly decreasing in the DENSITY.  _[Gornushkin 1999]_  (via `selfAbsorptionFactor`)
+- `REDUCED → APPROXIMATION` · `thickLineIntensity_lt_lineIntensity_of_pos_density` — The bias-direction theorem, at the bound `τ`.  _[Gornushkin 1999]_  (via `selfAbsorbedIntensity`)
 - `REDUCED` · `effectiveCrossSection_lt_of_energy_lt` — A lower-lying lower level absorbs more strongly.  _[Boltzmann]_
 - `PURE-MATH` · `lteSourceStrength_ratio_calibration_free` — The source-strength ratio is calibration- and opacity-free.
-- `REDUCED` · `thickLineIntensity_ratio_eq_source_mul_cogRatio` — The measured two-line ratio is a known multiple of the source-free `cogRatio`.  _[Gornushkin 1999]_
-- `REDUCED` · `thickLineIntensity_ratio_strictAntiOn_density` — THE TWO-LINE PAYOFF, at the bound `τ`.  _[Cristoforetti–Tognoni 2013]_
-- `REDUCED` · `thickLineIntensity_ratio_injOn_density` — Injectivity of the measured two-line ratio in the density.  _[Cristoforetti–Tognoni 2013]_
-- `REDUCED` · `boundOpticalDepth_lumped_alias` — Binding `τ` to `(T, N)` does NOT by itself break the density alias.  _[Gornushkin 1999]_
+- `REDUCED → APPROXIMATION` · `thickLineIntensity_ratio_eq_source_mul_cogRatio` — The measured two-line ratio is a known multiple of the source-free `cogRatio`.  _[Gornushkin 1999]_  (via `cogRatio`, `selfAbsorbedIntensity`)
+- `REDUCED → APPROXIMATION` · `thickLineIntensity_ratio_strictAntiOn_density` — THE TWO-LINE PAYOFF, at the bound `τ`.  _[Cristoforetti–Tognoni 2013]_  (via `selfAbsorbedIntensity`)
+- `REDUCED → APPROXIMATION` · `thickLineIntensity_ratio_injOn_density` — Injectivity of the measured two-line ratio in the density — flat kernel only.  _[Cristoforetti–Tognoni 2013]_  (via `selfAbsorbedIntensity`)
+- `REDUCED → APPROXIMATION` · `boundOpticalDepth_lumped_alias` — Binding `τ` to `(T, N)` does NOT by itself break the density alias.  _[Gornushkin 1999]_  (via `selfAbsorbedIntensity`)
 
 ## `OuterLoopModelB.lean`  (CflibsFormal)
 *the outer temperature iteration, Model B headline (Frontier 04)*
 
 **Results**
-- `REDUCED` · `outerLoop_contracts` — The CF-LIBS outer temperature loop contracts (`REDUCED`; Aguilera & Aragón 2007, Model B).  _[Aguilera & Aragón 2007]_
+- `REDUCED` · `outerLoop_contracts` — The frozen-offset Model-B outer loop contracts (`REDUCED`; Aguilera & Aragón 2007, Model B).  _[Aguilera & Aragón 2007]_
 
 ## `PartialLTE.lean`  (CflibsFormal)
 *the partial-LTE thermalization limit*
 
 **Definitions**
-- `thermalizationLimit` — Partial-LTE thermalization (collision) limit energy `E* = (n_e/(C·√T))^(1/3)`: the McWhirter criterion inverted for the largest energy gap a plasma of electr…
-- `thermalized` — Partial-LTE membership.
+- `thermalizationLimit` — Partial-LTE thermalization (collision) limit energy `E* = (n_e/(C·√T))^(1/3)`: the McWhirter criterion inverted for the largest energy gap that passes the te…
+- `thermalized` — Partial-LTE membership (McWhirter test in gap form).
 
 **Results**
 - `PURE-MATH` · `thermalizationLimit_pos` — The thermalization limit is strictly positive for positive prefactor, temperature, and density.
 - `REDUCED` · `mcwhirter_iff_thermalizationLimit` — The McWhirter bound and the thermalization limit are the same criterion, two ways.  _[Cristoforetti 2010]_
 - `REDUCED` · `lteValid_iff_thermalized` — The same criterion in the project's own vocabulary.  _[McWhirter 1965]_
-- `PURE-MATH` · `thermalizationLimit_mono_ne` — A denser plasma thermalizes more levels.
-- `PURE-MATH` · `thermalizationLimit_antitone_T` — A hotter plasma thermalizes fewer levels.
+- `PURE-MATH` · `thermalizationLimit_mono_ne` — A denser plasma passes the test for larger gaps.
+- `PURE-MATH` · `thermalizationLimit_antitone_T` — A hotter plasma passes the test for smaller gaps only.
 - `REDUCED` · `thermalized_recovers_gap` — Round-trip: the thermalization limit saturates the McWhirter bound.  _[McWhirter 1965]_
 
 ## `PartitionLipschitz.lean`  (CflibsFormal)
@@ -1290,9 +1297,9 @@
 - `stageIntercept` — Stage intercept of the Saha–Boltzmann plot.
 
 **Results**
-- `REDUCED` · `sahaBoltzmann_plot` — Saha–Boltzmann plot.  _[Yalcin 1999]_
+- `REDUCED` · `sahaBoltzmann_plot` — Saha–Boltzmann plot (uncollapsed: two parallel lines).  _[Yalcin 1999]_
 - `EXACT` · `sahaBoltzmann_shift_eq_log_saha` — Saha–Boltzmann shift equals the log Saha factor.  _[Yalcin 1999]_
-- `EXACT` · `saha_joint_identifiability` — Joint identifiability of `(T, n_e)` from the Saha–Boltzmann plot.  _[Yalcin 1999]_
+- `EXACT → REDUCED` · `saha_joint_identifiability` — Joint identifiability of `(T, n_e)` from the Saha–Boltzmann plot.  _[Yalcin 1999]_  (via `lineIntensity`)
 
 ## `SahaRangeEnclosure.lean`  (CflibsFormal)
 *an a-priori Saha `S(T)`-range enclosure (Frontier 04)*
@@ -1300,7 +1307,7 @@
 **Results**
 - `EXACT` · `sahaFactor_mem_Icc` — Saha-factor range enclosure (EXACT, Saha–Eggert (Griem)).  _[Saha–Eggert (Griem)]_
 - `EXACT` · `electronDensityFromRatio_mem_Icc` — Density-reader range enclosure (EXACT, Saha–Eggert (Griem)).  _[Saha–Eggert (Griem)]_
-- `REDUCED` · `outerLoop_contracts_apriori` — The CF-LIBS outer temperature loop contracts — a-priori density invariance (`REDUCED`; Aguilera & Aragón 2007, Model B; Saha–Eggert (Griem)).  _[Aguilera & Aragón 2007]_
+- `REDUCED` · `outerLoop_contracts_apriori` — The frozen-offset Model-B outer loop contracts — a-priori density invariance (`REDUCED`; Aguilera & Aragón 2007, Model B; Saha–Eggert (Griem)).  _[Aguilera & Aragón 2007]_
 
 ## `SahaStability.lean`  (CflibsFormal)
 *Part 2b: stability of the `n_e` diagnostic*
@@ -1325,21 +1332,21 @@
 *self-absorption / optical-thickness-aware forward map*
 
 **Definitions**
-- `selfAbsorptionFactor` — Curve-of-growth self-absorption factor `SA(τ)`.
-- `selfAbsorbedIntensity` — Optically-thick (self-absorbed) line intensity.
-- `slabIntensity` — Radiative-transfer slab intensity.
+- `model APPROXIMATION` · `selfAbsorptionFactor` — Flat-profile (line-centre) self-absorption factor `SA(τ)`.  _[Gornushkin 1999]_
+- `model APPROXIMATION` · `selfAbsorbedIntensity` — Optically-thick (self-absorbed) line intensity — flat-profile model.  _[Gornushkin 1999]_
+- `slabIntensity` — Radiative-transfer slab intensity at one frequency.
 
 **Results**
 - `PURE-MATH` · `selfAbsorptionFactor_pos` — Positivity of the self-absorption factor.
 - `PURE-MATH` · `selfAbsorptionFactor_le_one` — Self-absorption only dims.
 - `PURE-MATH` · `selfAbsorptionFactor_strictAntiOn` — Strict monotonicity of the escape factor.
 - `PURE-MATH` · `selfAbsorptionFactor_tendsto_one` — Thin limit.
-- `APPROXIMATION` · `selfAbsorbedIntensity_le_lineIntensity` — Bias-direction theorem (non-strict).  _[Gornushkin 1999]_
-- `APPROXIMATION` · `selfAbsorbedIntensity_lt_lineIntensity` — Bias-direction theorem (strict).  _[Gornushkin 1999]_
+- `EXACT → APPROXIMATION` · `selfAbsorbedIntensity_le_lineIntensity` — Bias-direction theorem (non-strict).  _[Gornushkin 1999]_  (via `selfAbsorbedIntensity`)
+- `EXACT → APPROXIMATION` · `selfAbsorbedIntensity_lt_lineIntensity` — Bias-direction theorem (strict).  _[Gornushkin 1999]_  (via `selfAbsorbedIntensity`)
 - `EXACT` · `slabIntensity_le_thin` — Radiative-transfer dimming, derived.  _[Gornushkin 1999]_
-- `EXACT` · `slabIntensity_eq_thin_mul_SA` — Curve-of-growth identity (DERIVED, not definitional).  _[Gornushkin 1999]_
-- `EXACT` · `selfAbsorbedIntensity_eq_slab` — The model intensity IS a radiative-transfer slab intensity.  _[Gornushkin 1999]_
-- `EXACT` · `lineIntensity_eq_selfAbsorbedIntensity_div` — Exact curve-of-growth correction (model left-inverse).  _[Gornushkin 1999]_
+- `EXACT → APPROXIMATION` · `slabIntensity_eq_thin_mul_SA` — Curve-of-growth identity (DERIVED, not definitional).  _[Gornushkin 1999]_  (via `selfAbsorptionFactor`)
+- `EXACT → APPROXIMATION` · `selfAbsorbedIntensity_eq_slab` — The model intensity is a slab intensity at a single optical depth.  _[Gornushkin 1999]_  (via `selfAbsorbedIntensity`)
+- `PURE-MATH` · `lineIntensity_eq_selfAbsorbedIntensity_div` — Model left-inverse of the flat-profile correction.
 
 ## `SelfAbsorptionInverse.lean`  (CflibsFormal)
 *Self-absorption coupled into the inverse problem — identifiability preserved vs. lost*
@@ -1349,10 +1356,10 @@
 
 **Results**
 - `PURE-MATH` · `lineIntensity_smul_left` — `N`-linearity of the optically-thin forward map.
-- `EXACT` · `thick_density_identifiability` — PRESERVED (known, matched `τ`) — per-species density identifiability.  _[Bulajic 2002]_
-- `EXACT` · `thick_composition_identifiability` — PRESERVED (known, matched `τ`) — multi-species composition identifiability.  _[Bulajic 2002]_
-- `EXACT` · `selfAbsorption_breaks_identifiability` — LOST (unknown `τ`) — self-absorption breaks identifiability.  _[Bulajic 2002]_
-- `EXACT` · `selfAbsorption_breaks_composition_identifiability` — LOST at the COMPOSITION level (unknown per-species `τ`) — self-absorption breaks closure identifiability.  _[Bulajic 2002]_
+- `EXACT → APPROXIMATION` · `thick_density_identifiability` — PRESERVED (known, matched `τ`) — per-species density identifiability.  _[Bulajic 2002]_  (via `selfAbsorbedIntensity`)
+- `EXACT → APPROXIMATION` · `thick_composition_identifiability` — PRESERVED (known, matched `τ`) — multi-species composition identifiability.  _[Bulajic 2002]_  (via `selfAbsorbedIntensity`)
+- `EXACT → APPROXIMATION` · `selfAbsorption_breaks_identifiability` — LOST (unknown `τ`) — self-absorption breaks identifiability.  _[Bulajic 2002]_  (via `selfAbsorbedIntensity`)
+- `EXACT → APPROXIMATION` · `selfAbsorption_breaks_composition_identifiability` — LOST at the COMPOSITION level (unknown per-species `τ`) — self-absorption breaks closure identifiability.  _[Bulajic 2002]_  (via `selfAbsorbedIntensity`)
 
 ## `SelfReversal.lean`  (CflibsFormal)
 *self-reversal (the two-zone line dip)*
@@ -1364,13 +1371,13 @@
 - `PURE-MATH` · `emergentIntensity_nonneg` — The two-zone emergent intensity is nonnegative for nonnegative source functions and optical depths.
 - `EXACT` · `selfReversal_noShell` — No-shell limit (exact).  _[Cowan–Dieke 1948]_
 - `EXACT` · `selfReversal_uniformSource` — Uniform-source limit (exact).  _[Cowan–Dieke 1948]_
-- `EXACT` · `emergentIntensity_strictAnti_shell` — The self-reversal dip mechanism.  _[Cowan–Dieke 1948]_
+- `EXACT` · `emergentIntensity_strictAnti_shell` — Shell absorption darkens a fixed wavelength.  _[Cowan–Dieke 1948]_
 
 ## `SpatialForward.lean`  (CflibsFormal)
 *spatially-resolved (discrete Abel / onion-peeling) forward model*
 
 **Definitions**
-- `chordIntensity` — The line-of-sight forward map for the onion-peeling discretization of the Abel transform: the lateral chord-intensity vector `I = L · ε`, where `ε : Fin N →…
+- `model REDUCED` · `chordIntensity` — The line-of-sight forward map for the onion-peeling discretization of the Abel transform: the lateral chord-intensity vector `I = L · ε`, where `ε : Fin N →…  _[Parigger 2016]_
 - `onionPeel` — The explicit onion-peeling recovery map: the left inverse of the forward map `chordIntensity`, `onionPeel G I = L⁻¹ · I`.
 - `peelDiagFloor` — The smallest self-path-length `ℓ = ⨅ᵢ Lᵢᵢ` across the shells (the strongest diagonal floor; `> 0` for `N ≥ 1` since the diagonal is positive).
 - `peelCouplingRatio` — The worst per-row coupling ratio `ρ = ⨆ᵢ (∑_{j>i} |Lᵢⱼ|)/Lᵢᵢ`: how strongly, in the extremal row, the already-peeled outer shells couple back into shell `i`…
@@ -1378,8 +1385,8 @@
 **Results**
 - `PURE-MATH` · `chordGeometry_det_ne_zero` — The path-length matrix of a physical onion-peeling geometry is nonsingular: its determinant is the product of the (positive) self-path-lengths, hence nonzero.
 - `PURE-MATH` · `chordGeometry_isUnit` — The path-length matrix is invertible.
-- `EXACT` · `chord_profile_identifiable` — Spatial identifiability — relaxing single-zone homogeneity.  _[Parigger 2016]_
-- `EXACT` · `singleZone_identifiable` — The single-zone homogeneous model (`N = 1`) obtained by instantiating the general spatial identifiability at `N = 1`.  _[Parigger 2016]_
+- `EXACT → REDUCED` · `chord_profile_identifiable` — Spatial identifiability for optically thin chords — relaxing single-zone homogeneity.  _[Parigger 2016]_  (via `chordIntensity`)
+- `EXACT → REDUCED` · `singleZone_identifiable` — The `N = 1` instance of `chord_profile_identifiable`: one homogeneous shell, a `1×1` path-length matrix, scalar injectivity, obtained by instantiation rather…  _[Parigger 2016]_  (via `chordIntensity`)
 - `PURE-MATH` · `peeling_identity` — The onion-peeling recursion as an exact pointwise identity.
 - `PURE-MATH` · `onionPeel_chordIntensity` — `onionPeel` inverts the discrete Abel forward map exactly: `onionPeel G (chordIntensity G.L ε) = ε` for every radial profile `ε`.
 - `PURE-MATH` · `onionPeel_blockTriangular` — The recovery is genuinely *inside-out*: `L⁻¹` is upper-triangular, so the recovered emissivity `εᵢ = (onionPeel G I) i` depends only on the chord intensities…
@@ -1392,10 +1399,10 @@
 *Stark broadening + the McWhirter LTE criterion*
 
 **Definitions**
-- `starkFWHM` — Electron-impact (Stark) full width at half maximum.
+- `model REDUCED` · `starkFWHM` — Electron-impact (Stark) full width at half maximum.  _[Griem 1974]_
 - `starkDensity` — Stark electron-density diagnostic (inverse map).
 - `mcWhirterBound` — McWhirter lower bound on electron density for LTE.
-- `lteValid` — LTE-validity predicate.
+- `lteValid` — McWhirter-admissibility predicate (the name `lteValid` overstates it).
 
 **Results**
 - `REDUCED` · `starkDensity_recovers` — Soundness of the Stark diagnostic.  _[Griem 1974]_
@@ -1404,7 +1411,7 @@
 - `PURE-MATH` · `starkFWHM_isLinear` — Griem linearity, bundled (`IsLinearMap`).
 - `PURE-MATH` · `mcWhirterBound_mono_T` — McWhirter bound increases with temperature.
 - `PURE-MATH` · `mcWhirterBound_mono_dE` — McWhirter bound increases with the energy gap.
-- `EXACT` · `stark_saha_lte_consistent` — Stark–Saha LTE cross-check (conditional bundling).  _[Cristoforetti 2010]_
+- `PURE-MATH` · `stark_saha_lte_consistent` — Stark–Saha–McWhirter conditional bundling.
 
 ## `StarkOpacityGuard.lean`  (CflibsFormal)
 *opacity guard for the Stark electron-density diagnostic*
@@ -1455,10 +1462,10 @@
 
 **Results**
 - `REDUCED` · `temporal_temperature_insitu` — In-situ gate temperature (Boltzmann slope).  _[Tognoni 2010]_
-- `EXACT` · `temporal_composition_invariant` — Per-gate composition soundness (dilution cancels).  _[Ciucci 1999]_
+- `EXACT → REDUCED` · `temporal_composition_invariant` — Per-gate composition soundness (dilution cancels).  _[Ciucci 1999]_  (via `lineIntensity`)
 - `REDUCED` · `temporal_composition_gate_independent` — Cross-gate composition invariance (thin corollary).  _[Tognoni 2010]_
-- `EXACT` · `gateSahaTotalDensity_eq` — The Saha completion is sound at the gate — `n_e` cancels (load-bearing).  _[Tognoni 2010]_
-- `EXACT` · `temporal_saha_composition_invariant` — Per-gate Saha composition soundness (`n_e` and `ρ` both cancel).  _[Ciucci 1999]_
+- `EXACT → REDUCED` · `gateSahaTotalDensity_eq` — The Saha completion is sound at the gate — `n_e` cancels (load-bearing).  _[Tognoni 2010]_  (via `lineIntensity`)
+- `EXACT → REDUCED` · `temporal_saha_composition_invariant` — Per-gate Saha composition soundness (`n_e` and `ρ` both cancel).  _[Ciucci 1999]_  (via `lineIntensity`)
 - `REDUCED` · `temporal_saha_composition_gate_independent` — Cross-gate Saha composition invariance (HEADLINE — thin corollary).  _[Tognoni 2010]_
 - `REDUCED` · `mem_lteWindow_thermalized` — Applicability: gate in the LTE window ⇒ thermalized.  _[Cristoforetti 2010]_
 - `PURE-MATH` · `mcwhirter_requirement_antitone` — McWhirter requirement falls as the plasma cools.
@@ -1504,24 +1511,24 @@
 *a non-circular error enclosure for the Voigt FWHM*
 
 **Results**
-- `EXACT` · `voigtFWHM_ge_max` — Lower sandwich rail (proved outright).  _[Olivero–Longbothum 1977]_
-- `EXACT` · `voigtFWHM_le_olUpper` — Sharp upper rail (proved outright).  _[Olivero–Longbothum 1977]_
+- `EXACT → APPROXIMATION` · `voigtFWHM_ge_max` — Lower sandwich rail (proved outright).  _[Olivero–Longbothum 1977]_  (via `voigtFWHM`)
+- `EXACT → APPROXIMATION` · `voigtFWHM_le_olUpper` — Sharp upper rail (proved outright).  _[Olivero–Longbothum 1977]_  (via `voigtFWHM`)
 - `APPROXIMATION` · `voigtFWHM_naive_upper_false` — Real finding (proved).  _[Olivero–Longbothum 1977]_
-- `REDUCED` · `voigtFWHM_true_enclosure` — Conditional error enclosure (main result).  _[Olivero–Longbothum 1977]_
-- `REDUCED` · `voigtFWHM_true_enclosure_clean` — Clean-constant enclosure.  _[Olivero–Longbothum 1977]_
+- `REDUCED → APPROXIMATION` · `voigtFWHM_true_enclosure` — Conditional error enclosure (main result).  _[Olivero–Longbothum 1977]_  (via `voigtFWHM`)
+- `REDUCED → APPROXIMATION` · `voigtFWHM_true_enclosure_clean` — Clean-constant enclosure.  _[Olivero–Longbothum 1977]_  (via `voigtFWHM`)
 
 ## `VoigtWidth.lean`  (CflibsFormal)
 *the Voigt FWHM combination (Olivero–Longbothum)*
 
 **Definitions**
-- `voigtFWHM` — Voigt FWHM (Olivero–Longbothum 1977).
+- `model APPROXIMATION` · `voigtFWHM` — Voigt FWHM (Olivero–Longbothum 1977).  _[Olivero–Longbothum 1977]_
 
 **Results**
 - `PURE-MATH` · `voigtFWHM_pos` — The Voigt FWHM is strictly positive when there is a nonzero Gaussian width (always true in practice — thermal Doppler — for `wL ≥ 0`).
-- `EXACT` · `voigtFWHM_ge_gauss` — A Voigt profile is at least as wide as its Gaussian part: `w_G ≤ w_V`.  _[Olivero–Longbothum 1977]_
-- `EXACT` · `voigtFWHM_ge_lorentz` — A Voigt profile is at least as wide as its Lorentzian part: `w_L ≤ w_V`.  _[Olivero–Longbothum 1977]_
+- `EXACT → APPROXIMATION` · `voigtFWHM_ge_gauss` — A Voigt profile is at least as wide as its Gaussian part: `w_G ≤ w_V`.  _[Olivero–Longbothum 1977]_  (via `voigtFWHM`)
+- `EXACT → APPROXIMATION` · `voigtFWHM_ge_lorentz` — A Voigt profile is at least as wide as its Lorentzian part: `w_L ≤ w_V`.  _[Olivero–Longbothum 1977]_  (via `voigtFWHM`)
 - `PURE-MATH` · `voigtFWHM_mono_wL` — The Voigt FWHM is increasing in the Lorentzian width `wL`.
 - `PURE-MATH` · `voigtFWHM_mono_wG` — The Voigt FWHM is increasing in the Gaussian width `wG`.
-- `EXACT` · `voigt_gaussian_limit` — Pure-Gaussian limit (exact).  _[Olivero–Longbothum 1977]_
+- `EXACT → APPROXIMATION` · `voigt_gaussian_limit` — Pure-Gaussian limit (exact).  _[Olivero–Longbothum 1977]_  (via `voigtFWHM`)
 - `APPROXIMATION` · `voigt_lorentzian_limit` — Pure-Lorentzian limit (honest restatement).  _[Olivero–Longbothum 1977]_
 

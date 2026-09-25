@@ -1,0 +1,52 @@
+{
+  "total": 1,
+  "offset": 0,
+  "data": [
+    {
+      "paperId": "5a3c4b555c8977c48f70e74504b596b422828c5b",
+      "externalIds": {
+        "MAG": "2067373532",
+        "DOI": "10.1016/J.SAB.2007.10.005",
+        "CorpusId": 97222132
+      },
+      "title": "A numerical study of expected accuracy and precision in Calibration-Free Laser-Induced Breakdown Spectroscopy in the assumption of ideal analytical plasma \u2606",
+      "venue": "",
+      "year": 2007,
+      "citationCount": 236,
+      "authors": [
+        {
+          "authorId": "92372926",
+          "name": "E. Tognoni"
+        },
+        {
+          "authorId": "144043596",
+          "name": "G. Cristoforetti"
+        },
+        {
+          "authorId": "2315692",
+          "name": "S. Legnaioli"
+        },
+        {
+          "authorId": "2638662",
+          "name": "V. Palleschi"
+        },
+        {
+          "authorId": "31203952",
+          "name": "A. Salvetti"
+        },
+        {
+          "authorId": "2107207835",
+          "name": "M. Mueller"
+        },
+        {
+          "authorId": "6448968",
+          "name": "U. Panne"
+        },
+        {
+          "authorId": "14727563",
+          "name": "I. Gornushkin"
+        }
+      ]
+    }
+  ]
+}

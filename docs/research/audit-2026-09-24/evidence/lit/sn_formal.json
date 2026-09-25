@@ -1,0 +1,213 @@
+{
+  "data": [
+    {
+      "score": 0.46184881913841114,
+      "paper": {
+        "corpusId": "270923833",
+        "title": "A Two-stage Identification Method for Switched Linear Systems",
+        "authors": [
+          "Wen-Ju Zheng",
+          "Ye Hao"
+        ],
+        "openAccessInfo": {
+          "license": null,
+          "status": null,
+          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://arxiv.org/abs/2407.02743, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        }
+      },
+      "snippet": {
+        "text": "Proof 3 We will prove the theorem by the Mathematical Induction and take M as the induction variable.\n\nTo the basic case, consider M = 2, {s m } 3 m=1 with s 1 = 1, s 3 = N + 1. Obviously, the case M = 2 is true and the problem (20) with M = 2 have the unique solution according to the Assumption 6.\n\nThen we make the induction that the theorem holds for M \u2212 1 and consider the case with M .Suppose by contradiction that there are two solutions {s m , \u03b2 m } M m=1 and {s \u2032 m , \u03b2 \u2032 m } M m=1 to the problem (20) with M , and we have\n\nAccording to the last segment and the Assumption 6, we have\n\nConsidering the beginning of the last segment, s \u2032 M , and the Assumption 6 with s M , x \u22a4 sM \u03b2 M = 0, x \u22a4 sM \u03b2 M\u22121 = 0, we have s \u2032 M \u2264 s M .This is because if not, this mismatch will result in x \u22a4 sM \u03b2 \u2032 m = 0, m \u2208 {1, \u2022 \u2022 \u2022 , M \u2212 1} which is contradicted to the third condition in Assumption 6.For the same reason with s M and\n\nThen we can derive s M = s \u2032 M and the partition for the last data segment Dm is unique.According to the induction, the solution to the partition of the data D = { D1 , \u2022 \u2022 \u2022 , DM\u22121 } with M \u2212 1 segments is unique and the case with M is proved.Finally, according to the induction, the theorem is proved.\n\nAlthough the uniqueness of the solution to the segmentation problem (20) and the identifiability of the switching instants are guaranteed by Theorem 5, The uniqueness of the solution to the segmentation problem (20) and the identifiability of the switching instants are not necessary for the identification of the parameters of the switched linear system (1), although they are guaranteed by Theorem 5.As a matter of fact, Assumption 6 is a sufficient but not necessary condition for Assumption 5.",
+        "snippetKind": "body"
+      }
+    },
+    {
+      "score": 0.45287037816532266,
+      "paper": {
+        "corpusId": "14674889",
+        "title": "Identification of Sparse Linear Operators",
+        "authors": [
+          "Reinhard Heckel",
+          "H. B\u00f6lcskei"
+        ],
+        "openAccessInfo": {
+          "license": null,
+          "status": "GREEN",
+          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://arxiv.org/abs/1209.5187, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        }
+      },
+      "snippet": {
+        "text": "The proof is then completed by showing that this continuously indexed linear system of equations has a unique solution if \u2206 \u2264 1/2. More formally, we need to relate identifiability according to Definition 1 to solvability of the continuously indexed linear system of equations (25). To this end, we first note that thanks to Lemma 1, it suffices to prove identifiability of \n\nDenote the restriction of the vector s(t, f ) to the entries corresponding to the active cells, i.e., the cells indexed by \u0393, by s \u0393 (t, f ) and let A \u0393 be the matrix containing the columns of A c that correspond to the index set \u0393. The linear system of equations ( 25) then reduces to \n\nSolvability of ( 27) can now formally be related to identifiability through the following lemma, proven in Appendix B. \n\nLemma 2. Let x be given by (16). Then, the (tightest) bounds \u03b1, \u03b2 in (8) for the set of operators H M \u0393 are given by \n\nThe proof of sufficiency in Theorem 2 is now completed by showing that for all \n\nshowing that \u03b1 \u0393 > 0 amounts to proving that A \u0393 has full rank for all \u0393 \u2286 \u03a3 with |\u0393| \u2264 L, i.e., for all M \u0393 such that A(M \u0393 ) \u2264 1. What comes to our rescue is [35,Thm. 4] which states that for almost all c, each4 L \u00d7 L submatrix of A c has full rank. In the remainder of the paper c is chosen such that each L \u00d7 L submatrix of A c , indeed, has full rank. In other words, c is chosen such that spark(A c ) = L + 1.",
+        "snippetKind": "body"
+      }
+    },
+    {
+      "score": 0.4396506628741437,
+      "paper": {
+        "corpusId": "274281317",
+        "title": "Structural identifiability of linear-in-parameter parabolic PDEs through auxiliary elliptic operators",
+        "authors": [
+          "Yurij Salmaniw",
+          "Alexander P. Browning"
+        ],
+        "openAccessInfo": {
+          "license": "CCBY",
+          "status": "HYBRID",
+          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://arxiv.org/abs/2411.17553, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        }
+      },
+      "snippet": {
+        "text": "Otherwise, we say they are distinguishable with respect to u 0 . If two parameter points are distinguishable with respect to u 0 for any u 0 \u0338 \u2261 0 we say they are unconditionally distinguishable. By non-identifiable solution, we refer to a solution X[A, u 0 ](x, t) that can be obtained from indistinguishable parameter points. \n\nWe now make explicit the connection between parameter distinguishability and model identifiability. Adhering to existing literature, we adopt the following definitions of identifiability [28]. \n\nFirst, one may consider identifiability from some initial condition.",
+        "snippetKind": "body"
+      }
+    },
+    {
+      "score": 0.42626151482645713,
+      "paper": {
+        "corpusId": "273662429",
+        "title": "Identifiability Analysis of Linear ODE Systems with Hidden Confounders",
+        "authors": [
+          "Yuanyuan Wang",
+          "Biwei Huang",
+          "Wei Huang",
+          "Xi Geng",
+          "Mingming Gong"
+        ],
+        "openAccessInfo": {
+          "license": null,
+          "status": null,
+          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://arxiv.org/abs/2410.21917, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        }
+      },
+      "snippet": {
+        "text": "The identifiability analysis of the ODE system (1) has been well studied. Here, we present a fundamental definition and theorem essential for understanding identifiability in the ODE system (1). Denoting its solution as x(t; x 0 , A), it is noteworthy that the system is fully observable, without latent variables interacting with it. We present the identifiability definition and theorem as follows. Definition 2.1. For x 0 \u2208 R d , A \u2208 R d\u00d7d , the ODE system (1) is said to be (x 0 , A)-identifiable, if for all x \u2032 0 \u2208 R d and all A \u2032 \u2208 R d\u00d7d , with (x 0 , A) \u0338 = (x \u2032 0 , A \u2032 ), it holds that x(\u2022; x 0 , A) \u0338 =x(\u2022; x \u2032 0 , A \u2032 ). 2 Lemma 2.1. For x 0 \u2208 R d , A \u2208 R d\u00d7d , the ODE system (1) is (x 0 , A)-identifiable if and only if condition A0 is satisfied. \n\nA0 the set of vectors {x 0 , Ax 0 , . . . , A d\u22121 x 0 } is linearly independent. 2 x(\u2022; x0, A) = {x(t; x0, A) : 0 \u2a7d t < \u221e}, this inequation means that there exists at least one t \u2a7e 0 such that x(t; x0, A) \u0338 = x(t; x \u2032 0 , A \u2032 ). \n\nDefinition 2.1 and Theorem 2.1 are adapted from [42, Definition 1] and [42,Lemma2]. We use x \u2032 0 and A \u2032 to distinguish other system parameters from the true system parameters x 0 and A; x \u2032 0 and A \u2032 can represent any d-dimensional initial conditions and any d \u00d7 d parameter matrices, respectively. Here instead of describing a collective property of a set of systems, we describe an intrinsic property of a single system with parameters (x 0 , A). In practice, the aim is to ascertain whether the true underlying system parameter (x 0 , A) is uniquely determined by observations.",
+        "snippetKind": "body"
+      }
+    },
+    {
+      "score": 0.4234015189726227,
+      "paper": {
+        "corpusId": "283693684",
+        "title": "Inverse problems for infinite-dimensional transport PDEs on Wasserstein space",
+        "authors": [
+          "Hongyu Liu",
+          "Jianliang Qian",
+          "Shen Zhang"
+        ],
+        "openAccessInfo": {
+          "license": null,
+          "status": null,
+          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://arxiv.org/abs/2512.06871, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        }
+      },
+      "snippet": {
+        "text": "Proof. Consider the case G(m) = 0 and let F i (t, m) = g i (t) for some real-valued functions g i . The DPE becomes A direct verification shows that the solutions are given by \n\nTherefore, if we choose g 1 and g 2 such that \u00b4T 0 g 1 (s)ds = \u00b4T 0 g 2 (s)ds but \n\nNext, we establish the global unique identifiability for the inverse problem (4.45), namely the injectivity of M, with a time-independent running cost F , employing the progressive variational scheme. \n\nTheorem 4.10 (Uniqueness for time-independent running costs). Suppose F (m) is time-independent and analytic with respect to the measure variable m. Then the measurement map M is injective. \n\nProof. Consider the following two systems (i = 1, 2), \n\nwhere \n\nFirst-order terms: \n\nConsider the corresponding auxiliary systems for t = 0, \n\nand their linearizations around (u i , m i ), \n\nLet \u03bb be an eigenvalue of the operator \u2212\u2206 + \u2207f \u2022 \u2207 + \u2206f with E \u03bb (x) the corresponding eigenfunction. Choosing \u00b5 0 (x) = E \u03bb (x), the solution to the linearized equation is \u00b5(t, x) = e \u2212\u03bbt E \u03bb (x). Further selecting m 0 (x) = e \u2212f (x) \u00b4Tn e \u2212f (y) dy , we can verify that m(t, x) = m 0 (x). \n\nIn this case, equation ( 4 \n\nHigher-order terms: Applying the second-order mixed directional derivative \u2202 2 s 1 s 2 (with direction (\u00b5 0 , \u00b5 0 )) to system (4.1) and defining U \n\n(2) \n\n2 (0, m) by definition, repeating the previous argument yields \n\nProceeding by induction, for any k \u2265 1, applying the k-th order mixed directional derivative",
+        "snippetKind": "body"
+      }
+    },
+    {
+      "score": 0.4227106823263234,
+      "paper": {
+        "corpusId": "88481217",
+        "title": "Minimum Volume Topic Modeling",
+        "authors": [
+          "B. Jang",
+          "A. Hero"
+        ],
+        "openAccessInfo": {
+          "license": null,
+          "status": null,
+          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://arxiv.org/abs/1904.02064, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        }
+      },
+      "snippet": {
+        "text": "Here we establish identifiability of the model obtained by solving problem (5). Identifiability gained interests in the topic modeling literature (Arora et al. (2013) and Fu et al. (2018)). We show the identifiability under the sufficiently scattered condition. We first state the following lemma. \n\nLemma 3.1. Let \u03b3 be a solution to the problem (5). \n\nIf rank(W ) = K, we have that \u03b3 \u2208 \u0393, where \n\nIntuitively, Lemma 3.1 tells us that we cannot have the solution outside of the blue triangle in Figure 2. If there was a solution outside of the triangle (Figure 2a), we could find the projection (Figure 2b) onto the word simplex (blue triangle) that still satisfies the constraint yet has a smaller volume, which is a contradiction. \n\nFigure 2: Visualization of the proof for Lemma 3.1. The set \u0393 corresponds to the blue triangle, which represents the feasible set of the problem (3). The red circle represents the feasible set of the relaxed problem (5). Given a potential solution \u03b2 for (5), we can always argue that the projection of \u03b2, namely Proj \u2206 V ( \u03b2), is a better solution to (5) as illustrated in Panel 2b. \n\nProof. We prove this statement by contradiction. Suppose \u03b3 \u2208 \u0393. Then, as \u03b3 is an optimal solution to the problem (5), we have that \u03b8 \n\nTherefore, the only constraint that \u03b3 could possibly violate is non-negativity of \u03b2. Let Proj \u2206 V ( \u03b2) be the projection of \u03b2 onto the simplex \u2206 V and let \u03b3 proj = Proj \u2206 V ( \u03b2)E K . Then, \u03b3 proj \u2208 \u0393 satisfies all the constraints in the optimization problem ( 5), but we also have that \n\nsince the volume of Proj \u2206 V ( \u03b2) is smaller than that of \u03b2. This is a contradiction as \u03b3 is the optimal solution to the problem (5). Thus, it follows that \u03b3 \u2208 \u0393. \n\nWe now state the sufficiently scattered assumption from Huang et al. (2016).",
+        "snippetKind": "body"
+      }
+    },
+    {
+      "score": 0.4225550425393714,
+      "paper": {
+        "corpusId": "278789556",
+        "title": "A Unified Framework for Simultaneous Parameter and Function Discovery in Differential Equations",
+        "authors": [
+          "Shalev Manor",
+          "Mohammad Kohandel"
+        ],
+        "openAccessInfo": {
+          "license": null,
+          "status": null,
+          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://arxiv.org/abs/2505.16996, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        }
+      },
+      "snippet": {
+        "text": "The second theorem generalizes the problem by treating the growth term g(x) as completely unknown. While this introduces additional complexity, uniqueness can still be ensured under stricter conditions. Theorem 3.3 (Uniqueness with Unknown Growth Terms). \n\nLet the governing equation be: \n\n, where y = H 1 (x) \u2208 R k and all functions C(x), d(x), H 1 are known. \n\nIf there exist x 1 , x 2 \u2208 R n such that: \n\nthen the values of u(Y ) and g(Y ) are uniquely determined. \n\nProof. Let y 1 = y 2 = Y . From the q th component of the system, we have: \n\nSubtracting gives: \n\nSolving for u(Y ): \n\nSubstituting back into either equation (e.g., the first) gives: \n\nwhich completes the proof of identifiability for both u(Y ) and g(Y ). \n\nCorollary 3.4. With the data sets: \n\nWhere \u03c7 and \u03c7 follow the governing equation of 3.3 for some g, u : R k \u2192 R. For the system described in Theorem 3.3, g(y i ) and u(y i ) can be uniquely determined for all i \u2208 {1, . . . , m} such that there exists a j \u2208 {1, . . . , m} such that \n\nThe two theorems presented above establish conditions under which unique solutions to the inverse problem can be guaranteed for systems involving unknown constants and functions. Theorem 3.1 applies to cases where the growth term is known up to a multiplicative constant and coupled with Corollary 3.2, guarantees uniqueness for all points observed in the training set, while Theorem 3.3 and Corollary 3.4 generalize the problem to include completely unknown growth terms with guaranteed uniqueness for specific observations in the dataset. \n\nAlthough these theorems are promising, one of their assumptions is overly restrictive in practice. Specifically, the condition that two y-values in a finite dataset are exactly equal is highly improbable due to discretization and finite machine precision. In practical applications, exact equality between two y i values is unlikely, which motivates the development of approximate uniqueness results based on continuity assumptions.",
+        "snippetKind": "body"
+      }
+    },
+    {
+      "score": 0.4209242296710284,
+      "paper": {
+        "corpusId": "256239818",
+        "title": "A fourth-order linearized difference scheme for the coupled space fractional Ginzburg\u2013Landau equation",
+        "authors": [
+          "Yuan Xu",
+          "Jia-Li Zeng",
+          "Shuanggui Hu"
+        ],
+        "openAccessInfo": {
+          "license": "CCBY",
+          "status": "GOLD",
+          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://api.unpaywall.org/v2/10.1186/s13662-019-2389-5?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.1186/s13662-019-2389-5, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        }
+      },
+      "snippet": {
+        "text": "Theorem 3 Suppose that the solution of problem (1)-( 3) is smooth enough. Then difference scheme ( 22)-( 25) is uniquely solvable for \n\nand h < h 0 , where \u03c4 0 , h 0 are the same positive constants in Theorem 1. \n\nProof To prove the theorem, we proceed by the mathematical induction. Obviously, U 1 and V 1 can be uniquely determined by (30) and (31). Suppose \n\n) are obtained uniquely, we now show that U n+1 and V n+1 are uniquely determined by ( 22)- (23). Assume that U n+1,1 , U n+1,2 are two solutions of (22), and let W n+1 = U n+1,1 -U n+1,2 , then it is easy to verify that W n+1 satisfies the following equation: \n\nComputing the inner product of (84) with W n+1 and taking the real part of the resulting equation, we have \n\nwhere Lemma 7 is used. Thus, \n\nwhen \u03c4 < \u03c4 0 , h < h 0 , and here Theorem 2 is used. \n\nwhere Theorem 2 is used. If \u03c4 < min{\u03c4 0 , \n\nwhich further implies \n\nwhere Lemma 6 is used. Therefore, (84) has only a trivial solution. This proves the uniqueness of the numerical solution U n+1 . The proof of the uniqueness for V n+1 is similar. This completes the proof of the theorem.",
+        "snippetKind": "body"
+      }
+    },
+    {
+      "score": 0.42085955532229835,
+      "paper": {
+        "corpusId": "204972869",
+        "title": "A fourth-order linearized difference scheme for the coupled space fractional Ginzburg\u2013Landau equation",
+        "authors": [
+          "Yuan Xu",
+          "Jia-Li Zeng",
+          "Shuanggui Hu"
+        ],
+        "openAccessInfo": {
+          "license": "CCBY",
+          "status": "GOLD",
+          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://api.unpaywall.org/v2/10.1186/s13662-019-2389-5?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.1186/s13662-019-2389-5, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        }
+      },
+      "snippet": {
+        "text": "Theorem 3 Suppose that the solution of problem (1)-( 3) is smooth enough. Then difference scheme ( 22)-( 25) is uniquely solvable for \n\nand h < h 0 , where \u03c4 0 , h 0 are the same positive constants in Theorem 1. \n\nProof To prove the theorem, we proceed by the mathematical induction. Obviously, U 1 and V 1 can be uniquely determined by (30) and (31). Suppose \n\n) are obtained uniquely, we now show that U n+1 and V n+1 are uniquely determined by ( 22)- (23). Assume that U n+1,1 , U n+1,2 are two solutions of (22), and let W n+1 = U n+1,1 -U n+1,2 , then it is easy to verify that W n+1 satisfies the following equation: \n\nComputing the inner product of (84) with W n+1 and taking the real part of the resulting equation, we have \n\nwhere Lemma 7 is used. Thus, \n\nwhen \u03c4 < \u03c4 0 , h < h 0 , and here Theorem 2 is used. \n\nwhere Theorem 2 is used. If \u03c4 < min{\u03c4 0 , \n\nwhich further implies \n\nwhere Lemma 6 is used. Therefore, (84) has only a trivial solution. This proves the uniqueness of the numerical solution U n+1 . The proof of the uniqueness for V n+1 is similar. This completes the proof of the theorem.",
+        "snippetKind": "body"
+      }
+    },
+    {
+      "score": 0.4169496570369773,
+      "paper": {
+        "corpusId": "246430274",
+        "title": "On the identifiability of mixtures of ranking models",
+        "authors": [
+          "Xiao-Min Zhang",
+          "Xu-Cheng Zhang",
+          "Po-Ling Loh",
+          "Yingyu Liang"
+        ],
+        "openAccessInfo": {
+          "license": null,
+          "status": null,
+          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://arxiv.org/abs/2201.13132, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        }
+      },
+      "snippet": {
+        "text": "If we instead assume that (p 1 , p 2 ) are known, the parameter space becomes \n\nBT L and we consider the system (5). In this case, our goal is to give an approach that, given (p 1 , p 2 ), can establish generic identifiability of the system (5). For concreteness, we will consider the case when p 1 = 0.7; cases involving different p 1 can be checked using identical procedures. \n\nProof sketch. The proof structure is similar to the proof of Theorem 4.1. We first prove the base case n = 5. We translate the system ( 5) into the following polynomial system with coefficients given by polynomials in (a, b): \n\nShowing the identifiability of the system ( 5) is equivalent to showing that the system (11) has exactly three solutions in (x, y), which can be analytically written as (a1:5, b1:5) or a1, 0, 0, 0, 0; b1, 1\u2212\u03b71j \u03b71j \u2212p1 j=2,...,5 or a1, 1\u2212\u03b71j \u03b71j \u2212p2 j=2,...,5 ; b1, 0, 0, 0, 0 . \n\nThen we can show that the system (11) has at least three solutions, except possibly on a Zariski closed proper subset of the parameters which makes the three solutions the same or makes the denominators above vanish (i.e., \u03b7 1j \u2212 p 1 = 0 or \u03b7 1j \u2212 p 2 = 0). Thus, Assumption 1 holds. \n\nFor Assumption 2, we first analytically compute Z(a 2:5 , b 2:5 ), defined in equation ( 7), with Magma. Next, we pick a particular (a \n\n) and run Magma to show that the system (11), plugged into (a \u2032 1:5 , b \u2032 1:5 ), has exactly three solutions (counted with multiplicity), which means Assumption 2 holds. Altogether, this means the system ( 5) has a unique solution in C (counted with multiplicity) for all (a 2:5 , b 2:",
+        "snippetKind": "body"
+      }
+    }
+  ],
+  "retrievalVersion": "pa1-v1"
+}

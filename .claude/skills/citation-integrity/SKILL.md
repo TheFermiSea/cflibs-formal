@@ -196,7 +196,7 @@ Rules:
    coefficient, every exponent, the direction of every inequality, which side of the ratio each
    quantity sits on. A `U_{z+1}/U_z` written upside down is a silent physics error.
 7. **Assign one of the four outcomes** and record it: whitelist row, docstring text, and report.
-8. **Run `scripts/check-citations.sh`** (advisory, exit 0) to catch mechanical fallout — a new
+8. **Run `scripts/check-citations.sh`** (exits 1 on an off-whitelist or SUSPECT citation; a CI gate since 2026-09-24; the rest of its output is advisory) to catch mechanical fallout — a new
    string that is a variant of an existing one, a singleton, an off-whitelist entry.
 
 ## Tools available in this repo

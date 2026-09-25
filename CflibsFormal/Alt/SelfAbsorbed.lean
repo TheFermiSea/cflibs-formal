@@ -17,8 +17,8 @@ This module supplies the SECOND alternative CF-LIBS composition estimator
 (namespace `CflibsFormal.Alt`), aimed at concentrated alloy / high-entropy-alloy lines
 that are optically THICK. Where the classic and C-sigma estimators assume optically-thin
 lines, this estimator consumes the optically-THICK measured intensities `Imeas : κ → ℝ`
-together with the KNOWN per-species optical depths `tau : κ → ℝ`, applies the exact
-curve-of-growth correction `I_thin = Imeas / SA(τ)` (the proven left-inverse
+together with the KNOWN per-species optical depths `tau : κ → ℝ`, applies the flat-profile
+correction `I_thin = Imeas / SA(τ)` (the model left-inverse
 `SelfAbsorption.lineIntensity_eq_selfAbsorbedIntensity_div`), and then runs the classic
 algebraic inversion `Classic.classicDensity` / `Closure.composition` verbatim.
 
@@ -26,9 +26,10 @@ We prove:
 
 * `classicDensity_smul_intensity` — linearity of the algebraic inverse `Classic.classicDensity`
   in its intensity argument (the load-bearing scalar-commutation lemma).
-* `selfAbsorbed_sound` — **soundness EVEN WHEN LINES ARE OPTICALLY THICK**: on genuine
-  thick forward-model data (`Imeas t = selfAbsorbedIntensity … (tau t)` at true densities
-  `N t`, `tau t ≥ 0`), `selfAbsorbedComposition` returns the TRUE composition `composition N`.
+* `selfAbsorbed_sound` — **soundness EVEN WHEN LINES ARE OPTICALLY THICK**, within the
+  flat-profile model: on thick forward-model data (`Imeas t = selfAbsorbedIntensity … (tau t)`
+  at true densities `N t`, `tau t ≥ 0`), `selfAbsorbedComposition` returns the TRUE
+  composition `composition N`.
 * `selfAbsorbed_corrects_bias` — the contrast / bias-direction value theorem: the NAIVE
   classic inversion (NO division by `SA`) on a genuinely-thick line (`τ > 0`) returns a
   density STRICTLY BELOW the true `N`, quantifying why the correction is necessary.
@@ -44,11 +45,18 @@ Two index types appear: `κ` (species/stages, from `Closure.lean`) and `ι` (ene
 from `Boltzmann.lean` / `ForwardMap.lean`). The estimator is a pure function of the
 observations `(Imeas, tau)` and NEVER takes the true density `N` (or composition) as input.
 
-**REDUCED model.** `SA(τ) = (1 − exp(−τ))/τ` is the line-center / flat-profile escape factor
-inherited from the radiative-transfer slab kernel `SelfAbsorption.slabIntensity`; the recovery
-is EXACT only as a left-inverse of THIS reduced model — itself a reduction of the full
-profile-integrated Aragón–Aguilera curve of growth (the slope-½ Lorentz-wing branch is out of
-scope) — and `τ` is assumed exactly known.
+**Flat-profile model (model tag APPROXIMATION).** `SA(τ) = (1 − exp(−τ))/τ` is the
+line-center / flat-profile escape factor inherited from the radiative-transfer slab kernel
+`SelfAbsorption.slabIntensity`; `selfAbsorptionFactor` and `selfAbsorbedIntensity` carry the
+model tag APPROXIMATION, so every physics result here stated over them publishes
+APPROXIMATION (`docs/conventions.md` §8; PURE-MATH identities are exempt). The recovery is
+EXACT only as a left-inverse of THIS model — itself a reduction of the full
+profile-integrated Aragón–Aguilera curve of growth (the slope-½ Lorentz-wing branch is out
+of scope) — and `τ` is assumed exactly known. Two consequences for real data: (i) on a
+peaked line with line-centre depth `τ₀`, dividing by `SA(τ₀)` over-corrects by 1.4–3.5× at
+`τ₀ = 3–10` in the audit probes (see the `SelfAbsorption` scope block); (ii) nothing checks
+that the supplied `tau` is the true optical depth — any `tau ≥ 0` is accepted, and no error
+bound for an estimated `τ̂ ≠ τ` is proved.
 -/
 
 namespace CflibsFormal.Alt
@@ -63,8 +71,8 @@ variable {κ : Type*} [Fintype κ]
 /-- **Self-absorption-corrected (curve-of-growth) composition estimator.** A PURE function
 of the OBSERVATIONS (`Imeas : κ → ℝ`, the measured optically-THICK intensities, one chosen
 line `u s` per species) and the KNOWN per-species optical depths `tau : κ → ℝ`. It NEVER
-takes the true density `N` (or composition) as input. Per species it forms the exact
-curve-of-growth correction `I_thin = Imeas t / SA(tau t)` (the proven left-inverse
+takes the true density `N` (or composition) as input. Per species it forms the flat-profile
+correction `I_thin = Imeas t / SA(tau t)` (the model left-inverse
 `SelfAbsorption.lineIntensity_eq_selfAbsorbedIntensity_div`), reuses
 `Classic.classicDensity` VERBATIM to read back the density from that corrected thin
 intensity, and applies `Closure.composition` (divides by total recovered density). The
@@ -90,9 +98,12 @@ theorem classicDensity_smul_intensity {kB T Fcal : ℝ} {g E A : ι → ℝ} (u 
 (`Imeas t = selfAbsorbedIntensity … (tau t)` at true densities `N t`, with `tau t ≥ 0`),
 `selfAbsorbedComposition` returns the TRUE composition `composition N`. The estimator is a
 function only of `(Imeas, tau)`, never of `N`, yet it recovers the true composition exactly
-— the central physics content, false for the naive classic estimator on the same thick
-data. Reuses `SelfAbsorption.lineIntensity_eq_selfAbsorbedIntensity_div` (the exact
-correction) and `Classic.classicDensity_recovers` (the inversion) verbatim. -/
+on data generated by the flat-profile model at the SAME `tau` — false for the naive classic
+estimator on the same thick data. Reuses
+`SelfAbsorption.lineIntensity_eq_selfAbsorbedIntensity_div` (the model left-inverse) and
+`Classic.classicDensity_recovers` (the inversion) verbatim. Publishes APPROXIMATION via
+`selfAbsorbedIntensity` (module docstring: over-correction on peaked profiles, unchecked
+`tau`). -/
 theorem selfAbsorbed_sound [Nonempty ι] {kB T Fcal : ℝ}
     {N : κ → ℝ} {g E A : κ → ι → ℝ} {u : κ → ι} {tau : κ → ℝ}
     (hg : ∀ s k, 0 < g s k) (hFcal : 0 < Fcal) (hA : ∀ s, 0 < A s (u s))
@@ -114,7 +125,8 @@ optically-thick measured intensity `selfAbsorbedIntensity … tau` into the UNCO
 `Classic.classicDensity` (i.e. WITHOUT dividing by `SA`) yields a recovered density STRICTLY
 BELOW the true `N`: the uncorrected method underestimates density on thick lines (`τ > 0`).
 This quantitatively justifies the correction performed by `selfAbsorbedComposition`,
-contrasting with `selfAbsorbed_sound`'s exactness. -/
+contrasting with `selfAbsorbed_sound`'s exactness. The factor `SA(τ) < 1` is the flat-profile
+value; the statement publishes APPROXIMATION via `selfAbsorbedIntensity`. -/
 theorem selfAbsorbed_corrects_bias [Nonempty ι] {kB T N Fcal : ℝ} {g E A : ι → ℝ}
     (hg : ∀ k, 0 < g k) (hN : 0 < N) (hFcal : 0 < Fcal) (hA : ∀ k, 0 < A k)
     (u : ι) {tau : ℝ} (htau : 0 < tau) :

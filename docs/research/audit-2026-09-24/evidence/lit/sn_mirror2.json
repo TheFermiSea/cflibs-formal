@@ -1,0 +1,189 @@
+{
+  "data": [
+    {
+      "score": 0.4744421088080417,
+      "paper": {
+        "corpusId": "16163302",
+        "title": "Properties of broadband depth-graded multilayer mirrors for EUV optical systems.",
+        "authors": [
+          "Andrey E. Yakshin",
+          "I. Kozhevnikov",
+          "Erwin Zoethout",
+          "E. Louis",
+          "Frederik Bijkerk"
+        ],
+        "openAccessInfo": {
+          "license": null,
+          "status": "GOLD",
+          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://api.unpaywall.org/v2/10.1364/OE.18.006957?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.1364/OE.18.006957, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        }
+      },
+      "snippet": {
+        "text": "This shows that as the minimum layer thickness increases, the relative dispersion increases and, therefore, the greater the oscillations in the reflectivity curve. In the current case the relative dispersion increases dramatically when the minimum layer thickness exceeds 2 nm, because the constraint on the layer thickness limits the degrees of freedom of computer optimization of the structure. The depth-distribution of layer thickness calculated under the assumption of a 1.5 nm minimum layer thickness is shown in Fig. 8 (unfilled symbols). Although this solution of depth-distribution differs significantly from the solution without the imposed limitation, this design results in virtually the same reflectivity profile. The accuracy of the optical constants and, in particular, the density of materials used for calculations also influences the optical quality of depth-graded multilayer mirrors. Curve 1 in Fig. 10 shows the reflectivity profile of a Mo/MoSi 2 /Si/MoSi 2 multilayer mirror designed with the assumption that the densities of all the materials are the same as their bulk densities. Curve 2 shows the reflectivity profile of the same mirror after the density of Mo has been reduced by 10%. This change results in a reduction of the reflectivity by 5% as well as increasing the distortion of the reflectivity curve (i.e. an increased RD value). On the other hand, the reflectivity is relatively unaffected by decreasing the density of Si or MoSi 2 . This situation is identical to that of hard x-ray supermirrors, whose optical parameters are determined mainly by the polarizability of the absorbing layers [9]. Finally, curve 3 in Fig. 10 was calculated assuming the absorption of silicon to be 1.5 times higher than that given in the literature. Increasing absorption may be caused, for example, by impurities introduced during film deposition and, evidently this decreases the reflectivity with no significant distortion of the reflectivity curve. 1). Curve 1 is the result of optimization targeting R0 = 54% and taking the density of all the layers to be the same as that of the bulk materials. Curve 2 is the reflectivity for the same layer thickness distribution but taking the density of Mo layers to be 0.9 of the bulk material density.",
+        "snippetKind": "body"
+      }
+    },
+    {
+      "score": 0.45975447513796236,
+      "paper": {
+        "corpusId": "246303122",
+        "title": "An optical pascal in Sweden",
+        "authors": [
+          "C. Forss\u00e9n",
+          "I. Silander",
+          "J. Zakrisson",
+          "M. Zelan",
+          "O. Axner"
+        ],
+        "openAccessInfo": {
+          "license": "CCBY",
+          "status": "HYBRID",
+          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://api.unpaywall.org/v2/10.1088/2040-8986/ac4ea2?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.1088/2040-8986/ac4ea2, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        }
+      },
+      "snippet": {
+        "text": "Every high reflectivity mirror that has a coating has also a finite penetration depth, which is the length light effectively penetrates into the coating before it is reflected (here denoted L pd ). Furthermore, when gas is let into a cavity, the cavity will deform and thereby change its length. This implies that L in equation ( 1) and the expression for the FSR will neither be the mirror-to-mirror distance, L 0 , nor be pressure independent. It needs to be seen as L 0 + 2 L pd + \u03b4L(P) where \u03b4L(P) the change in length when it is exposed to a pressure. The penetration depth of the mirrors, L pd , is given by cTg 2 , where, in turn, T g is the group delay of the mirror, and can take values that is a fraction of the wavelength. It has been found though that for mirrors with quarter wave stacks of coatings for which the outermost layer of the coating has a higher index of refraction than the subsequent one, referred to as Type H, L pd is proportional to the index of refraction of the gas [42], i.e. L pd (n) = nL pd (n = 1), just as the optical length of the mirror-to-mirror distance, L 0 , is given by nL 0 in the presence of gas. This implies that the penetration depth behaves as if it would be a part of the mirror-to-mirror distance. Hence, for the case with assessment of refractivity in terms of a shift on the beat frequency, it can be assimilated into the mirror-to-mirror distance which then can be denoted, L \u2032 0 . It has then been found suitable to define \u03bd 0 i as \u03bd 0 i,mes /(1 + 2L pd /L 0 ) where \u03bd 0 i,mes is the measured empty cavity frequency.",
+        "snippetKind": "body"
+      }
+    },
+    {
+      "score": 0.44116574261274394,
+      "paper": {
+        "corpusId": "229481858",
+        "title": "Simultaneous detection of atmospheric HONO and NO2 utilising an IBBCEAS system based on an iterative algorithm",
+        "authors": [
+          "Ke Tang",
+          "M. Qin",
+          "Wu Fang",
+          "Jun Duan",
+          "Fan-Hao Meng",
+          "Kaidi Ye",
+          "He-Lu Zhang",
+          "P. Xie",
+          "Yabai He",
+          "Wenbin Xu",
+          "Jian-Guo Liu",
+          "Wenqing Liu"
+        ],
+        "openAccessInfo": {
+          "license": "CCBY",
+          "status": "GOLD",
+          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://api.unpaywall.org/v2/10.5194/AMT-13-6487-2020?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.5194/AMT-13-6487-2020, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        }
+      },
+      "snippet": {
+        "text": "As the absorption optical path of the gas in the optical cavity is related to the reflectivity of the mirrors, it is necessary to determine the reflectivity of the high-reflectivity mirrors before the gas concentration is retrieved. According to the method mentioned by Washenfelder et al. (2008), the Rayleigh scattering difference between nitrogen and helium is used to determine the wavelength-dependent reflectivity of the cavity mirrors (R(\u03bb)): \n\nHere, d 0 is the cavity length, \u03b5 Ray is the extinction caused by Rayleigh scattering, and I N 2 and I He are the light intensity when the cavity is filled with nitrogen and helium respectively. \n\nThe accuracy in determining the mirror reflectivity will affect the accuracy of subsequent gas concentration measurements. Therefore, in order to achieve high measurement accuracy, it is necessary to stabilise the gas temperature inside the optical cavity. The high-purity nitrogen (99.999 %) and high-purity helium (99.999 %) are then introduced into the optical cavity in turn, and the corresponding spectra are recorded once the spectra become stable after gas filling. The wavelength-dependent mirror reflectivity is calculated by substituting the ratio of the recorded nitrogen spectrum intensity and helium spectrum intensity into Eq. ( 3). The resulting dependence of the mirror reflectivity on wavelength is shown in Fig. 2. The red line is the spectrum measured when the cavity is flushed with nitrogen, and the black line is obtained when the cavity is filled with helium. It can be seen that the reflectivity of the mirrors is \u223c 0.99980 at a wavelength of 368.2 nm.",
+        "snippetKind": "body"
+      }
+    },
+    {
+      "score": 0.429611532093037,
+      "paper": {
+        "corpusId": "53339271",
+        "title": "Optically Thick Laser-Induced Plasmas in Spectroscopic Analysis",
+        "authors": [
+          "F. Rezaei"
+        ],
+        "openAccessInfo": {
+          "license": "CCBY",
+          "status": "HYBRID",
+          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://api.unpaywall.org/v2/10.5772/61941?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.5772/61941, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        }
+      },
+      "snippet": {
+        "text": "Moon et al. [8] duplicated the emission from a plasma by putting a spherical mirror at twice the distance of its focal length from the plasma. They evaluated the existence of optically thick plasma conditions by a very quick check-up. They acquired two line profiles (with and without applying the mirror) for determination of the amount of self-absorption in order to correct the spectral lines.\n\nBy taking into account the theoretical consideration, they evaluated the emission from a spatially homogeneous plasma distribution by the presence and absence of a mirror as below:\n\n,1\n\n(1 exp ).  \n\nThe optical depth variations can also be evaluated by knowing the parameters of R c and R \u03bb as:\n\nFinally, the correction factor K \u03bb,corr (which is the inverse of the self-absorption coefficient SA) can be calculated experimentally versus the ratios of R C and R \u03bb as:\n\nFurthermore, the duplication factor can be calculated from the following equation as where, D \u03bb (\u03bb) illustrates the relative growth in spectral line intensity or integral absorption created by doubling the value of (fn a l) with two asymptotic magnitudes of 1 (at low optical depths) and 0.415 (at high optical depths). Here, f, n a and l refer to oscillation strength, number density, and plasma length, respectively. In this work, the plasma emission is produced by irradiation of a Nd:YAG laser with 90 \u00b1 5 mJ pulse energy, 1064 nm laser wavelength, 6 ns pulse duration, and 1 Hz repetition frequency on the sample surface. The ICCD is adjusted for a delay time of 1 \u03bcs. Figure 8 expresses the results for analysis of Cu spectral line at 510.55 nm. Figures 8(a) and 8(b) show the evolution of R \u03bb and K \u03bb,corr as a function of wavelength. As it is seen in Figure 8(a), the peak of spectral line saturates faster rather than that in line wings by doubling the plasma length. For obtaining the exact value of the correction factor K \u03bb,corr , the ratio of R \u03bb is estimated pixel by pixel. Furthermore, Figure 9 illustrates the evolution of calculated self-absorption correction factor K \u03bb, corr as a function of R \u03bb and R c . As it is seen in this figure, for the",
+        "snippetKind": "body"
+      }
+    },
+    {
+      "score": 0.4226830982205496,
+      "paper": {
+        "corpusId": "258877734",
+        "title": "Ozone Detection via Deep-Ultraviolet Cavity-Enhanced Absorption Spectroscopy with a Laser Driven Light Source",
+        "authors": [
+          "Anthony Puga",
+          "A. Yalin"
+        ],
+        "openAccessInfo": {
+          "license": "CCBY",
+          "status": "GOLD",
+          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://pmc.ncbi.nlm.nih.gov/articles/PMC10255287, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        }
+      },
+      "snippet": {
+        "text": "Figure 3a shows the wavelength-dependent mirror reflectivity calculated with Equation (2). We find a peak mirror reflectivity of 99.1% at 262 nm with reflectivity exceeding 98.8% over the range of ~243-273 nm. Mirror reflectivity in the DUV is inevitably poorer than that in the visible and infrared regions. The obtained results are reasonable and correspond to a maximum effective path length of ~58 m. However, past CRDS work in our group, with these mirrors, yielded R~99.7% suggesting that we may have room for improvement in this area [39]. Figure 3b shows an example of the light spectrum recorded after the cavity obtained at a 1 s integration time with the cavity filled by zero air. The spectral profile of intensity is due to the product of the output of the LDLS source (including fiber), the optical filter stack, and the cavity transmission profile. The final light spectrum has a low intensity across ~240-255 nm since this coincides with the peak reflectivity of the cavity mirrors (centered at ~248 nm). The strong intensity falloff below ~230 nm, and above ~275 nm, is due to pre-cavity filtering and serves to reduce light contamination within the spectrometer.",
+        "snippetKind": "body"
+      }
+    },
+    {
+      "score": 0.4208245431554295,
+      "paper": {
+        "corpusId": "16163302",
+        "title": "Properties of broadband depth-graded multilayer mirrors for EUV optical systems.",
+        "authors": [
+          "Andrey E. Yakshin",
+          "I. Kozhevnikov",
+          "Erwin Zoethout",
+          "E. Louis",
+          "Frederik Bijkerk"
+        ],
+        "openAccessInfo": {
+          "license": null,
+          "status": "GOLD",
+          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://api.unpaywall.org/v2/10.1364/OE.18.006957?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.1364/OE.18.006957, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        }
+      },
+      "snippet": {
+        "text": "As seen, the phase variation of both periodic (curve 1) and depth-graded (curves 2-4) mirrors is similar, with the phase being a smooth and monotone function of the incidence angle in the angular range of high reflectance. To characterize quantitatively the optical quality of a wideband multilayer mirror, we introduce the mean value of the reflectivity plateau, <R>, and the relative dispersion of the reflectivity, RD, as follows: \n\nwhere \u03c6 min = 0 and \u03c6 max = 18\u00b0. The relative dispersion of the reflectivity characterizes an undesirable deviation of the reflectivity curve from the flat plateau. The mean reflectivity versus the target value of the reflectivity plateau is shown in Fig. 4, curve 1. With increasing R 0 , the mean reflectivity differs from R 0 and tends to a certain value determined by the absorption of radiation in the material. The relative dispersion of the reflectivity versus the mean reflectivity is shown in Fig. 5, curve 1. It increases quickly with increasing <R>, limiting the practicable value of the reflectivity plateau. If it is assumed that an acceptable level of the reflectivity dispersion is 0.6 -0.7%, then the mean reflectivity is about 61%. The corresponding reflectivity profile is presented in Fig. 6, curve 1, and the variation of the layer thickness along the depth of Mo/Si multilayer mirror is shown in Fig. 7. Note that the inverse problem has typically a great number of solutions (minima of the merit function (1) of different depth), each of which results in different thickness profiles (see, e.g [9].). By trying different initial thickness profiles, we found that the optimization procedure resulted in the small RD value and in depth-distributions that have a relatively smooth form, which also tend to be quasi-periodic in contrast to designs obtained in [14,15]. This is essential for the fabrication process, since smoother profiles are considered to be easier to implement due to more accurate calibration of the layer thicknesses for commonly used deposition techniques.     1. Fig. 7.",
+        "snippetKind": "body"
+      }
+    },
+    {
+      "score": 0.41881219581366175,
+      "paper": {
+        "corpusId": "276042580",
+        "title": "High-reflective cylindrical-nanostructure multilayer mirrors for extreme ultraviolet radiation",
+        "authors": [
+          "Chih-Chung Wang",
+          "Chao-Te Lee",
+          "Hung-Pin Chen",
+          "Jia-Han Li"
+        ],
+        "openAccessInfo": {
+          "license": "CCBY",
+          "status": "HYBRID",
+          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://api.unpaywall.org/v2/10.1088/1402-4896/adb082?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.1088/1402-4896/adb082, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        }
+      },
+      "snippet": {
+        "text": "However, measured reflection will be slightly lower due to the control of layer thickness and surface roughness during fabrications. For the multilayer mirror with more than 40 pairs, the reflectivity will increase slightly as the Mo/Si pairs increase [6]. The exploration of multilayer reflection properties follows the Fresnel equation application, which calculates the reflectance of Mo/Si multilayer films at an extreme ultraviolet wavelength of 13.5 nm. When a light source impinges upon the Mo/Si multilayer structure, the electromagnetic field separates into refraction and reflection components. The Fresnel equation comes into play to discern the interplay between these components, thus revealing insights into reflectivity and transmittance. For multilayer calculation for the Fresnel equation [7], the reflectivity undergoes a continuous augmentation as the number of Mo/Si pairs in the stack increases. Due to the inherent extinction properties of materials, the reflectivity increases very slowly after reaching 70%. Nevertheless, once the stacking reaches 40 pairs, the reflectivity gradually converges at approximately 75% [1]. After optimization to achieve maximum reflectivity, layer thicknesses are determined to be about 2.78 nm for the Mo layer and 4.17 nm for the Si layer [1]. \n\nOn the other hand, there are also related studies using three overlapping materials, such as Ru-Mo/Si overlapping each other, and the reflectivity reaches 76%. Further studies on Ru-Mo/Si have been explored by simulation optimization [4] and practical testing [8]. The utilization of irregular non-periodic thicknesses to enhance the reflectivity of Mo/Si multilayer films has also been examined in related studies [9,10]. Still, the reflectivity does not have a significant increase. Lee et al [11] introduced vacuum voids into the Si layer, and the reflectivity increases proportionally with the volume of vacuum voids, ranging from 73.43% to 83.24%. This technique substantially enhances reflectivity. However, the structure is complex to fabricate. Mo has a more significant extinction coefficient than Si in the 13.5 nm wavelength region, so Mo was designed as an absorber to localize into the low-intensity standing wave field.",
+        "snippetKind": "body"
+      }
+    },
+    {
+      "score": 0.4106070311692753,
+      "paper": {
+        "corpusId": "212998858",
+        "title": "Modelling Fabry-P\u00e9rot etalons illuminated by focussed beams.",
+        "authors": [
+          "D. Marques",
+          "J. Guggenheim",
+          "Rehman Ansari",
+          "E. Zhang",
+          "P. Beard",
+          "P. Munro"
+        ],
+        "openAccessInfo": {
+          "license": "CCBY",
+          "status": "GOLD",
+          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://api.unpaywall.org/v2/10.1364/oe.382526?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.1364/oe.382526, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        }
+      },
+      "snippet": {
+        "text": "The FP etalon used has a fused silica cavity with thickness of 102 \u00b5m with custom made dielectric mirrors coated on both sides of the cavity (Fig. 6(b)). The mirrors were made by coating alternating layers of Zinc Sulfide (ZnS) and Sodium Hexafluoroaluminate (Na 3 AlF 6 ) with a nominal optical thickness of \u03bb des /4 where \u03bb des , the design wavelength, was 1402 nm. This design was chosen so that the reflectivity is variable between 97.2 % and 99.2 % in the wavelength range of the tunable laser allowing us to validate the model for multiple mirror reflectivities with a single FP etalon. As part of the quality control process, during the coating of each of the FP etalon mirrors, a fused silica witness piece was coated at the same time. By measuring the reflectivities of the two witness pieces, the FP mirror reflectivities can therefore be estimated. The measured and simulated reflectivities of the two coatings are shown in Fig. 6(c). The measured reflectivity data was acquired by measuring the integrated intensity of a collimated beam reflected by each witness piece inclined at an angle of approximately 8\u00b0to the beam, as specified by the manufacturer. The modelled data was calculated using the model presented in this paper assuming an incident collimated beam at normal incidence. Ideally, the reflectivity of each mirror should be equal since they both have the same design geometry. However, the measured data shows a small discrepancy between the two reflectivities due, most likely, to fabrication imperfections, albeit within the tolerance of the fabrication process. The simulated data corresponds to the mirrors' predicted reflectivity based upon the design geometry.",
+        "snippetKind": "body"
+      }
+    }
+  ],
+  "retrievalVersion": "pa1-v1"
+}

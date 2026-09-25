@@ -28,7 +28,9 @@ physical density `N` rather than about an unmoored parameter.
   to the density `N`. Together with `OpticalDepth.thickLineIntensity_eq_slab` (the
   `slabIntensity` leg, already proven there) this says the three models — multiplicative
   escape factor, radiative-transfer slab, curve of growth — coincide once `τ` is bound.
-  Every free-`τ` theorem about those kernels therefore specializes.
+  They coincide because they are one flat-profile kernel written three ways, so their
+  agreement is not independent evidence for that kernel. Every free-`τ` theorem about those
+  kernels therefore specializes.
 * `boundSelfAbsorptionFactor_strictAntiOn_density` — `SelfAbsorption`'s escape-factor
   antitonicity `SA(τ₂) < SA(τ₁)` becomes: the escape factor is strictly decreasing in the
   DENSITY.
@@ -40,9 +42,9 @@ physical density `N` rather than about an unmoored parameter.
   `thickLineIntensity_ratio_strictAntiOn_density` / `..._injOn_density` — the two-line
   payoff: for two lines of the same species sharing `(T, N)` and one common `σ₀ · ℓ` but with
   distinct lower-level OPACITIES `w₂ < w₁`, the ratio of MEASURED thick intensities is a
-  positive `N`-free multiple of `CurveOfGrowth.cogRatio`, hence strictly antitone and
-  injective in `N`. The multiplier is the source-strength ratio `S₁/S₂`, in which the
-  calibration constant `Fcal` and the (common) lumped `σ₀ · ℓ` cancel exactly
+  positive `N`-free multiple of `CurveOfGrowth.cogRatio`, hence (for this flat kernel)
+  strictly antitone and injective in `N`. The multiplier is the source-strength ratio `S₁/S₂`,
+  in which the calibration constant `Fcal` and the (common) lumped `σ₀ · ℓ` cancel exactly
   (`lteSourceStrength_ratio_calibration_free`) — it depends only on `T` and atomic data.
 * `effectiveCrossSection_lt_of_energy_lt` — the side condition `w₂ < w₁` of the two-line
   results need not be assumed of free parameters: AT A COMMON `σ₀` it follows from the atomic
@@ -96,6 +98,16 @@ the `OpticalDepth` scope block: the `τ` used here overstates the LTE optical de
 the Wien limit of the line source function). The `cogRatio` leg additionally assumes the two
 lines share one homogeneous emitting volume and one column density.
 
+**Flat kernel; published tags.** Every statement over `thickLineIntensity` or
+`selfAbsorptionFactor` uses the flat-profile escape factor on the frequency-integrated
+intensity, whose model tag is APPROXIMATION (1.4–3.5× over-correction at line-centre depths
+`3–10` for peaked profiles, in the audit probes; see the `SelfAbsorption` scope block). Those
+results publish APPROXIMATION whatever their own (relation) tag (`docs/conventions.md` §8).
+The two-line injectivity in `N` is a property of the flat kernel: for Stark-affected Voigt
+lines (audit probes at γ/σ = 0.1, 0.3, 0.93; no larger γ/σ probed) the profile-resolved pair
+ratio is non-monotone inside line-centre depths
+`≤ 30` (audit probes; see `CurveOfGrowth`'s scope block).
+
 * Gornushkin, Anzano, King, Smith, Omenetto, Winefordner, "Curve of growth methodology applied
   to laser-induced plasma emission spectroscopy", *Spectrochim. Acta Part B* **54** (1999)
   491–503 — the homogeneous-slab relation `I = S·(1 − exp(−τ))` shared by all three kernels
@@ -124,7 +136,8 @@ linearity `opticalDepth = σ_ℓ · ℓ · N`; no new physical content.
 
 REDUCED, not PURE-MATH: the proof consumes `thickLineIntensity_eq_slab`, so this identity
 inherits that result's homogeneous single-temperature flat-cross-section slab scope. It is
-also conditional — `0 < N` (with `σ₀, ℓ > 0`) is needed to get `τ > 0`. -/
+also conditional — `0 < N` (with `σ₀, ℓ > 0`) is needed to get `τ > 0`. Publishes
+APPROXIMATION via `selfAbsorbedIntensity` (module scope block). -/
 theorem thickLineIntensity_eq_cogIntensity [Nonempty ι] {kB T N Fcal sigma0 ell : ℝ}
     {g E A : ι → ℝ} (hg : ∀ k, 0 < g k) (hN : 0 < N) (hsig : 0 < sigma0) (hell : 0 < ell)
     (u l : ι) :
@@ -140,9 +153,11 @@ theorem thickLineIntensity_eq_cogIntensity [Nonempty ι] {kB T N Fcal sigma0 ell
 `SelfAbsorption.selfAbsorptionFactor_strictAntiOn` is a statement about a free real `τ`; once
 `τ` is the `opticalDepth` of the state, it becomes a statement about `N`: a denser plasma
 lets a strictly smaller fraction of its line photons escape. The `τ > 0` side conditions of
-the free-`τ` theorem are discharged from the state by `OpticalDepth.opticalDepth_pos`.
+the free-`τ` theorem are discharged from the state by `OpticalDepth.opticalDepth_pos`. The
+escaping fraction here is the flat-profile `SA`, not a profile-resolved escape factor.
 
-REDUCED: homogeneous single-temperature slab, flat line-center cross-section. -/
+Relation REDUCED (homogeneous single-temperature slab, flat line-center cross-section);
+publishes APPROXIMATION via `selfAbsorptionFactor`. -/
 theorem boundSelfAbsorptionFactor_strictAntiOn_density [Nonempty ι] {kB T sigma0 ell : ℝ}
     {g E : ι → ℝ} (hg : ∀ k, 0 < g k) (hsig : 0 < sigma0) (hell : 0 < ell) (l : ι) :
     StrictAntiOn (fun N => selfAbsorptionFactor (opticalDepth kB T N sigma0 ell g E l))
@@ -161,8 +176,8 @@ needs a free hypothesis `0 < τ`; with `τ` bound to the state that hypothesis i
 its optically-thin value, and neglecting self-absorption biases the inferred upper-level
 population downward.
 
-REDUCED: homogeneous single-temperature slab, flat line-center cross-section; inherits the
-`APPROXIMATION` scope of `selfAbsorbedIntensity_lt_lineIntensity`. -/
+Scope: homogeneous single-temperature slab, flat line-center cross-section; publishes
+APPROXIMATION via `selfAbsorbedIntensity`, like `selfAbsorbedIntensity_lt_lineIntensity`. -/
 theorem thickLineIntensity_lt_lineIntensity_of_pos_density [Nonempty ι]
     {kB T N Fcal sigma0 ell : ℝ} {g E A : ι → ℝ} (hg : ∀ k, 0 < g k) (hN : 0 < N)
     (hFcal : 0 < Fcal) (hA : ∀ k, 0 < A k) (hsig : 0 < sigma0) (hell : 0 < ell) (u l : ι) :
@@ -254,7 +269,8 @@ and `div_mul_div_comm`.
 
 REDUCED, not PURE-MATH: it consumes `thickLineIntensity_eq_cogIntensity` and hence
 `thickLineIntensity_eq_slab`, inheriting that slab scope; and one `σ₀` is shared by both
-lines (see the module's `## Honest limitations`). -/
+lines (see the module's `## Honest limitations`). Publishes APPROXIMATION via
+`selfAbsorbedIntensity`. -/
 theorem thickLineIntensity_ratio_eq_source_mul_cogRatio [Nonempty ι]
     {kB T N Fcal sigma0 ell : ℝ} {g E A : ι → ℝ} (hg : ∀ k, 0 < g k) (hN : 0 < N)
     (hsig : 0 < sigma0) (hell : 0 < ell) (u₁ l₁ u₂ l₂ : ι) :
@@ -274,11 +290,13 @@ statement about a free column variable `n` and free opacities `w₁ > w₂`. Res
 bound `τ`: for two lines of the same species sharing `(T, N)`, whose lower levels give
 `σ_ℓ₂(T) < σ_ℓ₁(T)`, the ratio of MEASURED thick intensities is strictly ANTITONE in the
 physical density `N` on `(0, ∞)` — the thicker line saturates first, so the ratio droops. The
-`N`-free prefactor `S₁/S₂` is positive, so it cannot destroy the strictness.
+`N`-free prefactor `S₁/S₂` is positive, so it cannot destroy the strictness. Flat kernel
+only: the profile-resolved Voigt pair ratio need not be monotone (module scope block).
 
-REDUCED: homogeneous single-temperature slab, flat line-center cross-section, one shared
-column density AND one shared `σ₀` for both lines (per-line `f_lu λ²` differences are not
-modelled — see the module's `## Honest limitations`). -/
+Relation REDUCED: homogeneous single-temperature slab, flat line-center cross-section, one
+shared column density AND one shared `σ₀` for both lines (per-line `f_lu λ²` differences are
+not modelled — see the module's `## Honest limitations`). Publishes APPROXIMATION via
+`selfAbsorbedIntensity`. -/
 theorem thickLineIntensity_ratio_strictAntiOn_density [Nonempty ι]
     {kB T Fcal sigma0 ell : ℝ} {g E A : ι → ℝ} (hg : ∀ k, 0 < g k) (hFcal : 0 < Fcal)
     (hA : ∀ k, 0 < A k) (hsig : 0 < sigma0) (hell : 0 < ell) (u₁ l₁ u₂ l₂ : ι)
@@ -303,17 +321,22 @@ theorem thickLineIntensity_ratio_strictAntiOn_density [Nonempty ι]
     thickLineIntensity_ratio_eq_source_mul_cogRatio hg hNb0 hsig hell u₁ l₁ u₂ l₂]
   exact mul_lt_mul_of_pos_left (cogRatio_strictAntiOn hwlt hw₂ hNa hNb hab) hS
 
-/-- **Injectivity of the measured two-line ratio in the density.** Immediate from the strict
-antitonicity above. This is the honest identifiability route once `σ₀ · ℓ` is NOT taken as
-known-and-single-line: two lines of distinct opacity, at one `(T, N)`, determine `N`. It is
-the bound-`τ` restatement of `CurveOfGrowth.cogRatio_injOn`.
+/-- **Injectivity of the measured two-line ratio in the density — flat kernel only.**
+Immediate from the strict antitonicity above. Within the flat-profile kernel this is the
+identifiability route once `σ₀ · ℓ` is NOT taken as known-and-single-line: two lines of
+distinct opacity, at one `(T, N)`, determine `N`. It is the bound-`τ` restatement of
+`CurveOfGrowth.cogRatio_injOn`, and like it does not transfer to Stark-affected Voigt lines
+(audit probes at γ/σ = 0.1, 0.3, 0.93), whose profile-resolved pair ratio is non-monotone inside
+line-centre depths
+`≤ 30` (audit probes; module scope block).
 
 SCOPE — the `wᵢ` (hence `σ₀ · ℓ` and `T`) must be known to invert the ratio for `N`; what is
 NOT needed is the absolute calibration `Fcal`, which cancels in `S₁/S₂`.
 
-REDUCED: homogeneous single-temperature slab, flat line-center cross-section, one shared
-column density AND one shared `σ₀` for both lines (per-line `f_lu λ²` differences are not
-modelled — see the module's `## Honest limitations`). -/
+Relation REDUCED: homogeneous single-temperature slab, flat line-center cross-section, one
+shared column density AND one shared `σ₀` for both lines (per-line `f_lu λ²` differences are
+not modelled — see the module's `## Honest limitations`). Publishes APPROXIMATION via
+`selfAbsorbedIntensity`. -/
 theorem thickLineIntensity_ratio_injOn_density [Nonempty ι] {kB T Fcal sigma0 ell : ℝ}
     {g E A : ι → ℝ} (hg : ∀ k, 0 < g k) (hFcal : 0 < Fcal) (hA : ∀ k, 0 < A k)
     (hsig : 0 < sigma0) (hell : 0 < ell) (u₁ l₁ u₂ l₂ : ι)
@@ -341,9 +364,12 @@ then both intensities equal `P · SA(1) · SA(2)`, and `N₁ ≠ N₂` because `
 antitone (`SelfAbsorption.selfAbsorptionFactor_strictAntiOn`). So the binding relocates the
 degree of freedom from `τ` into `σ₀ · ℓ`; it is removed only by a second input — a known
 `σ₀ · ℓ` (`thickLineIntensity_injOn`) or a second line
-(`thickLineIntensity_ratio_injOn_density`).
+(`thickLineIntensity_ratio_injOn_density`, a flat-kernel result). Unlike the `τ = 0` witness of
+`SelfAbsorptionInverse.selfAbsorption_breaks_identifiability`, this witness is reachable by a
+state-bound `τ`, so it is the physical form of the single-line alias.
 
-REDUCED: homogeneous single-temperature slab, flat line-center cross-section. -/
+Relation REDUCED (homogeneous single-temperature slab, flat line-center cross-section);
+publishes APPROXIMATION via `selfAbsorbedIntensity`. -/
 theorem boundOpticalDepth_lumped_alias [Nonempty ι] {kB T Fcal ell : ℝ} {g E A : ι → ℝ}
     (hg : ∀ k, 0 < g k) (hell : 0 < ell) (u l : ι) :
     ∃ N₁ N₂ sigma₁ sigma₂ : ℝ, 0 < N₁ ∧ 0 < N₂ ∧ 0 < sigma₁ ∧ 0 < sigma₂ ∧ N₁ ≠ N₂ ∧

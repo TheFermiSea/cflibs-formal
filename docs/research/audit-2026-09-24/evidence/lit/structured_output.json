@@ -1,0 +1,295 @@
+{
+ "summary": "Literature slice, re-verified after the session restart. Every citation below was retrieved this session (Semantic Scholar through the asta CLI; raw JSON is in docs/research/audit-2026-09-24/evidence/lit/) or comes from the verified files. The spec is honest about what it models. Its literature gaps fall into three groups.\n(1) Physics the literature uses and the spec never states. Ionization-potential depression (IPD) is absent: there is no Lean object, and the M4 acceptance doc wrongly calls IPD 'fine'. There are no results on how temperature splits between charge stages, or on the sign of the temperature bias that self-absorption causes; the literature disagrees on that sign. The spec also has no mass-fraction bridge, although the pipeline is scored in wt%.\n(2) Error bounds too loose to test the literature's informal claims. The closure chain (C6, classicComposition_atomicData_error, noise_to_composition) turns relative per-species errors into one absolute bound, so it can neither confirm nor refute Gornushkin & Völker's 2022 claim that closure amplifies errors on minor elements. For a 0.5% minor element with a 5% atomic-data error, the repo bound is 0.0557: 11 times the fraction itself and about 106 times the true worst case of 5.2e-4.\n(3) Citation errors of the kind the repo has been hurt by before. A real title is credited to the wrong authors: the IntechOpen chapter is by F. Rezaei (2016), not Aragón & Aguilera. The title given for JQSRT 149 (2014) 90 has no Semantic Scholar record. The corrigendum volume is wrong (155; it is 159). The source for ForwardMapEnergy is Thouin et al., so the reviews that name 'Khelladi' are wrong. The whitelist has zero rows with first-hand evidence, because its one CORRECTED row admits the source was never opened.\nTwo search negatives, each with a positive control. (a) No prior machine-checked formalization of CF-LIBS was found. The snippet search for formal proofs and identifiability in CF-LIBS returned only formal-identifiability papers from other fields, which shows the search ran. (b) The literature's informal claims on identifiability, bias direction and closure propagation are mostly unproved in the repo. InhomogeneityBias is the exception: it proves the one-stage mixing sign, and it credits Craig & Brown as prior art.\nThe six frontier ideas are all new; each was checked by grep over CflibsFormal/ and docs/frontiers. FI-1 to FI-3 type-check with sorry against the built repo (Frontier.lean). FI-4 to FI-6 have prose sketches only.",
+ "findings": [
+  {
+   "id": "LIT-01",
+   "category": "gap_vs_pipeline",
+   "severity": "medium",
+   "confidence": "CONFIRMED",
+   "location": "CflibsFormal/ (absent); CF-LIBS-improved cflibs/plasma/partition.py:81-117,166,207; cflibs/plasma/ipd.py:1-60",
+   "claim": "Ionization-potential depression (continuum lowering) is completely absent from the Lean spec. The pipeline, however, applies it in both the Saha exponent and the partition-function cutoff. The literature shows the partition-function side of the effect is not second-order.",
+   "evidence": "Search: rg -i 'depression|ionization.potential.lowering|IPD|lowering|Stewart|Debye' over CflibsFormal/ and docs/frontiers/. The only hit is the substring 'ipd' in 'hMlipdef' (SahaEquilibrium.lean:783), which shows the pattern does run. IPD otherwise appears only in the retracted docs/2dcos material (monograph.corrected.md:400-408, ERRATA.md:46).\nPipeline: partition.py:81-95 computes Debye-Hückel Δχ = Z·e²/λ_D with λ_D = sqrt(kT/(4π n_e e²)), 'the Saha exponent and the direct-sum partition cutoff use one consistent Δχ'. partition.py:166 and :207 sum 'U(T) = Σ gᵢ exp(-Eᵢ/kT) for Eᵢ < IP - Δχ' with e_max = ip_ev - delta_chi. ipd.py implements Stewart–Pyatt. The overhaul records IPD 'on in the forward and off in the inverse, so n_e comes out 0.936× low' (review-summary.md:32) and 'IPD adds positive feedback' to the n_e runaway (review-summary.md:68); see also BL-42 and BL-37.\nLiterature (retrieved): Ristić, Krstevski, Ranković, Marković, Šajić, Kuzmanović 2024, 'The influence of continuum lowering on the equilibrium composition of plasma: case study of laser-induced plasma on a WC–Cu target', Plasma Phys. Control. Fusion, DOI 10.1088/1361-6587/ad8b68. Abstract: 'the correction to the partition functions due to the reduction of the ionization potential is of greater importance than the correction to the Boltzmann term at higher temperatures for atomic species'.",
+   "recommendation": "Add a module, e.g. IonizationDepression.lean, containing:\n- chiEff(n_e, T) = χ - Δχ(n_e, T) as an abstract monotone function, with the Debye-Hückel instance Δχ = a(T)·sqrt(n_e);\n- a truncated partition function over {k | E k < chiEff};\n- the fixed-point form of the Saha relation;\n- the uniqueness and contraction theorem of FI-4;\n- a witness that the truncated U jumps as a level crosses the cutoff.\nTag the module REDUCED (Debye-Hückel). Cite Ristić 2024 and Stewart & Pyatt 1966 only after opening them."
+  },
+  {
+   "id": "LIT-02",
+   "category": "docstring_overclaim",
+   "severity": "medium",
+   "confidence": "CONFIRMED",
+   "location": "/home/brian/code/cflibs-formal/docs/integration/m4-population-context.md:18,22,30-34 (Tier-1 rows at :50-69)",
+   "claim": "The M4 acceptance doc says: 'An IPD-lowered χ − Δχ is fine, provided forward and inverse use the same value.' This is an overclaim. In the pipeline Δχ depends on n_e and T, and the level cutoff moves with it. The T-grid monotonicity and Lipschitz rows, the closed-form n_e inversion, and the contraction certificates C9/C10 therefore do not transfer to an IPD-on context.",
+   "evidence": "Doc :30-34: 'Every Saha result is stated for one ionization energy χ. An IPD-lowered χ − Δχ is fine, provided forward and inverse use the same value.' The rows it offers as acceptance criteria all quantify over T at a fixed χ: sahaFactor_strictMonoOn_temp (:62), electronDensityFromRatio_strictMonoOn_temp (:56), sahaFactor_lipschitz_temp (:61), electronDensityFromRatio_mem_Icc (:67) and outerLoop_contracts_apriori (:68). Several also need hEχ : ∀ k, EZ k ≤ chi.\nWith Debye-Hückel IPD (partition.py:81-95) the effective χ varies with T and n_e, which breaks this in three ways:\n(i) the T-grid rows do not apply;\n(ii) R·n_e = S(T, χ − Δχ(n_e)) is a fixed-point equation, not the explicit ↔ of saha_relation (:53);\n(iii) the pipeline's cutoff Eᵢ < IP − Δχ (partition.py:207) changes the level list, so U jumps as (n_e, T) cross thresholds. partitionFunction_lipschitz_temp (:64) cannot hold across a jump.\nThe doc's own row at :18 warns that 'a clamped, tabulated or polynomial U' breaks these rows, but it does not extend that warning to the IPD cutoff. The overhaul records the IPD-on inverse as an inner n_e fixed point: R9-performance.md:36, 'With apply_ipd=True, IP_eff(n_e,T) adds a 1-D inner n_e fixed point'. Ristić 2024 (DOI 10.1088/1361-6587/ad8b68) shows the partition-function correction dominates at high T.",
+   "recommendation": "Amend cross-cutting condition 2 in the doc. IPD transfers only pointwise, at a fixed (n_e, T) with a fixed level list. The T-grid, Lipschitz and enclosure rows, and C9/C10, are NOT acceptance criteria for an IPD-on PopulationContext. Add IPD-specific rows once FI-4 exists. Cross-reference the doc to BL-40 and BL-42."
+  },
+  {
+   "id": "LIT-03",
+   "category": "faithfulness",
+   "severity": "medium",
+   "confidence": "CONFIRMED",
+   "location": "CflibsFormal/Alt/CSigmaCurveOfGrowth.lean:44,57-59; docs/citation-whitelist.tsv:71",
+   "claim": "The IntechOpen chapter is attributed to the wrong authors. The module credits 'Optically Thick Laser-Induced Plasmas in Spectroscopic Analysis' to Aragón & Aguilera and cites its Eqs. 19/20 and 29–31. The chapter is by F. Rezaei (2016). This is the failure class the repo ranks worst: a real title attached to the wrong authors.",
+   "evidence": "CSigmaCurveOfGrowth.lean:57-59: '* Aragón & Aguilera, \"Optically Thick Laser-Induced Plasmas in Spectroscopic Analysis\", IntechOpen — the (1 − exp(−τ)) self-absorption factor (Eqs. 19/20) and the profile-integrated slope-½ wing (Eqs. 29–31)'. Line :44 relies on 'IntechOpen Eqs. 29–31'.\nasta papers get DOI:10.5772/61941 returns the title 'Optically Thick Laser-Induced Plasmas in Spectroscopic Analysis', author F. Rezaei, year 2016, publicationDate 2016-04-20, CorpusId 53339271. The same record came back in four independent snippet searches (sn_alpha/sn_mirror2/sn_csig2/sn_elsherbini.json). Its snippets discuss Aragón's CSigma graphs as third-party work ('this group developed COG curves by introducing the CSigma graph [2]').\nWhitelist row 71 has this chapter as 'Aragón & Aguilera (IntechOpen, n.d.) UNVERIFIED', with the note 'NO YEAR given'.",
+   "recommendation": "Re-attribute to Rezaei, F. (2016), IntechOpen, DOI 10.5772/61941. Re-verify the equation numbers 19/20 and 29–31 from the chapter before keeping them. Otherwise cite the slope-½ wing to Ladenburg–Reiche 1913 (already whitelisted) or Gornushkin 1999. Update whitelist row 71."
+  },
+  {
+   "id": "LIT-04",
+   "category": "tooling",
+   "severity": "medium",
+   "confidence": "CONFIRMED",
+   "location": "docs/citation-whitelist.tsv:12-15,83; scripts/check-citations.sh output; docs/literature-validation.md:3-6",
+   "claim": "No whitelist row carries first-hand evidence. There are zero VERIFIED rows, and the only CORRECTED row breaks the file's own definition of CORRECTED. AUDIT-VETTED, which backs 21 of 24 scope-tag citations, rests on a frozen audit that already got at least one primary source's author wrong (LIT-11).",
+   "evidence": "Header :12-15: 'VERIFIED — primary source OPENED and the specific claimed sentence/equation LOCATED'; 'CORRECTED — as VERIFIED, but the metadata in the repo was wrong'.\nRow 83 (Aragón & Aguilera 2005, CORRECTED): 'Metadata Crossref-checked; primary source NOT opened'.\nbash scripts/check-citations.sh: 'rows: 46 AUDIT-VETTED:28 CONVENTION:2 CORRECTED:1 UNVERIFIED:15'; '21 of 24 scope-tags citations are whitelisted at a status short of VERIFIED/CORRECTED'.\nliterature-validation.md:3-6 is a 'FROZEN SNAPSHOT (2026-07-09)' covering 48 modules. That audit's companion record, reviews/literature-validity-audit.md:56, names the ForwardMapEnergy source 'Khelladi et al.', but the DOI resolves to Thouin et al. (see LIT-11).",
+   "recommendation": "Demote row 83 to UNVERIFIED with a note 'metadata Crossref-checked', or open the paper and promote it. Report the VERIFIED count as a tracked metric in CI. Promote the most-used strings first: Tognoni 2010 (84 rows), Ciucci 1999 (72) and Gornushkin 1999 (69); together they carry 225 of 395 cited rows."
+  },
+  {
+   "id": "LIT-05",
+   "category": "docstring_overclaim",
+   "severity": "medium",
+   "confidence": "CONFIRMED",
+   "location": "CflibsFormal/CompositionRobustness.lean:13-37,98; AtomicDataPerturbation.lean:295; NoiseToComposition.lean:281; ErrorBudget.lean:325; Certificates.lean:206-211 (C6)",
+   "claim": "The closure-error chain is advertised as the per-element reliability deliverable for many-element alloys, but it is abundance-blind. Relative per-species errors (atomic data, temperature response) are collapsed into one absolute δ = Nmax·δ_rel/(1−δ_rel). The resulting bounds are vacuous for minor elements, and they cannot confirm or refute the literature's claim that closure amplifies errors on minor elements.",
+   "evidence": "CompositionRobustness.lean:13-37 calls the chain 'the per-element reliability deliverable for many-element alloys', with hypothesis hdelta : ∀ s, |Nhat s − N s| ≤ delta (one δ for all species). classicComposition_atomicData_error (:295) assumes a RELATIVE response error δ but feeds Nmax·(δ/(1−δ)) into composition_abs_sub_le_bound. noise_to_composition (:281) does the same with Nmax·Φ. C6 (Certificates.lean:206-211) certifies one absolute tolerance τ_C for every species.\nNumerical check: N = (0.995, 0.005), 5% multiplicative error, worst case over sign patterns:\n- actual |ΔC_minor| = 5.23e-4 (10.5% relative);\n- exact multiplicative bound 2δ/(1−δ)·C = 5.26e-4;\n- repo bound compositionErrorBound N Ŝ (Nmax·δ/(1−δ)) = 0.0557, which is 11 times the minor fraction itself and 106 times too loose.\nLiterature (retrieved): Gornushkin & Völker 2022, 'Intrinsic Performance of Monte Carlo Calibration-Free Algorithm for LIBS', Sensors 22:7149, DOI 10.3390/s22197149: 'small errors at high concentrations are transformed into large errors at low concentrations. This disadvantage, however, is not inherent in single-point calibration methods that do not use such summation'. Overhaul R11-05 builds its ratio-mode proposal on this claim.",
+   "recommendation": "Prove FI-3, i.e. relative bounds that scale with abundance. Restate classicComposition_atomicData_error and noise_to_composition in relative form, since their hypotheses are already relative. Add a relative-tolerance variant of C6. Until then, qualify the docstrings: the bounds are informative only for species with C_s comparable to Nmax/Ŝ."
+  },
+  {
+   "id": "LIT-06",
+   "category": "gap_vs_literature",
+   "severity": "medium",
+   "confidence": "CONFIRMED",
+   "location": "CflibsFormal/InhomogeneityBias.lean:20-30,484-496; Alt/CSigma.lean:27-30; SahaInverse.lean (saha_joint_identifiability)",
+   "claim": "Measured along the line of sight, neutral and ionic Boltzmann plots give DIFFERENT apparent temperatures. The Cσ and Saha–Boltzmann modules put both stages on one slope, and have no caveat about homogeneity. InhomogeneityBias bounds only one stage at a time, so the neutral/ion split is unmodelled. The pipeline's pooled SB-graph slope inherits this.",
+   "evidence": "Retrieved: Aguilera & Aragón 2007, 'Apparent excitation temperature in laser-induced plasmas', J. Phys.: Conf. Ser. 59:210-217, DOI 10.1088/1742-6596/59/1/046. From the abstract: 'the values of the apparent temperature obtained for neutral atoms and ions are different … apparent temperatures for neutral atoms (9890 K) and ions (11400 K)'.\nSpec: InhomogeneityBias builds weights for one species only (zoneWeight w z = Fcal·N z/U(T_z), :488-491). CSigma.lean:27-30 collapses ionic lines onto 'the SAME master line'. rg 'inhomogen|homogeneous|single temperature|one temperature|isotherm' over Alt/CSigma.lean, SahaInverse.lean and Alt/CSigmaCurveOfGrowth.lean returns 0 hits; the same pattern hits in InhomogeneityBias.lean, so it runs.\nPipeline: overhaul R9-performance.md:36, 'The SB-graph fit uses … a fixed design [x | element dummies]. Ion rows get x=E_k+IP_eff'. That is one slope across stages.\nThe string 'Aguilera & Aragón 2007' in the repo already means Spectrochim. Acta B 62:378, so the JPCS paper needs a distinct string.",
+   "recommendation": "Prove FI-1. Add a homogeneity caveat to the Alt/CSigma, SahaInverse and CSigmaCurveOfGrowth docstrings: a cross-stage collapse assumes one T, and line-of-sight integration generically breaks it. Whitelist the JPCS paper as 'Aguilera & Aragón 2007b (JPCS)'."
+  },
+  {
+   "id": "LIT-07",
+   "category": "gap_vs_literature",
+   "severity": "medium",
+   "confidence": "CONFIRMED",
+   "location": "CflibsFormal/SelfAbsorption.lean:240-248; OpticalDepthBridge.lean:35,158-164; Alt/SelfAbsorbed.lean:112-118; OpticalDepth.lean:60-64",
+   "claim": "The spec proves that self-absorption biases intensity and density downward. It never states the sign of the temperature (Boltzmann-slope) bias that uncorrected self-absorption causes. The literature disagrees on that sign.",
+   "evidence": "Spec: the proven bias directions are intensity/density only: thickLineIntensity_lt_lineIntensity_of_pos_density (OpticalDepthBridge.lean:35) and selfAbsorbed_corrects_bias (Alt/SelfAbsorbed.lean:112-118, 'underestimates density'). Temperature is addressed only as 'τ/I_thin antitone in T' (OpticalDepth.lean:60-64). SelfAbsorption.lean:240-248 treats correction with a known τ as exact. No SA module relates selfAbsorptionFactor to olsSlope, pairSlope or twoLineBeta; the only co-occurrence is DifferentialEstimator, which assumes matched τ.\nLiterature (retrieved), split on the sign:\n- John & Anoop 2023, RSC Adv., DOI 10.1039/d3ra06226k (simulation): 'With self-absorption the temperature calculated using Boltzmann plot has significantly diverged from the simulated temperature (Ca I 1.00 eV, Ca II 1.48 eV, Mg I 1.04 eV, and Mg II 1.48 eV)', against a true 1 eV.\n- Fayyaz et al. 2024, Anal. Sci. 40:413, DOI 10.1007/s44211-023-00480-9: self-absorption 'can lead to an underestimation of element concentrations and temperature measurements'.\n- Safi et al. 2019, J. Adv. Res. 18:1, DOI 10.1016/j.jare.2019.01.008: low-lying levels 'more prone to self-absorption, resulting in an inaccurate estimation of the plasma temperature'.",
+   "recommendation": "Prove FI-2: T is overestimated whenever τ is antitone in E_upper, the resonance-line ordering. Add a two-line counterexample with the opposite ordering, which settles the sign dispute conditionally. Note the result in the OpticalDepth and SelfAbsorption scope sections."
+  },
+  {
+   "id": "LIT-08",
+   "category": "faithfulness",
+   "severity": "medium",
+   "confidence": "CONFIRMED",
+   "location": "CflibsFormal/OpticalDepth.lean:92-93; CflibsFormal/Alt/CSigmaCurveOfGrowth.lean:50-53; docs/2dcos/ERRATA.md:65; docs/2dcos/monograph.corrected.md:738",
+   "claim": "The repo quotes the wrong title for the Cσ source paper (JQSRT 149 (2014) 90). The quoted title has no Semantic Scholar record. The corrigendum is cited nowhere in the Lean, and where it is cited (in docs) the volume is wrong.",
+   "evidence": "OpticalDepth.lean:92 and CSigmaCurveOfGrowth.lean:50-52 read: 'Aragón & Aguilera, \"Direct and inverse models… the Cσ method\", J. Quant. Spectrosc. Radiat. Transfer 149 (2014) 90'. asta papers search for that title returns total 0.\nPositive control: a search for the true title returns Aragón & Aguilera, 'CSigma graphs: A new approach for plasma characterization in laser-induced breakdown spectroscopy', JQSRT 149:90-102, DOI 10.1016/J.JQSRT.2014.07.026.\nCorrigendum: asta papers get DOI:10.1016/J.JQSRT.2015.03.001 returns 'Corrigendum to \"CSigma graphs…\" [JQSRT 149 (2014) 90-102]', JQSRT volume 159, pages 94-95 (2015). rg 'corrigendum|JQSRT.2014.07.026' over CflibsFormal finds nothing. ERRATA.md:65 and monograph.corrected.md:738 give 'corrigendum JQSRT 155'.\nThe string 'Aragón & Aguilera 2014' backs 15 scope-tag rows. It is AUDIT-VETTED (whitelist row 52), and that record gives no title.",
+   "recommendation": "Correct the title in both modules and add the DOI. Cite the corrigendum (JQSRT 159:94-95, DOI 10.1016/J.JQSRT.2015.03.001), fix '155' to '159' in the docs/2dcos files, and open the corrigendum to check whether it touches the Cσ abscissa/ordinate equations that the spec formalizes. Record the title in whitelist row 52."
+  },
+  {
+   "id": "LIT-09",
+   "category": "gap_vs_pipeline",
+   "severity": "low",
+   "confidence": "CONFIRMED",
+   "location": "CflibsFormal/OpacityBroadening.lean:87-91,105-112; CF-LIBS-improved cflibs/inversion/physics/opc.py:855-856",
+   "claim": "The spec declines to use the El Sherbini width/self-absorption power law, and says no bibliographic record for it is asserted. The record exists. Under the module's own homogeneous-Lorentzian slab model, the relation also holds within a narrow exponent band, so it could be proved rather than refused. The pipeline inverts widths with exponent 0.56, which the spec could anchor.",
+   "evidence": "OpacityBroadening.lean:87-91: 'w_obs = w_Stark · SA^(−0.54) … deliberately not used here and no bibliographic record for it is asserted'.\nRetrieved: El Sherbini, El Sherbini, Hegazy, Cristoforetti, Legnaioli, Palleschi 2005, 'Evaluation of self-absorption coefficients of aluminum emission lines in LIBS measurements', DOI 10.1016/J.SAB.2005.10.011 (285 citations). Safi et al. 2019 (DOI 10.1016/j.jare.2019.01.008) quotes 'a = −0.54 for Lorentzian line profiles'.\nComputation with the module's exact ratio lorentzWidthRatio τ = sqrt(1/h(τ) − 1), where h(τ) = −ln((1+e^−τ)/2)/τ and SA(τ) = (1−e^−τ)/τ. The effective exponent ln R/(−ln SA), evaluated on 20001 log-spaced τ in [1e-4, 1e4], lies in (0.5000, 0.5687] with its maximum at τ ≈ 5.2. Sample values: 0.534 at τ=1, 0.554 at τ=2, 0.539 at τ=100. The limit is 1/2 at both ends.\nPipeline: opc.py:855-856 sets 'CDSB_COG_EXP: float = 0.56' in dl/dl0 = ((1-e^-kl)/kl)^-0.56 and inverts it up to kl = 50 (CDSB_KL_MAX).",
+   "recommendation": "Replace the refusal with FI-6: a proven band SA^(−1/2) ≤ R(τ) ≤ SA^(−0.57), and hence a certified bracket that turns a measured width ratio into an SA value. Cite El Sherbini 2005 by DOI with status UNVERIFIED until the paper is opened."
+  },
+  {
+   "id": "LIT-10",
+   "category": "gap_vs_literature",
+   "severity": "low",
+   "confidence": "CONFIRMED",
+   "location": "CflibsFormal/DoubletChannel.lean:248,353,395,86-90; CflibsFormal/CurveOfGrowth.lean:254",
+   "claim": "Optical-depth recovery from a doublet or curve of growth is proved injective and continuous, but there is no conditioning or modulus bound. The literature's central objection concerns conditioning, not injectivity, and the spec does not cite it.",
+   "evidence": "Present: doubletRatio_injOn (:248), doublet_fit_unique (:353), doubletRatio_continuousOn (:395), cogRatio_injOn (CurveOfGrowth.lean:254). rg 'lipschitz|stab|condition|sensitiv' over both files finds no inverse-modulus result. The docstring at :86-90 admits the attainable range 'is not characterized'. The doublet ratio tends to 1 as τ→∞, so δτ grows like e^τ·δD.\nRetrieved: Maali & Shabanov 2019, 'Error analysis in optimization problems relevant for CF-LIBS', JQSRT, DOI 10.1016/J.JQSRT.2018.10.029: 'relative uncertainties in the values of the spectral parameters … cannot be made small because there exist large (correlated) variations … under which the fit error remains less than a preassigned (small) value', for τ from 1e-4 to 1e2. rg 'Maali|Shabanov' over the repo finds nothing.",
+   "recommendation": "Prove an explicit inverse modulus on [τmin, τmax], i.e. |τ−τ'| ≤ L(τmax)·|D(τ)−D(τ')| with L exponential in τmax, and expose it as a conditioning certificate beside C13. Cite Maali & Shabanov 2019 as the informal statement it makes precise."
+  },
+  {
+   "id": "LIT-11",
+   "category": "docs_drift",
+   "severity": "low",
+   "confidence": "CONFIRMED",
+   "location": "reviews/literature-validity-audit.md:56; reviews/boltzmann-convention-verdict.md:13,133,141; docs/citation-whitelist.tsv:75; CflibsFormal/ForwardMapEnergy.lean:20,52",
+   "claim": "The whitelist's Thouin/Khelladi conflict is settled: the article (DOI 10.1051/epjap/2023230072) is by Thouin et al. The reviews that attribute it to 'Khelladi et al.', and quote equations under that name, are wrong. The paper is about Boltzmann plots of spatially integrated lines, yet InhomogeneityBias does not cite it.",
+   "evidence": "asta papers get DOI:10.1051/epjap/2023230072 returns 'Interpretation of temperature measurements by the Boltzmann plot method on spatially integrated plasma oxygen spectral lines', by Julien Thouin, Malyk Benmouffok, P. Freton, Jean-Jacques Gonzalez, Eur. Phys. J. Appl. Phys., 2023. Semantic Scholar gives no volume, so the docstring's 'EPJ Appl. Phys. 98 (2023) 65' is unconfirmed.\nThe wrong attribution appears at boltzmann-convention-verdict.md:13 ('Khelladi et al., EPJ Appl. Phys. 101 (2023) ap230072 — integrated intensity J_tot = …'), at :133 and :141, and at literature-validity-audit.md:56. Whitelist row 75 records the conflict as unresolved.",
+   "recommendation": "Mark row 75 CORRECTED-metadata (DOI resolved; primary source still not opened). Fix the two review files. Consider citing the paper in InhomogeneityBias as LIBS-adjacent evidence on Boltzmann plots of integrated lines, once it has been opened."
+  },
+  {
+   "id": "LIT-12",
+   "category": "tooling",
+   "severity": "low",
+   "confidence": "CONFIRMED",
+   "location": "docs/scope-tags.tsv:753-754; CflibsFormal/Alt/NeutralityScale.lean:37",
+   "claim": "'Abbass 2016' is not on the whitelist, yet it backs two EXACT scope-tag rows.",
+   "evidence": "check-citations.sh output: 'OFF-WHITELIST Abbass 2016 [tags: Alt/NeutralityScale.lean]'. scope-tags.tsv:753-754: neutralityScale_eq_Fcal EXACT Abbass 2016; neutralityScale_undetected EXACT Abbass 2016.\nSemantic Scholar record: Abbass, Ahmed, Ahmed, Baig, 'A Comparative Study of Calibration Free Methods for the Elemental Analysis by LIBS', Plasma Chem. Plasma Process. (2016), DOI 10.1007/s11090-016-9729-y. The record returned no abstract, so the 'electron density conservation' attribution in docs/spec/03-module-specs.md:288-289 is not confirmed from it.",
+   "recommendation": "Add a whitelist row with the DOI and status UNVERIFIED. Retag the two rows REDUCED or PURE-MATH/—, since they are algebra about a normalization choice, until the paper is opened."
+  },
+  {
+   "id": "LIT-13",
+   "category": "docs_drift",
+   "severity": "low",
+   "confidence": "CONFIRMED",
+   "location": "CflibsFormal/MatrixEffects.lean:44,61-62; docs/citation-whitelist.tsv:72",
+   "claim": "The 'Borduchi, Milori, Villas-Boas, Spectrochim. Acta B (2022)' reference merges two papers. The three-author group wrote the 2019 paper; the 2022 paper has a fourth author.",
+   "evidence": "MatrixEffects.lean:61-62: 'Borduchi, L. C. L.; Milori, D. M. B. P.; Villas-Boas, P. R. Spectrochimica Acta Part B (2022)'. Semantic Scholar (bord.json) has two candidates:\n- the 2022 paper, 'Reducing matrix effects on the quantification of Ca, Mg, and Fe in soybean leaf samples using calibration-free LIBS and one-point calibration', by Borduchi, Milori, M. C. Meyer, Villas-Boas, SAB, DOI 10.1016/j.sab.2022.106561;\n- the three-author paper, 'One-point calibration of Saha-Boltzmann plot to improve accuracy and precision…', SAB 2019, DOI 10.1016/j.sab.2019.105692.",
+   "recommendation": "Pick one paper and cite it by DOI. The 2022 paper matches 'residual matrix effects'; if it is the intended source, add Meyer as an author. Update whitelist row 72."
+  },
+  {
+   "id": "LIT-14",
+   "category": "gap_vs_pipeline",
+   "severity": "medium",
+   "confidence": "CONFIRMED",
+   "location": "CflibsFormal/Closure.lean:44 (composition = number fraction); absent mass-fraction layer; CF-LIBS-improved cflibs/benchmark/scoreboard.py:253,381-383",
+   "claim": "Every composition theorem is about number (mole) fractions. The pipeline is scored and reported in mass fractions (wt%). No spec object or theorem transfers any composition identity or error bound to the mass scale on which the pipeline is judged.",
+   "evidence": "rg -i 'atomicMass|molarMass|wt ?%|weight fraction' over CflibsFormal finds nothing; the only 'mass fraction' strings are mislabels (LIT-15). Closure.lean:44 defines 'Number fraction (composition) of species s'.\nPipeline: scoreboard.py:253 reads CFLIBS_MASS_FRACTION_SCORING, and :381-383 calls _number_to_mass_fractions(predicted). The overhaul's accuracy bars are in wt% (R11-01 and R11-02, run with CFLIBS_MASS_FRACTION_SCORING=1).\nRetrieved: Völker & Gornushkin 2024, 'Mass and mole fractions in calibration-free LIBS', J. Anal. At. Spectrom., DOI 10.1039/d4ja00028e (TLDR: 'Importance of mole or mass fraction representations of concentrations in CF-LIBS').",
+   "recommendation": "Define massFraction M N s := composition (fun t => M t * N t) s and prove it equals the pipeline's conversion. Prove the transfer: under multiplicative per-species errors the relative bound of FI-3 carries over unchanged; under absolute errors, bounds degrade by up to max M / min M. Add the result to the M4/M8 acceptance rows."
+  },
+  {
+   "id": "LIT-15",
+   "category": "naming",
+   "severity": "low",
+   "confidence": "CONFIRMED",
+   "location": "CflibsFormal/MatrixEffects.lean:25,131; CflibsFormal/MultiSpecies.lean:92",
+   "claim": "The docstrings call a number fraction a 'mass fraction'.",
+   "evidence": "MatrixEffects.lean:131: '**Missing (undetected) mass fraction** m = 1 − (∑_{t∈D} n_t)/(∑_t n_t): the share of the true number density'. Line :25 repeats 'undetected mass fraction'. MultiSpecies.lean:92: 'the CF-LIBS mass/number-fraction normalization'. The definitions divide number densities, so these are number fractions (see Völker & Gornushkin 2024, DOI 10.1039/d4ja00028e, on why the distinction matters).",
+   "recommendation": "Change 'mass' to 'number (mole)' in the three docstrings. Keep 'mass fraction' for the future massFraction of LIT-14."
+  },
+  {
+   "id": "LIT-16",
+   "category": "faithfulness",
+   "severity": "low",
+   "confidence": "CONFIRMED",
+   "location": "CflibsFormal/IntervalEnclosure.lean:54-57",
+   "claim": "IntervalEnclosure cites Cristoforetti et al. 2010 as '(calibration-free LIBS)' for the two-column least-squares design of the Boltzmann plot. That paper is the LTE 'Beyond the McWhirter criterion' paper, so it is the wrong source for this claim.",
+   "evidence": "IntervalEnclosure.lean:55-56: 'The two-column least-squares design of the Boltzmann plot is standard: G. Cristoforetti et al., Spectrochim. Acta B 65 (2010) 86 (calibration-free LIBS)'. Retrieved record: Cristoforetti, De Giacomo, Dell'Aglio et al. 2010, 'Local Thermodynamic Equilibrium in Laser-Induced Breakdown Spectroscopy: Beyond the McWhirter criterion', DOI 10.1016/J.SAB.2009.11.005. The repo itself gives that title at OpacityBroadening.lean:83-85.",
+   "recommendation": "Cite Tognoni 2010 or Ciucci 1999 for the Boltzmann-plot OLS design, as OLS.lean:45 already does ('Tognoni et al. 2010'). Otherwise drop the citation, since the module is PURE-MATH."
+  },
+  {
+   "id": "LIT-17",
+   "category": "gap_vs_pipeline",
+   "severity": "low",
+   "confidence": "CONFIRMED",
+   "location": "CflibsFormal/DifferentialEstimator.lean:67-87; docs/scope-tags.tsv:643-653; CF-LIBS-improved cflibs/inversion/physics/opc.py:14-44",
+   "claim": "DifferentialEstimator presents itself as the formal counterpart of one-point calibration (OPC), but it does not cite the LIBS OPC literature; its prior art is stellar papers only. It also certifies a different estimator from the pipeline's OPC, which the overhaul proposes to promote (R11-03).",
+   "evidence": "DifferentialEstimator.lean:67-69: 'one reference sample of known composition … exactly as one-point-calibration (OPC) schemes do'. Its only prior art is stellar (:78-87: Meléndez 2009, Bedell 2014, Nissen & Gustafsson 2018). Its EXACT rows cite 'Ciucci 1999', and the REDUCED bound cites 'Aguilera & Aragón 2007' (scope-tags.tsv:643-653).\nRetrieved:\n- Cavalcanti, Teixeira, Legnaioli, Lorenzetti, Pardini, Palleschi 2013, 'One-point calibration for calibration-free LIBS quantitative analysis', SAB, DOI 10.1016/J.SAB.2013.05.016 (99 citations);\n- Borduchi et al. 2019, DOI 10.1016/j.sab.2019.105692;\n- Hu et al. 2022, Opt. Lett., DOI 10.1364/ol.472224 (self-absorption correction plus OPC).\nPipeline: opc.py:14-24 cites Cavalcanti 2013. It 'fixes the plasma temperature at the mean of the selected standards' optimal T*' and derives 'one robust per-element relative-sensitivity factor F by the geometric mean of C_true/C_rec'. That is a per-element factor at a pooled T. differentialComposition_exact_of_matched instead needs per-line ratios at a matched T.",
+   "recommendation": "Cite Cavalcanti 2013 as the LIBS prior art. Add a theorem for the pipeline's per-element-F OPC: exactness when the per-element bias factor is the same for standard and unknown, and a residual bound through logDifferentialRatio_affine_in_E when T differs from T*. Link it to R11-03."
+  },
+  {
+   "id": "LIT-18",
+   "category": "gap_vs_literature",
+   "severity": "low",
+   "confidence": "CONFIRMED",
+   "location": "CflibsFormal/ErrorBudget.lean; CflibsFormal/NoiseToComposition.lean; oracle/",
+   "claim": "The literature's own numerical accuracy studies of ideal-plasma CF-LIBS are uncited. They are the natural external baseline for the deterministic error budgets.",
+   "evidence": "Retrieved:\n- Tognoni, Cristoforetti, Legnaioli, Palleschi, Salvetti, Mueller 2007, 'A numerical study of expected accuracy and precision in Calibration-Free LIBS in the assumption of ideal analytical plasma', SAB, DOI 10.1016/J.SAB.2007.10.005 (236 citations);\n- Gornushkin & Völker 2022, DOI 10.3390/s22197149: 'The intrinsic accuracy of the MC calibration-free method is found to be around 1% for the eight elements tested'.\nrg -i 'expected accuracy|SAB.2007.10.005|ideal analytical plasma|Völker' over CflibsFormal/ finds nothing. Völker appears only in docs/frontiers/09 (:400).",
+   "recommendation": "Cite Tognoni 2007 in ErrorBudget and NoiseToComposition as the empirical counterpart. Add an oracle fixture comparing the proven bound with a Tognoni-2007-style ideal-plasma Monte Carlo on the same synthetic case, which quantifies how loose the bound is."
+  },
+  {
+   "id": "LIT-19",
+   "category": "gap_vs_literature",
+   "severity": "low",
+   "confidence": "CONFIRMED",
+   "location": "CflibsFormal/DoubletChannel.lean:66-71,303; (absent) mirror channel",
+   "claim": "The established duplicating-mirror self-absorption diagnostic is absent. It is exactly the kind of extra observable that DoubletChannel says it needs, and lacks, to test model adequacy.",
+   "evidence": "Retrieved: Moon, Herrera, Omenetto, Smith, Winefordner 2009, 'On the usefulness of a duplicating mirror to evaluate self-absorption effects in LIBS', SAB, DOI 10.1016/J.SAB.2009.06.011 (121 citations). rg -i 'mirror|duplicating' over CflibsFormal finds nothing.\nDoubletChannel.lean:66-71: 'Detecting inhomogeneity requires an over-determined observable set (a third line, a spatially or temporally resolved measurement, or a line-shape constraint), which this module does not supply'. single_line_tau_alias (:303) shows that one line cannot fix τ.",
+   "recommendation": "Formalize the mirror channel as in FI-5, as an abstract second pass through the same slab. Cite Moon 2009 for the method only, until its equation is opened."
+  },
+  {
+   "id": "LIT-20",
+   "category": "faithfulness",
+   "severity": "low",
+   "confidence": "CONFIRMED",
+   "location": "CflibsFormal/StarkBroadening.lean:15-35,56-60,86-95; CflibsFormal/StarkShift.lean:51; CF-LIBS-improved cflibs/radiation/stark.py:53-62,116-121",
+   "claim": "StarkBroadening says Griem's theory makes the Stark FWHM linear in n_e, and calls linearity 'the defining feature'. That holds only for the electron-impact term. The pipeline's forward model includes Griem's quasi-static ion term, which makes the width–density map nonlinear, and StarkBroadening does not say the ion term is out of scope.",
+   "evidence": "StarkBroadening.lean:22-23: 'Griem's theory makes the Stark FWHM *linear* in the electron density'. :32-35 calls linearity 'the defining feature of the electron-impact (Lorentzian) mechanism'. The out-of-scope note for 'quasi-static / ion-dynamic nonlinear corrections' appears only in StarkShift.lean:51.\nPipeline: radiation/stark.py:53 has 'Includes optional quasi-static ion-broadening correction based on Griem's theory'; :62 has 'w_total = w_hwhm * (1 + 1.75 * A_ion * (1 - 0.75 * R_D))'; :117 has 'A_ion = stark_A_ref * (n_e_cm3 / REF_NE) ** 0.25'. radiation/kernels.py:673 deliberately leaves it out. So starkDensity inverts the pipeline's forward model exactly only when A_ion = 0.",
+   "recommendation": "Add an explicit out-of-scope bullet to StarkBroadening: the ion-broadening term (A ∝ n_e^{1/4}) is excluded, and starkDensity_recovers is exact only for A = 0. Optionally prove that the ion-corrected width is strictly monotone in n_e, which keeps the inversion identifiable."
+  },
+  {
+   "id": "LIT-21",
+   "category": "naming",
+   "severity": "low",
+   "confidence": "CONFIRMED",
+   "location": "CflibsFormal/StarkBroadening.lean:106-110 (lteValid); Certificates.lean:231-247 (C7); docs/scope-tags.tsv:275; CflibsFormal/PartialLTE.lean:34-42",
+   "claim": "The McWhirter test is named `lteValid`, is the only runtime LTE certificate (C7), and feeds an EXACT row cited to Cristoforetti 2010. That paper's thesis is that McWhirter alone is insufficient for transient, inhomogeneous LIBS plasmas.",
+   "evidence": "StarkBroadening.lean:106-110 defines '**LTE-validity predicate**' as mcWhirterBound T dE ≤ ne. scope-tags.tsv:275: 'stark_saha_lte_consistent EXACT Cristoforetti 2010'. PartialLTE.lean:34-42 is honest ('necessary, not sufficient'; relaxation-time/diffusion-length criteria 'Out of scope'). Certificates.lean:233-236 says a single diagnostic 'certifies internal consistency, not physical LTE'.\nRetrieved: Cristoforetti et al. 2010, DOI 10.1016/J.SAB.2009.11.005. Secondary quotes retrieved: the review 'Optical diagnostics of laser-produced plasmas' (sn_lte2.json): 'the mere use of the McWhirter criterion alone to assess the existence of the LTE in laser-induced plasmas should not be encouraged'. Fayyaz et al. 2024 (DOI 10.1007/s44211-023-00480-9) checks the relaxation-time and variation-length criteria in addition to McWhirter.",
+   "recommendation": "Rename lteValid to mcWhirterAdmissible, or keep a deprecated alias. Retag stark_saha_lte_consistent as REDUCED, or cite McWhirter 1965 instead of Cristoforetti 2010. Add the Cristoforetti 2010 time-scale and length-scale criteria as further certificate predicates (C15/C16 are free per docs/spec/01-blueprint-audit.md:77), with the constants taken from the opened paper."
+  }
+ ],
+ "frontier_ideas": [
+  {
+   "title": "FI-1: ion apparent temperature ≥ neutral apparent temperature (Saha reweighting of the tilted mean)",
+   "informal_statement": "Take a plasma that is a positive mixture of LTE zones with uniform n_e, measured along the line of sight. Ion-stage zone weights equal neutral-stage weights times ρ_z = 2Λ(T_z)^{3/2}·exp(−χ b_z)/n_e. The partition functions cancel exactly, and ρ is antitone in b_z = 1/(k T_z). A reweighting antitone in b lowers the tilted mean inverse temperature at any fixed anchor, and tiltMean is antitone in the anchor. Hence, if the ion pair's lower line energy is at least the neutral pair's upper line energy, β_app(ion) ≤ β_app(neutral), so T_app(ion) ≥ T_app(neutral). This proves the sign that Aguilera & Aragón (2007) measured.",
+   "lean_sketch": "theorem tiltMean_reweight_le [Nonempty ζ] {w b ρ : ζ → ℝ} (hw : ∀ z, 0 < w z) (hρ : ∀ z, 0 < ρ z) (hanti : ∀ i j, b i ≤ b j → ρ j ≤ ρ i) (a : ℝ) : tiltMean (fun z => w z * ρ z) b a ≤ tiltMean w b a  -- type-checks with sorry in Frontier.lean.\nCorollary mixed_ion_apparentBeta_le_neutral: from mixed_apparentBeta_le_tiltMean (ion stage, anchor E_lo^II), tiltMean_reweight_le, tiltMean antitone in the anchor (via tiltMean_le_pairSlope and pairSlope_le_tiltMean), and tiltMean_le_pairSlope (neutral stage, anchor E_up^I), under the hypothesis E_up^I ≤ E_lo^II.",
+   "why_it_matters": "It turns the standard observation that ion Boltzmann plots run hotter into a theorem with explicit hypotheses, namely uniform n_e and the anchor ordering. It shows that the cross-stage collapse in Cσ/Saha–Boltzmann, and the pipeline's pooled SB-graph slope, mixes two different tilted means. The single-T identifiability of saha_joint_identifiability has no counterpart in a mixed plasma.",
+   "pipeline_link": "LIT-06; overhaul R9-performance.md:36 (pooled SB-graph slope with ion rows at x = E_k + IP_eff); G2-gap-fill.md:53 (the T_saha consistency diagnostic is tautological); M8 per-element flags",
+   "literature": "Aguilera & Aragón 2007, 'Apparent excitation temperature in laser-induced plasmas', J. Phys.: Conf. Ser. 59:210-217, DOI 10.1088/1742-6596/59/1/046 (retrieved; neutral 9890 K vs ion 11400 K). Aguilera & Aragón 2007, SAB 62:378 (whitelist; the multi-element Saha–Boltzmann estimator).",
+   "mathlib_prereqs": "Finset.sum_mul_sum and a weighted Chebyshev/FKG inequality through the double-sum identity Σ_i Σ_j p_i p_j (ρ_i−ρ_j)(b_i−b_j) ≤ 0. Mathlib/Algebra/Order/Chebyshev.lean has the unweighted Monovary.sum_mul_sum_le_card_mul_sum (:145) and MonovaryOn.sum_smul_sum_le_card_smul_sum (:59). Real.exp_pos, div_le_div_iff₀.",
+   "repo_anchors": "CflibsFormal/InhomogeneityBias.lean:tiltWeight (158), tiltMean (165), tiltMean_le_pairSlope (315), pairSlope_le_tiltMean (295), mixed_apparentBeta_le_tiltMean (550), zoneWeight (491); Saha.lean:sahaFactor, thermalBracket",
+   "already_exists_check": "rg -i 'apparent.*ion|ionic.*apparent|stage.specific|per.stage temperature' over CflibsFormal/ and docs/frontiers finds only single-stage InhomogeneityBias text. No lemma about reweighting tiltMean exists: rg 'reweight' over CflibsFormal finds nothing.",
+   "tractability": "B",
+   "risks": "Uniform n_e is load-bearing: if n_e,z rises with T_z fast enough, ρ can fail to be antitone. The anchor-ordering hypothesis is sufficient, not necessary. The model is optically thin with LTE per zone, inheriting REDUCED from mixed_*. The weighted Chebyshev step has no ready-made weighted form in mathlib, so expect about 40 lines."
+  },
+  {
+   "title": "FI-2: self-absorption flattens the OLS Boltzmann slope when τ is antitone in the upper-level energy",
+   "informal_statement": "Suppose optical depth decreases with upper-level energy, as for resonance and low-lying lines. Then the OLS slope of the self-absorbed Boltzmann plot is at least the thin-plasma slope. With the repo's raw ordinate (slope = −1/(kT) < 0), the slope moves toward zero, so the apparent temperature is an overestimate while the slope stays negative. With the opposite ordering, a two-line counterexample shows the sign flips. Together these settle the literature's disagreement conditionally.",
+   "lean_sketch": "theorem olsSlope_selfAbsorbed_ge [Nonempty ι] {E y τ : ι → ℝ} (hτ : ∀ k, 0 < τ k) (hanti : ∀ i j, E i ≤ E j → τ j ≤ τ i) : olsSlope E y ≤ olsSlope E (fun k => y k + Real.log (selfAbsorptionFactor (τ k)))  -- type-checks with sorry in Frontier.lean.\nProof: olsSlope is linear in y (olsSlope_eq_centered, OLS.lean:87). Real.log ∘ SA is antitone on (0,∞) (selfAbsorptionFactor_strictAntiOn, SelfAbsorption.lean:106, and Real.log_le_log), so the added term monovaries with E. Then Σ(E−Ē)(f−f̄) ≥ 0 by Chebyshev.\nPlus: example with τ increasing in E and a strict decrease.",
+   "why_it_matters": "The literature asserts both signs. John & Anoop 2023 simulate a temperature overestimate; Fayyaz 2024 states an underestimate. The spec currently proves only intensity and density directions. Temperature drives every downstream quantity, and self-absorption correction is opt-in in the pipeline.",
+   "pipeline_link": "LIT-07; overhaul R11-03 (self-absorption correction plus OPC); R3 findings on self-absorption extraction; NR-5 (resonance lines)",
+   "literature": "Retrieved: John & Anoop 2023, RSC Adv., DOI 10.1039/d3ra06226k; Fayyaz et al. 2024, Anal. Sci. 40:413, DOI 10.1007/s44211-023-00480-9; Safi et al. 2019, J. Adv. Res. 18:1, DOI 10.1016/j.jare.2019.01.008. From the whitelist: Gornushkin 1999 and Bulajic 2002 for SA(τ).",
+   "mathlib_prereqs": "Mathlib/Algebra/Order/Chebyshev.lean: Monovary.sum_mul_sum_le_card_mul_sum (:145), or a direct Σ_i Σ_j (E_i−E_j)(f_i−f_j) ≥ 0 argument; Real.log_le_log_iff; Finset.sum_sub_distrib.",
+   "repo_anchors": "CflibsFormal/OLS.lean:olsSlope (46), olsSlope_eq_centered (87); SelfAbsorption.lean:selfAbsorptionFactor_strictAntiOn (106), selfAbsorptionFactor_pos; OpticalDepth.lean:opticalDepth (gives τ from the lower-level population)",
+   "already_exists_check": "rg 'olsSlope|twoLineBeta|pairSlope' in SelfAbsorption.lean, OpticalDepth.lean and Alt/SelfAbsorbed.lean returns only prose mentions. DifferentialEstimator covers matched τ only. No theorem gives the sign of the SA temperature bias.",
+   "tractability": "A",
+   "risks": "The hypothesis 'τ antitone in E_upper' is an ordering assumption, not a law. τ depends on lower-level population and gf, so it has to be checked per line set; tag the result REDUCED. It also concerns the OLS slope only, not a weighted fit."
+  },
+  {
+   "title": "FI-3: the closure relative-error dichotomy: closure is abundance-neutral, and amplification on minors comes from the error model",
+   "informal_statement": "(a) If every species' density has a multiplicative error |N̂_s/N_s − 1| ≤ η < 1, then |Ĉ_s − C_s| ≤ (2η/(1−η))·C_s for EVERY s, whatever the abundance. The same holds for mass fractions, since reweighting by atomic mass preserves multiplicative errors. (b) For an additive per-species error δ, a witness shows relative error at least of order δ/N_s. So the amplification on minors that Gornushkin & Völker attribute to summation comes from additive error components, not from the normalization.",
+   "lean_sketch": "theorem composition_rel_error_mul {N Nhat : κ → ℝ} {η : ℝ} (hN : ∀ s, 0 < N s) (hη0 : 0 ≤ η) (hη1 : η < 1) (hmul : ∀ s, |Nhat s - N s| ≤ η * N s) (s : κ) : |composition Nhat s - composition N s| ≤ (2 * η / (1 - η)) * composition N s  -- type-checks with sorry in Frontier.lean.\nThen:\n- classicComposition_atomicData_error_rel: the same conclusion, with η = δ/(1−δ) taken from classicDensity_aliasing_error;\n- massFraction_rel_error: via composition (M ⊙ N);\n- an additive-lower-bound witness on κ = Fin 2.",
+   "why_it_matters": "It replaces the abundance-blind bounds of LIT-05. Those bounds are 11 times the fraction for a 0.5% minor; the new bound is tight, at 5.3e-4 against an actual 5.2e-4. It also turns an informal literature claim into a precise dichotomy, and it gives M8 per-element flags and C6 a relative-tolerance form that transfers to wt% (LIT-14).",
+   "pipeline_link": "LIT-05 and LIT-14; C6 compBudgetCert; M8 per-element reliability flags; overhaul R11-05 (the ratio-mode rationale); CFLIBS_MASS_FRACTION_SCORING",
+   "literature": "Retrieved: Gornushkin & Völker 2022, Sensors 22:7149, DOI 10.3390/s22197149 (the closure quote); Völker & Gornushkin 2024, JAAS, DOI 10.1039/d4ja00028e (mass vs mole). From the whitelist: Tognoni 2010; Aitchison 1986.",
+   "mathlib_prereqs": "Only field algebra: abs_div, abs_sub_le, Finset.sum_le_sum, div_le_div_iff₀. It uses the exact decomposition composition_sub_eq, or Ĉ_s/C_s = (1+e_s)/(1+ē) with ē = Σ C_t e_t ∈ [−η, η].",
+   "repo_anchors": "CflibsFormal/Closure.lean:composition (46), composition_smul_invariant (93); CompositionRobustness.lean:composition_sub_eq (79); AtomicDataPerturbation.lean:classicDensity_aliasing_error, classicComposition_atomicData_error (295); ErrorBudget.lean:relDensity_le (261); NoiseToComposition.lean:noise_to_composition (281)",
+   "already_exists_check": "rg -i 'relative composition|/ composition N s|\\* composition N s' over CflibsFormal finds only MultiSpecies prose about ratio identifiability. Every composition error theorem found has an absolute right-hand side (composition_abs_sub_le, composition_abs_sub_le_uniform, composition_target_sufficient, classicComposition_atomicData_error, noise_to_composition).",
+   "tractability": "A",
+   "risks": "Low mathematical risk. The physics claim in (b) needs care: it shows amplification is POSSIBLE under additive error, not that real CF-LIBS errors are additive. The noise-to-density leg (relDensity_le) gives exp(η)−1, which is multiplicative, so (a) applies directly to the intercept channel."
+  },
+  {
+   "title": "FI-4: IPD-aware Saha inversion: at most one physical n_e root, and inner-iteration contraction at rate Δχ/(2kT)",
+   "informal_statement": "Take Debye–Hückel lowering Δχ(n_e, T) = kT·a(T)·sqrt(n_e). The Saha condition R·n_e = S0(T)·exp(Δχ/kT) has at most two positive roots, because in y = ln n_e the map h(y) = y − ln(S0/R) − a·e^{y/2} is strictly concave. At most one root satisfies Δχ < 2kT. At a fixed point, the inner iteration n ↦ S0·e^{Δχ(n)/kT}/R has log-derivative exactly Δχ/(2kT). So it contracts locally if and only if Δχ < 2kT, and it contracts globally on {y ≤ y_c} whenever F(y_c) ≤ y_c and Δχ(e^{y_c}) < 2kT. The general form requires the elasticity n·∂Δχ/∂n < kT. (This condition is the auditor's own derivation, not taken from the literature.)",
+   "lean_sketch": "No Lean sketch compiled. Planned: noncomputable def sahaIPDMap (S0 R a : ℝ) (y : ℝ) : ℝ := Real.log (S0 / R) + a * Real.exp (y / 2);\ntheorem sahaIPD_root_unique (ha : 0 < a) : Set.Subsingleton {y | sahaIPDMap S0 R a y = y ∧ a * Real.exp (y/2) < 2};\ntheorem sahaIPD_contracting_on (hyc : a * Real.exp (yc/2) < 2) (hmaps : sahaIPDMap S0 R a yc ≤ yc) : ContractingWith … on Set.Iic yc.\nThe proof uses StrictConcaveOn for y − a·e^{y/2} and a mean-value bound on the derivative (a/2)·e^{y/2}.",
+   "why_it_matters": "It is the first spec object for IPD (LIT-01), and it gives a checkable certificate for the pipeline's IPD-on inner n_e loop. With the pipeline's own figures (Δχ ≈ 0.066 eV at 1e17 cm⁻³ and 1e4 K, against 2kT ≈ 1.72 eV) the rate is ≈ 0.04, which certifies the three-inner-step jit loop in the normal regime. By the √n_e scaling the condition fails only near n_e ~ 7e19 cm⁻³ at 1e4 K, i.e. at early dense gates. It also explains why a spurious high-n_e root can exist.",
+   "pipeline_link": "LIT-01 and LIT-02; overhaul BL-42 (IPD enum), BL-37 (IPD in seed), review-summary.md:68 (IPD positive feedback), R9-performance.md:36 (1-D inner n_e fixed point, jitpipe/solve.py:842-866); C9/C10 certificates (fixed χ)",
+   "literature": "Retrieved: Ristić et al. 2024, PPCF, DOI 10.1088/1361-6587/ad8b68 (IPD enters both the exponent and the partition function). The Debye–Hückel form and the 0.066 eV figure are quoted from the pipeline docstring (partition.py:81-95; it cites Mihalas 1978, which is on the whitelist as UNVERIFIED). Stewart & Pyatt 1966 is cited in the repo docs (ERRATA.md:46) but was not opened this session.",
+   "mathlib_prereqs": "Mathlib/Analysis/Convex/*: StrictConcaveOn; Mathlib/Topology/MetricSpace/Contracting.lean: ContractingWith, ContractingWith.fixedPoint; Real.exp strict monotonicity and deriv; Convex.norm_image_sub_le_of_norm_deriv_le (the mean-value inequality).",
+   "repo_anchors": "CflibsFormal/Saha.lean:sahaFactor, saha_relation, electronDensityFromRatio; SahaEquilibrium.lean:sahaIter_tendsto (593, C9); SahaContraction.lean (damped iteration pattern); Certificates.lean C9/C10",
+   "already_exists_check": "rg -i 'depression|IPD|Stewart|Debye|lowering' over CflibsFormal/ and docs/frontiers finds no IPD object; the only hit is the false positive 'hMlipdef'. The Saha fixed-point machinery exists only at fixed χ.",
+   "tractability": "B",
+   "risks": "Debye–Hückel only: Stewart–Pyatt needs the general elasticity form, whose monotonicity must be proved from the pipeline's formula. The level-cutoff discontinuity (LIT-02) is outside this scalar statement. a(T) must be treated as fixed within the inner loop, which is how the pipeline iterates."
+  },
+  {
+   "title": "FI-5: duplicating-mirror channel: τ from a single line, plus over-determination that gives DoubletChannel its missing model-adequacy test",
+   "informal_statement": "Model assumption, stated abstractly and not taken from Moon 2009's equations: a mirror of known effective reflectivity R_m sends the slab emission back through the same homogeneous slab, so the second observable is I_M = I·(1 + R_m·e^{−τ}). (a) Given R_m, τ = −ln((I_M/I − 1)/R_m) is identifiable from ONE line, which removes single_line_tau_alias. (b) With a doublet, there are three observables and two unknowns (F, τ). Any homogeneous slab has zero residual, while the two-zone emitter of inhomogeneous_doublet_admits_exact_homogeneous_fit has generically nonzero residual. That yields the over-determined model-adequacy test DoubletChannel says it lacks.",
+   "lean_sketch": "No Lean sketch compiled. Planned: noncomputable def mirrorIntensity (F Rm τ : ℝ) := slabIntensity F τ * (1 + Rm * Real.exp (-τ));\ntheorem mirror_determines_tau (hRm : 0 < Rm) (hF : 0 < F) (hτ : 0 < τ) : τ = -Real.log ((mirrorIntensity F Rm τ / slabIntensity F τ - 1) / Rm);\ntheorem mirror_doublet_residual_zero_homogeneous …;\nexample: a two-zone witness with nonzero residual.",
+   "why_it_matters": "It gives the first over-determined self-absorption observable in the spec, which turns the doublet channel's admitted blindness into a checkable consistency certificate. The single-line part is closed-form, so it is directly usable as a runtime certificate.",
+   "pipeline_link": "LIT-19; DoubletChannel limitation (:47-71); overhaul R3 self-absorption findings (doublet correction on DED synthetic, findings/R3-extraction-self-absorption-and-line-selection.md:270); R11-07 (self-absorption-prone resonance lines)",
+   "literature": "Retrieved (method only): Moon, Herrera, Omenetto, Smith, Winefordner 2009, SAB, DOI 10.1016/J.SAB.2009.06.011. Rezaei 2016 (DOI 10.5772/61941) describes the setup ('spherical mirror at twice the distance of its focal length'); its formula snippet came back garbled and is NOT relied on.",
+   "mathlib_prereqs": "Real.log_exp, Real.exp_pos, field_simp. For the two-zone witness: norm_num with Real.exp bounds (Real.exp_one_lt_d9, as used in OpacityBroadening).",
+   "repo_anchors": "CflibsFormal/SelfAbsorption.lean:slabIntensity, slabIntensity_eq_thin_mul_SA; DoubletChannel.lean:single_line_tau_alias (303), doublet_fit_unique (353), inhomogeneous_doublet_admits_exact_homogeneous_fit (425); Certificates.lean C12/C13",
+   "already_exists_check": "rg -i 'mirror|duplicating' over CflibsFormal finds nothing. docs/frontiers/09-radiative-transfer-depth.md discusses RT depth but has no mirror channel.",
+   "tractability": "B",
+   "risks": "The mirror law is a modeling assumption: geometry, R_m calibration, and the frequency dependence of τ(ν) across the profile all break the flat-slab form. Part (a) is tractability A inside the model. The non-zero two-zone residual (b) needs a concrete numeric witness, and that may be C if strictness must be shown in general."
+  },
+  {
+   "title": "FI-6: El Sherbini exponent band: SA(τ)^(−1/2) ≤ Lorentzian width ratio ≤ SA(τ)^(−0.57)",
+   "informal_statement": "For the module's homogeneous Lorentzian slab, the exact emergent-width inflation R(τ) = sqrt(1/h(τ) − 1) satisfies SA^(−1/2) < R ≤ SA^(−0.569) for all τ > 0. The auditor's numerics give an effective exponent in (0.5000, 0.5687], peaking near τ ≈ 5.2 and tending to 1/2 at both ends. So a measured width ratio brackets the self-absorption factor: R^(−2) ≤ SA ≤ R^(−1/0.57). The literature's −0.54 and the pipeline's 0.56 both fall inside the proven band.",
+   "lean_sketch": "No Lean sketch compiled. Planned: theorem sa_rpow_neg_half_le_lorentzWidthRatio (hτ : 0 < τ) : selfAbsorptionFactor τ ^ (-(1/2:ℝ)) ≤ lorentzWidthRatio τ. Equivalently 1/coreHalfLevel τ − 1 ≥ τ/(1 − e^{−τ}).\ntheorem lorentzWidthRatio_le_sa_rpow (hτ : 0 < τ) : lorentzWidthRatio τ ≤ selfAbsorptionFactor τ ^ (-(57/100:ℝ)).\ncorollary sa_mem_Icc_of_widthRatio.",
+   "why_it_matters": "It replaces the refusal at OpacityBroadening.lean:87-91 with a certified two-sided inversion from width to self-absorption. It anchors the pipeline's CD-SB exponent (opc.py:855, 0.56) and El Sherbini-style width gating (self_absorption.py:1997-2060) in a theorem, and bounds their model error: the ±0.035 exponent spread corresponds to about 6–10% error in τ over τ ∈ [1, 50].",
+   "pipeline_link": "LIT-09; cflibs/inversion/physics/opc.py:843-866 (CDSB_COG_EXP, KL cap 50); self_absorption.py El-Sherbini SA parameter; stark_ne.py:514 (a self-absorption-inflated width biases n_e upward)",
+   "literature": "Retrieved: El Sherbini et al. 2005, SAB, DOI 10.1016/J.SAB.2005.10.011; Safi et al. 2019, DOI 10.1016/j.jare.2019.01.008 ('a = −0.54 for Lorentzian line profiles'). The Brief Review (Zhang et al. 2022, Front. Phys. 10, DOI 10.3389/fphy.2022.887171) quotes α = −0.54.",
+   "mathlib_prereqs": "Real.rpow_le_rpow_left_iff, Real.log_le_sub_one_of_pos, Real.add_one_le_exp, Real.exp_bound. The lower bound reduces to an elementary inequality between log(1+e^{−τ}) and τ. The upper bound, with its non-rational exponent, likely needs case splits and interval bounds, as in lorentzWidthRatio_two_lower (OpacityBroadening.lean:635).",
+   "repo_anchors": "CflibsFormal/OpacityBroadening.lean:lorentzWidthRatio (367), coreHalfLevel, kOpacOf, lorentzWidthRatio_le_kOpacOf (430), lorentzWidthRatio_two_lower (635); SelfAbsorption.lean:selfAbsorptionFactor",
+   "already_exists_check": "rg -i 'sherbini|0\\.54|rpow' over OpacityBroadening.lean finds only the refusal paragraph (:87-91). The existing bounds are R ≤ kOpacOf = sqrt(2/SA − 1), which is conservative, and 1.5 ≤ R(2) ≤ 2. There is no lower bound in terms of SA and no power-law band.",
+   "tractability": "C",
+   "risks": "The band edges come from a grid evaluation (20001 points on [1e-4, 1e4]) plus the asymptotics. The exact supremum 0.5687 is numerical, so state the upper exponent with a margin (0.57). Proving a rpow bound uniformly in τ is analytically fiddly. The result holds only for a Lorentzian, homogeneous, flat source function, and says nothing about Voigt profiles."
+  }
+ ]
+}

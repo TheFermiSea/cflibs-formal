@@ -1,0 +1,12 @@
+{
+  "total": 1,
+  "offset": 0,
+  "data": [
+    {
+      "paperId": "6cdeaa679833391aefa631cfe2345e2c177a43c5",
+      "title": "Lean-auto: An Interface between Lean 4 and Automated Theorem Provers",
+      "venue": "International Conference on Computer Aided Verification",
+      "year": 2025
+    }
+  ]
+}

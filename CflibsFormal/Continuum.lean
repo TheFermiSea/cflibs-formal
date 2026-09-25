@@ -10,52 +10,81 @@ import Mathlib
 
 Real LIBS spectra sit on a **continuum** (free-free bremsstrahlung + free-bound recombination)
 that the line-based forward map ignores. This module formalizes the continuum's standard scaling,
-the (exact) soundness of baseline subtraction, and the line-to-continuum **thermometer**.
+baseline subtraction when the continuum level is known exactly, and the temperature dependence of
+a **reduced** line-to-continuum ratio. That reduced ratio is *not* a thermometer for neutral lines
+(see Honest scope).
 
-* `contEmissivity` — the Kramers/Biberman continuum emissivity in dimensionless reduced form
-  `ε ∝ n_e·n_ion·exp(-u)/√T`, with `u = hc/(λ·k_B·T) ≥ 0` the reduced continuum photon energy;
-  `contEmissivitySingly` is the singly-ionized case `n_ion ≈ n_e` (so `ε ∝ n_e²`). Both positive,
-  and strictly increasing in `n_e`.
+* `contEmissivity` — a Kramers/Biberman-type continuum emissivity in dimensionless reduced form
+  `ε ∝ n_e·n_ion·exp(-u)/√T`, with `u = hc/(λ·k_B·T) ≥ 0` the reduced continuum photon energy and
+  `n_ion` the density of the ion stage that produces the continuum; `contEmissivitySingly` is the
+  singly-ionized case `n_ion ≈ n_e` (so `ε ∝ n_e²`). Both positive, and strictly increasing in
+  `n_e`.
 * `baseline_subtraction_exact` — measured intensity is additive (`I_meas = I_line + ε_cont`), so
-  subtracting a fitted continuum baseline recovers the line **exactly**. Algebraically trivial, but
-  the faithful spec statement of why baseline subtraction is sound (cf. `LineBroadening`'s
-  deconvolution exactness).
-* `lineToContRatio` / `lineToContRatio_strictMono_T` — the line-to-continuum ratio
-  `R_LC(T) = B·√T·exp(-a/T)`, a temperature diagnostic. **Honest, conditional** claim: it is a
-  valid (strictly increasing) thermometer iff `a ≥ 0`, i.e. the line upper-level energy is at or
-  above the continuum photon energy (`E_k ≥ hc/λ`); then both `√T` and `exp(-a/T)` increase. The
-  *unconditional* monotonicity claim is **false** (for `a < 0` the ratio is non-monotone on
-  `(0, -2a)`), so the `0 ≤ a` hypothesis is load-bearing.
+  subtracting the continuum level `ε_cont` itself recovers the line **exactly**. Algebraically
+  trivial: the additive model and an exactly known continuum are assumptions of the statement. A
+  *fitted* baseline differs from `ε_cont`, and that error passes one-for-one into the recovered
+  line; no bound on it is proved here.
+* `lineToContRatio` / `lineToContRatio_strictMono_T` — the reduced ratio `R_LC(T) = B·√T·exp(-a/T)`
+  with `B > 0` and `a` held fixed. Proved: `R_LC` is strictly increasing on `T > 0` **if** `a ≥ 0`
+  (both `√T` and `exp(-a/T)` increase). The converse is not proved here; by calculus,
+  `d/dT log R_LC = (T + 2a)/(2T²)`, so for `a < 0` the ratio falls on `(0, -2a)` and rises after.
+  Whether `R_LC` is a physical line-to-continuum ratio at all depends on the line's ionization
+  stage (next section).
 
 ## Honest scope
 
-`contEmissivity` is the standard textbook Kramers/Biberman form asserted as the operational
-definition (the positive constants `K·Z²·ξ` folded into `C`); the **Biberman/Gaunt free-bound +
-free-free correction factor `ξ` is the genuinely approximate ingredient** (`O(1)` but carrying a
-real `λ,T` dependence, strong for `λ < 450 nm`). The line-to-continuum coefficient `B` folds the
-Saha density ratio `n_z/(n_e·n_ion)` and `gA/U`, so it is `T`-independent only to **leading order**
-under stable LTE — the clean `√T·exp(-a/T)` form is the leading-order LTE reduction, not exact. Out
-of scope: spectral integration over the bandpass, the explicit `ξ(λ,T)` fit, absolute radiometric
-calibration, and the two-unknown `(T,n_e)` joint inversion (only the forward monotonicity is here).
+`contEmissivity` is asserted as the operational definition, with the positive constants `K·Z²·ξ`
+folded into `C`. Freezing the Biberman/Gaunt correction factor `ξ` into `C` drops its real `λ,T`
+dependence (strong for `λ < 450 nm`). The form itself (`exp(-u)` as a common prefactor of the
+free-free and free-bound parts, with a factor `ξ` of order one left over) has **not** been checked
+against a primary source; treat it as approximate.
+
+Dividing a Boltzmann line of stage `z` (upper level `E_k`, same wavelength `λ`) by
+`contEmissivity` gives
+`ε_line/ε_cont ∝ [n_z/(n_e·n_ion)]·(gA/U_z)·√T·exp(-(E_k - hc/λ)/(k_B·T))/ξ`,
+so `a = (E_k - hc/λ)/k_B`, and `B` absorbs the bracketed density ratio. `B` is therefore **not**
+`T`-independent in general. What it carries depends on the stage (derivation from the repo's
+definitions; not formalized):
+
+* **Neutral line**, continuum from the next stage (`n_ion = n_{z+1}`). By the repo's own Saha law
+  (`sahaFactor`), `n_z/(n_e·n_{z+1}) = 1/S(T)`, which scales as `T^(-3/2)·exp(χ/(k_B·T))` at
+  frozen partition functions. This is the dominant temperature dependence, not a correction to
+  it. Substituting it gives
+  `ε_line/ε_cont ∝ exp((χ - E_k + hc/λ)/(k_B·T))/(T·U_{z+1}(T))`, which strictly **decreases**
+  in `T` whenever `E_k ≤ χ + hc/λ` (every bound level), at frozen `U_{z+1}` and `ξ`; a partition
+  function that rises with `T` only strengthens the decrease. So `lineToContRatio_strictMono_T`
+  does **not** describe a neutral line, and `a ≥ 0` has no physical meaning there.
+* **Line of the continuum-producing ion stage** (`n_z = n_ion`, e.g. an ionic line in a singly
+  ionized plasma). Then `B ∝ gA/(n_e·U_z(T)·ξ)` and no Saha factor enters, so the reduced form
+  holds at **fixed `n_e`** with `U_z` and `ξ` frozen. Only in this reading is
+  `lineToContRatio_strictMono_T` a statement about a measurable ratio.
+
+The theorem itself is a calculus fact about `B·√T·exp(-a/T)`. A neutral-line statement would
+have to substitute `sahaFactor` explicitly; ionization-potential depression is not modeled in the
+repo. Out of scope: spectral integration over the bandpass, the explicit `ξ(λ,T)` fit, absolute
+radiometric calibration, and the two-unknown `(T,n_e)` joint inversion.
 
 ## Literature
 
 The bremsstrahlung (free-free) + recombination (free-bound) continuum emissivity
-`ε ∝ Z²·n_e·n_ion·T^(-1/2)·exp(-hc/λk_BT)·ξ` and the line-to-continuum thermometry are standard:
-H. R. Griem, *Principles of Plasma Spectroscopy* (Cambridge, 1997), chapters on continuous spectra
-(Biberman/Gaunt correction factor); C. Aragón, J. A. Aguilera, "Characterization of laser induced
-plasmas by optical emission spectroscopy," *Spectrochim. Acta B* **63** (2008) 893–916 (the
-line-to-continuum-ratio temperature method). The additive line+continuum measured-intensity model
-and baseline subtraction are universal LIBS practice (Cremers & Radziemski, *Handbook of
-Laser-Induced Breakdown Spectroscopy*, 2nd ed., Wiley, 2013).
+`ε ∝ Z²·n_e·n_ion·T^(-1/2)·exp(-hc/λk_BT)·ξ` is standard: H. R. Griem, *Principles of Plasma
+Spectroscopy* (Cambridge, 1997), chapters on continuous spectra (Biberman/Gaunt correction
+factor). C. Aragón, J. A. Aguilera, "Characterization of laser induced plasmas by optical
+emission spectroscopy," *Spectrochim. Acta B* **63** (2008) 893–916 (the line-to-continuum-ratio
+temperature method); this module does not formalize that method's formula, only the reduced
+`R_LC` above. The additive line+continuum measured-intensity model and baseline subtraction are
+universal LIBS practice (Cremers & Radziemski, *Handbook of Laser-Induced Breakdown Spectroscopy*,
+2nd ed., Wiley, 2013).
 -/
 
 namespace CflibsFormal
 
-/-- **Continuum emissivity (Kramers/Biberman, dimensionless reduced form).**
-`ε ∝ n_e·n_ion·exp(-u)/√T`, where `u = hc/(λ·k_B·T) ≥ 0` is the reduced continuum photon energy and
-`C` folds the positive constant `K·Z²·ξ` — the Biberman/Gaunt factor `ξ` (`O(1)`) being the only
-non-exact ingredient. -/
+/-- **Continuum emissivity (Kramers/Biberman-type, dimensionless reduced form).**
+`ε ∝ n_e·n_ion·exp(-u)/√T`, where `u = hc/(λ·k_B·T) ≥ 0` is the reduced continuum photon energy,
+`n_ion` is the density of the continuum-producing ion stage, and `C` folds the positive constant
+`K·Z²·ξ`. Approximate: freezing the Biberman/Gaunt factor `ξ` into `C` drops its `λ,T`
+dependence, and the common `exp(-u)` prefactor on the free-bound part is not checked against a
+primary source (module Honest scope). -/
 noncomputable def contEmissivity (C ne nion T u : ℝ) : ℝ :=
   C * ne * nion * Real.exp (-u) / Real.sqrt T
 
@@ -74,11 +103,12 @@ intensity. The inverse of `totalIntensity` in its first argument (see
 noncomputable def subtractBaseline (Imeas eCont : ℝ) : ℝ :=
   Imeas - eCont
 
-/-- **Line-to-continuum intensity ratio**, reduced form `R_LC(T) = B·√T·exp(-a/T)`. `B > 0` folds
-the `T`-independent atomic/density constants (to leading order); `a = (E_k - hc/λ)/k_B` is the fixed
-exponent coefficient whose sign is set by whether the line upper-level energy `E_k` exceeds the
-continuum photon energy `hc/λ`. A temperature diagnostic — but monotone only for `a ≥ 0` (regime
-`E_k ≥ hc/λ`), see `lineToContRatio_strictMono_T`. -/
+/-- **Reduced line-to-continuum ratio** `R_LC(T) = B·√T·exp(-a/T)`, with `B > 0` and `a` held
+fixed. With `a = (E_k - hc/λ)/k_B`, it is the ratio of a Boltzmann line to `contEmissivity` only
+when `B` does not vary with `T`: for a line of the continuum-producing ion stage at fixed `n_e`,
+with partition function and `ξ` frozen, `B ∝ gA/(n_e·U·ξ)`. For a neutral line `B` carries the
+Saha factor `1/S(T)`, and this form is not the physical ratio, which decreases with `T` (module
+Honest scope). Strictly increasing in `T` if `a ≥ 0`: `lineToContRatio_strictMono_T`. -/
 noncomputable def lineToContRatio (B a T : ℝ) : ℝ :=
   B * Real.sqrt T * Real.exp (-a / T)
 
@@ -114,20 +144,22 @@ lemma lineToContRatio_pos {B a T : ℝ} (hB : 0 < B) (hT : 0 < T) :
   unfold lineToContRatio
   positivity
 
-/-- **Baseline subtraction is exact.** Subtracting the continuum from the additive measured
-intensity recovers the line intensity with no approximation: `(I_line + ε_cont) - ε_cont = I_line`.
-Algebraically trivial, but the faithful justification that continuum baseline subtraction is
-sound. -/
+/-- **Baseline subtraction is exact when the subtracted level is the true continuum.**
+`(I_line + ε_cont) - ε_cont = I_line`: algebraically trivial. The content lies in the assumptions,
+an additive measured intensity and a subtracted level equal to `ε_cont`. Any error in a fitted
+baseline passes one-for-one into the recovered line, and no bound on it is proved here. -/
 theorem baseline_subtraction_exact (Iline eCont : ℝ) :
     subtractBaseline (totalIntensity Iline eCont) eCont = Iline := by
   unfold subtractBaseline totalIntensity
   ring
 
-/-- **The line-to-continuum ratio is a thermometer — in the regime `E_k ≥ hc/λ`.** For `a ≥ 0`
-(line upper-level energy at or above the continuum photon energy), `R_LC(T) = B·√T·exp(-a/T)` is
-strictly increasing in `T` on `(0, ∞)`: both `√T` and `exp(-a/T)` increase. The `0 ≤ a` hypothesis
-is **load-bearing** — for `a < 0` the ratio is non-monotone (it decreases on `(0, -2a)`), so the
-*unconditional* thermometer claim would be false. -/
+/-- **The reduced ratio `B·√T·exp(-a/T)` is strictly increasing in `T` if `a ≥ 0`.** On
+`(0, ∞)`, with `B > 0` and `a` fixed, both `√T` and `exp(-a/T)` increase. This is a calculus fact
+about the reduced form. It reads as a temperature diagnostic only for a line of the
+continuum-producing ion stage at fixed `n_e` (partition function and `ξ` frozen); for a neutral
+line the physical line-to-continuum ratio *decreases* with `T` (module Honest scope). Only the
+"if" direction is proved. The hypothesis cannot simply be dropped: for `a < 0` the ratio
+decreases on `(0, -2a)`, a calculus fact not formalized here. -/
 theorem lineToContRatio_strictMono_T {B a : ℝ} (hB : 0 < B) (ha : 0 ≤ a) :
     StrictMonoOn (lineToContRatio B a) (Set.Ioi 0) := by
   intro x hx y _hy hxy

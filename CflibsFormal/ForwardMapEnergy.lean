@@ -52,8 +52,10 @@ laser induced plasmas by optical emission spectroscopy: A review of experiments 
 *Spectrochim. Acta B* **63** (2008) 893–916; and Thouin, J.; Benmouffok, M.; Freton, P.;
 Gonzalez, J.-J. "Interpretation of temperature measurements by the Boltzmann plot method on
 spatially integrated plasma oxygen spectral lines." *EPJ Appl. Phys.* **98** (2023) 65 (art.
-ap230072), which uses the wavelength Boltzmann ordinate `ln(J·λ/(A g)) = const − E/(kT)` with the
-`λ` multiplying `J` precisely to cancel the `1/λ` photon-energy factor. The photon-rate /
+ap230072, DOI 10.1051/epjap/2023230072), which uses the wavelength Boltzmann ordinate
+`ln(J·λ/(A g)) = const − E/(kT)` with the `λ` multiplying `J` precisely to cancel the `1/λ`
+photon-energy factor (its bibliographic record is Crossref-checked; the paper was not opened, so
+this description of its ordinate is unverified). The photon-rate /
 calibration-absorbed form `ln(I/(g A))` (λ folded into the lumped factor `F`) is the original
 Ciucci, A. et al. "New Procedure for Quantitative Elemental Analysis by Laser-Induced Plasma
 Spectroscopy." *Appl. Spectrosc.* **53** (1999) 960–964, and the review Tognoni, E. et al.

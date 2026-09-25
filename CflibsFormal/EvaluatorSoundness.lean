@@ -8,7 +8,7 @@ import CflibsFormal.Certificates
 import CflibsFormal.NoiseToComposition
 
 /-!
-# CF-LIBS formalization — evaluator soundness (what passing the hard certificate gate buys)
+# CF-LIBS formalization — evaluator soundness (which hard-gate clauses feed which theorem)
 
 The companion's algorithm-search evaluator (`cflibs/evolution/certificate_gate.py`:
 `GateProtocol`, `hard_certificate_gate`) rejects a candidate answer unless a HARD set of runtime
@@ -28,7 +28,7 @@ simplex checks), and where each clause lands here:
 | C3 conditioning | `conditioningCert ET` | none — the *same* predicate as C1 |
 | C4 slope budget (`ε = 1/min SNR`) | `slopeBudgetCert` | `hardGateBundle_slope_error_le` only |
 | C7 McWhirter at reported `(T̂, nₑ)` | `mcWhirterCert C T̂ ΔE nₑ` | `…_thermalizationLimit` only |
-| C12 known τ ≥ 0 per SA-corrected line | `∀ k, knownTauCert (τ k)` | none here |
+| C12 `τ ≥ 0` per SA-corrected line (nothing more) | `∀ k, knownTauCert (τ k)` | none here |
 | physical box on the reported `T̂` | `Tmin ≤ T̂ ≤ Tmax` | `noise_to_composition` (`hThat`, …) |
 | `nₑ` floor | `neMin ≤ nₑ` | none (a physical floor; no theorem consumes it) |
 | protocol constants | `0 < kB`, `0 < Tmin` | `noise_to_composition` |
@@ -40,11 +40,13 @@ The unconditional clauses form `hardGateBundle`; the sub-conjunction that `noise
 actually consumes is `gateCoreForComposition`, and
 `hardGateBundle_implies_noise_to_composition_hyps` is the projection between them. The payoff
 `hardGateBundle_composition_error_le` is the composed end-to-end bound under the bundle **plus the
-hypotheses no runtime gate can supply**:
+hypotheses no runtime gate can supply** (and it is vacuous at realistic parameters; see
+*Non-vacuity range* below):
 
 * **R1 (not certifiable at runtime).** `hδT : ∀ k, |ŷₖ − yₖ| ≤ εₖ` — the per-line ordinate noise
   bound is a distance to the *unknown true* ordinates. The gate can compute `ε = 1/min SNR`, but
   that `|ŷ − y| ≤ ε` is a *noise-model assumption*; it is carried explicitly, never certified.
+  A `1/SNR` is a one-sigma noise scale, not a bound on every line (`Certificates`, C4).
 * **A-priori bracket on the truth** (`aprioriBracket`). The gate boxes the *reported* `T̂`; the
   bound also needs the *true* `T ∈ [Tmin, Tmax]`, `0 < Fcal`, `0 < Nₛ ≤ Nmax` — statements about
   unknown quantities, i.e. modeling assumptions, not runtime checks.
@@ -53,15 +55,39 @@ hypotheses no runtime gate can supply**:
 * **`envelopeCert`** — the worst-case exp-channel smallness and the uniform envelope `Φ` at the
   noise-derived gap `dmax`. Runtime-*evaluable* (arithmetic in `ε`, the DB data and the protocol
   box, exactly as C4 is evaluable in `ε`), but the shipped gate does **not** compute it; it is
-  carried explicitly and named so the evaluator can add it as a fifth runtime predicate.
+  carried explicitly and named so the evaluator can add it as a fifth runtime predicate. In the
+  shipped box with NIST data it is false at 1 % noise and holds at 0.5 % only with a huge `Φ`
+  (see *Non-vacuity range*).
 
-**Negative clarity (C7).** `mcWhirterCert` is *not* a hypothesis of `noise_to_composition`, and
-the McWhirter data `(C, ΔE, nₑ)` do not even occur in the signature of `gateCoreForComposition`
-or `gateCore_composition_error_le`. C7 certifies LTE admissibility of the emission *model*
-(`mcWhirter_certificate_sound`: `ΔE ≤ thermalizationLimit`) — a REDUCED premise under which the
-Boltzmann/Saha forward model is meaningful at all. Passing it does not enter the error bound and
-must not be reported as tightening it; failing it means the *model* premise is unsupported, which
-the bound cannot see. The same holds for C12 (exactness of the self-absorption pre-correction).
+**Negative clarity (C7, C12).** `mcWhirterCert` is *not* a hypothesis of `noise_to_composition`,
+and the McWhirter data `(C, ΔE, nₑ)` do not even occur in the signature of
+`gateCoreForComposition` or `gateCore_composition_error_le`. C7 checks McWhirter admissibility
+(`mcWhirter_certificate_sound`: `ΔE ≤ thermalizationLimit`), a necessary but not sufficient
+condition for LTE, evaluated at the reported `(T̂, nₑ)`; at a recovered state it checks internal
+consistency only (`Certificates`, C7). Passing it does not enter the error bound and must not be
+reported as tightening it; failing it means the forward model's LTE premise fails the McWhirter
+test, which the bound cannot see. C12 checks only `0 ≤ τ`: any nonnegative estimate passes it, so
+it certifies nothing about the self-absorption correction or the data (`Certificates`, C12). It
+does not enter the bound either.
+
+## Non-vacuity range
+
+`hardGateBundle_composition_error_le` is not a usable composition guarantee at realistic
+parameters. It must not be reported, or scored in a bake-off, as a certified composition bound.
+Its right-hand side is that of `noise_to_composition`, which is 26 to 1.42e3 for NIST Fe/Cr/Ni
+level lists at 0.5–5 % noise in ±1–2 kK temperature boxes, while a composition error is at most
+1 (`NoiseToComposition`, *Non-vacuity range*; 2026-09-24 audit, finding U-01).
+
+In the shipped gate box itself, `T ∈ [3000, 20000] K` (the `certificate_gate.py` defaults),
+`envelopeCert` is false at 1 % noise. With the same 10-line Fe I temperature plot (upper levels
+evenly spaced over 3.3–6.6 eV), `dmax = 285 K`, and the exp-channel term
+`exp(E_u·dmax/(kB·Tmin²)) − 1` is 2.40–2.67 for Fe, Cr and Ni analysis lines with
+`E_u ≈ 3.3–3.5 eV`, above the required `< 1`. At 0.5 % noise that clause holds (0.84–0.92), but
+the per-species envelopes at `dmax` are 2.8e3–6.6e3, so `Φ ≥ 6.6e3`. (U-01 reports the 1 %
+figures; the 0.5 % figures were computed for this note from the audit's script and level data.)
+In that box the payoff theorem therefore either has unsatisfiable hypotheses or bounds nothing.
+Its only witness below is the `0 ≤ 0` corner with `E = 0`. The clause ledger above does not
+depend on these numbers.
 
 ## Literature and scope
 
@@ -111,12 +137,15 @@ def hardGateBundle (kB Tmin Tmax That eps tauBeta C dE ne neMin : ℝ)
 
 /-- **The `None`-gated HARD clauses** — C2 (joint rank, only when ≥ 2 ion stages are used), C9
 (Saha iteration, only when `saha_iter` is reported), C10 (damped multi-element iteration, only
-when `damped_iter` is reported) and C13 (distinct curve-of-growth widths, only when `cog_widths`
-are given). `none` mirrors the Python's "input not materialized ⇒ clause skipped". They are kept
+when `damped_iter` is reported) and C13 (two distinct positive per-line opacity coefficients,
+only when `cog_widths` are given; despite the Python name they are opacity coefficients, not
+widths). `none` mirrors the Python's "input not materialized ⇒ clause skipped". They are kept
 OUT of `hardGateBundle` for two reasons: the gate itself evaluates them only conditionally, and
-none of them is a hypothesis of `noise_to_composition` — each certifies a *different* theorem
-(joint (T, nₑ) identifiability, closure-iteration convergence, self-absorption identifiability).
-Bundling them would misdescribe both the gate and the bound. -/
+none of them is a hypothesis of `noise_to_composition` — each feeds a *different* theorem, with
+the limits stated in `Certificates`: C2, identifiability of the single-intercept joint `(T, nₑ)`
+design; C9 and C10, convergence of forward Saha closure iterations at fixed `T` and known element
+totals, not the inverse loop; C13, flat-kernel curve-of-growth pair-ratio injectivity in the
+column density. Bundling them would misdescribe both the gate and the bound. -/
 def conditionalGateClauses {ιD : Type*} (ET : ιT → ℝ) (stage : Option (ιT → ℝ))
     (saha : Option (ℝ × ℝ × ℝ)) (damped : Option ((ιD → ℝ) × (ιD → ℝ)))
     (cog : Option (ℝ × ℝ)) : Prop :=
@@ -128,7 +157,7 @@ def conditionalGateClauses {ιD : Type*} (ET : ιT → ℝ) (stage : Option (ιT
 /-! ## What `noise_to_composition` consumes, and what no gate can supply -/
 
 /-- **The sub-conjunction of `hardGateBundle` that `noise_to_composition` consumes.** Exactly the
-hypotheses `hkB, hTmin, hThat, hTmaxThat, hvarT, hg, hE, hA` of `NoiseToComposition.lean:281`.
+hypotheses `hkB, hTmin, hThat, hTmaxThat, hvarT, hg, hE, hA` of `noise_to_composition`.
 Note what is absent: the McWhirter data `(C, dE, ne)`, the slope budget `(eps, tauBeta)`, the
 optical depths `tau` and the `ne` floor are not even parameters — C3/C4/C7/C12 and the floor do
 no work in the composition bound. -/
@@ -143,7 +172,10 @@ def gateCoreForComposition (kB Tmin Tmax That : ℝ) (ET : ιT → ℝ) (g E A :
 `dmax = noiseTempGapBound kB Tmax ET epsT`. Runtime-*evaluable*: pure arithmetic in the per-line
 budgets `epsT` (the same epistemic input C4 consumes, R1), the DB data `g, E` at `u`/`k0`, the
 protocol box and the chosen envelope `Φ`. The shipped gate does **not** compute it; it is carried
-explicitly by the payoff theorem so that the evaluator can add it as a fifth runtime predicate. -/
+explicitly by the payoff theorem so that the evaluator can add it as a fifth runtime predicate.
+Evaluated in the shipped box `[3000, 20000] K` with NIST Fe/Cr/Ni data, it is false at 1 % noise
+(the exp-channel term is 2.40–2.67, not `< 1`) and true at 0.5 % only with `Φ ≥ 6.6e3`, far
+above any useful envelope (module *Non-vacuity range*). -/
 def envelopeCert [Fintype ι] (kB Tmin Tmax Φ : ℝ) (ET epsT : ιT → ℝ) (g E : κ → ι → ℝ)
     (u k0 : κ → ι) : Prop :=
   0 ≤ Φ
@@ -193,7 +225,8 @@ theorem hardGateBundle_of_certificates_report
 re-exported with its hypotheses regrouped: the gate-supplied `gateCoreForComposition`, the
 runtime-evaluable `envelopeCert`, the a-priori `aprioriBracket`, the **R1 noise bound `hδT`
 (not certifiable)**, and the definitional slope identifications `hβ`, `hβHat`. The McWhirter data
-do not occur in this statement. -/
+do not occur in this statement. Like `noise_to_composition`, it is vacuous at realistic
+parameters (module *Non-vacuity range*). -/
 theorem gateCore_composition_error_le [Fintype ι] [Fintype κ] [Nonempty ι] [Nonempty κ]
     [Nonempty ιT] {kB Tmin Tmax T That Fcal Φ Nmax : ℝ} {ET yT yHatT epsT : ιT → ℝ}
     {N : κ → ℝ} {g E A : κ → ι → ℝ} {u k0 : κ → ι}
@@ -213,17 +246,25 @@ theorem gateCore_composition_error_le [Fintype ι] [Fintype κ] [Nonempty ι] [N
   exact noise_to_composition hkB hTmin hT hThat hTmaxT hTmaxThat hg hE hFcal hA hN hNmax hΦ0
     hvarT hδT hβ hβHat hsmallmax henvmax s
 
-/-- **HEADLINE — what passing the hard gate formally buys (REDUCED, Tognoni 2010).** Under the
-shipped unconditional HARD gate `hardGateBundle`, PLUS the hypotheses no gate can supply — the
-runtime-evaluable but not-yet-shipped `envelopeCert`, the a-priori `aprioriBracket` on the truth,
-the **R1 per-line noise bound `hδT` (a distance to the unknown true ordinates; not certifiable at
-runtime)** and the definitional slope identifications — the recovered composition error obeys
+/-- **The composition bound under the hard gate (REDUCED, Tognoni 2010); vacuous at realistic
+parameters.** Under the shipped unconditional HARD gate `hardGateBundle`, PLUS the hypotheses no
+gate can supply — the runtime-evaluable but not-yet-shipped `envelopeCert`, the a-priori
+`aprioriBracket` on the truth, the **R1 per-line noise bound `hδT` (a distance to the unknown
+true ordinates; not certifiable at runtime)** and the definitional slope identifications — the
+recovered composition error obeys
 exactly the `noise_to_composition` bound
   `|Ĉ_s − C_s| ≤ compositionErrorBound N Ŝ (Nmax·Φ) s`.
 Of the gate's clauses only C1, the box on `T̂`, and the positivity data do work here (via
 `hardGateBundle_implies_noise_to_composition_hyps`); C3, C4, C7, C12 and the `nₑ` floor are
-discharged unused. In particular C7 (`mcWhirterCert`) certifies LTE validity of the *model* — a
-separate REDUCED premise — and does not enter, tighten, or condition this bound. -/
+discharged unused. In particular C7 (`mcWhirterCert`) checks the McWhirter condition, which is
+necessary but not sufficient for LTE, and C12 checks only `0 ≤ τ`; neither enters, tightens, or
+conditions this bound.
+
+This is not a usable composition guarantee. With NIST Fe/Cr/Ni level lists at 0.5–5 % noise the
+right-hand side is 26 to 1.42e3, and a composition error is at most 1. In the shipped
+`[3000, 20000] K` box at 1 % noise (the module's Fe I setup), `envelopeCert` is false, so the
+hypotheses cannot all hold (module *Non-vacuity range*). Do not report or score it as a certified
+composition bound. -/
 theorem hardGateBundle_composition_error_le [Fintype ι] [Fintype κ] [Nonempty ι] [Nonempty κ]
     [Nonempty ιT] {kB Tmin Tmax T That Fcal Φ Nmax eps tauBeta C dE ne neMin : ℝ}
     {ET yT yHatT epsT tau : ιT → ℝ} {N : κ → ℝ} {g E A : κ → ι → ℝ} {u k0 : κ → ι}
@@ -243,8 +284,9 @@ theorem hardGateBundle_composition_error_le [Fintype ι] [Fintype κ] [Nonempty 
 /-! ## What the remaining clauses buy — elsewhere, not in the composition bound -/
 
 /-- **C4 buys a slope (inverse-temperature) precision certificate, not a composition bound.**
-Under the gate and a *uniform* R1 noise bound `|ŷₖ − yₖ| ≤ eps` (the `eps = 1/min SNR` the gate
-plugs into C4 — again an assumption about the unknown truth), the OLS slope error is within the
+Under the gate and a *uniform* R1 noise bound `|ŷₖ − yₖ| ≤ eps` (with the `eps = 1/min SNR` the
+gate plugs into C4 — again an assumption about the unknown truth; a one-sigma scale such as
+`1/SNR` is not such a bound, see `Certificates`, C4), the OLS slope error is within the
 protocol target `tauBeta`. Thin re-export of `slopeBudget_certificate_sound`; uses only C1 and
 C4 of the bundle. This is a parallel route to temperature precision — `noise_to_composition`
 carries the per-line noise directly and never consumes `tauBeta`. -/
@@ -257,12 +299,13 @@ theorem hardGateBundle_slope_error_le [Nonempty ιT]
   obtain ⟨h1, -, h4, -⟩ := hgate
   exact slopeBudget_certificate_sound htau h1 hδ h4
 
-/-- **C7 buys LTE admissibility of the reported state, not a composition bound.** Under the gate
-(C7 at the reported `T̂`, the box giving `0 < T̂`, the floor giving `0 ≤ nₑ`) and the DB / protocol
-positivity `0 < C`, `0 ≤ ΔE`, `0 ≤ neMin`, the DB resonance gap is within the thermalization limit
-at the reported `(T̂, nₑ)`. Thin re-export of `mcWhirter_certificate_sound`. This is a REDUCED
-statement about the *model's* collisional-LTE premise (R3: internal consistency at one diagnostic,
-not physical LTE); it is the only formal work C7 does, and it is disjoint from
+/-- **C7 buys McWhirter admissibility of the reported state, not LTE and not a composition
+bound.** Under the gate (C7 at the reported `T̂`, the box giving `0 < T̂`, the floor giving
+`0 ≤ nₑ`) and the DB / protocol positivity `0 < C`, `0 ≤ ΔE`, `0 ≤ neMin`, the DB resonance gap is
+within the thermalization limit at the reported `(T̂, nₑ)`. Thin re-export of
+`mcWhirter_certificate_sound`. The McWhirter condition is necessary but not sufficient for LTE,
+and at a recovered `(T̂, nₑ)` it checks internal consistency at one diagnostic only (R3), not
+physical LTE. This is the only formal work C7 does, and it is disjoint from
 `hardGateBundle_composition_error_le`. -/
 theorem hardGateBundle_thermalizationLimit
     {kB Tmin Tmax That eps tauBeta C dE ne neMin : ℝ} {ET tau : ιT → ℝ}
@@ -300,7 +343,9 @@ fraction difference, not the single-species `0`), the fixture certificate inputs
 at the *reported* `T̂ = 2/3`. All hypotheses of `hardGateBundle_composition_error_le` are jointly
 satisfiable and the headline inequality is stated concretely. With `E = 0` the temperature
 channel is inert (the recovered densities are exact and `Φ = 0`), so the inequality is `0 ≤ 0`
-in value — this witness certifies joint satisfiability of every hypothesis, not tightness. -/
+in value — this witness certifies joint satisfiability of every hypothesis, not tightness. No
+witness with a nonzero composition error exists yet (audit U-13), and at realistic parameters the
+bound is vacuous (module *Non-vacuity range*). -/
 
 private def evET : Fin 2 → ℝ := ![0, 1]
 private def evYt : Fin 2 → ℝ := ![0, 1]

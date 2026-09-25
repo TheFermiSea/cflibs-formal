@@ -1,0 +1,289 @@
+{
+  "total": 92,
+  "offset": 0,
+  "next": 8,
+  "data": [
+    {
+      "paperId": "70e540e622dd535cdfb8161d419a7f8217d9b354",
+      "externalIds": {
+        "DOI": "10.56530/spectroscopy.di9189u6",
+        "CorpusId": 279656951
+      },
+      "title": "Research on Hardness Detection Method of Polyvinyl Chloride Cable Sheath Material Based on Laser-Induced Breakdown Spectroscopy",
+      "venue": "Spectroscopy",
+      "year": 2025,
+      "citationCount": 0,
+      "authors": [
+        {
+          "authorId": "2117691798",
+          "name": "Xiao-Mei Lin"
+        },
+        {
+          "authorId": "2368906415",
+          "name": "Guan-Yang Wang"
+        },
+        {
+          "authorId": "51270702",
+          "name": "Jing-Jun Lin"
+        },
+        {
+          "authorId": "2108716898",
+          "name": "Yu-Tao Huang"
+        }
+      ]
+    },
+    {
+      "paperId": "97539166008bab38e0d314dae5fb8cf6a9d54812",
+      "externalIds": {
+        "DOI": "10.1109/icops58192.2024.10626680",
+        "CorpusId": 271935817
+      },
+      "title": "Quantification of Material Composition inNuclear Power Plants Using SinglePoint-Calibration-Free Laser-induced Breakdown Spectroscopy",
+      "venue": "International Conference on Plasma Science",
+      "year": 2024,
+      "citationCount": 0,
+      "authors": [
+        {
+          "authorId": "2319184797",
+          "name": "B. Lu"
+        },
+        {
+          "authorId": "2484473710",
+          "name": "Y. Qiu"
+        },
+        {
+          "authorId": "2316655437",
+          "name": "L. Gong"
+        },
+        {
+          "authorId": "2287123774",
+          "name": "Y. Zhan"
+        },
+        {
+          "authorId": "2295281613",
+          "name": "J. Wu"
+        },
+        {
+          "authorId": "2316742353",
+          "name": "C. Pei"
+        },
+        {
+          "authorId": "2316657958",
+          "name": "Y. Hang"
+        },
+        {
+          "authorId": "2316834304",
+          "name": "Y. Li"
+        },
+        {
+          "authorId": "2316644651",
+          "name": "X. Li"
+        }
+      ]
+    },
+    {
+      "paperId": "542b8a7622c693f4199e0a2be9fdd2fe9ed45e63",
+      "externalIds": {
+        "DOI": "10.1109/icops53334.2026.11659999",
+        "CorpusId": 291396166
+      },
+      "title": "Spectral Model for Femtosecond Laser-Induced Breakdown Spectroscopy of Near-Vacuum Gases",
+      "venue": "International Conference on Plasma Science",
+      "year": 2026,
+      "citationCount": 0,
+      "authors": [
+        {
+          "authorId": "2460361177",
+          "name": "Matthew Blackburn"
+        },
+        {
+          "authorId": "2241855554",
+          "name": "Elijah Jans"
+        },
+        {
+          "authorId": "2266003630",
+          "name": "A. Steinberg"
+        },
+        {
+          "authorId": "2070310756",
+          "name": "N. Brown"
+        }
+      ]
+    },
+    {
+      "paperId": "42f869cd04aaa1eac09bda33860b5ec944b76e27",
+      "externalIds": {
+        "DOI": "10.3390/min14111109",
+        "CorpusId": 273713691
+      },
+      "title": "Laser-Induced Breakdown Spectroscopy Applied to the Quantification of K, Ca, Mg and Mn Nutrients in Organo-Mineral, Mineral P Fertilizers and Rock Fertilizers",
+      "venue": "Minerals",
+      "year": 2024,
+      "citationCount": 4,
+      "authors": [
+        {
+          "authorId": "16379175",
+          "name": "Cesar A. C. Cervantes"
+        },
+        {
+          "authorId": "2269653183",
+          "name": "Bruno S. Marangoni"
+        },
+        {
+          "authorId": "4541676",
+          "name": "G. Nicolodelli"
+        },
+        {
+          "authorId": "8795958",
+          "name": "G. Senesi"
+        },
+        {
+          "authorId": "1405425159",
+          "name": "P. Villas-Boas"
+        },
+        {
+          "authorId": "49430150",
+          "name": "Caroline S. Silva"
+        },
+        {
+          "authorId": "2052974562",
+          "name": "A. R. A. Nogueira"
+        },
+        {
+          "authorId": "2240665280",
+          "name": "V. M. Benites"
+        },
+        {
+          "authorId": "89328208",
+          "name": "D. Milori"
+        }
+      ]
+    },
+    {
+      "paperId": "159903970712ff66a487ec2322213202936bbf1a",
+      "externalIds": {
+        "DOI": "10.1016/j.talanta.2026.129658",
+        "CorpusId": 286519676,
+        "PubMed": "41830885"
+      },
+      "title": "Classification of martian rocks and soils at Tianwen-1 landing site based on laser-induced breakdown spectroscopy data of MarSCoDe.",
+      "venue": "Talanta: The International Journal of Pure and Applied Analytical Chemistry",
+      "year": 2026,
+      "citationCount": 0,
+      "authors": [
+        {
+          "authorId": "2424019956",
+          "name": "Chenyu Cao"
+        },
+        {
+          "authorId": "2321040888",
+          "name": "Jiale Huang"
+        },
+        {
+          "authorId": "2355097922",
+          "name": "Ming-Yu Su"
+        },
+        {
+          "authorId": "2046785234",
+          "name": "Chang-Qing Liu"
+        },
+        {
+          "authorId": "2091457468",
+          "name": "Zongcheng Ling"
+        }
+      ]
+    },
+    {
+      "paperId": "2ed22c8bd8d7a12378927370418b0b40eb14b21d",
+      "externalIds": {
+        "DOI": "10.9734/ijecc/2023/v13i92411",
+        "CorpusId": 260107657
+      },
+      "title": "Laser Induced Breakdown Spectroscopy: A Rapid Analytical Technique for Soil and Plant",
+      "venue": "International Journal of Environment and Climate Change",
+      "year": 2023,
+      "citationCount": 2,
+      "authors": [
+        {
+          "authorId": "9268633",
+          "name": "V. Soniya"
+        },
+        {
+          "authorId": "95642499",
+          "name": "P. S. Bhindhu"
+        },
+        {
+          "authorId": "2224537952",
+          "name": "M. Sujaina"
+        }
+      ]
+    },
+    {
+      "paperId": "410f226362d16bf24aecc2abb809983d47ef13bb",
+      "externalIds": {
+        "MAG": "3015847553",
+        "ArXiv": "2004.04301",
+        "CorpusId": 215548416
+      },
+      "title": "Estimating Scale Discrepancy in Bayesian Model Calibration for ChemCam on the Mars Curiosity Rover",
+      "venue": "",
+      "year": 2020,
+      "citationCount": 1,
+      "authors": [
+        {
+          "authorId": "144428316",
+          "name": "K. Bhat"
+        },
+        {
+          "authorId": "39275321",
+          "name": "Kary L. Myers"
+        },
+        {
+          "authorId": "143699031",
+          "name": "E. Lawrence"
+        },
+        {
+          "authorId": "143664708",
+          "name": "J. Colgan"
+        },
+        {
+          "authorId": "9880815",
+          "name": "E. Judge"
+        }
+      ]
+    },
+    {
+      "paperId": "7994a02433bb0ed28be38cf7fac6341d6599a296",
+      "externalIds": {
+        "DOI": "10.1214/20-aoas1373",
+        "CorpusId": 220825300
+      },
+      "title": "Structured discrepancy in Bayesian model calibration for ChemCam on the Mars Curiosity rover",
+      "venue": "",
+      "year": 2020,
+      "citationCount": 1,
+      "authors": [
+        {
+          "authorId": "144428316",
+          "name": "K. Bhat"
+        },
+        {
+          "authorId": "39275321",
+          "name": "Kary L. Myers"
+        },
+        {
+          "authorId": "2064273655",
+          "name": "E. Lawrence"
+        },
+        {
+          "authorId": "143664708",
+          "name": "J. Colgan"
+        },
+        {
+          "authorId": "9880815",
+          "name": "E. Judge"
+        }
+      ]
+    }
+  ]
+}

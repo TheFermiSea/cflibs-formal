@@ -26,11 +26,17 @@ jobs:
       # home-rolled axioms — including through imports — which grep cannot). Tool vendored in tools/.
       - name: Axiom-cleanliness gate
         run: lake exe axiom-audit --root CflibsFormal
-      # Epistemic-drift gate (declaration-granular): fail if any EXACT-tagged declaration
-      # transitively USES an APPROXIMATION-tagged declaration (constant-level, via the kernel env).
-      # The authoritative epistemic-scope gate — closes the mixed-module false-negative the
-      # module-level scripts/check-scope-consistency.sh below cannot. AxiomAudit machinery; needs the
-      # built env, so it runs after lean-action.
+      # Scope-tag gate (declaration-granular, two axes; docs/conventions.md section 8): a
+      # docs/scope-tags.tsv row on a theorem is its RELATION tag, a row on a definition its MODEL
+      # tag, and a theorem PUBLISHES the weaker of its relation tag and the model tags in its
+      # statement (PURE-MATH exempt). Fails on: an unresolved, ambiguous, duplicate or malformed
+      # row; a laundered model row (stronger than the models its definition is built from); an
+      # own-EXACT theorem that transitively USES an own-APPROXIMATION theorem; a published-EXACT
+      # theorem that transitively uses a published-APPROXIMATION theorem or an APPROXIMATION
+      # model; a stale docs/scope-published.tsv. Lists PURE-MATH theorems stated over an
+      # APPROXIMATION model as an advisory. Constant-level via the kernel env (AxiomAudit
+      # machinery), so it needs the built env and runs after lean-action; it closes the
+      # mixed-module false-negative of the module-level scripts/check-scope-consistency.sh below.
       - name: Scope-consistency gate (declaration-granular)
         run: lake exe scope-check
       # Kernel-replay gate: re-check every module this change touched with the toolchain's
@@ -77,14 +83,22 @@ jobs:
           diff -u oracle/fixtures.json /tmp/fixtures.json
           python3 oracle/check_fixtures.py
       # Docs-sync + scope-tag-completeness gate: regenerate the auto docs and (a) fail if any result
-      # is missing a curated scope tag in docs/scope-tags.tsv (gen-docs.sh exits non-zero), and
-      # (b) fail if the committed module-reference / theorem-catalog drift from source. Same
-      # regenerate-and-diff discipline as the oracle self-check; this is the integrity-spine gate —
-      # a new theorem cannot land undocumented OR without an EXACT/REDUCED/APPROXIMATION/PURE-MATH tag.
+      # is missing a curated scope tag in docs/scope-tags.tsv, or docs/scope-published.tsv is
+      # missing (gen-docs.sh exits non-zero), and (b) fail if the committed module-reference /
+      # theorem-catalog drift from source. The catalog renders each result's own -> published tag
+      # from docs/scope-published.tsv, which the scope-check step above has already verified is
+      # current. Same regenerate-and-diff discipline as the oracle self-check; this is the
+      # integrity-spine gate — a new theorem cannot land undocumented OR without an
+      # EXACT/REDUCED/APPROXIMATION/PURE-MATH tag.
       - name: Docs-sync gate
         run: |
           ./scripts/gen-docs.sh
           git diff --exit-code -- docs/module-reference.md docs/theorem-catalog.md
+      # Citation-integrity gate: every citation string in column 4 of docs/scope-tags.tsv must be
+      # on docs/citation-whitelist.tsv and none may be SUSPECT-OR-FABRICATED (the check that would
+      # have stopped an off-whitelist citation merging). Build-free: bash + python3 only.
+      - name: Citation-whitelist gate
+        run: ./scripts/check-citations.sh
       # Epistemic-drift ADVISORY (module-level): a fast, build-free companion to the authoritative
       # declaration-granular `scope-check` gate above. It also surfaces EXACT-on-REDUCED and
       # EXACT-on-mixed dependencies as advisory warnings (module granularity cannot prove per-theorem

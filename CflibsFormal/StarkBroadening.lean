@@ -13,15 +13,16 @@ import CflibsFormal.SahaInverse
 
 This module formalizes a *second, physically independent* electron-density
 diagnostic — the **electron-impact (Stark) line width** — and the **McWhirter
-lower bound** on the electron density that the assumption of local thermodynamic
-equilibrium (LTE) requires. It then ties the two together with a genuine
-two-diagnostic cross-check.
+lower bound** on the electron density, a necessary (not sufficient) condition for
+local thermodynamic equilibrium (LTE). It then states a *conditional bundling* of
+the Stark width, the Saha route and the McWhirter test.
 
 * `starkFWHM` — the forward map (electron density → Stark full width at half
   maximum). For an isolated Lorentzian line broadened by electron impacts,
   Griem's theory makes the Stark FWHM *linear* in the electron density:
   `Δλ = 2·w·(n_e/n_ref)`, with `w` the electron-impact width parameter tabulated
-  at a reference electron density `n_ref`.
+  at a reference electron density `n_ref`. Electron-impact term only (see
+  *Scope* below).
 * `starkDensity` — the inverse (diagnostic) map: it reads `n_e` off a *measured*
   Stark width `n_e = n_ref·Δλ/(2·w)`. It is a genuine function of the
   OBSERVATION (the width), never of the true `n_e`.
@@ -35,21 +36,35 @@ two-diagnostic cross-check.
   (Lorentzian) mechanism; stating it as `IsLinearMap` (rather than separate
   distributivity identities) makes that the single, meaningful claim.
 * `mcWhirterBound` / `lteValid` — the McWhirter lower bound
-  `n_e ≥ 1.6·10¹²·√T·(ΔE)³` and the LTE-admissibility predicate.
+  `n_e ≥ 1.6·10¹²·√T·(ΔE)³`, in the units `n_e` [cm⁻³], `T` [K], `ΔE` [eV], and the
+  McWhirter-admissibility predicate. Despite its name, `lteValid` is only the McWhirter
+  test: necessary, not sufficient, for LTE (see the scope note in `PartialLTE`).
 * `mcWhirterBound_mono_T` / `mcWhirterBound_mono_dE` — a hotter plasma or a larger
-  energy gap demands a higher electron density for LTE.
-* `stark_saha_lte_consistent` — **the cross-check.** A *conditional bundling*
-  theorem: IF the Stark route (n_e from a measured line WIDTH) and the Saha route
-  (n_e from a measured stage-intensity RATIO `R`, reusing `Saha.lean`) yield the
-  SAME electron density AND that value clears the McWhirter bound, THEN a single
-  `n_e` is simultaneously consistent with BOTH independent forward laws (the
-  Griem width via `starkFWHM` and the Saha law via `saha_relation`) and LTE.
-  Because the two diagnostics consume genuinely DIFFERENT observations (a width
-  vs a stage ratio), their agreement is real evidence, not `n_e = n_e` by
-  construction. Honest scoping: agreement (`hagree`) is *assumed*, not proven —
-  the two diagnostics are NOT shown to necessarily coincide; clauses 1–3 of the
-  conclusion restate the hypotheses, and only clauses 4–5 carry forward-law
-  content.
+  energy gap raises the McWhirter bound.
+* `stark_saha_lte_consistent` — a *conditional bundling* theorem, not a cross-check
+  that can fail. IF the Stark estimate (n_e from a measured line WIDTH) and the Saha
+  estimate (n_e from a stage population ratio `R = n_{z+1}/n_z`, reusing `Saha.lean`)
+  are EXACTLY equal as real numbers AND that value clears the McWhirter bound, THEN
+  one `n_e` satisfies both forward laws (the Griem width via `starkFWHM` and the Saha
+  law via `saha_relation`) and the McWhirter test. Agreement (`hagree`) is *assumed*,
+  never derived: the two diagnostics are NOT shown to coincide, and no disagreement
+  bound or tolerance form is proved. Clauses 1–3 of the conclusion restate the
+  hypotheses; clauses 4–5 are the algebraic inversions of `starkFWHM` and of the
+  Saha relation. The hypothesis is not vacuous (the two sides consume different
+  observations, a width and a stage ratio), but the conclusion adds no physics
+  beyond the definitions.
+
+## Scope
+
+* **Electron-impact width only.** The quasi-static ion-broadening correction, which
+  makes the width nonlinear in `n_e` (in the companion pipeline its ion parameter
+  scales as `n_e^{1/4}`), is out of scope here, as it is in `StarkShift`.
+  `starkDensity_recovers` therefore inverts a forward model that includes the ion
+  term only when that term is zero.
+* **Units.** `mcWhirterBound` is not unit-free: its prefactor `1.6·10¹²` fixes `n_e` in
+  cm⁻³, `T` in K and `ΔE` in eV (see its docstring). The Stark and Saha maps are
+  unit-agnostic, so every statement that combines them with `lteValid` needs the same
+  convention.
 
 ## Literature
 
@@ -82,7 +97,11 @@ variable {κ : Type*} [Fintype κ]
 broadened by electron impacts, Griem's theory gives a Stark FWHM that is *linear*
 in the electron density: `Δλ = 2·w·(n_e / n_ref)`, with `w` the electron-impact
 width parameter tabulated at a reference electron density `n_ref`. This is the
-forward map (electron density → measured line width). -/
+forward map (electron density → measured line width).
+
+REDUCED model: the electron-impact term only, linear in `n_e`, with `w` fixed at its
+reference-density value. The quasi-static ion-broadening correction, which makes the
+width nonlinear in `n_e`, is not modelled. -/
 noncomputable def starkFWHM (w nRef ne : ℝ) : ℝ :=
   2 * w * (ne / nRef)
 
@@ -98,21 +117,34 @@ noncomputable def starkDensity (w nRef width : ℝ) : ℝ :=
 McWhirter criterion (as recalled by Cristoforetti et al. 2010) requires, for the
 upper level energy gap `dE` (the largest relevant gap) at temperature `T`,
 `n_e ≥ 1.6·10¹² · √T · (ΔE)³` for collisional (LTE) processes to dominate
-radiative ones. The numerical prefactor and the `√T`, `(ΔE)³` scalings are the
-dimensionless content of the criterion. -/
+radiative ones. The criterion is necessary, not sufficient, for LTE.
+
+**Units.** The prefactor `1.6·10¹²` fixes the units: the bound is a density in cm⁻³,
+`T` is in K and `dE` in eV. The bound is not unit-free, and this mixed convention (eV
+is not a CGS unit) is not covered by the `Dimensions` layer, whose `siToCgs` rescales
+only length and mass. In other units it is wrong by
+orders of magnitude: `T` in eV instead of K makes the bound about 108 times too small
+(`√11604.5 ≈ 107.7`), and comparing it against `n_e` in m⁻³ makes the test 10⁶ times
+too lax. -/
 noncomputable def mcWhirterBound (T dE : ℝ) : ℝ :=
   1.6e12 * Real.sqrt T * dE ^ 3
 
-/-- **LTE-validity predicate.** Local thermodynamic equilibrium is admissible
-(by the McWhirter criterion) when the electron density is at least the McWhirter
-bound for the given temperature and energy gap: `mcWhirterBound T dE ≤ n_e`. -/
+/-- **McWhirter-admissibility predicate** (the name `lteValid` overstates it). The
+electron density is at least the McWhirter bound for the given temperature and energy
+gap: `mcWhirterBound T dE ≤ n_e`, with `n_e` in cm⁻³, `T` in K and `dE` in eV (the
+units of `mcWhirterBound`). This is necessary, not sufficient, for LTE: it does not
+test the relaxation-time or diffusion-length conditions a transient, inhomogeneous
+plasma also needs (see the scope note in `PartialLTE`). Passing it does not establish
+LTE. -/
 def lteValid (T dE ne : ℝ) : Prop :=
   mcWhirterBound T dE ≤ ne
 
 /-- **Soundness of the Stark diagnostic.** The diagnostic exactly inverts the
 Griem forward map: the electron density read off the measured Stark width equals
 the true `n_e`. Both hypotheses `w ≠ 0`, `n_ref ≠ 0` are load-bearing (with
-`w = 0` the inverse divides by zero and the round-trip fails). -/
+`w = 0` the inverse divides by zero and the round-trip fails). The forward map is the
+electron-impact width only: a width that also carries the quasi-static ion term is
+inverted exactly only when that term is zero. -/
 theorem starkDensity_recovers {w nRef ne : ℝ} (hw : w ≠ 0) (hnRef : nRef ≠ 0) :
     starkDensity w nRef (starkFWHM w nRef ne) = ne := by
   simp only [starkDensity, starkFWHM]
@@ -146,17 +178,17 @@ theorem starkFWHM_isLinear (w nRef : ℝ) : IsLinearMap ℝ (starkFWHM w nRef) w
   map_smul c ne := by simp only [starkFWHM, smul_eq_mul]; ring
 
 /-- **McWhirter bound increases with temperature.** A hotter plasma demands a
-higher electron density for LTE (the bound scales as `√T`). Only `hdE : 0 ≤ dE`
-is load-bearing (so `dE³ ≥ 0` preserves the order); `Real.sqrt` is monotone on
-all of ℝ, so no nonnegativity premise on `T` is needed. -/
+higher electron density to pass the McWhirter test (the bound scales as `√T`). Only
+`hdE : 0 ≤ dE` is load-bearing (so `dE³ ≥ 0` preserves the order); `Real.sqrt` is
+monotone on all of ℝ, so no nonnegativity premise on `T` is needed. -/
 theorem mcWhirterBound_mono_T {dE T₁ T₂ : ℝ} (hdE : 0 ≤ dE) (hT : T₁ ≤ T₂) :
     mcWhirterBound T₁ dE ≤ mcWhirterBound T₂ dE := by
   unfold mcWhirterBound
   gcongr
 
 /-- **McWhirter bound increases with the energy gap.** A larger energy gap demands
-a higher electron density for LTE (the bound scales as `(ΔE)³`). Only
-`hdE₁ : 0 ≤ dE₁` is load-bearing (the cube is order-preserving only for a nonneg
+a higher electron density to pass the McWhirter test (the bound scales as `(ΔE)³`).
+Only `hdE₁ : 0 ≤ dE₁` is load-bearing (the cube is order-preserving only for a nonneg
 base); `√T ≥ 0` holds unconditionally (`Real.sqrt_nonneg`), so the prefactor
 nonnegativity needs no premise on `T`. `_hT : 0 ≤ T` is kept only as physical
 documentation that the bound is intended for nonnegative temperatures. -/
@@ -166,26 +198,32 @@ theorem mcWhirterBound_mono_dE {T dE₁ dE₂ : ℝ} (_hT : 0 ≤ T)
   unfold mcWhirterBound
   gcongr
 
-/-- **Stark–Saha LTE cross-check (conditional bundling).** A genuine two-diagnostic
-consistency theorem. The Stark route recovers `n_e` from a measured line WIDTH
-(`starkDensity`), the Saha route recovers `n_e` from a measured stage-intensity
-RATIO `R` (`electronDensityFromRatio`, reused from `Saha.lean`) — two physically
-INDEPENDENT diagnostics consuming genuinely DIFFERENT observations. The theorem
-certifies: IF the two estimates agree (`hagree`) AND the common value clears the
-McWhirter bound (`hlte`), THEN there exists a single `n_e` that
+/-- **Stark–Saha–McWhirter conditional bundling.** The Stark route recovers `n_e` from
+a measured line WIDTH (`starkDensity`); the Saha route recovers `n_e` from a stage
+population ratio `R = n_{z+1}/n_z` (`electronDensityFromRatio`, reused from
+`Saha.lean`; `R` must itself be recovered from line intensities first). The two
+consume different observations. The theorem states: IF the two estimates are EXACTLY
+equal as real numbers (`hagree`) AND the common value clears the McWhirter bound
+(`hlte`), THEN there exists a single `n_e` that
 
-* (1) equals the Stark estimate, (2) equals the Saha estimate, (3) is LTE-valid —
-  these three restate the hypotheses; and
+* (1) equals the Stark estimate, (2) equals the Saha estimate, (3) passes the
+  McWhirter test — these three restate the hypotheses; and
 * (4) re-derives the observed width through the Griem forward map
-  `width = starkFWHM w nRef ne` (the inversion content, needs `hw`, `hnRef`), and
-  (5) satisfies the structural Saha law `R·n_e = sahaFactor` (via `saha_relation`,
-  needs `hR`).
+  `width = starkFWHM w nRef ne` (the algebraic inversion of `starkDensity`, needs
+  `hw`, `hnRef`), and (5) satisfies the structural Saha law `R·n_e = sahaFactor`
+  (via `saha_relation`, needs `hR`).
 
-Honest scoping: agreement (`hagree`) is *assumed*, not proven — the two
-diagnostics are NOT shown to necessarily coincide. The substance is that the two
-sides feed DIFFERENT observations (a WIDTH vs a stage RATIO `R`), so their
-equality is empirical evidence rather than a definitional identity, and clauses
-4–5 tie the single recovered `n_e` back to both independent forward laws. -/
+Scope. Agreement is *assumed*, never derived: the two diagnostics are NOT shown to
+coincide, and nothing here bounds their disagreement. Exact real equality of two
+measured estimates is an idealization; the theorem does not cover a tolerance test
+such as `|Δn_e|/mean ≤ rtol`. The hypothesis is not vacuous (a width and a stage ratio
+are different data), but the conclusion adds no physics beyond the definitions of the
+two forward laws. Clause (3) is the McWhirter test only: necessary, not sufficient,
+for LTE. Units: clause (3) fixes `n_e` in cm⁻³, `T` in K and `dE` in eV (see
+`mcWhirterBound`), so the conclusion is physically meaningful only when `nRef` is in
+cm⁻³ and `sahaFactor` returns cm⁻³ at `T` in kelvin (e.g. CGS `me`, `h`, `kB`, with
+`chi` and the level energies in the energy unit of `kB·T`). The Stark side is the
+electron-impact width only; the ion-broadening term is out of scope. -/
 theorem stark_saha_lte_consistent {w nRef width : ℝ}
     {kB T me h chi : ℝ} {gZ EZ : ι → ℝ} {gZ1 EZ1 : κ → ℝ} {R dE : ℝ}
     (hw : w ≠ 0) (hnRef : nRef ≠ 0) (hR : R ≠ 0)

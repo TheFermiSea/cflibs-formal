@@ -1,0 +1,3 @@
+'AuditQuad.gaussFWHM_conv' depends on axioms: [propext, Classical.choice, Quot.sound]
+'AuditQuad.gaussianPDFReal_halfMax' depends on axioms: [propext, Classical.choice, Quot.sound]
+rc=0

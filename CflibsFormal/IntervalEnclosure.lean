@@ -7,13 +7,16 @@ import Mathlib
 import CflibsFormal.OLS
 
 /-!
-# CF-LIBS formalization — a verified ε-ball enclosure for the OLS forward map
+# CF-LIBS formalization — a Lipschitz bound on the OLS design normal matrix
 
-This module supplies the **bounded-error verification link** the numerical oracle currently
-lacks: an *explicit Lipschitz bound* for the Boltzmann-plot forward/design map on a bounded
-input box. Concretely, for the two-column normal matrix `designNormalMatrix E =
-![![∑ Eₖ², ∑ Eₖ], ![∑ Eₖ, n]]` (OLS.lean:185) viewed as an entrywise map
-`normalMap : (ι → ℝ) → (Fin 2 → Fin 2 → ℝ)`, we prove
+This module proves **a Lipschitz bound on the normal matrix** of the Boltzmann-plot design, on a
+bounded box of energies. It bounds only that intermediate: it is not composed with any
+inverse-conditioning result (such as `centeredSolve_relative_condition` in `OLS.lean`), so it
+gives no bound on the fitted slope, intercept or temperature; perturbations of the ordinates are
+not modelled; and nothing else in the repository uses it (only the root `CflibsFormal.lean`
+aggregator imports it, and the numerical oracle does not reference it). Concretely, for the
+two-column normal matrix `designNormalMatrix E = ![![∑ Eₖ², ∑ Eₖ], ![∑ Eₖ, n]]` (`OLS.lean`)
+viewed as an entrywise map `normalMap : (ι → ℝ) → (Fin 2 → Fin 2 → ℝ)`, we prove
 
   `dist (normalMap E) (normalMap Ê) ≤ (2·B + 1)·n · dist E Ê`
 
@@ -22,12 +25,13 @@ metrics are the ambient sup-metrics of the `Pi` types and `n = card ι`. The Lip
 `L(B, n) = (2·B + 1)·n` is **explicit** in the box radius `B` and the line count `n`. Packaged
 as `LipschitzOnWith` in `normalMap_lipschitzOnWith`.
 
-**Interpretation (the ε-ball link).** If a floating-point execution perturbs the exact real
-energies by at most `ε` in the sup-metric — `dist E Ê ≤ ε` — then the computed normal matrix
-stays within an `L·ε` ball of the exact real result: `dist (normalMap E) (normalMap Ê) ≤ L·ε`
-(`normalMap_epsilon_ball`). This turns the regression oracle into a *bounded-error* verification
-link: a perturbation of the inputs propagates to a controlled perturbation of the design normal
-matrix, with a constant one can evaluate from the energy bound alone.
+**Interpretation (an ε-ball for the normal matrix only).** If a floating-point execution
+perturbs the exact real energies by at most `ε` in the sup-metric — `dist E Ê ≤ ε` — then the
+normal matrix built from the perturbed energies stays within an `L·ε` ball of the exact real one:
+`dist (normalMap E) (normalMap Ê) ≤ L·ε` (`normalMap_epsilon_ball`). The constant can be
+evaluated from the energy bound alone. Turning this into a bounded-error check of the regression
+oracle would need an end-to-end slope enclosure (this bound composed with the conditioning of the
+normal-equation solve), which is not proved here.
 
 ## Literature and scope
 
@@ -51,10 +55,10 @@ compared at are wholly independent of one another; the bound relates two genuine
 the same map, and the witnesses below exhibit a case where the output genuinely moves, so the
 Lipschitz inequality is a real constraint, not a vacuous `0 ≤ 0`.
 
-Builds on `CflibsFormal.OLS` (`designNormalMatrix`, OLS.lean:185; `det_designNormalMatrix`,
-OLS.lean:194). The two-column least-squares design of the Boltzmann plot is standard:
-G. Cristoforetti et al., *Spectrochim. Acta B* **65** (2010) 86 (calibration-free LIBS); the
-Lipschitz/perturbation content is pure real analysis (no physics in the statement).
+Builds on `CflibsFormal.OLS` (`designNormalMatrix`, `det_designNormalMatrix`). The least-squares
+Boltzmann-plot fit whose design this is follows `OLS.lean`, which cites Tognoni et al. (2010),
+*Spectrochim. Acta B* **65**, 1–14; the Lipschitz/perturbation content is pure real analysis (no
+physics in the statement).
 -/
 
 namespace CflibsFormal
@@ -65,25 +69,29 @@ open scoped BigOperators
 variable {ι : Type*} [Fintype ι]
 
 /-- The **energy box** of sup-radius `B`: all energy vectors with `|Eₖ| ≤ B` for every line `k`.
-The bounded input region on which the forward map is Lipschitz. -/
+The bounded input region on which the normal-matrix map is Lipschitz. -/
 def energyBox (B : ℝ) : Set (ι → ℝ) := {E | ∀ k, |E k| ≤ B}
 
-/-- The **Boltzmann-plot forward/design map**, `E ↦ designNormalMatrix E`, presented as an
+/-- The **Boltzmann-plot design normal-matrix map**, `E ↦ designNormalMatrix E`, presented as an
 entrywise function `Fin 2 → Fin 2 → ℝ` so that both source and target carry the ambient
 sup-metric of their `Pi` types (`Matrix (Fin 2) (Fin 2) ℝ` carries no `Dist` instance). The
 four entries are `∑ Eₖ²`, `∑ Eₖ` (twice) and the constant `n = card ι`. -/
 noncomputable def normalMap (E : ι → ℝ) : Fin 2 → Fin 2 → ℝ :=
   fun i j => designNormalMatrix E i j
 
+/-- The `(0,0)` entry of the normal matrix is `∑ₖ Eₖ²`. -/
 @[simp] theorem normalMap_zero_zero (E : ι → ℝ) : normalMap E 0 0 = ∑ k, E k ^ 2 := by
   simp [normalMap, designNormalMatrix]
 
+/-- The `(0,1)` entry of the normal matrix is `∑ₖ Eₖ`. -/
 @[simp] theorem normalMap_zero_one (E : ι → ℝ) : normalMap E 0 1 = ∑ k, E k := by
   simp [normalMap, designNormalMatrix]
 
+/-- The `(1,0)` entry of the normal matrix is `∑ₖ Eₖ`. -/
 @[simp] theorem normalMap_one_zero (E : ι → ℝ) : normalMap E 1 0 = ∑ k, E k := by
   simp [normalMap, designNormalMatrix]
 
+/-- The `(1,1)` entry of the normal matrix is the line count `n = card ι`. -/
 @[simp] theorem normalMap_one_one (E : ι → ℝ) : normalMap E 1 1 = (Fintype.card ι : ℝ) := by
   simp [normalMap, designNormalMatrix]
 
@@ -155,10 +163,11 @@ theorem normalMap_lipschitzOnWith {B : ℝ} (hB : 0 ≤ B) :
   rw [Real.coe_toNNReal _ (by positivity)]
   exact normalMap_dist_le hB hE hEhat
 
-/-- **The ε-ball enclosure (the verification link).** If the exact real energies are perturbed
+/-- **The ε-ball enclosure for the normal matrix.** If the exact real energies are perturbed
 by at most `ε` in the sup-metric (the abstract rounding model — see the scope block), the design
 normal matrix stays inside the `L·ε` ball of the exact result, `L = (2·B + 1)·n`. Immediate from
-`normalMap_dist_le` by monotonicity. -/
+`normalMap_dist_le` by monotonicity. It bounds the normal matrix only, not the fitted slope or
+intercept. -/
 theorem normalMap_epsilon_ball {B ε : ℝ} (hB : 0 ≤ B) {E Ehat : ι → ℝ}
     (hE : ∀ k, |E k| ≤ B) (hEhat : ∀ k, |Ehat k| ≤ B) (hε : dist E Ehat ≤ ε) :
     dist (normalMap E) (normalMap Ehat) ≤ (2 * B + 1) * (Fintype.card ι : ℝ) * ε := by
@@ -172,8 +181,8 @@ theorem normalMap_epsilon_ball {B ε : ℝ} (hB : 0 ≤ B) {E Ehat : ι → ℝ}
 The map genuinely computes and is *non-constant*, so the Lipschitz inequality above constrains a
 distance that can be strictly positive — it is not a vacuous `0 ≤ 0`. -/
 
-/-- The forward map computes: on two lines with energies `1, 1` the `(0,0)` entry is `∑ Eₖ² = 2`.
--/
+/-- The normal-matrix map computes: on two lines with energies `1, 1` the `(0,0)` entry is
+`∑ Eₖ² = 2`. -/
 example : normalMap (ι := Fin 2) ![1, 1] 0 0 = 2 := by
   simp [Fin.sum_univ_two]; norm_num
 
@@ -182,7 +191,7 @@ example : normalMap (ι := Fin 2) ![1, 1] 1 1 = 2 := by simp
 
 /-- **Non-constancy witness.** The energy vectors `![1,1]` and `![0,0]` (both in `energyBox 1`)
 map to *different* normal matrices — their `(0,0)` entries are `2` and `0` — so the output of the
-forward map genuinely moves. Hence the Lipschitz bound is a real constraint on a positive
+normal-matrix map genuinely moves. Hence the Lipschitz bound is a real constraint on a positive
 distance, not a vacuous one. -/
 example : normalMap (ι := Fin 2) ![1, 1] ≠ normalMap (ι := Fin 2) ![0, 0] := by
   intro h

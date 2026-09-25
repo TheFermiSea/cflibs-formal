@@ -29,27 +29,59 @@ We prove two complementary identifiability facts.
 
 * **Single line, known scale.** `cogIntensity_strictMono` / `cogIntensity_injective`:
   for `S > 0`, `w > 0` the map `n ↦ cogIntensity S w n` is strictly increasing, hence
-  injective. So with a *known* opacity `w` and source `S`, one self-absorbed line already
-  pins the column density `n`. This **sharpens**
+  injective. So, for this kernel, with a *known* opacity `w` and source `S` one
+  self-absorbed line already pins the column density `n`. This **sharpens**
   `selfAbsorption_breaks_identifiability`: the degeneracy is specifically about the
   *unknown* opacity/source scale, not optical thickness per se.
 
 * **Two lines, unknown scale.** `cogRatio_strictAntiOn` / `cogRatio_injOn`: for two lines
-  of the *same* species sharing the column density `n` but with *distinct* known opacities
-  `w₁ > w₂ > 0`, the intensity **ratio**
+  of the *same* species sharing the column density `n` AND one source `S`, but with
+  *distinct* known opacities `w₁ > w₂ > 0`, the intensity **ratio**
 
     `cogRatio w₁ w₂ n = (1 - exp(-(w₁ · n))) / (1 - exp(-(w₂ · n)))`
 
   has the common (possibly unknown) source `S` cancelled (`cogRatio_eq_intensity_ratio`),
-  and is strictly *antitone* — hence injective — in `n` on `(0, ∞)`. So the column density
-  `n` (and thus the relative composition) is recovered from the line ratio **even when the
-  common source scale `S` is unknown**: multiple lines of distinct opacity break the
+  and is strictly *antitone* — hence injective — in `n` on `(0, ∞)`. So, for this flat
+  kernel, that one species' column density `n` is recovered from the line ratio **even when
+  the common source scale `S` is unknown**: multiple lines of distinct opacity break the
   single-line self-absorption degeneracy. This is the positive counterpart to
   `selfAbsorption_breaks_identifiability`.
 
 `cogIntensity_slab_eq` records that `cogIntensity` is exactly the audited radiative-transfer
 slab kernel `slabIntensity` of `SelfAbsorption.lean` under `τ = w · n`, so no new physical
 kernel is introduced and the optically-thin limit recovers `ForwardMap`.
+
+## Scope — flat kernel, common source (read before using)
+
+* **Flat profile / line centre.** `cogIntensity` is the homogeneous-slab kernel at ONE optical
+  depth `w · n`: exact per frequency (e.g. at line centre, with `w · n` the line-centre depth)
+  or for the integrated intensity of a rectangular profile. For the integrated intensity of a
+  peaked profile it is an approximation, and the correction built on it over-corrects by
+  1.4–3.5× at line-centre depths `3–10` in the audit probes (see the `SelfAbsorption` scope
+  block).
+* **Pair-ratio injectivity is a flat-kernel property.** `cogRatio_injOn` is a theorem about
+  this kernel. For the profile-resolved (Voigt) curve of growth the pair ratio `W(r·n)/W(n)` is
+  not monotone in general. In the numerical probes of `docs/research/audit-2026-09-24`
+  (findings LF-04 and RF-03 as narrowed by the verifier; scipy `voigt_profile` with `γ` the
+  Lorentzian half-width and `σ` the Gaussian standard deviation, `r = 2`; not a theorem here),
+  with both line-centre depths `≤ 30` it stays monotone for a pure Doppler profile and for
+  `γ/σ = 0.01`, but has an interior minimum for each Stark-affected profile probed,
+  `γ/σ = 0.1, 0.3, 0.93` (no larger `γ/σ` was probed). Past that minimum, by the time the
+  larger depth reaches 30, the ratio has risen by only about 0.6%, 1.6% and 0.4% of its minimum
+  respectively (the audit's `evidence/verifier/voigt.py`), so the ratio is nearly flat there
+  and the practical problem is ill-conditioning more than exact non-injectivity.
+* **One source for two transitions is an assumption.** The ratio cancels `S` only because both
+  lines are given the SAME `S`. Physically the source term is per transition; in the repo's own
+  state-bound model the two source strengths differ by a `T`- and atomic-data-dependent factor
+  (`OpticalDepthBridge.lteSourceStrength_ratio_calibration_free`, used in
+  `OpticalDepthBridge.thickLineIntensity_ratio_eq_source_mul_cogRatio`). A common `S` is the
+  idealization `DoubletChannel` adopts for two members of one multiplet (its shared-`F`
+  assumption).
+* **One species, not a composition.** `n` is one species' lower-level column density; a
+  relative composition needs every species, their partition functions and a closure.
+* **Tags.** `cogRatio_strictAntiOn` is pure analysis (PURE-MATH). The physics readings hold
+  only after the reductions above: the flat kernel for `cogIntensity_strictMono` and
+  `cogIntensity_injective`, and in addition the shared `S` and shared `n` for `cogRatio_injOn`.
 
 ## Literature
 
@@ -66,9 +98,9 @@ growth to recover the optically-thin intensity; and
 Cristoforetti and Tognoni, "Calculation of elemental columnar density from self-absorbed
 lines", *Spectrochimica Acta Part B* **79–80** (2013) 63 — the column-density method that
 inverts self-absorbed lines (`τ = w·n` with `n` the columnar density) directly, the inverse
-formalized by the injectivity/identifiability theorems below. The `cogRatio`-based
-cancellation of the common source scale is a generic algebraic helper and carries no
-citation.
+formalized, for the flat kernel here, by the injectivity/identifiability theorems below. The
+`cogRatio`-based cancellation of the common source scale is a generic algebraic helper and
+carries no citation.
 -/
 
 namespace CflibsFormal
@@ -81,20 +113,24 @@ written as `τ = w · n` — a per-line opacity coefficient `w` (proportional to
 strength) times the lower-level **column density** `n` — the emergent self-absorbed line
 intensity is `I = S · (1 - exp(-(w · n)))`, with `S` the source/plateau term. This is the
 curve-of-growth relation of Gornushkin et al. (1999); it equals the audited slab kernel
-`slabIntensity S (w·n)` of `SelfAbsorption.lean` (see `cogIntensity_slab_eq`). -/
+`slabIntensity S (w·n)` of `SelfAbsorption.lean` (see `cogIntensity_slab_eq`). Flat kernel:
+exact per frequency (e.g. line centre) or for a rectangular profile; an approximation for the
+integrated intensity of a peaked profile (module scope block). -/
 noncomputable def cogIntensity (S w n : ℝ) : ℝ :=
   S * (1 - Real.exp (-(w * n)))
 
 /-- **Source-free curve-of-growth ratio.** The ratio of two same-species self-absorbed
 lines sharing the column density `n` with distinct opacities `w₁, w₂`. The common source
 scale `S` cancels (see `cogRatio_eq_intensity_ratio`), so this is the observable that
-remains available when `S` is unknown. -/
+remains available when `S` is unknown — provided the two lines really share one `S`, which is
+an assumption (module scope block). Flat kernel on both lines. -/
 noncomputable def cogRatio (w₁ w₂ n : ℝ) : ℝ :=
   (1 - Real.exp (-(w₁ * n))) / (1 - Real.exp (-(w₂ * n)))
 
 /-- **The curve-of-growth intensity is the radiative-transfer slab kernel.** `cogIntensity`
 is exactly `slabIntensity` (from `SelfAbsorption.lean`) under `τ = w · n`; no new physical
-kernel is introduced, so `cogIntensity` inherits the audited slab facts. -/
+kernel is introduced, so `cogIntensity` inherits the audited slab facts — and their
+flat-profile scope. -/
 @[simp] theorem cogIntensity_slab_eq (S w n : ℝ) :
     cogIntensity S w n = slabIntensity S (w * n) := rfl
 
@@ -115,7 +151,9 @@ theorem cogIntensity_strictMono {S w : ℝ} (hS : 0 < S) (hw : 0 < w) :
 /-- **Single-line injectivity (column-density recovery).** With known source `S > 0` and
 opacity `w > 0`, equal self-absorbed intensities force equal column densities: a single
 self-absorbed line determines `n`. This is the single-line inverse of
-Cristoforetti–Tognoni (2013). -/
+Cristoforetti–Tognoni (2013), for the flat kernel: inverting `cogIntensity` recovers `n` from
+integrated data only for a rectangular profile, because for a peaked profile the integrated
+intensity is a different function of `n` (module scope block). -/
 theorem cogIntensity_injective {S w : ℝ} (hS : 0 < S) (hw : 0 < w) :
     Function.Injective (fun n => cogIntensity S w n) :=
   (cogIntensity_strictMono hS hw).injective
@@ -213,7 +251,9 @@ limit values `w₁/w₂` as `n → 0⁺` and `1` as `n → ∞` are descriptive 
 not proved by this theorem). Strict monotonicity
 (either direction) gives injectivity, so the column density is recovered from the ratio
 even with the common source scale `S` unknown — the curve-of-growth break of the
-single-line self-absorption degeneracy (Bulajic et al. 2002; Cristoforetti–Tognoni 2013). -/
+single-line self-absorption degeneracy (Bulajic et al. 2002; Cristoforetti–Tognoni 2013).
+As mathematics this is a fact about the flat kernel alone; the profile-resolved (Voigt) pair
+ratio need not be monotone (module scope block). -/
 theorem cogRatio_strictAntiOn {w₁ w₂ : ℝ} (hw : w₂ < w₁) (hw₂ : 0 < w₂) :
     StrictAntiOn (fun n => cogRatio w₁ w₂ n) (Set.Ioi 0) := by
   have hw₁ : 0 < w₁ := lt_trans hw₂ hw
@@ -245,12 +285,16 @@ theorem cogRatio_strictAntiOn {w₁ w₂ : ℝ} (hw : w₂ < w₁) (hw₂ : 0 < 
     have := cogRatio_deriv_num_neg hw hw₂ (Set.mem_Ioi.mp hn)
     nlinarith [this]
 
-/-- **Multi-line, unknown-scale identifiability (injectivity).** The source-free ratio is
-injective on `(0, ∞)`: distinct positive column densities give distinct ratios, so `n`
-(hence the relative composition) is recovered from the ratio observable alone, without
-knowing the common source scale `S`. This is the genuine two-line break of the
-self-absorption degeneracy — the positive counterpart to
-`selfAbsorption_breaks_identifiability`. -/
+/-- **Multi-line, unknown-scale identifiability (injectivity) — flat kernel only.** The
+source-free ratio is injective on `(0, ∞)`: distinct positive column densities give distinct
+ratios, so one species' `n` is recovered from the ratio observable alone, without knowing the
+common source scale `S`. This is the two-line break of the self-absorption degeneracy — the
+positive counterpart to `selfAbsorption_breaks_identifiability` — under three reductions:
+the flat (rectangular-profile / line-centre) kernel on both lines, one shared `S`, and one
+shared column density `n`. In the audit probes the profile-resolved Voigt pair ratio is
+non-monotone inside line-centre depths `≤ 30` for the Stark-affected profiles probed
+(`γ/σ = 0.1, 0.3, 0.93`; module scope block), so this injectivity does not transfer to such
+lines. It is also not a relative composition: `n` belongs to one species. -/
 theorem cogRatio_injOn {w₁ w₂ : ℝ} (hw : w₂ < w₁) (hw₂ : 0 < w₂) :
     Set.InjOn (fun n => cogRatio w₁ w₂ n) (Set.Ioi 0) :=
   (cogRatio_strictAntiOn hw hw₂).injOn

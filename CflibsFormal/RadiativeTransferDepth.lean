@@ -19,7 +19,8 @@ depth-integrated formal solution `I(τ) = ∫₀^τ S(t)·e^{−(τ−t)} dt`:
 
 This module folds an **arbitrary** stack of `N` homogeneous zones and proves the two hand-coded
 kernels are its `N = 1` and `N = 2` base cases, then bounds the emergent intensity of *any*
-depth-structured LTE column between the uniform slabs at its coldest and hottest source values.
+depth-structured column between the uniform slabs at its smallest and largest source values (its
+coldest and hottest zones when `S = B_λ(T)`). Everything here is at a single wavelength.
 
 Order the zones **deepest-first**: zone `0` is farthest from the observer, the last list element
 is at the surface. Photons entering a zone are attenuated by `e^{−τ}` and the zone adds its own
@@ -34,12 +35,18 @@ emission `S·(1 − e^{−τ})`:
 * `rtEmergent_sandwich` — **the headline**: if every zone source lies in `[Smin, Smax]` and every
   `τₖ ≥ 0`, then `Smin·(1 − e^{−T}) ≤ rtEmergent zs ≤ Smax·(1 − e^{−T})` with `T = Σ τₖ` the total
   optical depth. Depth structure can only move `I` *within* the band the two uniform slabs bracket;
-  it cannot brighten past `Smax·(1 − e^{−T})` nor darken below `Smin·(1 − e^{−T})`. The rigorous
-  confinement of the spatial-non-uniformity temperature bias — derivative-free, a telescoping
-  `(1 − e^{−T₀})·e^{−τ} + (1 − e^{−τ}) = 1 − e^{−(T₀+τ)}` induction.
+  it cannot brighten past `Smax·(1 − e^{−T})` nor darken below `Smin·(1 − e^{−T})`. This confines
+  the **intensity** bias of spatial non-uniformity to the band width `(Smax − Smin)·(1 − e^{−T})`.
+  A *temperature* bias would need inverting `S = B_λ(T)`, which is not done here. The proof is
+  derivative-free, a telescoping `(1 − e^{−T₀})·e^{−τ} + (1 − e^{−τ}) = 1 − e^{−(T₀+τ)}`
+  induction.
 * `rtEmergent_uniform` — **exact**: an isothermal stack (all sources equal `S`) collapses to a
   single slab of combined depth, `slabIntensity S T`. Generalizes `selfReversal_uniformSource` to
-  `N` zones: depth structure carries no information iff the column is isothermal.
+  `N` zones: **if** the column is isothermal, its split into zones does not affect the emergent
+  intensity. Only this direction is proved. The converse fails at one wavelength: for `T > 0`
+  every value `I` in the sandwich band is the intensity of a uniform slab of the same total depth
+  (source `I/(1 − e^{−T})`), so a single emergent intensity cannot reveal depth structure (an
+  elementary remark, not formalized).
 
 The continuous companion layer:
 
@@ -54,7 +61,9 @@ The continuous companion layer:
 `S` is an **abstract input** function of depth (LTE, `S = B_λ(T(t))` in physics); no Planck source,
 no non-LTE scattering coupling `S = (1−ε)J + εB`, and `τ` is a **scalar per zone** — the emergent
 line *profile* over a frequency-resolved Voigt/Stark `τ_λ(t)` needs the Faddeeva function absent
-from mathlib (cf. `SelfReversal`'s and Frontier 07's deferrals) and is out of scope. The
+from mathlib (cf. `SelfReversal`'s and Frontier 07's deferrals) and is out of scope. So every
+result bounds the intensity at one wavelength, not a frequency-integrated line intensity, and none
+is a statement about temperature. The
 `rtFormalLinear` linear-in-τ source is the **stellar-atmosphere** Eddington–Barbier idealization,
 not a faithful LIBS profile: it is a PURE-MATH integral evaluation, never claimed EXACT-for-LIBS.
 
@@ -185,8 +194,10 @@ the uniform slabs at the coldest and hottest source values, sharing the total-de
 `(1 − e^{−T})`, `T = Σ τₖ`:
 `Smin·(1 − e^{−T}) ≤ rtEmergent zs ≤ Smax·(1 − e^{−T})`.
 Depth structure can only move `I` *within* this band — it cannot brighten past `Smax·(1 − e^{−T})`
-nor darken below `Smin·(1 − e^{−T})` — so the spatial-non-uniformity temperature bias is confined,
-of size at most `(Smax − Smin)·(1 − e^{−T})`. -/
+nor darken below `Smin·(1 − e^{−T})` — so at this wavelength the emergent intensity differs from
+that of any uniform slab with source in `[Smin, Smax]` and the same total depth by at most
+`(Smax − Smin)·(1 − e^{−T})`. This bounds an **intensity** bias only; a temperature bias would need
+inverting `S = B_λ(T)`, which is not done here. -/
 theorem rtEmergent_sandwich {zs : List (ℝ × ℝ)} {Smin Smax : ℝ}
     (hS : ∀ z ∈ zs, Smin ≤ z.1 ∧ z.1 ≤ Smax) (hτ : ∀ z ∈ zs, 0 ≤ z.2) :
     Smin * (1 - Real.exp (-(zs.map Prod.snd).sum)) ≤ rtEmergent zs
@@ -199,8 +210,9 @@ theorem rtEmergent_sandwich {zs : List (ℝ × ℝ)} {Smin Smax : ℝ}
 
 /-- **Uniform slab is the extremal case (exact).** An isothermal stack (all zone sources equal `S`)
 with nonnegative optical depths collapses to a single slab of the combined depth:
-`rtEmergent zs = slabIntensity S (Σ τₖ)`. The degenerate zero-width case of the sandwich — depth
-structure carries no information iff the column is isothermal. Generalizes
+`rtEmergent zs = slabIntensity S (Σ τₖ)`. The degenerate zero-width case of the sandwich: **if**
+the column is isothermal, how its depth is split into zones does not affect the emergent intensity.
+Only this direction is proved; the converse fails at one wavelength (module header). Generalizes
 `selfReversal_uniformSource` to `N` zones. -/
 theorem rtEmergent_uniform (S : ℝ) {zs : List (ℝ × ℝ)} (hS : ∀ z ∈ zs, z.1 = S)
     (hτ : ∀ z ∈ zs, 0 ≤ z.2) :

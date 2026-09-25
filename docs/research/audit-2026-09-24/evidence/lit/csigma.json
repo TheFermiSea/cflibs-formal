@@ -1,0 +1,237 @@
+{
+  "total": 203,
+  "offset": 0,
+  "next": 8,
+  "data": [
+    {
+      "paperId": "3a9398e6b073356a215dc235a61183ad1f293e41",
+      "externalIds": {
+        "MAG": "2023362562",
+        "DOI": "10.1016/J.JQSRT.2015.03.001",
+        "CorpusId": 121088633
+      },
+      "title": "Corrigendum to \"CSigma graphs: A new approach for plasma characterization in laser-induced breakdown spectroscopy\" [J. Quant. Spectrosc. Radiat. Transf. 149 (2014) 90-102]",
+      "venue": "",
+      "year": 2015,
+      "citationCount": 2,
+      "authors": [
+        {
+          "authorId": "122017867",
+          "name": "C. Arag\u00f3n"
+        },
+        {
+          "authorId": "152319675",
+          "name": "J. A. Aguilera"
+        }
+      ]
+    },
+    {
+      "paperId": "719debe0fa022e4824b947067c2f02dec7c12fe7",
+      "externalIds": {
+        "MAG": "1454911253",
+        "DOI": "10.1016/J.SAB.2015.07.008",
+        "CorpusId": 94737432
+      },
+      "title": "Time- and space-resolved spectroscopic characterization of laser-induced swine muscle tissue plasma",
+      "venue": "",
+      "year": 2015,
+      "citationCount": 22,
+      "authors": [
+        {
+          "authorId": "32123877",
+          "name": "J. J. Camacho"
+        },
+        {
+          "authorId": "120151512",
+          "name": "L. D\u00edaz"
+        },
+        {
+          "authorId": "1400606750",
+          "name": "S. Mart\u00ednez-Ram\u00edrez"
+        },
+        {
+          "authorId": "144791529",
+          "name": "J. O. C\u00e1ceres"
+        }
+      ]
+    },
+    {
+      "paperId": "2ea1b16c563238a4cf072bbcb312bfb9c419c8fd",
+      "externalIds": {
+        "MAG": "2039544695",
+        "DOI": "10.1016/J.SAB.2014.11.014",
+        "CorpusId": 95140365
+      },
+      "title": "Dynamics of a femtosecond/picosecond laser-induced aluminum plasma out of thermodynamic equilibrium in a nitrogen background gas",
+      "venue": "",
+      "year": 2015,
+      "citationCount": 23,
+      "authors": [
+        {
+          "authorId": "32613208",
+          "name": "V. Morel"
+        },
+        {
+          "authorId": "48856623",
+          "name": "A. Bultel"
+        },
+        {
+          "authorId": "91683124",
+          "name": "J. Annaloro"
+        },
+        {
+          "authorId": "92054148",
+          "name": "C\u00e9dric Chambrelan"
+        },
+        {
+          "authorId": "93071864",
+          "name": "G. Edouard"
+        },
+        {
+          "authorId": "47236873",
+          "name": "C. Grisolia"
+        }
+      ]
+    },
+    {
+      "paperId": "85787f1b59470f7ee492e0ebc2f55e90e0ce8c48",
+      "externalIds": {
+        "MAG": "1965813981",
+        "DOI": "10.1007/s00216-014-8433-0",
+        "CorpusId": 206917289,
+        "PubMed": "25577361"
+      },
+      "title": "Tag-femtosecond laser-induced breakdown spectroscopy for the sensitive detection of cancer antigen 125 in blood plasma",
+      "venue": "Analytical and Bioanalytical Chemistry",
+      "year": 2015,
+      "citationCount": 47,
+      "authors": [
+        {
+          "authorId": "2038158",
+          "name": "Y. Markushin"
+        },
+        {
+          "authorId": "144138109",
+          "name": "P. Sivakumar"
+        },
+        {
+          "authorId": "47472304",
+          "name": "D. Connolly"
+        },
+        {
+          "authorId": "48743439",
+          "name": "N. Melikechi"
+        }
+      ]
+    },
+    {
+      "paperId": "41843e249aea6b2fe28b798a8ec27dd8724a2cc9",
+      "externalIds": {
+        "MAG": "2096407211",
+        "DOI": "10.1063/1.4931739",
+        "CorpusId": 123662140
+      },
+      "title": "Laser induced focusing for over-dense plasma beams",
+      "venue": "",
+      "year": 2015,
+      "citationCount": 1,
+      "authors": [
+        {
+          "authorId": "2074071582",
+          "name": "P. Schmidt"
+        },
+        {
+          "authorId": "1400347153",
+          "name": "O. Boine-Frankenheim"
+        },
+        {
+          "authorId": "5707661",
+          "name": "P. Mulser"
+        }
+      ]
+    },
+    {
+      "paperId": "0232e7193b24f6c14f2bc82570b6ae3a1bd3e26c",
+      "externalIds": {
+        "MAG": "2055888524",
+        "DOI": "10.1016/J.JQSRT.2015.03.008",
+        "CorpusId": 56070823
+      },
+      "title": "Method for measurement of transition probabilities by laser-induced breakdown spectroscopy based on CSigma graphs\u2013Application to Ca II spectral lines",
+      "venue": "",
+      "year": 2015,
+      "citationCount": 12,
+      "authors": [
+        {
+          "authorId": "152319675",
+          "name": "J. A. Aguilera"
+        },
+        {
+          "authorId": "122017867",
+          "name": "C. Arag\u00f3n"
+        },
+        {
+          "authorId": "46443180",
+          "name": "J. Manrique"
+        }
+      ]
+    },
+    {
+      "paperId": "932b9115c227453a6bc1908e5b3df84f200ed843",
+      "externalIds": {
+        "MAG": "2271865147",
+        "DOI": "10.1021/acs.analchem.5b02926",
+        "CorpusId": 29037750,
+        "PubMed": "26402464"
+      },
+      "title": "Insight into the formation of molecular species in laser-induced plasma of isotopically labeled organic samples.",
+      "venue": "Analytical Chemistry",
+      "year": 2015,
+      "citationCount": 44,
+      "authors": [
+        {
+          "authorId": "48889008",
+          "name": "R. Glaus"
+        },
+        {
+          "authorId": "2240948",
+          "name": "J. Riedel"
+        },
+        {
+          "authorId": "14727563",
+          "name": "I. Gornushkin"
+        }
+      ]
+    },
+    {
+      "paperId": "05d93f8d3a825854e7fca2b3dc362fea728275a5",
+      "externalIds": {
+        "MAG": "2260133701",
+        "DOI": "10.1088/1009-0630/17/8/09",
+        "CorpusId": 96445253
+      },
+      "title": "The Spectral Emission Characteristics of Laser Induced Plasma on Tea Samples",
+      "venue": "",
+      "year": 2015,
+      "citationCount": 22,
+      "authors": [
+        {
+          "authorId": "31197278",
+          "name": "P. Zheng"
+        },
+        {
+          "authorId": "147599646",
+          "name": "Min-Jie Shi"
+        },
+        {
+          "authorId": "152924516",
+          "name": "Jin-Mei Wang"
+        },
+        {
+          "authorId": "2128088423",
+          "name": "Hong-Di Liu"
+        }
+      ]
+    }
+  ]
+}

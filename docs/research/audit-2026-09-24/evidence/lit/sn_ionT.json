@@ -1,0 +1,221 @@
+{
+  "data": [
+    {
+      "score": 0.6142966960307041,
+      "paper": {
+        "corpusId": "250689992",
+        "title": "Apparent excitation temperature in laser-induced plasmas",
+        "authors": [
+          "J. A. Aguilera",
+          "C. Arag\u00f3n"
+        ],
+        "openAccessInfo": {
+          "license": null,
+          "status": "GOLD",
+          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://api.unpaywall.org/v2/10.1088/1742-6596/59/1/046?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.1088/1742-6596/59/1/046, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        }
+      },
+      "snippet": {
+        "text": "In this work we have tried to understand the population-averaging process that is involved in spatiallyintegrated measurements of the temperature of inhomogeneous sources like laser induced plasmas. To this aim, the spatially-resolved characterization of a laser induced plasma has been carried out, obtaining the local values of the parameters (temperature and number densities of neutral atoms and ions) which determine the emissivity of any spectral line at each point within the plasma. By the convolution of the emissivity values, synthesized distributions of the line intensities, integrated along the line-of sight, have been obtained, which are in good agreement with the experimental distributions. Finally, for a set of neutral atom and ion spectral lines, the total intensity emitted by the laser-induced plasma has been synthesized starting from the spatially-resolved parameters. Using the synthesized intensities, Boltzmann plots with high correlation linear fittings have been obtained for neutral atoms and ions, which are in good agreement with experimental plots measured with spatial integration of the plasma. These plots demonstrate the existence of an apparent excitation temperature, different for neutral atoms and ions, resulting from the population-average of the local electronic temperature in the plasma. The results of the present work may explain the different values of temperature obtained in spatially-integrated measurements when using neutral atom and ion lines. The name apparent temperature is in fact more suitable for these different results of spatially-integrated measurements, the word temperature being only strictly applicable to local measurements.",
+        "snippetKind": "body"
+      }
+    },
+    {
+      "score": 0.6033572950322852,
+      "paper": {
+        "corpusId": "250689992",
+        "title": "Apparent excitation temperature in laser-induced plasmas",
+        "authors": [
+          "J. A. Aguilera",
+          "C. Arag\u00f3n"
+        ],
+        "openAccessInfo": {
+          "license": null,
+          "status": "GOLD",
+          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://api.unpaywall.org/v2/10.1088/1742-6596/59/1/046?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.1088/1742-6596/59/1/046, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        }
+      },
+      "snippet": {
+        "text": "Starting from the spatially-resolved plasma parameters (temperature and number densities), we have obtained the synthesized distributions of intensity, as described in 3.2, for a set of neutral atom and ion Fe emission lines. From the distributions, synthesized integrated intensities, that include the emission from the whole plasma, have been obtained for all the lines, and a Boltzmann plot for each species has been constructed. As the calculation procedure includes the use of equation 2 to obtain the emissivities, it is clear that in this process the population-averaging of the temperature in the plasma is carried out, so the temperature values deduced from the slopes of the synthesized Boltzmann plots are the apparent temperatures for each species. Figure 3 shows in solid circles the synthesized Boltzmann plots obtained for neutral atom and ion emission lines. The very high correlation of these plots to linear fittings (R 2 >0.9999) shows that, for a broad range of upper level energies, the use of Boltzmann plots in integrated measurements of intensity is experimentally valid with high approximation, despite the fact that, as mentioned previously, it is not justified from the theoretical point of view. From this figure, the usefulness of the concept of apparent temperature to describe the level excitation in laser-induced plasmas is also deduced. As expected, the apparent excitation temperature obtained for ions (11400 K), which are populated in the average in a hotter region of the plasma, is higher than that of neutral atoms (9890 K). \n\nIn order to provide additional evidence of the validity of the distribution of plasma parameters obtained in the present work and of the existence of the apparent excitation temperatures, we have also carried out independent measurements of the spatially-integrated intensities of the neutral atom and ion emission lines. In this case, the emission from the whole laser-induced plasma has been collected by a fibre optics cable placed at right angles to the laser beam direction. The experimental intensities have been used to obtain Boltzmann plots, one for each species, that are shown as open circles in figure 3. In order to compare the synthesized and experimental plots, the experimental data have been displaced along the yaxis by multiplying the intensities by the same factor.",
+        "snippetKind": "body"
+      }
+    },
+    {
+      "score": 0.5677991054629372,
+      "paper": {
+        "corpusId": "250689992",
+        "title": "Apparent excitation temperature in laser-induced plasmas",
+        "authors": [
+          "J. A. Aguilera",
+          "C. Arag\u00f3n"
+        ],
+        "openAccessInfo": {
+          "license": null,
+          "status": "GOLD",
+          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://api.unpaywall.org/v2/10.1088/1742-6596/59/1/046?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.1088/1742-6596/59/1/046, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        }
+      },
+      "snippet": {
+        "text": "The Boltzmann plot method, commonly used to determine the excitation temperature in laser-induced plasmas, is based in the linearization of equation 2 through the calculation of its natural logarithm. However, in most cases, the characterization is carried out using experimental systems in which all (or at least a part) of the emission from the plasma is collected, for example by a fiber optics cable or a spectrometer slit. Moreover, in most experiments, the magnitude that is measured is the line intensity, integrated along the line-of-sight, instead of the emissivity, and the Boltzmann plot relation is \n\nIt has to be remarked that the local magnitudes (electronic temperature and number density) in equation 2 are only related to the line emissivity. Therefore, the constant term in equation 3 is not related to the local value of the number density, and the temperature is not the local electronic temperature. Then, the question arises why a linear relation like equation 3 is obtained in many works where spatially-integrated measurements are carried out. The answer was already given by Boumans [6] and, for laser-induced plasmas, by Radziemski et al. [7]. These authors described that, for inhomogeneous sources, the temperature resulting from spatially-integrated measurements is a population-averaged temperature, a parameter that describes the source but is not identical with the local temperature. We have called this parameter apparent temperature T a , a name that emphasizes the fact that it is not the true electronic temperature. This idea has remarkable consequences because, as will be seen below and was already reported in a previous work [1], due to the different location of the population distributions of neutral atoms and ions, different apparent temperatures are obtained for the two species. In the present work we have tried to increase the insight into the concept of apparent temperature. To this aim, we have proceeded as follows. Starting from the spatially-resolved plasma parameters (temperature and number densities), we have obtained the synthesized distributions of intensity, as described in 3.2, for a set of neutral atom and ion Fe emission lines.",
+        "snippetKind": "body"
+      }
+    },
+    {
+      "score": 0.5607677513837079,
+      "paper": {
+        "corpusId": "229238902",
+        "title": "Time-resolved characteristics of laser induced breakdown spectroscopy on non-flat samples by single beam splitting",
+        "authors": [
+          "Bingying Lei",
+          "Boping Xu",
+          "Jing Wang",
+          "Jing Li",
+          "Yishan Wang",
+          "Jie Tang",
+          "Wei Zhao",
+          "Y. Duan"
+        ],
+        "openAccessInfo": {
+          "license": "CCBY",
+          "status": "GOLD",
+          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://pmc.ncbi.nlm.nih.gov/articles/PMC9057431, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        }
+      },
+      "snippet": {
+        "text": "The temporal evolution of plasma temperature indicates that the plasma cooling exhibits a strong dependence on delay time (t). Different from the adiabatic expansion approximation T p f t \u00c03 , the plasma temperature decay is proportional to t \u00c00.11 for the single beam mode and t \u00c00.14 for the split beam mode. 32 This decay of plasma temperature is due to the rapid conversion from thermal energy into kinetic energy, with the plasma attaining a high expansion velocity. 31 ][34][35] When setting the delay time at 900 ns, the plasma temperature was also calculated at other laser energies, with the results depicted in Fig. 5(d). It is seen that under all the laser energies of interest, the plasma temperature is estimated to be 10 121 AE 1619 K within the measurement uncertainty of 16%, which mainly comes from the uncertainties in the transition probabilities and the measurement of the spectral intensities of characteristic lines in the Boltzmann plots. 36,37 Comparative analysis of the plasma temperatures indicates that both the laser energy and the shooting mode produce little effect on the plasma temperature. \n\nA model for the condition of the laser supported radiation wave has been described, from which the plasma temperature T p can be derived according to the following equation: 38 \n\nwhere I is the laser irradiance, e i is the energy of the laser plasma at the ignition point, s is the Stefan-Boltzmann constant, and 3 is the emissivity of the plasma. Here, \u00ca represents the correlation coefficient between the internal energy of the fully established plasma and the plasma temperature. The ratio e i / \u00ca depends on the ionization potentials instead of the atom density. 3 depends on the initial atom density and degree of ionization at T p . Since the exponent of 0.18 in eqn ( 3) is very small, the plasma temperature has little dependence on the laser irradiance, atom density, and ionization potentials of component atoms and ions, which explains the little change in  The electron density is another key parameter that affects LIBS spectral features, which can be determined by the measurement of the Stark broadened line pro\ue103le. Two important broadening mechanisms are likely to contribute to the line width observed in laser-induced plasma: Doppler broadening and Stark broadening.",
+        "snippetKind": "body"
+      }
+    },
+    {
+      "score": 0.554378395631573,
+      "paper": {
+        "corpusId": "121667531",
+        "title": "Analyses of femtosecond laser ablation of Ti, Zr, and Hf",
+        "authors": [
+          "D. Grojo",
+          "J. Hermann",
+          "S. Bruneau",
+          "T. Itina"
+        ],
+        "openAccessInfo": {
+          "license": null,
+          "status": "CLOSED",
+          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://arxiv.org/abs/physics/0610278, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        }
+      },
+      "snippet": {
+        "text": "Thus, the intensity measurements correspond to the highly ionised plasma front which precedes the majority of neutral atoms. As stated before, the emission intensity of both neutral and ionic emission strongly increases with F las in the lower fluence range (F las \u2264 0.9 Jcm \u22122 ). For larger fluences, the ratio remains roughly constant. It is stressed that the fluence value of 0.9 Jcm \u22122 , corresponding to the change of the intensity increase with F las , is about one order of magnitude larger than the ablation threshold. However, F las = 0.9 Jcm \u22122 is the value for which a change of ablation regime has been predicted in literature. From the intensity ratio of ionic and atomic lines, the plasma temperature is estimated to a value of about 5000 K. A laser fluence independent plasma temperature at a distance of about 0.45 mm, which is relatively large with respect to the laser spot diameter of about 30 \u00b5m, is not a surprising result. It has been shown by Laville et al. [9], that due to radiative losses, the temperature evolution of pulsed laser-induced plasmas is characterised by a decrease \n\nwhere T 0 is the initial temperature while A is numerical constant which depends on the ablated material properties. For large delay times [t >> (T 0 3 A) \u22121 ], the temperature becomes independent of T 0 . Thus, an eventual increase of the initial temperature with F las does not necessarily increase the temperature at z = 0.45 mm measured several tens of nanosecond after the ablating laser pulse. Therefore, time-of-flight measurements of atoms and ions are a more efficient tool to get information on the ablation process itself as the propagation velocities are time-independent due to momentum conservation.",
+        "snippetKind": "body"
+      }
+    },
+    {
+      "score": 0.5532164538091795,
+      "paper": {
+        "corpusId": "96543675",
+        "title": "Apparent excitation temperature in laser-induced plasmas",
+        "authors": [
+          "J. A. Aguilera",
+          "C. Arag\u00f3n"
+        ],
+        "openAccessInfo": {
+          "license": null,
+          "status": "GOLD",
+          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://api.unpaywall.org/v2/10.1088/1742-6596/59/1/046?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.1088/1742-6596/59/1/046, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        }
+      },
+      "snippet": {
+        "text": "This work has shown the existence, for the purpose of experiments of laser-induced plasma spectroscopy, of an apparent (population-averaged) excitation temperature that determines with good approximation the Boltzmann population distribution for each ionisation species. In experiments in which the line intensity (integrated along the line-of-sight) is measured, the values of the apparent temperature obtained for neutral atoms and ions are different. To investigate the population-averaging process, a plasma generated with a Ni-Fe-Al alloy in air at atmospheric pressure has been characterized with complete spatial resolution, determining the local values of the electronic temperature and the relative number densities of Fe neutral atoms and ions. From the distributions of plasma parameters, synthesized distributions of intensities integrated along the line of sight have been obtained for Fe I and Fe II lines, showing good agreement with the experimental distributions. Synthesized Boltzmann plots of neutral atoms and ions, constructed with the spatially-integrated synthesized intensities, have shown linear behaviors, providing the apparent temperatures for neutral atoms (9890 K) and ions (11400 K). The synthesized Boltmann plots are also in good agreement with experimental Boltzmann plots obtained in independent spatiallyintegrated measurements of the plasma emission, carried out with a fiber optics cable.",
+        "snippetKind": "abstract"
+      }
+    },
+    {
+      "score": 0.553021120971898,
+      "paper": {
+        "corpusId": "250689992",
+        "title": "Apparent excitation temperature in laser-induced plasmas",
+        "authors": [
+          "J. A. Aguilera",
+          "C. Arag\u00f3n"
+        ],
+        "openAccessInfo": {
+          "license": null,
+          "status": "GOLD",
+          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://api.unpaywall.org/v2/10.1088/1742-6596/59/1/046?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.1088/1742-6596/59/1/046, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        }
+      },
+      "snippet": {
+        "text": "This work has shown the existence, for the purpose of experiments of laser-induced plasma spectroscopy, of an apparent (population-averaged) excitation temperature that determines with good approximation the Boltzmann population distribution for each ionisation species. In experiments in which the line intensity (integrated along the line-of-sight) is measured, the values of the apparent temperature obtained for neutral atoms and ions are different. To investigate the population-averaging process, a plasma generated with a Ni-Fe-Al alloy in air at atmospheric pressure has been characterized with complete spatial resolution, determining the local values of the electronic temperature and the relative number densities of Fe neutral atoms and ions. From the distributions of plasma parameters, synthesized distributions of intensities integrated along the line of sight have been obtained for Fe I and Fe II lines, showing good agreement with the experimental distributions. Synthesized Boltzmann plots of neutral atoms and ions, constructed with the spatially-integrated synthesized intensities, have shown linear behaviors, providing the apparent temperatures for neutral atoms (9890 K) and ions (11400 K). The synthesized Boltmann plots are also in good agreement with experimental Boltzmann plots obtained in independent spatiallyintegrated measurements of the plasma emission, carried out with a fiber optics cable.",
+        "snippetKind": "abstract"
+      }
+    },
+    {
+      "score": 0.5413104097619684,
+      "paper": {
+        "corpusId": "250689992",
+        "title": "Apparent excitation temperature in laser-induced plasmas",
+        "authors": [
+          "J. A. Aguilera",
+          "C. Arag\u00f3n"
+        ],
+        "openAccessInfo": {
+          "license": null,
+          "status": "GOLD",
+          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://api.unpaywall.org/v2/10.1088/1742-6596/59/1/046?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.1088/1742-6596/59/1/046, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        }
+      },
+      "snippet": {
+        "text": "3.1. Saha-Boltzmann plots for the determination of the local temperature and number densities of neutral atoms and ions The first step in this work has been the characterization of the laser-induced plasma with complete spatial resolution. To determine the plasma parameters starting from the spatially-resolved spectra, we have used the same theoretical framework described in a previous work [1], which was based in the book of Griem [9], so only the main equations will be given here. The determination of the local electronic temperature is based in the measurement of the emissivity (Wm -3 ) for various iron lines of each species z (z = 0 for neutral atoms, z = 1 for ions). In order to obtain the local emissivity at each position in the laser-induced plasma from the measured intensity, which is integrated along the line-of-sight, a deconvolution process described in a previous work of our group [10] has been used. Then, the linear relation \n\nwhich results from the Bolzmann and Saha equilibrium equations [1,11] and whose graphical representation is known as the Saha-Boltzmann plot, allows to deduce the local electronic temperature T (K) from the slope of its linear fitting. In this equation, is the transition probability (s -1 ), \n\nA ji is the transition wavelength (m), and are the energy (eV) and degeneracy (adimensional) of the upper level, is the number density (m -3 ) of the species ( for neutral atoms, for ions), \n\nis the partition function of the species, h is the Planck's constant (J s), c is the speed of light (ms -1 ), and k is the Boltzmann's constant (eV K -1 ). The asterisks indicate that the magnitudes are modified as follows: the left-hand side of the equation (the ordinate of the Saha-Boltzmann plot) includes the subtraction of a correction term that depends on the temperature and the electron density N e",
+        "snippetKind": "body"
+      }
+    },
+    {
+      "score": 0.5403620879501068,
+      "paper": {
+        "corpusId": "253173146",
+        "title": "Elemental Laser-Plasma Analysis of Pointed Gourd Leaves for Diabetes Management",
+        "authors": [
+          "T. Kumar",
+          "P. Rai",
+          "A. K. Rai",
+          "N. Rai",
+          "A. K. Rai",
+          "C. Parigger",
+          "G. Watal",
+          "S. Yadav"
+        ],
+        "openAccessInfo": {
+          "license": "CCBY",
+          "status": "GOLD",
+          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://api.unpaywall.org/v2/10.3390/foundations2040066?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.3390/foundations2040066, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        }
+      },
+      "snippet": {
+        "text": "For the validation of optically thin plasma, we have selected the pair of two interferencefree lines of Ca II and Mg II having the same upper energy level and estimated the spectral intensity ratio followed by Lorentzian fitting. The theoretical intensity ratio has been estimated by using the other spectroscopic parameters in NIST data. Both the theoretical and experimental ratios have been listed in Table 2. We observed from the table that the experimental ratio (I 1 /I 2 ) is approximately equal to the theoretical ratio A 1 g 1 \u03bb 2 /A 2 g 2 \u03bb 1 for the pair of spectral lines Ca-II (393.3/396.8) and MgII (279.5/280.2). It is clear from Table 2 that the intensity ratio (I 1 /I 2 ) of two spectral lines is approximately equal to the ratio A 1 g 1 \u03bb 2 /A 2 g 2 \u03bb 1 . These results demonstrate that the laser-induced plasma in the present study is optically thin. \n\nwhere N e is the electron density, T is the plasma temperature, and \u2206E is the energy difference for the corresponding transition needs to be met for the laser-plasma to be considered in a state of local thermodynamic equilibrium (LTE) [51][52][53][54]. In this work, emission lines of Ca I and Mg I are selected for graphical display in form of a Boltzmann plot that utilizes emission intensity and the standard logarithm form, \n\nHere, k B is the Boltzmann constant, U s (T) is the partition function, C s is the concentration, and F is an experimental factor. The plasma temperature of each constituent in laser-produced plasma was determined by using the slope and intercept of the above equation. The average temperature of the plasma is found to be 10,570 K, as displayed in Figure 4. The sufficient condition for plasma to be considered in LTE requires that the ionization and excitation temperatures determined by the Saha-Boltzmann equation and by a Boltzmann plot, respectively, must be in agreement to within 15%. The Saha-Boltzmann equation [55], ln \n\nfor the ionic and atomic emission ratio serves as a sufficient condition for the confirmation of LTE.",
+        "snippetKind": "body"
+      }
+    },
+    {
+      "score": 0.5289158073559803,
+      "paper": {
+        "corpusId": "140034993",
+        "title": "Rapid identification of macro nutrients in pharmaceutical medicine using laser-induced plasma spectroscopy",
+        "authors": [
+          "A. Khumaeni",
+          "H. Sugito",
+          "A. Yoyo Wardaya",
+          "W. Setia Budi"
+        ],
+        "openAccessInfo": {
+          "license": "CCBY",
+          "status": "GOLD",
+          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://api.unpaywall.org/v2/10.1088/1742-6596/1025/1/012007?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.1088/1742-6596/1025/1/012007, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        }
+      },
+      "snippet": {
+        "text": "Where \u03bb is wavelength of the transition line, I is the line intensity occurring between the upper energy level k and lower energy level i, A k is the transition probability, g k is the degeneracy of the upper energy level, T, k B , and E k are plasma temperature, Boltzmann constant and energy of the upper energy level, respectively, C is a constant for a given atomic species. The temperature T can be estimated from Eq.2 as follows 0 i u y mE y \uf03d\uf02b (2) Based on spectral lines shown in Table 1, the Boltzmann plots of the Zn neutral by LIBS using TEA CO 2 laser and Nd:YAG laser was shown in Fig. 4(a) and (b), respectively. The slopes of the curves gain a temperature of plasma of around 6400 K in TEA CO 2 laser and 4500 K in Nd:YAG laser. By the Boltzmann plot, the temperature of plasma induced by LIBS using TEA CO 2 laser and Nd:YAG laser were estimated to be 6400 K and 4500 K, respectively. This result confirmed our assumption that the plasma induced by TEA CO 2 laser has higher temperature than the case of Nd:YAG laser and therefore, the emission intensities of spectra obtained by LIBS using TEA CO 2 laser is higher than that of Nd:YAG LIBS.",
+        "snippetKind": "body"
+      }
+    }
+  ],
+  "retrievalVersion": "pa1-v1"
+}

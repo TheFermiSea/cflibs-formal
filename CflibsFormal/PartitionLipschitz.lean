@@ -52,6 +52,16 @@ approximation of the forward model is used — the reductions live only in the *
 over-estimate) and the *floor hypothesis* `Tmin`. The underlying two-point exponential bound and the
 inverse-temperature gap bound are pure real analysis, shared from `Analysis.lean`.
 
+**How loose.** The bounds are valid but not sharp. On tabulated level lists the discarded weights
+`exp(−Eₖ/(k_B T))` are small for all but the lowest levels, so `∑ₖ gₖ·Eₖ` exceeds the exact
+sensitivity by orders of magnitude. A spot check (2026-09-24) on the data of audit finding PS-03
+(the companion's production-database levels below the ionization energy, `T ∈ [0.8, 1.2]` eV)
+gives `((∑ₖ gₖ·Eₖ)/(k_B·Tmin²)) / sup |dU/dT|` from about 80 (V I) to 1.8×10³ (Fe II) for Al I
+and the neutral and singly ionized Fe, Ti, Ca and V lists, and 5×10⁴ for Al II. These constants
+are one of the over-estimates behind the 10⁶–10⁸ looseness of `SahaStability.sahaFactorLipConst`,
+and so one reason the outer-loop gate of `OuterLoopModelB` fails on real data. Keeping the weight
+`exp(−Eₖ/(k_B·Tmax))` in place of `1` would tighten the constant; that is not done here.
+
 Handoff (what closes gap #5, what remains): this module closes the missing `U_s(T)` Lipschitz
 leg — a temperature error now maps to a bounded relative `U`-error `δ_U`. A *literal* Lean
 composition into `classicDensity_aliasing_error_channels` is **not** delivered: that theorem's
@@ -82,7 +92,8 @@ inverse temperature is bounded by
 Reduction: the exact sensitivity of the `k`-th term is `gₖ·Eₖ·exp(−Eₖ/(k_B T))`; the constant
 `∑ₖ gₖ·Eₖ` upper-bounds it by discarding `exp(−Eₖ/(k_B T)) ≤ 1`, which holds precisely because
 `Eₖ ≥ 0` makes both exponents `≤ 0` (so `max(exp aₖ, exp bₖ) ≤ 1`). The forward model is exact;
-only the constant is an honest over-estimate. -/
+only the constant is an honest over-estimate, by orders of magnitude on tabulated level lists (see
+the module's Honest-scope note). -/
 theorem partitionFunction_two_point_bound
     {kB T1 T2 : ℝ} {g E : ι → ℝ}
     (hkB : 0 < kB) (hT1 : 0 < T1) (hT2 : 0 < T2)

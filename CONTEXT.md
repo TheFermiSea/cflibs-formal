@@ -30,7 +30,16 @@ provable structure (soundness, identifiability, error bounds), not curve-fitting
 - **Composition / closure** — `C_s = N_s / Σ_t N_t`; `Σ C_s = 1`; the vector lies in the
   probability simplex. Closure fixes the absolute scale (the *calibration-free* property).
 - **Self-absorption / optical depth / curve of growth** — `I_meas = I_thin · SA(τ)`,
-  `SA(τ) = (1−e^{−τ})/τ ∈ (0,1]`; derived from a radiative-transfer slab `S·(1−e^{−τ})`.
+  `SA(τ) = (1−e^{−τ})/τ ∈ (0,1]`; derived from a radiative-transfer slab `S·(1−e^{−τ})` per
+  frequency, i.e. for a flat (rectangular) line profile. Applied to the frequency-integrated
+  intensity of a peaked profile at the line-centre depth it is an approximation (dividing by it
+  over-corrects by 1.4–3.5× at `τ₀ = 3–10` for Gaussian and Lorentzian profiles in the
+  2026-09-24 audit probes), so `selfAbsorptionFactor` carries the model tag APPROXIMATION.
+- **Scope tags (two axes)** — a definition that encodes a physical model carries a *model* tag
+  (`lineIntensity` REDUCED, `selfAbsorptionFactor` APPROXIMATION); a theorem carries a
+  *relation* tag (how exactly it holds for the model it is stated over); the *published* tag is
+  the weaker of the two, computed by `lake exe scope-check --write` into
+  `docs/scope-published.tsv` (PURE-MATH exempt; `docs/conventions.md` §8).
 - **Identifiability** — injectivity of the forward map: equal observations (under explicit
   nondegeneracy) force equal `(T, n_e, composition)`.
 
@@ -56,7 +65,9 @@ definition is defined once and reused verbatim, and every module imports only `M
   (algorithm-agnostic estimator framework), `CompositionRobustness`,
   `CompositionIdentifiability`, `SelfAbsorptionInverse`, `SahaInverse`, `CurveOfGrowth`,
   `JointIdentifiability` (two-line observation map — `(T, composition)` jointly identifiable
-  from the observations alone, discharging `general_identifiability`'s assumed-ratio caveat),
+  from the observations with no assumed line ratio, discharging `general_identifiability`'s
+  assumed-ratio caveat; still over the shared-catalog `PlasmaParams` and a known, equal
+  calibration `hFeq`, so it publishes REDUCED),
   `SahaStability` (Lipschitz/relative-error transfer of the Saha n_e diagnostic),
   `SahaEquilibrium` (the reduced Saha–closure–charge self-consistency core: unique existence
   of the coupled `(n_e, N₀, N₁)` state at fixed T),
@@ -74,7 +85,8 @@ definition is defined once and reused verbatim, and every module imports only `M
   `EquivalentWidth` (the *integrated* curve of growth — equivalent width `W(τ)=∫(1−e^{−τφ})`:
   the slope-1 saturation bound `W ≤ τ·∫φ`, monotonicity, and the flat-profile slab identity
   `W = 1−e^{−τ}`; the slope-½ damping wing is honestly out of scope),
-  `StarkBroadening` (independent electron-density diagnostic + McWhirter LTE bound),
+  `StarkBroadening` (independent electron-density diagnostic + the McWhirter bound, a
+  necessary but not sufficient LTE condition),
   `SpatialForward` (discrete onion-peeling Abel inversion — relaxes single-zone homogeneity),
   `LineBroadening` (toward real line profiles: thermal Doppler width + the Gaussian-quadrature
   width budget / deconvolution that feeds the Stark diagnostic),
@@ -87,10 +99,16 @@ definition is defined once and reused verbatim, and every module imports only `M
   `HydrogenStark` (the hydrogen Balmer-line n_e diagnostic — the *most common* LIBS technique:
   linear Stark effect, `Δλ ∝ n_e^(2/3)` / `n_e ∝ Δλ^(3/2)`, distinct from the non-hydrogenic
   *linear-in-n_e* `StarkBroadening`),
-  `PartialLTE` (relaxes LTE: the McWhirter density bound inverted to the thermalization-limit energy
-  `E*`, with `mcWhirter ⟺ thermalized` — which levels are collisionally thermalized),
-  `Continuum` (the free-free + free-bound background: emissivity scaling, exact baseline-subtraction
-  recovery, and the line-to-continuum thermometer — monotone only in the `E_k ≥ hc/λ` regime),
+  `PartialLTE` (the McWhirter density bound inverted to the thermalization-limit energy `E*`,
+  with `mcWhirter ⟺ thermalized`: `E*` is the largest energy *gap* that passes the McWhirter
+  test, a necessary LTE condition; which levels actually thermalize is not a theorem here),
+  `Continuum` (the free-free + free-bound background: emissivity scaling, baseline subtraction
+  that is exact only when the subtracted level is the true continuum (a fitted baseline's error
+  passes one-for-one into the line, with no bound proved), and a *reduced* line-to-continuum
+  ratio `B·√T·exp(−a/T)`, proved strictly increasing in `T` when `a ≥ 0` (a PURE-MATH calculus
+  fact). It is not a thermometer for neutral lines: there `B` carries the Saha factor and the
+  physical ratio falls with `T`; it describes a measurable ratio only for a line of the
+  continuum-producing ion stage at fixed `n_e`),
   `Dimensions` (additive dimensional-analysis layer: machine-checks homogeneity of the forward
   relations; does not touch the dimensionless core),
   `ErrorBudget` (the deterministic error-propagation chain — ε → OLS slope → temperature →
@@ -115,11 +133,16 @@ definition is defined once and reused verbatim, and every module imports only `M
   master-line normalization plot), `Alt/CSigmaCurveOfGrowth` (the self-absorption DROOP on the
   Cσ graph: optically-thick lines sit below the universal line by `ln SA(τ)`, strictly monotone
   in the optical depth `τ = N·σ_ℓ·ℓ` — the cross-section `σ` weighting; the genuinely-new analytic
-  piece is `selfAbsorptionFactor_strictAntiOn`; honest REDUCED flat-profile/escape-factor scope, the
-  profile-integrated slope-½ wing out), `Alt/SelfAbsorbed` (self-absorption-corrected),
-  `Alt/LeastSquares` (multi-line OLS Boltzmann plot). Each is proven sound and related back
-  to the classic estimator. `Alt/OLSVariance` closes the **statistical** layer the deterministic
-  `ErrorBudget` chain deferred: on `Mathlib`'s probability stack (a zero-mean, homoscedastic,
+  piece is `selfAbsorptionFactor_strictAntiOn`; the model is the flat-profile escape factor,
+  whose model tag is APPROXIMATION, so the droop theorems publish APPROXIMATION; the
+  profile-integrated slope-½ wing is out), `Alt/SelfAbsorbed` (self-absorption-corrected, given
+  the true `τ`; same flat-profile model, so its soundness results publish APPROXIMATION),
+  `Alt/LeastSquares` (multi-line OLS Boltzmann plot). Each is proven sound in the sense of a
+  composition equality at known `T` on noise-free forward data (not an instance of
+  `Inverse.Sound`, which, by an informal argument recorded in `Inverse.lean` and not formalized, is satisfiable only when every species emits on one shared level) and
+  related back to the classic estimator.
+  `Alt/OLSVariance` closes the **statistical** layer the deterministic `ErrorBudget` chain
+  deferred: on `Mathlib`'s probability stack (a zero-mean, homoscedastic,
   independent noise model) it proves OLS-slope unbiasedness `𝔼[β̂]=β` and the Gauss–Markov variance
   law `Var(β̂)=σ²/SS_E` (`olsSlope_variance_eq`, via `OLS.olsSlope_noise_gain`), hence the
   `card`-free "more lines / more spread ⇒ less variance" statement (`olsSlope_variance_antitone`)
@@ -175,23 +198,26 @@ the peer-reviewed primary sources.
 
 5. **Modeling scope.** Baseline assumptions are LTE, a single-zone homogeneous plasma, and
    optically-thin emission — all explicit, and progressively relaxed: self-absorption is
-   modeled separately (`SelfAbsorption`, `SelfAbsorptionInverse`, `CurveOfGrowth`, with the
-   precise recover/defeat boundary characterized, plus the non-isothermal two-zone **self-reversal**
+   modeled separately (`SelfAbsorption`, `SelfAbsorptionInverse`, `CurveOfGrowth`: the
+   flat-profile escape-factor model, model tag APPROXIMATION, with the recover/defeat boundary
+   characterized for a free per-line `τ`, plus the non-isothermal two-zone **self-reversal**
    dip in `SelfReversal`); spatial inhomogeneity is modeled via the
    **discrete onion-peeling Abel inversion** (`SpatialForward`, single-zone = the N=1 case;
    the continuous Abel integral inverse is explicitly out of scope); the LTE assumption
    itself gets independent electron-density checks (`StarkBroadening`: non-hydrogenic Stark width,
    linear in nₑ, vs. Saha nₑ, McWhirter bound; `HydrogenStark`: the common hydrogen Balmer-line
    diagnostic, nₑ ∝ Δλ^(3/2)) and a principled relaxation (`PartialLTE`: the McWhirter density bound
-   inverted to the thermalization-limit energy `E*` — which levels collisionally thermalize);
+   inverted to the thermalization-limit energy `E*`, the largest gap that passes that necessary
+   LTE test; which levels thermalize is not a theorem);
    the point-line / known-width idealization is relaxed toward real
    **line profiles** (`LineBroadening`: thermal Doppler width + the exact Gaussian-quadrature
    width budget and deconvolution that exposes the Stark Lorentzian; `VoigtWidth`: the
    Olivero–Longbothum Voigt FWHM combination of those Gaussian and Lorentzian widths — the full
    Voigt convolution *profile* stays out of scope); and the optically-thin *line-only* forward
    model is extended with the
-   **continuum background** (`Continuum`: free-free + free-bound emissivity scaling, exact
-   baseline-subtraction recovery, and the line-to-continuum thermometer).
+   **continuum background** (`Continuum`: free-free + free-bound emissivity scaling, baseline
+   subtraction that is exact when the continuum level is known exactly, and the `T`-dependence
+   of a reduced line-to-continuum ratio, which is not a thermometer for neutral lines).
 
 ## Verification discipline
 
@@ -210,16 +236,21 @@ Gates 1–4 are automated in CI (`.github/workflows/lean_action_ci.yml`).
 
 ## Status
 
-81 modules, 751 axiom-clean named results (theorem/lemma) + 217 defs (counts via `scripts/stats.sh`).
-CI gates: axiom-cleanliness (`tools/`), style/structure lint (`runLinter`), docs-sync + scope-tag
-completeness (`scripts/gen-docs.sh`), import-hygiene (`scripts/stats.sh`), and the epistemic-drift
-scope-consistency guard (`scripts/check-scope-consistency.sh`).
+82 modules, 756 named results (theorem/lemma) + 219 defs (counts via `scripts/stats.sh`,
+2026-09-25). CI gates: axiom-cleanliness (`tools/`), style/structure lint (`runLinter`),
+docs-sync + scope-tag completeness (`scripts/gen-docs.sh`), import-hygiene (`scripts/stats.sh`),
+the declaration-granular scope gate (`lake exe scope-check`, which also checks that the published
+tags in `docs/scope-published.tsv` are current), and the module-level scope-consistency advisory
+(`scripts/check-scope-consistency.sh`).
 The original **~186-result corpus** was adversarially validated (verdict: sound-with-minor-fixes,
 zero blockers; all findings fixed) and given a whole-corpus **literature-validity audit**
 (`reviews/literature-validity-audit.md`): 69 faithful / 33 reduced / 5 idealized / 78 pure-math,
 **0 divergent, 0 unverified citations, 1 minor docstring over-reach (fixed)**. Subsequent additions
-to the current 751-result corpus (the frontier and architectural-review deepening sweeps) are
+to the current 756-result corpus (the frontier and architectural-review deepening sweeps) are
 individually author-plus-independent-audit reviewed rather than re-covered by that one-time audit.
+The 2026-09-24 deep audit later corrected several citations (wrong authors, a title with no
+bibliographic record, wrong metadata); the current per-citation status, and whether a primary
+source was opened, is in `docs/citation-whitelist.tsv`.
 A numerical regression oracle (`oracle/`) bridges the verified spec to the numerical pipeline
 (CF-LIBS-improved) — multi-element + the alternative estimators (OLS, self-absorption, Saha
 nₑ) + the derived error-budget thresholds, each fixture instantiating a proven theorem.
@@ -261,7 +292,9 @@ theorems say that floor is zero under stated nondegeneracy:
 `Identifiability.temperature_identifiability` (distinct upper-level energies ⇒ `T` unique),
 `JointIdentifiability.joint_identifiability` and
 `CompositionIdentifiability.compositionIdentifiable` (equal observations force equal `(T, C)`, no
-assumed ratio — the state-to-data map is injective). The converses are the *positive* case:
+assumed ratio — the state-to-data map is injective, given shared atomic data and a known, equal
+calibration `hFeq`, over the shared-catalog `PlasmaParams` in which every species has one level
+table and one `U(T)`; so these two publish REDUCED). The converses are the *positive* case:
 `temperature_degeneracy` / `temperature_not_identifiable_of_degenerate` exhibit two positive
 temperatures with identical observations, and `temperature_ratio_near_degenerate` bounds the
 approach (signal `O(ΔE)`), making the runtime "small `ΔE` ⇒ refuse" gate metrologically correct

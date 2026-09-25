@@ -1,0 +1,354 @@
+{
+  "total": 145,
+  "offset": 0,
+  "next": 10,
+  "data": [
+    {
+      "paperId": "2a0c234574a8403115c1352fe93f1c820ce8b875",
+      "externalIds": {
+        "DOI": "10.1080/05704928.2022.2136192",
+        "CorpusId": 253067092
+      },
+      "title": "Applications of laser induced breakdown spectroscopy in geotechnical engineering: a critical review of recent developments, perspectives and challenges",
+      "venue": "Applied spectroscopy reviews (Softcover ed.)",
+      "year": 2022,
+      "citationCount": 27,
+      "authors": [
+        {
+          "authorId": "2188294782",
+          "name": "O. A. Al-Najjar"
+        },
+        {
+          "authorId": "96400686",
+          "name": "Y. Wudil"
+        },
+        {
+          "authorId": "49301551",
+          "name": "U. F. Ahmad"
+        },
+        {
+          "authorId": "1816482912",
+          "name": "Omar S. Baghabra Al-Amoudi"
+        },
+        {
+          "authorId": "2132929633",
+          "name": "M. Al-Osta"
+        },
+        {
+          "authorId": "153280464",
+          "name": "M. A. Gondal"
+        }
+      ]
+    },
+    {
+      "paperId": "a00e13a1796021127beb43a61993bf79d122ff96",
+      "externalIds": {
+        "DOI": "10.1039/d3ja00130j",
+        "CorpusId": 259849504
+      },
+      "title": "Catching up on Calibration-Free LIBS",
+      "venue": "Journal of Analytical Atomic Spectrometry",
+      "year": 2023,
+      "citationCount": 24,
+      "authors": [
+        {
+          "authorId": "14966898",
+          "name": "F. Poggialini"
+        },
+        {
+          "authorId": "13876561",
+          "name": "B. Campanella"
+        },
+        {
+          "authorId": "2267044508",
+          "name": "B. Cocciaro"
+        },
+        {
+          "authorId": "2906844",
+          "name": "G. Lorenzetti"
+        },
+        {
+          "authorId": "2638662",
+          "name": "V. Palleschi"
+        },
+        {
+          "authorId": "2315692",
+          "name": "S. Legnaioli"
+        }
+      ]
+    },
+    {
+      "paperId": "42a77a025965fd3dbaf6628a229285604611ce84",
+      "externalIds": {
+        "DOI": "10.3390/photonics12111061",
+        "CorpusId": 282626362
+      },
+      "title": "A Comprehensive Review of the Fundamentals, Progress, and Applications of the LIBS Method in Analysis of Plants: Quantitative and Qualitative Analysis",
+      "venue": "Photonics",
+      "year": 2025,
+      "citationCount": 7,
+      "authors": [
+        {
+          "authorId": "2304465134",
+          "name": "F. Rezaei"
+        },
+        {
+          "authorId": "2389669260",
+          "name": "Alireza Eskandary"
+        },
+        {
+          "authorId": "2337401041",
+          "name": "Mobina Zahedi"
+        },
+        {
+          "authorId": "2389668790",
+          "name": "Saleheh Beheshtipour"
+        },
+        {
+          "authorId": "2240112387",
+          "name": "Vincenzo Palleschi"
+        }
+      ]
+    },
+    {
+      "paperId": "feb95218b6e1c31663586c48b5b756f8b54684a2",
+      "externalIds": {
+        "DOI": "10.3389/fphy.2022.887171",
+        "CorpusId": 249243944
+      },
+      "title": "A Brief Review of Calibration-Free Laser-Induced Breakdown Spectroscopy",
+      "venue": "Frontiers of Physics",
+      "year": 2022,
+      "citationCount": 23,
+      "authors": [
+        {
+          "authorId": "2153011425",
+          "name": "Ning Zhang"
+        },
+        {
+          "authorId": "2167338276",
+          "name": "Tianxue Ou"
+        },
+        {
+          "authorId": "50469060",
+          "name": "Mei Wang"
+        },
+        {
+          "authorId": "9071072",
+          "name": "Zhanjian Lin"
+        },
+        {
+          "authorId": "2142494644",
+          "name": "Chao Lv"
+        },
+        {
+          "authorId": "2109515107",
+          "name": "Yuzhi Qin"
+        },
+        {
+          "authorId": "2109000717",
+          "name": "Jiaming Li"
+        },
+        {
+          "authorId": "50841357",
+          "name": "Han Yang"
+        },
+        {
+          "authorId": "144279499",
+          "name": "Nan Zhao"
+        },
+        {
+          "authorId": "91055488",
+          "name": "Qing-Mao Zhang"
+        }
+      ]
+    },
+    {
+      "paperId": "2d4dbbe68d18d5b7835b237eaaa6e68decf767e5",
+      "externalIds": {
+        "DOI": "10.29356/jmcs.v67i4.1959",
+        "CorpusId": 266157613
+      },
+      "title": "Brief Review of the Role of Polymers in Different Lithium-Ion Conducting Electrolytes for LIBs",
+      "venue": "Journal of the Mexican Chemical Society",
+      "year": 2023,
+      "citationCount": 0,
+      "authors": [
+        {
+          "authorId": "2273510974",
+          "name": "Gregorio Guzman Gonzalez"
+        }
+      ]
+    },
+    {
+      "paperId": "e5697c6dcda24b960e4e1376583adae5acac6214",
+      "externalIds": {
+        "DOI": "10.1007/s10853-025-11417-0",
+        "CorpusId": 282504534
+      },
+      "title": "Review: recent progress in the inhibition of metal dendrites in sodium/potassium ion batteries",
+      "venue": "Journal of Materials Science",
+      "year": 2025,
+      "citationCount": 1,
+      "authors": [
+        {
+          "authorId": "2248261265",
+          "name": "Renzhong Xue"
+        },
+        {
+          "authorId": "2111769021",
+          "name": "Yilong Duan"
+        },
+        {
+          "authorId": "2248583699",
+          "name": "Zi-Jiong Li"
+        },
+        {
+          "authorId": "2229033108",
+          "name": "Haiyan Wang"
+        }
+      ]
+    },
+    {
+      "paperId": "0d7622c5817bd7af65ec9784ca9b898e60802c3f",
+      "externalIds": {
+        "DOI": "10.1002/bkcs.12799",
+        "CorpusId": 265217158
+      },
+      "title": "Recent progress in Co\u2010free, Ni\u2010rich cathode materials for lithium\u2010ion batteries",
+      "venue": "Bulletin of the Korean Chemical Society",
+      "year": 2023,
+      "citationCount": 22,
+      "authors": [
+        {
+          "authorId": "2266843853",
+          "name": "Sk. Khaja Hussain"
+        },
+        {
+          "authorId": "2469547329",
+          "name": "Ho-Bang Jin"
+        }
+      ]
+    },
+    {
+      "paperId": "d807f2bd12b80a078d125e20b7e6d6913191ba8a",
+      "externalIds": {
+        "DOI": "10.1149/1945-7111/ad3aea",
+        "CorpusId": 268981404
+      },
+      "title": "Review\u2014Recent Progress of Lithium-Rich Cation Disordered Rocksalt Cathode for High Performance Lithium-Ion Batteries",
+      "venue": "Journal of the Electrochemical Society",
+      "year": 2024,
+      "citationCount": 7,
+      "authors": [
+        {
+          "authorId": "51116097",
+          "name": "Jiashuai Wang"
+        },
+        {
+          "authorId": "2144716897",
+          "name": "Zhao-Kun Wang"
+        },
+        {
+          "authorId": "116024923",
+          "name": "Haofeng Shi"
+        },
+        {
+          "authorId": "2132039226",
+          "name": "Cheng-Deng Wang"
+        },
+        {
+          "authorId": "2265825731",
+          "name": "Zhi Wang"
+        },
+        {
+          "authorId": "2265807011",
+          "name": "Yan Gao"
+        },
+        {
+          "authorId": "2295341809",
+          "name": "Zhiming Bai"
+        },
+        {
+          "authorId": "2245098379",
+          "name": "Xiao-Qin Yan"
+        }
+      ]
+    },
+    {
+      "paperId": "cccf76979bdfabb7d2bdfb98a7f30b525fa899cf",
+      "externalIds": {
+        "DOI": "10.1088/2058-6272/aaead6",
+        "CorpusId": 250844332
+      },
+      "title": "Accuracy improvement of calibration-free laser-induced breakdown spectroscopy",
+      "venue": "",
+      "year": 2018,
+      "citationCount": 0,
+      "authors": [
+        {
+          "authorId": "9089555",
+          "name": "Hong-Bo Fu"
+        },
+        {
+          "authorId": "15419312",
+          "name": "Zhi-Bo Ni"
+        },
+        {
+          "authorId": "2108883836",
+          "name": "Hua-Dong Wang"
+        },
+        {
+          "authorId": "47710494",
+          "name": "Jun-Wei Jia"
+        },
+        {
+          "authorId": "14639470",
+          "name": "Feng-Zhong Dong"
+        }
+      ]
+    },
+    {
+      "paperId": "ba42bb5caf3ef5db05e172ef124f6fd7401b16d6",
+      "externalIds": {
+        "MAG": "2615862980",
+        "DOI": "10.1016/J.TIFS.2017.05.005",
+        "CorpusId": 89723301
+      },
+      "title": "Laser-induced breakdown spectroscopy (LIBS) for food analysis: A review",
+      "venue": "",
+      "year": 2017,
+      "citationCount": 227,
+      "authors": [
+        {
+          "authorId": "1403239447",
+          "name": "M. Markiewicz-K\u0119szycka"
+        },
+        {
+          "authorId": "1403239445",
+          "name": "Xavier Cama-Moncunill"
+        },
+        {
+          "authorId": "1398969910",
+          "name": "Maria P. Casado-Gavalda"
+        },
+        {
+          "authorId": "144929055",
+          "name": "Y. Dixit"
+        },
+        {
+          "authorId": "1398969895",
+          "name": "R. Cama-Moncunill"
+        },
+        {
+          "authorId": "145108832",
+          "name": "P. Cullen"
+        },
+        {
+          "authorId": "39440351",
+          "name": "C. Sullivan"
+        }
+      ]
+    }
+  ]
+}

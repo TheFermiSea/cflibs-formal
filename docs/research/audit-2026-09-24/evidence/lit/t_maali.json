@@ -1,0 +1,72 @@
+{
+  "total": 2,
+  "offset": 0,
+  "data": [
+    {
+      "paperId": "82f72156a6aa8be2b23873c4a5a829f135116585",
+      "externalIds": {
+        "MAG": "2896435416",
+        "DOI": "10.1016/J.JQSRT.2018.10.029",
+        "CorpusId": 126364735
+      },
+      "title": "Error analysis in optimization problems relevant for calibration-free laser-induced breakdown spectroscopy",
+      "venue": "Journal of Quantitative Spectroscopy and Radiative Transfer",
+      "year": 2019,
+      "citationCount": 7,
+      "authors": [
+        {
+          "authorId": "103518493",
+          "name": "J. J. Maali"
+        },
+        {
+          "authorId": "2178060",
+          "name": "S. V. Shabanov"
+        }
+      ]
+    },
+    {
+      "paperId": "d3a59b1dee48270e70086faffb380bdef9242135",
+      "externalIds": {
+        "CorpusId": 252846169
+      },
+      "title": "Quasi-free (p,2p) reactions in inverse kinematics for studying the fission yield dependence on temperature and its implication in the stellar nucleosynthesis r-process.",
+      "venue": "",
+      "year": 2022,
+      "citationCount": 0,
+      "authors": [
+        {
+          "authorId": "147024735",
+          "name": "J. Balibrea"
+        },
+        {
+          "authorId": "2259350988",
+          "name": "J. Benito"
+        },
+        {
+          "authorId": "2304937425",
+          "name": "B. Fernandez"
+        },
+        {
+          "authorId": null,
+          "name": "R."
+        },
+        {
+          "authorId": "2069549885",
+          "name": "Garc\u00eda"
+        },
+        {
+          "authorId": "2107552453",
+          "name": "J. Gomez"
+        },
+        {
+          "authorId": "115119574",
+          "name": "C. Guerrero"
+        },
+        {
+          "authorId": "8787976",
+          "name": "D. Villamar\u00edn"
+        }
+      ]
+    }
+  ]
+}

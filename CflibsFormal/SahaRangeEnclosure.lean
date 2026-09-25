@@ -9,7 +9,7 @@ import CflibsFormal.OuterLoopModelB
 /-!
 # CF-LIBS formalization — an a-priori Saha `S(T)`-range enclosure (Frontier 04)
 
-This leaf module upgrades the flagship outer-loop contraction theorem `outerLoop_contracts`
+This leaf module upgrades the Model-B outer-loop contraction theorem `outerLoop_contracts`
 (`OuterLoopModelB`) by turning its carried interval-invariance side condition `hmapsNe` — the
 hypothesis that the Saha density reader `n_e(T) = S(T)/R` maps the temperature box `[Tmin,Tmax]`
 into the density box `[nemin,nemax]` — from an **assumed** premise into a **proven** consequence
@@ -17,9 +17,9 @@ of the monotonicity of the Saha factor.
 
 The chain is:
 
-* `sahaFactor_mem_Icc` — because `S(·)` is monotone on `(0,∞)`
-  (`sahaFactor_strictMonoOn_temp`, M4), for any `T ∈ [Tmin,Tmax]` with `0 < Tmin` the value
-  `S(T)` is trapped between the two endpoint values `S(Tmin)` and `S(Tmax)`.
+* `sahaFactor_mem_Icc` — because `S(·)` is monotone on `(0,∞)` under the level-ceiling
+  hypothesis `hEχ` (`sahaFactor_strictMonoOn_temp`, M4), for any `T ∈ [Tmin,Tmax]` with
+  `0 < Tmin` the value `S(T)` is trapped between the two endpoint values `S(Tmin)` and `S(Tmax)`.
 * `electronDensityFromRatio_mem_Icc` — dividing the endpoint enclosure by a fixed `R > 0`
   (order-preserving) traps the density reader `n_e(T) = S(T)/R` between its endpoints.
 * `outerLoop_contracts_apriori` — the payoff. With the two endpoint containments
@@ -35,13 +35,25 @@ Scope tag: **`sahaFactor_mem_Icc`, `electronDensityFromRatio_mem_Icc` = EXACT; *
 H. R. Griem, *Principles of Plasma Spectroscopy* (Cambridge, 1997), and used throughout the
 CF-LIBS thermometry of Aguilera & Aragón 2007. The two enclosure lemmas are exact-over-`ℝ`
 monotonicity facts about the Saha factor `S(T)` and the density reader `S(T)/R`; they carry no
-approximation. `outerLoop_contracts_apriori` is `REDUCED` for the *same* reason its parent
-`outerLoop_contracts` is: the product gate `L₁·L₂ < 1` is a sufficient (non-sharp) convergence
-certificate. The genuine rigor upgrade over the parent is that the density interval-invariance is
-now a *theorem* about the endpoints rather than a carried assumption — one fewer trusted side
-condition on the flagship result. The temperature-side invariance `hmapsT` and the slope floor
-`hslopeFloor` remain carried side conditions (out of scope here; they concern the combined
-Saha–Boltzmann slope leg, not the Saha density leg).
+approximation.
+
+All three results carry the level-ceiling hypothesis `hEχ : ∀ k, EZ k ≤ chi`. It is a
+truncation obligation on the lower-stage level list, not a property of real atoms: the list must
+be truncated at or below the `chi` used in the exponent (`χ − Δχ` when ionization-potential
+depression lowers it). Untruncated tabulated lists often violate it: 202 of 324 species in the
+companion's production database (see the `SahaStability` module docstring).
+
+`outerLoop_contracts_apriori` is `REDUCED` for the *same* reason its parent `outerLoop_contracts`
+is: the Saha offset `offConst` is frozen at a reference `T` while the density leg uses `S(T)` at
+the current `T`, and the density leg reads a fixed measured stage ratio `R`. With the offset
+evaluated at the current `T` the Saha coupling cancels, and the map is not the companion's
+`iterative.py` loop (see `OuterLoopModelB`). The product gate `L₁·L₂ < 1` is a sufficient,
+non-sharp condition that fails by orders of magnitude on real data. The rigor gain over the
+parent is that the density interval-invariance is now a *theorem* about the endpoints rather
+than a carried assumption: this discharges the a-priori density-box obligation of the outer-loop
+gate (C11 in `docs/frontiers/12-runtime-certificates.md`). The temperature-side invariance
+`hmapsT` and the slope floor `hslopeFloor` remain carried, a-posteriori side conditions (they
+concern the combined Saha–Boltzmann slope leg, not the Saha density leg).
 -/
 
 namespace CflibsFormal
@@ -53,7 +65,8 @@ open scoped NNReal BigOperators
 `[Tmin,Tmax]` (with `0 < Tmin`), the Saha factor `S(T)` at any interior/boundary temperature is
 trapped between its two endpoint values. Immediate from the strict monotonicity of `S(·)` on
 `(0,∞)` (`sahaFactor_strictMonoOn_temp`, M4) demoted to `MonotoneOn`: all three of `Tmin`, `T`,
-`Tmax` lie in `Set.Ioi 0` (from `0 < Tmin ≤ T ≤ Tmax`), so `S Tmin ≤ S T ≤ S Tmax`. -/
+`Tmax` lie in `Set.Ioi 0` (from `0 < Tmin ≤ T ≤ Tmax`), so `S Tmin ≤ S T ≤ S Tmax`. Requires the
+lower-stage level list truncated at or below `chi` (`hEχ`; see the module docstring). -/
 theorem sahaFactor_mem_Icc {ι κ : Type*} [Fintype ι] [Fintype κ] [Nonempty ι] [Nonempty κ]
     {kB me h chi Tmin Tmax T : ℝ} {gZ EZ : ι → ℝ} {gZ1 EZ1 : κ → ℝ}
     (hkB : 0 < kB) (hme : 0 < me) (hh : 0 < h) (hchi : 0 ≤ chi)
@@ -75,7 +88,8 @@ theorem sahaFactor_mem_Icc {ι κ : Type*} [Fintype ι] [Fintype κ] [Nonempty �
 `n_e(T) = S(T)/R` inherits the endpoint enclosure of `S`: for a fixed measured stage ratio
 `R > 0`, dividing the `sahaFactor_mem_Icc` bracket by `R` (order-preserving on `ℝ` since
 `0 ≤ R`) traps `n_e(T)` between `n_e(Tmin)` and `n_e(Tmax)`. Uses that
-`electronDensityFromRatio … R` is *defeq* to `sahaFactor … / R`. -/
+`electronDensityFromRatio … R` is *defeq* to `sahaFactor … / R`. Carries the same level-truncation
+obligation `hEχ` as `sahaFactor_mem_Icc`. -/
 theorem electronDensityFromRatio_mem_Icc {ι κ : Type*} [Fintype ι] [Fintype κ]
     [Nonempty ι] [Nonempty κ]
     {kB me h chi Tmin Tmax T R : ℝ} {gZ EZ : ι → ℝ} {gZ1 EZ1 : κ → ℝ}
@@ -92,16 +106,19 @@ theorem electronDensityFromRatio_mem_Icc {ι κ : Type*} [Fintype ι] [Fintype �
   exact Set.mem_Icc.mpr
     ⟨div_le_div_of_nonneg_right hlo hR.le, div_le_div_of_nonneg_right hhi hR.le⟩
 
-/-- **The CF-LIBS outer temperature loop contracts — a-priori density invariance** (`REDUCED`;
-Aguilera & Aragón 2007, Model B; Saha–Eggert (Griem)). Identical conclusion to
+/-- **The frozen-offset Model-B outer loop contracts — a-priori density invariance**
+(`REDUCED`; Aguilera & Aragón 2007, Model B; Saha–Eggert (Griem)). Identical conclusion to
 `outerLoop_contracts`, but the carried interval-invariance side condition `hmapsNe` is **dropped**
 and replaced by the two endpoint containments `hnelo : nemin ≤ n_e(Tmin)` and
-`hnehi : n_e(Tmax) ≤ nemax` (plus `[Nonempty ιe] [Nonempty κe]` and the level-ceiling monotonicity
-premise `hEχ : ∀ k, EZ k ≤ chi`). The full box invariance is then *proven* inside the theorem:
-`electronDensityFromRatio_mem_Icc` traps each `n_e(T)` in `[n_e(Tmin), n_e(Tmax)]`, and
-`Set.Icc_subset_Icc hnelo hnehi` sends that sub-box into `[nemin,nemax]`. This is a genuine
-a-priori discharge — the density interval invariance is no longer assumed but derived from the
-box endpoints — after which the parent `outerLoop_contracts` is forwarded verbatim. -/
+`hnehi : n_e(Tmax) ≤ nemax` (plus `[Nonempty ιe] [Nonempty κe]` and the level-ceiling premise
+`hEχ : ∀ k, EZ k ≤ chi`, a truncation obligation on the lower-stage level list). The full box
+invariance is then *proven* inside the theorem: `electronDensityFromRatio_mem_Icc` traps each
+`n_e(T)` in `[n_e(Tmin), n_e(Tmax)]`, and `Set.Icc_subset_Icc hnelo hnehi` sends that sub-box into
+`[nemin,nemax]`. This is a genuine a-priori discharge — the density interval invariance is no
+longer assumed but derived from the box endpoints — after which the parent
+`outerLoop_contracts` is forwarded verbatim. The reduction is the parent's: Saha offset frozen at
+a reference `T`, density leg reading a fixed measured stage ratio `R`; with the offset evaluated
+at the current `T` the Saha coupling cancels (see `OuterLoopModelB`). -/
 theorem outerLoop_contracts_apriori
     {ιe : Type*} [Fintype ιe] [Nonempty ιe]
     {κe : Type*} [Fintype κe] [Nonempty κe]
