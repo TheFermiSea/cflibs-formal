@@ -38,7 +38,8 @@ target.json      {"theorem": "Fully.Qualified.name", "max_tokens": 150000, "max_
                   "note": "where this came from"}
 ```
 
-Defaults: `planner` `sonnet` (Claude CLI; D8), `worker` `qwen38-local`. The supervisor picks it up
+Defaults: `planner` `opus` (Opus 5.5 via the Claude CLI, effort `high`; owner 2026-09-25,
+revising D8's Sonnet), `worker` `qwen38-local`. The supervisor picks it up
 within 30 s. Optional planner keys:
 - `effort`: Claude planner effort, default `high`. OpenProver's own default for `opus` was `max`;
   the patch removes that because the owner ruled it out on cost.
@@ -56,7 +57,9 @@ line, `status.json` and, for verified targets, `verdict.json`.
 **Daily cap.** When the Claude planner spend of the last 24 h reaches
 `OPENPROVER_DAILY_PLANNER_USD` (default 60, list-price equivalent, advisor included, summed from
 every step's `meta.toml`), new non-pilot attempts are planned by `qwen38-local` with no advisor. The
-loop keeps running on local models. `status.json` shows `planner_usd_24h`. A verified proof is only a *candidate for landing*: open a PR by hand (Copilot review
+loop keeps running on local models. `status.json` shows `planner_usd_24h`.
+
+A verified proof is only a *candidate for landing*: open a PR by hand (Copilot review
 is billed per PR and per push; batch).
 
 ## What "verified" means
@@ -79,8 +82,9 @@ each fails through the full verifier AND through the kernel/probe layers alone (
 bypassed), and that every genuine proof passed on the command line still passes. Run it after any
 change to `verify.py`. On 2026-09-24 it passed with the three C3 proofs and F02 as genuine
 controls (~4 min; kernel replay ~15 s per candidate). OpenProver reporting `proved` with no passing
-candidate is logged as a FINDING. OpenProver's `proved` can mean only that its informal proof was
-accepted: F07 attempt 5 (2026-09-24) reported `proved` with no Lean file at all, and was correctly
+candidate is logged as a FINDING only if OpenProver itself accepted a PROOF.lean. OpenProver's
+`[result] proved` means only that PROOF.md exists (`cli.py`), e.g. when the token budget runs out
+after an informal proof: F07 attempt 5 (2026-09-24) reported `proved` with no Lean file at all, and was correctly
 not verified.
 
 ## Operating it
@@ -111,5 +115,8 @@ removing the key, or `--setting-sources project,local`, does (checked with a pro
 model to call the advisor). At full load (3 nodes, ~19 planner steps/h) the measured list-price cost
 per planner step was: Sonnet alone ~$0.20-0.27; Opus 5.5 at the same token counts ~$0.51; an Opus
 5.5 advisor consultation ~$0.49, because it re-reads ~95k tokens with no cache; a Fable
-consultation $1.23. A 2026-09-25 pilot compares four planner arms (Sonnet; Opus 5.5 high; Sonnet +
-gated Opus advisor; Qwen) on the same four targets.
+consultation $1.23. A 2026-09-25 four-arm pilot (Sonnet; Opus 5.5 high; Sonnet + gated Opus advisor; Qwen)
+was cut short on quota: its Claude arms were cancelled after one target each. On F07 (all three
+exhausted the 300k-token budget unproved) Sonnet cost $2.44 over 14 steps, Opus 5.5 $2.95 over 11
+(half Sonnet's planner output, so more budget left to the workers) and Sonnet + advisor $3.02. The
+owner then chose Opus 5.5 as the default planner under the daily cap.

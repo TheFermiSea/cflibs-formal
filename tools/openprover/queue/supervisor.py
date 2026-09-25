@@ -14,7 +14,7 @@ Layout under $OPENPROVER_HOME (default ~/.local/share/openprover):
   status.json, supervisor.log
 
 target.json: {"theorem": "Fully.Qualified.name", "max_tokens": 150000, "max_attempts": 2,
-              "max_planner_usd": 30, "planner": "sonnet", "worker": "qwen38-local", "note": "..."}
+              "max_planner_usd": 30, "planner": "opus", "worker": "qwen38-local", "note": "..."}
   optional: "effort" (Claude planner, default "high"), "advisor" (e.g. "opus"; attached only on
   planner steps 1, 1+advisor_every, ... up to advisor_max per run), "history_budget" (chars of
   planner history, default 120000 for every planner so arms see the same history), "pilot" (true:
@@ -52,7 +52,7 @@ Q = HOME / "queue"
 RUNS, RESULTS = HOME / "runs", HOME / "results"
 VERIFY = Path(__file__).with_name("verify.py")
 POLL_S, WALL_S, NODE_BACKOFF_S = 30, 9 * 3600, 1800
-DEFAULTS = {"max_tokens": 150000, "max_attempts": 2, "planner": "sonnet", "worker": "qwen38-local",
+DEFAULTS = {"max_tokens": 150000, "max_attempts": 2, "planner": "opus", "worker": "qwen38-local",
             "max_planner_usd": 30.0, "effort": "high", "advisor": None, "advisor_every": 5,
             "advisor_max": 3, "history_budget": 120000, "pilot": False}
 CLAUDE_PLANNERS = {"sonnet", "opus"}
@@ -235,8 +235,10 @@ def finish(job: dict) -> None:
         shutil.move(str(d), Q / "done" / tid)
         log(f"{tid}: VERIFIED (attempt {job['attempt']}, {hours:.1f} h, openprover said {reported!r})")
     else:
-        if reported == "proved":
-            log(f"{tid}: FINDING - openprover reported proved but no candidate passed verify.py")
+        if reported == "proved" and (run_dir / "PROOF.lean").exists():
+            log(f"{tid}: FINDING - openprover accepted a PROOF.lean that verify.py rejected")
+        elif reported == "proved":  # cli.py prints `proved` whenever PROOF.md exists
+            log(f"{tid}: openprover's 'proved' is informal only (PROOF.md, no PROOF.lean)")
         n = charged(d)
         if job["abort"] not in ("infra", "planner_down"):  # outages are not the target's fault
             n += 1
