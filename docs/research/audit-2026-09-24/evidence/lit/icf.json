@@ -1,0 +1,313 @@
+{
+  "total": 30,
+  "offset": 0,
+  "next": 8,
+  "data": [
+    {
+      "paperId": "cbb8474fe166de3667b455c9da224967256e2aa6",
+      "externalIds": {
+        "MAG": "2062174987",
+        "DOI": "10.1039/C4RA10132D",
+        "CorpusId": 96975077
+      },
+      "title": "A single-beam-splitting technique combined with a calibration-free method for field-deployable applications using laser-induced breakdown spectroscopy",
+      "venue": "",
+      "year": 2015,
+      "citationCount": 13,
+      "authors": [
+        {
+          "authorId": "2153556105",
+          "name": "Mingjun Xu"
+        },
+        {
+          "authorId": "47360318",
+          "name": "Qing-Yu Lin"
+        },
+        {
+          "authorId": "2052595443",
+          "name": "Guang Yang"
+        },
+        {
+          "authorId": "8132121",
+          "name": "Tao-Ran Xu"
+        },
+        {
+          "authorId": "2009789780",
+          "name": "Tian-Long Zhang"
+        },
+        {
+          "authorId": null,
+          "name": "Xu Wang"
+        },
+        {
+          "authorId": "39567350",
+          "name": "Shuai Wang"
+        },
+        {
+          "authorId": "2076182472",
+          "name": "Fang Bian"
+        },
+        {
+          "authorId": "145659087",
+          "name": "Y. Duan"
+        }
+      ]
+    },
+    {
+      "paperId": "3968260d871721e16f22c93415757bb73cf49cc5",
+      "externalIds": {
+        "MAG": "2085756513",
+        "DOI": "10.1007/S00340-014-5990-Z",
+        "CorpusId": 53455161
+      },
+      "title": "A hybrid calibration-free/artificial neural networks approach to the quantitative analysis of LIBS spectra",
+      "venue": "",
+      "year": 2015,
+      "citationCount": 64,
+      "authors": [
+        {
+          "authorId": "1398683232",
+          "name": "Eleonora D'Andrea"
+        },
+        {
+          "authorId": "2202870",
+          "name": "Stefano Pagnotta"
+        },
+        {
+          "authorId": "13464510",
+          "name": "E. Grifoni"
+        },
+        {
+          "authorId": "2315692",
+          "name": "S. Legnaioli"
+        },
+        {
+          "authorId": "2906844",
+          "name": "G. Lorenzetti"
+        },
+        {
+          "authorId": "2638662",
+          "name": "V. Palleschi"
+        },
+        {
+          "authorId": "1680609",
+          "name": "B. Lazzerini"
+        }
+      ]
+    },
+    {
+      "paperId": "4ddb355ea36c1858fefd5d0fc584b9914da399ce",
+      "externalIds": {
+        "MAG": "2058501695",
+        "DOI": "10.1039/C4JA00470A",
+        "CorpusId": 96772049
+      },
+      "title": "A method for improving the accuracy of calibration-free laser-induced breakdown spectroscopy (CF-LIBS) using determined plasma temperature by genetic algorithm (GA)",
+      "venue": "",
+      "year": 2015,
+      "citationCount": 41,
+      "authors": [
+        {
+          "authorId": "2144063316",
+          "name": "Juan Dong"
+        },
+        {
+          "authorId": "2155277632",
+          "name": "Long Liang"
+        },
+        {
+          "authorId": "2049043939",
+          "name": "Jiao Wei"
+        },
+        {
+          "authorId": "48176448",
+          "name": "Hong-Sheng Tang"
+        },
+        {
+          "authorId": "2009789780",
+          "name": "Tian-Long Zhang"
+        },
+        {
+          "authorId": "47008635",
+          "name": "Xiao-Feng Yang"
+        },
+        {
+          "authorId": "2117843501",
+          "name": "Kang Wang"
+        },
+        {
+          "authorId": "2108839992",
+          "name": "Hua Li"
+        }
+      ]
+    },
+    {
+      "paperId": "276f00e27e552cb68d8ccec4a1d647be415b2543",
+      "externalIds": {
+        "DOI": "10.1007/s00340-014-5990-z",
+        "CorpusId": 253846405
+      },
+      "title": "A hybrid calibration-free/artificial neural networks approach to the quantitative analysis of LIBS spectra",
+      "venue": "Applied physics B",
+      "year": 2015,
+      "citationCount": 3,
+      "authors": [
+        {
+          "authorId": "1398683232",
+          "name": "Eleonora D'Andrea"
+        },
+        {
+          "authorId": "2202870",
+          "name": "Stefano Pagnotta"
+        },
+        {
+          "authorId": "13464510",
+          "name": "E. Grifoni"
+        },
+        {
+          "authorId": "2315692",
+          "name": "S. Legnaioli"
+        },
+        {
+          "authorId": "2906844",
+          "name": "G. Lorenzetti"
+        },
+        {
+          "authorId": "2638662",
+          "name": "V. Palleschi"
+        },
+        {
+          "authorId": "1680609",
+          "name": "B. Lazzerini"
+        }
+      ]
+    },
+    {
+      "paperId": "624cb607c3dfadc83f391f1db73f20ca95abd053",
+      "externalIds": {
+        "MAG": "841638186",
+        "DOI": "10.1016/J.SAB.2015.06.009",
+        "CorpusId": 45357433
+      },
+      "title": "Calibration-free analysis of immersed brass alloys using long-ns-duration pulse laser-induced breakdown spectroscopy with and without correction for nonstoichiometric ablation",
+      "venue": "",
+      "year": 2015,
+      "citationCount": 52,
+      "authors": [
+        {
+          "authorId": "48334905",
+          "name": "Tomoko Takahashi"
+        },
+        {
+          "authorId": "2050699",
+          "name": "B. Thornton"
+        },
+        {
+          "authorId": "2059204304",
+          "name": "K. Ohki"
+        },
+        {
+          "authorId": "46676889",
+          "name": "T. Sakka"
+        }
+      ]
+    },
+    {
+      "paperId": "7fbb53aad5f78fe17fccddc641c7c7c8330e8bb9",
+      "externalIds": {
+        "MAG": "2034640135",
+        "DOI": "10.1016/J.SAB.2015.02.004",
+        "CorpusId": 96201952
+      },
+      "title": "Calibration-free analysis of steel slag by laser-induced breakdown spectroscopy with combined UV and VIS spectra",
+      "venue": "",
+      "year": 2015,
+      "citationCount": 31,
+      "authors": [
+        {
+          "authorId": "115639487",
+          "name": "P. Kolmhofer"
+        },
+        {
+          "authorId": "2481188854",
+          "name": "S. Eschlb\u00f6ck-Fuchs"
+        },
+        {
+          "authorId": "97735904",
+          "name": "N. Huber"
+        },
+        {
+          "authorId": "2054171914",
+          "name": "R. R\u00f6\u00dfler"
+        },
+        {
+          "authorId": "144580192",
+          "name": "J. Heitz"
+        },
+        {
+          "authorId": "12706145",
+          "name": "J. Pedarnig"
+        }
+      ]
+    },
+    {
+      "paperId": "6bb6069ebacba102a60d7e9962d9bfac1b9280b1",
+      "externalIds": {
+        "MAG": "2181276117",
+        "DOI": "10.1134/S1063780X15090019",
+        "CorpusId": 124475994
+      },
+      "title": "Determination of a brass alloy concentration composition using calibration-free laser-induced breakdown spectroscopy",
+      "venue": "",
+      "year": 2015,
+      "citationCount": 12,
+      "authors": [
+        {
+          "authorId": "1391555374",
+          "name": "M. Achouri"
+        },
+        {
+          "authorId": "1403268367",
+          "name": "T. Baba-Hamed"
+        },
+        {
+          "authorId": "13665200",
+          "name": "S. Beldjilali"
+        },
+        {
+          "authorId": "11756586",
+          "name": "A. Belasri"
+        }
+      ]
+    },
+    {
+      "paperId": "4a3aa72218bab73d807d84c4841126cdb43509b8",
+      "externalIds": {
+        "DOI": "10.1134/S1063780X15090019",
+        "CorpusId": 255229220
+      },
+      "title": "Determination of a brass alloy concentration composition using calibration-free laser-induced breakdown spectroscopy",
+      "venue": "Plasma Physics Reports",
+      "year": 2015,
+      "citationCount": 0,
+      "authors": [
+        {
+          "authorId": "122397091",
+          "name": "M. Achouri"
+        },
+        {
+          "authorId": "1403268367",
+          "name": "T. Baba-Hamed"
+        },
+        {
+          "authorId": "13665200",
+          "name": "S. Beldjilali"
+        },
+        {
+          "authorId": "11756586",
+          "name": "A. Belasri"
+        }
+      ]
+    }
+  ]
+}

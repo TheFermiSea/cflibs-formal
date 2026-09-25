@@ -19,9 +19,14 @@ computes every theorem's **published** scope tag, and fails on any of the follow
    `EXACT | REDUCED | APPROXIMATION | PURE-MATH`.
 4. **Laundered model row.** A definition row whose tag is stronger than the model tag the
    definition inherits from the tagged definitions it is built from (see below).
-5. **EXACT uses APPROXIMATION.** A theorem whose *published* tag is EXACT transitively uses
-   (constant level: statement and proof, through definition bodies) a theorem whose published
-   tag is APPROXIMATION, or a definition whose model tag is APPROXIMATION.
+5. **EXACT uses APPROXIMATION**, checked on both axes (constant level: statement and proof,
+   through definition bodies, transitively):
+   * **own:** a theorem whose *own* (relation) tag is EXACT uses a theorem whose own tag is
+     APPROXIMATION. Model tags do not enter this check: an exact statement about an
+     APPROXIMATION model is allowed (that is what the two axes are for), and the next check
+     catches it on the published axis.
+   * **published:** a theorem whose *published* tag is EXACT uses a theorem whose published tag
+     is APPROXIMATION, or a definition whose model tag is APPROXIMATION.
 6. **Stale published-tag file.** `docs/scope-published.tsv` differs from what this run computes.
    `lake exe scope-check --write` regenerates it; `scripts/gen-docs.sh` renders it into
    `docs/theorem-catalog.md`.
@@ -39,6 +44,10 @@ definition encodes the physics. Rank: `EXACT < REDUCED < APPROXIMATION`; `PURE-M
 * The **published** tag of a theorem is the weaker of its relation tag and the model tags of
   the `CflibsFormal` definitions appearing in its statement type. `PURE-MATH` theorems are
   exempt: their published tag is `PURE-MATH`.
+
+**Advisory (never a failure).** A `PURE-MATH` theorem whose statement type uses a definition
+with model tag APPROXIMATION is listed on stderr, so that each such "no physics content" claim
+is reviewed deliberately rather than inherited silently from the exemption.
 
 Reuses `AxiomAudit`'s imported-environment builder (`withImportedEnv`). All output is produced
 inside that builder, while the `.olean` string data is still mapped. Requires a built
@@ -278,6 +287,7 @@ def runCheck (rows : Array Row) (parseErrs : Array String) (write : Bool) : Core
   let mut pub : NameMap String := {}
   let mut out : Array (String × String × String × String × String × String) := #[]
   let mut changed : Nat := 0
+  let mut pureOverApprox : Array String := #[]
   for x in resolved do
     let own := x.row.tag
     if !x.thm then
@@ -285,45 +295,68 @@ def runCheck (rows : Array Row) (parseErrs : Array String) (write : Bool) : Core
       continue
     let mut published := own
     let mut viaStr := "—"
+    -- weakest model tag among the library definitions in the statement type
+    let ci ← getConstInfo x.const
+    let mut best : Option Nat := none
+    let mut via : NameSet := {}
+    for d in ci.type.getUsedConstants do
+      if isLib d && !isThm env d then
+        let ((r, vs), s) := (modelOf env isLib defRow d).run mstate
+        mstate := s
+        if rankKey r > rankKey best then
+          best := r
+          via := vs
+        else if r.isSome && r == best then
+          via := vs.foldl (·.insert ·) via
+    let viaNames := String.intercalate "," ((via.toList.map display).toArray.qsort (· < ·)).toList
     if let some ownR := rankOf? own then
-      let ci ← getConstInfo x.const
-      let mut best : Option Nat := none
-      let mut via : NameSet := {}
-      for d in ci.type.getUsedConstants do
-        if isLib d && !isThm env d then
-          let ((r, vs), s) := (modelOf env isLib defRow d).run mstate
-          mstate := s
-          if rankKey r > rankKey best then
-            best := r
-            via := vs
-          else if r.isSome && r == best then
-            via := vs.foldl (·.insert ·) via
       if rankKey best > (ownR : Int) then
         published := rankTag (best.getD 0)
-        viaStr := String.intercalate "," ((via.toList.map display).toArray.qsort (· < ·)).toList
+        viaStr := viaNames
         changed := changed + 1
+    else if best == some 2 then
+      -- advisory: a PURE-MATH theorem stated over an APPROXIMATION model
+      pureOverApprox := pureOverApprox.push s!"  {x.row.module} {x.row.name}  (via {viaNames})"
     pub := pub.insert x.const published
     out := out.push (x.row.module, x.row.name, "theorem", own, published, viaStr)
-  -- 5. EXACT (published) must not use APPROXIMATION (published / model)
+  -- 5. EXACT must not use APPROXIMATION, on both axes
+  let ownTag : NameMap String := resolved.foldl (init := {}) fun acc x =>
+    if x.thm then acc.insert x.const x.row.tag else acc
   let mut dstate : NameMap NameSet := {}
   let mut violations : Array String := #[]
+  let mut ownChecked : Nat := 0
   let mut exactChecked : Nat := 0
   for x in resolved do
-    if !x.thm || pub.find? x.const != some "EXACT" then continue
-    exactChecked := exactChecked + 1
+    if !x.thm then continue
+    let ownExact := x.row.tag == "EXACT"
+    let pubExact := pub.find? x.const == some "EXACT"
+    if !ownExact && !pubExact then continue
     let (deps, s) := (libClosure env isLib x.const).run dstate
     dstate := s
-    let mut bad : Array String := #[]
-    for d in deps.toArray do
-      if isThm env d then
-        if pub.find? d == some "APPROXIMATION" then bad := bad.push s!"{display d} (theorem)"
-      else
-        let ((r, _), s) := (modelOf env isLib defRow d).run mstate
-        mstate := s
-        if r == some 2 then bad := bad.push s!"{display d} (model)"
-    if !bad.isEmpty then
-      let bs := String.intercalate ", " (bad.qsort (· < ·)).toList
-      violations := violations.push s!"  {display x.const}  uses  {bs}"
+    -- 5a. own axis: own-EXACT theorem vs the own (relation) tags of the theorems it uses
+    if ownExact then
+      ownChecked := ownChecked + 1
+      let bad : Array String := deps.toArray.filterMap fun d =>
+        if isThm env d && ownTag.find? d == some "APPROXIMATION" then
+          some s!"{display d} (theorem, own)"
+        else none
+      if !bad.isEmpty then
+        let bs := String.intercalate ", " (bad.qsort (· < ·)).toList
+        violations := violations.push s!"  [own]       {display x.const}  uses  {bs}"
+    -- 5b. published axis: published-EXACT theorem vs published theorem tags and model tags
+    if pubExact then
+      exactChecked := exactChecked + 1
+      let mut bad : Array String := #[]
+      for d in deps.toArray do
+        if isThm env d then
+          if pub.find? d == some "APPROXIMATION" then bad := bad.push s!"{display d} (theorem)"
+        else
+          let ((r, _), s) := (modelOf env isLib defRow d).run mstate
+          mstate := s
+          if r == some 2 then bad := bad.push s!"{display d} (model)"
+      if !bad.isEmpty then
+        let bs := String.intercalate ", " (bad.qsort (· < ·)).toList
+        violations := violations.push s!"  [published] {display x.const}  uses  {bs}"
   -- 6. the published-tag file
   let sorted := out.qsort fun a b => a.1 < b.1 || (a.1 == b.1 && a.2.1 < b.2.1)
   let header :=
@@ -351,16 +384,25 @@ def runCheck (rows : Array Row) (parseErrs : Array String) (write : Bool) : Core
   let nDefs := (resolved.filter (!·.thm)).size
   IO.println s!"scope-check: rows resolved {tagLine}; {nDefs} definition (model) rows"
   IO.println s!"scope-check: {changed} theorem(s) publish a weaker tag than their own \
-    (via model rows); {exactChecked} published-EXACT results checked"
+    (via model rows)"
+  IO.println s!"scope-check: EXACT-uses-APPROXIMATION checked on {ownChecked} own-EXACT \
+    theorem(s) (against own tags of used theorems) and {exactChecked} published-EXACT \
+    theorem(s) (against published theorem tags and model tags)"
+  if !pureOverApprox.isEmpty then
+    IO.eprintln s!"scope-check: ADVISORY (not a failure) — {pureOverApprox.size} PURE-MATH \
+      theorem(s) have an APPROXIMATION model in their statement; confirm each is pure math:"
+    for a in pureOverApprox do IO.eprintln a
   if write && stale then IO.println s!"scope-check: wrote {publishedPath}"
   if errors.isEmpty && violations.isEmpty then
-    IO.println "scope-check: OK — every row resolves uniquely; no published-EXACT result uses an \
-      APPROXIMATION theorem or model."
+    IO.println "scope-check: OK — every row resolves uniquely; no own-EXACT theorem uses an \
+      own-APPROXIMATION theorem; no published-EXACT theorem uses an APPROXIMATION theorem or \
+      model."
     return 0
   for e in errors do IO.eprintln s!"scope-check: {e}"
   if !violations.isEmpty then
-    IO.eprintln s!"scope-check: FAIL — {violations.size} published-EXACT result(s) transitively \
-      use an APPROXIMATION theorem or model:"
+    IO.eprintln s!"scope-check: FAIL — {violations.size} violation(s): an EXACT result \
+      transitively uses an APPROXIMATION theorem or model ([own] = relation axis, [published] = \
+      published axis):"
     for v in violations do IO.eprintln v
   IO.eprintln s!"scope-check: FAIL ({errors.size} row/file error(s), {violations.size} \
     EXACT→APPROXIMATION violation(s))"

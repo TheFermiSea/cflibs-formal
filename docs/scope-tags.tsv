@@ -118,6 +118,7 @@ MultiSpecies.lean	speciesComposition_sum_one	EXACT	Ciucci 1999
 MultiSpecies.lean	speciesComposition_mem_stdSimplex	EXACT	Ciucci 1999
 MultiSpecies.lean	deNormalized_lineIntensity	EXACT	Ciucci 1999
 MultiSpecies.lean	density_ratio_from_intensities	EXACT	Ciucci 1999
+MultiSpecies.lean	lineIntensityPerU	REDUCED	Ciucci 1999
 MultiSpecies.lean	deNormalizedDensity_eq_deNormalizedDensityPerU	PURE-MATH	—
 MultiSpecies.lean	lineIntensity_eq_lineIntensityPerU	PURE-MATH	—
 MultiSpecies.lean	deNormalized_lineIntensity_perU	EXACT	Ciucci 1999
@@ -210,6 +211,8 @@ SelfAbsorptionInverse.lean	thick_density_identifiability	EXACT	Bulajic 2002
 SelfAbsorptionInverse.lean	thick_composition_identifiability	EXACT	Bulajic 2002
 SelfAbsorptionInverse.lean	selfAbsorption_breaks_identifiability	EXACT	Bulajic 2002
 SelfAbsorptionInverse.lean	selfAbsorption_breaks_composition_identifiability	EXACT	Bulajic 2002
+CurveOfGrowth.lean	cogIntensity	APPROXIMATION	Gornushkin 1999
+CurveOfGrowth.lean	cogRatio	APPROXIMATION	Gornushkin 1999
 CurveOfGrowth.lean	cogIntensity_slab_eq	PURE-MATH	—
 CurveOfGrowth.lean	cogIntensity_strictMono	REDUCED	Cristoforetti–Tognoni 2013
 CurveOfGrowth.lean	cogIntensity_injective	REDUCED	Cristoforetti–Tognoni 2013
@@ -322,13 +325,14 @@ Alt/CSigma.lean	csigma_temperature_cross_stage	EXACT	Aguilera & Aragón 2007
 Alt/CSigma.lean	csigma_universal_line	EXACT	Aragón & Aguilera 2014
 Alt/CSigma.lean	csigma_universal_indep_species	EXACT	Aragón & Aguilera 2014
 Alt/CSigma.lean	csigma_saha_universal_line	EXACT	Aguilera & Aragón 2007
-Alt/CSigmaCurveOfGrowth.lean	csigma_curve_of_growth_droop	APPROXIMATION	Aragón & Aguilera 2014
-Alt/CSigmaCurveOfGrowth.lean	csigma_curve_of_growth_thin	APPROXIMATION	Aragón & Aguilera 2014
-Alt/CSigmaCurveOfGrowth.lean	csigma_curve_of_growth_le	APPROXIMATION	Aragón & Aguilera 2014
-Alt/CSigmaCurveOfGrowth.lean	csigma_curve_of_growth_lt	APPROXIMATION	Aragón & Aguilera 2014
-Alt/CSigmaCurveOfGrowth.lean	csigma_curve_of_growth_tendsto_universal	APPROXIMATION	Aragón & Aguilera 2014
-Alt/CSigmaCurveOfGrowth.lean	csigma_curve_of_growth_strictAntiOn	APPROXIMATION	Aragón & Aguilera 2014
-Alt/CSigmaCurveOfGrowth.lean	csigma_curve_of_growth_density_droop	APPROXIMATION	Aragón & Aguilera 2014
+Alt/CSigmaCurveOfGrowth.lean	csigmaOpticalDepth	REDUCED	Aragón & Aguilera 2014
+Alt/CSigmaCurveOfGrowth.lean	csigma_curve_of_growth_droop	EXACT	Aragón & Aguilera 2014
+Alt/CSigmaCurveOfGrowth.lean	csigma_curve_of_growth_thin	EXACT	Aragón & Aguilera 2014
+Alt/CSigmaCurveOfGrowth.lean	csigma_curve_of_growth_le	EXACT	Aragón & Aguilera 2014
+Alt/CSigmaCurveOfGrowth.lean	csigma_curve_of_growth_lt	EXACT	Aragón & Aguilera 2014
+Alt/CSigmaCurveOfGrowth.lean	csigma_curve_of_growth_tendsto_universal	EXACT	Aragón & Aguilera 2014
+Alt/CSigmaCurveOfGrowth.lean	csigma_curve_of_growth_strictAntiOn	EXACT	Aragón & Aguilera 2014
+Alt/CSigmaCurveOfGrowth.lean	csigma_curve_of_growth_density_droop	EXACT	Aragón & Aguilera 2014
 Alt/LeastSquares.lean	olsIntercept_of_forward	REDUCED	Ciucci 1999
 Alt/LeastSquares.lean	olsDensity_recovers	REDUCED	Ciucci 1999
 Alt/LeastSquares.lean	olsBoltzmann_forward_feasible	REDUCED	Tognoni 2010
@@ -384,15 +388,15 @@ NonLTEKinetics.lean	nonlte_temp_error_uniform	REDUCED	Cristoforetti 2010
 Alt/OLSVariance.lean	olsSlope_estimator_eq	PURE-MATH	—
 Alt/OLSVariance.lean	expectation_const_add_weightedNoise	PURE-MATH	—
 Alt/OLSVariance.lean	variance_const_add_weightedNoise	PURE-MATH	—
-Alt/OLSVariance.lean	olsSlope_unbiased	REDUCED	Aitken 1935
-Alt/OLSVariance.lean	olsSlope_variance_noiseGain	EXACT	Aitken 1935
-Alt/OLSVariance.lean	olsSlope_variance_eq	EXACT	Aitken 1935
-Alt/OLSVariance.lean	olsSlope_variance_antitone	EXACT	Aitken 1935
+Alt/OLSVariance.lean	olsSlope_unbiased	REDUCED	Gauss–Markov
+Alt/OLSVariance.lean	olsSlope_variance_noiseGain	EXACT	Gauss–Markov
+Alt/OLSVariance.lean	olsSlope_variance_eq	EXACT	Gauss–Markov
+Alt/OLSVariance.lean	olsSlope_variance_antitone	EXACT	Gauss–Markov
 Alt/GaussMarkov.lean	linEstimator_eq	PURE-MATH	—
 Alt/GaussMarkov.lean	linEstimator_eq_unbiased	PURE-MATH	—
 Alt/GaussMarkov.lean	linEstimator_expectation	PURE-MATH	—
 Alt/GaussMarkov.lean	linEstimator_unbiased_iff	PURE-MATH	—
-Alt/GaussMarkov.lean	linEstimator_variance	EXACT	Aitken 1935
+Alt/GaussMarkov.lean	linEstimator_variance	EXACT	Gauss–Markov
 Alt/GaussMarkov.lean	weight_sq_ge_noiseGain	PURE-MATH	—
 Alt/GaussMarkov.lean	ols_is_blue	REDUCED	Gauss–Markov
 MatrixEffects.lean	recoveredComposition_sum_one	PURE-MATH	—
@@ -454,17 +458,17 @@ EquivalentWidth.lean	tendsto_integral_g_beta	PURE-MATH	—
 EquivalentWidth.lean	equivWidth_lorentzian_sqrt_sharp	EXACT	Ladenburg–Reiche 1913
 Alt/StochasticBudget.lean	alphaHat_estimator_eq	PURE-MATH	—
 Alt/StochasticBudget.lean	betaHat_memLp_two	PURE-MATH	—
-Alt/StochasticBudget.lean	olsSlope_chebyshev	REDUCED	Aitken 1935
-Alt/StochasticBudget.lean	alphaHat_unbiased	REDUCED	Aitken 1935
-Alt/StochasticBudget.lean	alphaHat_variance_eq	EXACT	Aitken 1935
+Alt/StochasticBudget.lean	olsSlope_chebyshev	REDUCED	Gauss–Markov
+Alt/StochasticBudget.lean	alphaHat_unbiased	REDUCED	Gauss–Markov
+Alt/StochasticBudget.lean	alphaHat_variance_eq	EXACT	Gauss–Markov
 Alt/StochasticBudget.lean	alphaHat_memLp_two	PURE-MATH	—
-Alt/StochasticBudget.lean	alphaHat_chebyshev	REDUCED	Aitken 1935
+Alt/StochasticBudget.lean	alphaHat_chebyshev	REDUCED	Gauss–Markov
 Alt/StochasticBudget.lean	temp_slope_event_subset	PURE-MATH	—
 Alt/StochasticBudget.lean	temp_tail_transfer	REDUCED	Tognoni 2010
 Alt/StochasticBudget.lean	density_event_subset	PURE-MATH	—
 Alt/StochasticBudget.lean	density_tail_species	REDUCED	Tognoni 2010
 Alt/StochasticBudget.lean	composition_tail_union	REDUCED	Tognoni 2010
-Alt/StochasticBudget.lean	olsSlope_subGaussian_tail	REDUCED	Aitken 1935
+Alt/StochasticBudget.lean	olsSlope_subGaussian_tail	REDUCED	—
 Certificates.lean	energySpread_certificate_sound	REDUCED	Tognoni 2010
 Certificates.lean	jointRank_certificate_sound	REDUCED	Aguilera & Aragón 2007
 Certificates.lean	conditioning_certificate_sound	PURE-MATH	—
@@ -583,6 +587,7 @@ StarkOpacityGuard.lean	starkOpacity_certificate_sound	REDUCED	Cristoforetti 2010
 StarkOpacityGuard.lean	starkOpacityLteCert_imp_mcWhirterCert	PURE-MATH	—
 StarkOpacityGuard.lean	stark_lte_gate_sound_of_opticallyThin	REDUCED	Cristoforetti 2010
 OpticalDepth.lean	opticalDepth_eq_linear	PURE-MATH	—
+OpticalDepth.lean	opticalDepth	REDUCED	Gornushkin 1999
 OpticalDepth.lean	opticalDepth_eq_csigma	PURE-MATH	—
 OpticalDepth.lean	effectiveCrossSection_pos	PURE-MATH	—
 OpticalDepth.lean	lteSourceStrength_pos	PURE-MATH	—
@@ -599,6 +604,7 @@ OpticalDepth.lean	thickLineIntensity_injOn	REDUCED	Gornushkin 1999
 OpticalDepth.lean	no_density_alias_of_boundOpticalDepth	REDUCED	Gornushkin 1999
 OpticalDepth.lean	csigma_density_droop_bound	APPROXIMATION	Aragón & Aguilera 2014
 OpticalDepth.lean	csigma_density_injOn	APPROXIMATION	Aragón & Aguilera 2014
+DoubletChannel.lean	doubletRatio	APPROXIMATION	Gornushkin 1999
 DoubletChannel.lean	doubletRatio_eq_cogRatio	PURE-MATH	—
 DoubletChannel.lean	doubletRatio_eq_inv_cogRatio	PURE-MATH	—
 DoubletChannel.lean	doublet_denom_pos	PURE-MATH	—
@@ -758,8 +764,8 @@ HeteroAtomicData.lean	temp_rel_error_atomicData_hetero	REDUCED	Tognoni 2010
 HeteroAtomicData.lean	heteroSlopeBound_lt_global_witness	PURE-MATH	—
 HeteroAtomicData.lean	nvP_heteroSlopeBound_value	PURE-MATH	—
 HeteroAtomicData.lean	nvP_slope_bias_eq_log	EXACT	Tognoni 2010
-Alt/NeutralityScale.lean	neutralityScale_eq_Fcal	EXACT	—
-Alt/NeutralityScale.lean	neutralityScale_undetected	EXACT	—
+Alt/NeutralityScale.lean	neutralityScale_eq_Fcal	EXACT	Ciucci 1999
+Alt/NeutralityScale.lean	neutralityScale_undetected	EXACT	Ciucci 1999
 Alt/NeutralityScale.lean	closureEstimate_bias	EXACT	Tognoni 2010
 Alt/NeutralityScale.lean	lineIntensity_linear	EXACT	Ciucci 1999
 Alt/NeutralityScale.lean	lineIntensity_ratio	EXACT	Ciucci 1999

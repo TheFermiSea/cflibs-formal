@@ -224,12 +224,65 @@ REDUCED in `docs/scope-tags.tsv`, so every result stated over it publishes at mo
 **Choice.** A scope tag answers one of two questions, depending on what the row names.
 
 * A row naming a **definition** that encodes a physical model carries a **model tag**: how
-  faithfully the definition encodes the physics. Initial model rows (2026-09-24):
-  `lineIntensity` REDUCED (the λ-free photon-rate form of §7), `starkFWHM` REDUCED
-  (electron-impact width linear in `n_e`), `PlasmaParams` REDUCED (one shared temperature and one
-  shared level catalog), `voigtFWHM` APPROXIMATION (the Olivero–Longbothum empirical fit),
-  `selfAbsorptionFactor` and `selfAbsorbedIntensity` APPROXIMATION (the flat, line-centre escape
-  factor applied to the frequency-integrated intensity).
+  faithfully the definition encodes the physics. The model rows in `docs/scope-tags.tsv`
+  (2026-09-25; the TSV is authoritative, and `scope-check` prints the count):
+
+  | Module | Definition | Model tag | What the tag records |
+  |---|---|---|---|
+  | `ForwardMap` | `lineIntensity` | REDUCED | the λ-free photon-rate form of §7 |
+  | `MultiSpecies` | `lineIntensityPerU` | REDUCED | the same λ-free form with a per-species `U_s`; its body restates the form without using `lineIntensity`, so it inherits nothing and needs its own row |
+  | `Inverse` | `PlasmaParams` | REDUCED | one shared temperature and one shared level catalog |
+  | `StarkBroadening` | `starkFWHM` | REDUCED | electron-impact width linear in `n_e` |
+  | `SpatialForward` | `chordIntensity` | REDUCED | optically thin chords: shell contributions add with no attenuation |
+  | `ErrorBudget` | `combinedSahaBoltzmannSlope` | REDUCED | single element, one intercept, unit weights, unshifted abscissa, frozen Saha offset |
+  | `VoigtWidth` | `voigtFWHM` | APPROXIMATION | the Olivero–Longbothum empirical fit |
+  | `SelfAbsorption` | `selfAbsorptionFactor`, `selfAbsorbedIntensity` | APPROXIMATION | the flat, line-centre escape factor applied to the frequency-integrated intensity |
+  | `CurveOfGrowth` | `cogIntensity`, `cogRatio` | APPROXIMATION | the same flat kernel `S(1 − e^{−w·n})`, documented as a line intensity and a line-intensity ratio |
+  | `DoubletChannel` | `doubletRatio` | APPROXIMATION | the same flat kernel on both members of a multiplet pair, documented as the measured-intensity ratio |
+  | `OpticalDepth` | `opticalDepth` | REDUCED | `τ = σ₀·ℓ·n_l`: a homogeneous single-temperature column with a flat line-centre cross-section (its docstring's own scope claim) |
+  | `Alt/CSigmaCurveOfGrowth` | `csigmaOpticalDepth` | REDUCED | `τ = σ_ℓ·ℓ·C`: the same homogeneous-column optical depth, with a free cross-section (`OpticalDepth.opticalDepth_eq_csigma`) |
+
+  **Which definitions get a flat-kernel row.** A definition gets model tag APPROXIMATION when it
+  is documented or used as the *frequency-integrated* line intensity with one optical depth for
+  the whole line (the flat kernel). Definitions that are frequency-resolved (they evaluate the
+  kernel at one frequency, or take the profile or the frequency as an argument) get no row,
+  because at one frequency the formal solution for a homogeneous layer is exact:
+  `SelfAbsorption.slabIntensity` (documented "at one frequency"),
+  `SelfReversal.emergentIntensity`, `OpacityBroadening.emergentProfile`, and
+  `RadiativeTransferDepth.rtEmergent` / `rtFormal`. Tagging `slabIntensity` APPROXIMATION was
+  tried in a scratch run (2026-09-25). It made the exact per-frequency results
+  `rtEmergent_single`, `rtEmergent_uniform` and `rtFormal_const` publish APPROXIMATION, and
+  `rtFormal_sandwich` fail the published-axis check. Definitions built from a tagged definition
+  (`thickLineIntensity`, `thickObserve`, `kOpacOf`, `csigmaSelfAbsorbedUniversalOrdinate`) inherit
+  its tag and need no row. **Known gap:** five `DoubletChannel` theorems state the multiplet pair
+  through `slabIntensity` rather than `doubletRatio`, so they publish REDUCED, not APPROXIMATION.
+  They are `doubletRatio_scale_invariant`, `doublet_fit_unique`,
+  `doublet_identifies_columnDensity_calibration_free`,
+  `inhomogeneous_doublet_admits_exact_homogeneous_fit` and `single_line_tau_alias`. Read at the
+  two line centres they are exact per-frequency statements; for integrated intensities the
+  module's flat-kernel caveat applies.
+
+  A definition that restates a tagged model in its own body, instead of calling the tagged
+  definition, inherits nothing (as `lineIntensityPerU` did before its row). Give such a definition
+  its own row. No gate detects a restatement.
+
+  **Where the approximation lives.** When a theorem is an exact statement about a tagged model,
+  its relation tag is EXACT and the model row carries the approximation into the published tag.
+  For example, the `Alt/CSigmaCurveOfGrowth` droop theorems have relation EXACT and publish
+  APPROXIMATION via `selfAbsorbedIntensity`. A relation tag of APPROXIMATION is for a statement
+  that is itself approximate. It is also for a statement whose approximate model is not a tagged
+  `CflibsFormal` definition in its statement, because no model row would otherwise carry the
+  approximation.
+
+  **Open (2026-09-25):** `OpticalDepth.csigma_density_droop_bound` and `csigma_density_injOn` are
+  the same kind of exact statement, but they keep relation APPROXIMATION for now. Retagging them
+  EXACT does not change their published tag (APPROXIMATION via `selfAbsorbedIntensity`), and
+  `scope-check` accepts it. The module-level `scripts/check-scope-consistency.sh` rejects it,
+  though, with `OpticalDepth -> Certificates -> CurveOfGrowth`. The reason is that the script
+  counts model rows as module tags. `CurveOfGrowth` has APPROXIMATION model rows and no EXACT
+  row, so the script reads it as an "APPROXIMATION-only" module. That is a false positive under
+  the two axes. Resolving it needs a decision on the
+  module-level script, for example reading `docs/scope-published.tsv` on the importer side.
 * A row naming a **theorem** carries a **relation tag**: how exactly the theorem holds for the
   model it is stated over. EXACT = an exact theorem about that model; REDUCED = exact only after a
   stated reduction; APPROXIMATION = the statement itself is approximate; PURE-MATH = no physics
@@ -244,11 +297,29 @@ a weaker model.
 
 **Tooling.** The published tag needs the kernel environment, so `lake exe scope-check --write`
 computes it into `docs/scope-published.tsv`, and `scripts/gen-docs.sh` renders both tags in
-`docs/theorem-catalog.md` (`own → published` when they differ). `scope-check` fails on a row that
-does not resolve to exactly one declaration of its module, on a duplicate row, on a laundered
-model row, on a stale `docs/scope-published.tsv`, and when a theorem whose *published* tag is EXACT
-transitively uses a theorem published APPROXIMATION or a definition whose model tag is
-APPROXIMATION.
+`docs/theorem-catalog.md` (`own → published` when they differ). Run `scope-check --write` first,
+then `gen-docs.sh`. `scope-check` fails in these cases:
+
+* a row does not resolve to exactly one declaration of its module;
+* a row is a duplicate, or is malformed;
+* a model row is laundered, i.e. stronger than the models its definition is built from;
+* `docs/scope-published.tsv` is stale;
+* the **EXACT-uses-APPROXIMATION** rule is broken on either axis. The check is transitive and at
+  the constant level, through statements, proofs and definition bodies:
+  * **own axis:** a theorem whose *own* (relation) tag is EXACT uses a theorem whose own tag is
+    APPROXIMATION. Model tags do not enter this check. An exact statement about an APPROXIMATION
+    model is what the two axes allow, and the published axis reports it.
+  * **published axis:** a theorem whose *published* tag is EXACT uses a theorem published
+    APPROXIMATION, or a definition whose model tag is APPROXIMATION.
+
+  The own axis covers every relation-EXACT theorem, including those that publish REDUCED through
+  a model row. The published axis alone would miss those. `scope-check` prints how many theorems
+  each axis checked.
+
+`scope-check` also prints an **advisory** list, which never fails the gate: PURE-MATH theorems
+whose statement uses an APPROXIMATION model. The PURE-MATH exemption lets such a theorem publish
+PURE-MATH, so each one should be confirmed to be pure math (an identity or analytic fact about
+the function) rather than a physics claim that escaped its model tag.
 
 **How to read a tag.** Quote the published tag when describing what the repo establishes about
 the physics. The relation tag says only how the theorem relates to its model: `voigtFWHM_ge_gauss`

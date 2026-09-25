@@ -200,7 +200,9 @@ lies exactly on the line `−E_k/(k_B T) + log(Fcal·N/U)`, so the projection in
 the identifiable inverse (`olsSlope = −1/(k_B T)`, `olsIntercept = log(Fcal·N/U)`, cf.
 `olsIntercept_of_forward`) and the fit is `LeastSquaresFeasible` at every tolerance `ε ≥ 0`. This
 is the on-manifold anchor of the projection inverse (`LeastSquaresFit.ols_minimizer_eq_inverse`):
-it is precisely why the OLS estimator is `Sound` on the noise-free fixpoint (`leastSquares_sound`).
+it is why the OLS estimator recovers the true composition on the noise-free fixpoint
+(`leastSquares_sound`). That is agreement on the forward image, not an instance of the
+`Inverse.Sound` contract (see `Inverse.lean`).
 Off the fixpoint the residual is positive and quantifies the model/measurement mismatch, which is
 what the strict-mode feasibility gate tests. -/
 theorem olsBoltzmann_forward_feasible [Nonempty ι] {kB T N Fcal : ℝ} {g E A : ι → ℝ}

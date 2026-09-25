@@ -123,20 +123,25 @@ a factor near 2×10³; at `ε = 1 %` in [8000, 12000] K the channel is 83.1 wher
 form gives 0.040.
 
 The full grid is `ε ∈ {0.5, 1, 2, 5} %` over the boxes [8000, 12000] and [9000, 11000] K; the
-table shows three of its cells. Every cell with the full level lists is above 1. Both the Fe and
-the Ni bound fall below 1 only when the level lists are truncated to `E ≤ 1 eV` and `ε ≤ 2 %`
+table shows three of its cells. Every cell with the full level lists is above 1. The Fe and Ni
+bounds are both below 1 only when the level lists are truncated to `E ≤ 1 eV` and `ε ≤ 2 %`
 (for example Ni 0.040 and Fe 0.093 at 0.5 % in [9000, 11000] K; Ni 0.28 and Fe 0.65 at 2 % in
 [8000, 12000] K; at 5 % the Fe bound stays at 1.23–2.31). Such a list is not the atom's
 partition function, so the bound is not informative for the physical `U` at realistic noise.
-With a 3 eV truncation only the Ni bound falls below 1, in three cells (smallest 0.47, at 0.5 %
-in [9000, 11000] K); the Fe bound never does (smallest 1.09).
+With a 3 eV truncation only the Ni bound falls below 1, in three of the eight cells (0.95 at 1 %
+in [9000, 11000] K; 0.71 and 0.47 at 0.5 % in [8000, 12000] and [9000, 11000] K); the Fe bound
+never does (smallest 1.09). `Certificates` states the same condition.
 
-The composition leg is also abundance-blind. It turns the per-species *relative* envelope `Φ`
-into one *absolute* tolerance `Nmax·Φ`, so for a minor species the bound can exceed that
-species' own fraction. The audit's finding LIT-05 shows this for the same absolute-tolerance
-form of `CompositionRobustness.composition_abs_sub_le_bound`: for `N = (0.995, 0.005)` and a 5 %
-relative density error, the minor species' true worst-case `|ΔC|` is 5.2e-4, while the bound
-is 0.0557 (with `Ŝ = 0.95`, both species read 5 % low).
+The composition leg is also abundance-blind (audit finding LIT-05). It turns the per-species
+*relative* envelope `Φ` into one *absolute* tolerance `Nmax·Φ`, so for a minor species the bound
+can exceed that species' own fraction. One scenario, recomputed for this note:
+`N = (0.995, 0.005)` (`S = 1`), every recovered density within `Φ = 5 %` of its true value, so
+the tolerance is `Nmax·Φ = 0.04975`. Over all such `N̂` the minor species' error is largest with
+the major 5 % low and the minor 5 % high: `Ŝ = 0.9505`, `|ΔC| = 0.00525/0.9505 − 0.005 = 5.23e-4`.
+At that same `N̂`, `compositionErrorBound` gives
+`0.04975/0.9505 + (0.005/0.9505)·2·0.04975 = 0.05234 + 0.00052 = 0.0529`: 101 times the error and
+10.6 times the minor fraction itself. A relative bound `2Φ/(1 − Φ)·C_s = 5.26e-4` would be nearly
+tight (hand algebra; not in the library).
 
 No witness below exercises the headline with a nonzero composition error (audit U-13). A tighter
 partition-function leg (the mean-excitation-energy, log-derivative bound) and a relative,

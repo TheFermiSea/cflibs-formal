@@ -54,7 +54,13 @@ case "${1:-}" in
   "")
     echo "usage: $0 --changed <git-base> | --all | <Module>..." >&2; exit 2 ;;
   *)
-    mods=("$@") ;;
+    # Split every argument on whitespace, so a newline- or space-separated list passed as ONE
+    # argument (e.g. "$(git diff --name-only ... | ...)") is counted and replayed per module.
+    # Before this, such a list printed one `ok` line per module but a summary of "1 module(s)".
+    for a in "$@"; do
+      read -r -d '' -a parts <<< "$a" || true
+      mods+=("${parts[@]}")
+    done ;;
 esac
 
 if [ "${#mods[@]}" -eq 0 ]; then

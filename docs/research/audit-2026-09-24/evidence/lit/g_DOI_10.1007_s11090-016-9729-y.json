@@ -1,0 +1,41 @@
+{
+  "paperId": "fc6f2f42fa71ca7a826d40ecee606958fb3c6b5e",
+  "externalIds": {
+    "MAG": "2496243424",
+    "DOI": "10.1007/s11090-016-9729-y",
+    "CorpusId": 100571046
+  },
+  "title": "A Comparative Study of Calibration Free Methods for the Elemental Analysis by Laser Induced Breakdown Spectroscopy",
+  "venue": "Plasma chemistry and plasma processing",
+  "year": 2016,
+  "openAccessPdf": {
+    "url": "",
+    "status": "CLOSED",
+    "license": null,
+    "disclaimer": "Notice: The following paper fields have been elided by the publisher: {'abstract'}. Paper or abstract available at https://api.unpaywall.org/v2/10.1007/s11090-016-9729-y?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.1007/s11090-016-9729-y, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+  },
+  "journal": {
+    "name": "Plasma Chemistry and Plasma Processing",
+    "pages": "1287-1299",
+    "volume": "36"
+  },
+  "authors": [
+    {
+      "authorId": "92868761",
+      "name": "Qaswer Abbass"
+    },
+    {
+      "authorId": "97327687",
+      "name": "Nasar Ahmed"
+    },
+    {
+      "authorId": "49580248",
+      "name": "R. Ahmed"
+    },
+    {
+      "authorId": "152999442",
+      "name": "M. A. Baig"
+    }
+  ],
+  "abstract": null
+}

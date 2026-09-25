@@ -64,9 +64,12 @@ than the certificate names suggest (deep audit 2026-09-24, ledger U-04):
 
 No conjunction of these certificates gives an informative composition-error bound at realistic
 parameters. The one composed chain (`EvaluatorSoundness`, via `noise_to_composition`) gives
-composition bounds of 26 to 1.4·10³ at 0.5–5 % noise on NIST Fe/Cr/Ni level lists, where a
-fraction error is at most 1. In that test it falls below 1 only when the level lists are truncated
-to levels at or below 1 eV (audit finding U-01).
+composition bounds of 26 to 1.4·10³ at 0.5–5 % noise on the full NIST Fe/Cr/Ni level lists, where
+a fraction error is at most 1 (audit finding U-01). On that test's grid (`ε` of 0.5, 1, 2 and 5 %;
+boxes [8000, 12000] and [9000, 11000] K) the Fe and Ni bounds are both below 1 only when the level
+lists are truncated to `E ≤ 1 eV` and `ε ≤ 2 %`. With a 3 eV truncation only the Ni bound falls
+below 1, in three of the eight cells, and the Fe bound never does (`NoiseToComposition`,
+*Non-vacuity range*, from a re-run of the U-01 script).
 
 ## Honest scope
 
@@ -503,7 +506,8 @@ curve-of-growth ratio `(1 − e^{−w₁ n})/(1 − e^{−w₂ n})` is injective
 `n > 0`, so `n` is determined by the ratio alone. The single-line failure mode is
 `CflibsFormal.selfAbsorption_breaks_identifiability`.
 
-Scope (REDUCED; audit findings U-06, LF-04, LF-08):
+Scope (relation REDUCED; published APPROXIMATION via the `cogRatio` model row,
+`docs/conventions.md` §8; audit findings U-06, LF-04, LF-08):
 * `w₁`, `w₂` are per-line opacity coefficients (`τ = w·n`, proportional to oscillator strength),
   not line widths.
 * The ratio model assumes the two lines share one source term and one lower-level column `n`.
@@ -511,8 +515,9 @@ Scope (REDUCED; audit findings U-06, LF-04, LF-08):
   their ratio is given by `CflibsFormal.lteSourceStrength_ratio_calibration_free` and is not 1
   in general. The Prop encodes neither condition.
 * Injectivity is a property of the flat kernel `1 − e^{−w n}`. For a profile-resolved (Voigt)
-  curve of growth of Stark-broadened lines (`γ/σ ≳ 0.1`) the pair ratio is non-monotone within
-  `τ ≤ 30`, though with small amplitude, so conditioning is the practical issue there.
+  curve of growth of Stark-broadened lines the audit's probes (γ/σ = 0.1, 0.3, 0.93; no larger
+  γ/σ probed) found the pair ratio non-monotone within line-centre depths `≤ 30`, rising about
+  0.4–1.6% past its minimum, so conditioning is the practical issue there.
 * `n` is one species' column density, not a relative composition.
 
 The dossier's C13 disjunction also had a `τ`-known branch, C12, which carries no information
@@ -526,8 +531,9 @@ def saDistinctCert (w₁ w₂ : ℝ) : Prop := 0 < w₂ ∧ w₂ < w₁
 /-- **C13 soundness: flat-kernel pair-ratio injectivity** (thin re-export of
 `CflibsFormal.cogRatio_injOn`). Distinct positive opacity coefficients certify that the
 flat-kernel curve-of-growth ratio is injective on `(0, ∞)`, so the shared column density is
-determined by the ratio without knowing the common source scale. REDUCED: flat kernel, one shared
-source term and one shared lower-level column (see the section note). -/
+determined by the ratio without knowing the common source scale. Relation REDUCED (one shared
+source term and one shared lower-level column); publishes APPROXIMATION because `cogRatio` is the
+flat-kernel model (see the section note). -/
 theorem saDistinct_certificate_sound {w₁ w₂ : ℝ} (hcert : saDistinctCert w₁ w₂) :
     Set.InjOn (fun n => cogRatio w₁ w₂ n) (Set.Ioi 0) :=
   cogRatio_injOn hcert.2 hcert.1

@@ -1,0 +1,61 @@
+{
+  "paperId": "5d4fb0b019bcf675575022868a24baa2e0fdd6d7",
+  "externalIds": {
+    "MAG": "2052904492",
+    "DOI": "10.1016/J.SAB.2005.10.011",
+    "CorpusId": 97154194
+  },
+  "title": "Evaluation of self-absorption coefficients of aluminum emission lines in laser-induced breakdown spectroscopy measurements",
+  "venue": "",
+  "year": 2005,
+  "openAccessPdf": {
+    "url": "",
+    "status": "CLOSED",
+    "license": null,
+    "disclaimer": "Notice: The following paper fields have been elided by the publisher: {'abstract'}. Paper or abstract available at https://api.unpaywall.org/v2/10.1016/J.SAB.2005.10.011?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.1016/J.SAB.2005.10.011, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+  },
+  "journal": {
+    "name": "Spectrochimica Acta Part B: Atomic Spectroscopy",
+    "pages": "1573-1579",
+    "volume": "60"
+  },
+  "authors": [
+    {
+      "authorId": null,
+      "name": "A. M. El Sherbini"
+    },
+    {
+      "authorId": null,
+      "name": "Th. M. El Sherbini"
+    },
+    {
+      "authorId": "2128322755",
+      "name": "H. Hegazy"
+    },
+    {
+      "authorId": "144043596",
+      "name": "G. Cristoforetti"
+    },
+    {
+      "authorId": "2315692",
+      "name": "S. Legnaioli"
+    },
+    {
+      "authorId": "2638662",
+      "name": "V. Palleschi"
+    },
+    {
+      "authorId": "1719249",
+      "name": "L. Pardini"
+    },
+    {
+      "authorId": "31203952",
+      "name": "A. Salvetti"
+    },
+    {
+      "authorId": "92372926",
+      "name": "E. Tognoni"
+    }
+  ],
+  "abstract": null
+}

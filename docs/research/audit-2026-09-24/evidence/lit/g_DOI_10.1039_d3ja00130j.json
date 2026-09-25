@@ -1,0 +1,46 @@
+{
+  "paperId": "a00e13a1796021127beb43a61993bf79d122ff96",
+  "externalIds": {
+    "DOI": "10.1039/d3ja00130j",
+    "CorpusId": 259849504
+  },
+  "title": "Catching up on Calibration-Free LIBS",
+  "venue": "Journal of Analytical Atomic Spectrometry",
+  "year": 2023,
+  "openAccessPdf": {
+    "url": "https://pubs.rsc.org/en/content/articlepdf/2023/ja/d3ja00130j",
+    "status": "HYBRID",
+    "license": "CCBYNC",
+    "disclaimer": "Notice: Paper or abstract available at https://api.unpaywall.org/v2/10.1039/d3ja00130j?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.1039/d3ja00130j, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+  },
+  "journal": {
+    "name": "Journal of Analytical Atomic Spectrometry"
+  },
+  "authors": [
+    {
+      "authorId": "14966898",
+      "name": "F. Poggialini"
+    },
+    {
+      "authorId": "13876561",
+      "name": "B. Campanella"
+    },
+    {
+      "authorId": "2267044508",
+      "name": "B. Cocciaro"
+    },
+    {
+      "authorId": "2906844",
+      "name": "G. Lorenzetti"
+    },
+    {
+      "authorId": "2638662",
+      "name": "V. Palleschi"
+    },
+    {
+      "authorId": "2315692",
+      "name": "S. Legnaioli"
+    }
+  ],
+  "abstract": "This review paper will present and critically discuss the evolution of the Calibration-Free LIBS (CF-LIBS) method and some of its new applications that appeared since the last extensive review on..."
+}

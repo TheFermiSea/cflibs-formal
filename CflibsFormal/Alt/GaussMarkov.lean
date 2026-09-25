@@ -9,15 +9,13 @@ import CflibsFormal.Alt.OLSVariance
 /-!
 # CF-LIBS formalization — Gauss–Markov optimality (BLUE) for the OLS Boltzmann-plot slope
 
-`Alt.OLSVariance` proves the *value* of the OLS slope variance, `Var(β̂) = σ²/SS_E`, but its
-honest-scope docstring explicitly **does not claim optimality**: "we prove the variance value and
-unbiasedness only — NOT that OLS is the minimum-variance estimator among linear unbiased
-estimators (the full Gauss–Markov/Aitken optimality theorem)." **This module discharges the
-homoscedastic (Gauss–Markov) half of that promise**: when every ordinate carries the same noise
-variance `σ²`, among *all* linear unbiased estimators of the slope OLS has the least variance —
-it is the Best Linear Unbiased Estimator (BLUE). The Aitken half — unequal or correlated noise,
-where the BLUE is the weighted (generalized) least-squares estimator and OLS is in general not
-BLUE — is **not** proved here.
+`Alt.OLSVariance` proves the *value* of the OLS slope variance, `Var(β̂) = σ²/SS_E`, and
+unbiasedness, but not optimality. **This module proves the homoscedastic (Gauss–Markov)
+optimality**: when every ordinate carries the same noise variance `σ²`, among *all* linear
+unbiased estimators of the slope OLS has the least variance — it is the Best Linear Unbiased
+Estimator (BLUE). Aitken's generalization — unequal or correlated noise, where the BLUE is the
+weighted (generalized) least-squares estimator and OLS is in general not BLUE — is **not** proved
+here.
 
 A **general linear estimator** of the ordinates is `Tₐ(ω) = ∑ₖ aₖ·yₖ(ω)` for weights `a : ι → ℝ`,
 under the same linear model `yₖ(ω) = α + β·Eₖ + εₖ(ω)` as `Alt.OLSVariance`. We prove:
@@ -148,7 +146,9 @@ theorem linEstimator_unbiased_iff (a E : ι → ℝ) (ε : ι → Ω → ℝ)
   · rintro ⟨ha0, ha1⟩ α β
     rw [linEstimator_expectation a E α β ε hL2 hmean0, ha0, ha1]; ring
 
-/-- **Variance of a general linear estimator** `Var(Tₐ) = σ²·∑ₖaₖ²`. Strip the constant
+/-- **Variance of a general linear estimator** `Var(Tₐ) = σ²·∑ₖaₖ²`, under pairwise-uncorrelated
+noise with one common variance `σ²` on every line (`hhom`): the Gauss–Markov error model, not
+Aitken's weighted one. Strip the constant
 deterministic part (`variance_const_add`), expand the weighted-noise sum's variance into its
 double-covariance form (`variance_sum`), pull each weight out (`covariance_const_mul`), and read
 the diagonal `aₖ²σ²` after uncorrelatedness annihilates the off-diagonal. The arbitrary-weight

@@ -50,13 +50,17 @@ argument, proved beside the other `selfAbsorptionFactor_*` lemmas).
 FACTOR inherited from the radiative-transfer slab kernel `SelfAbsorption.slabIntensity`. It is
 exact for a rectangular profile or at one frequency; applied to the integrated intensity of a
 peaked line it understates the escaping fraction, so the droop `ln SA(τ)` is overstated (see the
-scope block of `SelfAbsorption`). `selfAbsorptionFactor` carries the model tag APPROXIMATION,
-so every theorem here publishes APPROXIMATION. It is NOT the full profile-integrated
-Aragón–Aguilera curve of growth: the slope-1 → slope-½ Lorentz-wing knee (Rezaei 2016, Eqs. 29–31,
-the `√x` asymptote) is OUT OF SCOPE, as are the Voigt `τ(ν)`, inversion of `(C, σ_ℓ)` from a
-measured curve, and multi-element pooled fits. Each curve-of-growth-shape theorem below repeats
-this qualifier. Each theorem is an exact statement about the flat-profile model; the
-approximation is in the model.
+scope block of `SelfAbsorption`). It is NOT the full profile-integrated Aragón–Aguilera curve
+of growth: the slope-1 → slope-½ Lorentz-wing knee (Rezaei 2016, Eqs. 29–31, the `√x`
+asymptote) is OUT OF SCOPE, as are the Voigt `τ(ν)`, inversion of `(C, σ_ℓ)` from a measured
+curve, and multi-element pooled fits. Each curve-of-growth-shape theorem below repeats this
+qualifier.
+
+**Tags (two axes, `docs/conventions.md` §8).** Each theorem is an exact statement about the
+flat-profile model, so its own (relation) tag is EXACT; the approximation is in the model.
+`selfAbsorbedIntensity` and `selfAbsorptionFactor` carry the model tag APPROXIMATION, and every
+theorem here is stated over `selfAbsorbedIntensity` (through
+`csigmaSelfAbsorbedUniversalOrdinate`), so every theorem publishes APPROXIMATION.
 
 ## Literature
 
@@ -122,9 +126,11 @@ This is a legitimate but mathematically shallow bridge — `csigma_universal_lin
 strict/shape droop theorems (`csigma_curve_of_growth_lt`, `…_strictAntiOn`, `…_density_droop`),
 powered by the escape-factor monotonicity `SelfAbsorption.selfAbsorptionFactor_strictAntiOn`.
 
-APPROXIMATION: exact for the flat-profile escape factor `SA(τ) = (1 − exp(−τ))/τ`, which only
-approximates the Aragón–Aguilera Cσ curve of growth (for a peaked profile it overstates the
-droop); the profile-integrated slope-½ Lorentz wing is out of scope. -/
+Relation EXACT: an exact identity for the flat-profile escape factor
+`SA(τ) = (1 − exp(−τ))/τ`. Publishes APPROXIMATION via `selfAbsorbedIntensity` and
+`selfAbsorptionFactor`, because that model only approximates the Aragón–Aguilera Cσ curve of
+growth (for a peaked profile it overstates the droop); the profile-integrated slope-½ Lorentz
+wing is out of scope. -/
 theorem csigma_curve_of_growth_droop [Nonempty ι] {kB T N Fcal : ℝ} {g E A : ι → ℝ}
     (hg : ∀ k, 0 < g k) (hN : 0 < N) (hFcal : 0 < Fcal) (hA : ∀ k, 0 < A k) (k : ι)
     {tau : ℝ} (htau : 0 ≤ tau) :
@@ -147,9 +153,10 @@ exactly the optically-thin universal-line value `ln F − E_k/(k_B T)`: `SA(0) =
 droop term `ln SA(0) = 0` vanishes. The thick model continuously recovers
 `csigma_universal_line`.
 
-APPROXIMATION: exact for the flat-profile (escape-factor) model, which only approximates the
-Aragón–Aguilera Cσ curve of growth (for a peaked profile it overstates the droop); the
-profile-integrated slope-½ Lorentz wing is out of scope. -/
+Relation EXACT: exact for the flat-profile (escape-factor) model. Publishes APPROXIMATION via
+`selfAbsorbedIntensity`, because that model only approximates the Aragón–Aguilera Cσ curve of
+growth (for a peaked profile it overstates the droop); the profile-integrated slope-½ Lorentz
+wing is out of scope. -/
 theorem csigma_curve_of_growth_thin [Nonempty ι] {kB T N Fcal : ℝ} {g E A : ι → ℝ}
     (hg : ∀ k, 0 < g k) (hN : 0 < N) (hFcal : 0 < Fcal) (hA : ∀ k, 0 < A k) (k : ι) :
     csigmaSelfAbsorbedUniversalOrdinate kB T N Fcal g E A k 0
@@ -159,11 +166,13 @@ theorem csigma_curve_of_growth_thin [Nonempty ι] {kB T N Fcal : ℝ} {g E A : �
 
 /-- **The droop is downward (non-strict).** For any `τ ≥ 0` the concentration-normalized
 measured ordinate lies AT OR BELOW the universal line `ln F − E_k/(k_B T)`: self-absorption
-only dims, so `ln SA(τ) ≤ 0`. Neglecting it biases the inferred composition downward.
+only dims, so `ln SA(τ) ≤ 0`. Neglecting it would bias a composition read off the universal
+line downward (an interpretation; that inference is not formalized here).
 
-APPROXIMATION: exact for the flat-profile (escape-factor) model, which only approximates the
-Aragón–Aguilera Cσ curve of growth (for a peaked profile it overstates the droop); the
-profile-integrated slope-½ Lorentz wing is out of scope. -/
+Relation EXACT: exact for the flat-profile (escape-factor) model. Publishes APPROXIMATION via
+`selfAbsorbedIntensity`, because that model only approximates the Aragón–Aguilera Cσ curve of
+growth (for a peaked profile it overstates the droop); the profile-integrated slope-½ Lorentz
+wing is out of scope. -/
 theorem csigma_curve_of_growth_le [Nonempty ι] {kB T N Fcal : ℝ} {g E A : ι → ℝ}
     (hg : ∀ k, 0 < g k) (hN : 0 < N) (hFcal : 0 < Fcal) (hA : ∀ k, 0 < A k) (k : ι)
     {tau : ℝ} (htau : 0 ≤ tau) :
@@ -180,9 +189,10 @@ nonzero optical depth, the measured ordinate is STRICTLY below the universal lin
 sign of the escape factor (the deep monotone version is
 `csigma_curve_of_growth_strictAntiOn`).
 
-APPROXIMATION: exact for the flat-profile (escape-factor) model, which only approximates the
-Aragón–Aguilera Cσ curve of growth (for a peaked profile it overstates the droop); the
-profile-integrated slope-½ Lorentz wing is out of scope. -/
+Relation EXACT: exact for the flat-profile (escape-factor) model. Publishes APPROXIMATION via
+`selfAbsorbedIntensity`, because that model only approximates the Aragón–Aguilera Cσ curve of
+growth (for a peaked profile it overstates the droop); the profile-integrated slope-½ Lorentz
+wing is out of scope. -/
 theorem csigma_curve_of_growth_lt [Nonempty ι] {kB T N Fcal : ℝ} {g E A : ι → ℝ}
     (hg : ∀ k, 0 < g k) (hN : 0 < N) (hFcal : 0 < Fcal) (hA : ∀ k, 0 < A k) (k : ι)
     {tau : ℝ} (htau : 0 < tau) :
@@ -203,9 +213,10 @@ universal-line value `ln F − E_k/(k_B T)` as the optical depth shrinks to zero
 curve of growth meets the optically-thin universal line in the limit. Routes through
 `selfAbsorptionFactor_tendsto_one` and continuity of `Real.log` at `1`.
 
-APPROXIMATION: exact for the flat-profile (escape-factor) model, which only approximates the
-Aragón–Aguilera Cσ curve of growth (for a peaked profile it overstates the droop); the
-profile-integrated slope-½ Lorentz wing is out of scope. -/
+Relation EXACT: exact for the flat-profile (escape-factor) model. Publishes APPROXIMATION via
+`selfAbsorbedIntensity`, because that model only approximates the Aragón–Aguilera Cσ curve of
+growth (for a peaked profile it overstates the droop); the profile-integrated slope-½ Lorentz
+wing is out of scope. -/
 theorem csigma_curve_of_growth_tendsto_universal [Nonempty ι] {kB T N Fcal : ℝ}
     {g E A : ι → ℝ} (hg : ∀ k, 0 < g k) (hN : 0 < N) (hFcal : 0 < Fcal) (hA : ∀ k, 0 < A k)
     (k : ι) :
@@ -227,10 +238,11 @@ optical depth means a strictly deeper droop below the universal line. Reduces to
 `selfAbsorptionFactor_strictAntiOn` through the droop identity and strict monotonicity of
 `Real.log`. This is the shape statement of the Cσ curve of growth.
 
-APPROXIMATION: exact for the flat-profile (escape-factor) model, which only approximates the
-Aragón–Aguilera Cσ curve of growth (for a peaked profile it overstates the droop); the
-profile-integrated slope-½ Lorentz wing (the slope-1 → slope-½ knee) is out of scope — only
-the strict monotone descent of the escape-factor branch is proved. -/
+Relation EXACT: exact for the flat-profile (escape-factor) model. Publishes APPROXIMATION via
+`selfAbsorbedIntensity`, because that model only approximates the Aragón–Aguilera Cσ curve of
+growth (for a peaked profile it overstates the droop); the profile-integrated slope-½ Lorentz
+wing (the slope-1 → slope-½ knee) is out of scope — only the strict monotone descent of the
+escape-factor branch is proved. -/
 theorem csigma_curve_of_growth_strictAntiOn [Nonempty ι] {kB T N Fcal : ℝ} {g E A : ι → ℝ}
     (hg : ∀ k, 0 < g k) (hN : 0 < N) (hFcal : 0 < Fcal) (hA : ∀ k, 0 < A k) (k : ι) :
     StrictAntiOn (fun tau => csigmaSelfAbsorbedUniversalOrdinate kB T N Fcal g E A k tau)
@@ -259,9 +271,10 @@ module's one-temperature, homogeneous-plasma model). Proved by the same mechanis
 as `csigma_curve_of_growth_strictAntiOn` — the droop identity cancels the direct `N`-dependence,
 leaving the escape-factor descent — composed with `τ = σ_ℓ ℓ N` strictly increasing in `N`.
 
-APPROXIMATION: exact for the flat-profile (escape-factor) model, which only approximates the
-Aragón–Aguilera Cσ curve of growth (for a peaked profile it overstates the droop); the
-profile-integrated slope-½ Lorentz wing is out of scope. -/
+Relation EXACT: exact for the flat-profile (escape-factor) model. Publishes APPROXIMATION via
+`selfAbsorbedIntensity`, because that model only approximates the Aragón–Aguilera Cσ curve of
+growth (for a peaked profile it overstates the droop); the profile-integrated slope-½ Lorentz
+wing is out of scope. -/
 theorem csigma_curve_of_growth_density_droop [Nonempty ι] {kB T Fcal sigmaL ell : ℝ}
     {g E A : ι → ℝ} (hg : ∀ k, 0 < g k) (hFcal : 0 < Fcal) (hA : ∀ k, 0 < A k)
     (hsig : 0 < sigmaL) (hell : 0 < ell) (k : ι) :

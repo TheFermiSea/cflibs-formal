@@ -46,8 +46,8 @@ for a central dip. Neither half below is formalized here.
 
 * *Necessary* (for `S_core ≥ 0` and depths that peak at line center): if the condition fails at
   the center, then at every wavelength where both depths are no larger, the intensity is no larger
-  than at the center, so the center is not a minimum. This follows from the rewriting
-  `I = S_shell + (S_core(1 − e^{−τc}) − S_shell)·e^{−τs}`.
+  than at the center, so the center is not a strict minimum (no dip). This follows from the
+  rewriting `I = S_shell + (S_core(1 − e^{−τc}) − S_shell)·e^{−τs}`.
 * *Not sufficient*: let both zones share one profile `ψ ≤ 1` (`τc = a·ψ`, `τs = b·ψ`). Then
   `dI/dψ = e^{−bψ}·[S_core·a·e^{−aψ} − b·(S_core(1 − e^{−aψ}) − S_shell)]`. The center (`ψ = 1`)
   is a dip when `b·(S_core(1 − e^{−a}) − S_shell) > S_core·a·e^{−a}` and is not one when the

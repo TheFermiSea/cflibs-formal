@@ -96,10 +96,12 @@ Further honest scope caveats:
   `doubletRatio_injOn` and every uniqueness result built on it (`doubletRatio_determines_tau`,
   `doublet_determines_columnDensity`, `doublet_identifies_columnDensity_calibration_free`,
   `doublet_fit_unique`), is a property of this kernel. For the profile-resolved Voigt curve of
-  growth the pair ratio is non-monotone inside line-centre depths `≤ 30` for Stark-affected
-  lines (`γ/σ ≳ 0.1`), though that second branch spans under 1% of the ratio; for pure Doppler
-  and `γ/σ = 0.01` profiles it stays monotone there (numerical probes, `r = 2`,
-  `docs/research/audit-2026-09-24`; not a theorem here; see `CurveOfGrowth`'s scope block).
+  growth the pair ratio is non-monotone inside line-centre depths `≤ 30` for each
+  Stark-affected profile probed (`γ/σ = 0.1, 0.3, 0.93`; no larger `γ/σ` was probed), though
+  past its minimum it rises by only about 0.4–1.6% of the minimum value within that range; for
+  pure Doppler and `γ/σ = 0.01` profiles it stays monotone there (numerical probes, `r = 2`,
+  `docs/research/audit-2026-09-24`; not a theorem here; see `CurveOfGrowth`'s scope block for
+  the conventions and the per-probe values).
 
 ## Literature and scope
 
@@ -127,9 +129,12 @@ Further honest scope caveats:
   `Alt/CSigma.lean`. The scope-tag rows for this module therefore cite Gornushkin 1999 for
   the curve-of-growth kernel rather than reusing that string.
 
-Everything is dimensionless `ℝ`. Results are tagged **REDUCED** where they depend on the
-homogeneous-slab, flat-profile kernel and the shared-`F` / proportional-`τ` multiplet
-idealization, and **PURE-MATH** where they are pure algebra or analysis.
+Everything is dimensionless `ℝ`. Relation tags (`docs/conventions.md` §8): results that depend
+on the homogeneous-slab, flat-profile kernel and the shared-`F` / proportional-`τ` multiplet
+idealization carry relation **REDUCED**, and pure algebra or analysis carries **PURE-MATH**. The
+published scope is the weaker of the relation tag and the model tags of the definitions a
+statement uses: `doubletRatio` and the flat kernel carry the model tag APPROXIMATION, so results
+stated through them publish APPROXIMATION (see `docs/scope-published.tsv`).
 -/
 
 namespace CflibsFormal
@@ -259,8 +264,9 @@ members — distinct positive optical depths give distinct doublet ratios. This 
 identifiability statement: the second observable removes the one-line `N`–`τ` alias.
 
 Flat kernel only: the injectivity is a property of the rectangular-profile / line-centre kernel
-`1 - exp(-τ)`. For Stark-affected Voigt lines (`γ/σ ≳ 0.1`) the profile-resolved pair ratio is
-non-monotone inside line-centre depths `≤ 30` (audit probes; module scope caveats). -/
+`1 - exp(-τ)`. In the audit probes the profile-resolved Voigt pair ratio is non-monotone inside
+line-centre depths `≤ 30` for the Stark-affected profiles probed (`γ/σ = 0.1, 0.3, 0.93`;
+module scope caveats). -/
 theorem doubletRatio_injOn {r : ℝ} (hr0 : 0 < r) (hr1 : r ≠ 1) :
     Set.InjOn (fun tau => doubletRatio r tau) (Set.Ioi 0) := by
   rcases lt_or_gt_of_ne hr1 with h | h

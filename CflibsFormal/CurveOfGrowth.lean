@@ -62,11 +62,14 @@ kernel is introduced and the optically-thin limit recovers `ForwardMap`.
 * **Pair-ratio injectivity is a flat-kernel property.** `cogRatio_injOn` is a theorem about
   this kernel. For the profile-resolved (Voigt) curve of growth the pair ratio `W(r·n)/W(n)` is
   not monotone in general. In the numerical probes of `docs/research/audit-2026-09-24`
-  (findings LF-04 and RF-03 as narrowed by the verifier; scipy, `r = 2`, not a theorem here),
+  (findings LF-04 and RF-03 as narrowed by the verifier; scipy `voigt_profile` with `γ` the
+  Lorentzian half-width and `σ` the Gaussian standard deviation, `r = 2`; not a theorem here),
   with both line-centre depths `≤ 30` it stays monotone for a pure Doppler profile and for
-  `γ/σ = 0.01`, but has an interior minimum for Stark-affected profiles with `γ/σ ≳ 0.1`. That
-  second branch spans under 1% of the ratio, so in practice the inversion is ill-conditioned
-  there rather than grossly ambiguous.
+  `γ/σ = 0.01`, but has an interior minimum for each Stark-affected profile probed,
+  `γ/σ = 0.1, 0.3, 0.93` (no larger `γ/σ` was probed). Past that minimum, by the time the
+  larger depth reaches 30, the ratio has risen by only about 0.6%, 1.6% and 0.4% of its minimum
+  respectively (the audit's `evidence/verifier/voigt.py`), so the ratio is nearly flat there
+  and the practical problem is ill-conditioning more than exact non-injectivity.
 * **One source for two transitions is an assumption.** The ratio cancels `S` only because both
   lines are given the SAME `S`. Physically the source term is per transition; in the repo's own
   state-bound model the two source strengths differ by a `T`- and atomic-data-dependent factor
@@ -288,10 +291,10 @@ ratios, so one species' `n` is recovered from the ratio observable alone, withou
 common source scale `S`. This is the two-line break of the self-absorption degeneracy — the
 positive counterpart to `selfAbsorption_breaks_identifiability` — under three reductions:
 the flat (rectangular-profile / line-centre) kernel on both lines, one shared `S`, and one
-shared column density `n`. For Stark-affected Voigt lines (`γ/σ ≳ 0.1`) the profile-resolved
-pair ratio is non-monotone inside line-centre depths `≤ 30` (audit probes, module scope block),
-so this injectivity does not transfer to them. It is also not a relative composition: `n`
-belongs to one species. -/
+shared column density `n`. In the audit probes the profile-resolved Voigt pair ratio is
+non-monotone inside line-centre depths `≤ 30` for the Stark-affected profiles probed
+(`γ/σ = 0.1, 0.3, 0.93`; module scope block), so this injectivity does not transfer to such
+lines. It is also not a relative composition: `n` belongs to one species. -/
 theorem cogRatio_injOn {w₁ w₂ : ℝ} (hw : w₂ < w₁) (hw₂ : 0 < w₂) :
     Set.InjOn (fun n => cogRatio w₁ w₂ n) (Set.Ioi 0) :=
   (cogRatio_strictAntiOn hw hw₂).injOn

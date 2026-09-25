@@ -59,6 +59,12 @@ is positive and its argmin has no closed form. This is the **compactness leg** o
 joint `(T, N)` fit — the residual of gap #1 in `docs/SOLVER_FORMALIZATION_GAPS.md`, and a
 prerequisite for the fully-coupled multi-species `(T, n_e, composition)` inverse (gaps #6, #8).
 
+**Tags in the headlines below are relation tags** (`docs/conventions.md` §8): "(EXACT, Ciucci
+1999)" says the statement holds exactly for the model it is stated over. That model,
+`lineIntensity`, carries the model tag REDUCED (the λ-free photon-rate form, §7), so every physics
+result here stated over it publishes REDUCED. The published tags are in
+`docs/scope-published.tsv`.
+
 ## Literature
 
 The joint least-squares fit of `(T, N)` (and, in the full pipeline, `n_e` and composition) to raw
@@ -1053,7 +1059,7 @@ private lemma ce_orth_two :
   exact ce_lineIntensity_sum_of_boltzmann
     (by rw [Fin.sum_univ_three, b0, b1, b2]; simp only [ceObs]; norm_num)
 
-/-- **Off-manifold `T`-non-uniqueness for `m = 3` (EXACT, HONEST NEGATIVE result).** The
+/-- **Off-manifold `T`-non-uniqueness for `m = 3` (PURE-MATH, HONEST NEGATIVE result).** The
 density-profiled least-squares residual is NOT injective in the temperature once there are `m ≥ 3`
 lines: for the explicit three-line configuration `ceG`, `ceE = (0, −2·log 2, −2·log 3)` (three
 *distinct* energies), `ceA`, and off-manifold observation `ceObs = (3, −3, 1)`, the two distinct
@@ -1135,10 +1141,12 @@ Let `obs = N₀·c(T₀) + η` be the two-line forward spectrum at `(T₀, N₀)
 and `T₀` in the box `[Tmin, Tmax]` (`0 < Tmin`). If the profiled residual at `T` is at most the one
 at `T₀` (for example, `T` minimizes it over the box), then
 `S²·(T − T₀)² ≤ 6·(1 + Rmax²)·∑ₖ ηₖ²`, with `K = g₁A₁/(g₀A₀)`, `ΔE = E₀ − E₁`,
-`S = N₀·c₀(T₀)·K·exp(−|ΔE/k_B|/Tmin)·|ΔE/k_B|/Tmax²` and `Rmax = K·exp(|ΔE/k_B|/Tmin)`. When
-`S > 0` (distinct energies) this gives `|T − T₀| ≤ C·√(∑ₖ ηₖ²)` with an explicit box constant `C`;
-when `E₀ = E₁`, `S = 0` and the bound localizes nothing. It localizes the minimizer near `T₀`; it
-does not say the minimizer is unique. -/
+`S = N₀·c₀(T₀)·K·exp(−|ΔE/k_B|/Tmin)·|ΔE/k_B|/Tmax²` and `Rmax = K·exp(|ΔE/k_B|/Tmin)`. Under
+the hypotheses, `S > 0` exactly when `E₀ ≠ E₁` and `k_B ≠ 0`; then this gives
+`|T − T₀| ≤ C·√(∑ₖ ηₖ²)` with an explicit box constant `C`. The theorem has no hypothesis on
+`k_B`: at `k_B = 0` Lean's `x/0 = 0` makes `ΔE/k_B = 0`, so `S = 0` even for distinct energies.
+When `E₀ = E₁` or `k_B = 0`, `S = 0` and the bound localizes nothing. It localizes the minimizer
+near `T₀`; it does not say the minimizer is unique. -/
 theorem profiledResidual_metric_bound {kB Fcal Tmin Tmax T0 N0 T : ℝ} {g E A obs η : Fin 2 → ℝ}
     (hg : ∀ k, 0 < g k) (hFcal : 0 < Fcal) (hA : ∀ k, 0 < A k)
     (hN0 : 0 < N0) (hTmin : 0 < Tmin)

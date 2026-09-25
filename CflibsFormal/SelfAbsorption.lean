@@ -28,10 +28,11 @@ We prove:
   recovers `ForwardMap` in the optically-thin limit (a strict generalization).
 * `selfAbsorbedIntensity_le_lineIntensity` / `selfAbsorbedIntensity_lt_lineIntensity` —
   the **bias-direction theorem**: a self-absorbed line is measured below its thin value,
-  so neglecting self-absorption biases the inferred upper-level population DOWNWARD — and
-  hence the extracted composition of any *differentially* self-absorbed species DOWNWARD
-  (a self-absorption factor common to ALL species cancels in the scale-invariant closure;
-  see `SelfAbsorptionInverse`). The direction holds for any nonnegative integrable profile
+  so neglecting self-absorption biases the inferred upper-level population DOWNWARD. For the
+  extracted composition this suggests a downward bias for any *differentially* self-absorbed
+  species (a factor common to ALL species cancels in the scale-invariant closure; see
+  `SelfAbsorptionInverse`); that composition-level inference is an interpretation, not
+  formalized here. The direction holds for any nonnegative integrable profile
   (`EquivalentWidth.equivWidth_le_thin`); the size `SA(τ)` of the shortfall is the
   flat-profile value.
 * `slabIntensity_eq_thin_mul_SA` — the **derivation** of `SA(τ)` for one optical depth: the
@@ -192,9 +193,10 @@ theorem selfAbsorptionFactor_tendsto_one :
 
 /-- **Bias-direction theorem (non-strict).** A self-absorbed line is measured at or below
 its optically-thin value: `I_meas ≤ I_thin`. Hence neglecting self-absorption biases the
-inferred upper-level population DOWNWARD, and hence the extracted composition of any
-*differentially* self-absorbed species (a factor common to all species cancels in the
-scale-invariant closure) — the dominant failure mode for concentrated alloy /
+inferred upper-level population DOWNWARD. For the extracted composition this suggests a
+downward bias for any *differentially* self-absorbed species (a factor common to all species
+cancels in the scale-invariant closure); that composition-level inference is an interpretation,
+not formalized here — the dominant failure mode for concentrated alloy /
 high-entropy-alloy lines. The direction holds for any nonnegative integrable profile
 (`EquivalentWidth.equivWidth_le_thin`); the size of the shortfall, `SA(τ)`, is the
 flat-profile value. -/
@@ -209,9 +211,10 @@ theorem selfAbsorbedIntensity_le_lineIntensity [Nonempty ι] {kB T N Fcal : ℝ}
 /-- **Bias-direction theorem (strict).** For any *actually* optically-thick line
 (`τ > 0`) the downward bias is strict: `I_meas < I_thin`. Self-absorption is never
 benign — it always reduces the measured intensity and must be corrected, biasing the
-inferred upper-level population DOWNWARD, and hence the extracted composition of any
-*differentially* self-absorbed species (a factor common to all species cancels in the
-scale-invariant closure). -/
+inferred upper-level population DOWNWARD. For the extracted composition this suggests a
+downward bias for any *differentially* self-absorbed species (a factor common to all species
+cancels in the scale-invariant closure); that composition-level inference is an interpretation,
+not formalized here. -/
 theorem selfAbsorbedIntensity_lt_lineIntensity [Nonempty ι] {kB T N Fcal : ℝ}
     {g E A : ι → ℝ} (hg : ∀ k, 0 < g k) (hN : 0 < N) (hFcal : 0 < Fcal)
     (hA : ∀ k, 0 < A k) (k : ι) {tau : ℝ} (htau : 0 < tau) :

@@ -104,7 +104,8 @@ intensity, whose model tag is APPROXIMATION (1.4–3.5× over-correction at line
 `3–10` for peaked profiles, in the audit probes; see the `SelfAbsorption` scope block). Those
 results publish APPROXIMATION whatever their own (relation) tag (`docs/conventions.md` §8).
 The two-line injectivity in `N` is a property of the flat kernel: for Stark-affected Voigt
-lines (`γ/σ ≳ 0.1`) the profile-resolved pair ratio is non-monotone inside line-centre depths
+lines (audit probes at γ/σ = 0.1, 0.3, 0.93; no larger γ/σ probed) the profile-resolved pair
+ratio is non-monotone inside line-centre depths
 `≤ 30` (audit probes; see `CurveOfGrowth`'s scope block).
 
 * Gornushkin, Anzano, King, Smith, Omenetto, Winefordner, "Curve of growth methodology applied
@@ -325,7 +326,8 @@ Immediate from the strict antitonicity above. Within the flat-profile kernel thi
 identifiability route once `σ₀ · ℓ` is NOT taken as known-and-single-line: two lines of
 distinct opacity, at one `(T, N)`, determine `N`. It is the bound-`τ` restatement of
 `CurveOfGrowth.cogRatio_injOn`, and like it does not transfer to Stark-affected Voigt lines
-(`γ/σ ≳ 0.1`), whose profile-resolved pair ratio is non-monotone inside line-centre depths
+(audit probes at γ/σ = 0.1, 0.3, 0.93), whose profile-resolved pair ratio is non-monotone inside
+line-centre depths
 `≤ 30` (audit probes; module scope block).
 
 SCOPE — the `wᵢ` (hence `σ₀ · ℓ` and `T`) must be known to invert the ratio for `N`; what is
