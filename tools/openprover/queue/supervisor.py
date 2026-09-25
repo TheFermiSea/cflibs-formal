@@ -15,6 +15,15 @@ Layout under $OPENPROVER_HOME (default ~/.local/share/openprover):
 
 target.json: {"theorem": "Fully.Qualified.name", "max_tokens": 150000, "max_attempts": 2,
               "max_planner_usd": 30, "planner": "sonnet", "worker": "qwen38-local", "note": "..."}
+  optional: "effort" (Claude planner, default "high"), "advisor" (e.g. "opus"; attached only on
+  planner steps 1, 1+advisor_every, ... up to advisor_max per run), "history_budget" (chars of
+  planner history, default 120000 for every planner so arms see the same history), "pilot" (true:
+  exempt from the daily-cap fallback below, so a planner comparison keeps its arms).
+
+Daily planner cap (owner, 2026-09-25): when the Claude planner spend of the last 24 h (every
+step's meta.toml, advisor included) reaches OPENPROVER_DAILY_PLANNER_USD (default 60, list-price
+equivalent), new non-pilot attempts are planned by the local model (qwen38-local) with no
+advisor. Running attempts keep their per-attempt cap.
 
 One run per healthy node. A node whose /health fails is restarted once over ssh; if it is still
 down it is skipped for 30 minutes. Running jobs are watched too: a node that fails two consecutive
@@ -44,7 +53,11 @@ RUNS, RESULTS = HOME / "runs", HOME / "results"
 VERIFY = Path(__file__).with_name("verify.py")
 POLL_S, WALL_S, NODE_BACKOFF_S = 30, 9 * 3600, 1800
 DEFAULTS = {"max_tokens": 150000, "max_attempts": 2, "planner": "sonnet", "worker": "qwen38-local",
-            "max_planner_usd": 30.0}
+            "max_planner_usd": 30.0, "effort": "high", "advisor": None, "advisor_every": 5,
+            "advisor_max": 3, "history_budget": 120000, "pilot": False}
+CLAUDE_PLANNERS = {"sonnet", "opus"}
+LOCAL_PLANNER = "qwen38-local"
+DAILY_PLANNER_USD = float(os.environ.get("OPENPROVER_DAILY_PLANNER_USD", "60"))
 UNHEALTHY_POLLS = 2  # consecutive failed /health checks on a running job's node before acting
 PLANNER_DOWN_STREAK = [0]  # consecutive planner-outage aborts; the pause doubles each time (cap 8x)
 PLANNER_ERR_STEPS = 5  # consecutive planner llm_error steps (e.g. subscription limit) before pausing
@@ -93,6 +106,33 @@ def planner_usd(run_dir: Path) -> float:
     return total
 
 
+def planner_usd_24h() -> float:
+    """Planner spend (list-price $, advisor included) of every step finished in the last 24 h."""
+    cutoff = time.time() - 86400
+    total = 0.0
+    for steps in RUNS.glob("*/steps"):
+        if steps.stat().st_mtime < cutoff - WALL_S:  # no step started in the window
+            continue
+        for f in steps.glob("step_*/meta.toml"):
+            try:
+                if f.stat().st_mtime >= cutoff:
+                    total += tomllib.loads(f.read_text()).get("planner", {}).get("cost_usd", 0.0)
+            except (OSError, tomllib.TOMLDecodeError):
+                pass
+    return total
+
+
+def choose_planner(tid: str, cfg: dict) -> tuple[str, str | None]:
+    """(planner, advisor) for a new attempt: the target's own, or the local planner over the cap."""
+    if cfg["planner"] in CLAUDE_PLANNERS and not cfg["pilot"]:
+        spent = planner_usd_24h()
+        if spent >= DAILY_PLANNER_USD:
+            log(f"{tid}: Claude planner spend ${spent:.2f} in the last 24 h >= "
+                f"${DAILY_PLANNER_USD:.0f} cap, planning with {LOCAL_PLANNER}")
+            return LOCAL_PLANNER, None
+    return cfg["planner"], cfg["advisor"]
+
+
 def trailing_llm_errors(run_dir: Path) -> int:
     """Consecutive most-recent steps whose planner call failed (status = "llm_error")."""
     n = 0
@@ -123,19 +163,37 @@ def start(tid: str, node: dict) -> dict:
             if (m := re.fullmatch(rf"{re.escape(tid)}-(\d+)(?:\.log)?", p.name))]
     attempt = max(used, default=0) + 1  # never reuse a run dir: OpenProver would resume it
     run_dir = RUNS / f"{tid}-{attempt}"
+    planner, advisor = choose_planner(tid, cfg)
     cmd = [str(HOME / "venv/bin/openprover"), str(run_dir), "--headless", "--autonomous",
-           "--planner-model", cfg["planner"], "--worker-model", cfg["worker"],
+           "--planner-model", planner, "--worker-model", cfg["worker"],
            "--provider-url", f"http://{node['host']}:{node['port']}",
            "--answer-reserve", "16384", "--max-tokens", str(cfg["max_tokens"]),
+           "--history-budget", str(cfg["history_budget"]),
            "--on-rate-limited", "backoff",
            "--lean-project", str(HOME / "leanproj"),
            "--lean-theorem", str(d / "statement.lean"), "--theorem", str(d / "dossier.md")]
+    if planner in CLAUDE_PLANNERS:
+        cmd += ["--effort", cfg["effort"]]
+    env = {k: v for k, v in os.environ.items() if not k.startswith("OPENPROVER_ADVISOR_")}
+    if advisor and planner in CLAUDE_PLANNERS:  # read by the patched llm/claude.py
+        env.update(OPENPROVER_ADVISOR_MODEL=advisor, OPENPROVER_ADVISOR_EVERY=str(cfg["advisor_every"]),
+                   OPENPROVER_ADVISOR_MAX=str(cfg["advisor_max"]))
+    else:
+        advisor = None
+    plan = {"planner": planner, "advisor": advisor,
+            "effort": cfg["effort"] if planner in CLAUDE_PLANNERS else None,
+            "advisor_every": cfg["advisor_every"] if advisor else None,
+            "advisor_max": cfg["advisor_max"] if advisor else None,
+            "history_budget": cfg["history_budget"], "pilot": cfg["pilot"],
+            "fallback": planner != cfg["planner"]}
+    Path(f"{run_dir}.planner.json").write_text(json.dumps(plan, indent=2))
     out = open(f"{run_dir}.log", "w")
     proc = subprocess.Popen(cmd, cwd=HOME / "leanproj", stdout=out, stderr=subprocess.STDOUT,
-                            start_new_session=True)
-    log(f"{tid}: attempt {attempt} started on {node['name']} (pid {proc.pid})")
+                            start_new_session=True, env=env)
+    log(f"{tid}: attempt {attempt} started on {node['name']} (pid {proc.pid}; planner {planner}"
+        f"{f' + advisor {advisor}' if advisor else ''})")
     return {"tid": tid, "node": node["name"], "proc": proc, "run_dir": run_dir, "attempt": attempt,
-            "started": time.time(), "cfg": cfg, "unhealthy": 0, "abort": None}
+            "started": time.time(), "cfg": cfg, "plan": plan, "unhealthy": 0, "abort": None}
 
 
 def finish(job: dict) -> None:
@@ -171,6 +229,8 @@ def finish(job: dict) -> None:
         (res / "verdict.json").write_text(json.dumps({**ok, "node": job["node"], "attempt": job["attempt"],
                                                       "run_dir": str(run_dir), "hours": round(hours, 2),
                                                       "openprover_result": reported,
+                                                      "plan": job["plan"],
+                                                      "planner_usd": round(planner_usd(run_dir), 2),
                                                       "verified_at": now()}, indent=2))
         shutil.move(str(d), Q / "done" / tid)
         log(f"{tid}: VERIFIED (attempt {job['attempt']}, {hours:.1f} h, openprover said {reported!r})")
@@ -184,12 +244,15 @@ def finish(job: dict) -> None:
         dest = "pending" if n < cfg["max_attempts"] else "parked"
         shutil.move(str(d), Q / dest / tid)
         log(f"{tid}: not verified (run {job['attempt']}, {n}/{cfg['max_attempts']} attempts charged, "
-            f"{hours:.1f} h, openprover said {reported!r}, abort={job['abort']}) -> {dest}")
+            f"{hours:.1f} h, openprover said {reported!r}, abort={job['abort']}, "
+            f"planner {job['plan']['planner']}) -> {dest}")
 
 
 def write_status(jobs: dict, down: dict) -> None:
     st = {"at": now(),
-          "running": {n: {"target": j["tid"], "attempt": j["attempt"],
+          "planner_usd_24h": round(planner_usd_24h(), 2), "daily_planner_cap_usd": DAILY_PLANNER_USD,
+          "running": {n: {"target": j["tid"], "attempt": j["attempt"], "planner": j["plan"]["planner"],
+                          "advisor": j["plan"]["advisor"],
                           "hours": round((time.time() - j["started"]) / 3600, 2)} for n, j in jobs.items()},
           "nodes_down_until": {n: datetime.fromtimestamp(t, timezone.utc).isoformat(timespec="seconds")
                                for n, t in down.items()},

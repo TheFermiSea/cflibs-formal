@@ -195,3 +195,50 @@ else:
     cl.write_text(_c.replace(o, '            raise RuntimeError(f"Claude CLI failed (exit {proc.returncode}): "  # cflibs patch: include stdout\n'
                                  '                               f"{stderr[:300]} | stdout: {stdout[-400:]}")'))
     print(f"patched (planner error text): {cl}")
+
+# Planner effort (2026-09-25). 1.0.1 auto-selects effort "max" whenever `opus` is used and rejects
+# --effort unless BOTH planner and worker are Claude models, so an Opus planner with a local worker
+# always ran at max. The owner ruled max out on cost: default to "high", and accept --effort when
+# at least one of the two models is Claude (it only reaches LLMClient, via CLAUDE_CODE_EFFORT_LEVEL).
+patch(cli, [
+    ('            effective_effort = "max" if any(m == "opus" for m in claude_models_used) else "high"',
+     '            effective_effort = "high"  # cflibs patch: never auto-select max (owner, 2026-09-25)'),
+    ('        if non_claude:\n            parser.error(\n                f"--effort is only supported',
+     '        if len(non_claude) == 2:  # cflibs patch: effort applies to whichever model is Claude\n'
+     '            parser.error(\n                f"--effort is only supported'),
+])
+# Gated advisor (2026-09-25). The Claude CLI attaches an advisor to every call when the user
+# settings name one, and has no per-call cap; unattended, the inherited advisor was 77% of planner
+# spend. The owner's settings no longer name one. When OPENPROVER_ADVISOR_MODEL is set (by the
+# queue supervisor), attach it with --settings only to first-attempt planner steps 1, 1+EVERY,
+# 1+2*EVERY, ... up to MAX per process; parse retries, phase-2 and discussion calls never get it.
+_c = cl.read_text()
+if "def _advisor_for(" in _c:
+    print(f"already patched (gated advisor): {cl}")
+else:
+    anchor = "from ._base import Interrupted, archive\n"
+    assert _c.count(anchor) == 1, "gated advisor: import anchor not found"
+    _c = _c.replace(anchor, anchor + '''
+_ADVISOR_USED = [0]  # cflibs patch: advisor consultations attached by this process
+
+
+def _advisor_for(label: str) -> str | None:
+    """cflibs patch: the advisor model to attach to this call, or None."""
+    model = os.environ.get("OPENPROVER_ADVISOR_MODEL")
+    m = re.fullmatch(r"planner_step_(\\d+)", label or "")
+    if not model or not m:
+        return None
+    every = int(os.environ.get("OPENPROVER_ADVISOR_EVERY", "5"))
+    cap = int(os.environ.get("OPENPROVER_ADVISOR_MAX", "3"))
+    if (int(m.group(1)) - 1) % every or _ADVISOR_USED[0] >= cap:
+        return None
+    _ADVISOR_USED[0] += 1
+    return model
+''')
+    o = '        if json_schema:\n            cmd.extend(["--json-schema", json.dumps(json_schema)])\n'
+    assert _c.count(o) == 1, "gated advisor: cmd anchor not found or not unique"
+    _c = _c.replace(o, o + '        _adv = _advisor_for(label)  # cflibs patch: gated advisor\n'
+                           '        if _adv:\n'
+                           '            cmd.extend(["--settings", json.dumps({"advisorModel": _adv})])\n'
+                           '            logger.info("[%s] advisor %s attached", label, _adv)\n')
+    cl.write_text(_c); print(f"patched (gated advisor): {cl}")

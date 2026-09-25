@@ -39,7 +39,24 @@ target.json      {"theorem": "Fully.Qualified.name", "max_tokens": 150000, "max_
 ```
 
 Defaults: `planner` `sonnet` (Claude CLI; D8), `worker` `qwen38-local`. The supervisor picks it up
-within 30 s. A verified proof is only a *candidate for landing*: open a PR by hand (Copilot review
+within 30 s. Optional planner keys:
+- `effort`: Claude planner effort, default `high`. OpenProver's own default for `opus` was `max`;
+  the patch removes that because the owner ruled it out on cost.
+- `advisor`: e.g. `"opus"`. It is attached with `--settings` only on planner steps 1,
+  1+`advisor_every`, 1+2×`advisor_every`, … up to `advisor_max` per run (defaults 5 and 3).
+  Retries, phase-2 and discussion calls never get it. No automated run uses Fable 5.1 (owner,
+  2026-09-25).
+- `history_budget`: chars of planner history, default 120000 for every planner. That is Claude's
+  auto value; Qwen's auto value is ~39k, so a comparison would otherwise be unmatched.
+- `pilot: true`: exempts the target from the daily-cap fallback below.
+
+Each attempt's planner configuration is written to `runs/<id>-<n>.planner.json`, the start log
+line, `status.json` and, for verified targets, `verdict.json`.
+
+**Daily cap.** When the Claude planner spend of the last 24 h reaches
+`OPENPROVER_DAILY_PLANNER_USD` (default 60, list-price equivalent, advisor included, summed from
+every step's `meta.toml`), new non-pilot attempts are planned by `qwen38-local` with no advisor. The
+loop keeps running on local models. `status.json` shows `planner_usd_24h`. A verified proof is only a *candidate for landing*: open a PR by hand (Copilot review
 is billed per PR and per push; batch).
 
 ## What "verified" means
@@ -91,4 +108,8 @@ The Claude planner is the only paid part (subscription quota). Until 2026-09-25 
 the account's usage in that window). The key was removed on 2026-09-25, which leaves ~$0.3 of
 Sonnet per planner step. `--settings '{"advisorModel": null}'` does not turn the advisor off; only
 removing the key, or `--setting-sources project,local`, does (checked with a probe that asks the
-model to call the advisor).
+model to call the advisor). At full load (3 nodes, ~19 planner steps/h) the measured list-price cost
+per planner step was: Sonnet alone ~$0.20-0.27; Opus 5.5 at the same token counts ~$0.51; an Opus
+5.5 advisor consultation ~$0.49, because it re-reads ~95k tokens with no cache; a Fable
+consultation $1.23. A 2026-09-25 pilot compares four planner arms (Sonnet; Opus 5.5 high; Sonnet +
+gated Opus advisor; Qwen) on the same four targets.
