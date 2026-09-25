@@ -12,11 +12,12 @@ import CflibsFormal.Identifiability
 /-!
 # CF-LIBS formalization — Part 6: the algorithm-agnostic inverse-problem framework
 
-This module assembles the *shared core* of the CF-LIBS inverse problem, the part
-that is common to **every** composition-extraction algorithm (classical CF-LIBS,
-C-sigma, …). It reuses the already-proven forward model (`ForwardMap.lineIntensity`,
-the `Boltzmann` populations) and closure (`Closure.composition`) verbatim — nothing
-here re-defines or re-proves the forward map or the identifiability cores.
+This module states the CF-LIBS inverse problem in an algorithm-agnostic form, over a
+shared-catalog parameter record. It reuses the already-proven forward model
+(`ForwardMap.lineIntensity`, the `Boltzmann` populations) and closure
+(`Closure.composition`) verbatim — nothing here re-defines or re-proves the forward map or
+the identifiability cores. The concrete estimators `Classic` and `Alt.CSigma` do not use this
+framework: they work over per-species atomic-data tables and do not import this module.
 
 The encoding is deliberately a *plain record of functions over `Fintype` indices*
 (no heavy structure/typeclass machinery):
@@ -24,19 +25,24 @@ The encoding is deliberately a *plain record of functions over `Fintype` indices
 * `PlasmaParams` — the parameters of a multi-species LTE plasma: shared temperature
   `T`, per-species total density `N`, and shared atomic data `g E A` (one emitting
   level per species is selected by a separate `emit : species → levelIndex` map fed
-  to the observation map).
+  to the observation map). *Modeling reduction (model tag REDUCED):* one level catalog,
+  hence one partition function `U(T)`, serves every species; real elements each have
+  their own levels and `U_s(T)`. Every physics theorem stated over `PlasmaParams`
+  publishes REDUCED or weaker (PURE-MATH theorems are exempt).
 * `PlasmaParams.Admissible` — the nondegeneracy bundle (`0 < T`, `0 < N s`, `0 < g`,
   `0 < A`) that makes a `PlasmaParams` a physical LTE state.
 * `observe` — the **forward / observation map**: the observable for species `s` is
   the integrated intensity of its single emitting line `emit s`, reusing
   `lineIntensity` (one line per species).
 * `CompositionEstimator` — a plain map `(species → ℝ) → (species → ℝ)` from an
-  observation vector to an estimated composition vector. Every concrete extraction
-  method is an inhabitant.
+  observation vector (one intensity per species) to an estimated composition vector.
+  Any atomic data or temperature it uses must be fixed in advance as parameters.
 * `trueComposition` — the ground-truth target `C s = N s / ∑ₜ N t` (= `composition
   p.N`), the estimator-*independent* answer.
-* `Sound` — the correctness contract: a sound estimator returns `trueComposition p`
+* `Sound` — a correctness contract: a sound estimator returns `trueComposition p`
   on any observation arising from the forward model applied to an admissible `p`.
+  `p` ranges over the atomic data `g E A` too, which the estimator never sees, so
+  `Sound` is satisfiable only when `emit` is constant (see its docstring).
 
 The central results are:
 
@@ -48,18 +54,25 @@ The central results are:
   temperature equality is delivered by the supplied ratio hypothesis `hTratio` (an
   additional assumed two-line Boltzmann ratio), **not** extracted from `hObs` — the
   one-line-per-species observation map `observe` only constrains the emitting lines.
+  It is stated over the shared-catalog `PlasmaParams` (published REDUCED) and assumes
+  a known, equal calibration `hFeq`, which is not a calibration-free premise.
   Assembled strictly from the proven `temperature_identifiability` and
   `density_identifiability` (neither reproven), plus `Closure.composition`.
-* `sound_estimators_agree` — the abstract **cross-method agreement bridge**: any two
-  sound estimators return equal compositions on forward-model observations from an
-  admissible parameter set. A short `Sound + Sound` consequence (both equal
-  `trueComposition p`). This is what makes classical CF-LIBS and C-sigma comparable.
+* `sound_estimators_agree` — an abstract agreement lemma: any two `Sound` estimators
+  return equal compositions on forward-model observations from an admissible parameter
+  set (both equal `trueComposition p`). Because `Sound` is satisfiable only for constant
+  `emit`, it does not cover classical CF-LIBS or C-sigma: `Classic.classic_sound` and
+  `Alt.csigma_sound` are equalities at a known `T` over per-species atomic-data tables,
+  not `Sound` instances. Their agreement is proved outside `Sound`:
+  `Alt.csigma_agrees_classic` (from the identity `Alt.csigmaComposition_eq_classicComposition`)
+  and `Alt.csigma_agrees_of_sound` (via the transitivity lemma `Alt.sound_agree`).
 * `rawCompositionEstimator` / `rawCompositionEstimator_sound` — a *concrete* sound
-  estimator inhabiting the `Sound` predicate (for the constant-`emit` case, where every
-  species shares one emitting level), so `sound_estimators_agree` has a non-vacuous
-  premise: the raw estimator simply normalizes the observed intensities, which equals
-  the true composition because the shared per-species forward constant cancels under
-  the scale-invariant closure normalization.
+  estimator inhabiting the `Sound` predicate for the constant-`emit` case, where every
+  species shares one emitting level. That is the only case in which `Sound` is
+  satisfiable, so `sound_estimators_agree` has a non-vacuous premise only there. The raw
+  estimator simply normalizes the observed intensities, which equals the true
+  composition because the shared per-species forward constant cancels under the
+  scale-invariant closure normalization.
 -/
 
 namespace CflibsFormal
@@ -75,7 +88,13 @@ density of species `s`; `g`, `E`, `A` are the shared atomic data (statistical
 weights, level energies, Einstein A-coefficients) indexed by atomic level. One
 *emitting level* per species is selected separately by an `emit : species →
 levelIndex` map supplied to the observation map, so the same atomic-data tables
-`g E A` serve every species (CF-LIBS shares a level catalog).
+`g E A` serve every species.
+
+*Modeling reduction (model tag REDUCED).* One level catalog serves every species, so every
+species' population is normalized by the SAME partition function `U(T)` summed over that
+catalog. Real elements each have their own levels and their own `U_s(T)`; CF-LIBS does not
+share a level catalog across elements. The per-species-table layout used by `Classic` and
+`Alt` (`g E A : κ → ι → ℝ`) and `MultiSpecies.lineIntensityPerU` are the faithful forms.
 
 Kept as a plain `structure` of fields over `Fintype` indices — no typeclass
 machinery — so it is a transparent record the forward map can destructure. -/
@@ -114,8 +133,11 @@ noncomputable def observe [Fintype levelIndex] (kB Fcal : ℝ) (emit : species �
 
 /-- A **composition estimator**: a map from an observation vector `(species → ℝ)`
 (the measured line intensities, one per species) to a composition vector `(species →
-ℝ)` (estimated number fractions). Plain function type — every concrete extraction
-method (classical CF-LIBS, C-sigma, …) is an inhabitant. -/
+ℝ)` (estimated number fractions). Plain function type, so any such map qualifies,
+including `Classic.classicComposition kB T Fcal g E A u` and `Alt.csigmaComposition …` with
+the temperature and per-species atomic data fixed as parameters. Being an inhabitant says
+nothing about soundness: `Sound` quantifies over every admissible `PlasmaParams`, including
+its atomic data, and is satisfiable only for constant `emit` (see `Sound`). -/
 def CompositionEstimator (species : Type*) : Type _ :=
   (species → ℝ) → (species → ℝ)
 
@@ -129,13 +151,21 @@ noncomputable def trueComposition (p : PlasmaParams species levelIndex) (s : spe
 
 /-- **Soundness** of an estimator: on any observation vector that genuinely arises
 from the forward model applied to an *admissible* parameter set `p`, the estimator
-returns the true composition `trueComposition p`. This is the correctness contract
-shared by all extraction methods; agreement between methods follows from two of them
-satisfying it.
+returns the true composition `trueComposition p`.
 
 Non-tautological: `est` is an *opaque* universally-quantified function, and
 `trueComposition` is the estimator-*independent* target — soundness genuinely
-constrains `est` rather than being baked into its definition. -/
+constrains `est` rather than being baked into its definition.
+
+*Satisfiable only for constant `emit`.* `p` ranges over the atomic data `g E A` as well as
+`T` and `N`, and the estimator is never given the atomic data. If two species emit on
+different levels, multiply `A` at one of those levels by some `c > 0`, `c ≠ 1`, and divide by
+`c` the density of every species emitting there: `observe` is unchanged (`U` does not involve
+`A`) but `trueComposition` changes, so no `est` is `Sound`. (Informal argument; not
+formalized in this repository.) The constant-`emit` case is inhabited by
+`rawCompositionEstimator_sound`. `classic_sound`, `csigma_sound` and the other estimator
+soundness theorems are NOT instances of this predicate. A contract that takes the atomic data
+as a known input and quantifies only over `(T, N)` is future work. -/
 def Sound [Fintype levelIndex] (kB Fcal : ℝ) (emit : species → levelIndex)
     (est : CompositionEstimator species) : Prop :=
   ∀ p : PlasmaParams species levelIndex, p.Admissible →
@@ -160,6 +190,14 @@ intensities to a common temperature, and only then does `density_identifiability
 equal `N s` for every species (hence equal closure composition). So composition rests on
 `hObs` PLUS the matched temperature (from `hTratio`), matched calibration, and atomic
 data — not on `hObs` alone.
+
+*Model and calibration.* The statement is over `PlasmaParams`, whose one shared level
+catalog (one `U(T)` for every species) is a modeling reduction; the published scope is
+REDUCED. `hFeq` assumes both parameter sets carry the same known calibration, which is not
+the calibration-free setting. It is stronger than the composition conclusion needs: `Fcal`
+multiplies every observation, so with `Fcal₁ ≠ Fcal₂` the densities rescale by `Fcal₂/Fcal₁`
+and closure is scale-invariant. That `hFeq`-free version is not formalized in this
+repository.
 
 Assembled strictly from the already-proven `temperature_identifiability` and
 `density_identifiability` (neither reproven), plus `Closure.composition`.
@@ -215,15 +253,17 @@ theorem general_identifiability
   intro s
   simp only [trueComposition, hNfun]
 
-/-- **Cross-method agreement bridge.** Any two sound estimators return equal
-compositions on forward-model observations from an admissible parameter set. A short
-`Sound + Sound` consequence: both equal `trueComposition p`. This is the abstract
-bridge that makes the classical CF-LIBS and C-sigma method families comparable — the
-reliability focus on cross-method agreement.
+/-- **Abstract agreement lemma.** Any two sound estimators return equal compositions on
+forward-model observations from an admissible parameter set. A short `Sound + Sound`
+consequence: both equal `trueComposition p`.
 
-Non-vacuous: the premise `Sound …` is inhabited by `rawCompositionEstimator` when
-`emit` is constant (`rawCompositionEstimator_sound` below), so this is not an
-agreement between estimators whose soundness is never met. -/
+Scope: `Sound` is satisfiable only when `emit` is constant (every species on one level; see
+`Sound`), so this lemma has content only in that degenerate case. It does not cover classical
+CF-LIBS or C-sigma, whose soundness theorems are not `Sound` instances; their agreement is
+`Alt.csigma_agrees_classic` / `Alt.csigma_agrees_of_sound`.
+
+Non-vacuous in the constant-`emit` case: the premise `Sound …` is inhabited there by
+`rawCompositionEstimator` (`rawCompositionEstimator_sound` below). -/
 theorem sound_estimators_agree [Fintype levelIndex]
     {kB Fcal : ℝ} {emit : species → levelIndex}
     {est₁ est₂ : CompositionEstimator species}
@@ -245,13 +285,14 @@ constant `c = Fcal · A k₀ · g k₀ · exp(−E k₀/(k_B T)) / U(T)` is iden
 species, so each observed intensity is `I_s = c · N_s`. Closure number fractions are
 scale-invariant (`composition_smul_invariant`), hence normalizing the raw intensities
 returns the true composition `N_s / ∑ N_t` exactly, for **every** admissible parameter
-set. This inhabits the `Sound` premise of `sound_estimators_agree`, confirming the
-agreement bridge is non-vacuous.
+set. This inhabits the `Sound` premise of `sound_estimators_agree` in the constant-`emit`
+case, which is the only case in which `Sound` is satisfiable.
 
 (With a *non-constant* `emit`, the per-species constants differ — through `A`, `g`, and
-the temperature-dependent Boltzmann factor at distinct upper-level energies — and the
-raw estimator is in general *not* sound; recovering composition then requires the
-per-line de-normalization of `MultiSpecies.deNormalizedDensity` at a known `T`.) -/
+the temperature-dependent Boltzmann factor at distinct upper-level energies — and no
+estimator of the one-intensity-per-species observation is sound, because `Sound` ranges over
+unknown atomic data (see `Sound`). Recovering composition then requires known atomic data and
+the per-line de-normalization of `MultiSpecies.deNormalizedDensity` at a known `T`.) -/
 theorem rawCompositionEstimator_sound [Fintype levelIndex] [Nonempty levelIndex]
     {kB Fcal : ℝ} (hFcal : 0 < Fcal) (k₀ : levelIndex) :
     Sound kB Fcal (fun _ => k₀) (rawCompositionEstimator (species := species)) := by

@@ -2,16 +2,22 @@
 # Epistemic-drift ADVISORY for cflibs-formal (module-level, build-free).
 #
 # The AUTHORITATIVE per-declaration gate is `lake exe scope-check` (tools/ScopeCheck.lean): it walks
-# the actual constant-use graph and FAILs iff an EXACT-tagged declaration transitively USES an
-# APPROXIMATION-tagged one — closing this script's mixed-module blind spot. This script is the fast,
-# build-free companion: it works on the module import graph + tag tallies and additionally surfaces
-# EXACT-on-REDUCED / EXACT-on-mixed dependencies as advisory warnings.
+# the actual constant-use graph and FAILs iff a theorem whose PUBLISHED tag is EXACT transitively
+# USES a theorem published APPROXIMATION or a definition with an APPROXIMATION model tag (it also
+# fails on unresolved or duplicate rows) — closing this script's mixed-module blind spot. This
+# script is the fast, build-free companion: it works on the module import graph + tag tallies and
+# additionally surfaces EXACT-on-REDUCED / EXACT-on-mixed dependencies as advisory warnings.
 #
 # An EXACT result claims to faithfully encode the cited physics. If such a result rests on a
 # dependency whose ONLY physical content is an APPROXIMATION (a documented idealization / limiting
 # case), the EXACT claim is over-reaching: it is exact only relative to an approximation. This
 # script surfaces that drift from the two artifacts that already encode the epistemic status of the
 # spec — docs/scope-tags.tsv (curated scope tags) and the intra-repo `import CflibsFormal.X` graph.
+#
+# Since the owner decision of 2026-09-24 (docs/conventions.md section 8) the TSV also holds MODEL
+# rows (a row naming a definition). This module-level advisory folds them into the module's tag
+# set like any theorem row, which can only add warnings/failures (conservative). The two-axis
+# published-tag computation lives in `lake exe scope-check` alone.
 #
 # Scope ordering (least -> most approximate):  EXACT < REDUCED < APPROXIMATION.
 # (PURE-MATH carries no physical claim and is ignored by the ordering.)

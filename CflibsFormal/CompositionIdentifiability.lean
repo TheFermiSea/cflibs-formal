@@ -12,10 +12,13 @@ import CflibsFormal.Closure
 /-!
 # CF-LIBS formalization — multi-line / many-element composition identifiability
 
-This module **strengthens** `Inverse.general_identifiability` by *removing its honest
+This module **strengthens** `Inverse.general_identifiability` by *removing its `hTratio`
 caveat*. There, the observation map `observe` exposed only **one** line per species, so
 the temperature was pinned by a *separately supplied* two-line Boltzmann ratio
 hypothesis `hTratio` rather than being extracted from the observations themselves.
+Its other two caveats remain here: the statement is over the shared-catalog
+`PlasmaParams` (one level table and one partition function for every species, a modeling
+reduction; published scope REDUCED), and it assumes a known, equal calibration `hFeq`.
 
 Here we define a richer observation map `observeMulti` that additionally exposes, for a
 designated **anchor species** `s₀`, **two** lines on a distinct-energy level pair
@@ -103,7 +106,7 @@ of the anchor species `s₀` having distinct energies (`hE₁`), then they have 
 temperature** and **equal full composition** `∀ s, trueComposition p₁ s = trueComposition
 p₂ s`.
 
-*The caveat of `general_identifiability` is removed.* The temperature equality is now
+*The `hTratio` caveat of `general_identifiability` is removed.* The temperature equality is now
 extracted **from `hObs`**: the two anchor observables `observeMulti … (Sum.inr false)` and
 `(Sum.inr true)` are exactly `p`'s `lineIntensity` on levels `i` and `j` of the same
 anchor species `s₀`, so projecting `hObs` at those indices and taking the ratio supplies
@@ -120,7 +123,15 @@ parameter sets) is genuine: the anchor-ratio equality forces `T₁ = T₂` only 
 `Real.exp` injectivity, and the per-species equality forces equal `N s` via positive
 constant cancellation — neither is `rfl`. This is an injectivity statement about the
 forward map; `trueComposition` is the estimator-independent target, never defined to
-equal a hypothesis. -/
+equal a hypothesis.
+
+*Model and calibration.* The statement is over `PlasmaParams`: one level catalog, hence one
+partition function `U(T)`, serves every species. That is a modeling reduction (real elements
+have their own `U_s(T)`), so the published scope is REDUCED. `hFeq` assumes both parameter
+sets carry the same known calibration, which is not the calibration-free setting; it is
+stronger than the conclusion needs, since `Fcal` cancels in the anchor ratio and a calibration
+mismatch only rescales every `N s` by `Fcal₂/Fcal₁`, which closure removes. That `hFeq`-free
+version is not formalized in this repository. -/
 theorem compositionIdentifiable
     [Fintype levelIndex] [Nonempty levelIndex]
     {kB Fcal₁ Fcal₂ : ℝ} {emit : species → levelIndex}
@@ -184,7 +195,11 @@ physical conclusion `p₁.T = p₂.T`. The non-triviality is genuine — it rout
 `Prop` proof-irrelevance and carry no physics content.)
 
 (`[Fintype species]` is retained because it is required by `compositionIdentifiable`,
-whose first projection this corollary returns.) -/
+whose first projection this corollary returns.)
+
+Scope: it inherits `compositionIdentifiable`'s hypotheses, including the shared-catalog
+`PlasmaParams` (published REDUCED) and `hFeq`. `hFeq` is not needed for the temperature
+alone, since `Fcal` cancels in the anchor ratio, but it is part of this statement. -/
 theorem compositionIdentifiable_T
     [Fintype levelIndex] [Nonempty levelIndex]
     {kB Fcal₁ Fcal₂ : ℝ} {emit : species → levelIndex}

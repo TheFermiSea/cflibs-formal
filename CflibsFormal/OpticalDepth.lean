@@ -34,7 +34,7 @@ the same plasma state `(T, N)` with one and the same partition function `U(T)`.
 
 Emission is **linear** in `N` (`lineIntensity = Fcal · A_u · n_u ∝ N`). Absorption enters
 through `1 − exp(−τ)` with `τ ∝ N`. Coupling the two at a shared `(T, N)` gives the
-saturation law (`thickLineIntensity_eq_slab`)
+flat-kernel saturation law (`thickLineIntensity_eq_slab`; see the scope block)
 
   `I_meas(N) = S · (1 − exp(−τ(N)))`,   `S = I_thin/τ = lteSourceStrength`,
 
@@ -52,10 +52,11 @@ by `SelfAbsorptionInverse.selfAbsorption_breaks_identifiability` **cannot be rep
   `σ₀ · ℓ` is an unknown lumped parameter `a`, then `I_meas = (c/a)·(1 − exp(−a·N))` has two
   unknowns in one equation and the `(N, τ)` alias **reappears inside the lumped parameter** —
   exactly the failure pattern documented in `docs/2dcos/ERRATA.md`. Without a known `σ₀ · ℓ`,
-  the alias is broken only by a SECOND observable (a second line of different width:
-  `CurveOfGrowth.cogRatio_injOn`, certificate `Certificates.saDistinctCert`). This module does
-  NOT repeal `selfAbsorption_breaks_identifiability`; it identifies the extra input under
-  which that theorem's witness is unreachable.
+  the alias is broken only by a SECOND observable (a second line of different opacity
+  coefficient, i.e. a different `τ` at the same density: `CurveOfGrowth.cogRatio_injOn`,
+  certificate `Certificates.saDistinctCert` — flat-kernel results, see `CurveOfGrowth`'s scope
+  block). This module does NOT repeal `selfAbsorption_breaks_identifiability`; it identifies
+  the extra input under which that theorem's witness is unreachable.
 * **`opticalDepth` is NOT claimed monotone in `T`.** The partition function `U(T)` redistributes
   population, so no monotone `T`-law holds for `τ` alone at fixed `N`. The clean temperature law
   is the RATIO `τ / I_thin`, which is `N`-free and `U`-free
@@ -65,8 +66,12 @@ by `SelfAbsorptionInverse.selfAbsorption_breaks_identifiability` **cannot be rep
 * **Joint `(T, N)` recovery from ONE line is still dead.** `thickLineIntensity_injOn` is
   injectivity in `N` at FIXED, KNOWN `T`; `T` still has to come from ≥ 2 lines (the Boltzmann
   plot, `ForwardMap.temperature_from_two_lines`).
-* **Composition-level non-identifiability is untouched.** With per-species unknown `τ`,
-  `SelfAbsorptionInverse.selfAbsorption_breaks_composition_identifiability` still stands.
+* **Composition level: neither direction is proved at a bound `τ`.**
+  `SelfAbsorptionInverse.selfAbsorption_breaks_composition_identifiability` is a theorem about
+  FREE per-species `τ`, and its witnesses put `τ = 0` at a positive density, which is
+  unreachable here (`opticalDepth_pos`). The alias that survives binding is the single-line
+  lumped-`σ₀ · ℓ` one (`OpticalDepthBridge.boundOpticalDepth_lumped_alias`); a
+  composition-level statement at a state-bound `τ` is open.
 
 ## Literature and scope
 
@@ -75,6 +80,14 @@ cross-section and LTE level populations. The frequency-dependent profile `τ(ν)
 core/wing structure, the profile-integrated slope-½ curve of growth, spatial gradients, and
 self-reversal are all OUT OF SCOPE (see `EquivalentWidth`, `SelfReversal`,
 `RadiativeTransferDepth` for those directions).
+
+**Published tags.** `thickLineIntensity` is `SelfAbsorption.selfAbsorbedIntensity` at the bound
+`τ`: the frequency-integrated thin intensity times the flat-profile escape factor, whose model
+tag is APPROXIMATION (for a peaked profile, dividing by `SA(τ₀)` at the line-centre depth `τ₀`
+over-corrects by 1.4–3.5× at `τ₀ = 3–10` in the audit probes; see the `SelfAbsorption` scope
+block). So every result below stated over `thickLineIntensity` publishes APPROXIMATION, although
+its own (relation) tag is REDUCED (`docs/conventions.md` §8). Results about `opticalDepth`,
+`lteSourceStrength` and `lineIntensity` alone are unaffected.
 
 **Stimulated emission is NOT modelled.** The full LTE line absorption coefficient carries the
 negative-absorption correction `1 − exp(−(E_u − E_l)/(k_B T))`; `opticalDepth` omits it. Two
@@ -89,9 +102,14 @@ records how far that definition sits from the full LTE absorption coefficient.
   to laser-induced plasma emission spectroscopy", *Spectrochim. Acta Part B* **54** (1999)
   491–503 — the homogeneous-slab emission `I = S·(1 − exp(−τ))` with `τ = σ ℓ n` built from the
   LTE lower-level density, and the source function `S` as the `N`-free prefactor.
-* Aragón & Aguilera, "Direct and inverse models… the Cσ method", *J. Quant. Spectrosc. Radiat.
-  Transfer* **149** (2014) 90 — the abscissa `C σ_ℓ ∝ τ = N σ_ℓ ℓ` whose free `σ_ℓ` is
-  instantiated here by the Boltzmann-weighted `effectiveCrossSection`.
+* Aragón & Aguilera, "CSigma graphs: A new approach for plasma characterization in
+  laser-induced breakdown spectroscopy", *J. Quant. Spectrosc. Radiat. Transfer* **149** (2014)
+  90–102, DOI 10.1016/j.jqsrt.2014.07.026 — the line optical depth `τ_ℓ = 10⁻² C · N ℓ · σ_ℓ`
+  (Eq. 19 of the authors' accepted manuscript), i.e. `τ = N σ_ℓ ℓ` in the species density,
+  whose `σ_ℓ` is played here by the Boltzmann-weighted `effectiveCrossSection`. The paper's
+  `σ_ℓ` (Eqs. 4, 18) also carries the stimulated-emission factor, the ionization fraction and the
+  `1/Δλ_L` line-shape average, which `effectiveCrossSection` does not. A corrigendum, *JQSRT*
+  **159** (2015) 94–95, DOI 10.1016/j.jqsrt.2015.03.001, was not opened.
 -/
 
 namespace CflibsFormal
@@ -199,10 +217,12 @@ theorem opticalDepth_pos [Nonempty ι] {kB T N sigma0 ell : ℝ} {g E : ι → �
   rw [opticalDepth_eq_linear]
   exact mul_pos (mul_pos (effectiveCrossSection_pos hg hsig l) hell) hN
 
-/-- **The C12 certificate is now discharged from physics, not assumed.** A physical state
-with `N ≥ 0` produces an optical depth satisfying `Certificates.knownTauCert`. This closes the
-gap flagged in the module docstring: the pipeline's `0 ≤ τ` obligation follows from the
-Boltzmann state rather than being posited.
+/-- **The C12 predicate holds for a state-bound optical depth.** A physical state with
+`N ≥ 0` produces an optical depth satisfying `Certificates.knownTauCert`, i.e. `0 ≤ τ` follows
+from the Boltzmann state rather than being posited. That is all this discharges: `knownTauCert`
+checks only nonnegativity, so it is satisfied equally by a wrong estimate `τ̂ ≥ 0`, and this
+theorem says nothing about whether the `τ` a pipeline feeds to C12 is the true optical depth.
+No error bound for an estimated `τ̂` is proved here.
 
 REDUCED: homogeneous single-temperature slab, flat line-center cross-section. -/
 theorem opticalDepth_knownTauCert [Nonempty ι] {kB T N sigma0 ell : ℝ} {g E : ι → ℝ}
@@ -320,15 +340,19 @@ theorem opticalDepth_div_lineIntensity_strictAntiOn_temperature [Nonempty ι]
 
 /-! ## The payoff: the absorption channel becomes injective in `N` -/
 
-/-- **Saturation law.** With `τ` bound to the same `(T, N)`, the measured thick intensity is
-EXACTLY the radiative-transfer slab solution with the `N`-free source strength:
+/-- **Saturation law.** With `τ` bound to the same `(T, N)`, the model thick intensity equals
+the slab kernel `slabIntensity` at that single optical depth, with the `N`-free source
+strength:
   `I_meas(N) = S · (1 − exp(−τ(N)))`,   `S = lteSourceStrength`.
 The linear-in-`N` emission and the `1 − exp(−τ)` absorption combine into a single bounded,
-strictly increasing function of `N`. Routes through the EXACT slab identity
+strictly increasing function of `N`. Routes through the identity
 `SelfAbsorption.selfAbsorbedIntensity_eq_slab`, so nothing here is definitional sleight of
-hand: `slabIntensity` is built from `exp`, independently of `selfAbsorptionFactor`.
+hand: `slabIntensity` is built from `exp`, independently of `selfAbsorptionFactor`. The slab
+kernel at one `τ` is the integrated line intensity only for a rectangular profile; for a peaked
+profile this is the flat-profile approximation (module scope block).
 
-REDUCED: homogeneous single-temperature slab, flat line-center cross-section. -/
+Relation REDUCED (homogeneous single-temperature slab, flat line-center cross-section);
+publishes APPROXIMATION via `selfAbsorbedIntensity`. -/
 theorem thickLineIntensity_eq_slab [Nonempty ι] {kB T N Fcal sigma0 ell : ℝ}
     {g E A : ι → ℝ} (hg : ∀ k, 0 < g k) (hN : 0 < N) (hsig : 0 < sigma0) (hell : 0 < ell)
     (u l : ι) :
@@ -345,7 +369,8 @@ factor gives this on its own: the thin intensity is linear in `N` but the escape
 `SA(τ(N))` is strictly *decreasing* in `N`; their product `S·(1 − exp(−τ(N)))` is strictly
 increasing because the source strength `S` is `N`-free.
 
-REDUCED: homogeneous single-temperature slab, flat line-center cross-section. -/
+Relation REDUCED (homogeneous single-temperature slab, flat line-center cross-section);
+publishes APPROXIMATION via `selfAbsorbedIntensity`. -/
 theorem thickLineIntensity_strictMonoOn [Nonempty ι] {kB T Fcal sigma0 ell : ℝ}
     {g E A : ι → ℝ} (hg : ∀ k, 0 < g k) (hFcal : 0 < Fcal) (hA : ∀ k, 0 < A k)
     (hsig : 0 < sigma0) (hell : 0 < ell) (u l : ι) :
@@ -374,7 +399,8 @@ SCOPE — the hypotheses are the whole story: `T`, the atomic data `(g, E, A)`, 
 `Fcal`, AND the product `σ₀ · ℓ` must all be known. If `σ₀ · ℓ` is an unknown lumped parameter
 the `(N, τ)` alias reappears inside it; see the module docstring.
 
-REDUCED: homogeneous single-temperature slab, flat line-center cross-section. -/
+Relation REDUCED (homogeneous single-temperature slab, flat line-center cross-section);
+publishes APPROXIMATION via `selfAbsorbedIntensity`. -/
 theorem thickLineIntensity_injOn [Nonempty ι] {kB T Fcal sigma0 ell : ℝ}
     {g E A : ι → ℝ} (hg : ∀ k, 0 < g k) (hFcal : 0 < Fcal) (hA : ∀ k, 0 < A k)
     (hsig : 0 < sigma0) (hell : 0 < ell) (u l : ι) :
@@ -390,9 +416,10 @@ unreachable here because `τ = 0` forces `N = 0`, outside the physical domain.
 This does NOT contradict that theorem: it identifies the extra input (a known `σ₀ · ℓ` at a
 known `T`) that removes its degree of freedom. Without that input the alias returns inside the
 lumped parameter, and the honest remedy stays a second observable
-(`CurveOfGrowth.cogRatio_injOn`).
+(`CurveOfGrowth.cogRatio_injOn`, itself a flat-kernel result).
 
-REDUCED: homogeneous single-temperature slab, flat line-center cross-section. -/
+Relation REDUCED (homogeneous single-temperature slab, flat line-center cross-section);
+publishes APPROXIMATION via `selfAbsorbedIntensity`. -/
 theorem no_density_alias_of_boundOpticalDepth [Nonempty ι] {kB T Fcal sigma0 ell : ℝ}
     {g E A : ι → ℝ} (hg : ∀ k, 0 < g k) (hFcal : 0 < Fcal) (hA : ∀ k, 0 < A k)
     (hsig : 0 < sigma0) (hell : 0 < ell) (u l : ι) :

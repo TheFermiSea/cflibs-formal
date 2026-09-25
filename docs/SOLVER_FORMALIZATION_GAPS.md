@@ -67,9 +67,16 @@ strict solver would step outside the verified envelope.
    two-sided sensitivity bound (2026-07-02): `sahaFactor_lipschitz_temp` (channelwise —
    thermal bracket + exponential + partition-ratio via `PartitionLipschitz` — assembled
    into an explicit Lipschitz constant on a `[Tmin,Tmax]` box) and
-   `electronDensityFromRatio_lipschitz_temp` (the `(ΔT, ΔR)` budget is complete).
-   MONOTONICITY stays honestly open (`dS/dT` sign-indefinite through `U_{z+1}/U_z`) — but
-   the runtime error budget needs the bound, not the sign. The
+   `electronDensityFromRatio_lipschitz_temp` (the `(ΔT, ΔR)` budget is complete). The
+   bound is valid but loose: on tabulated level lists `sahaFactorLipConst` is about
+   10⁶–10⁸ times the true `sup |dS/dT|` (audit 2026-09-24, finding PS-03).
+   MONOTONICITY is ✅ closed under a level-truncation hypothesis (Frontier 02):
+   `sahaFactor_strictMonoOn_temp` and `electronDensityFromRatio_strictMonoOn_temp` hold when
+   the lower-stage level list is truncated at or below the `χ` used in the exponent (`hEχ`;
+   `χ − Δχ` when ionization-potential depression lowers it). Unconditionally `dS/dT` is
+   sign-indefinite through `U_{z+1}/U_z`, and untruncated tabulated lists violate `hEχ` for
+   202 of 324 species in the companion's production database (finding PS-06), so the
+   truncation is an obligation on the caller. The
    design-matrix leg is ✅ closed (2026-07-02) — `OLS.lean`: `det_designNormalMatrix`
    (`det = n·SS_E`, the Lagrange/variance identity) and `designNormalMatrix_det_ne_zero_iff`
    (nonsingular ⟺ positive energy spread), so the OLS `hvar` hypothesis IS the exact rank
@@ -130,7 +137,22 @@ strict solver would step outside the verified envelope.
    b=3/2, q=√2/2`). The multi-element coupled iteration's convergence is now ✅ closed
    (2026-07-09): `dampedMultiElementIter_tendsto` (the unconditional damped Krasnoselskii–Mann
    map) and `multiElementIonized_iter_tendsto` (the literal direct iteration, via the monotone
-   even/odd subsequence argument). Still open: the outer T-iteration.
+   even/odd subsequence argument). The outer T-iteration is **addressed only as a reduced
+   model** (Frontier 04): `OuterLoopModelB.outerLoop_contracts`,
+   `SahaRangeEnclosure.outerLoop_contracts_apriori` (density-box invariance discharged
+   a-priori) and `JointConvergence.jointConvergence` (the same 1-D composite unrolled, under
+   the stronger gate `max(L₁, L₂) < 1`) prove box contraction for a *frozen-offset, fixed-`R`*
+   loop. The Saha offset is frozen at a reference `T`, while the density leg `n_e = S(T)/R`
+   uses the current `T` and a fixed stage ratio `R`. With the offset evaluated at the current
+   `T` the Saha coupling cancels: the composite then depends on `T` only through
+   `U_z(T)/U_{z+1}(T)`, and is constant when the offset is `log S(T)` (audit 2026-09-24,
+   finding INV-01; the scratch witness `modelB_consistent_offset_degenerate` is not yet
+   landed). The product gate `L₁·L₂ < 1` is a sufficient condition that fails on realistic
+   data: it evaluates to 6×10³–5×10⁴ on the audit's Ti-like test case (findings PS-03,
+   INV-03), so it is not a usable runtime certificate. **Still open:** a theorem about the
+   pipeline's actual outer loop (`iterative.py`: stage ratio re-derived from intercepts at the
+   current `T`, ion abscissae shifted by the ionization energy, one intercept per element,
+   0.5-damped Gauss–Seidel with holds), which none of these results models.
 
 7. **Multi-species per-U generalization.** ✅ **Addressed** in `MultiSpecies.lean`
    (2026-07-02): `deNormalizedDensityPerU` / `lineIntensityPerU` with genuinely

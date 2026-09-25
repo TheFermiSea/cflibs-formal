@@ -40,11 +40,16 @@ approximation and no centering needed**:
 N̂ = olsDensity … A' I = N · exp(olsIntercept E (fun k => log(A_k/A'_k))).
 ```
 This is the OLS mirror of `classicDensity_aliasing`
-(`olsDensity_aliasing_A`). In the repo's centered Boltzmann-plot convention
-(`mean E = 0`) `olsIntercept E δ = mean δ`, so the multiplicative bias is exactly the
+(`olsDensity_aliasing_A`). Since `olsIntercept E δ = mean δ − olsSlope E δ · mean E`, the
+multiplicative bias depends on the energy origin whenever the per-line errors are correlated with
+energy (`olsSlope E δ ≠ 0`). With energies measured from their own mean (`mean E = 0`)
+`olsIntercept E δ = mean δ`, so the multiplicative bias is exactly the
 **geometric mean** of the per-line data ratios `A_k/A'_k` — the formal reason the multi-line
-reader tolerates a single bad line better than the single-line reader (which carries the raw,
-undivided ratio): a single outlier `δ_k` is divided by `n`. `olsDensity_aliasing_A_error`
+reader, in that frame, tolerates a single bad line better than the single-line reader (which
+carries the raw, undivided ratio): a single outlier `δ_k` is divided by `n`. With energies
+measured from the ground state (the tabulated convention), the energy-correlated part of the
+`A`-error enters the intercept with lever arm `mean E`, and the bias can be much larger (see
+*Honest scope*). `olsDensity_aliasing_A_error`
 turns the identity into a REDUCED closed-form bound via `olsIntercept_stable_hetero`
 (`ErrorBudget.lean`) and `abs_log_ratio_le` (`Analysis.lean`), and
 `olsComposition_atomicData_error` propagates the per-species density bound into the
@@ -58,9 +63,19 @@ recovered composition via `composition_abs_sub_le_uniform` (`ErrorBudget.lean`),
   three atomic-data sub-channels `g,E,A`), no centering hypothesis, no approximation.
 * `olsDensity_aliasing_A_error` / `olsComposition_atomicData_error` are **REDUCED**: the
   per-line log-ratios `log(A_k/A'_k)` are lumped through the centered-convention intercept
-  bound `olsIntercept_stable_hetero` (so `hcent : mean E = 0` is required, the repo's
-  standard Boltzmann-plot normalization — WLOG on the energy origin, since a shift is
-  absorbed into the intercept) and the two-sided log-transfer bound `abs_log_ratio_le`.
+  bound `olsIntercept_stable_hetero` and the two-sided log-transfer bound `abs_log_ratio_le`.
+* **The centering hypothesis `hcent : mean E = 0` is load-bearing, not a convention.** The
+  forward intensities do not depend on the energy origin, but the known-`T` OLS reader's output
+  does: shifting every energy by `c` multiplies `N̂` by `exp(−c · olsSlope E δlog)`, where
+  `δlog_k = log(A_k/A'_k)`. Centering moves the energy-correlated part of the `A`-error into the
+  slope (temperature) channel, and this bound, which reads only the intercept at a known `T`,
+  omits that channel. At the ground-state origin the bound can fail badly: with `E = (5, 6)`,
+  `A = (1, 1)`, `A' = (1, 1.6)` and relative budget `δ = (0, 0.6)`, the exact identity gives
+  `N̂/N ≈ 10.49`, so `|N̂ − N|/N ≈ 9.49`, against the centered bound `exp(η) − 1 ≈ 1.117`; at the
+  centroid origin the error is `≈ 0.209` (numerical check, 2026-09-24 audit, rerun; not
+  formalized). An origin-free bound would add a lever-arm term `|mean E| · |olsSlope E δlog|`
+  (controlled by `HeteroAtomicData.heteroSlopeBound`); it is not proved here. The composition
+  corollary needs `mean (E s) = 0` for every species, i.e. a separate energy origin per species.
 * **This is a worst-case BIAS bound, not a variance bound — do NOT read it as
   "more lines ⇒ better".** `δ_k = log(A_k/A'_k)` is a fixed, systematic atomic-data error, not
   zero-mean measurement noise; the `olsSlope_noise_gain` / `Alt.OLSVariance` machinery that
@@ -129,8 +144,11 @@ density is exactly the true density scaled by the exponential of the OLS INTERCE
 per-line log-ratios `log(A_k/A'_k)`:
   `N̂ = N · exp(olsIntercept E (fun k => log(A_k/A'_k)))`.
 This is the OLS mirror of `classicDensity_aliasing`: the single-line reader carries the raw
-ratio of response factors, the multi-line OLS reader carries its intercept — the log-domain
-(geometric-mean, in the centered convention) AVERAGE of the per-line data ratios. Proof: the
+ratio of response factors, the multi-line OLS reader carries its intercept. With centered
+energies that intercept is the log-domain (geometric-mean) AVERAGE of the per-line data ratios;
+in general it is `mean δ − olsSlope E δ · mean E` (with `δ_k = log(A_k/A'_k)`), so it depends on
+the energy origin whenever the errors correlate with energy. The identity holds for every origin;
+no centering is assumed. Proof: the
 observed ordinate splits as `ŷ_k = y_k^true + log(A_k/A'_k)` (via `Real.log_mul` on
 `I_k/(g_k A'_k) = (I_k/(g_k A_k))·(A_k/A'_k)`, all factors positive), `olsIntercept` is linear
 in the ordinate (`olsIntercept_add`), the true-ordinate intercept is `log(Fcal·N/U)`
@@ -190,16 +208,22 @@ example :
 
 /-! ## M3 — REDUCED closed-form error bound -/
 
-/-- **REDUCED closed-form density-error bound, OLS reader, A-channel.** In the centered
-Boltzmann-plot convention (`mean E = 0`) with a per-line RELATIVE transition-probability
+/-- **REDUCED closed-form density-error bound, OLS reader, A-channel, centered energies only.**
+When the energies are measured from their own mean (`hcent : mean E = 0`) and there is a per-line
+RELATIVE transition-probability
 error `|A'_k − A_k| ≤ δ_k·A_k` (`δ_k < 1`), the recovered density obeys
   `|N̂ − N| ≤ N·(exp(η) − 1)`,   `η = (∑_k δ_k/(1−δ_k)) / card ι`.
+**`hcent` is load-bearing, not a convention**: centering moves the energy-correlated part of the
+`A`-error into the slope (temperature) channel, which this intercept-only bound omits. At the
+ground-state origin the same reader can violate the bound: `E = (5, 6)`, `A = (1, 1)`,
+`A' = (1, 1.6)`, `δ = (0, 0.6)` give `|N̂ − N|/N ≈ 9.49` against `exp(η) − 1 ≈ 1.117` (numerical
+check, not formalized; see the module's *Honest scope*).
 Derivation: `olsDensity_aliasing_A` gives the EXACT `N̂ − N = N·(exp(olsIntercept E δlog) − 1)`
 with `δlog_k = log(A_k/A'_k)`; `abs_log_ratio_le` bounds each `|δlog_k| ≤ δ_k/(1−δ_k)`;
 `olsIntercept_stable_hetero` (centered convention) bounds the intercept of `δlog` against the
 zero ordinate by the AVERAGE `η` of those per-line bounds; `abs_exp_sub_one_le` closes the
 exponential step. REDUCED because the per-line `δ_k` are lumped into the single average `η`
-(rather than kept fully per-line downstream) and the centered convention (`mean E = 0`) is
+(rather than kept fully per-line downstream) and centered energies (`mean E = 0`) are
 assumed. **Honest scope — bias, not variance**: `η` is the worst-case average of a SYSTEMATIC
 per-line error, not a statistical standard error; a uniformly-signed `δ_k` does not shrink as
 `card ι` grows (`exp η − 1` does not vanish as `n → ∞` unless the signed average `η → 0`). -/
@@ -278,9 +302,12 @@ controlled by the atomic-data error:
   `|Ĉ_s − C_s| ≤ (card κ + 1)·delta / Ŝ`.
 REDUCED: the per-species, per-line `δ_{s,k}` are collapsed through `olsDensity_aliasing_A_error`
 into the single uniform cap `delta`; the composition algebra itself is exact
-(`composition_abs_sub_le_uniform`). Same honest bias-not-variance scope as
-`olsDensity_aliasing_A_error`: `delta` bounds a worst-case SYSTEMATIC per-species bias, not a
-statistical composition variance. -/
+(`composition_abs_sub_le_uniform`). It inherits the load-bearing centering of
+`olsDensity_aliasing_A_error`, once per species: `hcent : ∀ s, mean (E s) = 0` measures each
+species' energies from that species' own line centroid, and at the ground-state origin the
+per-species bound can fail (see the module's *Honest scope*). Same honest bias-not-variance
+scope: `delta` bounds a worst-case SYSTEMATIC per-species bias, not a statistical composition
+variance. -/
 theorem olsComposition_atomicData_error [Nonempty ι] [Nonempty κ]
     {kB T Fcal delta : ℝ} {N : κ → ℝ} {g E A A' : κ → ι → ℝ} {δ : κ → ι → ℝ}
     (hg : ∀ s k, 0 < g s k) (hN : ∀ s, 0 < N s) (hFcal : 0 < Fcal)

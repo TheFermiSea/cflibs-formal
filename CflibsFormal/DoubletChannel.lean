@@ -88,6 +88,18 @@ Further honest scope caveats:
   conditioned on the observed ratio being attained at some `τ₀ > 0`, and the two-zone
   theorem supplies that hypothesis by an intermediate-value argument rather than by a
   range computation.
+* **Flat kernel / line centre.** `slabIntensity F τ = F·(1 - exp(-τ))` is the slab solution
+  at ONE optical depth. Using it for the two measured (integrated) intensities treats each
+  line as a rectangular profile with a single `τ` — the flat-profile kernel of
+  `SelfAbsorption` (see its scope block: 1.4–3.5× over-correction at line-centre depths
+  `3–10` for peaked profiles, in the audit probes). The strict monotonicity, and hence
+  `doubletRatio_injOn` and every uniqueness result built on it (`doubletRatio_determines_tau`,
+  `doublet_determines_columnDensity`, `doublet_identifies_columnDensity_calibration_free`,
+  `doublet_fit_unique`), is a property of this kernel. For the profile-resolved Voigt curve of
+  growth the pair ratio is non-monotone inside line-centre depths `≤ 30` for Stark-affected
+  lines (`γ/σ ≳ 0.1`), though that second branch spans under 1% of the ratio; for pure Doppler
+  and `γ/σ = 0.01` profiles it stays monotone there (numerical probes, `r = 2`,
+  `docs/research/audit-2026-09-24`; not a theorem here; see `CurveOfGrowth`'s scope block).
 
 ## Literature and scope
 
@@ -116,8 +128,8 @@ Further honest scope caveats:
   the curve-of-growth kernel rather than reusing that string.
 
 Everything is dimensionless `ℝ`. Results are tagged **REDUCED** where they depend on the
-homogeneous-slab kernel and the shared-`F` / proportional-`τ` multiplet idealization, and
-**PURE-MATH** where they are pure algebra or analysis.
+homogeneous-slab, flat-profile kernel and the shared-`F` / proportional-`τ` multiplet
+idealization, and **PURE-MATH** where they are pure algebra or analysis.
 -/
 
 namespace CflibsFormal
@@ -244,7 +256,11 @@ theorem doubletRatio_strictMonoOn {r : ℝ} (hr0 : 0 < r) (hr : r < 1) :
 /-- **Injectivity of the doublet channel on the physical domain.** For any known ratio of
 oscillator strengths `r > 0` with `r ≠ 1` — i.e. two *genuinely different* multiplet
 members — distinct positive optical depths give distinct doublet ratios. This is the
-identifiability statement: the second observable removes the one-line `N`–`τ` alias. -/
+identifiability statement: the second observable removes the one-line `N`–`τ` alias.
+
+Flat kernel only: the injectivity is a property of the rectangular-profile / line-centre kernel
+`1 - exp(-τ)`. For Stark-affected Voigt lines (`γ/σ ≳ 0.1`) the profile-resolved pair ratio is
+non-monotone inside line-centre depths `≤ 30` (audit probes; module scope caveats). -/
 theorem doubletRatio_injOn {r : ℝ} (hr0 : 0 < r) (hr1 : r ≠ 1) :
     Set.InjOn (fun tau => doubletRatio r tau) (Set.Ioi 0) := by
   rcases lt_or_gt_of_ne hr1 with h | h
@@ -279,11 +295,11 @@ multiplet pair, and yielding equal measured intensity ratios, must have the same
 density. The scales never appear in the conclusion: they cancel inside each ratio, so no
 radiometric calibration enters the inversion of `N`.
 
-Scope: REDUCED — homogeneous-slab kernel, one shared `F` per experiment, exactly known
-`r`, and `τ₁ = κ·N` with known `κ`. Note that `κ` is a **single** bound variable shared by
-*both* experiments: only the radiometric scale `F` is permitted to differ, while equal line
-strength, equal temperature (which fixes the lower-level population inside `κ`) and equal
-path length are load-bearing hypotheses, not consequences. "Calibration-free" here means
+Scope: REDUCED — homogeneous-slab, flat-profile kernel, one shared `F` per experiment,
+exactly known `r`, and `τ₁ = κ·N` with known `κ`. Note that `κ` is a **single** bound variable
+shared by *both* experiments: only the radiometric scale `F` is permitted to differ, while
+equal line strength, equal temperature (which fixes the lower-level population inside `κ`)
+and equal path length are load-bearing hypotheses, not consequences. "Calibration-free" here means
 free of `F`; it does **not** mean free of `κ`. See the module docstring for what this does
 **not** prove. -/
 theorem doublet_identifies_columnDensity_calibration_free

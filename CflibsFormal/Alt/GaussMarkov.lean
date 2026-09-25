@@ -12,9 +12,12 @@ import CflibsFormal.Alt.OLSVariance
 `Alt.OLSVariance` proves the *value* of the OLS slope variance, `Var(β̂) = σ²/SS_E`, but its
 honest-scope docstring explicitly **does not claim optimality**: "we prove the variance value and
 unbiasedness only — NOT that OLS is the minimum-variance estimator among linear unbiased
-estimators (the full Gauss–Markov/Aitken optimality theorem)." **This module discharges that
-promise**: among *all* linear unbiased estimators of the slope, OLS has the least variance —
-it is the Best Linear Unbiased Estimator (BLUE).
+estimators (the full Gauss–Markov/Aitken optimality theorem)." **This module discharges the
+homoscedastic (Gauss–Markov) half of that promise**: when every ordinate carries the same noise
+variance `σ²`, among *all* linear unbiased estimators of the slope OLS has the least variance —
+it is the Best Linear Unbiased Estimator (BLUE). The Aitken half — unequal or correlated noise,
+where the BLUE is the weighted (generalized) least-squares estimator and OLS is in general not
+BLUE — is **not** proved here.
 
 A **general linear estimator** of the ordinates is `Tₐ(ω) = ∑ₖ aₖ·yₖ(ω)` for weights `a : ι → ℝ`,
 under the same linear model `yₖ(ω) = α + β·Eₖ + εₖ(ω)` as `Alt.OLSVariance`. We prove:
@@ -34,9 +37,10 @@ under the same linear model `yₖ(ω) = α + β·Eₖ + εₖ(ω)` as `Alt.OLSVa
 
 ## Honest scope
 
-* **EXACT, not approximate.** Every result is an exact identity / inequality under the stated
-  linear-Gaussian-free model (no linearization). `weight_sq_ge_noiseGain` is deterministic Finset
-  algebra; only `linEstimator_variance`/`ols_is_blue` touch the probability layer.
+* **Exact under its hypotheses, not approximate.** Every result is an exact identity / inequality
+  under the stated linear model (no Gaussianity, no linearization). `weight_sq_ge_noiseGain` is
+  deterministic Finset algebra; only `linEstimator_variance`/`ols_is_blue` touch the probability
+  layer, and both assume one common variance `σ²` for every line (`hhom`).
 * **Unbiasedness is an `iff`, quantified over `α, β`.** `linEstimator_unbiased_iff` characterizes
   unbiasedness for *all* intercepts/slopes; "unbiased for one fixed `β`" is strictly weaker and is
   NOT what BLUE optimality requires. `ols_is_blue` takes the two constraints as hypotheses.
@@ -45,23 +49,35 @@ under the same linear model `yₖ(ω) = α + β·Eₖ + εₖ(ω)` as `Alt.OLSVa
   `olsSlope_variance_noiseGain`) needs only `cov(εᵢ, εⱼ) = 0` for `i ≠ j` — NOT independence. So
   `ols_is_blue` is the genuine Gauss–Markov theorem: minimum variance among linear unbiased
   estimators under exactly the textbook (uncorrelated, homoscedastic, zero-mean) error model.
+  (Zero mean is not a hypothesis of `ols_is_blue` itself; it is what makes the two weight
+  constraints `ha0`, `ha1` equivalent to unbiasedness, via `linEstimator_unbiased_iff`.)
+* **Homoscedasticity is load-bearing.** Under per-line variances `σ_k²` OLS is not BLUE. With
+  `E = (0, 1, 2)` and `σ = (1, 1, 100)`, OLS has variance `2500.25`, while the unbiased weights
+  `a = (−1, 1, 0)` give variance `2` (hand arithmetic; not formalized). The weighted
+  (Aitken) optimality theorem is not proved in this repository.
 * **Consistency with `Alt.OLSVariance`.** `ols_is_blue` rewrites `Var(β̂)` via
   `olsSlope_variance_noiseGain` to `σ²·∑wₖ²` and `Var(Tₐ)` via `linEstimator_variance` to `σ²·∑aₖ²`,
   then closes with `weight_sq_ge_noiseGain` and `0 ≤ σ²`; the OLS case `a = w` attains equality,
   so the bound is sharp and agrees with `olsSlope_variance_eq` at `a = olsWeight E`.
-* **Physics is in prose only.** With `β = −1/(k_B T)` (Boltzmann plot), BLUE says OLS extracts the
-  least-variance inverse temperature among all linear ordinate combinations satisfying the two
-  unbiasedness constraints. No physical constant enters any Lean statement.
+* **Physics is in prose only, and it needs equal-noise ordinates.** With `β = −1/(k_B T)`
+  (Boltzmann plot), BLUE says OLS extracts the least-variance inverse temperature among all linear
+  ordinate combinations satisfying the two unbiasedness constraints — **provided every
+  Boltzmann-plot ordinate `yₖ = log(Iₖ/(gₖAₖ))` has the same noise variance.** Real ordinates are
+  heteroscedastic (weak lines have larger relative intensity noise, and tabulated `Aₖ` carry
+  line-dependent uncertainties), so for a real plot this module does not show that OLS is the
+  best linear reader. No physical constant enters any Lean statement.
 
 ## Literature
 
-The minimum-variance property of OLS among linear unbiased estimators is the Gauss–Markov theorem;
-its modern generalized-least-squares form is A. C. Aitken, "On Least Squares and Linear Combination
-of Observations," *Proceedings of the Royal Society of Edinburgh* **55** (1935) 42–48. The
-simple-regression statement (slope variance `σ²/Sₓₓ` is least among unbiased linear estimators) is
-standard, e.g. N. R. Draper and H. Smith, *Applied Regression Analysis*, 3rd ed.,
-Wiley-Interscience (1998), Ch. 1–2. This module formalizes the optimality layer deferred by
-`Alt.OLSVariance`; its deterministic kernel is `OLS.olsSlope_noise_gain` (`∑wₖ² = 1/SS_E`).
+The minimum-variance property of OLS among linear unbiased estimators under uncorrelated,
+homoscedastic errors is the Gauss–Markov theorem. The simple-regression statement proved here
+(slope variance `σ²/Sₓₓ` is least among unbiased linear estimators) is standard, e.g.
+N. R. Draper and H. Smith, *Applied Regression Analysis*, 3rd ed., Wiley-Interscience (1998),
+Ch. 1–2. Its generalized-least-squares (weighted, possibly correlated) form is A. C. Aitken, "On
+Least Squares and Linear Combination of Observations," *Proceedings of the Royal Society of
+Edinburgh* **55** (1935) 42–48; that form is **not** what is proved here. This module formalizes
+the optimality layer deferred by `Alt.OLSVariance`; its deterministic kernel is
+`OLS.olsSlope_noise_gain` (`∑wₖ² = 1/SS_E`).
 -/
 
 namespace CflibsFormal.Alt
@@ -185,12 +201,16 @@ theorem weight_sq_ge_noiseGain (a E : ι → ℝ)
   have hnn : 0 ≤ ∑ k, (a k - olsWeight E k) ^ 2 := Finset.sum_nonneg (fun k _ => sq_nonneg _)
   linarith
 
-/-- **THE headline — OLS is the Best Linear Unbiased Estimator (BLUE) of the slope.** For ANY
+/-- **THE headline — under equal noise on every line, OLS is the Best Linear Unbiased Estimator
+(BLUE) of the slope.** For ANY
 linear estimator `Tₐ` that is unbiased (`∑ₖaₖ = 0`, `∑ₖaₖEₖ = 1`), `Var(β̂) ≤ Var(Tₐ)` under the
-uncorrelated, homoscedastic, square-integrable noise model. Combines `olsSlope_variance_noiseGain`
+uncorrelated, homoscedastic (`hhom`: one common `σ²`), square-integrable noise model. Combines
+`olsSlope_variance_noiseGain`
 (`Var(β̂) = σ²·∑wₖ²`), `linEstimator_variance` (`Var(Tₐ) = σ²·∑aₖ²`), the algebraic core
 `weight_sq_ge_noiseGain` (`∑wₖ² ≤ ∑aₖ²`), and `0 ≤ σ²`. Equality at `a = olsWeight E`, so the
-bound is sharp. This is the Gauss–Markov/Aitken optimality theorem deferred by `Alt.OLSVariance`. -/
+bound is sharp. This is the homoscedastic Gauss–Markov theorem deferred by `Alt.OLSVariance`.
+It is not Aitken's generalized theorem: with per-line variances `σ_k²` OLS is in general not BLUE
+(see the module's *Honest scope*), and real Boltzmann-plot ordinates are heteroscedastic. -/
 theorem ols_is_blue [Nonempty ι] (a E : ι → ℝ) (α β σ : ℝ) (ε : ι → Ω → ℝ)
     (hvar : 0 < ∑ k, (E k - mean E) ^ 2)
     (hL2 : ∀ k, MemLp (ε k) 2 μ)

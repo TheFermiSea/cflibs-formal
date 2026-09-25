@@ -41,12 +41,19 @@ We supply:
 
 ## Scope (honest)
 
-This is **existence only**. Unlike the linear case in `LeastSquaresFit.lean` — where the minimizer
-is the closed-form OLS estimate, is *unique* under nonzero energy spread, and provably coincides
-with the identifiable inverse on-manifold — here we prove *only* that a minimizer exists on the
-compact physical box. **Uniqueness of the minimizer, any characterization of it, and its relation
-to the identifiable inverse off-manifold all remain open** (the objective is non-convex in `T`, so
-local minima and boundary optima are genuinely possible). `nlObjective_onManifold_min` pins the
+This first section is **existence only**. Unlike the linear case in `LeastSquaresFit.lean` — where
+the minimizer is the closed-form OLS estimate, is *unique* under nonzero energy spread, and provably
+coincides with the identifiable inverse on-manifold — here we prove *only* that a minimizer exists
+on the compact physical box. For general noisy data, **uniqueness of the minimizer, any
+characterization of it, and its relation to the identifiable inverse all remain open** (the
+objective is non-convex in `T`, so local minima and boundary optima are genuinely possible). Later
+sections settle special cases only: exact-fit data for any number of lines
+(`profiledT_onManifold_unique`, `joint_onManifold_unique`, `profiledT_offManifold_unique`), two
+lines on a temperature box under an antipode-avoidance hypothesis
+(`profiledT_two_offManifold_box_unique`), and, in `ProfiledTUniqueness.lean`, line sets with two
+upper-level energies on a box. For `m ≥ 3` lines the profiled residual value need not be injective
+in `T` (an explicit three-line counterexample, `profiledResidual_not_injective_m3`).
+`nlObjective_onManifold_min` pins the
 minimum *value* to `0` only in the noise-free case; for real (noisy) spectra the minimal residual
 is positive and its argmin has no closed form. This is the **compactness leg** of the nonlinear
 joint `(T, N)` fit — the residual of gap #1 in `docs/SOLVER_FORMALIZATION_GAPS.md`, and a
@@ -624,28 +631,41 @@ example :
     (by simp only [nvT2E, Matrix.cons_val_zero, Matrix.cons_val_one]; norm_num)
     (fun _ => rfl) one_pos
 
-/-! ### OFF-manifold results (Frontier 01, milestones M4–M6)
+/-! ### Exact-fit uniqueness, near-manifold bounds, `m ≥ 3` counterexample (Frontier 01, M4–M6)
 
-On-manifold uniqueness (M1–M3) does not transfer to noisy data unchanged. This section collects the
-genuinely off-manifold results: two-line off-manifold `T`-uniqueness (M5 — at most one
-exactly-fitting temperature, `obs` arbitrary), a near-manifold `L²` stability bound on the profiled
-residual (M4 — the value half of the perturbation picture), and the honest `m ≥ 3` non-uniqueness
-counterexample (M6 — the residual value is not injective in `T`, fencing off the frontier). -/
+On-manifold uniqueness (M1–M3) does not transfer to noisy data unchanged. This section collects:
+exact-fit `T`-uniqueness (M5 — at most one exactly fitting temperature; no on-manifold hypothesis
+is written, but the exact-fit premise itself puts `obs` on the forward manifold, so this is an
+off-manifold result in name only), a near-manifold `L²` stability bound on the profiled residual
+(M4 — the value half of the perturbation picture), and the honest `m ≥ 3` non-uniqueness
+counterexample (M6 — the residual value is not injective in `T`, fencing off the frontier). The
+genuine off-manifold minimizer result is `profiledT_two_offManifold_box_unique` further below. -/
 
-/-- **OFF-manifold `T`-uniqueness for `m` lines (EXACT, Ciucci 1999).** The first genuinely
-off-manifold identifiability result: `obs : ι → ℝ` is *arbitrary* (no on-manifold /
-exact-forward-spectrum hypothesis), only `obs i ≠ 0` on the chosen distinct-energy pair `E i ≠ E j`.
-If two positive temperatures `T₁, T₂` both drive the density-profiled residual
-`Φ(T) = nlObjective … (T, N̂(T))` to zero, they coincide. So `m` off-manifold lines admit **at most
-one** exactly-fitting temperature.
+/-- **Exact-fit `T`-uniqueness for `m` lines (EXACT, Ciucci 1999): at most one temperature fits
+`obs` exactly.** If two positive temperatures `T₁, T₂` both drive the density-profiled residual
+`Φ(T) = nlObjective … (T, N̂(T))` to zero, they coincide. No on-manifold hypothesis is written, and
+on `obs` only `obs i ≠ 0` on the chosen distinct-energy pair `E i ≠ E j` is assumed. But the
+premise `h1` is itself an exact fit: by `nlObjective_eq_zero_iff` it says `obs = N̂(T₁)·c(T₁)`,
+so `obs` lies on the forward manifold `{N·c(T)}` (with `N̂(T₁)` a nonzero real, not necessarily
+positive). The name `offManifold` is historical.
+
+**Where this has content.** For noisy data with `m ≥ 3` lines an exact fit almost never exists
+(the exactly fittable `obs` form a two-parameter family in `ℝ^m`; this is not formalized), and the
+theorem is then vacuous. For `m = 2` (with `obs 0 ≠ 0`) an exact fit exists iff the observed ratio
+`obs 1/obs 0` lies in the range of the model ratio `c₁(T)/c₀(T)` over `T > 0`, so the result does
+constrain such two-line noisy data. For noiseless data it gives the uniqueness half of
+`profiledT_onManifold_unique`.
+It says nothing about the least-squares minimizer when no exact fit exists; the genuine
+off-manifold minimizer results are `profiledT_two_offManifold_box_unique` (below) and, in
+`ProfiledTUniqueness.lean`, `joint_two_box_minimizer_unique` and
+`joint_twoLevel_box_minimizer_unique`.
 
 Mechanism (the same exact-fit engine as the on-manifold `profiledT_onManifold_unique`, no closed
 form): `Φ(T) = 0 ⟺` an exact fit `∀ k, N̂(T)·c_k(T) = obs_k` (`nlObjective_eq_zero_iff`). On pair
 `(i, j)` this forces the cross-ratio `obs_j·c_i(T) = obs_i·c_j(T)` at each temperature; since the
 observed ratio `obs_j/obs_i` is `obs`-fixed, the intensity ratio `c_j/c_i` is *forced identical* at
 `T₁` and `T₂`, and `temperature_identifiability` (distinct energies, `Real.exp` injectivity) pins
-`T₁ = T₂`. Unlike the on-manifold results, `obs` is unconstrained — this is a true off-manifold
-uniqueness statement. -/
+`T₁ = T₂`. -/
 theorem profiledT_offManifold_unique [Nonempty ι] {kB Fcal T1 T2 : ℝ} {g E A obs : ι → ℝ}
     (hkB : 0 < kB) (hg : ∀ k, 0 < g k) (hFcal : 0 < Fcal) (hA : ∀ k, 0 < A k)
     (hT1 : 0 < T1) (hT2 : 0 < T2) (i j : ι) (hobsi : obs i ≠ 0) (hE : E i ≠ E j)
@@ -672,10 +692,12 @@ theorem profiledT_offManifold_unique [Nonempty ι] {kB Fcal T1 T2 : ℝ} {g E A 
   rw [div_eq_div_iff hci1.ne' hci2.ne']
   exact hprod
 
-/-- **Two-line OFF-manifold `T`-uniqueness (EXACT, Ciucci 1999).** The `Fin 2`, distinct-energy
-`E 0 ≠ E 1` instance of `profiledT_offManifold_unique` (pair `i, j = 0, 1`, `obs 0 ≠ 0`): two
-off-manifold lines admit at most one exactly-fitting temperature. A corollary of the general-`m`
-result. -/
+/-- **Two-line exact-fit `T`-uniqueness (EXACT, Ciucci 1999).** The `Fin 2`, distinct-energy
+`E 0 ≠ E 1` instance of `profiledT_offManifold_unique` (pair `i, j = 0, 1`, `obs 0 ≠ 0`): at most
+one temperature fits two lines exactly. A corollary of the general-`m` result. For two lines an
+exact fit exists iff `obs 1/obs 0` lies in the range of the model ratio `c₁(T)/c₀(T)` over `T > 0`,
+so this constrains noisy two-line data only when that holds; the least-squares minimizer in
+general is `profiledT_two_offManifold_box_unique`. -/
 theorem profiledT_two_offManifold_unique {kB Fcal T1 T2 : ℝ} {g E A obs : Fin 2 → ℝ}
     (hkB : 0 < kB) (hg : ∀ k, 0 < g k) (hFcal : 0 < Fcal) (hA : ∀ k, 0 < A k)
     (hT1 : 0 < T1) (hT2 : 0 < T2) (hobs0 : obs 0 ≠ 0) (hE : E 0 ≠ E 1)
@@ -695,10 +717,14 @@ private def nvOffE : Fin 2 → ℝ := ![0, 1]
 /-- Einstein coefficients for the off-manifold witness. -/
 private def nvOffA : Fin 2 → ℝ := fun _ => 1
 
-/-- **Non-vacuity of `profiledT_two_offManifold_unique`.** Every hypothesis is realized at concrete
-distinct-energy data `E = ![0,1]` with an *arbitrary* off-manifold observation `obs = ![3, 7]`
-(no exact-forward-spectrum constraint), so the theorem is not vacuous: any two zero-residual
-temperatures for these two lines are forced equal. -/
+/-- **Side conditions of `profiledT_two_offManifold_unique` at concrete data (a partial witness).**
+At distinct-energy data `E = ![0,1]`, `g = A = 1`, `kB = Fcal = 1` and `obs = ![3, 7]`, the side
+conditions (positivity, `obs 0 ≠ 0`, `E 0 ≠ E 1`) are discharged, and the exact-fit premises
+`h1`, `h2` are left as hypotheses. For this `obs` those premises can never hold: the model ratio
+`c₁(T)/c₀(T) = exp(−1/T)` lies in `(0, 1)` for `T > 0`, while an exact fit needs it to equal
+`7/3 > 1`. So the conclusion here holds vacuously, and this example does NOT show that the exact-fit
+premises are satisfiable. An observation whose ratio lies in `(0, 1)`, such as `![3, 1]` (fitted
+exactly at `T = 1/log 3`), would realize them; that instance is not formalized here. -/
 example {T1 T2 : ℝ} (hT1 : 0 < T1) (hT2 : 0 < T2)
     (h1 : nlObjective 1 1 nvOffG nvOffE nvOffA ![3, 7]
         (T1, profiledDensity 1 1 nvOffG nvOffE nvOffA ![3, 7] T1) = 0)
@@ -1104,6 +1130,15 @@ lemma clean_residual_ratio {kB Fcal T0 N0 T : ℝ} {g E A obs : Fin 2 → ℝ}
   field_simp
   ring
 
+/-- **Two-line metric localization of a noisy profiled-`T` minimizer (REDUCED, Tognoni 2010).**
+Let `obs = N₀·c(T₀) + η` be the two-line forward spectrum at `(T₀, N₀)` plus noise `η`, with `T`
+and `T₀` in the box `[Tmin, Tmax]` (`0 < Tmin`). If the profiled residual at `T` is at most the one
+at `T₀` (for example, `T` minimizes it over the box), then
+`S²·(T − T₀)² ≤ 6·(1 + Rmax²)·∑ₖ ηₖ²`, with `K = g₁A₁/(g₀A₀)`, `ΔE = E₀ − E₁`,
+`S = N₀·c₀(T₀)·K·exp(−|ΔE/k_B|/Tmin)·|ΔE/k_B|/Tmax²` and `Rmax = K·exp(|ΔE/k_B|/Tmin)`. When
+`S > 0` (distinct energies) this gives `|T − T₀| ≤ C·√(∑ₖ ηₖ²)` with an explicit box constant `C`;
+when `E₀ = E₁`, `S = 0` and the bound localizes nothing. It localizes the minimizer near `T₀`; it
+does not say the minimizer is unique. -/
 theorem profiledResidual_metric_bound {kB Fcal Tmin Tmax T0 N0 T : ℝ} {g E A obs η : Fin 2 → ℝ}
     (hg : ∀ k, 0 < g k) (hFcal : 0 < Fcal) (hA : ∀ k, 0 < A k)
     (hN0 : 0 < N0) (hTmin : 0 < Tmin)

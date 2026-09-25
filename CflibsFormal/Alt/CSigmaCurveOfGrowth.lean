@@ -13,16 +13,24 @@ import CflibsFormal.SelfAbsorption
 `CSigma.lean` builds the optically-thin **Cσ universal line**: after the
 concentration/partition normalization `ln(N_s/U_s(T))`, every line of every element (and,
 with the Saha shift, every stage) collapses onto ONE line `Y = ln F − E_k/(k_B T)`
-(`csigma_universal_line`). That construction is purely optically thin.
+(`csigma_universal_line`). That construction is purely optically thin, and it assumes ONE
+temperature `T` for every species and both stages (a homogeneous plasma; see the scope note
+in `CSigma.lean`). Line-of-sight integration over an inhomogeneous plasma generally gives
+neutral and ion lines different apparent temperatures; nothing here covers that case.
 
 This module adds the **self-absorption droop**. At finite optical depth `τ` the measured
-line is dimmed by the curve-of-growth escape factor `SA(τ) = (1 − exp(−τ))/τ ∈ (0, 1]`
-(`SelfAbsorption.selfAbsorptionFactor`), so the concentration-normalized **measured**
-ordinate sits BELOW the universal line by exactly `ln SA(τ)`. The optical depth carries
-the genuine **σ (cross-section) weighting** of the Aragón–Aguilera Cσ graph,
-`τ = N · σ_ℓ · ℓ` (`csigmaOpticalDepth`): `σ_ℓ` is the profile-averaged line cross-section
-and `N` the species number density. So the droop is strictly monotone (deeper) in `τ`,
-hence in `N` — the optically-thick lines bend down off the universal line.
+line is dimmed, in the flat-profile model, by the escape factor
+`SA(τ) = (1 − exp(−τ))/τ ∈ (0, 1]` (`SelfAbsorption.selfAbsorptionFactor`), so the
+concentration-normalized **measured** ordinate sits BELOW the universal line by exactly
+`ln SA(τ)`. The optical depth carries the **σ (cross-section) weighting** of the
+Aragón–Aguilera Cσ graph, `τ = N · σ_ℓ · ℓ` (`csigmaOpticalDepth`), with `N` the species
+number density. Here `σ_ℓ` is an uninterpreted positive parameter: the module does not
+construct a cross-section from atomic data (for instance the companion `csigma.py`'s
+lower-level, stimulated-emission-corrected cross-section, which depends on `T`), so the
+density droop holds with `σ_ℓ` held fixed (for a cross-section built from atomic data, at
+fixed `T`). So the droop is strictly monotone
+(deeper) in `τ`, hence in `N` — the optically-thick lines bend down off the universal line.
+This module is not a formal twin of `csigma.py`, which fits a Doppler curve of growth.
 
 **Note on "σ".** In `csigmaConcentrationLog`/`csigmaUniversalOrdinate` the subtracted
 `ln(N_s/U_s)` is the *concentration/partition* normalization, NOT a cross-section; the loose
@@ -38,28 +46,40 @@ strict droop `csigma_curve_of_growth_lt` and the shape theorems
 escape-factor monotonicity `SelfAbsorption.selfAbsorptionFactor_strictAntiOn` (the derivative
 argument, proved beside the other `selfAbsorptionFactor_*` lemmas).
 
-**REDUCED model.** `SA(τ) = (1 − exp(−τ))/τ` is the line-center / flat-profile ESCAPE FACTOR
-inherited from the radiative-transfer slab kernel `SelfAbsorption.slabIntensity`. It is NOT
-the full profile-integrated Aragón–Aguilera curve of growth: the slope-1 → slope-½
-Lorentz-wing knee (IntechOpen Eqs. 29–31, the `√x` asymptote) is OUT OF SCOPE, as are the
-Voigt `τ(ν)`, inversion of `(C, σ_ℓ)` from a measured curve, and multi-element pooled fits.
-Each curve-of-growth-shape theorem below repeats this qualifier.
+**APPROXIMATION model.** `SA(τ) = (1 − exp(−τ))/τ` is the line-center / flat-profile ESCAPE
+FACTOR inherited from the radiative-transfer slab kernel `SelfAbsorption.slabIntensity`. It is
+exact for a rectangular profile or at one frequency; applied to the integrated intensity of a
+peaked line it understates the escaping fraction, so the droop `ln SA(τ)` is overstated (see the
+scope block of `SelfAbsorption`). `selfAbsorptionFactor` carries the model tag APPROXIMATION,
+so every theorem here publishes APPROXIMATION. It is NOT the full profile-integrated
+Aragón–Aguilera curve of growth: the slope-1 → slope-½ Lorentz-wing knee (Rezaei 2016, Eqs. 29–31,
+the `√x` asymptote) is OUT OF SCOPE, as are the Voigt `τ(ν)`, inversion of `(C, σ_ℓ)` from a
+measured curve, and multi-element pooled fits. Each curve-of-growth-shape theorem below repeats
+this qualifier. Each theorem is an exact statement about the flat-profile model; the
+approximation is in the model.
 
 ## Literature
 
-* Aragón & Aguilera, "Direct and inverse models to obtain the spatial distribution of
-  electron density and temperature… the Cσ method", *J. Quant. Spectrosc. Radiat. Transfer*
-  **149** (2014) 90 — the Cσ graph, the line cross-section `σ_ℓ` and the abscissa
-  `Cσ_ℓ ∝ τ = N σ_ℓ ℓ`.
+* Aragón & Aguilera, "CSigma graphs: A new approach for plasma characterization in
+  laser-induced breakdown spectroscopy", *J. Quant. Spectrosc. Radiat. Transfer* **149** (2014)
+  90–102, DOI 10.1016/j.jqsrt.2014.07.026 — the Cσ graph, the line cross-section `σ_ℓ`
+  (Eqs. 16–18) and the line optical depth `τ_ℓ = 10⁻² C · N ℓ · σ_ℓ` (Eq. 19), so the abscissa
+  `10⁻² C σ_ℓ` is proportional to `τ`; one Cσ graph per ionization stage. Equation numbers are
+  from the authors' accepted manuscript. A corrigendum, *JQSRT* **159** (2015) 94–95, DOI
+  10.1016/j.jqsrt.2015.03.001, was not opened, so whether it amends these is unchecked.
 * Aguilera & Aragón, "Multi-element Saha–Boltzmann and Boltzmann plots in laser-induced
   plasmas", *Spectrochim. Acta Part B* **62** (2007) 378 — the optically-thin universal /
   master line, recovered here as the `τ → 0⁺` asymptote.
-* Aragón & Aguilera, "Optically Thick Laser-Induced Plasmas in Spectroscopic Analysis",
-  IntechOpen — the `(1 − exp(−τ))` self-absorption factor (Eqs. 19/20) and the
-  profile-integrated slope-½ wing (Eqs. 29–31) that is explicitly OUT OF SCOPE here.
+* F. Rezaei, "Optically Thick Laser-Induced Plasmas in Spectroscopic Analysis", ch. 13 of
+  *Plasma Science and Technology – Progress in Physical States and Chemical Reactions* (InTech,
+  2016), DOI 10.5772/61941 — a review chapter: the line-centre self-absorption coefficient
+  `SA = (1 − exp(−τ₀))/τ₀` (Eq. 16), the profile-integrated intensity
+  `I = I_P ∫ (1 − exp(−τ(ν))) dν` with the LTE `τ(ν)` (Eqs. 19–20, presented there as the
+  Aragón–Aguilera curve of growth), and the slope-1 / slope-½ asymptotes and their intersection
+  (Eqs. 29–31), which are explicitly OUT OF SCOPE here.
 * Gornushkin, Anzano, King, Smith, Omenetto, Winefordner, "Curve of growth methodology applied
-  to laser-induced plasma emission", *Spectrochim. Acta Part B* **54** (1999) 491–503 — the slab
-  emission `I = S·(1 − exp(−τ))` underlying `SelfAbsorption.slabIntensity`.
+  to laser-induced plasma emission spectroscopy", *Spectrochim. Acta Part B* **54** (1999)
+  491–503 — the slab emission `I = S·(1 − exp(−τ))` underlying `SelfAbsorption.slabIntensity`.
 -/
 
 namespace CflibsFormal.Alt
@@ -72,9 +92,10 @@ variable {ι : Type*} [Fintype ι]
 
 /-- **Cσ optical depth** `τ = σ_ℓ · ℓ · C`: the line cross-section `σ_ℓ`, the absorption path
 length `ℓ`, and the absorber column scale `C` (the species number density `N` along the line
-of sight). This is the genuine **cross-section weighting** of the Aragón–Aguilera Cσ graph
+of sight). This is the **cross-section weighting** of the Aragón–Aguilera Cσ graph
 (JQSRT 149 (2014) 90): the abscissa `Cσ_ℓ` is proportional to `τ`, and it is `σ_ℓ` — not the
-`ln(N/U)` normalization — that is the line cross-section. -/
+`ln(N/U)` normalization — that is the line cross-section. Here `σ_ℓ` is a free parameter: no
+cross-section is computed from atomic data, and `τ` is a plain product. -/
 noncomputable def csigmaOpticalDepth (sigmaL ell C : ℝ) : ℝ :=
   sigmaL * ell * C
 
@@ -101,9 +122,9 @@ This is a legitimate but mathematically shallow bridge — `csigma_universal_lin
 strict/shape droop theorems (`csigma_curve_of_growth_lt`, `…_strictAntiOn`, `…_density_droop`),
 powered by the escape-factor monotonicity `SelfAbsorption.selfAbsorptionFactor_strictAntiOn`.
 
-REDUCED: `SA(τ) = (1 − exp(−τ))/τ` is the flat-profile (escape-factor) reduction of the
-Aragón–Aguilera Cσ curve of growth; the profile-integrated slope-½ Lorentz wing is out of
-scope. -/
+APPROXIMATION: exact for the flat-profile escape factor `SA(τ) = (1 − exp(−τ))/τ`, which only
+approximates the Aragón–Aguilera Cσ curve of growth (for a peaked profile it overstates the
+droop); the profile-integrated slope-½ Lorentz wing is out of scope. -/
 theorem csigma_curve_of_growth_droop [Nonempty ι] {kB T N Fcal : ℝ} {g E A : ι → ℝ}
     (hg : ∀ k, 0 < g k) (hN : 0 < N) (hFcal : 0 < Fcal) (hA : ∀ k, 0 < A k) (k : ι)
     {tau : ℝ} (htau : 0 ≤ tau) :
@@ -126,8 +147,9 @@ exactly the optically-thin universal-line value `ln F − E_k/(k_B T)`: `SA(0) =
 droop term `ln SA(0) = 0` vanishes. The thick model continuously recovers
 `csigma_universal_line`.
 
-REDUCED: this is the flat-profile (escape-factor) reduction of the Aragón–Aguilera Cσ curve
-of growth; the profile-integrated slope-½ Lorentz wing is out of scope. -/
+APPROXIMATION: exact for the flat-profile (escape-factor) model, which only approximates the
+Aragón–Aguilera Cσ curve of growth (for a peaked profile it overstates the droop); the
+profile-integrated slope-½ Lorentz wing is out of scope. -/
 theorem csigma_curve_of_growth_thin [Nonempty ι] {kB T N Fcal : ℝ} {g E A : ι → ℝ}
     (hg : ∀ k, 0 < g k) (hN : 0 < N) (hFcal : 0 < Fcal) (hA : ∀ k, 0 < A k) (k : ι) :
     csigmaSelfAbsorbedUniversalOrdinate kB T N Fcal g E A k 0
@@ -139,8 +161,9 @@ theorem csigma_curve_of_growth_thin [Nonempty ι] {kB T N Fcal : ℝ} {g E A : �
 measured ordinate lies AT OR BELOW the universal line `ln F − E_k/(k_B T)`: self-absorption
 only dims, so `ln SA(τ) ≤ 0`. Neglecting it biases the inferred composition downward.
 
-REDUCED: this is the flat-profile (escape-factor) reduction of the Aragón–Aguilera Cσ curve
-of growth; the profile-integrated slope-½ Lorentz wing is out of scope. -/
+APPROXIMATION: exact for the flat-profile (escape-factor) model, which only approximates the
+Aragón–Aguilera Cσ curve of growth (for a peaked profile it overstates the droop); the
+profile-integrated slope-½ Lorentz wing is out of scope. -/
 theorem csigma_curve_of_growth_le [Nonempty ι] {kB T N Fcal : ℝ} {g E A : ι → ℝ}
     (hg : ∀ k, 0 < g k) (hN : 0 < N) (hFcal : 0 < Fcal) (hA : ∀ k, 0 < A k) (k : ι)
     {tau : ℝ} (htau : 0 ≤ tau) :
@@ -157,8 +180,9 @@ nonzero optical depth, the measured ordinate is STRICTLY below the universal lin
 sign of the escape factor (the deep monotone version is
 `csigma_curve_of_growth_strictAntiOn`).
 
-REDUCED: this is the flat-profile (escape-factor) reduction of the Aragón–Aguilera Cσ curve
-of growth; the profile-integrated slope-½ Lorentz wing is out of scope. -/
+APPROXIMATION: exact for the flat-profile (escape-factor) model, which only approximates the
+Aragón–Aguilera Cσ curve of growth (for a peaked profile it overstates the droop); the
+profile-integrated slope-½ Lorentz wing is out of scope. -/
 theorem csigma_curve_of_growth_lt [Nonempty ι] {kB T N Fcal : ℝ} {g E A : ι → ℝ}
     (hg : ∀ k, 0 < g k) (hN : 0 < N) (hFcal : 0 < Fcal) (hA : ∀ k, 0 < A k) (k : ι)
     {tau : ℝ} (htau : 0 < tau) :
@@ -179,8 +203,9 @@ universal-line value `ln F − E_k/(k_B T)` as the optical depth shrinks to zero
 curve of growth meets the optically-thin universal line in the limit. Routes through
 `selfAbsorptionFactor_tendsto_one` and continuity of `Real.log` at `1`.
 
-REDUCED: this is the flat-profile (escape-factor) reduction of the Aragón–Aguilera Cσ curve
-of growth; the profile-integrated slope-½ Lorentz wing is out of scope. -/
+APPROXIMATION: exact for the flat-profile (escape-factor) model, which only approximates the
+Aragón–Aguilera Cσ curve of growth (for a peaked profile it overstates the droop); the
+profile-integrated slope-½ Lorentz wing is out of scope. -/
 theorem csigma_curve_of_growth_tendsto_universal [Nonempty ι] {kB T N Fcal : ℝ}
     {g E A : ι → ℝ} (hg : ∀ k, 0 < g k) (hN : 0 < N) (hFcal : 0 < Fcal) (hA : ∀ k, 0 < A k)
     (k : ι) :
@@ -202,9 +227,10 @@ optical depth means a strictly deeper droop below the universal line. Reduces to
 `selfAbsorptionFactor_strictAntiOn` through the droop identity and strict monotonicity of
 `Real.log`. This is the shape statement of the Cσ curve of growth.
 
-REDUCED: this is the flat-profile (escape-factor) reduction of the Aragón–Aguilera Cσ curve
-of growth; the profile-integrated slope-½ Lorentz wing (the slope-1 → slope-½ knee) is out
-of scope — only the strict monotone descent of the escape-factor branch is proved. -/
+APPROXIMATION: exact for the flat-profile (escape-factor) model, which only approximates the
+Aragón–Aguilera Cσ curve of growth (for a peaked profile it overstates the droop); the
+profile-integrated slope-½ Lorentz wing (the slope-1 → slope-½ knee) is out of scope — only
+the strict monotone descent of the escape-factor branch is proved. -/
 theorem csigma_curve_of_growth_strictAntiOn [Nonempty ι] {kB T N Fcal : ℝ} {g E A : ι → ℝ}
     (hg : ∀ k, 0 < g k) (hN : 0 < N) (hFcal : 0 < Fcal) (hA : ∀ k, 0 < A k) (k : ι) :
     StrictAntiOn (fun tau => csigmaSelfAbsorbedUniversalOrdinate kB T N Fcal g E A k tau)
@@ -223,16 +249,19 @@ theorem csigma_curve_of_growth_strictAntiOn [Nonempty ι] {kB T N Fcal : ℝ} {g
 /-- **The density droop (the σ cross-section weighting, `N`-coupled).** Couple the optical
 depth to the SAME species number density that the universal line normalizes away:
 `τ = σ_ℓ · ℓ · N` (`csigmaOpticalDepth`). Then, as a function of `N`, the
-concentration-normalized measured ordinate is STRICTLY ANTITONE on `(0, ∞)`. This is faithful
-to the physics: the universal-line value `ln F − E_k/(k_B T)` is `N`-independent (the
-concentration normalization cancels), so the ONLY `N`-dependence left is the self-absorption
-droop, and increasing the density `N` strictly deepens it through `τ = N σ_ℓ ℓ`. Here `σ_ℓ`
-is the genuine line cross-section of the Aragón–Aguilera Cσ graph. Proved by the same mechanism
+concentration-normalized measured ordinate is STRICTLY ANTITONE on `(0, ∞)`. Within the model,
+the universal-line value `ln F − E_k/(k_B T)` is `N`-independent (the concentration
+normalization cancels), so the ONLY `N`-dependence left is the self-absorption droop, and
+increasing the density `N` strictly deepens it through `τ = N σ_ℓ ℓ`. Here `σ_ℓ` stands for the
+line cross-section of the Aragón–Aguilera Cσ graph but is a free positive parameter held fixed;
+a cross-section built from atomic data depends on `T`, so the statement is at fixed `T` (the
+module's one-temperature, homogeneous-plasma model). Proved by the same mechanism
 as `csigma_curve_of_growth_strictAntiOn` — the droop identity cancels the direct `N`-dependence,
 leaving the escape-factor descent — composed with `τ = σ_ℓ ℓ N` strictly increasing in `N`.
 
-REDUCED: this is the flat-profile (escape-factor) reduction of the Aragón–Aguilera Cσ curve
-of growth; the profile-integrated slope-½ Lorentz wing is out of scope. -/
+APPROXIMATION: exact for the flat-profile (escape-factor) model, which only approximates the
+Aragón–Aguilera Cσ curve of growth (for a peaked profile it overstates the droop); the
+profile-integrated slope-½ Lorentz wing is out of scope. -/
 theorem csigma_curve_of_growth_density_droop [Nonempty ι] {kB T Fcal sigmaL ell : ℝ}
     {g E A : ι → ℝ} (hg : ∀ k, 0 < g k) (hFcal : 0 < Fcal) (hA : ∀ k, 0 < A k)
     (hsig : 0 < sigmaL) (hell : 0 < ell) (k : ι) :

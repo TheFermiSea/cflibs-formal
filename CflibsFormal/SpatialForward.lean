@@ -8,18 +8,20 @@ import Mathlib
 /-!
 # Saha–Boltzmann formalization — spatially-resolved (discrete Abel / onion-peeling) forward model
 
-Every other module in this development assumes a **single, homogeneous** plasma
-zone: one temperature, one electron density, one composition. This module
-**relaxes that single-zone homogeneity assumption** by modelling the plasma as
-`N` concentric cylindrical shells, each with its own emissivity, and proving that
-the *full radial emissivity profile* is uniquely recovered from the measured
-lateral chord intensities.
+Most modules in this development assume a **single, homogeneous** plasma zone:
+one temperature, one electron density, one composition (exceptions include
+`SelfReversal`'s two zones, `RadiativeTransferDepth`'s `N`-zone stack and
+`InhomogeneityBias`'s mixture of plasma states). This module relaxes spatial
+homogeneity at the level of **emissivity** by modelling the plasma as `N`
+concentric cylindrical shells, each with its own emissivity, and proving that the
+*full radial emissivity profile* is uniquely recovered from the measured lateral
+chord intensities, **provided every chord is optically thin** (below).
 
 ## Physics
 
-For a cylindrically symmetric emitting plasma the lateral (chord) intensity
-`I(y)` at impact parameter `y` is the **Abel transform** of the radial emissivity
-`ε(r)`:
+For a cylindrically symmetric, **optically thin** emitting plasma the lateral
+(chord) intensity `I(y)` at impact parameter `y` is the **Abel transform** of the
+radial emissivity `ε(r)`:
 
   `I(y) = 2 ∫_y^R ε(r) · r / sqrt(r² − y²) dr`,
 
@@ -35,6 +37,10 @@ measured chord-intensity vector is
   `I = L · ε`,   `I i = ∑ j, L i j · ε j`,
 
 where `L i j` is the geometric path length of chord `i` through shell `j`.
+This linear map is the **optically thin** model: every shell's emission reaches
+the detector unattenuated, so the contributions along a chord simply add. A
+self-absorbed line (optical depth along the chord not small) breaks the linearity,
+and none of the results below apply to it.
 Geometry forces two facts:
 
 * `L` is **upper-triangular**: `j < i → L i j = 0` (a chord at index `i` never
@@ -46,19 +52,20 @@ These are exactly the conditions under which the triangular system is solved by
 back-substitution ("peeling" shells from the outside in), and — proven here —
 under which the forward map is injective, so the radial profile is identifiable.
 
-* `chordIntensity L ε := L.mulVec ε` — the discrete Abel forward map. The
-  single-zone model of every other module is exactly the `N = 1` case, where `L`
-  is `1×1` and `chordIntensity` collapses to `I 0 = L 0 0 · ε 0`.
+* `chordIntensity L ε := L.mulVec ε` — the discrete, optically thin Abel forward
+  map. Its `N = 1` case is a single homogeneous shell: `L` is `1×1` and
+  `chordIntensity` collapses to `I 0 = L 0 0 · ε 0`.
 * `ChordGeometry N` — packages the path-length matrix `L` with its two
   geometric hypotheses (`upper`, `diag_pos`).
 * `chordGeometry_det_ne_zero` / `chordGeometry_isUnit` — the path-length matrix
   is nonsingular (det = product of positive diagonal entries) hence invertible.
-* `chord_profile_identifiable` — **the spatial identifiability theorem**: equal
-  chord-intensity vectors force equal radial emissivity profiles. The full
-  inhomogeneous profile `ε : Fin N → ℝ` is recovered, not just a single zone.
-* `singleZone_identifiable` — the `N = 1` homogeneous case as the trivial
-  specialization, documenting that this formalization strictly generalizes the
-  single-zone baseline used everywhere else in the repo.
+* `chord_profile_identifiable` — **the spatial identifiability theorem**: under
+  the optically thin forward map, equal chord-intensity vectors force equal radial
+  emissivity profiles. The full inhomogeneous profile `ε : Fin N → ℝ` is
+  recovered, not just a single zone.
+* `singleZone_identifiable` — the `N = 1` instance, one homogeneous shell. It is
+  not a bridge to the single-zone models of the other modules: nothing here links
+  the shell emissivity `ε` to `lineIntensity` or any other emission model.
 
 ## Scope / not covered (honest scoping)
 
@@ -72,11 +79,18 @@ a substantially harder analysis result (improper/singular integrals,
 differentiation under the integral sign) and is stated above as background and
 motivation only.
 
+**Optically thin chords.** The forward map `I = L · ε` assumes no absorption along
+any chord at the observed wavelength. Every result here is about that linear model;
+for a self-absorbed line the chord intensity is not `L · ε`, and neither the
+identifiability nor the error bounds transfer. Also assumed: cylindrical symmetry,
+constant emissivity within each shell, and exactly known path lengths `L`.
+
 This module has no CF-LIBS code dependency beyond mathlib's linear algebra: the
 emissivity `ε i` of a shell would, in a fuller pipeline, be the Boltzmann/Saha
-line emission of that shell's local `(T, n_e, composition)`, but the
-identifiability result here is purely the invertibility of the geometric
-path-length system and so depends only on `Matrix` API.
+line emission of that shell's local `(T, n_e, composition)`, but no such link is
+formalized (nothing here mentions `lineIntensity`), and the identifiability result
+is purely the invertibility of the geometric path-length system, so it depends
+only on `Matrix` API.
 
 ## Literature
 
@@ -104,10 +118,12 @@ Abel transform: the lateral chord-intensity vector `I = L · ε`, where
 `ε : Fin N → ℝ` is the radial emissivity profile over `N` concentric shells and
 `L i j` is the geometric path length of chord `i` through shell `j`.
 
-This is the **discrete Abel forward transform**. The single-zone model used by
-every other module is exactly `N = 1`, where `L` is a `1×1` matrix and this
-collapses to scalar multiplication `I 0 = L 0 0 · ε 0`. Kept as a thin wrapper
-over `Matrix.mulVec` so that all of mathlib's `mulVec` API applies verbatim. -/
+This is the **discrete Abel forward transform** for **optically thin** chords:
+shell contributions add with no attenuation along the line of sight, which fails
+for self-absorbed lines. At `N = 1`, `L` is a `1×1` matrix and this collapses to
+scalar multiplication `I 0 = L 0 0 · ε 0` (one homogeneous shell). Kept as a thin
+wrapper over `Matrix.mulVec` so that all of mathlib's `mulVec` API applies
+verbatim. -/
 noncomputable def chordIntensity {N : ℕ} (L : Matrix (Fin N) (Fin N) ℝ)
     (eps : Fin N → ℝ) : Fin N → ℝ :=
   L.mulVec eps
@@ -150,12 +166,15 @@ theorem chordGeometry_isUnit {N : ℕ} (G : ChordGeometry N) :
   rw [Matrix.isUnit_iff_isUnit_det]
   exact (chordGeometry_det_ne_zero G).isUnit
 
-/-- **Spatial identifiability — relaxing single-zone homogeneity.**
+/-- **Spatial identifiability for optically thin chords — relaxing single-zone homogeneity.**
 
 Equal measured chord-intensity vectors force equal radial emissivity profiles:
 the *full* radial profile `ε : Fin N → ℝ` over all `N` shells (not a single
 homogeneous zone) is uniquely recovered from the lateral intensities, so the
-discrete onion-peeling Abel inversion is well-posed.
+discrete onion-peeling Abel inversion is well-posed. Scope: this holds for the
+optically thin forward map `I = L · ε` with exactly known path lengths; the
+statement itself is the injectivity of an upper-triangular matrix with positive
+diagonal, and says nothing about self-absorbed lines.
 
 This is the spatial analogue of `saha_joint_identifiability` /
 `temperature_from_two_levels` for an inhomogeneous plasma. It is
@@ -170,11 +189,11 @@ theorem chord_profile_identifiable {N : ℕ} (G : ChordGeometry N)
     eps = eps' :=
   Matrix.mulVec_injective_of_isUnit (chordGeometry_isUnit G) h
 
-/-- The single-zone homogeneous model (`N = 1`) obtained by **instantiating the
-general spatial identifiability** at `N = 1`. This documents that the
-inhomogeneous formalization strictly generalizes the single-zone spatial-homogeneity
-ASSUMPTION shared by the other modules (1 shell → N shells): the homogeneous case is the
-`1×1` specialization, not an independently proved scalar-injectivity fact. -/
+/-- **The `N = 1` instance** of `chord_profile_identifiable`: one homogeneous
+shell, a `1×1` path-length matrix, scalar injectivity, obtained by instantiation
+rather than proved separately. It is not a bridge to the single-zone models of the
+other modules: nothing links this `ε` to `lineIntensity` or any other emission
+model, so it does not show that those modules are special cases of this one. -/
 theorem singleZone_identifiable (G : ChordGeometry 1)
     {eps eps' : Fin 1 → ℝ}
     (h : chordIntensity G.L eps = chordIntensity G.L eps') :

@@ -36,13 +36,18 @@ statements, separating the channels and being honest about which CF-LIBS provabl
 
 ## Honest scope
 
-* **EXACT, not approximate** — every result is an exact identity/inequality in dimensionless `ℝ`.
+* **Exact over the stated model, not approximate** — every result is an exact identity/inequality
+  in dimensionless `ℝ` about the model its statement uses. That model carries reductions: the
+  λ-free `lineIntensity` (REDUCED model row), a fixed-`T` two-stage Saha split, and, in the
+  homologous-pair section, ONE level catalog `(g, E, A)` (hence one `U(T)`) fed to two species.
+  Published scope tags are the weaker of relation and model tag (`docs/conventions.md` §8).
 * **The matrix-independence is of the COMPLETENESS (`D`) and ABLATION (`F`) channels, with the
   detected densities `n` and the temperature `T` HELD FIXED.** It is NOT unconditional
   matrix-independence: thermodynamic shifts that change `n`, `T`, or `n_e` themselves are handled
-  separately (per-shot `T`/`n_e` recovery in `Identifiability`/`SahaInverse`); CF-LIBS alone leaves
-  documented residual matrix effects (Borduchi et al. 2022). The `F`-bridge fixes `T` across both
-  matrices, so it is the ablation channel ONLY (not a temperature-shift claim).
+  separately (per-shot `T`/`n_e` recovery in `Identifiability`/`SahaInverse`). CF-LIBS by itself is
+  not claimed to remove matrix effects: Borduchi et al. (2022) add a one-point calibration to
+  CF-LIBS to mitigate them (checked against the abstract only). The `F`-bridge fixes `T` across
+  both matrices, so it is the ablation channel ONLY (not a temperature-shift claim).
 * **The recovered quantity is the PLASMA composition.** Equality to the SAMPLE composition is the
   separate stoichiometric-ablation assumption; fractionation (its failure) is OUT OF SCOPE, as are
   self-absorption (only mitigated, see `SelfAbsorption`/`CurveOfGrowth`) and molecular/oxide
@@ -57,9 +62,12 @@ Closure inflation under incomplete detection: Ciucci, A.; Corsi, M.; Palleschi, 
 Salvetti, A.; Tognoni, E. *Applied Spectroscopy* **53** (1999) 960 (the sum is over *all* species);
 Tognoni, E.; Cristoforetti, G.; Legnaioli, S.; Palleschi, V. *Spectrochimica Acta Part B* **65**
 (2010) 1 (completeness / stoichiometric-composition failure). Subcompositional coherence:
-J. Aitchison, *The Statistical Analysis of Compositional Data* (Chapman & Hall, 1986). Residual
-matrix effects in CF-LIBS: Borduchi, L. C. L.; Milori, D. M. B. P.; Villas-Boas, P. R.
-*Spectrochimica Acta Part B* (2022). Ionization suppression / electron-density coupling: Aguilera,
+J. Aitchison, *The Statistical Analysis of Compositional Data* (Chapman & Hall, 1986). Matrix
+effects and a one-point-calibration correction to CF-LIBS: Borduchi, L. C. L.; Milori, D. M. B. P.;
+Meyer, M. C.; Villas-Boas, P. R. "Reducing matrix effects on the quantification of Ca, Mg, and Fe
+in soybean leaf samples using calibration-free LIBS and one-point calibration", *Spectrochimica
+Acta Part B* **198** (2022) 106561, DOI 10.1016/j.sab.2022.106561 (abstract read; full text not
+opened). Ionization suppression / electron-density coupling: Aguilera,
 J. A.; Aragón, C. *Spectrochimica Acta Part B* **62** (2007) 378; Aragón, C.; Aguilera, J. A.
 *Spectrochimica Acta Part B* **63** (2008) 893.
 -/
@@ -236,7 +244,12 @@ theorem recovered_ratio_from_intensities [Nonempty ι] {kB T Fcal : ℝ} {g E A 
 `n_ion·n_e/n_neutral = S` with `n_ion + n_neutral = N_tot`). `S > 0` is the Saha factor. -/
 noncomputable def sahaIonDensity (S Ntot ne : ℝ) : ℝ := Ntot * S / (S + ne)
 
-/-- Saha neutral density at electron density `n_e`: `n_neutral = N_tot·n_e/(S+n_e)`. -/
+/-- Saha neutral density at electron density `n_e`: `n_neutral = N_tot·n_e/(S+n_e)`.
+
+For two elements the neutral-density ratio is `(N_s/N_t)·(S_t + n_e)/(S_s + n_e)`, which moves
+with `n_e` unless `S_s = S_t`. Example: `S_s = 1`, `S_t = 2`, `N_s = N_t = 1` give `3/2` at
+`n_e = 1` and `4/3` at `n_e = 2`. So a homologous neutral-line ratio read on element totals is
+not `n_e`-invariant (see `MatrixIonizationCoupling.envelope_ionization_matrix_shift`). -/
 noncomputable def sahaNeutralDensity (S Ntot ne : ℝ) : ℝ := Ntot * ne / (S + ne)
 
 /-- The two stages partition the element's total density: `n_neutral + n_ion = N_tot` (exact at any
@@ -269,8 +282,9 @@ theorem sahaIonDensity_antitone {S Ntot : ℝ} (hS : 0 < S) (hN : 0 < Ntot) :
 /-! ## Per-shot temperature robustness — the homologous-line-pair technique
 
 Everything above holds `T` (and `n_e`) FIXED. Real LIBS plasmas jitter shot-to-shot: `T` changes
-between acquisitions. This section adds the missing per-shot-`T` robustness channel, grounding the
-classical **homologous-line-pair** (internal-standard) technique.
+between acquisitions. This section adds a per-shot-`T` robustness channel: the Boltzmann part of
+the classical **homologous-line-pair** (internal-standard) technique. The partition-function
+part is exact only in the shared-catalog reduction (see *How `U` enters* below).
 
 The forward line intensity of species `s`'s designated line (`ForwardMap.lineIntensity`) is
 `I_s(T) = Fcal · A_s · N_s · g_s · exp(-E_s/(k_B T)) / U(T)`, so the two-species intensity RATIO
@@ -282,15 +296,20 @@ temperature change `T ↦ T'` (`homologousPair_ratio_temperature_invariant`).
 
 **How `U` enters (honest scope).** In this module's shared-atomic-data encoding both designated
 lines are drawn from a COMMON partition-function manifold (`g E A : ι → ℝ`), so the SAME `U(T)`
-sits in numerator and denominator and cancels EXACTLY even though it genuinely depends on `T`
-(`homologousPair_ratio_closed_form`): the shared-`U` case is fully EXACT. When the two species
-carry genuinely per-species partition functions `U_s(T) ≠ U_t(T)` (`lineIntensityPerU`), energy
-matching still cancels channel (i) exactly and the ONLY residual is the partition-function
-ratio `U_t/U_s` (`homologousPair_ratio_perU_closed_form`, `= U_s = U_t` recovering the shared case).
-That residual — a slowly-varying secondary channel — is left EXPLICIT, not hidden; the derived
-`homologousPair_ratio_perU_temperature_invariant` is REDUCED, since it freezes `U_s, U_t` across
-shots (the `lineIntensityPerU` convention treats `U` as a per-shot scalar input), isolating the
-Boltzmann channel from the genuine `U_s(T)` drift.
+sits in numerator and denominator and cancels exactly even though it genuinely depends on `T`
+(`homologousPair_ratio_closed_form`). Feeding one level catalog to two different species is a
+MODELING REDUCTION (`U_s ≡ U_t`): distinct elements have their own levels and their own
+`U_s(T)`. So the shared-`U` cross-species results are REDUCED (for the invariance, the same
+scope as its per-`U` sibling); they are exact theorems about the shared-catalog model, not
+about real element pairs.
+When the two species carry per-species partition functions `U_s(T) ≠ U_t(T)`
+(`lineIntensityPerU`), energy matching still cancels channel (i) exactly and the ONLY residual
+is the partition-function ratio `U_t/U_s` (`homologousPair_ratio_perU_closed_form`, with
+`U_s = U_t` recovering the shared case). That closed form is the faithful statement: the
+residual is left EXPLICIT, and for a real element pair `U_t(T)/U_s(T)` varies with `T`. The
+derived `homologousPair_ratio_perU_temperature_invariant` is REDUCED, since it freezes `U_s, U_t`
+across shots (the `lineIntensityPerU` convention treats `U` as a per-shot scalar input),
+isolating the Boltzmann channel from the genuine `U_s(T)` drift.
 
 **Necessity / contrast.** Invariance is a property OF the energy matching: with `E_s ≠ E_t` the
 exponential factor `exp((E_t − E_s)/(k_B T))` genuinely varies with `T`, so the ratio at two
@@ -308,9 +327,14 @@ channel above (`sahaIonDensity_antitone`) and `SahaInverse`/`Identifiability`. -
 with designated-line densities `N_s, N_t` emitting from a COMMON atomic-data family `(g, E, A)` at
 one temperature `T`, the intensity ratio is
 `I_s/I_t = ((N_s·g_s·A_s)/(N_t·g_t·A_t)) · exp((E_t − E_s)/(k_B T))`:
-the calibration `Fcal` and the shared partition function `U(T)` cancel EXACTLY. The whole
-temperature dependence of the ratio is the single Boltzmann exponential in the energy GAP
-`E_t − E_s`. (Ciucci et al. 1999, the two-line Boltzmann ratio; here across two species.) -/
+the calibration `Fcal` and the shared partition function `U(T)` cancel exactly. Within that model
+the whole temperature dependence of the ratio is the single Boltzmann exponential in the energy
+GAP `E_t − E_s`. (Ciucci et al. 1999, the two-line Boltzmann ratio; here across two species.)
+
+*Scope: REDUCED (shared catalog).* One `(g, E, A)` family, hence one `U(T)`, serves both species,
+i.e. `U_s ≡ U_t`. For distinct elements the ratio carries the extra factor `U_t/U_s`; the
+faithful per-species form is `homologousPair_ratio_perU_closed_form`, of which this is the case
+`U_s = U_t`. -/
 theorem homologousPair_ratio_closed_form [Nonempty ι] {kB T Ns Nt Fcal : ℝ} {g E A : ι → ℝ}
     (hg : ∀ k, 0 < g k) (hNt : 0 < Nt) (hFcal : 0 < Fcal) (hA : ∀ k, 0 < A k) (s t : ι) :
     lineIntensity kB T Ns Fcal g E A s / lineIntensity kB T Nt Fcal g E A t
@@ -328,16 +352,24 @@ theorem homologousPair_ratio_closed_form [Nonempty ι] {kB T Ns Nt Fcal : ℝ} {
   simp only [lineIntensity, population, boltzmannFactor]
   field_simp
 
-/-- **THE per-shot-`T` deliverable — homologous-pair exact temperature invariance.** For a
-homologous pair (two species' designated lines with EQUAL upper-level energies `E_s = E_t`, drawn
-from a common partition-function manifold), the two-species intensity ratio is the SAME at ANY two
-temperatures `T`, `T'`:
+/-- **Homologous-pair temperature invariance in the shared-catalog model.** For a homologous
+pair (two species' designated lines with EQUAL upper-level energies `E_s = E_t`, drawn from ONE
+common level catalog `(g, E, A)`, hence one partition function `U(T)`), the two-species
+intensity ratio is the SAME at ANY two temperatures `T`, `T'`:
 `I_s(T)/I_t(T) = I_s(T')/I_t(T')`.
-The Boltzmann exponentials cancel identically at the matched energy and the shared `U(T)` cancels,
-so per-shot temperature jitter leaves the ratio invariant — the exact ground of the
-homologous-line-pair technique. No positivity of `T`, `T'` is needed: the collapse is total (both
-sides equal the `T`-free constant `(N_s·g_s·A_s)/(N_t·g_t·A_t)`). This is the CROSS-species
-(`N_s ≠ N_t`) form; the same-species sibling is `Identifiability.temperature_degeneracy`. -/
+The Boltzmann exponentials cancel identically at the matched energy and the shared `U(T)` cancels.
+No positivity of `T`, `T'` is needed: the collapse is total (both sides equal the `T`-free
+constant `(N_s·g_s·A_s)/(N_t·g_t·A_t)`). This is the CROSS-species (`N_s ≠ N_t`) form; the
+same-species sibling is `Identifiability.temperature_degeneracy`.
+
+*Scope: REDUCED (shared `U` across species).* The shared `U` is disclosed in the statement (one
+`g E A` for both `s` and `t`), but it is a modeling reduction, `U_s ≡ U_t`: distinct elements
+have their own partition functions, and `U_t(T)/U_s(T)` varies with `T`. So this is NOT a
+per-shot-`T` guarantee for a real element pair. The faithful form is
+`homologousPair_ratio_perU_closed_form`, whose per-shot residual is exactly `U_t/U_s`; its
+frozen-`U` invariance `homologousPair_ratio_perU_temperature_invariant` is likewise REDUCED.
+What this theorem does establish is that energy matching removes the Boltzmann-exponential
+channel exactly. -/
 theorem homologousPair_ratio_temperature_invariant [Nonempty ι]
     {kB T T' Ns Nt Fcal : ℝ} {g E A : ι → ℝ}
     (hg : ∀ k, 0 < g k) (hNt : 0 < Nt) (hFcal : 0 < Fcal) (hA : ∀ k, 0 < A k)
@@ -348,12 +380,17 @@ theorem homologousPair_ratio_temperature_invariant [Nonempty ι]
     homologousPair_ratio_closed_form hg hNt hFcal hA s t, hE]
   simp
 
-/-- **Contrast — invariance is a property OF the energy matching.** With DISTINCT upper-level
-energies `E_s ≠ E_t` the two-species intensity ratio genuinely varies with temperature: at two
-distinct positive temperatures `T ≠ T'` (with `k_B > 0`) the ratios differ. The surviving
-Boltzmann factor `exp((E_t − E_s)/(k_B T))` is a non-constant function of `T` once `ΔE ≠ 0`, so
+/-- **Contrast — invariance is a property OF the energy matching.** In the shared-catalog model
+(one `(g, E, A)`, hence one `U(T)`, for both species), with DISTINCT upper-level energies
+`E_s ≠ E_t` the two-species intensity ratio genuinely varies with temperature: at two distinct
+positive temperatures `T ≠ T'` (with `k_B > 0`) the ratios differ. The surviving Boltzmann
+factor `exp((E_t − E_s)/(k_B T))` is a non-constant function of `T` once `ΔE ≠ 0`, so
 `homologousPair_ratio_temperature_invariant` genuinely requires the homologous (`E_s = E_t`)
-hypothesis. (Ciucci et al. 1999, the two-line Boltzmann ratio.) -/
+hypothesis. (Ciucci et al. 1999, the two-line Boltzmann ratio.)
+
+*Scope: REDUCED (shared `U` across species).* With per-species `U_s(T)`, `U_t(T)` the ratio also
+carries `U_t/U_s`, and this theorem does not exclude that factor coinciding at two particular
+temperatures; it is a statement about the shared-catalog model. -/
 theorem nonHomologousPair_ratio_temperature_dependent [Nonempty ι]
     {kB T T' Ns Nt Fcal : ℝ} {g E A : ι → ℝ}
     (hkB : 0 < kB) (hT : 0 < T) (hT' : 0 < T') (hTT' : T ≠ T')
@@ -383,7 +420,9 @@ manifold, carried as `MultiSpecies.lineIntensityPerU` scalars) and per-species d
 Energy matching `E_s = E_t` collapses the exponential to `1`, leaving the ratio's ENTIRE residual
 equal to the partition-function ratio `U_t/U_s` — the honest per-species form of the
 homologous-pair identity (the shared-`U` `homologousPair_ratio_closed_form` is the case
-`U_s = U_t`). **Scope EXACT** for the fixed-`T` identity; `U_s, U_t` are free positive inputs. -/
+`U_s = U_t`). **Relation EXACT** for the fixed-`T` identity; `U_s, U_t` are free positive
+inputs. The forward form it is stated over is the same λ-free photon-rate form as
+`lineIntensity`, whose model tag is REDUCED. -/
 theorem homologousPair_ratio_perU_closed_form {kB T Ns Nt Fcal Us Ut : ℝ} {g E A : ι → ℝ}
     (hg : ∀ k, 0 < g k) (hNt : 0 < Nt) (hFcal : 0 < Fcal) (hA : ∀ k, 0 < A k)
     (hUs : 0 < Us) (hUt : 0 < Ut) (s t : ι) :
@@ -410,9 +449,10 @@ forward model, a homologous pair (`E_s = E_t`) has a temperature-invariant inten
 **REDUCED**, not EXACT: `MultiSpecies.lineIntensityPerU` carries each `U_s` as a per-shot scalar
 INPUT, so varying `T` here holds `U_s, U_t` fixed. It therefore isolates the Boltzmann/exponential
 temperature channel (killed exactly by energy matching) from the genuine per-species drift
-`U_s(T)/U_t(T)`, which is the physical residual left OUT of scope (the shared-`U`
-`homologousPair_ratio_temperature_invariant` is EXACT because there the single `U(T)` cancels
-regardless of its `T`-dependence). -/
+`U_s(T)/U_t(T)`, which is the physical residual left OUT of scope. The shared-`U`
+`homologousPair_ratio_temperature_invariant` has the same REDUCED scope for the mirror-image
+reason: there the single `U(T)` cancels regardless of its `T`-dependence, but only because one
+catalog is assumed for both species (`U_s ≡ U_t`). -/
 theorem homologousPair_ratio_perU_temperature_invariant {kB T T' Ns Nt Fcal Us Ut : ℝ}
     {g E A : ι → ℝ}
     (hg : ∀ k, 0 < g k) (hNt : 0 < Nt) (hFcal : 0 < Fcal) (hA : ∀ k, 0 < A k)
@@ -438,7 +478,8 @@ private def nvMeA : Fin 2 → ℝ := ![3, 7]
 /-- **Non-vacuity of `homologousPair_ratio_temperature_invariant`.** Two species with genuinely
 different densities (`N_0 = 4 ≠ 6 = N_1`), degeneracies (`g 0 = 2 ≠ 5 = g 1`) and Einstein
 coefficients but MATCHED upper-level energies (`E 0 = E 1 = 1`) give the SAME intensity ratio at
-`T = 1` and at `T = 5` — the per-shot temperature jitter is killed exactly by the energy match. -/
+`T = 1` and at `T = 5` — in the shared-catalog model (one `U(T)` for both), the temperature
+change is killed exactly by the energy match. -/
 example :
     lineIntensity 1 1 4 1 nvMeG nvMeEmatch nvMeA 0
         / lineIntensity 1 1 6 1 nvMeG nvMeEmatch nvMeA 1

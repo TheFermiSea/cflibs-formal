@@ -10,9 +10,9 @@ import CflibsFormal.SahaRangeEnclosure
 /-!
 # CF-LIBS formalization — the joint `(T, n_e)` outer-loop contraction (Frontier)
 
-This leaf lands the **physics-level joint `(T, n_e)` convergence theorem** for the CF-LIBS
-outer loop, instantiating the abstract 2-D box Banach spine `jointOuterContraction_box`
-(`SahaEquilibrium`) at the concrete legs: the temperature update
+This leaf states the **joint `(T, n_e)` convergence theorem** for the frozen-offset Model-B
+outer loop of `OuterLoopModelB`, instantiating the abstract 2-D box Banach spine
+`jointOuterContraction_box` (`SahaEquilibrium`) at the two legs: the temperature update
 `fT (T,n_e) = combinedSlopeTempUpdate … n_e` (`ErrorBudget`, depends **only on `n_e`**) and
 the density reader `fNe (T,n_e) = electronDensityFromRatio … T … R` (`Saha`, `n_e(T)=S(T)/R`,
 depends **only on `T`**). Each leg ignores its own output coordinate, so the joint row-sum
@@ -24,19 +24,36 @@ matrix is **anti-diagonal** — `a=0`, `b=L₂`, `c=L₁`, `d=0` — with densit
 
 ## Literature and scope
 
-`REDUCED` (Aguilera & Aragón 2007, Model B; Saha–Eggert (Griem)). Genuine 2-D upgrade of
-`outerLoop_contracts`: the joint state iterates in the product (max) metric on `ℝ × ℝ` and the
-fixed point is self-consistent in **both** coordinates at once.
+`REDUCED` (Aguilera & Aragón 2007, Model B; Saha–Eggert (Griem)). The reduction is the one
+named in `OuterLoopModelB`: the Saha offset `offConst` is frozen at a reference `T`, the density
+leg reads a fixed measured stage ratio `R`, and the slope is the single-element,
+unshifted-abscissa `combinedSahaBoltzmannSlope`. With the offset evaluated at the current `T` the
+Saha coupling cancels. The theorem does not model the companion's `iterative.py` loop.
+
+**Not a genuinely 2-D result.** Both legs ignore their own coordinate (`a = d = 0`), so the
+joint iteration is the 1-D composite `Φ = legT ∘ legNe` of `outerLoop_contracts` unrolled: from
+`(T₀, n₀)` the `T`-coordinate is `Φ^[k] T₀` at step `2k` and `Φ^[k] (legT n₀)` at step `2k+1`.
+Mathematically the conclusion therefore follows from `outerLoop_contracts_apriori` plus the
+Lipschitz continuity of `legNe` (it is proved here directly through the 2-D spine instead). The
+joint state iterates in the product (max) metric on `ℝ × ℝ`, and the fixed point is
+`pstar = (T⋆, n_e(T⋆))` with `T⋆` the fixed point of `Φ`, self-consistent in both coordinates.
+The gate `max L₂ L₁ < 1` implies the product gate `L₁·L₂ < 1` and is strictly stronger:
+`L₁ = 2`, `L₂ = 0.1` passes the product gate and fails this one. A genuinely 2-D case
+(`a, d ≠ 0`) needs legs that depend on their own coordinate, e.g. an offset evaluated at the
+current `T`.
 
 *Discharged.* The two anti-diagonal Lipschitz bounds (from the two published sensitivity
 lemmas), the four coefficient signs, and the density interval-invariance `hmapsNe` — proven
 a-priori from the endpoint containments `hnelo`/`hnehi` via `electronDensityFromRatio_mem_Icc`
 ∘ `Set.Icc_subset_Icc`, as in `outerLoop_contracts_apriori`.
 
-*Carried (genuine runtime side conditions).* The temperature interval-invariance `hmapsT`
+*Carried (side conditions).* The temperature interval-invariance `hmapsT`
 (no monotonicity for the slope-inversion leg), the slope floor `hslopeFloor`, the box
-order/positivity data, and the **convergence certificate** `hgate : max L₂ L₁ < 1` — the
-runtime-checkable gate (sufficient, not necessary), mirroring `outerLoop_contracts`'s `hgate`.
+order/positivity data, the level-truncation obligation `hEχ` (the lower-stage level list is
+truncated at or below `chi`; see `sahaFactor_strictMonoOn_temp`), and the **convergence gate**
+`hgate : max L₂ L₁ < 1` (sufficient, not necessary). The gate is arithmetic on known
+quantities, but `L₁` inherits the 10⁶–10⁸ looseness of `sahaFactorLipConst`, so on real data it
+fails by orders of magnitude (see `OuterLoopModelB`).
 -/
 
 namespace CflibsFormal
@@ -44,15 +61,18 @@ namespace CflibsFormal
 open Finset Real
 open scoped BigOperators NNReal
 
-/-- **The CF-LIBS joint `(T, n_e)` outer loop contracts** (`REDUCED`; Aguilera & Aragón 2007,
-Model B; Saha–Eggert (Griem)). Instantiating the abstract 2-D box Banach theorem
+/-- **The frozen-offset Model-B joint `(T, n_e)` outer loop contracts** (`REDUCED`; Aguilera &
+Aragón 2007, Model B; Saha–Eggert (Griem)). Instantiating the abstract 2-D box Banach theorem
 `jointOuterContraction_box` at the anti-diagonal CF-LIBS legs `fT (T,n_e) =
 combinedSlopeTempUpdate … n_e` and `fNe (T,n_e) = electronDensityFromRatio … T … R`: the joint
 sweep `Φ (T,n_e) = (fT T n_e, fNe T n_e)` on the box `[Tmin,Tmax] ×ˢ [nemin,nemax]` has a
 **unique** self-consistent fixed point `pstar`, and the iterates `Φ^[n] p0` converge to `pstar`
 jointly in both coordinates (product metric) from every start in the box. The density
-interval-invariance is discharged a-priori from the endpoint containments `hnelo`/`hnehi`; the
-gate `max L₂ L₁ < 1` is the carried convergence certificate. -/
+interval-invariance is discharged a-priori from the endpoint containments `hnelo`/`hnehi`
+(using the level-truncation obligation `hEχ`); the gate `max L₂ L₁ < 1` is the carried
+convergence condition, strictly stronger than the product gate of `outerLoop_contracts`.
+Because `a = d = 0` this is the 1-D composite unrolled (module docstring), and the reduction
+(frozen Saha offset, fixed stage ratio `R`) is that of `OuterLoopModelB`. -/
 theorem jointConvergence
     {ιe : Type*} [Fintype ιe] [Nonempty ιe]
     {κe : Type*} [Fintype κe] [Nonempty κe]

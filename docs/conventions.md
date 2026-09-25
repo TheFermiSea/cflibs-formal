@@ -214,6 +214,51 @@ shorter wavelengths), so it does not average away. It is an ordinate shift corre
 abscissa: the worst case for `ErrorBudget.olsSlope_stable_l1`, which is sharp exactly when the
 errors align in sign with `E_k − Ē`. The slope tilts and `T` is biased with a straight-looking plot.
 
+Since 2026-09-24 the reduction is also carried by a **model row**: `lineIntensity` is tagged
+REDUCED in `docs/scope-tags.tsv`, so every result stated over it publishes at most REDUCED (§8).
+
+---
+
+## 8. Scope tags — **two axes, publish the weaker** (owner decision 2026-09-24)
+
+**Choice.** A scope tag answers one of two questions, depending on what the row names.
+
+* A row naming a **definition** that encodes a physical model carries a **model tag**: how
+  faithfully the definition encodes the physics. Initial model rows (2026-09-24):
+  `lineIntensity` REDUCED (the λ-free photon-rate form of §7), `starkFWHM` REDUCED
+  (electron-impact width linear in `n_e`), `PlasmaParams` REDUCED (one shared temperature and one
+  shared level catalog), `voigtFWHM` APPROXIMATION (the Olivero–Longbothum empirical fit),
+  `selfAbsorptionFactor` and `selfAbsorbedIntensity` APPROXIMATION (the flat, line-centre escape
+  factor applied to the frequency-integrated intensity).
+* A row naming a **theorem** carries a **relation tag**: how exactly the theorem holds for the
+  model it is stated over. EXACT = an exact theorem about that model; REDUCED = exact only after a
+  stated reduction; APPROXIMATION = the statement itself is approximate; PURE-MATH = no physics
+  content.
+
+The **published** tag of a theorem is the weaker of its relation tag and the model tags of the
+`CflibsFormal` definitions appearing in its statement, ordered `EXACT < REDUCED < APPROXIMATION`.
+PURE-MATH theorems are exempt (they publish PURE-MATH). A definition without its own row inherits
+the weakest model tag among the tagged definitions its type and body use, transitively. A
+definition row may not be stronger than what the definition inherits, so a wrapper cannot launder
+a weaker model.
+
+**Tooling.** The published tag needs the kernel environment, so `lake exe scope-check --write`
+computes it into `docs/scope-published.tsv`, and `scripts/gen-docs.sh` renders both tags in
+`docs/theorem-catalog.md` (`own → published` when they differ). `scope-check` fails on a row that
+does not resolve to exactly one declaration of its module, on a duplicate row, on a laundered
+model row, on a stale `docs/scope-published.tsv`, and when a theorem whose *published* tag is EXACT
+transitively uses a theorem published APPROXIMATION or a definition whose model tag is
+APPROXIMATION.
+
+**How to read a tag.** Quote the published tag when describing what the repo establishes about
+the physics. The relation tag says only how the theorem relates to its model: `voigtFWHM_ge_gauss`
+is an exact inequality about the Olivero–Longbothum fit (relation EXACT) and publishes
+APPROXIMATION, because the fit is.
+
+**Failure mode if mixed.** Reading a relation tag as a physics claim restores the defect this
+decision removes: an "EXACT" theorem stated over an approximate model presents that model's
+idealization as established physics, and no gate would notice.
+
 ---
 
 ## What this file does **not** lock
