@@ -242,3 +242,22 @@ def _advisor_for(label: str) -> str | None:
                            '            cmd.extend(["--settings", json.dumps({"advisorModel": _adv})])\n'
                            '            logger.info("[%s] advisor %s attached", label, _adv)\n')
     cl.write_text(_c); print(f"patched (gated advisor): {cl}")
+
+# Local planner, truncated reply (2026-09-25). When a planner reply is cut off, prover.py retries
+# with call(..., no_thinking=True), which HFClient.call does not accept: the first Qwen-planned run
+# (PILOT-Q-F07) died with TypeError on step 1. Accept it and ask the chat template not to think.
+_h = hf.read_text()
+if "no_thinking: bool = False,  # cflibs patch" in _h:
+    print(f"already patched (local planner no_thinking): {hf}")
+else:
+    o = '        max_tokens: int | None = None,\n    ) -> dict:\n        """Make an LLM call via HTTP and archive it.'
+    assert _h.count(o) == 1, "no_thinking: call() signature not found or not unique"
+    _h = _h.replace(o, '        max_tokens: int | None = None,\n'
+                       '        no_thinking: bool = False,  # cflibs patch: prover.py phase-2 retry passes it\n'
+                       '    ) -> dict:\n        """Make an LLM call via HTTP and archive it.')
+    o = ('                "max_tokens": effective_max_tokens,\n                **_sampling(self.model),\n'
+         '                "stream": bool(stream_callback),\n            }\n')
+    assert _h.count(o) == 1, "no_thinking: vLLM payload in call() not found or not unique"
+    _h = _h.replace(o, o + '            if no_thinking:  # cflibs patch: llama-server --jinja passes these to the template\n'
+                           '                payload["chat_template_kwargs"] = {"enable_thinking": False}\n')
+    hf.write_text(_h); print(f"patched (local planner no_thinking): {hf}")
