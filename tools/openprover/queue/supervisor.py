@@ -46,6 +46,7 @@ POLL_S, WALL_S, NODE_BACKOFF_S = 30, 9 * 3600, 1800
 DEFAULTS = {"max_tokens": 150000, "max_attempts": 2, "planner": "sonnet", "worker": "qwen38-local",
             "max_planner_usd": 30.0}
 UNHEALTHY_POLLS = 2  # consecutive failed /health checks on a running job's node before acting
+PLANNER_DOWN_STREAK = [0]  # consecutive planner-outage aborts; the pause doubles each time (cap 8x)
 PLANNER_ERR_STEPS = 5  # consecutive planner llm_error steps (e.g. subscription limit) before pausing
 
 
@@ -159,6 +160,8 @@ def finish(job: dict) -> None:
             break
     (run_dir / "verdicts.json").write_text(json.dumps(verdicts, indent=2)) if run_dir.exists() else None
     ok = next((v for v in verdicts if v.get("passed")), None)
+    if job["abort"] is None:
+        PLANNER_DOWN_STREAK[0] = 0  # a run finished normally: the planner is back
     hours = (time.time() - job["started"]) / 3600
     if ok:
         res = RESULTS / tid
@@ -215,9 +218,12 @@ def tick(fleet: list, jobs: dict, down: dict) -> None:
                 f"on {name}, terminating")
         elif trailing_llm_errors(job["run_dir"]) >= PLANNER_ERR_STEPS:
             job["abort"] = "planner_down"
-            down["*"] = time.time() + NODE_BACKOFF_S
+            PLANNER_DOWN_STREAK[0] += 1
+            pause = NODE_BACKOFF_S * 2 ** min(PLANNER_DOWN_STREAK[0] - 1, 3)
+            down["*"] = max(down.get("*", 0), time.time() + pause)
             log(f"{job['tid']}: {PLANNER_ERR_STEPS}+ consecutive planner errors (Claude CLI; quota?), "
-                f"terminating (not charged) and pausing dispatch {NODE_BACKOFF_S // 60} min")
+                f"terminating (not charged) and pausing dispatch {pause // 60} min "
+                f"(outage #{PLANNER_DOWN_STREAK[0]} in a row)")
         elif job["unhealthy"] >= UNHEALTHY_POLLS and not restart(node):
             job["abort"] = "infra"
             down[name] = time.time() + NODE_BACKOFF_S

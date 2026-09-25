@@ -182,3 +182,16 @@ else:
                        '                "raw": {**(resp["raw"] or {}), "usage": {"prompt_tokens": total_in_tokens,\n'
                        '                        "completion_tokens": total_out_tokens}},  # cflibs patch\n')
     pr.write_text(_p); print(f"patched (usage sum): {pr}")
+
+# Planner error visibility (2026-09-25). On a non-zero exit the Claude CLI puts its reason (e.g. a
+# usage-limit message) in stdout as JSON, not stderr, so every overnight planner failure logged as
+# "Claude CLI failed (exit 1): " with nothing after it (95 abort/requeue cycles, cause unknown).
+_c = cl.read_text()
+if "cflibs patch: include stdout" in _c:
+    print(f"already patched (planner error text): {cl}")
+else:
+    o = '            raise RuntimeError(f"Claude CLI failed (exit {proc.returncode}): {stderr[:500]}")'
+    assert _c.count(o) == 1, "planner error text: pattern not found or not unique"
+    cl.write_text(_c.replace(o, '            raise RuntimeError(f"Claude CLI failed (exit {proc.returncode}): "  # cflibs patch: include stdout\n'
+                                 '                               f"{stderr[:300]} | stdout: {stdout[-400:]}")'))
+    print(f"patched (planner error text): {cl}")
