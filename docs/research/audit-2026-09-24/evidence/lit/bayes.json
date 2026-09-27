@@ -1,0 +1,309 @@
+{
+  "total": 142,
+  "offset": 0,
+  "next": 8,
+  "data": [
+    {
+      "paperId": "4ddb355ea36c1858fefd5d0fc584b9914da399ce",
+      "externalIds": {
+        "MAG": "2058501695",
+        "DOI": "10.1039/C4JA00470A",
+        "CorpusId": 96772049
+      },
+      "title": "A method for improving the accuracy of calibration-free laser-induced breakdown spectroscopy (CF-LIBS) using determined plasma temperature by genetic algorithm (GA)",
+      "venue": "",
+      "year": 2015,
+      "citationCount": 41,
+      "authors": [
+        {
+          "authorId": "2144063316",
+          "name": "Juan Dong"
+        },
+        {
+          "authorId": "2155277632",
+          "name": "Long Liang"
+        },
+        {
+          "authorId": "2049043939",
+          "name": "Jiao Wei"
+        },
+        {
+          "authorId": "48176448",
+          "name": "Hong-Sheng Tang"
+        },
+        {
+          "authorId": "2009789780",
+          "name": "Tian-Long Zhang"
+        },
+        {
+          "authorId": "47008635",
+          "name": "Xiao-Feng Yang"
+        },
+        {
+          "authorId": "2117843501",
+          "name": "Kang Wang"
+        },
+        {
+          "authorId": "2108839992",
+          "name": "Hua Li"
+        }
+      ]
+    },
+    {
+      "paperId": "6bb6069ebacba102a60d7e9962d9bfac1b9280b1",
+      "externalIds": {
+        "MAG": "2181276117",
+        "DOI": "10.1134/S1063780X15090019",
+        "CorpusId": 124475994
+      },
+      "title": "Determination of a brass alloy concentration composition using calibration-free laser-induced breakdown spectroscopy",
+      "venue": "",
+      "year": 2015,
+      "citationCount": 12,
+      "authors": [
+        {
+          "authorId": "1391555374",
+          "name": "M. Achouri"
+        },
+        {
+          "authorId": "1403268367",
+          "name": "T. Baba-Hamed"
+        },
+        {
+          "authorId": "13665200",
+          "name": "S. Beldjilali"
+        },
+        {
+          "authorId": "11756586",
+          "name": "A. Belasri"
+        }
+      ]
+    },
+    {
+      "paperId": "4a3aa72218bab73d807d84c4841126cdb43509b8",
+      "externalIds": {
+        "DOI": "10.1134/S1063780X15090019",
+        "CorpusId": 255229220
+      },
+      "title": "Determination of a brass alloy concentration composition using calibration-free laser-induced breakdown spectroscopy",
+      "venue": "Plasma Physics Reports",
+      "year": 2015,
+      "citationCount": 0,
+      "authors": [
+        {
+          "authorId": "122397091",
+          "name": "M. Achouri"
+        },
+        {
+          "authorId": "1403268367",
+          "name": "T. Baba-Hamed"
+        },
+        {
+          "authorId": "13665200",
+          "name": "S. Beldjilali"
+        },
+        {
+          "authorId": "11756586",
+          "name": "A. Belasri"
+        }
+      ]
+    },
+    {
+      "paperId": "624cb607c3dfadc83f391f1db73f20ca95abd053",
+      "externalIds": {
+        "MAG": "841638186",
+        "DOI": "10.1016/J.SAB.2015.06.009",
+        "CorpusId": 45357433
+      },
+      "title": "Calibration-free analysis of immersed brass alloys using long-ns-duration pulse laser-induced breakdown spectroscopy with and without correction for nonstoichiometric ablation",
+      "venue": "",
+      "year": 2015,
+      "citationCount": 52,
+      "authors": [
+        {
+          "authorId": "48334905",
+          "name": "Tomoko Takahashi"
+        },
+        {
+          "authorId": "2050699",
+          "name": "B. Thornton"
+        },
+        {
+          "authorId": "2059204304",
+          "name": "K. Ohki"
+        },
+        {
+          "authorId": "46676889",
+          "name": "T. Sakka"
+        }
+      ]
+    },
+    {
+      "paperId": "7fbb53aad5f78fe17fccddc641c7c7c8330e8bb9",
+      "externalIds": {
+        "MAG": "2034640135",
+        "DOI": "10.1016/J.SAB.2015.02.004",
+        "CorpusId": 96201952
+      },
+      "title": "Calibration-free analysis of steel slag by laser-induced breakdown spectroscopy with combined UV and VIS spectra",
+      "venue": "",
+      "year": 2015,
+      "citationCount": 31,
+      "authors": [
+        {
+          "authorId": "115639487",
+          "name": "P. Kolmhofer"
+        },
+        {
+          "authorId": "2481188854",
+          "name": "S. Eschlb\u00f6ck-Fuchs"
+        },
+        {
+          "authorId": "97735904",
+          "name": "N. Huber"
+        },
+        {
+          "authorId": "2054171914",
+          "name": "R. R\u00f6\u00dfler"
+        },
+        {
+          "authorId": "144580192",
+          "name": "J. Heitz"
+        },
+        {
+          "authorId": "12706145",
+          "name": "J. Pedarnig"
+        }
+      ]
+    },
+    {
+      "paperId": "cbb8474fe166de3667b455c9da224967256e2aa6",
+      "externalIds": {
+        "MAG": "2062174987",
+        "DOI": "10.1039/C4RA10132D",
+        "CorpusId": 96975077
+      },
+      "title": "A single-beam-splitting technique combined with a calibration-free method for field-deployable applications using laser-induced breakdown spectroscopy",
+      "venue": "",
+      "year": 2015,
+      "citationCount": 13,
+      "authors": [
+        {
+          "authorId": "2153556105",
+          "name": "Mingjun Xu"
+        },
+        {
+          "authorId": "47360318",
+          "name": "Qing-Yu Lin"
+        },
+        {
+          "authorId": "2052595443",
+          "name": "Guang Yang"
+        },
+        {
+          "authorId": "8132121",
+          "name": "Tao-Ran Xu"
+        },
+        {
+          "authorId": "2009789780",
+          "name": "Tian-Long Zhang"
+        },
+        {
+          "authorId": null,
+          "name": "Xu Wang"
+        },
+        {
+          "authorId": "39567350",
+          "name": "Shuai Wang"
+        },
+        {
+          "authorId": "2076182472",
+          "name": "Fang Bian"
+        },
+        {
+          "authorId": "145659087",
+          "name": "Y. Duan"
+        }
+      ]
+    },
+    {
+      "paperId": "2febcde4c2e009a1f69e4058ae4084483a7b98f2",
+      "externalIds": {
+        "MAG": "2793230328",
+        "CorpusId": 139958594
+      },
+      "title": "Two calibration-free approaches for analysis of industrial slags by laser-induced breakdown spectroscopy",
+      "venue": "",
+      "year": 2015,
+      "citationCount": 0,
+      "authors": [
+        {
+          "authorId": "14727563",
+          "name": "I. Gornushkin"
+        }
+      ]
+    },
+    {
+      "paperId": "316c52635dbc5210c8d9cd3866f48cae3e9965b5",
+      "externalIds": {
+        "MAG": "1958473076",
+        "DOI": "10.1039/C5JA00089K",
+        "CorpusId": 93949238
+      },
+      "title": "Analytical-performance improvement of laser-induced breakdown spectroscopy for steel using multi-spectral-line calibration with an artificial neural network",
+      "venue": "",
+      "year": 2015,
+      "citationCount": 48,
+      "authors": [
+        {
+          "authorId": "2005678985",
+          "name": "Li Kuohu"
+        },
+        {
+          "authorId": "95637811",
+          "name": "Lianbo Guo"
+        },
+        {
+          "authorId": "11610705",
+          "name": "Chang-Mao Li"
+        },
+        {
+          "authorId": "12074669",
+          "name": "Xiangyou Li"
+        },
+        {
+          "authorId": "145291902",
+          "name": "M. Shen"
+        },
+        {
+          "authorId": "50675988",
+          "name": "Zheng Zhong"
+        },
+        {
+          "authorId": "2116465269",
+          "name": "Yu Yang"
+        },
+        {
+          "authorId": "153421438",
+          "name": "Rong-Fei Hao"
+        },
+        {
+          "authorId": "33850652",
+          "name": "Z. Hao"
+        },
+        {
+          "authorId": "48411647",
+          "name": "Qingdong Zeng"
+        },
+        {
+          "authorId": "2207599163",
+          "name": "Yong-Feng Lu"
+        },
+        {
+          "authorId": "46413633",
+          "name": "Xiao-Yan Zeng"
+        }
+      ]
+    }
+  ]
+}

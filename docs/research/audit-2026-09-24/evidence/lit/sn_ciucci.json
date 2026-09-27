@@ -1,0 +1,220 @@
+{
+  "data": [
+    {
+      "score": 0.340807846142792,
+      "paper": {
+        "corpusId": "118573976",
+        "title": "On various validity criteria for the configuration average in collisional\u2013radiative codes",
+        "authors": [
+          "Michel Poirier"
+        ],
+        "openAccessInfo": {
+          "license": null,
+          "status": "GREEN",
+          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://arxiv.org/abs/0802.0094, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        }
+      },
+      "snippet": {
+        "text": "The solution of the detailed system (II.1) with modified (microreversible) rates as discussed in subsection II C provides a useful accuracy check when comparison is made with Saha-Boltzmann. \n\nThis is illustrated for a 10-eV neon plasma in Table III. The average ionization degree is computed for the various rate systems detailed at the end of subsection II C. One observes that the \"collisional\", \"radiative\", and \"complete\" rate equations provide a Z * -value in close agreement with Saha-Boltzmann equation, usually agreeing within the nine digits, with a small degradation for large electron densities. It is essential to note that this N \u00d7 N (N = 4637) matrix inversion is performed with a remarkable accuracy, the Gauss elimination used resulting in a number of floating-point operations scaling as N 3 . In addition to the Z * comparison, the tests on the maximum population difference (e.g., max irregularities in autoionization and collisional ionization previously noticed [24] and therefore it does not detect accurately the CA-validity breakdown. However a safe way to control the CA validity is to compare the charge Z * all (and not Z * coll ) to Z * SB because the latter quantity is sensitive to irregularities in all kinds of processes. \n\nA comparison between detailed and CA results in a 30 eV-neon plasma is presented in Table V. For this temperature the CA approximation is acceptable in the whole density range investigated, the error varying from 3% to 1%. However, the energy criterion (II.4), though globally satisfied, does not give an accurate picture of the CA validity. For increasing density numbers, the CA approximation improves while the criterion (II.4) is less verified. While in this table the energy dispersion \u2206E \u03b1 is evaluated using configuration populations N \u03b1 derived from the CA-collisional-radiative solution, using N \u03b1 from Saha-Boltzmann equation would increase monotonically from 10 \u221210 eV to 5.7 eV in this density range. \n\nNevertheless in the 30-eV neon case, the ratio Z * all / Z * SB cannot provide a uniform test for CA validity.",
+        "snippetKind": "body"
+      }
+    },
+    {
+      "score": 0.3276843530888929,
+      "paper": {
+        "corpusId": "119273479",
+        "title": "Measurement of the proton light response of various LAB based scintillators and its implication for supernova neutrino detection via neutrino\u2013proton scattering",
+        "authors": [
+          "B. von Krosigk",
+          "L. Neumann",
+          "R. J. M. Nolte",
+          "S. R\u00f6ttger",
+          "K. Zuber"
+        ],
+        "openAccessInfo": {
+          "license": "CCBY",
+          "status": "HYBRID",
+          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://arxiv.org/abs/1301.6403, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        }
+      },
+      "snippet": {
+        "text": "where the second equality only holds for the case described here. The calibration factor n \u22121 can now be derived from a linear fit to the positions of all Compton edges in the PH spectrum as performed in Fig. 4 and is independent of the total offset of the pulse-height scale. The values obtained in the present measurements are summarized in Tab. I.",
+        "snippetKind": "body"
+      }
+    },
+    {
+      "score": 0.3244780451268607,
+      "paper": {
+        "corpusId": "254591308",
+        "title": "Relativistic strong-field ionization of hydrogenlike atomic systems in constant crossed electromagnetic fields",
+        "authors": [
+          "A. Eckey",
+          "M. Klaiber",
+          "A. Voitkiv",
+          "C. M\u00fcller"
+        ],
+        "openAccessInfo": {
+          "license": null,
+          "status": "CLOSED",
+          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://arxiv.org/abs/2212.06440, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        }
+      },
+      "snippet": {
+        "text": "II.A. In the next subsection II.B we determine an overall Coulomb correction factor that the SFA rate needs to be multiplied with. An analytical approximation of the Coulomb-corrected ionization rate in closed form is obtained in Subsec. II.C. We illustrate our approach by numerical results in Sec. III and compare them with predictions from other theories. Conclusions are given in Sec. IV.",
+        "snippetKind": "body"
+      }
+    },
+    {
+      "score": 0.3218508350470303,
+      "paper": {
+        "corpusId": "257167405",
+        "title": "LIBS assisted PCA analysis of multiple rare-earth elements (La, Ce, Nd, Sm, and Yb) in phosphorite deposits",
+        "authors": [
+          "A. Fayyaz",
+          "H. Asghar",
+          "A. Alshehri",
+          "T. Alrebdi"
+        ],
+        "openAccessInfo": {
+          "license": "CCBY",
+          "status": "GOLD",
+          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://pmc.ncbi.nlm.nih.gov/articles/PMC9989654, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        }
+      },
+      "snippet": {
+        "text": "This linear relationship (refer Eq. ( 6)) gives the electron temperature (slope ~1/kT) by constructing the ln (I\u03bb/A k g k ) term as a function of the upper-level energy. The error can be minimized to improve the accuracy of the temperature measurement using multiple emission spectral lines. However, for high temperatures, the line intensities ratios from several ionization stages can be associated with the plasma temperature using a relation similar to the Boltzmann equation. Because the energy spans in a separate ionization level at high temperatures are not too large to make precise temperature measurements. Higher energy spans are achievable by employing transitions from several ionization phases utilizing the Saha-Boltzmann's equation; \n\nHere, E \u221e is the ionization-energy, N e is the electron-density, subscripts 1 and 2 refer to the different ionization stages, and \u0394E is the ionization-energy correction owing to minor scale polarization of the optical plasma [54,55]. Eq. ( 7) is similar to the Boltzmann equation however includes the T 3/2 factor and an electron number density. The T 3/2 factor in Eq. ( 7) prevents the application of the Saha equation through multiple lines in the Boltzmann equation. A temperature measurement using the Saha equation can also be performed after simplification of Eq. ( 7). Eq. ( 7) can be simplified by taking the natural log; \n\n\u21d2 ln \n\nNow, Eq. ( 8) can be utilized to plot both the species such as atomic (I) and ionic (II) on the same Boltzmann-type plot. In Eq. ( 8), two major differences such as the upper-level energy difference, and the first term has been transformed. To draw atomic and ionic lines on the same plot, we adjust the abscissa values of the ionic energy levels (E J z * ) only, by inserting modified ionization-energy such as [56] to the ion energy levels and finally, we modify the Saha-Boltzmann relation for the emission line emissivity of an ingredient element as; ln",
+        "snippetKind": "body"
+      }
+    },
+    {
+      "score": 0.3217656434874112,
+      "paper": {
+        "corpusId": "119660992",
+        "title": "Simple soluble molecular ionization model",
+        "authors": [
+          "G. Dunne",
+          "C. Gauthier"
+        ],
+        "openAccessInfo": {
+          "license": null,
+          "status": "GREEN",
+          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://arxiv.org/abs/physics/0402051, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        }
+      },
+      "snippet": {
+        "text": "Simple soluble molecular ionization model",
+        "snippetKind": "title"
+      }
+    },
+    {
+      "score": 0.3213007535264759,
+      "paper": {
+        "corpusId": "280708366",
+        "title": "M2C: An open-source software for multiphysics simulation of compressible multi-material flows and fluid-structure interactions",
+        "authors": [
+          "Xuning Zhao",
+          "W. Ma",
+          "Shafquat Islam",
+          "Aditya Narkhede",
+          "Kevin Wang"
+        ],
+        "openAccessInfo": {
+          "license": null,
+          "status": null,
+          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://arxiv.org/abs/2508.16387, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        }
+      },
+      "snippet": {
+        "text": "To compute the ionization state of a plasma, the Saha equation ( 26) is formulated as (cf. [32]), \n\nwhere Z av denotes the average charge number of the material (possibly a mixture of multiple elements), and n H the number density of heavy particles. f m,j is the Saha coefficient, given by (the right-hand side of Eq. ( 26)) \n\nIn the current implementation, the ionization model depends only on temperature and density, and is one-way coupled to the Navier-Stokes equations. Therefore, Eq. ( 48) is solved independently within each control volume of \u2126 m at every time step, where m denotes the material undergoing ionization. This equation is a 1D transcendental equation with Z av as the sole unknown and is solved using a safeguarded iterative root-finding method -specifically, the TOMS748 algorithm [47] from the Boost library. \n\nTo accelerate the solution process, U r,j is tabulated as functions of exp(\u22121/T ) at the beginning of the analysis. During each time step, its value is obtained using interpolation, with cubic Bsplines as the default method. For non-ideal plasmas, the ionization energy shift \u2206I r,j depends on plasma properties, requiring an iterative solution for both Z av and the Debye length \u03bb D , following the method described in [9]. Once Eq.( 48) is solved, the molar fractions of neutral atoms and each ionized state are determined by evaluating the contribution of free electrons to the average charge per heavy particle, as described in [4]. \n\nThe ionization modeling capability in M2C is demonstrated in m2c/Tests/HVImpactShafquatIslam-/2D_axisym_HVI through a hypervelocity impact test case, which is also discussed in Sec. 6.3. Additionally, a standalone solver of the Saha equation is available, as described in Sec. 5.7.",
+        "snippetKind": "body"
+      }
+    },
+    {
+      "score": 0.31815208617474316,
+      "paper": {
+        "corpusId": "14564465",
+        "title": "Electric charge screening effect in single-W production with the KoralW Monte Carlo",
+        "authors": [
+          "S. Jadach",
+          "W. P\u0142aczek",
+          "M. Skrzypek",
+          "B. Ward",
+          "Z. Was"
+        ],
+        "openAccessInfo": {
+          "license": null,
+          "status": "GREEN",
+          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://arxiv.org/abs/hep-ph/0209268, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        }
+      },
+      "snippet": {
+        "text": "Adding and subtracting the function \u2206U(\u01eb) of Eq. ( 10) we obtain (again in the small \u01eb limit) \n\nLet us now summarize the situation. We have constructed the exact compensating weight W norm exact . It would exactly restore the normalization of the master formula changed by the real emission weight W real ECS . At the same time, however, this weight would ruin the entire MC algorithm. Because of its x-dependence through the \u2206D(\u01eb) function, the series of integrals over d 4 x leading to four-momenta-conserving delta functions could not be performed now! Therefore we have to modify the compensating weight. We have to do it in such a way that: (1) the master formula remains independent of dummy \u01eb parameter and (2) the normalization of the master formula remains as close as possible to the original normalization of Eq. ( 14). To fulfil these requirements we observe that the whole dependence on \u01eb is contained in the \u2206U(\u01eb) integral. We will not modify it and the condition (1) will be fulfilled. The trouble-making \u2206D(\u01eb) function is up to the small term (1 \u2212 w R (k)) identical to the original D function. As is known [15], the role of the D function is to compensate for the four-momentum non-conservation in the case of emission of multiple high energy photons. Numerically it is a very small correction, of the O(\u03b1 2 ) LL type. Therefore within our accuracy we can drop this whole term and the condition (2) will be fulfilled within an O(\u03b3 2 ) accuracy. Upon including the LLST correction factor exp (3/4)(\u03b3 t \u2212 \u03b3 s ) , as described in Section 2.2, we arrive at the W norm ECS of Eq. (10).",
+        "snippetKind": "body"
+      }
+    },
+    {
+      "score": 0.31761726615759,
+      "paper": {
+        "corpusId": "4505544",
+        "title": "Nuclear physics in particle therapy: a review",
+        "authors": [
+          "M. Durante",
+          "H. Paganetti"
+        ],
+        "openAccessInfo": {
+          "license": "CCBY",
+          "status": "HYBRID",
+          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://api.unpaywall.org/v2/10.1088/0034-4885/79/9/096702?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.1088/0034-4885/79/9/096702, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        }
+      },
+      "snippet": {
+        "text": "For moderately relativistic particles, the main energy loss channel is ionization of the atomic shell electrons. The usual continuous slowing down approximation (CSDA) is used by neglecting the higher-energy moments (Bichsel 2013). In CSDA, assuming that the mean energy of the ion is reduced less than 5% in an absorber thickness d, the mean energy loss is proportional to the stopping power S (or LET), adequately described for a large energy range in terms of mean energy loss and shell corrections in the Bethe formula, including Barkas-Anderson-Bloch corrections:\n\nwhere e is the electronic charge, N A the Avogadro number, m the mass of the electron; Z p and \u03b2 the charge and relative velocity of the projectile, respectively; Z T , A T , and \u03c1 the atomic number, mass number and density of the target material, respectively; and I is the mean excitation energy. The various terms are the shell correction C, Barkas correction L 1 , Bloch term L 2 , and Mott and density corrections L 3 . Equation (2) is generally known as Bethe-Bloch formula, and it is generally considered accurate at high energies. When \u03b2 becomes comparable to the velocity of the orbital electrons, several corrections are needed to reproduce accurately the Brag peak position. Models include the Lindhard theory, Anderson-Ziegler models (Ziegler 1999), and analytical models for protons (Candela Juan et al 2011) and C-ions (Surdutovich et al 2009). The CSDA range is evaluated from the stopping power as\n\nwhere E is the initial energy and L the maximum range. Due to scattering, actual ranges are somewhat smaller; this fact can be described by the 'detour factor'. Projected ranges, i.e. the projection of the range onto the axis of the original direction of travel, are calculated by the common software SRIM (Ziegler 2013). Integration of the Bethe-Bloch equation (equation (3)) is not a simple task and typical approximations use the Langevin equation for energy dissipation. A practical range relationship is the Bragg-Kleeman formula:\n\nThe non-relativistic approximation is appropriate for the typical particle therapy energies: E 0 2mc 2 = 93",
+        "snippetKind": "body"
+      }
+    },
+    {
+      "score": 0.31503165799208427,
+      "paper": {
+        "corpusId": "116949760",
+        "title": "Relativistic and radiative corrections to the Mollow spectrum",
+        "authors": [
+          "J. Evers",
+          "U. Jentschura",
+          "C. Keitel"
+        ],
+        "openAccessInfo": {
+          "license": null,
+          "status": "GREEN",
+          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://arxiv.org/abs/quant-ph/0403202, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        }
+      },
+      "snippet": {
+        "text": "Thus the corrections amount to a modification of the Rabi frequency given by \u2126 \u2192 \u2126(1 + A j ). \n\nWe expect a similar nonlogarithmic correction of order \u03b1(Z\u03b1) 2 to supplement the C-term discussed in Sec. III B 3. The logarithmic C-term was found to be of the order of \u03b1(Z\u03b1) 2 ln[(Z\u03b1) \u22122 ]. The evaluation of the corresponding nonlogarithmic term is however beyond the scope of this work. Here, we only present a (conservative) estimate of the expected correction. To this end we observe that the general form of the radiative corrections under discussion is \n\nwhere c 1 and c 2 are dimensionless constants. Based on experience with similar corrections (both for self-energy effects and well as radiative corrections to decay rates [37,50]), we assume the following relation with the corresponding uncertainty for the unknown parameter c 2 : \n\nFor example, we verify the validity of this estimate for the particular contribution to the nonlogarithmic part discussed above, i.e. for the terms that contribute to A j . For these terms, the estimate (\u22122 \u00b1 2) \u2022 c 1 evaluates to \u22122.56 \u00b1 2.56 for the constant term. In comparison, the values obtained above for c 2 by a direct numerical analysis are \u22122.92 for the correction A1 /2 , and \u22122.97 for the correction A3 /2 , which agrees to the estimate. For the C-term correction, we thus obtain from Eqs. (3.71) and (3.92) \n\nas the combination of the logarithmic and the estimated nonlogarithmic correction. We expect the nonlogarithmic correction to be spin-dependent in analogy to (3.86). As for the correction to the matrix element, this shifts the Mollow sidebands by [see also Eq. (3.72)] \n\nsuch that the correction may be applied by the replacement \u2126 \u2192 \u2126(1 \u2212 C j ).",
+        "snippetKind": "body"
+      }
+    },
+    {
+      "score": 0.31503165799208427,
+      "paper": {
+        "corpusId": "246063445",
+        "title": "Non-Gaussian effects of the Saha\u2019s ionization in the early universe",
+        "authors": [
+          "L. L. Sales",
+          "F. C. Carvalho",
+          "E. P. Bento",
+          "H. Souza"
+        ],
+        "openAccessInfo": {
+          "license": "CCBY",
+          "status": "GOLD",
+          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://arxiv.org/abs/2201.07922, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        }
+      },
+      "snippet": {
+        "text": "This paper is organized as follows. In Section II, we present the standard Saha's approach to describe the neutral hydrogen formation process. Our proposal for the non-Gaussian Saha's ionization is introduced in Section III. Applications are presented in Section IV, where we explore the non-Gaussian effects of the deuterium bottleneck, recombination, and the particle anti-particle excess. Lastly, the conclusions are shown in Section V. Throughout the paper, we will adopt the following system of natural units: c = k B = = 1.",
+        "snippetKind": "body"
+      }
+    }
+  ],
+  "retrievalVersion": "pa1-v1"
+}

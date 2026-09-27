@@ -14,9 +14,23 @@ import CflibsFormal.Closure
 # Saha–Boltzmann formalization — Part 6: coupling Saha into the inverse problem
 
 This module *couples* the Saha ionization equilibrium into the Boltzmann-plot
-inverse problem, formalizing the **Saha–Boltzmann plot** that places
-neutral-stage and ion-stage lines on a single straight line for the joint
-determination of temperature `T` and electron density `n_e`.
+inverse problem, formalizing the uncollapsed **Saha–Boltzmann plot** for the joint
+determination of temperature `T` and electron density `n_e`. In the ordinate used
+here, `log(I/(g·A))` against the upper-level energy, neutral-stage and ion-stage
+lines lie on **two parallel lines** (common slope `-1/(k_B T)`) whose intercepts
+differ by a Saha-determined offset. The single-line form of the literature needs the
+`+χ` abscissa shift and the Saha-bracket ordinate correction, neither of which is
+applied here; that collapsed form is `Alt.csigma_saha_master_line` /
+`Alt.csigma_cross_stage_collapse`.
+
+**Homogeneity (one temperature).** Every result here uses ONE temperature `T` for
+both ionization stages: for each stage's Boltzmann populations and for the Saha law.
+This is the homogeneous-plasma reduction, assumed and not established. For a
+spatially integrated spectrum of an inhomogeneous plasma, line-of-sight averaging
+generally gives neutral and ion lines different apparent temperatures, so the two
+stage lines need not share a slope and the cross-stage coupling does not transfer.
+`InhomogeneityBias` bounds the mixing bias for one stage at a time; the
+neutral/ion split is not modelled.
 
 Earlier modules treated the Boltzmann (temperature/density) inverse and the
 Saha (electron-density) diagnostic *separately* (`ForwardMap.lean`,
@@ -28,9 +42,10 @@ Saha (electron-density) diagnostic *separately* (`ForwardMap.lean`,
   `-1/(k_B T)` and stage intercept `log(Fcal·N/U(T))`.
 * `stageIntercept` — the ordinate intercept (value at `E = 0`) for a single
   ionization stage, `b = log(Fcal·N/U(T))`.
-* `sahaBoltzmann_plot` — both the neutral and ion stage ordinates lie on a line
-  of common slope `-1/(k_B T)`, and the inter-stage intercept shift is computed
-  in closed form. The shift carries the stage density ratio `log(Nz1/Nz)`.
+* `sahaBoltzmann_plot` — the neutral and ion stage ordinates each lie on a line,
+  the two lines sharing the slope `-1/(k_B T)`, and the inter-stage intercept shift
+  is computed in closed form. The shift carries the stage density ratio
+  `log(Nz1/Nz)`.
 * `sahaBoltzmann_shift_eq_log_saha` — under the structural Saha law the
   inter-stage shift equals `log S − log n_e + (log U_z − log U_{z+1})`,
   exhibiting `n_e` explicitly inside the Saha–Boltzmann plot offset.
@@ -40,7 +55,9 @@ Saha (electron-density) diagnostic *separately* (`ForwardMap.lean`,
   AND `n_e` are uniquely determined: the neutral and ion densities are each recovered
   from their observed lines (`density_identifiability`, ion stage included), the stage
   ratio is *derived*, and the Saha law forces `n_e`. The electron density is recovered
-  from observations, never taken as input nor via a smuggled stage ratio.
+  from observations, never taken as input nor via a smuggled stage ratio. `T` comes
+  from the neutral pair alone and is then assumed to hold for the ion stage too (the
+  homogeneity reduction above).
 
 ## Literature
 
@@ -70,8 +87,10 @@ variable {κ : Type*} [Fintype κ]
 Boltzmann-plot ordinate `Y = log (I_{ki} / (g_k A_{ki}))` for the line with upper
 level `k`. By `boltzmann_plot_intensity` this equals `log(Fcal·N/U(T)) - E_k/(k_B T)`:
 affine in the upper-level energy with slope `-1/(k_B T)` and stage intercept
-`log(Fcal·N/U(T))`. This is the per-line quantity that gets plotted; the multi-stage
-Saha–Boltzmann plot stacks the neutral- and ion-stage ordinates on one line. -/
+`log(Fcal·N/U(T))`. This is the per-line quantity that gets plotted. Plotted against
+the upper-level energy, the neutral- and ion-stage ordinates fall on two parallel lines
+offset by the difference of their stage intercepts; putting them on one line needs the
+`+χ` abscissa shift and the Saha ordinate correction (`Alt.csigmaSahaOrdinate`). -/
 noncomputable def sahaBoltzmannOrdinate (kB T N Fcal : ℝ) (g E A : ι → ℝ) (k : ι) : ℝ :=
   Real.log (lineIntensity kB T N Fcal g E A k / (g k * A k))
 
@@ -83,12 +102,16 @@ encodes the stage population ratio, and via Saha the electron density `n_e`. -/
 noncomputable def stageIntercept (kB T N Fcal : ℝ) (g E : ι → ℝ) : ℝ :=
   Real.log (Fcal * N / partitionFunction kB T g E)
 
-/-- **Saha–Boltzmann plot.** Establishes that the neutral-stage and ion-stage lines
-BOTH lie on a single straight line of common slope `-1/(k_B T)` (parts 1 and 2, one
-per stage), and computes the inter-stage vertical shift between the two stage
-intercepts in closed form (part 3). This is the Saha–Boltzmann plot construction of
-Yalcin et al. and Aguilera & Aragón: a shared slope across stages with a
-stage-dependent ordinate offset. The shift formula
+/-- **Saha–Boltzmann plot (uncollapsed: two parallel lines).** Establishes that the
+neutral-stage and the ion-stage points each lie on a straight line, the two lines
+sharing the slope `-1/(k_B T)` (parts 1 and 2, one per stage), and computes the
+inter-stage vertical shift between the two stage intercepts in closed form (part 3).
+The shift is in general nonzero, so these are two parallel lines, not one. This is the
+uncollapsed form of the Saha–Boltzmann plot of Yalcin et al. and Aguilera & Aragón: a
+shared slope across stages with a stage-dependent ordinate offset. Their single line
+needs the `+χ` abscissa shift and the Saha ordinate correction, proved in
+`Alt.csigma_saha_master_line`. The theorem uses one `T` for both stages (the
+homogeneity reduction in the module header). The shift formula
 `log(Nz1/Nz) + (log U_z − log U_{z+1})` is the bridge to the Saha relation:
 combined with the Saha law `Nz1/Nz = S/n_e`, the shift carries `n_e` (made explicit
 in `sahaBoltzmann_shift_eq_log_saha`). -/
@@ -130,7 +153,9 @@ into the inter-stage shift: under the structural Saha law `Nz1·n_e/Nz = S(T)` (
 `log S − log n_e + (log U_z − log U_{z+1})`. Because `log S` is itself the closed
 form of `log_sahaFactor` (affine in `1/(k_B T)`), the shift is an explicit function
 of `n_e` and `T`: this is the precise sense in which the vertical offset between
-neutral and ion lines on the Saha–Boltzmann plot encodes the electron density. -/
+the neutral and ion lines on the Saha–Boltzmann plot encodes the electron density.
+Both intercepts and the Saha law are evaluated at one `T` (the homogeneity reduction in
+the module header). -/
 theorem sahaBoltzmann_shift_eq_log_saha [Nonempty ι] [Nonempty κ]
     {kB T me h chi Nz Nz1 ne Fcal : ℝ} {gZ EZ : ι → ℝ} {gZ1 EZ1 : κ → ℝ}
     (hkB : 0 < kB) (hT : 0 < T) (hme : 0 < me) (hh : 0 < h)
@@ -176,10 +201,19 @@ determined:
 
 The electron density `n_e` is recovered from the observed neutral- AND ion-line
 intensities, never taken as input and never via a smuggled stage-ratio hypothesis. This
-is the joint `(T, n_e)` recovery that Yalcin et al. and Aguilera & Aragón obtain from a
-multi-element Saha–Boltzmann plot, and the new content beyond prior modules (which proved
-`T` and `n_e` identifiability separately). The atomic data and calibration are shared
-across the two candidate states, so the two Saha factors coincide after `T₁ = T₂`. -/
+is the joint `(T, n_e)` identifiability that the multi-element Saha–Boltzmann plot of
+Yalcin et al. and Aguilera & Aragón aims at, and the new content beyond prior modules
+(which proved `T` and `n_e` identifiability separately). It is not their fitting
+procedure: here `T` comes from the neutral pair alone, not from one line through both
+stages. The atomic data and calibration are shared across the two candidate states, so
+the two Saha factors coincide after `T₁ = T₂`.
+
+Scope. Uniqueness only: the observations must agree exactly between the two candidate
+states, and no stability bound is given. The model uses ONE temperature for the neutral
+populations, the ion populations and the Saha law (a homogeneous plasma). That is
+assumed, not established: a spatially integrated spectrum of an inhomogeneous plasma
+generally gives neutral and ion lines different apparent temperatures, and the theorem
+says nothing about that case. -/
 theorem saha_joint_identifiability [Nonempty ι] [Nonempty κ]
     {kB me h chi : ℝ} {T₁ T₂ Nz₁ Nz₂ Nz1₁ Nz1₂ Fcal ne₁ ne₂ : ℝ}
     {gZ EZ AZ : ι → ℝ} {gZ1 EZ1 AZ1 : κ → ℝ}

@@ -1,0 +1,366 @@
+{
+  "total": 1050,
+  "offset": 0,
+  "next": 10,
+  "data": [
+    {
+      "paperId": "eb8a3e3b176c760e8b1e81cfb3eff83839f17376",
+      "externalIds": {
+        "MAG": "2343881123",
+        "DOI": "10.1515/zpch-2015-0704",
+        "CorpusId": 101301919
+      },
+      "title": "Inverse Calibration Free fs-LIBS of Copper-Based Alloys",
+      "venue": "",
+      "year": 2016,
+      "citationCount": 2,
+      "authors": [
+        {
+          "authorId": "146193700",
+          "name": "A. Smaldone"
+        },
+        {
+          "authorId": "3770529",
+          "name": "A. De Bonis"
+        },
+        {
+          "authorId": "14208609",
+          "name": "A. Galasso"
+        },
+        {
+          "authorId": "3863649",
+          "name": "A. Guarnaccio"
+        },
+        {
+          "authorId": "49518774",
+          "name": "A. Santagata"
+        },
+        {
+          "authorId": "6144961",
+          "name": "R. Teghil"
+        }
+      ]
+    },
+    {
+      "paperId": "43d1738d079a182380c6057ed61c20161b1d23ec",
+      "externalIds": {
+        "MAG": "2902915591",
+        "CorpusId": 126246313
+      },
+      "title": "Application of two calibration-free LIBS techniques for synthetic spectra of cement samples",
+      "venue": "",
+      "year": 2018,
+      "citationCount": 0,
+      "authors": [
+        {
+          "authorId": "96732144",
+          "name": "T. V\u00f6lker"
+        }
+      ]
+    },
+    {
+      "paperId": "60f2a121c12cc877be898ec4e1a9d10318a112c6",
+      "externalIds": {
+        "MAG": "2487189786",
+        "DOI": "10.1016/J.SAB.2016.08.002",
+        "CorpusId": 99053192
+      },
+      "title": "Calibration-free inverse method for depth-profile analysis with laser-induced breakdown spectroscopy",
+      "venue": "",
+      "year": 2016,
+      "citationCount": 8,
+      "authors": [
+        {
+          "authorId": "8787898",
+          "name": "R. Gaudiuso"
+        }
+      ]
+    },
+    {
+      "paperId": "09e2cf034b66600001b301ba5fcd73c5b2ea2d9b",
+      "externalIds": {
+        "MAG": "2069825252",
+        "DOI": "10.1016/j.aca.2014.01.020",
+        "CorpusId": 5642471,
+        "PubMed": "24528655"
+      },
+      "title": "Laser-induced breakdown spectroscopy of archaeological findings with calibration-free inverse method: comparison with classical laser-induced breakdown spectroscopy and conventional techniques.",
+      "venue": "Analytica Chimica Acta",
+      "year": 2014,
+      "citationCount": 55,
+      "authors": [
+        {
+          "authorId": "8787898",
+          "name": "R. Gaudiuso"
+        },
+        {
+          "authorId": "1397943877",
+          "name": "M. Dell\u2019Aglio"
+        },
+        {
+          "authorId": "91840962",
+          "name": "O. De Pascale"
+        },
+        {
+          "authorId": "49581281",
+          "name": "S. Loperfido"
+        },
+        {
+          "authorId": "11030638",
+          "name": "A. Mangone"
+        },
+        {
+          "authorId": "2485427346",
+          "name": "A. De Giacomo"
+        }
+      ]
+    },
+    {
+      "paperId": "984319cdaf60ca7ca207eab081cc7922bf1c0a2d",
+      "externalIds": {
+        "MAG": "2512159138",
+        "DOI": "10.1016/J.SAB.2016.08.022",
+        "CorpusId": 98982019
+      },
+      "title": "From Calibration-Free to Fundamental Parameters Analysis: A comparison of three recently proposed approaches",
+      "venue": "",
+      "year": 2016,
+      "citationCount": 45,
+      "authors": [
+        {
+          "authorId": "13464510",
+          "name": "E. Grifoni"
+        },
+        {
+          "authorId": "2315692",
+          "name": "S. Legnaioli"
+        },
+        {
+          "authorId": "2906844",
+          "name": "G. Lorenzetti"
+        },
+        {
+          "authorId": "2202870",
+          "name": "Stefano Pagnotta"
+        },
+        {
+          "authorId": "14966898",
+          "name": "F. Poggialini"
+        },
+        {
+          "authorId": "2638662",
+          "name": "V. Palleschi"
+        }
+      ]
+    },
+    {
+      "paperId": "cbb8474fe166de3667b455c9da224967256e2aa6",
+      "externalIds": {
+        "MAG": "2062174987",
+        "DOI": "10.1039/C4RA10132D",
+        "CorpusId": 96975077
+      },
+      "title": "A single-beam-splitting technique combined with a calibration-free method for field-deployable applications using laser-induced breakdown spectroscopy",
+      "venue": "",
+      "year": 2015,
+      "citationCount": 13,
+      "authors": [
+        {
+          "authorId": "2153556105",
+          "name": "Mingjun Xu"
+        },
+        {
+          "authorId": "47360318",
+          "name": "Qing-Yu Lin"
+        },
+        {
+          "authorId": "2052595443",
+          "name": "Guang Yang"
+        },
+        {
+          "authorId": "8132121",
+          "name": "Tao-Ran Xu"
+        },
+        {
+          "authorId": "2009789780",
+          "name": "Tian-Long Zhang"
+        },
+        {
+          "authorId": null,
+          "name": "Xu Wang"
+        },
+        {
+          "authorId": "39567350",
+          "name": "Shuai Wang"
+        },
+        {
+          "authorId": "2076182472",
+          "name": "Fang Bian"
+        },
+        {
+          "authorId": "145659087",
+          "name": "Y. Duan"
+        }
+      ]
+    },
+    {
+      "paperId": "46355d09a6179d7bb9339d157925717ab913fdc9",
+      "externalIds": {
+        "MAG": "2046224359",
+        "DOI": "10.1039/B820494B",
+        "CorpusId": 97603405
+      },
+      "title": "Comparative study of two standard-free approaches in laser-induced breakdown spectroscopy as applied to the quantitative analysis of aluminum alloy standards under vacuum conditions",
+      "venue": "",
+      "year": 2009,
+      "citationCount": 65,
+      "authors": [
+        {
+          "authorId": "92118969",
+          "name": "Kathleen K. Herrera"
+        },
+        {
+          "authorId": "92372926",
+          "name": "E. Tognoni"
+        },
+        {
+          "authorId": "14727563",
+          "name": "I. Gornushkin"
+        },
+        {
+          "authorId": "12575877",
+          "name": "N. Omenetto"
+        },
+        {
+          "authorId": "2219653857",
+          "name": "Benjamin W. Smith"
+        },
+        {
+          "authorId": "7474149",
+          "name": "J. Winefordner"
+        }
+      ]
+    },
+    {
+      "paperId": "8e72300f8898695a752f35ebd6e668174513ae39",
+      "externalIds": {
+        "MAG": "2482372985",
+        "DOI": "10.1016/J.SAB.2016.07.007",
+        "CorpusId": 99338413
+      },
+      "title": "Tomography of homogenized laser-induced plasma by Radon transform technique",
+      "venue": "",
+      "year": 2016,
+      "citationCount": 25,
+      "authors": [
+        {
+          "authorId": "2481188854",
+          "name": "S. Eschlb\u00f6ck-Fuchs"
+        },
+        {
+          "authorId": "144427389",
+          "name": "A. Demidov"
+        },
+        {
+          "authorId": "14727563",
+          "name": "I. Gornushkin"
+        },
+        {
+          "authorId": "48280486",
+          "name": "Thomas Schmid"
+        },
+        {
+          "authorId": "2054171914",
+          "name": "R. R\u00f6\u00dfler"
+        },
+        {
+          "authorId": "97735904",
+          "name": "N. Huber"
+        },
+        {
+          "authorId": "6448968",
+          "name": "U. Panne"
+        },
+        {
+          "authorId": "12706145",
+          "name": "J. Pedarnig"
+        }
+      ]
+    },
+    {
+      "paperId": "2466fff9eb3f623f3802a5a31a1c0780e6ef53d9",
+      "externalIds": {
+        "MAG": "1990923170",
+        "DOI": "10.1016/J.SAB.2012.06.034",
+        "CorpusId": 94912053
+      },
+      "title": "Laser-induced plasma analysis of copper alloys based on Local Thermodynamic Equilibrium: An alternative approach to plasma temperature determination and archeometric applications",
+      "venue": "",
+      "year": 2012,
+      "citationCount": 48,
+      "authors": [
+        {
+          "authorId": "8787898",
+          "name": "R. Gaudiuso"
+        },
+        {
+          "authorId": "1397943877",
+          "name": "M. Dell\u2019Aglio"
+        },
+        {
+          "authorId": "91840962",
+          "name": "O. De Pascale"
+        },
+        {
+          "authorId": "49518774",
+          "name": "A. Santagata"
+        },
+        {
+          "authorId": "4382764",
+          "name": "A. De Giacomo"
+        }
+      ]
+    },
+    {
+      "paperId": "8c343689a0fb9738153d19f2c3b38fb47c9237ad",
+      "externalIds": {
+        "DOI": "10.59277/romrepphys.2024.76.605",
+        "CorpusId": 270662372
+      },
+      "title": "Compositional analysis of Silybum marianum plant at reduced pressure using calibration-free LIBS",
+      "venue": "Romanian Reports in Physics",
+      "year": 2024,
+      "citationCount": 2,
+      "authors": [
+        {
+          "authorId": "2307715551",
+          "name": "Qasim M."
+        },
+        {
+          "authorId": "2466390155",
+          "name": "Anwar-Ul-Haq M."
+        },
+        {
+          "authorId": "2307696344",
+          "name": "Shah Amin"
+        },
+        {
+          "authorId": "2134632812",
+          "name": "S. M."
+        },
+        {
+          "authorId": "2467083956",
+          "name": "Haq S. U."
+        },
+        {
+          "authorId": "2126319517",
+          "name": "A. Rameez"
+        },
+        {
+          "authorId": "2466390054",
+          "name": "Aslam Baig M."
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,229 @@
+{
+  "data": [
+    {
+      "score": 0.5280631163571539,
+      "paper": {
+        "corpusId": "195768081",
+        "title": "Opacity Corrections for Resonance Silver Lines in Nano-Material Laser-Induced Plasma",
+        "authors": [
+          "A. E. El Sherbini",
+          "Ahmed H. EL Farash",
+          "Tharwat M. el Sherbini",
+          "C. Parigger"
+        ],
+        "openAccessInfo": {
+          "license": "CCBY",
+          "status": "GOLD",
+          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://api.unpaywall.org/v2/10.3390/ATOMS7030073?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.3390/ATOMS7030073, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        }
+      },
+      "snippet": {
+        "text": "Here, \u2206\u03bb and \u2206\u03bb S0 indicate the FWHM of spectral lines with and without self-absorption, respectively. Figure 8 summarizes two typical examples of the discussed spectral line shape analysis for the measured Ag I lines at 327.9 and 338.2 nm. Figure 8a,d display self-reversed data, Figure 8b,e portray corrected lines that are still self-absorbed, and Figure 8c,f illustrate the retrieved line-shapes when using data from the optically thin line at 827 nm. \n\nAtoms 2019, 7, x FOR PEER REVIEW 7 of 9 \n\nor in terms of the transmittance, SR = T(\u03c4 ). Self-reversal diminishes the peak spectral radiance as well. In comparison with self-absorption, self-reversal causes further apparent enlargement of the FWHM, \u0394\u03bbS2, with \u0394\u03bbS2 > \u0394\u03bbS1. In analogy with the derivation of self-absorption [3], one can write \u0394\u03bb = \u0394\u03bb SR . The value for the exponent is taken to be \u03b1 = -0.54, in analogy to previously reported self-absorption studies [3]. The self-reversal factor, SR, is functionally identical to that for the selfabsorption factor [3], SA, \u0394\u03bb = \u0394\u03bb SA . Here, \u0394\u03bb and \u0394\u03bbS0 indicate the FWHM of spectral lines with and without self-absorption, respectively. Figure 8 summarizes two typical examples of the discussed spectral line shape analysis for the measured Ag I lines at 327.9 and 338.2 nm. Figure 8a,d display self-reversed data, Figure 8b,e portray corrected lines that are still self-absorbed, and Figure 8c,f illustrate the retrieved line-shapes when using data from the optically thin line at 827 nm. The measured widths and plasma transmission percentages (typically 33% and 40% for the reported experiments) are included in the figure captions. The theoretical, asymptotic form for the transmittance of a Lorentzian line profile [2,6] equals \n\nThe theoretical transmittances are compatible with SR factors of 0.32 and 0.38. The measured line shapes are well-described by the fitted Lorentzians.",
+        "snippetKind": "body"
+      }
+    },
+    {
+      "score": 0.4894229859335204,
+      "paper": {
+        "corpusId": "270627632",
+        "title": "Electron density in a non-thermal atmospheric discharge in contact with water and the effect of water temperature on plasma-water interactions",
+        "authors": [
+          "O. van Rooij",
+          "Olivia Ahlborn",
+          "A. Sobota"
+        ],
+        "openAccessInfo": {
+          "license": "CCBY",
+          "status": "HYBRID",
+          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://api.unpaywall.org/v2/10.1088/1361-6463/ad59b0?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.1088/1361-6463/ad59b0, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        }
+      },
+      "snippet": {
+        "text": "Note that the former expression uses, \u2206\u03bb A S , which is the full width at half area (FWHA) in nm, while \u2206\u03bb S uses the FWHM in nm. However, in this report the width of the Stark broadening is determined by deriving the Lorentzian component of a pseudo-Voigt profile fitted through the data. For a Lorentzian profile the FWHA is equal to the FWHM.",
+        "snippetKind": "body"
+      }
+    },
+    {
+      "score": 0.4790428621374449,
+      "paper": {
+        "corpusId": "52212328",
+        "title": "Self-Absorption Analysis of Silver Resonance Lines in Nano-Material Laser Produced Plasma",
+        "authors": [
+          "Ashraf M. El Sherbini",
+          "Mohamed Hagras",
+          "M. Rizk",
+          "El-Sayed A. El Badawy",
+          "C. Parigger"
+        ],
+        "openAccessInfo": {
+          "license": "CCBY",
+          "status": "GREEN",
+          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://api.unpaywall.org/v2/10.20944/PREPRINTS201807.0376.V1?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.20944/PREPRINTS201807.0376.V1, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        }
+      },
+      "snippet": {
+        "text": "is defined in terms of integrated absorption coefficient, \u03ba (\u03bb), of a spectral line measured along the line-of-sight, \u2113, at the transition wavelength, \u03bb0. Figure 5 illustrates results for \u03c4 \u03bb 0 ranging from 0.25 to 2 at equal steps of 0.25, and for fixed Lorentzian FWHM of \u0394\u03bbs = 0.5 nm. The line shape indicates a flat top for unity optical thickness, i.e., \u03c4 \u03bb 0 = 1. For values higher than unity, self-absorption affects the line shape primarily at the center 2,3 . \n\nindicates the ratio of transmitted and of weakly (\u03ba (\u03bb) \u2113 << 1) affected intensities at line center, or in terms of the transmittance, T(\u03c4 \u03bb 0 ) = SR. Self-reversal diminishes the peak spectral radiance, and it causes enlarged FWHM, \u0394\u03bbS2, with \u0394\u03bbS2 > \u0394\u03bbS1. Similar to the derivation of self-absorption 12 , \u0394\u03bb S2 = \u0394\u03bb S1 SR \u03b1 , or \n\nThe value for the exponent is taken to be \u03b1 = -0.54, in analogy to previously reported self-absorption studies 12 . \n\nThe self-absorption factor 12 , SA, is functionally identical to that for the self-reversal factor, SR, \n\nHere, \u0394\u03bb and \u0394\u03bb0 indicate the FWHM of spectral lines with and without self-absorption, respectively. In this example, the self-reversal peak separation provides values for \u0394\u03bbS2, using the FWHM would cause even larger discrepancies for the electron density, ne. From Equation ( 5), computed \u0394\u03bbS1 show ne that are ~ ten times higher than the results obtained from an optically thin line. When using lower fluence levels for these two lines, larger variances occur in the inferred ne values. From Eq. ( 6), a factor of ten higher electron density means that the self-absorption factor is of the order of SA ~ 0.01.",
+        "snippetKind": "body"
+      }
+    },
+    {
+      "score": 0.4768562400665707,
+      "paper": {
+        "corpusId": "225600435",
+        "title": "Laser-Induced Breakdown Spectroscopy for Determination of Spectral Fundamental Parameters",
+        "authors": [
+          "S. M. Aberkane",
+          "Ali Safi",
+          "Asia Botto",
+          "B. Campanella",
+          "S. Legnaioli",
+          "F. Poggialini",
+          "S. Raneri",
+          "F. Rezaei",
+          "V. Palleschi"
+        ],
+        "openAccessInfo": {
+          "license": "CCBY",
+          "status": "GOLD",
+          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://api.unpaywall.org/v2/10.3390/app10144973?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.3390/app10144973, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        }
+      },
+      "snippet": {
+        "text": "line profile with a Voigt function. After that, the Lorentzian component can be obtained by subtracting the experimental broadening from this value. \n\nThe subtraction should be performed correctly considering how the Gaussian and Lorentzian line widths contribute to the FWHM of the Voigt profile. Olivero et al. [49] proposed a formula for the Voigt FWHM that is correct within \u00b10.01%, as:  =  0.5346 + 0.4654 1 +  0.4654  (19) This relation can be inverted numerically for deriving the Lorentzian FWHM (the one related to the Stark effect) once the Voigt and the Gaussian FWHM are known. \n\nThe second problem, much more difficult to solve, is related to the self-absorption of the line, which introduces an apparent broadening of the line (see Figure 1) which increases with the increase of self-absorption. \n\nDealing with the self-absorption is made complicated by the fact that the line shape of a selfabsorbed emission line is not described by a Lorentzian or Voigt profile anymore. Moreover, the presence of self-absorption sometimes is not easy to spot. One should consider, however, that even when the effect of self-absorption is not evident, the apparent FWHM of the line can be substantially larger than the Stark broadening (for \u03c4(\u03bb0) ? ? (? ? )= 1, the apparent FWHM is about 30% larger than the unperturbed Stark width) [50]. \n\nThe effects of self-absorption should thus be checked carefully, for avoiding errors in the determination of the Stark coefficients. \n\nA (conceptually) simple method for determining experimentally the degree of self-absorption in LIBS plasma is the duplicating mirror method (see Figure 3   The method assumes that the radiation emitted by the plasma in the direction opposite to the detector is sent back through the plasma, using a spherical mirror. By comparing the intensity of the line measured with and without the spherical mirror (ideally, one should be double of the other, in the absence of self-absorption effects) it is possible to evaluate the self-absorption of the plasma for that line.",
+        "snippetKind": "body"
+      }
+    },
+    {
+      "score": 0.4672485345077279,
+      "paper": {
+        "corpusId": "53339271",
+        "title": "Optically Thick Laser-Induced Plasmas in Spectroscopic Analysis",
+        "authors": [
+          "F. Rezaei"
+        ],
+        "openAccessInfo": {
+          "license": "CCBY",
+          "status": "HYBRID",
+          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://api.unpaywall.org/v2/10.5772/61941?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.5772/61941, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        }
+      },
+      "snippet": {
+        "text": "Amamou et al. [6,7] calculated the self-absorption for both Gaussian and Lorentzian line profiles with a Simplex algorithm program fitting method [22] in a homogenous laserproduced plasma. They fitted the experimental results with theoretical calculation and then, their expressions for Lorentzian profiles were used for quantification of the transition probabilities, ratios, and the ratios of optical thicknesses as well. They introduced different correction factors by considering the ratio of the peaks, line widths, and surfaces of two spectral lines for both of the considered line profiles. The correction factor for the line height can be evaluated by considering the ratio of peak intensities of spectral lines in case of non-self-absorbed atomic line to the case of the self-absorbed line as follows: \n\nAs well as by taking into account the FWHM ratios, the correction factor for the line width can be calculated by the following equation:\n\nFor an optical thickness of less than 4, it is assumed that the line surface is proportional to the multiplication of line width by its height. Hence, the correction factor for the line surface can be estimated as:\n\nhere, \u03c4 0 is the optical thickness at central line wavelength (or maximum of optical thickness). The results of these calculations are obtained from the plasma created by laser irradiation on a silicate solid sample placed in a xenon and hydrogen atmosphere for the various multiples of Si II lines. Figure 1 illustrates the evolution of self-absorption correction factors for the abovementioned parameters in a Lorentzian distribution.",
+        "snippetKind": "body"
+      }
+    },
+    {
+      "score": 0.46191423320954333,
+      "paper": {
+        "corpusId": "93408643",
+        "title": "Characterization of laser \u2013 induced plasmas by atomic emission spectroscopy",
+        "authors": [
+          "D. D. Pace",
+          "G. Bertuccelli",
+          "C. D'Angelo"
+        ],
+        "openAccessInfo": {
+          "license": null,
+          "status": "GOLD",
+          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://api.unpaywall.org/v2/10.1088/1742-6596/274/1/012076?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.1088/1742-6596/274/1/012076, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        }
+      },
+      "snippet": {
+        "text": "In fact, from equations ( 2) and ( 7), we deduce where a correction factor, R \u03bb (adim.), has been defined, that can be calculated once the optical thickness has been obtained. Then, the factor R \u03bb can be applied to the experimental profiles to retrieve the optically thin line profiles for the same number density of emitters, This expression allows evaluating self-absorption in a quick, easy way starting from the experimental profile of any line. In figure 4, the factor SA is represented as a function of \u03c4 0 . SA = 0 if the line is optically thin, while it increases to 1 as the lines becomes self-absorbed. The effect of selfabsorption starts to be appreciable when \u03c4 (\u03bd) \u2248 1. Therefore, it can be deduced from equation (13) that a line possess a low self-absorption coefficient when SA \u2264 0.35 approximately. \n\nCalculating \u03c4 \u03bb directly from equation ( 4) is difficult because all the parameters involved should be estimated previously, which depend on the experimental conditions. To overcome this problem, we obtained \u03c4 \u03bb using a pseudo Voigt profile formed by the convolution of the Gaussian component of the instrument profile and a Lorentzian profile of varying width.",
+        "snippetKind": "body"
+      }
+    },
+    {
+      "score": 0.4581688962852569,
+      "paper": {
+        "corpusId": "258833553",
+        "title": "Spectral line shape in the limit of frequent velocity-changing collisions",
+        "authors": [
+          "N. Stolarczyk",
+          "P. Wcis\u0142o",
+          "R. Ciury\u0142o"
+        ],
+        "openAccessInfo": {
+          "license": null,
+          "status": "CLOSED",
+          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://arxiv.org/abs/2305.11885, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        }
+      },
+      "snippet": {
+        "text": "Recently, studies on line shapes for which width is dominated by the speeddependent collisional shift led to formulating a simple an- * NikodemStolarczyk319@gmail.com alytical expression [13,14] (see Eq. (15) in Ref. [13]) for width of Lorentzian profile approximating such line shape when speed-dependent collisional shift is described by a quadratic function [15] and velocity-changing collisions are approximated by the hard-collision model [16,17].The phenomenological finding from Ref. [13] got justification in a derivation [18] coming from the speed-dependent hard-collision profile [19,20].\n\nIn this article, we generalize the results from Ref. [18]; we derive general formulas for the effective width and shift of a Lorentzian to which a sophisticated line shape model, based on any arbitrary speed-dependent collisional broadening and shift and velocity-changing collision operator, converges in the limit of frequent velocitychanging collisions.For quadratic speed dependencies of collisional width and shift, and the billiard ball model of velocity-changing collisions, we provide a simple analytical expression for the effective Lorentzian width and shift.We show how their components depend on rates of speed-changing and velocity-changing collisions related to the perturber/absorber mass ratio.We validate the analytical formulas numerically.",
+        "snippetKind": "body"
+      }
+    },
+    {
+      "score": 0.4575724890988352,
+      "paper": {
+        "corpusId": "14064891",
+        "title": "Self-broadening in Balmer line wing formation in stellar atmospheres",
+        "authors": [
+          "P. Barklem",
+          "N. Piskunov",
+          "B. J. O'mara"
+        ],
+        "openAccessInfo": {
+          "license": null,
+          "status": null,
+          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://arxiv.org/abs/astro-ph/0010022, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        }
+      },
+      "snippet": {
+        "text": "In the presence of a given weak quasi-static ion field this profile will be Stark shifted by an amount dictated by the first order Stark shift of the p-d component. The final profile can then be found by integrating this profile over the Holtsmark distribution of quasi-static ion fields which in the weak field limit will be well approximated by a Lorentzian with a width which is the sum of the electron impact width and selfbroadening width somewhat enhanced by the smearing effect of the quasi-static ion field. Using this as a guide an alternative procedure is to calculate the profile in the absence of self-broadening using, for example, the profiles of Stehl\u00e9 (1994). In the weak quasi-static ion field limit these profiles should be well approximated by a Lorentzian (for example Stehl\u00e9 1996) with the full impact width containing all line components (but dominated by the p-d component) somewhat enhanced by the smearing effect of the weak quasi-static ion field. As the profile is Lorentzian in the wings the absorption will be proportional to this enhanced impact width. The profile of the line in the absence of ions and electrons produced by self-broadening will also be Lorentzian with a depth in the wings proportional to the self-broadening impact width which again contains the effect of all components but dominated by the p-d component. Thus all three sources of broadening can be represented by a Lorentzian with a width which is simply the sum of the widths Table 4. Percentage increases in equivalent width using our self-broadening theory compared with Ali & Griem (1966) for the synthetic lower Balmer line profiles computed for MARCS models of various effective temperature, with solar gravity and metallicity. \n\nof the two profiles or equivalently in the line wings by simply adding the profiles. The effect of radiative broadening and broadening by helium collisions can be included in the same way. \n\nTest calculations show this procedure for the convolution to be an excellent approximation for the cases considered here. For example in the solar synthetic profile, no difference can be seen between the profile computed in this way and that computed with a complete numerical convolution.",
+        "snippetKind": "body"
+      }
+    },
+    {
+      "score": 0.4531268794248127,
+      "paper": {
+        "corpusId": "195768081",
+        "title": "Opacity Corrections for Resonance Silver Lines in Nano-Material Laser-Induced Plasma",
+        "authors": [
+          "A. E. El Sherbini",
+          "Ahmed H. EL Farash",
+          "Tharwat M. el Sherbini",
+          "C. Parigger"
+        ],
+        "openAccessInfo": {
+          "license": "CCBY",
+          "status": "GOLD",
+          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://api.unpaywall.org/v2/10.3390/ATOMS7030073?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.3390/ATOMS7030073, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        }
+      },
+      "snippet": {
+        "text": "is defined in terms of integrated absorption coefficient, \u03ba (\u03bb), of a spectral line measured along the line-of-sight, \u2113, at the transition wavelength, \u03bb0. The fitting of the argument in Equation ( 2) to the experimentally measured line shape can be formulated with two line-shape parameters, namely, the self-absorbed Lorentzian FWHM, \u0394\u03bbS1, and the optical depth, \u03c4 , at line center [2]. \n\nThe self-reversal parameter, SR, is introduced for a quantitative description of the measured line shapes. The parameter SR indicates the ratio of transmitted and of weakly (\u03ba (\u03bb) \u2113 << 1) affected intensities at line center, The fitting of the argument in Equation ( 2) to the experimentally measured line shape can be formulated with two line-shape parameters, namely, the self-absorbed Lorentzian FWHM, \u2206\u03bb S1 , and the optical depth, \u03c4 \u03bb 0 , at line center [2]. \n\nThe self-reversal parameter, SR, is introduced for a quantitative description of the measured line shapes. The parameter SR indicates the ratio of transmitted and of weakly (\u03ba (\u03bb) << 1) affected intensities at line center, SR \n\nor in terms of the transmittance, SR = T(\u03c4 \u03bb 0 ). Self-reversal diminishes the peak spectral radiance as well. In comparison with self-absorption, self-reversal causes further apparent enlargement of the FWHM, \u2206\u03bb S2 , with \u2206\u03bb S2 > \u2206\u03bb S1 . In analogy with the derivation of self-absorption [3], one can write \u2206\u03bb S2 = \u2206\u03bb S1 SR \u03b1 . The value for the exponent is taken to be \u03b1 = -0.54, in analogy to previously reported self-absorption studies [3]. The self-reversal factor, SR, is functionally identical to that for the self-absorption factor [3], SA, \u2206\u03bb = \u2206\u03bb S0 SA \u03b1 . Here, \u2206\u03bb and \u2206\u03bb S0 indicate the FWHM of spectral lines with and without self-absorption, respectively.",
+        "snippetKind": "body"
+      }
+    },
+    {
+      "score": 0.4367079218372387,
+      "paper": {
+        "corpusId": "225600435",
+        "title": "Laser-Induced Breakdown Spectroscopy for Determination of Spectral Fundamental Parameters",
+        "authors": [
+          "S. M. Aberkane",
+          "Ali Safi",
+          "Asia Botto",
+          "B. Campanella",
+          "S. Legnaioli",
+          "F. Poggialini",
+          "S. Raneri",
+          "F. Rezaei",
+          "V. Palleschi"
+        ],
+        "openAccessInfo": {
+          "license": "CCBY",
+          "status": "GOLD",
+          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://api.unpaywall.org/v2/10.3390/app10144973?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.3390/app10144973, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        }
+      },
+      "snippet": {
+        "text": "The two line widths (Gaussian and Lorentzian) could be, in principle, deconvolved by fitting the experimental line profile with a Voigt line shape. \n\nHowever, since the resolution of the spectrometer can be obtained with good precision from the information provided by the manufacturer or determined by measuring the broadening of a narrow emission line, a more effective strategy would be directly measuring the FWHM of the experimental line profile with a Voigt function. After that, the Lorentzian component can be obtained by subtracting the experimental broadening from this value. \n\nThe subtraction should be performed correctly considering how the Gaussian and Lorentzian line widths contribute to the FWHM of the Voigt profile. Olivero et al. [49] proposed a formula for the Voigt FWHM that is correct within \u00b10.01%, as: \n\nThis relation can be inverted numerically for deriving the Lorentzian FWHM (the one related to the Stark effect) once the Voigt and the Gaussian FWHM are known. \n\nThe second problem, much more difficult to solve, is related to the self-absorption of the line, which introduces an apparent broadening of the line (see Figure 1) which increases with the increase of self-absorption. \n\nDealing with the self-absorption is made complicated by the fact that the line shape of a self-absorbed emission line is not described by a Lorentzian or Voigt profile anymore. Moreover, the presence of self-absorption sometimes is not easy to spot. One should consider, however, that even when the effect of self-absorption is not evident, the apparent FWHM of the line can be substantially larger than the Stark broadening (for \u03c4(\u03bb 0 ) = 1, the apparent FWHM is about 30% larger than the unperturbed Stark width) [50]. \n\nThe effects of self-absorption should thus be checked carefully, for avoiding errors in the determination of the Stark coefficients. \n\nA (conceptually) simple method for determining experimentally the degree of self-absorption in LIBS plasma is the duplicating mirror method (see Figure 3) [51,52]. \n\nline profile with a Voigt function.",
+        "snippetKind": "body"
+      }
+    }
+  ],
+  "retrievalVersion": "pa1-v1"
+}

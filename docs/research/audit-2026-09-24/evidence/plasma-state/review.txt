@@ -1,0 +1,1657 @@
+Review On Laser Induced Breakdown spectroscopy: Methodology and
+Technical Developments
+Jinto Thomas1, 2, a) and Hem Chandra Joshi1, 2, b)
+1)
+
+Institute for Plasma Research, Bhat, Gandhinagar,Gujarat, India, 382428
+Homi Bhabha National Institute, Training School Complex, Anushaktinagar, Mumbai 400094,
+India
+2)
+
+arXiv:2302.13272v1 [physics.plasm-ph] 26 Feb 2023
+
+(Dated: 28 February 2023)
+
+In this review we attempt to provide a brief account of laser induced breakdown spectroscopy (LIBS) methodology and technological developments. We also summarise various methods adopted for exploiting LIBS.
+Besides, a brief overview of combination of LIBS in conjunction with other methods is also given.
+Keywords: LIBS, Spectroscopy, Laser plasma
+XIII. LIF+ LIBS
+
+9
+
+XIV. Nanoparticle enhanced LIBS
+(NELIBS)
+
+10
+
+XV. Spatial Constraint Method
+
+11
+
+XVI. Optically trapped LIBS (OTLIBS)
+
+11
+
+XVII. Polarization Resolved LIBS
+(PRLIBS)
+
+12
+
+XVIII. RESONANT ENHANCED LIBS
+(RELIBS), RESONANT SURFACE
+ENHANCED LIBS (RSENILIBS)
+
+12
+
+XIX. Back Reflection Enhanced LIBS
+(BRELIBS)
+
+12
+
+CONTENTS
+
+I. Introduction
+
+1
+
+II. LIBS Methodology
+A. Ablation types (Front ablation and Back
+ablation)
+B. Single pulse(SP)
+C. Double pulse (DP)
+
+2
+2
+3
+3
+
+III. colliding Plasma
+
+4
+
+IV. Grating induced breakdown
+spectroscopy (GIBS)
+
+4
+
+V. LIBS imaging/Confocal LIBS
+
+4
+
+VI. Self-Absorption, Optical Thickness
+
+5
+
+VII. Self-reversal of lines
+
+5
+
+VIII. Parameter estimation
+A. Electron density
+B. Electron temperature
+
+6
+6
+7
+
+IX. Local Thermodynamical Equilibrium
+
+8
+
+X. Calibration free LIBS (CFLIBS)
+A. C Sigma graphs
+B. Internal reference for self-absorption
+correction (IRSAC)
+
+8
+8
+8
+
+XI. Enhancement in signal/detection
+sensitivity
+A. Effect of magnetic field
+B. Effect of electric field
+C. Glow discharge LIBS (GDLIBS)
+D. Microwave Assisted LIBS (MALIBS)
+
+9
+9
+9
+9
+9
+
+XII. Surface Enhanced LIBS (SENLIBS)
+
+9
+
+a) Electronic mail: jinto@ipr.res.in
+b) Electronic mail: hem˙sup@yahoo.co.uk
+
+XX. Simultaneous LIBS Combination With
+Other Analytical Measurements
+12
+A. LIBS-Raman
+12
+B. LIBS-Laser Ablation- Inductively
+Coupled Plasma (LA-ICP)
+13
+C. LIBS- X-Ray Fluorescence (XRF)
+13
+XXI. concluding remarks
+
+13
+
+XXII. References
+
+13
+
+I.
+
+INTRODUCTION
+
+In the recent years laser induced breakdown spectroscopy (LIBS) has found numerous applications encompassing various field1 . Simultaneously various LIBS techniques also emerged for better exploitation and interpretation of obtained data2,3 . New techniques like hand held
+and standoff LIBS have been developed and used4 . Optimization of time window has been pointed out in ref.5
+Exploiting delayed emission for LIBS indentation has also
+been suggested6 .
+From time to time review articles covering various aspects of LIBS have come up in the literature7–18 . However they are focused on particular aspect or technique
+
+2
+e.g. study of uranium containing compounds19 , plasma
+facing components20,21 , LIBS imaging22 element analysis of industrial materials23 and data analysis24 , nano
+particles in LIBS25,26 , industrial applications27 , underwater applications28 , food analysis29 ,optical diagnostics
+and laser produced plasma30,31 , cancer diagnostics and
+classification32 , rapid CPVID detection1 (Scientific reports 12, 2022, 1614) aerosol analysis33 and geological
+samples34 . Hand held and portable LIBS technique is reviewed in reference4 . Technique used in LIBS quantification have also progressed35 in the past. Ultra sensitive
+and multianalyte analysis of plasma plumes using laser
+induced fluorescence (LIF) has been reviewed in a recent
+article36 . Combination of other techniques e.g. FTIR,
+Raman and Hyper spectral imaging (HI) have been elucidated to gather detailed spatial information37383940
+Hybrid LIBS-Raman-LIF been discussed in a recent
+review41 .
+Despite these reports, efforts are continuously emerging to extend the LIBS detection range and its application in various platforms e.g. study of deposition on the
+tokamak first wall components42 , analysis of hydrogen
+isotopes30 hardness estimation etc. In this short review
+we attempt to briefly sketch salient features associated
+with LIBS which encompass phenomenological aspects
+to emerging applications and recent technical developments. Some new features e.g. colliding plasma, application of self-reversal in estimating isotopic abundance,
+filament induced LIBS and grating induced LIBS are also
+briefly covered. The overall goal of this article to provide
+with first hand information to the LIBS community. We
+describe it in the following sections
+
+II.
+
+LIBS METHODOLOGY
+
+When a substance is irradiated with a high power laser,
+the material is heated and results in melt which finally
+forms a plasma plume which consists of atom, ions and
+electrons. The mechanism and timescales of ablation
+process and subsequent plasma formation for short (fs)
+and long (ns) pulses are demonstrated in Fig 1. In nsLIBS, at initial times in plasma formation the primary
+mechanisms are thermal vaporization and non-thermal
+evaporation whereas in case of fs LIBS, thermal evaporation occurs after Coulomb explosion, electron-ion energy transfer and heating of lattice by electrons which
+are followed by thermal vaporization. However, at later
+stages in case of ns LIBS, plasma reflection, absorption
+and reflection can occur whereas later stages for both
+ns and fs LIBS comprise of plasma-ambient interaction,
+shock wave propagation and confinement. Finally both
+are characterized by LIBS regime followed by plume condensation and particle ejection. Plume hydrodynamics
+has been found to play an important role in molecular
+and nano-cluster formation. In the early stages, shock
+wave at the edge has been found to hinder molecular
+formation which takes place only after the shock wave
+
+FIG. 1. Approximate time scales of nanosecond and femtosecond energy absorption and laser ablation along with various processes happening during and after the laser pulse
+(adapted with permission from reference43 ).
+
+collapse44 . Regarding expansion behavior, a systematic
+study is carried out for fs, ps and ns ablations45 . Differences in the propagation of the plume are observed
+for these three cases. For forward ablation of nickel thin
+film, in case of fs ablation, linear expansion is noticed for
+low background pressures which eventually shows shock
+wave like expansion at higher background pressures. For
+ps ablation, blast wave model describes the expansion at
+low pressures but a drag model appears appropriate for
+higher pressures. For fs ablation, effect of laser fluence
+on the emission characteristics in ultrafast laser produced
+copper was reported by Anoop et.al46 . At low to moderate fluences, neutral emission dominates but at higher
+fluences, ionic emission is predominant. Fast and slow
+components are also noticed in case of Zn (I) 481 nm
+emission in ultrafast laser produced zinc plasma which
+are ascribed to neutral and recombination contributions
+to the emission47
+
+A.
+
+Ablation types (Front ablation and Back ablation)
+
+In LIBS, basically the material can be ablated in three
+configurations viz. front, back and non-orthogonal ablation. Front and rear ablation geometries for thin film
+target are shown in Fig 2 and Fig 3. When laser is incident from the front side, it is termed as front ablation.
+On the other hand, when the laser is incident from backside, it is named as back or rear ablation. Notable differences in plume expansion geometry, composition of the
+plume and plume velocity are noticed. Higher velocity
+is obtained in case of front ablation as compared to the
+rear ablation48 . Moreover, spherical shock wave front
+is observed for both the cases, however, front side ablation has been found to have more excited state species
+as compared to rear ablation49 . Further, neutral species
+dominate in the rear ablation geometry50 .
+
+3
+
+FIG. 2. Schematic diagram of laser produced plasma plume
+of thin film deposited on a transparent substrate in front ablation (FA) and back ablation (BA) geometries (adapted with
+permission from reference50 ).
+
+FIG. 4. Typical LIBS spectra of the atomic lines of Cu at
+varied delay times obtained at two pulse durations of 35ns (a
+and b) and 180 ns (c and d) (adapted with permission from
+reference53 ) .
+
+FIG. 3. Schematic diagram of the tomographic system for
+demonstrating the effect of non-orthogonal ablation (adapted
+with permission from reference51 ).
+
+Besides these two geometries, laser ablation for different incident angles of laser beam has also been studied.
+Non orthogonal ablation has been found to increase inhomogeneity. It has been found to be composed of two
+parts; one following the ablation pulse and the other expanding along the sample normal. Moreover, the temporal evolution of the plasma, ionic and neutral emission
+and electron density and temperature have ben found to
+exhibit similar trends.
+
+B.
+
+Single pulse(SP)
+
+In most of the LIBS experiments single pulsed laser
+is used for ablation. The pulse of the laser can vary
+from femtosecond to microsecond time52 . Enhancement
+in intensity with long ns pulses has been reported in submerged solids52 . Moreover, long ns pulses have been
+found to produce plasma with stronger emission and
+longer lifetime as compared to LIBS using short (35 ns)
+pulses. Figure 4 shows the LIBS studies using short (35
+ns) and and long (180 ns) laser pulses for copper53 .
+
+FIG. 5.
+Various DP configurations (a) Collinear DP, (b)
+Orthogonal reheating DP (c) orthogonal pre ablation DP and
+(d) dual pulsed cross beam (adapted with permission from
+reference54 ).
+
+C.
+
+Double pulse (DP)
+
+Double pulse (DP) LIBS has been found to enhance
+intensity of the atomic/ionic lines depending on inter
+pulse delay55 . A simple schematic of various configurations of DP LIBS is shown in Fig 5. The DP configuration can be collinear (a), orthogonal reheating (b)
+orthogonal pre ablation (c) or dual laser cross beam
+(d). Further, DP LIBS can also have different configurations depending on lasers. It can have nano second +
+nanosecond (ns+ns), femtosecond+ femtosecond (fs+fs)
+femtosecond+ nanosecond (fs+ns) or nanosecond+ femtosecond (ns+fs) configurations. It has been found that
+the spectral intensity of copper plasma is higher in case of
+the configuration fs+ns55 . The plasma temperature has
+been found to be lower whereas electron density is higher.
+It has been suggested that the second pulse re-excites the
+plasma resulting in enhanced spectral intensity. Intensity enhancement has also been reported for orthogonal
+fs+fs DP LIBS.56 and is projected for LIBS imaging with
+
+4
+
+FIG. 7. Experimental schematic diagram of GIBS (adapted
+with permission from reference67 ).
+
+FIG. 6. Illustration of the orientation of the spectrometer
+slit with respect to the stagnation layer. This arrangement
+can provide one dimensional spatial resolution normal to the
+target along the stagnation layer (adapted with permission
+from reference59 ).
+
+better spatial resolution and spectro-chemical sensitivity. Effect of inverse Bremsstrahlung is reported for DP
+LIBS57 . In a recent work, effect of DP ablation on the
+emission characteristics of plasma has been theoretically
+treated using hydrodynamic model58 . Enhancement in
+intensity is attributed to two mechanisms viz plasmaplasma coupling effect and pressure effect.
+
+III.
+
+COLLIDING PLASMA
+
+When two laser produced plasmas (known as seed plasmas) are made to interact, an interaction zone is formed.
+This interaction zone is characterized by a stagnation
+layer. Colliding plasma schemes are useful in understanding plasma screening effects in fusion devices60 .
+A simple setup for colliding plasma is shown in Fig 6.
+The spectrometer slit is aligned along the propagation
+of stagnation layer. However, the properties of the stagnation region depend on the relative orientation of the
+targets from which seed plasma are formed. Two widely
+used target configurations- plane and wedge shaped for
+plasma collision studies.
+Further, collisionality parameter (ζ = D/λii ) is defined
+to represent various scenarios where D is the separation
+between the two seed plasmas and λii is ion-ion mean
+free path defined by
+
+λii (1 99K 2) =
+
+4
+4π20 m2i v12
+4
+4
+e Z ni ln∆12
+
+on mi , the collisionality condition can be engineered by
+the orientation of the seed plasmas with respect to each
+other and target material. Further, the colliding plasma
+can be homogeneous or heterogeneous. If the seed plasmas are from the same element, it is called homogeneous
+whereas seed plasmas from different elements termed as
+heterogeneous Signatures of enhanced neutral emission
+and molecular formation have been reported for the interaction zone61 . Moreover properties of interaction zone
+are also modulated in the presence of magnetic field62 .
+By observing the lines corresponding to trace elements,
+Tiwari et al63 showed that sensitivity can be optimized
+using colliding plasma in the presence of the magnetic
+field. In an other recent study Delaney et al64 studied
+the properties of stagnation layer formed in case of laterally colliding plasmas and annular plasmas and found
+that limit of detection (LOD) can be improved in case of
+colliding plasmas64 .
+
+IV. GRATING INDUCED BREAKDOWN
+SPECTROSCOPY (GIBS)
+
+In conventional ns-LIBS technique, plasma shielding
+affects its reproducibility, repeatability and signal to
+noise ratio. Interestingly in filament induced breakdown spectroscopy (FIBG) , remarkable property of
+the filaments to travel long distances independently of
+the diffraction limit makes it suitable for long range
+operation65 . In case of FIBG, the problem of shielding is
+overcome but the power density profile is limited. These
+problems can be countered in plasma grating induced
+breakdown spectroscopy (GIBS)66 . A simple illustration
+of FIBG is shown in Fig 7. Fig 8 shows improvement
+intensity of Si 288.2 nm line with GIBS. .
+
+(1)
+
+Collisionality parameter ζ > 1 indicates soft stagnation or interpenetration of the plumes species of seed
+plasma whereas ζ < 1indicates the condition of hard
+stagnation ( in this case collisions among the seed plasmas. will dominate and result in heated plasma. As mean
+free path is highly dependent on V12 and to a lesser extent
+
+V.
+
+LIBS IMAGING/CONFOCAL LIBS
+
+Spatially resolved LIBS imaging has attracted considerable interest because of its importance in revealing elemental distribution in the sample. For improving lateral
+resolution in LIBS imaging techniques e.g. micro-LIBs,
+fs-LIBS and near field enhanced atomic emission spec-
+
+5
+
+FIG. 8. (a) Intensity of the Si 288.2 nm line as a function
+of the laser pulse energy detected with the FIBS and GIBS
+systems. (b) Intensity of the Si 288.2 nm line obtained by interaction of two beams with different polarizations. Intensity
+enhancement is evident in case of GIBS which also depends
+on polarization (adapted with permission from reference67 ).
+
+FIG. 10. Schematic of Confocal LIBS microscopy. The beam
+emitted from continuous-wave (CW) laser passes through a
+beam expander and beam splitters BS1 and BS2, and then is
+focused onto the sample by an objective. The reflected light
+transmits along the original light path and is reflected by the
+BS2, and then is finally detected by a photomultiplier tube
+(PMT) (adapted with permission from reference68 ).
+
+FIG. 9. General protocol for LIBS imaging (A) Schematic
+view of the LIBS imaging setup with main components: the
+microscope objective is used to focus the laser pulse, the motorized platform for moving the sample, and the detection
+system connected to a spectrometer via an optical fiber. (B)
+Examples of single-shot emission spectra in the spectral range
+between 250 and 280 nm. (C) Sample relative-abundance images of Au (yellow), Fe (red), and P (blue) represented using
+false color scales. (adapted with permission from reference66 )
+
+troscopy have been proposed66 . Figure 9 demonstrates
+the general protocol for LIBS imaging whereas fig 10
+shows confocal LIBS imaging setup.
+
+VI.
+
+SELF-ABSORPTION, OPTICAL THICKNESS
+
+LIBS based spectro-chemical analysis based on relation between the observed intensity of an emission line
+and analyte concentration and from analytical point of
+view a linear relationship is desired. However, If optical thickness is large, part of the emitted radiation will
+be reabsorbed by the same species which is termed as
+self-absorption69 . Self-absorption coefficient (SA) is de-
+
+fined as the ratio of the actual intensity of an emission
+line to the theoretical intensity70 .Cases of self-absorption
+in case of homogeneous as well as inhomogeneous plasm
+are well described by Fatemeh Rezaei et al69 . A simplest check to ensure that the plasma is thin is to check
+the ratio of intensities of two lines which originate from
+same upper energy level or with upper energy levels with
+a small difference and if the following relation holds, it
+can be assumed to be optically thin.
+I1
+g1 A1 λ2
+=
+I2
+g2 A2 λ1
+
+(2)
+
+where I, g, A, λ with subscripts are the intensities, gaunt
+factor, transition probabilities and wavelengths respectively of the lines 1 and 2 under consideration. Another
+way to is to estimate spectral absorption at the center of
+a line originating in levels i and j and can be given by
+kji (λ0 ) = 8.85 × 10−13 fji λ20 ni Pji (λ0 )
+
+(3)
+
+where kji (cm−1 ) is absorption coefficient, fji is the absorption oscillator strength, λ0 is the wavelength and
+Pji (λ0 ) is normalized line profile at the center. For
+Lorentzian profile Pji (λ0 )= 1/(π∆λ1/2 ).
+VII.
+
+SELF-REVERSAL OF LINES
+
+Self reversal results when the emission from the hot
+center is absorbed by the species present at cooler periphery or due to plasma inhomogeneity71 as shown in
+figure 11. The emitted line shows dip at the peak due
+to absorption of the emitted line at rather hotter plasma
+
+6
+
+FIG. 13. Self reversal demonstrating Li isotopic dependence
+(adapted with permission from reference71 ).
+FIG. 11.
+Figure (a, b) depicts how self-reversal can take
+place; (c,d) shows self-reversal in 670.8 nm resonance line of
+Lithium (Li I) (adapted with permission from reference71 ).
+
+pected. Figure 13 shows the isotopic dependence of self
+reversal profiles for lithium 670.8nm resonance line.
+
+VIII.
+
+PARAMETER ESTIMATION
+
+The estimation of two important parameters viz electron density and electron temperature is important in
+understanding the plasma plume behavior as well as estimation of elemental composition.
+
+A.
+
+FIG. 12. Self-reversal in Lithium 670.8 nm and 610.3 nm
+lines in a confined geometry. More pronounced self-reversal
+is clearly evident for 670.8 nm resonance line (adapted with
+permission from reference72 ).
+
+center. A number of studies reported the presence of selfreversed lines under different plasma environments71–75 .
+Strong self-reversal in Li 670.8 line is noticed when LIBS
+was performed in a confined geometry as shown in figure 12. Moreover, it is dependent on the distance of the
+plate used to confine the plasma and time delay72 . Strong
+self-reversal was also reported in laser produced plasma
+for Ba ionic line73 . Shock waves during breakdown had
+also been considered to play an important role in generating plasma inhomogeneities74 . Laser induced fluorescence (LIF) of laser ablated filaments has been found to
+reduce the self-reversal features in the spectral profiles75 .
+Self-reversal of lines in LIBS which was considered to
+be unwanted, appears to to be boon in disguise. Estimation of isotopic abundance in case of lithium isotopes has
+been projected by exploiting the narrow (less effected by
+line broadening processes) self-reversed profile71 . With
+further optimization and analysis of self-reversed lines,
+better quantitative estimate of isotopic abundance is ex-
+
+Electron density
+
+Electron density is mainly estimated from the Stark
+broadening of the lines and is well established in literature and will not be detailed in the present article.
+However, in some cases Stark parameters of certain lines
+are not available and hence need to be estimated. One
+of the adopted methods is to use an alloy with other
+metal with known Stark parameters and from the obtained density extract the unknown Stark parameters76
+In another study Aragon et al. used fused glass samples to extract the Stark parameters for FeII and Ni II
+and Ti II with improved line to background ratios77,78 .
+In some cases, these parameters are estimated from Hα
+line due to the presence of trace amount of water. In
+case of nickel Stark parameters are estimated from the
+density obtained from Hα line79,80 . Parameters for some
+lines of tungsten were estimated by using CII line (426.7
+nm) in tungsten carbide plasma81 . Cross calibration in
+a multi element plasma was also used to extract these
+parameters82 . Stark widths for UI and UII were estimated from the O I 799.19 nm line present as surface
+impurity in a uranium metal target31 . Stark broadening
+coefficients for Tantalum lines were extracted using extended C-sigma method83 from the information of Stark
+broadening coefficient for a known line. However, these
+methods either may suffer from the interference from the
+presence of more elements on the plasma or the lines
+from the tracer impurities may be weak to provide sufficient intensity. Moreover presence of hydrogen, at low
+pressures presence of trace amount of water can give Hα
+
+7
+line but may have low intensity. At the same time at
+higher air pressure (higher water content is expected),
+water is likely to contaminate the plasma as well as affect the plasma properties. From Hα , we can estimate
+Stark parameters of any element.
+The spectral emission from LPP plasma are broadened
+due to various mechanisms, such as Stark, Doppler, van
+der Waals etc.84 . The line shape of emission from LPP
+plasma varies depending on the broadening mechanisms.
+A Lorentzian profile is expected for the collisional broadening process such as Stark and van der Waal broadening. whereas Doppler broadening results in a Gaussian
+profile. Some times more than one mechanism results
+in the broadening and hence the lines shape will be a
+convolution of different profiles as discussed in details by
+Griem84
+In LPP, three primary mechanisms can contribute to
+the spectral line shape; Doppler, Stark and instrumental.
+FWHM due to Doppler broadening can be estimated by
+r
+Te
+−7
+∆λ = 7.2 × 10 λ0
+(4)
+M
+In case of LIBS, the main broadening mechanism is
+considered as Stark broadening as due to low temperature, contribution from Doppler is very small. The Stark
+width is given by
+∆λ1/2 = 2W (
+
+ne
+)A0
+1016
+
+(5)
+
+Though the Stark broadening contribution is dominant in LPP plasma, the Doppler broadening may come
+significant at LPP emission of a plume expanding into
+a low background pressure and at a later time where
+the plasma density is not high. Assuming instrumental width as Lorentzian, the actual Stark width can be
+deducted by subtracting the instrumental width from
+the fitted Lorentzian width. Besides, Stark broadening,
+Laser Thomson scattering and interferometry can also
+be used to estimate electron density in laser produced
+plasmas85,86 . It has been described in an earlier review
+article also87 .
+
+B.
+
+Electron temperature
+
+The estimation of plasma parameter using the OES is
+based on the Boltzmann and Saha equation. Boltzmann
+equation relates the ratio of population densities Njz of
+excited energy levels and the number density N z with
+temperature T as
+z
+
+Njz
+gjz exp( −E
+kT )
+=
+z
+z
+N
+U (T )
+
+(6)
+
+where z represents the ionization stages, Ejz and gjz are
+the respective energy and degeneracy of the specified
+level, U z (T ) is the partition function. The Saha equation relates electron density (Ne ) and temperature with,
+
+population density of different states z and z − 1 as follows
+3/2
+
+
+
+z−1
+z−1
+2U z (T ) 2πmkT
+−(E∞
+− ∆E∞
+)
+Ne N z
+= z−1
+exp
+(7)
+N z−1
+U
+(T )
+h2
+kT
+z−1
+where E∞
+is the ionisation energy of species in charge
+z−1
+state of z−1, ∆E∞
+is the correction in ionization energy
+due to the plasma interaction, h is Planck?s constant
+(6.626 × 10−34 J.s), m is the mass of the electron (9.109 ×
+10−31 Kg). All these parameters for most of the species
+are well known and available in data bases like NIST.
+The applicability of these equations largely depends on
+the validity of LTE conditions of plasma described in
+section IX.
+Electron temperature can be estimated using the ratio of emission intensities of spectral lines of the same
+species and charge states using the Boltzman equation
+(Equation (6)). Estimation of temperature is normally
+done either by taking the ratio of the emission intensity of
+two separate lines or using a Boltzmann plot method88 .
+In the case of intensity ratios of line emissions, assuming
+local thermodynamic equilibrium (LTE) in the system,
+the temperature is estimated using the following equation which is derived from Boltzman equation,
+
+
+I1
+−(E1 − E2 )
+g1 A1 λ2
+=
+exp
+(8)
+I2
+g2 A2 λ1
+kb Te
+
+whereλi , Ai , gi , Ii andEi (i = 1, 2) are the wavelength,
+transition probability, statistical weight, line intensity,
+and energy of the excited state respectively. When only
+two lines are considered, the selection of these lines is
+very critical. To have a better accuracy, the upper state
+energy levels of the two lines under consideration have
+to be well separated. Moreover, the energy difference
+should be significantly larger than the plasma electron
+temperature to get an accurate estimation of electron
+temperature from line intensity ratio. Also, care has to
+be taken to make correction for the opacity of the plasma
+if it is present. A lack of consideration of these conditions
+can lead to wrong estimation of the temperature. Better estimate of electron temperature can be achieved by
+using spectral lines of two successive ionization states89 .
+Electron temperature can be estimated by eq.2 of this
+reference.
+A more general and accurate way for the estimation
+of temperature is possible by using the Boltzmann plot
+method. In this method, a number of lines can be used
+for the estimation of temperature. The equation for estimating temperature (equation (8)) can be re written
+as
+
+
+Iij λij
+−Ei
+ln
+=
++C
+(9)
+gi Aij
+KTe
+where Iij , λij ,Aij , gi and Ei are the spectral intensity,
+wavelength, transition probability and statistical weight
+of the upper state and upper state energy respectively.
+If a plot is made with Ei on x axis and the left hand
+
+8
+side(LHS) of equation (9) as the y axis, the slope of the
+−1
+, from which one can easily
+graph will be equal to KT
+e
+estimate the plasma temperature. In this method, lines
+meeting the required conditions can be used, which improves the accuracy of temperature estimation.
+Another method for the estimation of plasma temperature using spectroscopy is the line-to-continum ratio method90 . The equation for this method is derived
+from Saha equation and from the expression for the integrated spectral emissivities of the respective lines it can
+be expresses as
+
+
+Ei −4E1
+−E2
+−5
+exp kT
+2.0052
+×
+10
+A
+g
+exp
+21
+2
+kTe
+I1
+exc
+
+
+
+i
+h 
+
+(λ) =
+(10)
+−hc
+−hc
+εc
++ G exp
+U λ T ξ 1 − exp
+i i e
+
+λkTe
+
+λkTe
+
+where I1 is the integrated intensity of emission line, εc is
+the continuum emission coefficient, A21 is the transition
+probability, g2 is the upper state statistical weight. Ei
+is the ionization potential, E2 is the upper state energy
+level, 4E1 is the correction factor to inonization potential due to the plasma which can be neglected safely. Ui
+is the partition function, ξ is the free-bound continuum
+correction factor, G is the free free Gaunt factor. Experimentally, εc is measured closest to the line chosen.
+From the above equation we can calculate the electron
+temperature Te .
+As discussed in case of density, temperature can also
+be estimated using laser Thomson scattering87
+IX.
+
+LOCAL THERMODYNAMICAL EQUILIBRIUM
+
+For establishing that the levels are populated with
+Boltzmann distribution, the plasma is assumed is
+to be under local thermodynamic equilibrium (LTE).
+Macwhirter criterion defined below is taken as a necessary condition for the LTE condition
+3
+ne ≥ 1.6 × 1012 Te0.5 ∆Emn
+−3
+
+(11)
+
+atomic mass of element, ∆E is the energy difference in
+the upper and lower level, f12 is the oscillator strength
+and g is the gaunt factor. f12 is a dimensionless quantity of the probability of absorption or emission of electromagnetic radiation for a particular transition and g
+is the correction factor to be used as an approximation
+to the classical calculation of emission results. Similar
+to the variations in diffusion length, it is equally important that the relaxation time of the plasma for establishing the thermodynamic equilibrium has to be shorter
+than the time of variation of plasma temperature and
+density91 . Typical laser produced plasma at its initial
+stage has density  1018 cm−3 and temperature of few
+eV, which meets the requirement of LTE condition. However, after a sizeable plasma expansion, the density falls
+rapidly which leads to non-LTE plasma conditions.
+
+X.
+
+CALIBRATION FREE LIBS (CFLIBS)
+
+Convention LIBS analysis suffers from matrix effects
+and also requires reference sample for calibration curve.
+Hence calibration free LIBS (CF LIBS) approach was
+adopted. Details of this method are given in a review by
+Tongoni et al.92 and also in recent reference of Zhang et
+al35 .However, CFLIBS considers that (i) plasma plume
+represents the actual composition, (ii) the plasma is in
+LTE condition in spatial as well as temporal window,
+(iii) plasma is considered to be homogeneous and (iv)
+the spectral lines under consideration are optically thin.
+
+A.
+
+C Sigma graphs
+
+Generalized curves of growth known as CSigma( Cσ)
+graphs which include several lines of various elements of
+same ionic stage were suggested by Aragon et al. for
+LIBS93 . It is based on Saha, Boltzmann and radiative
+transfer equations under the assumption of local thermodynamic equilibrium (LTE). Further C-sigma graphs are
+based on the calculation of line cross section which allows
+estimation of self-absorption.
+
+where ne is electron density in cm , Te is electron temperature in Kelvin and ∆Emn (eV) is the largest energy gap between the adjacent energy levels. However
+for transient and inhomogeneous plasma. Christoferrati
+criteria91 discussed below have to be checked. In the
+case of transient plasma, like the case of a laser produced plasma, require to be verified with the ChristoferB. Internal reference for self-absorption correction
+rati criteria in order to ensure the LTE situation. The
+(IRSAC)
+Christoferrati criteria state that the diffusion length Dλ
+of atoms/ions, during a time period of the order of the relaxation time to the equilibrium, should be shorter than
+To overcome self-absorption in CF-LIBS, correction by
+the variation length of temperature and electron number
+internal reference has also been suggested94 . Basically
+density in the plasma. The diffusion length is approxithe line chosen as internal reference has lower energy
+mated as
+level with higher energy or with low transition probability
+
+ 
+1/2
+which is affected slightly by self –absorption. Based on
+3/4
+(kB Te )
+∆E
+B Te
+Dλ ≈ 1.4 × 101 2 ×
+×
+× e∆E/2k
+(12)
+this,
+the intensity of other lines can be corrected. MoreNe
+MA f12 (g)
+over, columnar density and standard reference line (CDSRL) method has been found to result in better accuracy
+where kB is the Boltzmann constant, Ne is the electron
+than standard LIBS94,95 .
+number density, T is the plasma temperature, MA is the
+
+9
+XI. ENHANCEMENT IN SIGNAL/DETECTION
+SENSITIVITY
+
+Signal enhancement and subsequent increase in detection sensitivity has been a subject of wide investigations
+for better exploiting it in various applications. A recent review briefly describes some of the approaches attempted for it2 . The methods adopted of signal enhancement are DP LIBS, atmosphere control method, applying spatial constraint, application of magnetic and electric fields, microwave assisted LIBS (MALIBS), LIBS/
+laser induced fluorescence combination (LIBS+LIF),
+nano particle enhanced LIBS( NELIBS).Sample temperature has also been found to enhance signal emission
+intensity96–99 . Increase in signal emission is attributed
+to increased ablation rate.
+FIG. 14. Schematic diagram of (a) SENLIBS and (b) conventional LIBS (adapted with permission from reference111 ).
+A.
+
+Effect of magnetic field
+D.
+
+Introduction of magnetic field has been found to result
+in significant enhancement in the intensity of lines100 .
+Various mechanisms e.g. confinement by the field, increase in electron impact excitation due to Joule heating and acting as a constraint been suggested for this
+enhancement2,101 .
+
+B.
+
+Interaction between microwave radiation and
+laser produced plasma has been studied in earlier
+works and significant increase in line intensity was
+noticed108,109 .Intensity enhancement and plasma sustainment in presence of microwave in air has been
+suggested to occur due to re-excitation and , of course,
+not due to absorption of the microwave110 .
+
+Effect of electric field
+XII.
+
+Electric field assisted LIBS has been studied for the detection of chlorine and copper102 . In another work significant enhancement (≈ 8 fold) is observed in case of copper
+lines103 . Fluctuations (contraction/expansion) in the
+laser produced plasma are suggested for observed intensity enhancement. Electric field effect on laser induced
+titanium (Ti) plasma has also been investigated104 . Intensity enhancement in Ti lines has been found to depend
+on voltage biasing.
+
+C.
+
+Microwave Assisted LIBS (MALIBS)
+
+Glow discharge LIBS (GDLIBS)
+
+GDLIBS has been found to result in significant signal
+enhancement when compare with simple GD or LIBS105
+.GD-LIBS takes advantage of collisional excitation by
+exciting the material generated by LIBS106 . Flameenhanced LIBS (FELIBS): Enhancement in LIBS sensitivity was noticed by producing laser plasma in the outer
+envelope of a neutral oxy-acetylene flame107 . High temperature and low density plasma was observed before 4µs
+which has been projected to be beneficial for enhancing
+LIBS sensitivity.
+
+SURFACE ENHANCED LIBS (SENLIBS)
+
+In this method metallic target is used to enhance and
+stabilise plasma for direct analysis of flow111,112 . It has
+been demonstrated that it has the potential of improving
+measurement sensitivity. Figure 14 shows the schematic
+diagram of SENLIBS and conventional LIBS. Figure 15
+shows substantial enhancement in the emission intensity
+for copper and aluminium lines. In both the experiments,
+it is worth mentioning that there is no significant variation in the background lines.
+
+XIII.
+
+LIF+ LIBS
+
+Combination of laser induced fluorescence with LIBS
+(LIF+LIBS) can enhance the intensity of lines and subsequently provide better detection sensitivity. A typical
+LIF+LIBS setup is shown in Fig 16, and enhanced Co-I
+intensity is demonstrated in Fig 17 . Significant improvement in single shot Limit of detection is observed while
+combining LIBS and LIF . Moreover spectral interference
+effect which is problematic in conventional LIBS can be
+resolved with LIF +LIBS (adapted with permission from
+reference113 ).
+
+10
+
+FIG. 17. Enhancement in Co (I) 340.51 nm line in LIBS+LIF
+(adapted with permission from reference114 ).
+
+FIG. 18.
+Schematic of the ablation process in NELIBS:
+(a) Laser irradiation and field emission,(b) explosion of NPs
+and breakdown, (c) electron heating and plasma formation,
+and (d) plasma evolution and target re-solidification (adapted
+with permission from reference115 ).
+
+XIV.
+
+FIG. 15. Spectra showing Si I lines from silica in (a) copper
+rod and (b) in aluminium rod (adapted with permission from
+reference111 ).
+
+NANOPARTICLE ENHANCED LIBS (NELIBS)
+
+Presence of nano-particles has been found to enhance
+LIBS intensity. In Fig 18,19, processes associated in the
+presence of nano-particle in metallic target are shown.
+NELIBS has been found to have larger plasma volume
+and longer persistence in spite of similar plasma parameters. Production of more efficient seed electrons in comparison to conventional LIBS has been attributed to this
+enhancement.
+
+FIG. 16. Typical setup for LIBS+LIF combination (adapted
+with permission from reference114 ).
+FIG. 19.
+NP enhanced photo-ablation in metals and dielectrics (adapted with permission from reference26 ).
+
+11
+
+FIG. 20. NEMLIBS set up (adapted with permission from
+reference116 ).
+
+Nano-particle enhanced molecular LIBS (NEMLIBS)
+was recently reported by Tang et.al.116 . Geometric constraint was proposed to improve NEMLIBS. Moreover,
+larger spot size, higher laser energy and pre-ablation of
+sample are beneficial in NEMLIBS. A typical NEMLIBS
+set up is shown in figure 20 and enhancement in molecular emission in the absence as well as in the presence of
+constraint is shown in Fig 21.
+
+XV.
+
+SPATIAL CONSTRAINT METHOD
+
+FIG. 21. Demonstration in enhancement in NEMLIBS for
+AlO and C2 with and without geometric constraint. (adapted
+with permission from reference116 ).
+
+Spatial constraint method: In this method a spatial
+constraint device is introduced at the periphery of the
+plasma2 . The generated shock wave will be reflected
+at the constraint, subsequently compressing the plasma.
+This will result in higher temperature and density which
+in turn will give enhanced signal. A schematic of spatial
+constraint method is depicted in figure 22.
+
+XVI.
+
+OPTICALLY TRAPPED LIBS (OTLIBS)
+
+Optical catapulting-optical trapping LIBS: In this
+technique spectral identification of micro and nano sized
+particles is done by sequential optical catapulting, optical trapping and LIBS117,118 . The details of optical trapping technique are reviewed in Galbács, et. al25 . A typical arrangement for LIBS analysis of optically trapped
+single particle is illustrated in Fig 23. The method
+has been demonstrated to have attogram-level detection
+sensitivity117,119 .
+
+FIG. 22.
+Plasma plume evolution (A) in the presence of
+spatial constraint and (B) without spatial constraint (adapted
+with permission from reference2 ).
+
+12
+
+FIG. 23. Scheme of an experimental arrangement for LIBS
+analysis of optical trapped single nano particles (adapted with
+permission from reference25 ).
+
+FIG. 25. Schematic of R-SENILIBS set up (adapted with
+permission from reference127 ).
+
+FIG. 24. Polarisation resolved spectra of Al2+ for different
+stages of plasma evolution at a background pressure of 1 ×
+102 mbar. The laser fluence was 550 J/cm2 with an ICCD
+camera gate width of 10 ns (adapted with permission from
+reference125
+XVII.
+
+FIG. 26. (a) Partial energy level diagram for resonant excitation of Pb atoms and (b) off resonance and on resonance
+line spectra (adapted with permission from reference127 ).
+
+POLARIZATION RESOLVED LIBS (PRLIBS)
+
+Emission anisotropy in the expanding plasma plume
+has been studied because of its importance in deciphering electron distribution and self-generated electric and
+magnetic fields120–123 . The degree of polarization at a
+particular wavelength is defined by
+Pλ =
+
+IH − IV
+IH + IV
+
+(13)
+
+Exploiting polarization resolved LIBS may be interesting in enhancing LIBS sensitivity124 as can be seen from
+figure 24
+XVIII. RESONANT ENHANCED LIBS (RELIBS),
+RESONANT SURFACE ENHANCED LIBS (RSENILIBS)
+
+In RELIBS, the excitation laser is tuned to strong absorption line of one of the major species126 . The energy
+absorbed is then distributed over all the elements in the
+plasma through collisions. A schematic of R-SENILIBS is
+given in figure 25. Main advantage of RELIBS over LIBSLIF is its ability to determine multiple species simultaneously. Concept of R-SENILIBS was reported to and was
+used to detect lead in water127 . In this method surface
+enhanced LIBS is combined with resonance enhancement
+to improve the detection sensitivity. Figure 26 shows the
+energy level diagram for resonant excitation in the case
+of Pb atoms. It can be seen that large enhancement in
+intensity is observed in case of on resonance condition.
+
+XIX.
+
+BACK REFLECTION ENHANCED LIBS (BRELIBS)
+
+LIBS sensitivity is enhanced using BRELIBS by using
+metallic reflectors behind transparent targets128 as can
+be seen in figure 27. In this method metallic reflectors
+behind target are used to enhance LIBS sensitivity. The
+reflected laser beam reheats the plasma resulting in enhanced intensity. Further, the obtained LIBS spectrum
+shows pronounced increase in signal to noise ratio (SNR).
+
+XX. SIMULTANEOUS LIBS COMBINATION WITH
+OTHER ANALYTICAL MEASUREMENTS
+
+In this section we briefly introduce other analytical
+methods which are simultaneously used with LIBS.
+
+A.
+
+LIBS-Raman
+
+Combination of Raman and LIBS enables one to study
+the chemical composition in a broader context encompassing elemental and morphological information38,39 .
+In earlier studies simultaneous Raman and LIBS measurements with a single ns laser with 1064 nm fundamental and 532 nm second harmonic were suggested by
+
+13
+C.
+
+LIBS- X-Ray Fluorescence (XRF)
+
+Double pulse LIBS and micro-x-ray fluorescence (micro-XRF) were reported for characterizing
+materials139 . They have found that LIBS is highly
+subjective to sample chemical and physical properties.
+Performance of portable LIBS and portable XRF device
+has been reported by Rao et. al140 . While portable
+LIBS can give instantaneous measurement, its accuracy
+is hampered by self-absorption. On the other hand,
+XRF measurements have better limit of detection but
+the measurement consumes time.
+
+FIG. 27.
+Schematic of back reflection enhanced LIBS
+(adapted with permission from reference128 ).
+
+Sharma and coworkers129,130 . However, combination of
+LIBS and Raman in a single platform has gained lot of
+attention131,132 . Spatial and temporal combining techniques have been suggested for this133 . Potentially
+portable table top remote Raman-LIBS system has been
+reported recently134 .
+
+XXI.
+
+In this brief review we sketch LIBS techniques from
+parameter estimation to the emerging trends and also
+projected applications. In this article we have also introduced application aspects of some hitherto not exploited
+much phenomena e.g. colliding plasma, self-reversal of
+lines and GIBS. Further, we believe that glimpses outlined in the present review will provide a sound platform
+to the beginners also as it encompasses brief phenomenological aspects as well as recent developments in the field.
+
+XXII.
+
+B. LIBS-Laser Ablation- Inductively Coupled Plasma
+(LA-ICP)
+
+Meissner et.al.135 compared LIBS and Laser ablationInductively coupled mass spectroscopy (LA-ICP-MS) for
+the detection of trace elements in a solid matrix. LIBS
+is affected by matrix as well as self-absorption but does
+not depend on sample preparation. On the other hand,
+LA-ICP-MS detection limits are in principle lower but
+the preparation method strongly influences the measurements. Simultaneous LIBS and LA-ICP optical emission spectroscopy (LA-ICP-OES) have been reported for
+simultaneous analysis of the elements in asphaltenes136
+. Elemental analysis was done by LA-ICP-MS as well.
+At the same time the aromatic/paraffinic nature was
+also determined by LIBS from H/C ratio. Simultaneous LIBS and LA-ICP- mass spectroscopy (LA-ICPMS) has been reported for spatially resolved mapping of
+major and trace elements Bastnasite rare earth ore137 .
+The combination of two techniques provides complementary measurements that can be achieved with separate
+measurements due to low sensitivity or strong interferences. Combined LIBS/LA-ICP-MS has been reported
+for polymer alteration under corrosive conditions138 . It
+has been demonstrated that LIBS/LA-ICP-MS is a powerful method for polymer characterization as well in the
+study of polymer degradation.
+
+CONCLUDING REMARKS
+
+1 K.
+
+REFERENCES
+
+Berlo, W. Xia, F. Zwillich, E. Gibbons, R. Gaudiuso,
+E. Ewusi-Annan, G. R. Chiklis, and N. Melikechi, “Laser induced breakdown spectroscopy for the rapid detection of sarscov-2 immune response in plasma,” Scientific Reports 12, 1614
+(2022).
+2 X. Fu, G. Li, and D. Dong, “Improving the detection sensitivity
+for laser-induced breakdown spectroscopy: A review,” Frontiers
+in Physics 8, 68 (2020).
+3 D. F. Andrade, E. R. Pereira-Filho,
+and D. Amarasiriwardena, “Current trends in laser-induced breakdown spectroscopy:
+a tutorial review,” Applied Spectroscopy Reviews 56, 98–114
+(2021), https://doi.org/10.1080/05704928.2020.1739063.
+4 G. S. Senesi, R. S. Harmon, and R. R. Hark, “Field-portable
+and handheld laser-induced breakdown spectroscopy: Historical
+review, current status and future prospects,” Spectrochimica
+Acta Part B: Atomic Spectroscopy 175, 106013 (2021).
+5 E. Mal, R. Junjuri, M. K. Gundawar, and A. Khare, “Optimization of temporal window for application of calibration free-laser
+induced breakdown spectroscopy (cf-libs) on copper alloys in
+air employing a single line,” J. Anal. At. Spectrom. 34, 319–330
+(2019).
+6 G. Arora, J. Thomas, and H. C. Joshi, “On the delayed emission from a laser-produced aluminum plasma under an argon
+environment,” J. Anal. At. Spectrom. 37, 1119–1125 (2022).
+7 D. W. Hahn and N. Omenetto, “Laser-induced breakdown spectroscopy (libs), part ii: Review of instrumental and methodological approaches to material analysis and applications to different
+fields,” Appl. Spectrosc. 66, 347–419 (2012).
+8 D. W. Hahn and N. Omenetto, “Laser-induced breakdown spectroscopy (libs), part i: Review of basic diagnostics and plasma–
+particle interactions: Still-challenging issues within the analytical plasma community,” Appl. Spectrosc. 64, 335A–366A
+(2010).
+
+14
+9 C. Pasquini, J. Cortez, L. Silva,
+
+and F. B. Gonzaga, “Laser induced breakdown spectroscopy,” Journal of the Brazilian Chemical Society 18, 463–512 (2007).
+10 J.
+P.
+Singh
+and
+S.
+N.
+Thakur,
+Laser-induced breakdown spectroscopy (Elsevier, 2020).
+11 J.
+P.
+Singh
+and
+S.
+Thakur,
+Laser-Induced Breakdown Spectroscopy (Elsevier, 2007).
+12 A.
+W. Miziolek, V. Palleschi,
+and I. Schechter,
+Laser induced breakdown spectroscopy (Cambridge university press, 2006).
+13 A. F. Pablo, A Guide to Laser-induced Breakdown Spectroscopy
+(Nova Science Pub Inc, 2021).
+14 R.
+Noll, “Laser-induced breakdown spectroscopy,” in
+Laser-Induced Breakdown Spectroscopy
+(Springer,
+2012)
+pp. 7–15.
+15 D. Zhang, H. Zhang, Y. Zhao, Y. Chen, C. Ke, T. Xu,
+and Y. He, “A brief review of new data analysis methods of laser-induced breakdown spectroscopy: machine learning,” Applied Spectroscopy Reviews 57, 89–111 (2022),
+https://doi.org/10.1080/05704928.2020.1843175.
+16 S. Romppanen, I. Pölönen, H. Häkkänen, and S. Kaski, “Optimization of spodumene identification by statistical approach
+for laser-induced breakdown spectroscopy data of lithium pegmatite ores,” Applied Spectroscopy Reviews 0, 1–21 (2021),
+https://doi.org/10.1080/05704928.2021.1963977.
+17 O. A. Al-Najjar, Y. S. Wudil, U. F. Ahmad, O. S. B. AlAmoudi, M. A. Al-Osta, and M. A. Gondal, “Applications
+of laser induced breakdown spectroscopy in geotechnical engineering: a critical review of recent developments, perspectives
+and challenges,” Applied Spectroscopy Reviews 0, 1–37 (2022),
+https://doi.org/10.1080/05704928.2022.2136192.
+18 D. F. Andrade, E. R. Pereira-Filho,
+and D. Amarasiriwardena, “Current trends in laser-induced breakdown spectroscopy:
+a tutorial review,” Applied Spectroscopy Reviews 56, 98–114
+(2021), https://doi.org/10.1080/05704928.2020.1739063.
+19 E. J. Kautz, E. N. Weerakkody, M. S. Finko, D. Curreli, B. Koroglu, T. P. Rose, D. G. Weisz, J. C. Crowhurst, H. B. Radousky,
+M. DeMagistris, N. Sinha, D. A. Levin, E. L. Dreizin, M. C.
+Phillips, N. G. Glumac, and S. S. Harilal, “Optical spectroscopy
+and modeling of uranium gas-phase oxidation: Progress and perspectives,” Spectrochimica Acta Part B: Atomic Spectroscopy
+185, 106283 (2021).
+20 G. S. Maurya, A. Marı́n-Roldán, P. Veis, A. K. Pathak, and
+P. Sen, “A review of the libs analysis for the plasma-facing components diagnostics,” Journal of Nuclear Materials 541, 152417
+(2020).
+21 C. Li, C.-L. Feng, H. Y. Oderji, G.-N. Luo, and H.-B. Ding,
+“Review of libs application in nuclear fusion technology,” Frontiers of Physics 11, 1–16 (2016).
+22 L. Jolivet, M. Leprince, S. Moncayo, L. Sorbier, C.-P. Lienemann, and V. Motto-Ros, “Review of the recent advances and
+applications of libs-based imaging,” Spectrochimica Acta Part
+B: Atomic Spectroscopy 151, 41–53 (2019).
+23 J. D. Pedarnig, S. Trautner, S. Grünberger, N. Giannakaris,
+S. Eschlböck-Fuchs, and J. Hofstadler, “Review of element analysis of industrial materials by in-line laser—induced breakdown
+spectroscopy (libs),” (2021).
+24 D. Zhang, H. Zhang, Y. Zhao, Y. Chen, C. Ke, T. Xu,
+and Y. He, “A brief review of new data analysis methods of laser-induced breakdown spectroscopy:
+machine
+learning,” Applied Spectroscopy Reviews 0, 1–23 (2020),
+https://doi.org/10.1080/05704928.2020.1843175.
+25 G. Galbács, A. Kéri, A. Kohut, M. Veres, and Z. Geretovszky,
+“Nanoparticles in analytical laser and plasma spectroscopy –
+a review of recent developments in methodology and applications,” J. Anal. At. Spectrom. 36, 1826–1872 (2021).
+26 M. Dell’Aglio, R. Alrifai, and A. De Giacomo, “Nanoparticle enhanced laser induced breakdown spectroscopy (nelibs), a
+first review,” Spectrochimica Acta Part B: Atomic Spectroscopy
+148, 105–112 (2018).
+
+27 S. Legnaioli, B. Campanella, F. Poggialini, S. Pagnotta, M. A.
+
+Harith, Z. A. Abdel-Salam, and V. Palleschi, “Industrial applications of laser-induced breakdown spectroscopy: a review,”
+Anal. Methods 12, 1014–1029 (2020).
+28 A. MATSUMOTO and T. SAKKA, “A review of underwater laser-induced breakdown spectroscopy of submerged solids,”
+Analytical Sciences 37, 1061–1072 (2021).
+29 D. Stefas, N. Gyftokostas, E. Nanou, P. Kourelias,
+and
+S. Couris, “Laser-induced breakdown spectroscopy: An efficient tool for food science and technology (from the analysis of martian rocks to the analysis of olive oil, honey, milk,
+and other natural earth products),” Molecules 26 (2021),
+10.3390/molecules26164981.
+30 E. J. Kautz, A. Devaraj, D. J. Senor, and S. S. Harilal, “Hydrogen isotopic analysis of nuclear reactor materials using ultrafast
+laser-induced breakdown spectroscopy,” Opt. Express 29, 4936–
+4946 (2021).
+31 M. Burger, P. J. Skrodzki, I. Jovanovic, M. C. Phillips, and
+S. S. Harilal, “Laser-produced uranium plasma characterization
+and stark broadening measurements,” Physics of Plasmas 26,
+093103 (2019), https://doi.org/10.1063/1.5099643.
+32 M. N. Khan, Q. Wang, B. S. Idrees, W. Xiangli, G. Teng,
+X. Cui, Z. Zhao, K. Wei, and M. Abrar, “A review on
+laser-induced breakdown spectroscopy in different cancers diagnosis and classification,” Frontiers in Physics 10 (2022),
+10.3389/fphy.2022.821057.
+33 H. Ji, Y. Ding, L. Zhang, Y. Hu,
+and X. Zhong, “Review of aerosol analysis by laser-induced breakdown spectroscopy,” Applied Spectroscopy Reviews 56, 193–220 (2021),
+https://doi.org/10.1080/05704928.2020.1780604.
+34 S. Qiao, Y. Ding, D. Tian, L. Yao, and G. Yang, “A review
+of laser-induced breakdown spectroscopy for analysis of geological materials,” Applied Spectroscopy Reviews 50, 1–26 (2015),
+https://doi.org/10.1080/05704928.2014.911746.
+35 N. Zhang, T. Ou, M. Wang, Z. Lin, C. Lv, Y. Qin, J. Li, H. Yang,
+N. Zhao, and Q. Zhang, “A brief review of calibration-free
+laser-induced breakdown spectroscopy,” Frontiers in Physics 10
+(2022), 10.3389/fphy.2022.887171.
+36 N.-H. Cheung, “Laser-induced plume fluorescence for ultrasensitive and simultaneous multianalyte analysis – a review,”
+Spectrochimica Acta Part B: Atomic Spectroscopy 194, 106473
+(2022).
+37 M. C. S. Ribeiro, G. S. Senesi, J. S. Cabral, C. Cena, B. S.
+Marangoni, C. Kiefer, and G. Nicolodelli, “Evaluation of rice
+varieties using libs and ftir techniques associated with pca
+and machine learning algorithms,” Appl. Opt. 59, 10043–10048
+(2020).
+38 D. Holub, P. Porizka, M. Kizovsky, D. Prochazka, O. Samek,
+and J. Kaiser, “The potential of combining laser-induced breakdown spectroscopy and raman spectroscopy data for the analysis
+of wood samples,” Spectrochimica Acta Part B: Atomic Spectroscopy 195, 106487 (2022).
+39 H. Sun, C. Song, X. Lin, and X. Gao, “Identification of meat
+species by combined laser-induced breakdown and raman spectroscopies,” Spectrochimica Acta Part B: Atomic Spectroscopy
+194, 106456 (2022).
+40 C. Sandoval-Munoz, G. Velasquez, J. Alvarez, F. Perez, M. Velasquez, S. Torres, D. Sbarbaro-Hofer, V. Motto-Ros, and
+J. Yanez, “Enhanced elemental and mineralogical imaging of
+cu-mineralized rocks by coupling ?-libs and hsi,” J. Anal. At.
+Spectrom. 37, 1981–1993 (2022).
+41 D. V. S, S. D. George,
+V. B. Kartha, S. Chidangil,
+and U. V. K, “Hybrid libs-raman-lif systems for
+multi-modal spectroscopic applications:
+a topical review,” Applied Spectroscopy Reviews 56, 463–491 (2021),
+https://doi.org/10.1080/05704928.2020.1800486.
+42 H. van der Meiden, S. Almaviva, J. Butikova, V. Dwivedi,
+P. Gasior, W. Gromelski, A. Hakola, X. Jiang, I. Jõgi,
+J. Karhunen, M. Kubkowska, M. Laan, G. Maddaluno,
+A. Marı́n-Roldán, P. Paris, K. Piip, M. Pisarčı́k, G. Sergienko,
+
+15
+M. Veis, P. Veis, S. Brezinsek, and the EUROfusion WP
+PFC Team, “Monitoring of tritium and impurities in the first
+wall of fusion devices using a LIBS based diagnostic,” Nuclear
+Fusion 61, 125001 (2021).
+43 N. L. LaHaye, S. S. Harilal, P. K. Diwakar, and A. Hassanein,
+“The effect of laser pulse duration on icp-ms signal intensity,
+elemental fractionation, and detection limits in fs-la-icp-ms,” J.
+Anal. At. Spectrom. 28, 1781–1787 (2013).
+44 S. S. Harilal, B. E. Brumfield, B. D. Cannon,
+and
+M. C. Phillips, “Shock wave mediated plume chemistry
+for molecular formation in laser ablation plasmas,” Analytical Chemistry 88, 2296–2302 (2016), pMID: 26732866,
+https://doi.org/10.1021/acs.analchem.5b04136.
+45 J. Thomas, H. C. Joshi, A. Kumar,
+and R. Philip, “Pulse
+width dependent dynamics of laser-induced plasma from a ni
+thin film,” Journal of Physics D: Applied Physics 52, 135201
+(2019).
+46 K. K. Anoop, S. S. Harilal, R. Philip, R. Bruzzese,
+and
+S. Amoruso, “Laser fluence dependence on emission dynamics
+of ultrafast laser induced copper plasma,” Journal of Applied
+Physics 120, 185901 (2016), https://doi.org/10.1063/1.4967313.
+47 N. Smijesh and R. Philip, “Emission dynamics of an expanding ultrafast-laser produced zn plasma under different ambient pressures,” Journal of Applied Physics 114, 093301 (2013),
+https://doi.org/10.1063/1.4820575.
+48 A. Mondal, R. K. Singh, and A. Kumar, “Effect of ablation
+geometry on the dynamics, composition, and geometrical shape
+of thin film plasma,” Physics of Plasmas 25, 013517 (2018),
+https://doi.org/10.1063/1.4991469.
+49 L. Escobar-Alarcón, E. Camps, E. Haro-Poniatowski, M. Villagran, and C. Sanchez, “Characterization of rear- and front-side
+laser ablation plasmas for thin-film deposition,” Applied Surface
+Science 197-198, 192–196 (2002).
+50 A. Mondal, R. K. Singh, and H. C. Joshi, “Neutral and ion
+composition of laser produced lithium plasma plume in front and
+back ablation of thin film,” J. Anal. At. Spectrom. 34, 1822–
+1828 (2019).
+51 E. Képeš, I. Gornushkin, P. Pořı́zka, and J. Kaiser, “Spatiotemporal spectroscopic characterization of plasmas induced by nonorthogonal laser ablation,” Analyst 146, 920–929 (2021).
+52 N. Li, N. Nishi, R. Zheng, and T. Sakka, “Signal enhancement
+in underwater long-pulse laser-induced breakdown spectroscopy
+for the analysis of bulk water,” J. Anal. At. Spectrom. 36, 1170–
+1179 (2021).
+53 N. Li, K. Tanabe, N. Nishi, R. Zheng, and T. Sakka, “Simultaneous detection of a submerged cu target and bulk water by
+long-pulse laser-induced breakdown spectroscopy,” J. Anal. At.
+Spectrom. 36, 1960–1968 (2021).
+54 P. Diwakar, S. Harilal, J. Freeman, and A. Hassanein, “Role
+of laser pre-pulse wavelength and inter-pulse delay on signal enhancement in collinear double-pulse laser-induced breakdown spectroscopy,” Spectrochimica Acta Part B: Atomic Spectroscopy 87, 65–73 (2013), thematic Issue: 7th International
+Conference on Laser Induced Breakdown Spectroscopy (LIBS
+2012), Luxor, Egypt, 29 September-4 October 2012.
+55 Y. Wang, A. Chen, D. Zhang, Q. Wang, S. Li, Y. Jiang, and
+M. Jin, “Enhanced optical emission in laser-induced breakdown spectroscopy by combining femtosecond and nanosecond laser pulses,” Physics of Plasmas 27, 023507 (2020),
+https://doi.org/10.1063/1.5131772.
+56 N. Giannakaris, A. Haider, C. M. Ahamer, S. Grünberger,
+S. Trautner,
+and J. D. Pedarnig, “Femtosecond singlepulse and orthogonal double-pulse laser-induced breakdown
+spectroscopy (libs): Femtogram mass detection and chemical imaging with micrometer spatial resolution,” Applied
+Spectroscopy 0, 00037028211042398 (0), pMID: 34494912,
+https://doi.org/10.1177/00037028211042398.
+57 V. Sivakumaran, H. C. Joshi, R. K. Singh,
+and A. Kumar, “Optical time of flight studies of lithium plasma
+in double pulse laser ablation:
+Evidence of inverse
+
+bremsstrahlung absorption,” Physics of Plasmas 21, 063110
+(2014), https://doi.org/10.1063/1.4885107.
+58 J. Wang, Y. Zhao, G. Wang, L. Zhang, S. Wang, W. Zhang,
+X. Ma, Z. Liu, X. Luo, W. Ma, Z. Ye, Z. Zhu, W. Yin, and
+S. Jia, “Theoretical study on signal enhancement of orthogonal
+double pulse induced plasma,” J. Anal. At. Spectrom. , – (2022).
+59 P. Hough, C. McLoughlin, S. S. Harilal, J. P. Mosnier,
+and J. T. Costello, “Emission characteristics and dynamics of the stagnation layer in colliding laser produced
+plasmas,” Journal of Applied Physics 107, 024904 (2010),
+https://doi.org/10.1063/1.3282683.
+60 K. F. Al-Shboul, S. S. Harilal, S. M. Hassan, A. Hassanein, J. T. Costello, T. Yabuuchi, K. A. Tanaka, and
+Y. Hirooka, “Interpenetration and stagnation in colliding
+laser plasmas,” Physics of Plasmas 21, 013502 (2014),
+https://doi.org/10.1063/1.4859136.
+61 A. K. Saxena, R. K. Singh, H. C. Joshi, and A. Kumar, “Spectroscopic investigation of molecular formation in laterally colliding laser-produced carbon plasmas,” Appl. Opt. 58, 561–570
+(2019).
+62 A. Mondal, R. K. Singh, V. Chaudhari,
+and H. C.
+Joshi, “Effect of magnetic field on the lateral interaction
+of plasma plumes,” Physics of Plasmas 27, 093109 (2020),
+https://doi.org/10.1063/5.0006647.
+63 P. K. Tiwari, N. Behera, R. Singh, and H. Joshi, “Comparative
+study of libs signal for single and colliding plasma plumes in a
+variable magnetic field,” Spectrochimica Acta Part B: Atomic
+Spectroscopy 191, 106411 (2022).
+64 B. Delaney, P. Hayden, T. Kelly, E. Kennedy, and J. Costello,
+“Laser induced breakdown spectroscopy with annular plasmas
+in vacuo: Stagnation and limits of detection,” Spectrochimica
+Acta Part B: Atomic Spectroscopy 193, 106430 (2022).
+65 P. Rohwetter, K. Stelmaszczyk, L. Wöste, R. Ackermann,
+G. Méjean, E. Salmon, J. Kasparian, J. Yu, and J.-P. Wolf,
+“Filament-induced remote surface ablation for long range laserinduced breakdown spectroscopy operation,” Spectrochimica
+Acta Part B: Atomic Spectroscopy 60, 1025–1033 (2005), laser
+Induced Plasma Spectroscopy and Applications (LIBS 2004)
+Third International Conference.
+66 V.
+Motto-Ros,
+S.
+Moncayo,
+C.
+Fabre,
+and
+B. Busser, “Chapter 14 - libs imaging applications,” in
+Laser-Induced Breakdown Spectroscopy (Second Edition),
+edited by J. P. Singh and S. N. Thakur (Elsevier, Amsterdam,
+2020) second edition ed., pp. 329–346.
+67 M. Hu, J. Peng, S. Niu, and H. Zeng, “Plasma-grating-induced
+breakdown spectroscopy,” Advanced Photonics 2, 1 – 6 (2020).
+68 W. Huang, C. He, Y. Wang, W. Zhao, and L. Qiu, “Confocal controlled libs microscopy with high spatial resolution and
+stability,” J. Anal. At. Spectrom. 35, 2530–2535 (2020).
+69 F. Rezaei,
+G. Cristoforetti, E. Tognoni, S. Legnaioli,
+V. Palleschi, and A. Safi, “A review of the current analytical approaches for evaluating, compensating and exploiting self-absorption in laser induced breakdown spectroscopy,”
+Spectrochimica Acta Part B: Atomic Spectroscopy 169, 105878
+(2020).
+70 Y. Yang, X. Hao, and L. Ren, “Correction of self-absorption effect in calibration-free laser-induced breakdown spectroscopy(cflibs) by considering plasma temperature and electron density,”
+Optik 208, 163702 (2020).
+71 K. Touchet, F. Chartier, J. Hermann, and J.-B. Sirven, “Laserinduced breakdown self-reversal isotopic spectrometry for isotopic analysis of lithium,” Spectrochimica Acta Part B: Atomic
+Spectroscopy 168, 105868 (2020).
+72 B. Kumar, R. K. Singh, and A. Kumar, “Dynamics of laserblow-off induced li plume in confined geometry,” Physics of Plasmas 20, 083511 (2013), https://doi.org/10.1063/1.4818900.
+73 M. Kumar, N. Behera, R. Singh, and H. Joshi, “Optical time-offlight and spectroscopic investigation of laser produced barium
+plasma in presence of magnetic field and ambient gas,” Physics
+Letters A 429, 127968 (2022).
+
+16
+74 I. Urbina, F. Bredice, C. Sanchez-Aké, M. Villagrán-Muniz, and
+
+V. Palleschi, “Temporal analysis of self-reversed ag i resonant
+lines in libs experiment at different laser pulse energy and in different surrounding media,” Spectrochimica Acta Part B: Atomic
+Spectroscopy 195, 106489 (2022).
+75 E. J. Kautz, M. C. Phillips, and S. S. Harilal, “Laser-induced
+fluorescence of filament-produced plasmas,” Journal of Applied
+Physics 130, 203302 (2021), https://doi.org/10.1063/5.0065240.
+76 R. Mayo, M. Ortiz, and M. Plaza, “Measured stark widths
+of several ni II spectral lines,” Journal of Physics B: Atomic,
+Molecular and Optical Physics 41, 095702 (2008).
+77 C. Aragon, J. Aguilera, and J. Manrique, “Measurement of
+stark broadening parameters of fe ii and ni ii spectral lines
+by laser induced breakdown spectroscopy using fused glass
+samples,” Journal of Quantitative Spectroscopy and Radiative
+Transfer 134, 39–45 (2014).
+78 J. Manrique, J. A. Aguilera,
+and C. Aragon, “Experimental Stark widths and shifts of Ti ii spectral lines,”
+Monthly Notices of the Royal Astronomical Society 462,
+1501–1507 (2016), https://academic.oup.com/mnras/articlepdf/462/2/1501/13773749/stw1641.pdf.
+79 J. Thomas, H. C. Joshi, A. Kumar, and R. Philip, “Effect
+of ambient gas pressure on nanosecond laser produced plasma
+on nickel thin film in a forward ablation geometry,” Physics of
+Plasmas 25, 103108 (2018), https://doi.org/10.1063/1.5048834.
+80 A. El Sherbini, H. Hegazy,
+and T. El Sherbini, “Measurement of electron density utilizing the h-alpha line from laser
+produced plasma in air,” Spectrochimica Acta Part B: Atomic
+Spectroscopy 61, 532–539 (2006).
+81 D. Nishijima and R. P. Doerner, “Stark width measurements
+and boltzmann plots of w i in nanosecond laser-induced plasmas,” Journal of Physics D: Applied Physics 48, 325201 (2015).
+82 H. Liu, B. S. Truscott, and M. N. R. Ashfold, “Determination of
+stark parameters by cross-calibration in a multi-element laserinduced plasma,” Scientific Reports 6, 25609 (2016).
+83 F. Poggialini, B. Campanella, R. Jafer, S. Legnaioli, F. Bredice,
+S. Raneri, and V. Palleschi, “Determination of the stark
+broadening coefficients of tantalum emission lines by timeindependent extended c-sigma method,” Spectrochimica Acta
+Part B: Atomic Spectroscopy 167, 105829 (2020).
+84 H. Griem, Spectral Line Broadening by Plasmas (Academic
+Press, New York, 1974).
+85 S. S. Harilal, M. C. Phillips, D. H. Froula, K. K. Anoop, R. C.
+Issac, and F. N. Beg, “Optical diagnostics of laser-produced
+plasmas,” Rev. Mod. Phys. 94, 035002 (2022).
+86 K. Choudhury, R. K. Singh, S. Narayan, A. Srivastava,
+and A. Kumar, “Time resolved interferometric study of
+the plasma plume induced shock wave in confined geometry:
+Two-dimensional mapping of the ambient and
+plasma density,” Physics of Plasmas 23, 042108 (2016),
+https://doi.org/10.1063/1.4947032.
+87 K. Muraoka and A. Kono, “Laser thomson scattering for lowtemperature plasmas,” Journal of Physics D: Applied Physics
+44, 043001 (2011).
+88 C. Aragon and J. Aguilera, “Characterization of laser induced
+plasmas by optical emission spectroscopy: A review of experiments and methods,” Spectrochimica Acta Part B: Atomic
+Spectroscopy 63, 893 – 916 (2008).
+89 S. S. Harilal, C. V. Bindhu, V. P. N. Nampoori, and C. P. G.
+Vallabhan, “Time evolution of the electron density and temperature in laser-produced plasmas from yba2cu3o7,” Applied
+Physics B 66, 633–638 (1998).
+90 H.-Y. Moon, B. W. Smith, and N. Omenetto, “Temporal behavior of line-to-continuum ratios and ion fractions as a means
+of assessing thermodynamic equilibrium in laser-induced breakdown spectroscopy,” Chemical Physics 398, 221 – 227 (2012),
+chemical Physics of Low-Temperature Plasmas (in honour of
+Prof Mario Capitelli).
+91 G. Cristoforetti, A. D. Giacomo, M. Dell’Aglio, S. Legnaioli,
+E. Tognoni, V. Palleschi, and N. Omenetto, “Local thermo-
+
+dynamic equilibrium in laser-induced breakdown spectroscopy:
+Beyond the mcwhirter criterion,” Spectrochimica Acta Part B:
+Atomic Spectroscopy 65, 86 – 95 (2010).
+92 E. Tognoni, G. Cristoforetti, S. Legnaioli, and V. Palleschi,
+“Calibration-free laser-induced breakdown spectroscopy: State
+of the art,” Spectrochimica Acta Part B: Atomic Spectroscopy
+65, 1–14 (2010).
+93 C. Aragon and J. Aguilera, “Csigma graphs: A new approach
+for plasma characterization in laser-induced breakdown spectroscopy,” Journal of Quantitative Spectroscopy and Radiative
+Transfer 149, 90–102 (2014).
+94 L. Sun and H. Yu, “Correction of self-absorption effect in
+calibration-free laser-induced breakdown spectroscopy by an internal reference method.” Talanta 79 2, 388–95 (2009).
+95 Z. Hu, F. Chen, D. Zhang, Y. Chu, W. Wang, Y. Tang, and
+L. Guo, “A method for improving the accuracy of calibrationfree laser-induced breakdown spectroscopy by exploiting selfabsorption,” Analytica Chimica Acta 1183, 339008 (2021).
+96 R. Hai, Z. He, D. Wu, W. Tong, H. Sattar, M. Imran, and
+H. Ding, “Influence of sample temperature on the laser-induced
+breakdown spectroscopy of a molybdenum–tungsten alloy,” J.
+Anal. At. Spectrom. 34, 2378–2384 (2019).
+97 V. N. Lednev, M. Y. Grishin, P. A. Sdvizhenskii, R. D. Asyutin,
+R. S. Tretyakov, A. Y. Stavertiy, and S. M. Pershin, “Sample
+temperature effect on laser ablation and analytical capabilities
+of laser induced breakdown spectroscopy,” J. Anal. At. Spectrom. 34, 607–615 (2019).
+98 K. Guo, A. Chen, W. Xu, D. Zhang,
+and M. Jin, “Effect of sample temperature on time-resolved laser-induced
+breakdown spectroscopy,” AIP Advances 9, 065214 (2019),
+https://doi.org/10.1063/1.5097301.
+99 S. Tavassoli and A. Gragossian, “Effect of sample temperature on laser-induced breakdown spectroscopy,” Optics & Laser
+Technology 41, 481–485 (2009).
+100 V. N. Rai, H. Zhang, F. Y. Yueh, J. P. Singh, and A. Kumar, “Effect of steady magnetic field on laser-induced breakdown spectroscopy,” Appl. Opt. 42, 3662–3669 (2003).
+101 H. Joshi, A. Kumar, R. Singh,
+and V. Prahlad, “Effect of
+a transverse magnetic field on the plume emission in laserproduced plasma: An atomic analysis,” Spectrochimica Acta
+Part B: Atomic Spectroscopy 65, 415–419 (2010).
+102 R. Ahmed, A. Jabbar, M. Akhtar, Z. A. Umar, and M. A.
+Baig, “Amelioration in the detection of chlorine using electric
+field assisted libs,” Plasma Chemistry and Plasma Processing
+40, 809–818 (2020).
+103 R. AHMED, A. JABBAR, Z. A. UMAR, and M. A. BAIG,
+“Electric-field induced fluctuations in laser generated plasma
+plume,” Plasma Science and Technology 23, 045505 (2021).
+104 E. Asamoah, C. Jiawei, K. Ayepah, S. Wilson, Y. Hongbing,
+Z. Weihua, Z. Lin, W. Pengyu, and A. Asamoah, “Investigating
+a laser-induced titanium plasma under an applied static electric
+field,” Spectroscopy (Santa Monica) 36 (2021), cited By 1.
+105 K. A. Tereszchuk, J. M. Vadillo, and J. J. Laserna, “Glowdischarge-assisted laser-induced breakdown spectroscopy: Increased sensitivity in solid analysis,” Appl. Spectrosc. 62, 1262–
+1267 (2008).
+106 K. Tereszchuk, J. Vadillo, and J. Laserna, “Depth profile analysis of layered samples using glow discharge assisted laser-induced
+breakdown spectrometry (gd-libs),” Spectrochimica Acta Part
+B: Atomic Spectroscopy 64, 378–383 (2009).
+107 L. Liu, S. Li, X. N. He, X. Huang, C. F. Zhang, L. S. Fan, M. X.
+Wang, Y. S. Zhou, K. Chen, L. Jiang, J. F. Silvain, and Y. F.
+Lu, “Flame-enhanced laser-induced breakdown spectroscopy,”
+Opt. Express 22, 7686–7693 (2014).
+108 Y. Liu, M. Baudelet, and M. Richardson, “Elemental analysis
+by microwave-assisted laser-induced breakdown spectroscopy:
+Evaluation on ceramics,” J. Anal. At. Spectrom. 25, 1316–1323
+(2010).
+109 M. Oba, M. Miyabe, K. Akaoka,
+and I. Wakaida, “Development of microwave-assisted, laser-induced breakdown spec-
+
+17
+troscopy without a microwave cavity or waveguide,” Japanese
+Journal of Applied Physics 59, 062001 (2020).
+110 Y. Ikeda and J. K. Soriano, “Microwave-enhanced laser-induced
+air plasma at atmospheric pressure,” Opt. Express 30, 33756–
+33766 (2022).
+111 Z. Yu, S. Yao, L. Zhang, Z. Lu, Z. S. Lie, and J. Lu, “Surfaceenhanced laser-induced breakdown spectroscopy utilizing metallic target for direct analysis of particle flow,” J. Anal. At. Spectrom. 34, 172–179 (2019).
+112 X. Yang, X. Li, Z. Cui, G. Yao, Z. Zhou, and K. Li, “Improving the sensitivity of surface-enhanced laser-induced breakdown spectroscopy by repeating sample preparation,” Frontiers
+in Physics 8 (2020), 10.3389/fphy.2020.00194, cited By 5.
+113 I. Elhamdaoui, N. Mohamed, S. Selmani, P. Bouchard, M. Sabsabi, M. Constantin, and F. Vidal, “Rapid quantitative analysis
+of palladium in ores using laser-induced breakdown spectroscopy
+assisted with laser-induced fluorescence (libs-lif),” J. Anal. At.
+Spectrom. , – (2022).
+114 R. Zhou, K. Liu, Z. Tang, P. Gao, J. Yan, and X. Li, “Highsensitivity determination of available cobalt in soil using laserinduced breakdown spectroscopy assisted with laser-induced fluorescence,” Appl. Opt. 60, 9062–9066 (2021).
+115 A. De Giacomo, R. Gaudiuso, C. Koral, M. Dell’Aglio, and
+O. De Pascale, “Nanoparticle enhanced laser induced breakdown spectroscopy: Effect of nanoparticles deposited on sample
+surface on laser ablation and plasma emission,” Spectrochimica
+Acta Part B: Atomic Spectroscopy 98, 19–27 (2014).
+116 Z. Tang, K. Liu, Z. Hao, K. Liu, W. Zhang, Q. Li, C. Zhu,
+J. Chen, and X. Li, “The validity of nanoparticle enhanced
+molecular laser-induced breakdown spectroscopy,” J. Anal. At.
+Spectrom. 36, 1034–1040 (2021).
+117 F. J. Fortes, A. Fernández-Bravo,
+and J. Javier Laserna,
+“Chemical characterization of single micro- and nano-particles
+by optical catapulting–optical trapping–laser-induced breakdown spectroscopy,” Spectrochimica Acta Part B: Atomic Spectroscopy 100, 78–85 (2014), dedicated To Nicolo Omenetto On
+the Occasion of his 75th Birthday.
+118 P. Purohit, F. J. Fortes,
+and J. J. Laserna, “Optical trapping as a morphologically selective tool for in situ
+libs elemental characterization of single nanoparticles generated by laser ablation of bulk targets in air,” Analytical Chemistry 93, 2635–2643 (2021), pMID: 33400487,
+https://doi.org/10.1021/acs.analchem.0c04827.
+119 P. Purohit, F. J. Fortes,
+and J. J. Laserna, “Atomization
+efficiency and photon yield in laser-induced breakdown spectroscopy analysis of single nanoparticles in an optical trap,”
+Spectrochimica Acta Part B: Atomic Spectroscopy 130, 75–81
+(2017).
+120 G. A. Wubetu, H. Fiedorowicz, J. T. Costello,
+and T. J.
+Kelly, “Time resolved anisotropic emission from an aluminium
+laser produced plasma,” Physics of Plasmas 24, 013105 (2017),
+https://doi.org/10.1063/1.4973444.
+121 M. Aghababaei Nejad, M. Soltanolkotabi, and A. Eslami Majd,
+“Polarization investigation of laser-induced breakdown plasma
+emission from al, cu, mo, w, and pb elements using nongated
+detector,” Journal of Laser Applications 30, 022005 (2018),
+https://doi.org/10.2351/1.5012507.
+122 G. A. Wubetu, T. J. Kelly, P. Hayden, H. Fiedorowicz,
+W. Skrzeczanowski, and J. T. Costello, “Recombination contributions to the anisotropic emission from a laser produced copper
+plasma,” Journal of Physics B: Atomic, Molecular and Optical
+Physics 53, 065701 (2020).
+123 A. Sharma and R. Thareja, “Anisotropic emission in laserproduced aluminum plasma in ambient nitrogen,” Applied Surface Science 253, 3113–3121 (2007).
+124 D. Zhao, N. Farid, R. Hai, D. Wu, and H. Ding, “Diagnostics of first wall materials in a magnetically confined fusion
+device by polarization-resolved laser-induced breakdown spectroscopy,” Plasma Science and Technology 16, 149–154 (2014).
+
+125 G.
+
+A. Wubetu, H. Fiedorowicz, J. T. Costello, and T. J.
+Kelly, “Time resolved anisotropic emission from an aluminium
+laser produced plasma,” Physics of Plasmas 24, 013105 (2017),
+https://doi.org/10.1063/1.4973444.
+126 K. Rifai, F. Vidal, M. Chaker, and M. Sabsabi, “Resonant
+laser-induced breakdown spectroscopy (rlibs) analysis of traces
+through selective excitation of aluminum in aluminum alloys,”
+J. Anal. At. Spectrom. 28, 388–395 (2013).
+127 K. Liu, Z. Tang, R. Zhou, W. Zhang, Q. Li, C. Zhu, C. He,
+K. Liu, and X. Li, “Determination of lead in aqueous solutions
+using resonant surface-enhanced libs,” J. Anal. At. Spectrom.
+36, 2480–2484 (2021).
+128 M. Abdel-Harith, A. Elhassan, Z. Abdel-Salam, and M. F.
+Ali, “Back-reflection-enhanced laser-induced breakdown spectroscopy (brelibs) on transparent materials: Application on
+archaeological glass,” Analytica Chimica Acta 1184, 339024
+(2021).
+129 S. Sharma, A. Misra, P. Lucey, R. Wiens, and S. Clegg, “Combined remote libs and raman spectroscopy at 8.6m of sulfurcontaining minerals, and minerals coated with hematite or covered with basaltic dust,” Spectrochimica Acta Part A: Molecular
+and Biomolecular Spectroscopy 68, 1036–1045 (2007), seventh
+International Conference on Raman Spectroscopy Applied to
+the Earth and Planetary Sciences.
+130 S. M. Clegg, R. Wiens, A. K. Misra, S. K. Sharma, J. Lambert, S. Bender, R. Newell, K. Nowak-Lovato, S. Smrekar,
+M. D. Dyar, and S. Maurice, “Planetary geochemical investigations using raman and laser-induced breakdown spectroscopy,”
+Applied Spectroscopy 68, 925–936 (2014), pMID: 25226246,
+https://doi.org/10.1366/13-07386.
+131 Q. Lin, G. Niu, Q. Wang, Q. Yu,
+and Y. Duan, “Combined laser-induced breakdown with raman spectroscopy:
+Historical technology development and recent applications,” Applied Spectroscopy Reviews 48, 487–508 (2013),
+https://doi.org/10.1080/05704928.2012.751028.
+132 D. V. S, S. D. George,
+V. B. Kartha, S. Chidangil,
+and U. V. K, “Hybrid libs-raman-lif systems for
+multi-modal spectroscopic applications:
+a topical review,” Applied Spectroscopy Reviews 56, 463–491 (2021),
+https://doi.org/10.1080/05704928.2020.1800486.
+133 V. N. Lednev, S. M. Pershin, P. A. Sdvizhenskii, M. Y. Grishin, A. N. Fedorov, V. V. Bukin, V. B. Oshurko, and A. N.
+Shchegolikhin, “Combining raman and laser induced breakdown
+spectroscopy by double pulse lasing,” Analytical and Bioanalytical Chemistry 410, 277–286 (2018).
+134 K. Muhammed Shameem, V. Dhanada, S. D. George,
+V. Kartha, C. Santhosh, and V. Unnikrishnan, “Assessing the
+feasibility of a low-throughput gated echelle spectrograph for
+laser-induced breakdown spectroscopy (libs)-raman measurements at standoff distances,” Optics & Laser Technology 153,
+108264 (2022).
+135 K. Meissner, T. Lippert, A. Wokaun, and D. Guenther, “Analysis of trace metals in comparison of laser-induced breakdown
+spectroscopy with la-icp-ms,” Thin Solid Films 453-454, 316–
+322 (2004), proceedings of Symposium H on Photonic Processing of Surfaces, Thin Films and Devices, of the E-MRS 2003
+Spring Conference.
+136 D. Oropeza, J. González, J. Chirinos, V. Zorba, E. Rogel, C. Ovalles, and F. López-Linares, “Elemental analysis of asphaltenes using simultaneous laser-induced breakdown
+spectroscopy (libs)&#x2013;laser ablation inductively coupled
+plasma optical emission spectrometry (la-icp-oes),” Appl. Spectrosc. 73, 540–549 (2019).
+137 J. R. Chirinos, D. D. Oropeza, J. J. Gonzalez, H. Hou,
+M. Morey, V. Zorba, and R. E. Russo, “Simultaneous 3dimensional elemental imaging with libs and la-icp-ms,” J. Anal.
+At. Spectrom. 29, 1292–1298 (2014).
+138 L. Brunnbauer, M. Mayr, S. Larisegger, M. Nelhiebel, L. Pagnin,
+R. Wiesinger, M. Schreiner, and A. Limbeck, “Combined laicp-ms/libs: powerful analytical tools for the investigation of
+
+18
+polymer alteration after treatment under corrosive conditions,”
+Scientific Reports 10, 12513 (2020).
+139 M. F. Alberghina, R. Barraco, M. Brai, T. Schillaci,
+and L. Tranchina, “Double laser LIBS and micro-XRF
+spectroscopy applied to characterize materials coming from the Greek-Roman theater of Taormina,” in
+O3A: Optics for Arts, Architecture, and Archaeology II, Vol.
+
+7391, edited by L. Pezzati and R. Salimbeni, International
+Society for Optics and Photonics (SPIE, 2009) p. 739107.
+140 A. P. Rao, P. R. Jenkins, J. D. Auxier, M. B. Shattan, and
+A. K. Patnaik, “Analytical comparisons of handheld libs and
+xrf devices for rapid quantification of gallium in a plutonium
+surrogate matrix,” J. Anal. At. Spectrom. 37, 1090–1098 (2022).
+
+

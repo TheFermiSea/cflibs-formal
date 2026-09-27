@@ -21,21 +21,41 @@ line. This is the multi-element **Boltzmann** master-line construction of Aguile
 Aragón, "Multi-element Saha–Boltzmann and Boltzmann plots in laser-induced plasmas,"
 *Spectrochimica Acta Part B* **62** (2007) 378.
 
+**What this module is not.** Despite the "C-sigma" name, this is a *normalization*
+construction: the optically thin multi-element Boltzmann (and Saha–Boltzmann) master line, with
+the upper-level emission ordinate `log(I/(g·A))`. It contains no line cross-section and no curve
+of growth. In particular it is NOT a formal twin of the companion pipeline's `csigma.py`, which
+implements the curve-of-growth Cσ graph: a relative absorption cross-section built on the
+lower-level population with stimulated emission, a Planck-normalized ordinate and a Doppler
+curve-of-growth fit. `csigma.py` has no Lean twin in this repo; the sibling
+`CSigmaCurveOfGrowth` adds only the flat escape-factor droop below the universal line.
+
 **Three sections.** The FIRST section formalizes the single-stage multi-element **Boltzmann**
 master plot (Aguilera & Aragón, *Spectrochim. Acta B* **62** (2007) 378): after subtracting the
 per-species offset, all lines of all species collapse onto `Y = −E/(k_B T)` using only
-`E/(k_B T)`. The SECOND section adds the defining feature of the **Saha–Boltzmann / Cσ graph**
-(Aragón & Aguilera, *J. Quant. Spectrosc. Radiat. Transfer* **149** (2014) 90): the
-**Saha-coupled cross-stage collapse**, where *ionic* (stage `Z+1`) lines also fall on the SAME
+`E/(k_B T)`. The SECOND section adds the defining feature of the multi-element **Saha–Boltzmann**
+plot of that same paper: the **Saha-coupled cross-stage collapse**. It is not a feature of the Cσ
+graph of Aragón & Aguilera, *J. Quant. Spectrosc. Radiat. Transfer* **149** (2014) 90–102, which
+builds one graph for neutral-atom lines and another for ion lines (§2.5 of the authors' accepted
+manuscript). In the collapse, *ionic* (stage `Z+1`) lines also fall on the SAME
 master line via a Saha ionization-energy abscissa shift `+χ` and a Saha-bracket ordinate
 correction (`csigma_saha_master_line`, `csigma_cross_stage_collapse`) — this genuinely uses
 `Saha.lean` (`sahaFactor`, `log_sahaFactor`), and its exact construction was verified against
-the CF-LIBS literature. The THIRD section proves the final piece of the full Cσ graph: the
-per-species concentration/partition normalization `− ln(N_s/U_s)` that collapses *all elements*
-onto ONE universal line of intercept `ln Fcal` (`csigma_universal_line`,
+the CF-LIBS literature. The THIRD section proves the optically thin, concentration-normalized
+collapse: the per-species concentration/partition normalization `− ln(N_s/U_s)` that collapses
+*all elements* onto ONE universal line of intercept `ln Fcal` (`csigma_universal_line`,
 `csigma_universal_indep_species`, `csigma_saha_universal_line`). (That normalization is a
 concentration/partition offset, *not* the line cross-section σ itself — see the sibling
-`CSigmaCurveOfGrowth` module's disclaimer.)
+`CSigmaCurveOfGrowth` module's disclaimer. The Cσ graph's cross-section abscissa and its curve
+of growth are not formalized here.)
+
+**Scope: one temperature (homogeneity).** Every collapse here evaluates all lines, of all
+species and of both ionization stages, at ONE temperature `T` and one `Fcal`. That is the
+homogeneous-plasma reduction, assumed and not established. For a spatially integrated spectrum
+of an inhomogeneous plasma, line-of-sight averaging generally gives neutral and ion lines
+different apparent temperatures, so the cross-stage collapse and the cross-stage temperature of
+`csigma_temperature_cross_stage` need not hold for measured data. `InhomogeneityBias` bounds the
+mixing bias for one stage at a time; the neutral/ion split is not modelled.
 
 For line `k` (upper level `k`) of a species with data `(N, g, E, A)`, define the
 C-sigma ordinate
@@ -96,9 +116,11 @@ noncomputable def csigmaOffset (kB T Fcal N : ℝ) (g E : ι → ℝ) : ℝ :=
 data `(N, g, E, A)`:
   `Y_{s,k} = log (I_{s,k} / (g_k A_k)) − q_s`,
 where `I_{s,k} = lineIntensity …` (from `ForwardMap.lean`) and `q_s = csigmaOffset …`.
-The defining feature of the Aguilera–Aragón C-sigma graph: after subtracting the
-per-species offset `q_s`, the ordinate of EVERY line of EVERY species depends only on
-the upper-level energy `E k` (see `csigma_master_line`). -/
+The defining feature of the Aguilera–Aragón multi-element Boltzmann master plot: after
+subtracting the per-species offset `q_s`, the ordinate of EVERY line of EVERY species
+depends only on the upper-level energy `E k` (see `csigma_master_line`), for species at
+one shared temperature `T`. This is an emission ordinate, not the curve-of-growth Cσ
+ordinate of the companion's `csigma.py`. -/
 noncomputable def csigmaOrdinate (kB T N Fcal : ℝ) (g E A : ι → ℝ) (k : ι) : ℝ :=
   Real.log (lineIntensity kB T N Fcal g E A k / (g k * A k))
     - csigmaOffset kB T Fcal N g E
@@ -300,17 +322,23 @@ theorem csigma_agrees_classic [Nonempty ι] {kB T Fcal : ℝ}
     (div_pos (mul_pos (mul_pos (hN t) (hg t (u t))) (boltzmannFactor_pos _ _ _))
       (partitionFunction_pos (hg t)))
 
-/-! ## Saha-coupled cross-stage collapse (the genuine Cσ feature)
+/-! ## Saha-coupled cross-stage collapse (the Saha–Boltzmann feature)
 
 The single-stage master line above is the optically-thin **Boltzmann** master plot. The defining
-feature of the real **Saha–Boltzmann / Cσ graph** (Aguilera & Aragón 2007; Aragón & Aguilera 2014)
-is that lines of *different ionization stages* also collapse onto ONE line, via the **Saha**
+feature of the **Saha–Boltzmann plot** (Aguilera & Aragón 2007) is that lines of *different
+ionization stages* also collapse onto ONE line, via the **Saha**
 equation: an ionic (stage `Z+1`) line, with its abscissa shifted by the ionization energy `χ` and
 its ordinate corrected by the Saha bracket, lands on the SAME master line as the neutral (stage `Z`)
-lines. This is the part that genuinely uses `Saha.lean` (`sahaFactor`, `log_sahaFactor`) and that
-distinguishes Cσ from a relabelled per-species Boltzmann plot. The exact construction (abscissa
+lines. The Cσ graph of Aragón & Aguilera 2014 does not do this: it keeps one graph per ionization
+stage. This is the part that genuinely uses `Saha.lean` (`sahaFactor`, `log_sahaFactor`) and that
+distinguishes it from a relabelled per-species Boltzmann plot. The exact construction (abscissa
 shift `+χ`, ordinate `−` the Saha bracket) is that of the Saha–Boltzmann plot, verified against
-the CF-LIBS literature. -/
+the CF-LIBS literature.
+
+Scope: the collapse holds for a plasma at ONE temperature `T`, shared by both stages and by the
+Saha law. That is assumed, not established; line-of-sight integration over an inhomogeneous plasma
+generally gives neutral and ion lines different apparent temperatures, and then the ionic points
+need not land on the neutral line (see the module header). -/
 
 /-- Log of the **Saha bracket** `2·(2π m_e k_B T / h²)^{3/2} / n_e`. Subtracting this from an
 ionic-stage Boltzmann ordinate is exactly the correction that lands it on the neutral master line
@@ -338,7 +366,8 @@ has Saha-corrected ordinate exactly `−(E_k + χ)/(k_B T)` — the neutral mast
 ionic lines of an element fall on ONE straight line of slope `−1/(k_B T)` and common intercept
 `q_I = ln(F·N_I/U_I)`. Reduces the ionic Boltzmann plot (`boltzmann_plot_intensity`) through the
 Saha log-identity (`log_sahaFactor`); the partition functions, `n_e`, the `log 2` and the
-`(3/2)·log` bracket all cancel, leaving only the ionization shift `χ`. -/
+`(3/2)·log` bracket all cancel, leaving only the ionization shift `χ`. Both stages and the Saha
+law are evaluated at one `T` (the homogeneity reduction in the module header). -/
 theorem csigma_saha_master_line [Nonempty ι] [Nonempty κ]
     {kB T me h chi ne NI NII Fcal : ℝ} {gI EI : ι → ℝ} {gII EII AII : κ → ℝ}
     (hkB : 0 < kB) (hT : 0 < T) (hme : 0 < me) (hh : 0 < h) (hne : 0 < ne)
@@ -378,7 +407,8 @@ theorem csigma_saha_master_line [Nonempty ι] [Nonempty κ]
 same ionization-shifted abscissa (`E_I i = E_II k + χ`) produce the SAME Cσ ordinate: the neutral
 master ordinate (`csigma_master_line`) and the ionic Saha-corrected ordinate
 (`csigma_saha_master_line`) coincide. The cross-stage analogue of
-`csigma_master_line_indep_species` — "all points, both stages, collapse onto one line." -/
+`csigma_master_line_indep_species` — "all points, both stages, collapse onto one line" — for a
+plasma at one shared temperature `T` (the homogeneity reduction in the module header). -/
 theorem csigma_cross_stage_collapse [Nonempty ι] [Nonempty κ]
     {kB T me h chi ne NI NII Fcal : ℝ} {gI EI AI : ι → ℝ} {gII EII AII : κ → ℝ}
     (hkB : 0 < kB) (hT : 0 < T) (hme : 0 < me) (hh : 0 < h) (hne : 0 < ne)
@@ -412,9 +442,13 @@ theorem csigma_master_olsSlope [Nonempty ι] {kB T N Fcal : ℝ} {g E A : ι →
 an *ionic* line `k` together yield the temperature: the slope of the Cσ master line through the
 neutral point `(E_I i, ·)` and the ionization-shifted ionic point `(E_II k + χ, ·)` is exactly
 `−1/(k_B T)`. This is the practical value of the Saha-coupled collapse — a single-species Boltzmann
-plot **cannot** combine an atomic and an ionic line, but the Saha–Boltzmann / Cσ graph can. Reduces
-to
-`csigma_master_line` (neutral) and `csigma_saha_master_line` (ionic). -/
+plot **cannot** combine an atomic and an ionic line, but the Saha–Boltzmann plot can. Reduces
+to `csigma_master_line` (neutral) and `csigma_saha_master_line` (ionic).
+
+Scope: both lines are emitted at the same `T`. If the neutral and ion lines carry different
+apparent temperatures, as line-of-sight integration over an inhomogeneous plasma generally gives,
+this pair slope need not match either stage's temperature, and the theorem says nothing about
+it. -/
 theorem csigma_temperature_cross_stage [Nonempty ι] [Nonempty κ]
     {kB T me h chi ne NI NII Fcal : ℝ} {gI EI AI : ι → ℝ} {gII EII AII : κ → ℝ}
     (hkB : 0 < kB) (hT : 0 < T) (hme : 0 < me) (hh : 0 < h) (hne : 0 < ne)
@@ -435,11 +469,15 @@ theorem csigma_temperature_cross_stage [Nonempty ι] [Nonempty κ]
 /-! ## The Cσ universal line (all ELEMENTS on one line)
 
 The master line above subtracts the *full* per-species offset `q_s = ln(F·N_s/U_s)`, so every
-species collapses to `Y = −E/(k_B T)` (intercept `0`). The full **Cσ graph** (Aragón & Aguilera,
-2014) instead subtracts only the **concentration/partition** part `ln(N_s/U_s)`, leaving the *common
-instrumental intercept* `ln F` — so all lines of all ELEMENTS (and, with the Saha correction, all
-STAGES) fall on ONE universal line of slope `−1/(k_B T)` and intercept `ln F`, independent of each
-element's concentration and partition function. (Verified against the CF-LIBS literature.) -/
+species collapses to `Y = −E/(k_B T)` (intercept `0`). The **Cσ** normalization (Aragón &
+Aguilera, 2014) instead subtracts only the **concentration/partition** part `ln(N_s/U_s)`, leaving
+the *common instrumental intercept* `ln F` — so all lines of all ELEMENTS fall on ONE universal
+line of slope `−1/(k_B T)` and intercept `ln F`, independent of each element's concentration and
+partition function (the thin limit of the Cσ graph, Eqs. 22–23 of the authors' accepted
+manuscript, within one ionization stage). Adding the Saha correction of Aguilera & Aragón 2007
+puts all STAGES on that line too; the 2014 paper does not take that step. This is the optically
+thin form with an emission ordinate, at one shared `T`; the Cσ
+graph's cross-section abscissa and its curve of growth are not formalized here. -/
 
 /-- The **concentration/partition normalization** `ln(N_s/U_s(T))` — subtracted from a Boltzmann
 ordinate to remove a species' concentration-and-partition dependence, leaving the common `ln F`. -/
@@ -491,8 +529,9 @@ noncomputable def csigmaSahaUniversalOrdinate (kB T me h ne NI NII Fcal : ℝ)
 /-- **The universal line spans both stages.** An ionic (stage `Z+1`) line in Saha equilibrium with
 the neutral stage has universal ordinate `ln F − (E_k + χ)/(k_B T)` — the SAME universal line
 (slope `−1/(k_B T)`, intercept `ln F`) as the neutral lines, at the ionization-shifted abscissa. So
-ALL lines of ALL elements and BOTH stages collapse onto one line. (`csigmaSahaUniversalOrdinate`
-differs from `csigmaSahaOrdinate` by exactly `ln F`, the offset minus the concentration norm.) -/
+ALL lines of ALL elements and BOTH stages collapse onto one line, for a plasma at one shared `T`
+(the homogeneity reduction in the module header). (`csigmaSahaUniversalOrdinate` differs from
+`csigmaSahaOrdinate` by exactly `ln F`, the offset minus the concentration norm.) -/
 theorem csigma_saha_universal_line [Nonempty ι] [Nonempty κ]
     {kB T me h chi ne NI NII Fcal : ℝ} {gI EI : ι → ℝ} {gII EII AII : κ → ℝ}
     (hkB : 0 < kB) (hT : 0 < T) (hme : 0 < me) (hh : 0 < h) (hne : 0 < ne)

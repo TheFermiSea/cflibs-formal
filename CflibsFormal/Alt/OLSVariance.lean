@@ -42,9 +42,12 @@ variable `betaHat ω = olsSlope E (y(·,ω))`. We prove:
   mutual independence `iIndepFun`. The proof routes through `ProbabilityTheory.variance_sum` (the
   double-covariance form `Var[∑ₖ εₖ] = ∑ᵢ∑ⱼ cov(εᵢ, εⱼ)`) and annihilates the off-diagonal by
   uncorrelatedness, so no independence enters any hypothesis or proof.
-* **Optimality / BLUE.** This module proves the variance *value* and unbiasedness; the optimality
-  layer — OLS is the minimum-variance estimator among linear unbiased estimators (the full
-  Gauss–Markov/Aitken theorem) — is formalized in the sibling `Alt.GaussMarkov` (`ols_is_blue`).
+* **Optimality / BLUE.** This module proves the variance *value* and unbiasedness. The
+  homoscedastic optimality layer — with one common noise variance on every line, OLS is the
+  minimum-variance estimator among linear unbiased estimators (the Gauss–Markov theorem) — is
+  formalized in the sibling `Alt.GaussMarkov` (`ols_is_blue`). Aitken's generalization to unequal
+  or correlated noise, where the best linear unbiased estimator is the weighted (generalized)
+  least-squares one and OLS in general is not, is not proved in this repository.
 * **Consistency with `ErrorBudget`.** `olsSlope_variance_eq` is literally
   `olsSlope_variance_noiseGain` composed with `OLS.olsSlope_noise_gain`; both route through
   the single identity `∑ wₖ² = 1/SS_E`, so the two modules cannot disagree on `σ²/SS_E`.
@@ -58,15 +61,20 @@ variable `betaHat ω = olsSlope E (y(·,ω))`. We prove:
   temperature uncertainty `σ_T/T = k_B T·σ_β`: bunched upper-level energies (small `SS_E`) blow up
   the inverse-temperature variance — the principled origin of the energy-spread threshold. No
   physical constant enters any Lean statement.
+* **One common ordinate variance.** The variance results assume the same `σ²` on every line
+  (`hhom`). Real Boltzmann-plot ordinates are heteroscedastic (weak lines are noisier, and `gA`
+  uncertainties differ by line); the per-line-variance law for OLS or weighted least squares is
+  not proved here.
 
 ## Literature
 
 The slope estimator's variance `Var(β̂) = σ²/Sₓₓ` under zero-mean, homoscedastic, uncorrelated
-errors is the Gauss–Markov law; its modern (generalized least squares) form is A. C. Aitken,
-"On Least Squares and Linear Combination of Observations," *Proceedings of the Royal Society of
-Edinburgh* **55** (1935) 42–48. The closed form `Var(β̂) = σ²/∑(xₖ − x̄)²` for the
+errors is the Gauss–Markov law. The closed form `Var(β̂) = σ²/∑(xₖ − x̄)²` for the
 simple-regression slope is standard, e.g. N. R. Draper and H. Smith, *Applied Regression
-Analysis*, 3rd ed., Wiley-Interscience (1998), Ch. 1–2. In the CF-LIBS setting the multi-line
+Analysis*, 3rd ed., Wiley-Interscience (1998), Ch. 1–2. Its generalized-least-squares (weighted,
+possibly correlated) form is A. C. Aitken, "On Least Squares and Linear Combination of
+Observations," *Proceedings of the Royal Society of Edinburgh* **55** (1935) 42–48; that form is
+not used or proved here. In the CF-LIBS setting the multi-line
 least-squares Boltzmann-plot fit is reviewed in Tognoni, E.; Cristoforetti, G.; Legnaioli, S.;
 Palleschi, V. "Calibration-Free Laser-Induced Breakdown Spectroscopy: State of the art."
 *Spectrochimica Acta Part B* **65** (2010) 1–14; the intercept-borne concentration is Ciucci, A.;

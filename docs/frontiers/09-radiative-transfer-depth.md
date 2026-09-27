@@ -131,16 +131,24 @@ in `emergentIntensity_nonneg` (`SelfReversal.lean`) and `selfAbsorptionFactor_le
 **Physical reading (the whole point):** the emergent intensity of *any* depth-structured LTE
 column is bracketed by the uniform slabs at its coldest and hottest source values, sharing the
 same total-depth escape factor `(1−e^{−T})`. Depth structure can only move `I` *within* that
-band — it cannot brighten past `S_max(1−e^{−T})` nor darken below `S_min(1−e^{−T})`. This is
-the rigorous bound behind "spatial non-uniformity biases the extracted temperature"
-(Gornushkin 2010): the bias is confined, and its size is `(S_max−S_min)(1−e^{−T})`.
+band — it cannot brighten past `S_max(1−e^{−T})` nor darken below `S_min(1−e^{−T})`. This
+confines the **intensity** bias of spatial non-uniformity at one wavelength to the band width
+`(S_max−S_min)(1−e^{−T})`. *[2026-09-25: the 2026-07 text called this "the rigorous bound behind
+'spatial non-uniformity biases the extracted temperature' (Gornushkin 2010)". It bounds intensity
+only; a temperature bias would need inverting `S = B_λ(T)`, which `RadiativeTransferDepth` does
+not do.]*
 
 ### 2.3 "Uniform slab is the extremal case" — CONFIRMED, squeeze corollary
 
 Instantiate §2.2 with `S_min = S_max = S` (all zones share one source): the two bounds
 collapse and `rtEmergent zs = S(1−e^{−T}) = slabIntensity S T`. So the uniform slab is
 *exactly* the degenerate (zero-width band) case of the sandwich — the extremal/boundary
-configuration, and the only one where depth structure carries no information. Provable
+configuration: **if** the column is isothermal, its split into zones does not affect the emergent
+intensity. *[2026-09-25: the 2026-07 text added "and the only one where depth structure carries no
+information". That converse is not proved and fails at one wavelength: for `T > 0` every value in
+the sandwich band is the intensity of a uniform slab of the same total depth (source
+`I/(1−e^{−T})`), so a single emergent intensity never reveals depth structure
+(`RadiativeTransferDepth` module header; an elementary remark, not formalized).]* Provable
 either as a squeeze from §2.2 (`le_antisymm`) or by a direct one-line induction reusing the
 telescoping identity. Matches `selfReversal_uniformSource` (`SelfReversal.lean`), the `S_shell
 = S_core` collapse, and generalizes it to `N` zones.
@@ -281,8 +289,9 @@ theorem rtEmergent_sandwich {zs : List (ℝ × ℝ)} {Smin Smax : ℝ}
     ∧ rtEmergent zs ≤ Smax * (1 - Real.exp (-(zs.map Prod.snd).sum))
 ```
 Scope: EXACT (the bound is exact for the piecewise-constant model). Citation: Gornushkin 2010
-(spatial-nonuniformity bias — the bound *confines* it). Prereq: none. Proof: the generalized-
-accumulator invariant of §2.2 by `List.rec`/`induction zs`, telescoping
+(spatial-nonuniformity bias — the bound *confines* its **intensity** part at one wavelength; a
+temperature bias needs inverting `S = B_λ(T)`, not done [2026-09-25]). Prereq: none. Proof: the
+generalized-accumulator invariant of §2.2 by `List.rec`/`induction zs`, telescoping
 `(1−e^{−T₀})e^{−τ}+(1−e^{−τ}) = 1−e^{−(T₀+τ)}` via `Real.exp_add`+`ring`, then `nlinarith`/
 `linarith` on the two direction-preserving weight facts (`Real.exp_pos`, `1−e^{−τ}≥0`).
 Add a non-vacuity witness (2 zones, `Smin<Smax`, `τ={1,1}`) in the `SelfReversal`/`SpatialForward`
@@ -295,8 +304,11 @@ theorem rtEmergent_uniform (S : ℝ) {zs : List (ℝ × ℝ)} (hS : ∀ z ∈ zs
     rtEmergent zs = slabIntensity S (zs.map Prod.snd).sum
 ```
 Scope: EXACT. Citation: Gornushkin 1999. Prereq: M3 (squeeze with `Smin=Smax=S`,
-`le_antisymm`) or a direct induction. Generalizes `selfReversal_uniformSource` to `N` zones;
-the "depth structure carries no information iff isothermal" statement.
+`le_antisymm`) or a direct induction. Generalizes `selfReversal_uniformSource` to `N` zones.
+*[2026-09-25: this line used to read 'the "depth structure carries no information iff
+isothermal" statement'. Only one direction is proved: an isothermal column's emergent intensity
+does not depend on how its depth is split into zones. The converse fails at one wavelength (§2.3
+note), and the result is about emergent intensity, not temperature.]*
 
 ### M5 — `rtFormal` def + constant-source recovers slab · **B**
 ```
@@ -403,4 +415,7 @@ result explicitly **not** over-claimed as a LIBS law.
 All three surfaced from the CF-LIBS corpus (NotebookLM, 75-source notebook) but none is in the
 current verified citation set; **verify full bibliographic data before use.** Gornushkin 2010
 (spatial non-uniformity → temperature bias) and Cowan–Dieke 1948 are already vetted and suffice
-for M1–M6.
+for M1–M6. *[2026-09-25: Cowan–Dieke 1948 is on `docs/citation-whitelist.tsv`; "Gornushkin
+2010" is not, and no opened copy is on record. The landed `RadiativeTransferDepth` cites
+Gornushkin 1999 and Cowan–Dieke 1948 in `docs/scope-tags.tsv` and its `## Literature`, so the
+"Citation: Gornushkin 2010" lines in §4 above are the 2026-07 plan, not the landed rows.]*

@@ -17,9 +17,22 @@ echo "== Named results (theorem/lemma) and definitions per module =="
 total_results=0
 total_defs=0
 while IFS= read -r f; do
+  # Count only lines that start OUTSIDE a comment: a docstring line that happens to begin with
+  # the word "theorem" (prose) is not a declaration. `depth` tracks nested `/- ... -/` blocks
+  # (docstrings `/-- ... -/` included); a `--` line comment ends the scan of its line.
   read -r n d < <(awk '
-    /^(@\[[^]]*\][ \t]*)?(theorem|lemma) / { r++ }
-    /^(noncomputable[ \t]+)?def /          { x++ }
+    depth == 0 && /^(@\[[^]]*\][ \t]*)?(theorem|lemma) / { r++ }
+    depth == 0 && /^(noncomputable[ \t]+)?def /          { x++ }
+    {
+      s = $0; i = 1; len = length(s)
+      while (i <= len) {
+        two = substr(s, i, 2)
+        if (two == "/-") { depth++; i += 2; continue }
+        if (depth > 0 && two == "-/") { depth--; i += 2; continue }
+        if (depth == 0 && two == "--") break
+        i++
+      }
+    }
     END { print r + 0, x + 0 }' "$f")
   printf '  %-46s %3d results  %3d defs\n' "${f#CflibsFormal/}" "$n" "$d"
   total_results=$((total_results + n))

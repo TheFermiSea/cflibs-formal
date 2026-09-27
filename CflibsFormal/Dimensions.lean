@@ -183,8 +183,14 @@ theorem hydrogenStark_homogeneous :
 For the base dimensions CF-LIBS uses, SI (m, kg, s, K) and Gaussian-CGS (cm, g, s, K) differ only
 in the *size* of the length and mass units (`1 m = 100 cm`, `1 kg = 1000 g`); time and temperature
 coincide. So a quantity's numeric value scales from SI to CGS by `100^(length exponent) ·
-1000^(mass exponent)`. CF-LIBS literature constants (e.g. the McWhirter `1.6e12`, Stark/Saha
-forms) are quoted in CGS; this lets the dimensionless spec be grounded against either system. -/
+1000^(mass exponent)`. CF-LIBS literature constants are often quoted in CGS; for those, this lets
+the dimensionless spec be grounded against either system.
+
+Not every literature constant is CGS. The McWhirter `1.6e12` (`StarkBroadening.mcWhirterBound`)
+uses a mixed convention: `n_e` in cm⁻³, `T` in K and `ΔE` in eV. The eV is not a CGS unit, so
+`siToCgs`, a pure length/mass rescaling between two coherent systems, does not reach the
+eV → erg factor that constant needs. No dimension is assigned to `mcWhirterBound` here; it lies
+outside this layer. -/
 
 /-- SI→CGS numeric-value conversion factor for a quantity of dimension `d`:
 `100^(d.length) · 1000^(d.mass)`. The time and temperature exponents are dropped because the

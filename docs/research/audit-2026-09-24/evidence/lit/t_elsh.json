@@ -1,0 +1,104 @@
+{
+  "total": 3,
+  "offset": 0,
+  "data": [
+    {
+      "paperId": "5d4fb0b019bcf675575022868a24baa2e0fdd6d7",
+      "externalIds": {
+        "MAG": "2052904492",
+        "DOI": "10.1016/J.SAB.2005.10.011",
+        "CorpusId": 97154194
+      },
+      "title": "Evaluation of self-absorption coefficients of aluminum emission lines in laser-induced breakdown spectroscopy measurements",
+      "venue": "",
+      "year": 2005,
+      "citationCount": 285,
+      "authors": [
+        {
+          "authorId": null,
+          "name": "A. M. El Sherbini"
+        },
+        {
+          "authorId": null,
+          "name": "Th. M. El Sherbini"
+        },
+        {
+          "authorId": "2128322755",
+          "name": "H. Hegazy"
+        },
+        {
+          "authorId": "144043596",
+          "name": "G. Cristoforetti"
+        },
+        {
+          "authorId": "2315692",
+          "name": "S. Legnaioli"
+        },
+        {
+          "authorId": "2638662",
+          "name": "V. Palleschi"
+        },
+        {
+          "authorId": "1719249",
+          "name": "L. Pardini"
+        },
+        {
+          "authorId": "31203952",
+          "name": "A. Salvetti"
+        },
+        {
+          "authorId": "92372926",
+          "name": "E. Tognoni"
+        }
+      ]
+    },
+    {
+      "paperId": "60bc69bdf3af1c66f197d9bb9757554c485650f9",
+      "externalIds": {
+        "MAG": "2595537529",
+        "DOI": "10.1177/0003702817693231",
+        "CorpusId": 4232505,
+        "PubMed": "28374614"
+      },
+      "title": "Evaluation of Optical Depths and Self-Absorption of Strontium and Aluminum Emission Lines in Laser-Induced Breakdown Spectroscopy (LIBS)",
+      "venue": "Applied Spectroscopy",
+      "year": 2017,
+      "citationCount": 25,
+      "authors": [
+        {
+          "authorId": "14764625",
+          "name": "Bader A. Alfarraj"
+        },
+        {
+          "authorId": "14130751",
+          "name": "Chet R. Bhatt"
+        },
+        {
+          "authorId": "145067312",
+          "name": "F. Yueh"
+        },
+        {
+          "authorId": "2318240171",
+          "name": "Jagdish P. Singh"
+        }
+      ]
+    },
+    {
+      "paperId": "6eb86883695ddbe01eaa45483f95f14b2985d530",
+      "externalIds": {
+        "DOI": "10.52865/mmvg3776",
+        "CorpusId": 250059358
+      },
+      "title": "Estimation of Temperature in Aluminum Plasma Using Laser Induced Breakdown Spectroscopy",
+      "venue": "Israa University Journal for Applied Science",
+      "year": 2018,
+      "citationCount": 0,
+      "authors": [
+        {
+          "authorId": "40658417",
+          "name": "S. Mansour"
+        }
+      ]
+    }
+  ]
+}

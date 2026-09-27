@@ -1,0 +1,32 @@
+{
+  "paperId": "b3e983e5f392d7fe8ef067c8926c9cf962576d32",
+  "externalIds": {
+    "DOI": "10.1088/1742-6596/59/1/046",
+    "CorpusId": 250689992
+  },
+  "title": "Apparent excitation temperature in laser-induced plasmas",
+  "venue": "",
+  "year": 2007,
+  "openAccessPdf": {
+    "url": "https://iopscience.iop.org/article/10.1088/1742-6596/59/1/046/pdf",
+    "status": "GOLD",
+    "license": null,
+    "disclaimer": "Notice: Paper or abstract available at https://api.unpaywall.org/v2/10.1088/1742-6596/59/1/046?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.1088/1742-6596/59/1/046, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+  },
+  "journal": {
+    "name": "Journal of Physics: Conference Series",
+    "pages": "210 - 217",
+    "volume": "59"
+  },
+  "authors": [
+    {
+      "authorId": "152319675",
+      "name": "J. A. Aguilera"
+    },
+    {
+      "authorId": "122017867",
+      "name": "C. Arag\u00f3n"
+    }
+  ],
+  "abstract": "This work has shown the existence, for the purpose of experiments of laser-induced plasma spectroscopy, of an apparent (population-averaged) excitation temperature that determines with good approximation the Boltzmann population distribution for each ionisation species. In experiments in which the line intensity (integrated along the line-of-sight) is measured, the values of the apparent temperature obtained for neutral atoms and ions are different. To investigate the population-averaging process, a plasma generated with a Ni-Fe-Al alloy in air at atmospheric pressure has been characterized with complete spatial resolution, determining the local values of the electronic temperature and the relative number densities of Fe neutral atoms and ions. From the distributions of plasma parameters, synthesized distributions of intensities integrated along the line of sight have been obtained for Fe I and Fe II lines, showing good agreement with the experimental distributions. Synthesized Boltzmann plots of neutral atoms and ions, constructed with the spatially-integrated synthesized intensities, have shown linear behaviors, providing the apparent temperatures for neutral atoms (9890 K) and ions (11400 K). The synthesized Boltmann plots are also in good agreement with experimental Boltzmann plots obtained in independent spatiallyintegrated measurements of the plasma emission, carried out with a fiber optics cable."
+}

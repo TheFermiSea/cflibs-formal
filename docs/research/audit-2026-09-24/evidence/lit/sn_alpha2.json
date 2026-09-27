@@ -1,0 +1,235 @@
+{
+  "data": [
+    {
+      "score": 0.7226233970533185,
+      "paper": {
+        "corpusId": "146168184",
+        "title": "How Hydrogen Admixture Changes Plasma Jet Characteristics in Spray Processes at Low Pressure",
+        "authors": [
+          "G. Mauer"
+        ],
+        "openAccessInfo": {
+          "license": "CCBY",
+          "status": "HYBRID",
+          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://api.unpaywall.org/v2/10.1007/s11090-020-10143-6?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.1007/s11090-020-10143-6, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        }
+      },
+      "snippet": {
+        "text": "The total FWHM of the convoluted line profile \u0394\u03bb V is determined by a Voigt fit of the measured data. The Lorentzian part \u0394\u03bb L is complementary to the Gaussian fraction \u0394\u03bb G and can be determined applying the approximate formula for convolution at half maximum given by Olivero and Longbothum [19] in a rearranged form Alternatively, simpler formulas can be applied [20,21], however at some lower accuracy. \u0394\u03bb L corresponds to the searched Stark width \u0394\u03bb S as there is no other significant Lorentzian contribution to the peak broadening under the conditions examined in this work.",
+        "snippetKind": "body"
+      }
+    },
+    {
+      "score": 0.6961458565960434,
+      "paper": {
+        "corpusId": "270627632",
+        "title": "Electron density in a non-thermal atmospheric discharge in contact with water and the effect of water temperature on plasma-water interactions",
+        "authors": [
+          "O. van Rooij",
+          "Olivia Ahlborn",
+          "A. Sobota"
+        ],
+        "openAccessInfo": {
+          "license": "CCBY",
+          "status": "HYBRID",
+          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://api.unpaywall.org/v2/10.1088/1361-6463/ad59b0?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.1088/1361-6463/ad59b0, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        }
+      },
+      "snippet": {
+        "text": "Note that the former expression uses, \u2206\u03bb A S , which is the full width at half area (FWHA) in nm, while \u2206\u03bb S uses the FWHM in nm. However, in this report the width of the Stark broadening is determined by deriving the Lorentzian component of a pseudo-Voigt profile fitted through the data. For a Lorentzian profile the FWHA is equal to the FWHM.",
+        "snippetKind": "body"
+      }
+    },
+    {
+      "score": 0.6799117115539237,
+      "paper": {
+        "corpusId": "53339271",
+        "title": "Optically Thick Laser-Induced Plasmas in Spectroscopic Analysis",
+        "authors": [
+          "F. Rezaei"
+        ],
+        "openAccessInfo": {
+          "license": "CCBY",
+          "status": "HYBRID",
+          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://api.unpaywall.org/v2/10.5772/61941?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.5772/61941, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        }
+      },
+      "snippet": {
+        "text": "El Sherbini et al. [15] presented a simple relation for correcting the self-absorption effect in a homogenous plasma. This model is applicable when the Stark broadening parameter of selected spectral lines is known, as well as when the plasma electron density is available from experiments.\n\nIn this work, the intensity of a spectral line in thick condition (erg.s -1 .cm -3 ) along the line profile due to the transition between two levels (j and i) is expressed by \n\nGenerally, the absorption coefficient k(\u03bb) is described by a Voigt profile, which is convolution of a Lorentzian and a Gaussian distribution. In laser sources plasmas, Lorentzian width is associated with the Stark effect and the Gaussian line width is dominated by the Doppler broadening. In a typical LIBS experiment, the Gaussian contribution of a spectral line width is negligible compared to the Lorentzian component, hence, the optical depth k(\u03bb)l can be calculated by\n\nHere, K = 2 \n\nConsequently, I 0 (\u03bb) illustrates the line intensity in case of negligible self-absorption. According to Eqs. (13) and (15), it is clearly seen that, in the case of self-absorption, the line intensity at its peak (i.e. for \u03bb = \u03bb 0 ) has less value compared to that in the case of thin plasmas. Then, the self-absorption coefficient, SA, can be expressed as \n\nBy numerically solving the above equation for \u0394\u03bb and taking into account the definition of FWHM as \u03bb = \u03bb 0 \u00b1 \u0394\u03bb / 2, the intensity of I(\u03bb) equals to I(\u03bb 0 )/2. Hence, the exact equation between the measured spectral width (\u0394\u03bb) and related non-self-absorbed line width (\u0394\u03bb 0 ) can be evaluated. Then, after appropriate calculation, provided that \u0394\u03bb and n e are measured from the experiment and w s magnitude is inserted from the literature, the SA coefficient can be obtained as:\n\nIn the above equation, n e can be measured from the non-self-absorbed spectral line of hydrogen H \u03b1 at 656.27 nm. For evaluation of the mentioned method, the experiment is performed on several Al spectral lines radiated from",
+        "snippetKind": "body"
+      }
+    },
+    {
+      "score": 0.668042758617927,
+      "paper": {
+        "corpusId": "225600435",
+        "title": "Laser-Induced Breakdown Spectroscopy for Determination of Spectral Fundamental Parameters",
+        "authors": [
+          "S. M. Aberkane",
+          "Ali Safi",
+          "Asia Botto",
+          "B. Campanella",
+          "S. Legnaioli",
+          "F. Poggialini",
+          "S. Raneri",
+          "F. Rezaei",
+          "V. Palleschi"
+        ],
+        "openAccessInfo": {
+          "license": "CCBY",
+          "status": "GOLD",
+          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://api.unpaywall.org/v2/10.3390/app10144973?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.3390/app10144973, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        }
+      },
+      "snippet": {
+        "text": "The two line widths (Gaussian and Lorentzian) could be, in principle, deconvolved by fitting the experimental line profile with a Voigt line shape. \n\nHowever, since the resolution of the spectrometer can be obtained with good precision from the information provided by the manufacturer or determined by measuring the broadening of a narrow emission line, a more effective strategy would be directly measuring the FWHM of the experimental line profile with a Voigt function. After that, the Lorentzian component can be obtained by subtracting the experimental broadening from this value. \n\nThe subtraction should be performed correctly considering how the Gaussian and Lorentzian line widths contribute to the FWHM of the Voigt profile. Olivero et al. [49] proposed a formula for the Voigt FWHM that is correct within \u00b10.01%, as: \n\nThis relation can be inverted numerically for deriving the Lorentzian FWHM (the one related to the Stark effect) once the Voigt and the Gaussian FWHM are known. \n\nThe second problem, much more difficult to solve, is related to the self-absorption of the line, which introduces an apparent broadening of the line (see Figure 1) which increases with the increase of self-absorption. \n\nDealing with the self-absorption is made complicated by the fact that the line shape of a self-absorbed emission line is not described by a Lorentzian or Voigt profile anymore. Moreover, the presence of self-absorption sometimes is not easy to spot. One should consider, however, that even when the effect of self-absorption is not evident, the apparent FWHM of the line can be substantially larger than the Stark broadening (for \u03c4(\u03bb 0 ) = 1, the apparent FWHM is about 30% larger than the unperturbed Stark width) [50]. \n\nThe effects of self-absorption should thus be checked carefully, for avoiding errors in the determination of the Stark coefficients. \n\nA (conceptually) simple method for determining experimentally the degree of self-absorption in LIBS plasma is the duplicating mirror method (see Figure 3) [51,52]. \n\nline profile with a Voigt function.",
+        "snippetKind": "body"
+      }
+    },
+    {
+      "score": 0.6671068837727301,
+      "paper": {
+        "corpusId": "225600435",
+        "title": "Laser-Induced Breakdown Spectroscopy for Determination of Spectral Fundamental Parameters",
+        "authors": [
+          "S. M. Aberkane",
+          "Ali Safi",
+          "Asia Botto",
+          "B. Campanella",
+          "S. Legnaioli",
+          "F. Poggialini",
+          "S. Raneri",
+          "F. Rezaei",
+          "V. Palleschi"
+        ],
+        "openAccessInfo": {
+          "license": "CCBY",
+          "status": "GOLD",
+          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://api.unpaywall.org/v2/10.3390/app10144973?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.3390/app10144973, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        }
+      },
+      "snippet": {
+        "text": "line profile with a Voigt function. After that, the Lorentzian component can be obtained by subtracting the experimental broadening from this value. \n\nThe subtraction should be performed correctly considering how the Gaussian and Lorentzian line widths contribute to the FWHM of the Voigt profile. Olivero et al. [49] proposed a formula for the Voigt FWHM that is correct within \u00b10.01%, as:  =  0.5346 + 0.4654 1 +  0.4654  (19) This relation can be inverted numerically for deriving the Lorentzian FWHM (the one related to the Stark effect) once the Voigt and the Gaussian FWHM are known. \n\nThe second problem, much more difficult to solve, is related to the self-absorption of the line, which introduces an apparent broadening of the line (see Figure 1) which increases with the increase of self-absorption. \n\nDealing with the self-absorption is made complicated by the fact that the line shape of a selfabsorbed emission line is not described by a Lorentzian or Voigt profile anymore. Moreover, the presence of self-absorption sometimes is not easy to spot. One should consider, however, that even when the effect of self-absorption is not evident, the apparent FWHM of the line can be substantially larger than the Stark broadening (for \u03c4(\u03bb0) ? ? (? ? )= 1, the apparent FWHM is about 30% larger than the unperturbed Stark width) [50]. \n\nThe effects of self-absorption should thus be checked carefully, for avoiding errors in the determination of the Stark coefficients. \n\nA (conceptually) simple method for determining experimentally the degree of self-absorption in LIBS plasma is the duplicating mirror method (see Figure 3   The method assumes that the radiation emitted by the plasma in the direction opposite to the detector is sent back through the plasma, using a spherical mirror. By comparing the intensity of the line measured with and without the spherical mirror (ideally, one should be double of the other, in the absence of self-absorption effects) it is possible to evaluate the self-absorption of the plasma for that line.",
+        "snippetKind": "body"
+      }
+    },
+    {
+      "score": 0.6520052186353752,
+      "paper": {
+        "corpusId": "246210291",
+        "title": "Optical diagnostics of laser-produced plasmas",
+        "authors": [
+          "S. S. Harilal",
+          "M. Phillips",
+          "D. Froula",
+          "K. Anoop",
+          "R. Issac",
+          "F. Beg"
+        ],
+        "openAccessInfo": {
+          "license": null,
+          "status": "GREEN",
+          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://arxiv.org/abs/2201.08783, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        }
+      },
+      "snippet": {
+        "text": "By knowing the instrumental profile of the spectrometer used, the contributions of various line-broadening mechanisms can be obtained through deconvolution.The broadening contributed by Lorentzian profiles adds linearly while the Gaussian profiles add quadratically, and the overall profile is a convolution of Gaussian and Lorentzian (Voigt function).Assuming the instrumental profile is Gaussian (\u2206\u03bb G(instru.) ) and other broadening mechanisms are negligible except the Stark effect, the Stark width (\u2206\u03bb Stark ) can be obtained from the measured full width half maximum (FWHM) (\u2206\u03bb mea. ) using the following relation\n\nIf the instrumental profile is Lorentzian (\u2206\u03bb L(instru.)), the measured profile will be a simple addition of Stark and instrumental broadening.\n\nAt late times of plasma evolution, the Stark effect is negligible and the Doppler effect contributes to line broadening.If the instrumental broadening is Gaussian, then the Doppler contribution \u2206\u03bb Doppler can be deduced from the following relation:\n\nIt is recommended to use high-resolution spectrographs with spectral resolutions significantly better than the linewidth of the selected transition for plasma lineshape analysis.However, even with the use of a highresolution spectrometer, it is challenging to separate crowded atomic transitions in a high-Z plasma system (e.g., W, U) with many overlapping emission lines and closely spaced molecular bands (Harilal et al., 2021c;Kautz et al., 2020c).\n\nThe convolution or deconvolution of the spectral profiles discussed above is for spectral lineshapes measured under optically thin conditions.In addition to the instrumental profile, other factors such as self-absorption, self-reversal, etc. may distort the lineshape.For example, the self-absorption processes in the plasma may lead to the broadening of an emission line.This is because absorption is strongest at the line center and weakest at the wings of the spectral profile.However, it is difficult to evaluate the amount of self-absorption in an LPP by simply observing the lineshape.",
+        "snippetKind": "body"
+      }
+    },
+    {
+      "score": 0.6443978582167795,
+      "paper": {
+        "corpusId": "40001269",
+        "title": "Photoionization broadening of the 1S-2S transition in a beam of atomic hydrogen",
+        "authors": [
+          "N. Kolachevsky",
+          "M. Haas",
+          "U. Jentschura",
+          "M. Herrmann",
+          "P. Fendel",
+          "M. Fischer",
+          "R. Holzwarth",
+          "T. Udem",
+          "C. Keitel",
+          "T. H\u00e4nsch"
+        ],
+        "openAccessInfo": {
+          "license": null,
+          "status": "GREEN",
+          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://arxiv.org/abs/quant-ph/0609114, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        }
+      },
+      "snippet": {
+        "text": "The analysis of the line width is more complicated in comparison with the analysis of the frequency shift since a number of different effects contribute significantly to the line broadening. The line width consists of intensity-independent and intensity-dependent parts. The intensity-independent part includes the laser spectral line width and the time-of-flight broadening, while such effects as power broadening, inhomogeneous AC Stark broadening and ionization broadening contribute to the latter part. In addition, temporal intensity fluctuations of the laser radiation in the excitation region also induce an additional intensity-dependent broadening due to the variable Stark shift. Thus, assuming for simplicity the Lorentzian profiles, one can write: \n\nwhere \u0393 tot (P ) is the total line width, \u0393 tof is the contribution of the time-of-flight broadening, and \u0393(P ) includes all intensity-dependent effects with \u0393(0) = 0. The laser line width \u0393 laser carries a factor of 4 because we measure it at 486 nm whereas all other transition frequencies correspond to 121 nm. It has been shown experimentally, that the spectral line width of our laser system doubles for the frequency doubling process. We understand that each of the contributions listed above has a complex spectral shape which can significantly differ from Lorentzian and the expression ( 5) can be used only for rough estimations. Still, the simulations show that in our case the time-of-flight broadening has near-to-Lorentzian spectral line shape while heterodyne experiments indicate the same for the spectral line of our laser system. As is evident from Fig. 4b, the intensity-dependent part of the line width is formed by three different processes: (i) the power broadening, (ii) the inhomogeneous AC Stark shift in the laser beam profile and (iii) the ionization of the 2S state. The pure power broadening corresponds to the case (\u03b3 i = 0, \u03b2 ac = 0) and is due to Rabi flopping between the ground and the excited states, effectively reducing the lifetime of the population in the excited 2S state. The inhomogeneous AC Stark shift in the case (\u03b3 i = 0, \u03b2 ac = 0) originates from a Gaussian intensity profile in the excitation region.",
+        "snippetKind": "body"
+      }
+    },
+    {
+      "score": 0.6324546641870068,
+      "paper": {
+        "corpusId": "67788121",
+        "title": "Determination of excitation temperature in laser-induced plasmas using columnar density Saha-Boltzmann plot",
+        "authors": [
+          "Ali Safi",
+          "S. H. Tavassoli",
+          "G. Cristoforetti",
+          "S. Legnaioli",
+          "V. Palleschi",
+          "F. Rezaei",
+          "E. Tognoni"
+        ],
+        "openAccessInfo": {
+          "license": "CCBYNCND",
+          "status": "GOLD",
+          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://pmc.ncbi.nlm.nih.gov/articles/PMC6370548, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        }
+      },
+      "snippet": {
+        "text": "1 \n\nSA value is close to 1 if the line is thin and tends to zero in significant self-absorption conditions. The optical depth value k k 0 \u00f0 \u00del can thus be estimated by measuring the SA parameter. Among the various methods proposed to measure SA, the line width ratio method of El-Sherbini et al. [31] is utilized here: \n\nwhere Dk is the FWHM of the measured emission line, Dk 0 is the expected FWHM of line profile in optically thin conditions, and a = \u00c00.54 for Lorentzian line profiles. In typical LIBS plasma conditions, the Stark effect is the dominating line broadening mechanism and the value of Dk 0 can thus be calculated using the relation \n\n, where w s is the half-width Stark parameter of the line [32], and the electron number density can be obtained using, for example, the Stark broadening of the hydrogen Balmer alpha line at 656.3 nm, as suggested earlier [16]. The use of the H a line for the calculation of the electron density has the advantage of providing a result which is not affected by the self-absorption effect. \n\nFinally, the value of the optical depth k(k 0 )l can be numerically evaluated from the SA parameter by utilizing Eq. ( 9). It is evident from the relation that the estimation of optical depth is more accurate when the emission line is more broadened, i.e. when the self-absorption is high. In the last step, by rewriting Eq. ( 8) in practical units, columnar density (cm \u00c02 ) can be estimated by the following equation \n\nwhere k 0 and Dk 0 are in Angstrom units.",
+        "snippetKind": "body"
+      }
+    },
+    {
+      "score": 0.614537126455101,
+      "paper": {
+        "corpusId": "53339271",
+        "title": "Optically Thick Laser-Induced Plasmas in Spectroscopic Analysis",
+        "authors": [
+          "F. Rezaei"
+        ],
+        "openAccessInfo": {
+          "license": "CCBY",
+          "status": "HYBRID",
+          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://api.unpaywall.org/v2/10.5772/61941?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.5772/61941, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        }
+      },
+      "snippet": {
+        "text": "Amamou et al. [6,7] calculated the self-absorption for both Gaussian and Lorentzian line profiles with a Simplex algorithm program fitting method [22] in a homogenous laserproduced plasma. They fitted the experimental results with theoretical calculation and then, their expressions for Lorentzian profiles were used for quantification of the transition probabilities, ratios, and the ratios of optical thicknesses as well. They introduced different correction factors by considering the ratio of the peaks, line widths, and surfaces of two spectral lines for both of the considered line profiles. The correction factor for the line height can be evaluated by considering the ratio of peak intensities of spectral lines in case of non-self-absorbed atomic line to the case of the self-absorbed line as follows: \n\nAs well as by taking into account the FWHM ratios, the correction factor for the line width can be calculated by the following equation:\n\nFor an optical thickness of less than 4, it is assumed that the line surface is proportional to the multiplication of line width by its height. Hence, the correction factor for the line surface can be estimated as:\n\nhere, \u03c4 0 is the optical thickness at central line wavelength (or maximum of optical thickness). The results of these calculations are obtained from the plasma created by laser irradiation on a silicate solid sample placed in a xenon and hydrogen atmosphere for the various multiples of Si II lines. Figure 1 illustrates the evolution of self-absorption correction factors for the abovementioned parameters in a Lorentzian distribution.",
+        "snippetKind": "body"
+      }
+    },
+    {
+      "score": 0.6054484755918861,
+      "paper": {
+        "corpusId": "94633894",
+        "title": "Stark Broadening of Co II Lines in Stellar Atmospheres",
+        "authors": [
+          "Z. Majlinger",
+          "M. Dimitrijevi\u0107",
+          "V. Sre\u0107kovi\u0107"
+        ],
+        "openAccessInfo": {
+          "license": "CCBY",
+          "status": "GOLD",
+          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://api.unpaywall.org/v2/10.3390/data5030074?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.3390/data5030074, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        }
+      },
+      "snippet": {
+        "text": "The same comparisons but for DB white dwarf atmosphere model with the same parameters are shown in Figure 2a,b. In Figure 3a,b, we can see the behaviors in the  1a and 2a, but as a function of logarithm of Rosseland optical depth, for the model atmosphere of A-type star [32] with model parameters log g = 4.5 and T eff = 10,000 K. (b) Same as Figure 3a, but as a function of atmospheric layer temperature instead of optical depth. \n\nfunction of logarithm of Rosseland optical depth and temperature in the stellar atmospheres for an A-type model atmosphere [32] with parameters log g = 4.5 and Teff = 10,000 K. Stark width in comparison with Doppler width increases as wavelength increases, because if a wavelength is larger than the corresponding atomic energy levels are closer and because of that, the perturbation of the emitter/absorber is larger and the emitted spectral line is broader. We notice also that Stark widths are proportional to \u03bb 2 , while Doppler widths are proportional to \u03bb [3]. For the last line, \u03bb9959, the point where Stark width reaches Doppler width is deeper in the atmosphere than for the previous line, \u03bb9519, because the Stark width values for this line are smaller since the corresponding atomic energy levels are further away than in the previous case and the perturbation is smaller. \n\nWe can see that for the hydrogen-rich (DA) type of WD, Stark broadening starts to be more significant than the Doppler broadening already in the atmospheric layers with relatively smaller optical depth, for spectral lines \u03bb9519 and \u03bb9969 near to \u03c4 \u2248 0.5. Electron-impact broadening for the line \u03bb2709 becomes more significant for layers after \u03c4 \u2248 10, while for line \u03bb2533.2 Doppler broadening is dominant for all considered values of optical depth.",
+        "snippetKind": "body"
+      }
+    }
+  ],
+  "retrievalVersion": "pa1-v1"
+}

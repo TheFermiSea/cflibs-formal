@@ -1,0 +1,222 @@
+{
+  "data": [
+    {
+      "score": 0.5551566471898766,
+      "paper": {
+        "corpusId": "272846387",
+        "title": "Bayesian-inverted laser Thomson scattering measurements indicate electrostatic erosion pathways in magnetically-shielded Hall effect thrusters",
+        "authors": [
+          "J. L. Suazo Betancourt",
+          "Julian Lopez-Uricoechea",
+          "Naia I. Butler-Craig",
+          "A. Steinberg",
+          "M. Walker"
+        ],
+        "openAccessInfo": {
+          "license": "CCBY",
+          "status": "HYBRID",
+          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://api.unpaywall.org/v2/10.1063/5.0221547?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.1063/5.0221547, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        }
+      },
+      "snippet": {
+        "text": "The advantage of the Bayesian framework compared to more common least-squared analysis lies in its rigorous propagation and quantification of uncertainty through the entire signal inversion process, from the LRS through the LTS. Furthermore, in the LTS inversion, the Bayesian framework provides a rigorous assessment on the reliability of the plasma model underlying the signal inversion via the Bayes' factor. Hence, the result of the LRS or LTS signal inversion process is a posterior probability density function (PDF) P i (x i , \u03b8 i jb) following Bayes' equation, \n\nHere, P i (bjx i , \u03b8 i ), P i (x i , \u03b8 i ), and P(b) are the likelihood, prior, and evidence PDFs, b is the data for a given measurement, and i indicates whether the PDFs and parameters pertain to a LRS measurement (i \u00bc R), LTS measurement inverted using a Maxwellian plasma model (i \u00bc TM), etc. The posterior is a comprehensive description of one's knowledge of the QoI following a measurement, carrying all the measured and prior information about the QoI and nuisance parameters. In this work, the likelihood distributions, parameters used to construct the prior probability distribution functions, etc. are the same as in Suazo Betancourt et al. 50 The posterior estimates from the LRS inference are used to construct the priors for the nuisance parameters for the LTS inference. This method robustly encodes the uncertainty in the neutral background pressure, neutral background temperature, center wavelength, and efficiency constant in the uncertainty for the electron temperature, density, and drift velocity. The PDFs were sampled using a Markov-chain Monte Carlo method. For the sake of computational efficiency, the length of the Markov chains was limited to 50 000 samples from the posterior using a Metropolis-Hastings algorithm. These samples were used to determine the maximum a posteriori (MAP) estimates of the QoI and quantify the uncertainty. In the results that follow, individual data points are the MAP values of the QoI and the error bars represent plus and minus twice the standard deviation for each parameter. \n\nFor all LTS measurements, signals were inverted using both Maxwellian and Druyvesteyn plasma models. From these, we compute the Bayes' factor,",
+        "snippetKind": "body"
+      }
+    },
+    {
+      "score": 0.5345352492822975,
+      "paper": {
+        "corpusId": "266374899",
+        "title": "Automated Estimation of Plasma Temperature and Density from Emission Spectroscopy",
+        "authors": [
+          "Todd A. Oliver",
+          "C. Michoski",
+          "S. Langendorf",
+          "Andrew LaJoie"
+        ],
+        "openAccessInfo": {
+          "license": null,
+          "status": null,
+          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://arxiv.org/abs/2312.12674, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        }
+      },
+      "snippet": {
+        "text": "In addition to examining individual shots, the spectra obtained at different conditions can be analyzed in an attempt to identify the dependency of the state of the plasma upon various experimentally controllable parameters.As an example, Figure 8 shows the dependence of the inferred temperature on the camera delay time, which corresponds to the time in the evolution of the plasma formed in the core of the merging jets, for the different inlet pressure and capacitor bank voltages shown in Table I.The results show that, with the present measurements and models, it is very difficult to identify any meaningful trends, because the uncertainty is large enough that it is unclear whether changes in the most probable temperature between conditions are real.To evaluate the uncertainty estimates, we note that the data set includes some conditions that are repeated.These repeats lead to a scatter in the results at the same delay times shown in the figure, but all the repeats fall within the uncertainty of each other.This gives some confidence that the uncertain estimates from the inference are not too small.Further, the scatter between repeats is roughly of the same magnitude as the uncertainty, indicating that our uncertainty estimates are not dramatically too large.Thus, we are forced to conclude that any trends in the temperature are swamped by the uncertainty and cannot be determined from these measurements alone.V. CONCLUSIONS\n\nIn this study, we have presented an approach for the automated estimation of plasma temperature and density from emission spectroscopy, integrating physical and probabilistic models by way of Bayesian inference.The robustness of our approach lies in its ability to assimilate complex physical models with probabilistic reasoning, offering a nuanced understanding of plasma characteristics.The detailed overview of Bayesian inference, coupled with the foundational physical models, set the stage for a methodological framework that is both rigorous and adaptable.\n\nOur experimental results on a series of experiments at PLX have yielded promising results and consist of a pre-processing phase and a Bayesian inference phase.The results from this inference, particularly the individual shot and shot sequence analyses, have demonstrated the efficacy of our approach in providing accurate and reliable estimations of plasma parameters.\n\nThese results underscore the potential of Bayesian methods in the field of plasma diagnostics, often offering a significant leap over traditional estimation techniques.\n\nThe current state of the technique offers many paths for possible extensions and improvements.",
+        "snippetKind": "body"
+      }
+    },
+    {
+      "score": 0.530088148855808,
+      "paper": {
+        "corpusId": "257675429",
+        "title": "Machine learning and Bayesian inference in nuclear fusion research: an overview",
+        "authors": [
+          "A. Pavone",
+          "A. Merlo",
+          "S. Kwak",
+          "J. Svensson"
+        ],
+        "openAccessInfo": {
+          "license": "CCBY",
+          "status": "HYBRID",
+          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://api.unpaywall.org/v2/10.1088/1361-6587/acc60f?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.1088/1361-6587/acc60f, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        }
+      },
+      "snippet": {
+        "text": "Some of the most successful applications of Bayesian inference in nuclear fusion regard the interpretation of diagnostic raw data, an early example of which is the Thomson scattering (TS) diagnostic [3]. Under a Bayesian interpretation, each diagnostic measurement can be seen as a constraint on the distribution of possible plasma parameter values, as is shown by writing the joint probability distribution of the system. As an example consider measurements of interferometer (IF) and TS diagnostics together [4]: they depend on the plasma electron density n e and the plasma electron temperature, constraining the possible values it can have. Therefore, given a predictive model f i for the IF signal d i = f i (n e ), and one for the TS signal d t = f t (n e , T e ), the joint probability distribution of a consistent model of the electron density can be written as: \n\nwhere we have also done a marginalization over the electron temperature. The challenge in practical implementations of Bayesian inference is twofold: on one side, the accurate development of the computational models f t and f i requires a thorough understanding of the physical processes in play and a detailed accounting of experimental configurations, such as instrument functions, calibration and geometrical features; on the other side, the computation of the posterior distribution with numerical recipes is not trivial: it often requires tailoring a problem-specific implementation and a trade-off between accuracy and efficiency. As shown by the work reviewed in this section, the painstaking modelling of diagnostic measurements and the implementation of robust inference algorithms pays off with accurate and consistent results. \n\nInference of plasma equilibria. An early application of Bayesian inference to achieve consistency across heterogeneous measurements is reported in [5,6]. The authors create a joint model of a number of diagnostics together with an equilibrium constraint, where both the uncertainty of flux surfaces and other nuisance parameters are modelled to achieve consistency between diagnostics: the Bayesian approach is to include all systematic uncertainties in the model as probability distributions that can in some cases be inferred from data, but in all cases allow the inclusion of their uncertainties in the final marginalized posterior over the plasma parameters of interest.",
+        "snippetKind": "body"
+      }
+    },
+    {
+      "score": 0.5199791187106519,
+      "paper": {
+        "corpusId": "257219271",
+        "title": "Review on laser-induced breakdown spectroscopy: methodology and technical developments",
+        "authors": [
+          "Jinto Thomas",
+          "Hem Chandra Joshi"
+        ],
+        "openAccessInfo": {
+          "license": null,
+          "status": "GREEN",
+          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://arxiv.org/abs/2302.13272, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        }
+      },
+      "snippet": {
+        "text": "Convention LIBS analysis suffers from matrix effects and also requires reference sample for calibration curve.Hence calibration free LIBS (CF LIBS) approach was adopted.Details of this method are given in a review by Tongoni et al. 92 and also in recent reference of Zhang et al 35 .However, CFLIBS considers that (i) plasma plume represents the actual composition, (ii) the plasma is in LTE condition in spatial as well as temporal window, (iii) plasma is considered to be homogeneous and (iv) the spectral lines under consideration are optically thin.",
+        "snippetKind": "body"
+      }
+    },
+    {
+      "score": 0.5192894044981244,
+      "paper": {
+        "corpusId": "257453530",
+        "title": "Laser-induced breakdown spectroscopy instrument and spectral analysis for deep-ocean Fe-Mn crusts",
+        "authors": [
+          "Guang Yang",
+          "Guan-Yu Chen",
+          "Zixuan Cai",
+          "Xiang-yin Quan",
+          "Yang Zhu"
+        ],
+        "openAccessInfo": {
+          "license": "CCBY",
+          "status": "GOLD",
+          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://api.unpaywall.org/v2/10.3389/fmars.2023.1135058?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.3389/fmars.2023.1135058, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        }
+      },
+      "snippet": {
+        "text": "The calibration-free (CF-LIBS) (Ciucci et al., 1990;Dell'Aglio et al., 2018;Ferus et al., 2018;Umar et al., 2018) is implemented on the premise of three basic assumptions: (1) the elemental composition of the plasma produced by LIBS corresponds exactly to the elemental constitution of the sample analyzed before ablation, which is also known as chemometric ablation; (2) the plasma formed by LIBS is in the local thermodynamic equilibrium (LTE), judged by Eq. ( 1), which specifically means that the excitation rate of all the energy levels p and q that collide cannot be less than 10 times the rate of spontaneous radiation; and (3) the plasma from LIBS is in an optically thin state, meaning that no self-absorption is present in the plasma emission spectrum. \n\nwhere T e is the electron temperature, N e is the electron density, and DE is the maximum energy difference of the ions analyzed. Based on the three fundamental assumptions, the mathematical relationship between the spectral line intensities and the plasma parameters can be expressed by Eq. ( 2): \n\nIn Eq. ( 2), I ij l is the intensity of the integrated spectral line at the leap wavelength l; i and j are the high and low energy levels of the electron leap corresponding to the leap wavelength l; F is the experimental constant; C s is the relative concentration of emitting species in the plasma; s is the particle species; A ij is the probability of jumping for a given spectral line; g i is the statistical weight of energy level i; T is the excitation temperature of the plasma; E i is the energy of particle energy level i; k B is the Boltzmann constant; and U s (T) is the partition function of the species s at temperature T, which can be calculated by Eq. (3): \n\nBy taking the logarithm of Eq. ( 2), the equation can be transformed into a linear form:",
+        "snippetKind": "body"
+      }
+    },
+    {
+      "score": 0.5008108154851125,
+      "paper": {
+        "corpusId": "266374899",
+        "title": "Automated Estimation of Plasma Temperature and Density from Emission Spectroscopy",
+        "authors": [
+          "Todd A. Oliver",
+          "C. Michoski",
+          "S. Langendorf",
+          "Andrew LaJoie"
+        ],
+        "openAccessInfo": {
+          "license": null,
+          "status": null,
+          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://arxiv.org/abs/2312.12674, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        }
+      },
+      "snippet": {
+        "text": "The current state of the technique offers many paths for possible extensions and improvements.First, for practical reasons, the inferences of some parameters-e.g., the hyperparameters of the probabilistic model-are conducted separately from the primary inference for the plasma properties.These inferences could be unified, allowing the effects of calibration uncertainties to be included and quantified.Second, the process could be extended to enable inference for trace species, enabling the identification of contaminants.More broadly, there is significant potential for adoption of these techniques in plasma research and other related fields.For instance, the ability to accurately estimate plasma temperature and density is not only critical for understanding plasma behavior but also pivotal for advancing nuclear instrumentation and its applications.\n\nIn conclusion, this study contributes a novel and effective tool for the field of plasma diagnostics, harnessing the power of Bayesian inference and sophisticated physical modeling.\n\nIt opens up new avenues for research and application, promising to enhance the precision and understanding of plasma processes, as well as finding application in other areas of experimental analysis, such as analytical chemistry, etc. Future work will focus on refining the models further and exploring the integration of additional data sources, to extend the capabilities and applicability of the methodology.",
+        "snippetKind": "body"
+      }
+    },
+    {
+      "score": 0.49983034902340107,
+      "paper": {
+        "corpusId": "266374899",
+        "title": "Automated Estimation of Plasma Temperature and Density from Emission Spectroscopy",
+        "authors": [
+          "Todd A. Oliver",
+          "C. Michoski",
+          "S. Langendorf",
+          "Andrew LaJoie"
+        ],
+        "openAccessInfo": {
+          "license": null,
+          "status": null,
+          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://arxiv.org/abs/2312.12674, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        }
+      },
+      "snippet": {
+        "text": "To determine the state of the plasma-including, potentially, the temperature, density, and composition-a model relating these variables to the observed spectral data is required.\n\nThe plasma properties of interest are then inferred based on what parameter values lead to agreement between the modeled and observed spectra.This process-i.e., determining the value that minimizes the misfit between the experiment and the model-naturally takes the form of an optimization problem, but a straightforward optimization does not automatically account for uncertainty, which is introduced both by uncertainties inherent in any measurement process as well as by approximations inherent in any modeling process.To account for these uncertainties, a Bayesian inference approach is adopted here.In this approach, the solution of the inverse problem is a probability distribution for the plasma properties of interest.This probability distribution characterizes not only the most likely values of the parameters but also the relative probability of other values, accounting for the uncertainties in the measurements and models underlying the analysis.",
+        "snippetKind": "body"
+      }
+    },
+    {
+      "score": 0.4957087760390771,
+      "paper": {
+        "corpusId": "252506278",
+        "title": "Intrinsic Performance of Monte Carlo Calibration-Free Algorithm for Laser-Induced Breakdown Spectroscopy",
+        "authors": [
+          "I. Gornushkin",
+          "T. V\u00f6lker"
+        ],
+        "openAccessInfo": {
+          "license": "CCBY",
+          "status": "GOLD",
+          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://pmc.ncbi.nlm.nih.gov/articles/PMC9573556, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        }
+      },
+      "snippet": {
+        "text": "The performance of the Monte Carlo (MC) algorithm for calibration-free LIBS was studied on the example of a simulated spectrum that mimics a metallurgical slag sample. The underlying model is that of a uniform, isothermal, and stationary plasma in local thermodynamical equilibrium. Based on the model, the algorithm generates from hundreds of thousands to several millions of simultaneous configurations of plasma parameters and the corresponding number of spectra. The parameters are temperature, plasma size, and concentrations of species. They are iterated until a cost function, which indicates a difference between synthetic and simulated slag spectra, reaches its minimum. After finding the minimum, the concentrations of species are read from the model and compared to the certified values. The algorithm is parallelized on a graphical processing unit (GPU) to reduce computational time. The minimization of the cost function takes several minutes on the GPU NVIDIA Tesla K40 card and depends on the number of elements to be iterated. The intrinsic accuracy of the MC calibration-free method is found to be around 1% for the eight elements tested. For a real experimental spectrum, however, the efficiency may turn out to be worse due to the idealistic nature of the model, as well as incorrectly chosen experimental conditions. Factors influencing the performance of the method are discussed.",
+        "snippetKind": "abstract"
+      }
+    },
+    {
+      "score": 0.49259528300463784,
+      "paper": {
+        "corpusId": "221103742",
+        "title": "An initial exploration of Bayesian model calibration for estimating the composition of rocks and soils on Mars",
+        "authors": [
+          "Claire-Alice H\u00e9bert",
+          "E. Lawrence",
+          "Kary L. Myers",
+          "J. Colgan",
+          "E. Judge"
+        ],
+        "openAccessInfo": {
+          "license": null,
+          "status": "GREEN",
+          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://arxiv.org/abs/2008.04982, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        }
+      },
+      "snippet": {
+        "text": "Clegg et al. [2] introduced the use of multivariate approaches, such as partial least squares regression, to improve the ability to determine the elements present in a sample and estimate their relative proportions in the presence of matrix effects. More recently, scientists at Los Alamos National Laboratory adapted a first-principles plasma physics code called ATOMIC [12] to provide a forward model for the emission from LIBS plasmas, including their matrix effects [3,4,8]. The new existence of this forward model presents an exciting opportunity to explore the use of Bayesian model calibration [9] to compute estimates, with associated uncertainties, of the components of a target and their relative abundances. That is, we want to solve the inverse problem to determine the input parameters for ATOMIC, which include the elements present and their proportions, that produce the simulated spectrum that is most like an unknown measured spectrum. \n\nBayesian model calibration in the context of highdimensional outputs [7], of which LIBS spectra are an example, has a successful history in a variety of scientific applications. For example, in materials science, these methods have been applied to estimate strength parameters of aluminum alloys in hydrodynamic shock experiments [16]. \n\nWe draw inspiration from Judge et al. [8], who demonstrated the impact of matrix effects on sodium peak heights in a simple two-element mix of sodium and copper measured with LIBS. The authors also demonstrated the ability of ATOMIC to replicate those effects from first principles. In particular, their experimental observations, supported by ATOMIC's theoretical calculations and modeling, showed that the sodium lines increased significantly in emission intensity as more copper was added to the target. This effect is explained by an increase in electron density, due to the copper, leading to increased recombination within the plasma. \n\nIn this paper we will also use simplified two-element targets of sodium and copper to begin to explore our ability to use Bayesian model calibration with ATOMIC to perform disaggregation. As we look forward to more complex targets drawn from the large parameter space of all possible elements, and particularly in the context of the high data-collection rate of ChemCam on Curiosity, we recognize that using ATOMIC directly in this framework will be computationally intractable.",
+        "snippetKind": "body"
+      }
+    },
+    {
+      "score": 0.49055194627044874,
+      "paper": {
+        "corpusId": "229343290",
+        "title": "A Review of Underwater Laser-induced Breakdown Spectroscopy of Submerged Solids",
+        "authors": [
+          "Ayumu Matsumoto",
+          "T. Sakka"
+        ],
+        "openAccessInfo": {
+          "license": null,
+          "status": "GOLD",
+          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://api.unpaywall.org/v2/10.2116/analsci.20R007?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.2116/analsci.20R007, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        }
+      },
+      "snippet": {
+        "text": "In some cases, the calibration curve method is not practical due to matrix effects. Basically, separate calibration curves for each different matrix should be prepared before the on-site survey. In the case of solid samples, the ablation process is strongly affected by the surface condition. The fluctuation of the surrounding environment decreases the quantitative performance of the calibration curve. In this context, calibration-free LIBS (CF-LIBS) has been developed. 127 In this method, the composition in the sample is directly determined from the emission spectrum without calibration under the assumption that the atomic density ratio in the plasma corresponds to that in the sample. Because of its applicability, CF-LIBS has been widely applied to LIBS measurements of various targets in gaseous phase. 128 Calibration free analysis is also applied to underwater LIBS of submerged samples. 97,129,130 However, there are many limitations in quantitative aspect of the spectral measurements, as well as data analysis, to achieve the quantitative elemental analysis with high reliability.",
+        "snippetKind": "body"
+      }
+    }
+  ],
+  "retrievalVersion": "pa1-v1"
+}

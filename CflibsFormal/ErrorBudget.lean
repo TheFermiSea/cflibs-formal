@@ -473,23 +473,45 @@ example :
 The single-stage two-line temperature is composition-independent (`ForwardMap`'s
 `temperature_from_two_lines`), so a `T`-leg built from it is a *constant* map — the outer
 CF-LIBS loop would then be degenerate (contraction constant `0`, headline true-but-vacuous).
-The **non-degenerate** loop of Aguilera & Aragón 2007 places *all* stages on one Boltzmann
-plot: the ion-stage ordinates are shifted by the Saha offset `c(n_e) = log S(T) − log n_e +
-Δlog U` (`SahaInverse.sahaBoltzmann_shift_eq_log_saha`), and that vertical shift of the ion
-*cluster* moves the *combined* OLS slope whenever the two clusters occupy different energy
-ranges. This section builds that combined slope, proves its offset→slope sensitivity (the
-content-bearing Lipschitz bound that makes the loop non-trivial), and packages the
-temperature update `n_e ↦ 1/(k_B·slope(n_e))` as the `L₂` leg of the outer contraction. -/
+The combined Saha–Boltzmann plot of Aguilera & Aragón 2007 places *all* stages on one
+Boltzmann plot. In the form used here the ion-stage ordinates are shifted by the Saha offset
+`c(n_e) = log S(T) − log n_e + (log U_z(T) − log U_{z+1}(T))`
+(`SahaInverse.sahaBoltzmann_shift_eq_log_saha`), and that vertical shift of the ion *cluster*
+moves the *combined* OLS slope whenever the two clusters occupy different energy ranges. This
+section builds that combined slope, proves its offset→slope sensitivity, and packages the
+temperature update `n_e ↦ 1/(k_B·slope(n_e))` as the `L₂` leg of the outer contraction.
 
-/-- **Combined Saha–Boltzmann slope** (Aguilera & Aragón 2007, Model B).
+**Scope (the reduction this leg carries).** The `n_e`-independent part of the offset is one
+frozen number `offConst` (physically, that part evaluated at a reference `T`). The slope's
+dependence on `n_e` is a dependence at fixed `offConst`. In the outer loop, where
+`n_e = S(T)/R`, evaluating the offset at the current `T` instead cancels `log S(T)` and removes
+the Saha coupling (see `OuterLoopModelB`). The plot is a single element with one intercept and unit
+weights on the unshifted abscissa `E`, so the `−χ/(k_B T)` term sits in the offset. Aguilera &
+Aragón instead shift the ion abscissae by the ionization energy, and the companion pipeline also
+fits one intercept per element; neither is modelled here. -/
+
+/-- **Combined Saha–Boltzmann slope** (after Aguilera & Aragón 2007; this repo's Model B).
 The OLS Boltzmann-plot slope over all lines when the ion-stage lines (selected by the
 offset multiplier `s`, e.g. `s k = 1` on ion lines and `0` on neutral lines) are shifted
-vertically by the Saha offset `c(n_e) = offConst − log n_e`, where `offConst` collects the
-`n_e`-independent part `log S(T) + Δlog U` at fixed `T`:
+vertically by the Saha offset `c(n_e) = offConst − log n_e`:
 `slope(n_e) = olsSlope E (fun k => y k + (offConst − log n_e)·s k)`.
-Unlike the single-stage two-line temperature (`temperature_from_two_lines`, composition-
-independent), this slope genuinely depends on `n_e` through the offset — the coupling that
-makes the outer CF-LIBS loop non-degenerate. -/
+`offConst` is a fixed number, read physically as the `n_e`-independent part
+`log S(T) + log U_z(T) − log U_{z+1}(T)` evaluated at a reference `T`; its own `T`-dependence
+is frozen.
+
+Conventions and reductions. The ordinates are **sign-normalized**, `y k = −log(Iₖ/(gₖAₖ))`: the
+convention in which a single-stage Boltzmann plot of exact data has slope `+1/(k_B T)`. Only in
+that convention is the ion shift *added* (in the raw convention `log(I/(gA))` the offset enters
+with the opposite sign and the single-stage slope is `−1/(k_B T)`). With `offConst` frozen at a
+reference `T` different from the emitting `T`, the combined slope of exact data is in general
+not `1/(k_B T)`; that mismatch is what the outer loop iterates on. The fit is single-element, with
+one intercept and unit weights, on the unshifted abscissa `E`; the `−χ/(k_B T)` term therefore
+lives in `offConst`, not in the slope (Aguilera & Aragón shift the ion abscissae by the
+ionization energy instead).
+
+At fixed `offConst` this slope depends on `n_e`, unlike the composition-independent single-stage
+two-line temperature (`temperature_from_two_lines`). In the outer loop that dependence survives
+only while `offConst` stays frozen (see `OuterLoopModelB`). -/
 noncomputable def combinedSahaBoltzmannSlope (E y s : ι → ℝ) (offConst ne : ℝ) : ℝ :=
   olsSlope E (fun k => y k + (offConst - Real.log ne) * s k)
 
@@ -501,8 +523,10 @@ the ion indicator):
 This is in fact an *equality* (the slope is affine in `log n_e`): via `olsSlope_sub_eq` the
 offset difference `log n_e₂ − log n_e₁` multiplies the centered-energy–weighted ion mass
 `∑ₖ (Eₖ − Ē)·sₖ`. The constant is **nonzero exactly when the ion cluster's mean energy
-differs from the overall mean** — precisely the non-degeneracy of Model B (contrast Model A,
-where the constant is `0`). `hvar : 0 < SS_E` supplies the nonzero denominator. -/
+differs from the overall mean**: at fixed `offConst` the slope then really moves with `n_e`
+(contrast Model A, where the constant is `0`). This is non-degeneracy of the `T`-leg in `n_e`
+only; whether the outer loop is non-degenerate depends on `offConst` staying frozen (see
+`OuterLoopModelB`). `hvar : 0 < SS_E` supplies the nonzero denominator. -/
 theorem combinedSlope_offset_lipschitz [Nonempty ι] (E y s : ι → ℝ) {offConst : ℝ}
     (hvar : 0 < ∑ k, (E k - mean E) ^ 2) (ne1 ne2 : ℝ) :
     |combinedSahaBoltzmannSlope E y s offConst ne1
@@ -569,12 +593,14 @@ private theorem recip_lip_floor {kB m x y : ℝ} (hkB : 0 < kB) (hm : 0 < m)
   gcongr
 
 /-- **Combined Saha–Boltzmann temperature update** (Model B `T`-leg): the outer loop's map
-from a density `n_e` to the recovered inverse-temperature-scaled value `1/(k_B·slope(n_e))`,
-where `slope = combinedSahaBoltzmannSlope`. This is the CF-LIBS `T`-leg `legT : n_e ↦ T′`. -/
+from a density `n_e` to the recovered temperature `T′ = 1/(k_B·slope(n_e))`, where
+`slope = combinedSahaBoltzmannSlope` at a fixed offset `offConst`. This is the Model-B `T`-leg
+`legT : n_e ↦ T′`. It reads a temperature only for the sign-normalized slope `+1/(k_B T)` (see
+`combinedSahaBoltzmannSlope`); the loop theorems require `slope ≥ smin > 0`. -/
 noncomputable def combinedSlopeTempUpdate (kB : ℝ) (E y s : ι → ℝ) (offConst ne : ℝ) : ℝ :=
   1 / (kB * combinedSahaBoltzmannSlope E y s offConst ne)
 
-/-- **`T`-leg Lipschitz constant of the outer CF-LIBS loop** (`REDUCED`; Aguilera & Aragón
+/-- **`T`-leg Lipschitz constant of the Model-B outer loop** (`REDUCED`; Aguilera & Aragón
 2007). On a density box with floor `n_e ≥ nemin > 0` and a combined-slope floor
 `slope(n_e) ≥ smin > 0`, the temperature update is Lipschitz in `n_e` with the explicit
 constant `L₂ = (|∑ₖ (Eₖ − Ē)·sₖ| / SS_E) / (k_B·smin²·nemin)`:
@@ -583,9 +609,10 @@ The three chained legs are the reciprocal leg `slope ↦ 1/(k_B·slope)` (consta
 `1/(k_B·smin²)`, `recip_lip_floor`), the offset leg (`combinedSlope_offset_lipschitz`,
 constant `|∑ₖ (Eₖ − Ē)·sₖ|/SS_E`), and the log leg `n_e ↦ log n_e` (constant `1/nemin`,
 `log_lip_floor`). `L₂` is the second factor of the outer-loop product gate `L₁·L₂ < 1`
-(with `L₁ = sahaFactorLipConst/R₀` the density-reader constant). `REDUCED`: the slope floor
-`smin` and the density floor `nemin` are carried as explicit side conditions (the recovered
-temperature must stay in the box — genuine hypotheses, cf. `sahaIter_mapsTo`). -/
+(with `L₁ = sahaFactorLipConst/R₀` the density-reader constant). `REDUCED`: the leg is the
+frozen-offset, single-element, unshifted-abscissa slope of `combinedSahaBoltzmannSlope`; the
+slope floor `smin` and the density floor `nemin` are carried as explicit side conditions (the
+recovered temperature must stay in the box — genuine hypotheses, cf. `sahaIter_mapsTo`). -/
 theorem combinedSlopeTempUpdate_lipschitz [Nonempty ι] (kB : ℝ) (E y s : ι → ℝ)
     {offConst nemin smin : ℝ}
     (hvar : 0 < ∑ k, (E k - mean E) ^ 2) (hkB : 0 < kB) (hnemin : 0 < nemin) (hsmin : 0 < smin)
@@ -621,16 +648,19 @@ theorem combinedSlopeTempUpdate_lipschitz [Nonempty ι] (kB : ℝ) (E y s : ι �
 /-! ### Non-vacuity witnesses (Model B non-degeneracy)
 
 Two lines at energies `E = (0, 1)` with a single ion line (`s = (0, 1)`): `Ē = 1/2`, so
-`∑ₖ (Eₖ − Ē)·sₖ = 1/2 ≠ 0` and the sensitivity constant is `1 > 0`. The combined slope then
-evaluates to `slope(n_e) = − log n_e`, a *genuinely* `n_e`-dependent (non-constant) map — the
-loop is real (contrast Model A, where the two-line temperature ignores its input). -/
+`∑ₖ (Eₖ − Ē)·sₖ = 1/2 ≠ 0` and the sensitivity constant is `1 > 0`. At the fixed offset
+`offConst = 0` the combined slope evaluates to `slope(n_e) = − log n_e`, a non-constant map of
+`n_e` (contrast Model A, where the two-line temperature ignores its input). These witnesses
+concern the `T`-leg at a fixed offset; they say nothing about the offset evaluated at the
+current `T`, which removes the Saha coupling (see `OuterLoopModelB`). -/
 
 private def nvCsE : Fin 2 → ℝ := ![0, 1]
 private def nvCsY : Fin 2 → ℝ := ![0, 0]
 private def nvCsS : Fin 2 → ℝ := ![0, 1]
 
-/-- The offset→slope sensitivity constant is a genuine strictly positive value (Model B is
-non-degenerate: the ion cluster's mean energy differs from the overall mean). -/
+/-- The offset→slope sensitivity constant is a genuine strictly positive value (the `T`-leg
+is non-degenerate at fixed offset: the ion cluster's mean energy differs from the overall
+mean). -/
 example : 0 < |∑ k, (nvCsE k - mean nvCsE) * nvCsS k| / (∑ k, (nvCsE k - mean nvCsE) ^ 2) := by
   simp only [nvCsE, nvCsS, mean, Fin.sum_univ_two, Fintype.card_fin]
   norm_num
@@ -641,8 +671,8 @@ example (ne : ℝ) : combinedSahaBoltzmannSlope nvCsE nvCsY nvCsS 0 ne = - Real.
     Fintype.card_fin, Matrix.cons_val_zero, Matrix.cons_val_one]
   ring
 
-/-- The combined slope genuinely moves with `n_e` (non-degenerate `T`-leg): the slopes at
-`n_e = 1` and `n_e = e` differ (`0 ≠ −1`), so the outer map is not constant. -/
+/-- At the fixed offset `offConst = 0` the combined slope moves with `n_e`: the slopes at
+`n_e = 1` and `n_e = e` differ (`0 ≠ −1`), so this `T`-leg is not constant. -/
 example : combinedSahaBoltzmannSlope nvCsE nvCsY nvCsS 0 1
     ≠ combinedSahaBoltzmannSlope nvCsE nvCsY nvCsS 0 (Real.exp 1) := by
   have h1 : combinedSahaBoltzmannSlope nvCsE nvCsY nvCsS 0 1 = 0 := by

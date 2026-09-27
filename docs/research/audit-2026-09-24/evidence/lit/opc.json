@@ -1,0 +1,313 @@
+{
+  "total": 853,
+  "offset": 0,
+  "next": 8,
+  "data": [
+    {
+      "paperId": "4ddb355ea36c1858fefd5d0fc584b9914da399ce",
+      "externalIds": {
+        "MAG": "2058501695",
+        "DOI": "10.1039/C4JA00470A",
+        "CorpusId": 96772049
+      },
+      "title": "A method for improving the accuracy of calibration-free laser-induced breakdown spectroscopy (CF-LIBS) using determined plasma temperature by genetic algorithm (GA)",
+      "venue": "",
+      "year": 2015,
+      "citationCount": 41,
+      "authors": [
+        {
+          "authorId": "2144063316",
+          "name": "Juan Dong"
+        },
+        {
+          "authorId": "2155277632",
+          "name": "Long Liang"
+        },
+        {
+          "authorId": "2049043939",
+          "name": "Jiao Wei"
+        },
+        {
+          "authorId": "48176448",
+          "name": "Hong-Sheng Tang"
+        },
+        {
+          "authorId": "2009789780",
+          "name": "Tian-Long Zhang"
+        },
+        {
+          "authorId": "47008635",
+          "name": "Xiao-Feng Yang"
+        },
+        {
+          "authorId": "2117843501",
+          "name": "Kang Wang"
+        },
+        {
+          "authorId": "2108839992",
+          "name": "Hua Li"
+        }
+      ]
+    },
+    {
+      "paperId": "95df7262effee4b8144253f8b7b141bcf4f28911",
+      "externalIds": {
+        "MAG": "2624018052",
+        "CorpusId": 55527809
+      },
+      "title": "Silicon Based Temperature Sensors with Extended Temperature Range and Simple One-point Calibration",
+      "venue": "",
+      "year": 2015,
+      "citationCount": 3,
+      "authors": [
+        {
+          "authorId": "91082633",
+          "name": "I. Tobehn"
+        },
+        {
+          "authorId": "144277707",
+          "name": "A. Steinke"
+        },
+        {
+          "authorId": "143980779",
+          "name": "Andreas Albrecht"
+        },
+        {
+          "authorId": "92167238",
+          "name": "H. Hansch"
+        },
+        {
+          "authorId": "47312744",
+          "name": "M. Kunze"
+        },
+        {
+          "authorId": "1707247",
+          "name": "T. Ortlepp"
+        }
+      ]
+    },
+    {
+      "paperId": "3968260d871721e16f22c93415757bb73cf49cc5",
+      "externalIds": {
+        "MAG": "2085756513",
+        "DOI": "10.1007/S00340-014-5990-Z",
+        "CorpusId": 53455161
+      },
+      "title": "A hybrid calibration-free/artificial neural networks approach to the quantitative analysis of LIBS spectra",
+      "venue": "",
+      "year": 2015,
+      "citationCount": 64,
+      "authors": [
+        {
+          "authorId": "1398683232",
+          "name": "Eleonora D'Andrea"
+        },
+        {
+          "authorId": "2202870",
+          "name": "Stefano Pagnotta"
+        },
+        {
+          "authorId": "13464510",
+          "name": "E. Grifoni"
+        },
+        {
+          "authorId": "2315692",
+          "name": "S. Legnaioli"
+        },
+        {
+          "authorId": "2906844",
+          "name": "G. Lorenzetti"
+        },
+        {
+          "authorId": "2638662",
+          "name": "V. Palleschi"
+        },
+        {
+          "authorId": "1680609",
+          "name": "B. Lazzerini"
+        }
+      ]
+    },
+    {
+      "paperId": "276f00e27e552cb68d8ccec4a1d647be415b2543",
+      "externalIds": {
+        "DOI": "10.1007/s00340-014-5990-z",
+        "CorpusId": 253846405
+      },
+      "title": "A hybrid calibration-free/artificial neural networks approach to the quantitative analysis of LIBS spectra",
+      "venue": "Applied physics B",
+      "year": 2015,
+      "citationCount": 3,
+      "authors": [
+        {
+          "authorId": "1398683232",
+          "name": "Eleonora D'Andrea"
+        },
+        {
+          "authorId": "2202870",
+          "name": "Stefano Pagnotta"
+        },
+        {
+          "authorId": "13464510",
+          "name": "E. Grifoni"
+        },
+        {
+          "authorId": "2315692",
+          "name": "S. Legnaioli"
+        },
+        {
+          "authorId": "2906844",
+          "name": "G. Lorenzetti"
+        },
+        {
+          "authorId": "2638662",
+          "name": "V. Palleschi"
+        },
+        {
+          "authorId": "1680609",
+          "name": "B. Lazzerini"
+        }
+      ]
+    },
+    {
+      "paperId": "7fbb53aad5f78fe17fccddc641c7c7c8330e8bb9",
+      "externalIds": {
+        "MAG": "2034640135",
+        "DOI": "10.1016/J.SAB.2015.02.004",
+        "CorpusId": 96201952
+      },
+      "title": "Calibration-free analysis of steel slag by laser-induced breakdown spectroscopy with combined UV and VIS spectra",
+      "venue": "",
+      "year": 2015,
+      "citationCount": 31,
+      "authors": [
+        {
+          "authorId": "115639487",
+          "name": "P. Kolmhofer"
+        },
+        {
+          "authorId": "2481188854",
+          "name": "S. Eschlb\u00f6ck-Fuchs"
+        },
+        {
+          "authorId": "97735904",
+          "name": "N. Huber"
+        },
+        {
+          "authorId": "2054171914",
+          "name": "R. R\u00f6\u00dfler"
+        },
+        {
+          "authorId": "144580192",
+          "name": "J. Heitz"
+        },
+        {
+          "authorId": "12706145",
+          "name": "J. Pedarnig"
+        }
+      ]
+    },
+    {
+      "paperId": "e755b0f866df9573c2ece39dc52f742d72ae6518",
+      "externalIds": {
+        "MAG": "2352625460",
+        "DOI": "10.16910/JEMR.8.1.2",
+        "CorpusId": 17068426
+      },
+      "title": "SMOOVS: Towards calibration-free text entry by gaze using smooth pursuit movements",
+      "venue": "",
+      "year": 2015,
+      "citationCount": 52,
+      "authors": [
+        {
+          "authorId": "48950503",
+          "name": "Otto Hans-Martin Lutz"
+        },
+        {
+          "authorId": "2007434949",
+          "name": "Antje C. Venjakob"
+        },
+        {
+          "authorId": "39495713",
+          "name": "S. Ruff"
+        }
+      ]
+    },
+    {
+      "paperId": "cbb8474fe166de3667b455c9da224967256e2aa6",
+      "externalIds": {
+        "MAG": "2062174987",
+        "DOI": "10.1039/C4RA10132D",
+        "CorpusId": 96975077
+      },
+      "title": "A single-beam-splitting technique combined with a calibration-free method for field-deployable applications using laser-induced breakdown spectroscopy",
+      "venue": "",
+      "year": 2015,
+      "citationCount": 13,
+      "authors": [
+        {
+          "authorId": "2153556105",
+          "name": "Mingjun Xu"
+        },
+        {
+          "authorId": "47360318",
+          "name": "Qing-Yu Lin"
+        },
+        {
+          "authorId": "2052595443",
+          "name": "Guang Yang"
+        },
+        {
+          "authorId": "8132121",
+          "name": "Tao-Ran Xu"
+        },
+        {
+          "authorId": "2009789780",
+          "name": "Tian-Long Zhang"
+        },
+        {
+          "authorId": null,
+          "name": "Xu Wang"
+        },
+        {
+          "authorId": "39567350",
+          "name": "Shuai Wang"
+        },
+        {
+          "authorId": "2076182472",
+          "name": "Fang Bian"
+        },
+        {
+          "authorId": "145659087",
+          "name": "Y. Duan"
+        }
+      ]
+    },
+    {
+      "paperId": "91e8355ce7593ec6650c32be888aca076e491b0c",
+      "externalIds": {
+        "MAG": "2326683443",
+        "DOI": "10.3169/ITEJ.69.J53",
+        "CorpusId": 61762914
+      },
+      "title": "A Calibration Method using One Point for Instructing Robot by Pointing Gestures",
+      "venue": "",
+      "year": 2015,
+      "citationCount": 1,
+      "authors": [
+        {
+          "authorId": "48758713",
+          "name": "S. Ueno"
+        },
+        {
+          "authorId": "144889095",
+          "name": "S. Naito"
+        },
+        {
+          "authorId": "40894914",
+          "name": "Tsuhan Chen"
+        }
+      ]
+    }
+  ]
+}

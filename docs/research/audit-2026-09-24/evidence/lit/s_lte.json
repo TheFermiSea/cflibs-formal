@@ -1,0 +1,331 @@
+{
+  "total": 34,
+  "offset": 0,
+  "next": 10,
+  "data": [
+    {
+      "paperId": "21c5567d4fd1433ee263c4cfdaa6ec483e1cf086",
+      "externalIds": {
+        "MAG": "1997926507",
+        "DOI": "10.1016/J.SAB.2009.11.005",
+        "CorpusId": 95218609
+      },
+      "title": "Local Thermodynamic Equilibrium in Laser-Induced Breakdown Spectroscopy: Beyond the McWhirter criterion",
+      "venue": "",
+      "year": 2010,
+      "citationCount": 622,
+      "authors": [
+        {
+          "authorId": "144043596",
+          "name": "G. Cristoforetti"
+        },
+        {
+          "authorId": "4382764",
+          "name": "A. De Giacomo"
+        },
+        {
+          "authorId": "1397943877",
+          "name": "M. Dell\u2019Aglio"
+        },
+        {
+          "authorId": "2315692",
+          "name": "S. Legnaioli"
+        },
+        {
+          "authorId": "92372926",
+          "name": "E. Tognoni"
+        },
+        {
+          "authorId": "2638662",
+          "name": "V. Palleschi"
+        },
+        {
+          "authorId": "12575877",
+          "name": "N. Omenetto"
+        }
+      ]
+    },
+    {
+      "paperId": "170f3db26d43ca358ffdfdcc228787189e15bbb7",
+      "externalIds": {
+        "MAG": "2327599030",
+        "DOI": "10.1364/AO.55.002741",
+        "CorpusId": 31403197,
+        "PubMed": "27139680"
+      },
+      "title": "Characterization of local thermodynamic equilibrium in a laser-induced aluminum alloy plasma.",
+      "venue": "Applied Optics",
+      "year": 2016,
+      "citationCount": 15,
+      "authors": [
+        {
+          "authorId": "2144288535",
+          "name": "Yong Zhang"
+        },
+        {
+          "authorId": "2152620315",
+          "name": "Zhen-Yang Zhao"
+        },
+        {
+          "authorId": "8132121",
+          "name": "Tao-Ran Xu"
+        },
+        {
+          "authorId": "12627037",
+          "name": "Guang-Hui Niu"
+        },
+        {
+          "authorId": "39691383",
+          "name": "Ying Liu"
+        },
+        {
+          "authorId": "145659087",
+          "name": "Y. Duan"
+        }
+      ]
+    },
+    {
+      "paperId": "67502d5208e9d49f5aac28758e4b81aac9ea7103",
+      "externalIds": {
+        "MAG": "2024531750",
+        "DOI": "10.1016/J.SAB.2014.03.009",
+        "CorpusId": 94831589
+      },
+      "title": "Investigation of the local thermodynamic equilibrium of laser-induced aluminum plasma by Thomson scattering technique",
+      "venue": "",
+      "year": 2014,
+      "citationCount": 30,
+      "authors": [
+        {
+          "authorId": "11586409",
+          "name": "A. Mendys"
+        },
+        {
+          "authorId": "46409776",
+          "name": "M. Ka\u0144ski"
+        },
+        {
+          "authorId": null,
+          "name": "Ali Farah-Sougueh"
+        },
+        {
+          "authorId": null,
+          "name": "Ali Farah-Sougueh"
+        },
+        {
+          "authorId": "67232139",
+          "name": "S. Pellerin"
+        },
+        {
+          "authorId": "92466695",
+          "name": "B. Pokrzywka"
+        },
+        {
+          "authorId": "12534074",
+          "name": "K. Dzier\u017c\u0229ga"
+        }
+      ]
+    },
+    {
+      "paperId": "42bf723ddbca56466a60f1f543ff2fd4aa60e672",
+      "externalIds": {
+        "DOI": "10.1016/j.ejpb.2024.114579",
+        "CorpusId": 274070214,
+        "PubMed": "39547471"
+      },
+      "title": "Homogeneity analysis of medicine tablets by laser induced breakdown spectroscopy combined with multivariate methods.",
+      "venue": "European journal of pharmaceutics and biopharmaceutics",
+      "year": 2024,
+      "citationCount": 2,
+      "authors": [
+        {
+          "authorId": "13616693",
+          "name": "A. Farhadian"
+        },
+        {
+          "authorId": "88876212",
+          "name": "M. Mollaei"
+        }
+      ]
+    },
+    {
+      "paperId": "2be15aa91bbb7649e96671b2ba614c8ce554b6d4",
+      "externalIds": {
+        "DOI": "10.1007/s00339-022-05871-9",
+        "CorpusId": 251340344
+      },
+      "title": "Quantitative laser-induced breakdown spectroscopy based on corona equilibrium for estimating atomic composition in powdered milk",
+      "venue": "Applied Physics A",
+      "year": 2022,
+      "citationCount": 1,
+      "authors": [
+        {
+          "authorId": "49807494",
+          "name": "K. Sasaki"
+        },
+        {
+          "authorId": "1750891507",
+          "name": "Kazusa Maruyama"
+        }
+      ]
+    },
+    {
+      "paperId": "be58c3529e1a2a5aef9f1e4f13f3f9f6d0bd93cf",
+      "externalIds": {
+        "MAG": "1516235770",
+        "DOI": "10.1063/1.4926990",
+        "CorpusId": 94328151
+      },
+      "title": "Investigation of thermodynamic equilibrium in laser-induced aluminum plasma using the H\u03b1 line profiles and Thomson scattering spectra",
+      "venue": "",
+      "year": 2015,
+      "citationCount": 13,
+      "authors": [
+        {
+          "authorId": "79476172",
+          "name": "M. Cveji\u0107"
+        },
+        {
+          "authorId": "12534074",
+          "name": "K. Dzier\u017c\u0229ga"
+        },
+        {
+          "authorId": "93371036",
+          "name": "T. Pieta"
+        }
+      ]
+    },
+    {
+      "paperId": "ac1468cf0b24c8977ace961e48be7aa9dd765980",
+      "externalIds": {
+        "MAG": "2031802838",
+        "DOI": "10.1016/J.SAB.2013.01.011",
+        "CorpusId": 95353113
+      },
+      "title": "Local thermodynamic equilibrium considerations in powerchip laser-induced plasmas",
+      "venue": "",
+      "year": 2013,
+      "citationCount": 19,
+      "authors": [
+        {
+          "authorId": "32830023",
+          "name": "J. Merten"
+        },
+        {
+          "authorId": "2219653857",
+          "name": "Benjamin W. Smith"
+        },
+        {
+          "authorId": "12575877",
+          "name": "N. Omenetto"
+        }
+      ]
+    },
+    {
+      "paperId": "c1f50b4c571687467a567693f005c85fdcab6f74",
+      "externalIds": {
+        "MAG": "2344978716",
+        "DOI": "10.1088/0963-0252/25/1/015006",
+        "CorpusId": 102132221
+      },
+      "title": "Position- and time-resolved Stark broadening diagnostics of a non-thermal laser-induced plasma",
+      "venue": "",
+      "year": 2016,
+      "citationCount": 17,
+      "authors": [
+        {
+          "authorId": "2143856960",
+          "name": "Hao Liu"
+        },
+        {
+          "authorId": "39766894",
+          "name": "B. Truscott"
+        },
+        {
+          "authorId": "4452153",
+          "name": "M. Ashfold"
+        }
+      ]
+    },
+    {
+      "paperId": "9605c82bbae2b57b3e5c7e31a3d390e594392ba2",
+      "externalIds": {
+        "MAG": "3096195384",
+        "PubMedCentral": "7785430",
+        "DOI": "10.1016/j.sjbs.2020.10.024",
+        "CorpusId": 228957530,
+        "PubMed": "33424324"
+      },
+      "title": "Nutritional and toxic elemental analysis of dry fruits using laser induced breakdown spectroscopy (LIBS) and inductively coupled plasma atomic emission spectrometry (ICP-AES)",
+      "venue": "Saudi Journal of Biological Sciences",
+      "year": 2020,
+      "citationCount": 39,
+      "authors": [
+        {
+          "authorId": "93448913",
+          "name": "I. Rehan"
+        },
+        {
+          "authorId": "153280464",
+          "name": "M. A. Gondal"
+        },
+        {
+          "authorId": "2148619831",
+          "name": "M. A. Almessiere"
+        },
+        {
+          "authorId": "81780864",
+          "name": "R. A. Dakheel"
+        },
+        {
+          "authorId": "94366330",
+          "name": "K. Rehan"
+        },
+        {
+          "authorId": "119879760",
+          "name": "S. Sultana"
+        },
+        {
+          "authorId": "34574256",
+          "name": "M. Dastageer"
+        }
+      ]
+    },
+    {
+      "paperId": "ebea19cadc9a1eb56d186f46853b0834fe984974",
+      "externalIds": {
+        "CorpusId": 53405427
+      },
+      "title": "COMPARATIVE STUDY OF LASER INDUCED PLASMA IN ARGON USING OPTICAL EMISSION SPECTROSCOPY AND THOMSON SCATTERING",
+      "venue": "",
+      "year": 2014,
+      "citationCount": 1,
+      "authors": [
+        {
+          "authorId": "1431750667",
+          "name": "A. Farah-Sougueh"
+        },
+        {
+          "authorId": "11586409",
+          "name": "A. Mendys"
+        },
+        {
+          "authorId": "93371036",
+          "name": "T. Pieta"
+        },
+        {
+          "authorId": "12534074",
+          "name": "K. Dzier\u017c\u0229ga"
+        },
+        {
+          "authorId": "67232139",
+          "name": "S. Pellerin"
+        },
+        {
+          "authorId": "2071820771",
+          "name": "J. Hermann"
+        }
+      ]
+    }
+  ]
+}

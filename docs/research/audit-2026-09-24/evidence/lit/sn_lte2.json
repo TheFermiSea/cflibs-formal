@@ -1,0 +1,265 @@
+{
+  "data": [
+    {
+      "score": 0.8404814056118872,
+      "paper": {
+        "corpusId": "266754320",
+        "title": "CF-LIBS based elemental analysis of Saussurea simpsoniana medicinal plant: a study on roots, seeds, and leaves",
+        "authors": [
+          "A. Fayyaz",
+          "N. Ali",
+          "Z. A. Umar",
+          "H. Asghar",
+          "M. Waqas",
+          "R. Ahmed",
+          "R. Ali",
+          "M. A. Baig"
+        ],
+        "openAccessInfo": {
+          "license": null,
+          "status": "GOLD",
+          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://api.unpaywall.org/v2/10.1007/s44211-023-00480-9?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.1007/s44211-023-00480-9, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        }
+      },
+      "snippet": {
+        "text": "Additionally, apart from the McWhirter criterion, which is necessary but not a complete condition, we also examined the relaxation time of the plasma, which represents the time required for the establishment of excitation and ionization equilibrium. We confirmed that this time is considerably shorter than the period of variation in thermodynamic parameters as proposed by Cristoforetti et al. [46]. Furthermore, Cristoforetti et al. [46] introduced an additional criterion for an inhomogeneous plasma to be considered in LTE. According to this criterion, the characteristic variation length \"d\" should be much larger than the diffusion length (10\u03bb < d). The diffusion-length (\u03bb) was estimated using the following relation [46,47]. \n\nwhere \u03bb is the diffusion-length, \u0394E corresponds to the energy gap, while k B T refers to the plasma temperature, and both values are calculated in electron volts (eV). The variable M A signifies the atomic mass of a unique element, while f 12 indicates the oscillator strength obtained from ( 4) N e (cm \u22123 ) \u2265 1.6 \u00d7 10 12",
+        "snippetKind": "body"
+      }
+    },
+    {
+      "score": 0.6718531274313615,
+      "paper": {
+        "corpusId": "245218923",
+        "title": "Role of Focusing Distance in Picosecond Laser-Induced Cu Plasma Spectra",
+        "authors": [
+          "Lin-Yu Chen",
+          "Hu Deng",
+          "Zhi-Xiang Wu",
+          "Zhong-Gang Xiong",
+          "Jin Guo",
+          "Quancheng Liu",
+          "Akwasi Danso Samuel",
+          "L. Shang"
+        ],
+        "openAccessInfo": {
+          "license": "CCBY",
+          "status": "GOLD",
+          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://arxiv.org/abs/2112.08942, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        }
+      },
+      "snippet": {
+        "text": "LTE refers to the existence of thermal equilibrium within a small region of the plasma. In LTE plasma, the collisional processes of excitation and de-excitation dominate the radiative processes, which require the electron density to be following the McWhirter relation [34], \n\n( ) \n\nwhere \u0394E represents the difference between the upper and lower energy (eV) levels of the spectral line. According to the physical parameters mentioned in the last section, the minimum electron density can be approximately calculated as 0.202*10 16 /cm 3 \n\nwhere the \u03c4rel is the plasma relaxation time, which can be expressed as [34], \n\n( ) \n\nwhere fmn is the oscillator strength of the m-n transition (ranging from 0.42 to 0.54, Table 1.1 in literature [35]). <g> is the effective Gaunt factor (dimensionless, ~ 04, Fig. 1 in literature [36]). \u25b3Enm is the energy difference between the upper and lower level. For line 521.82 nm, the relaxation time \u03c4rel is estimated at ~ 3.3 nanoseconds, which is much shorter than the observation time of the spectrometer in this work. It means that the LTE is satisfied when the plasma is homogenous and transient in this work. \n\nTo consider the valid LTE as overall as possible, the third criterion, diffusion length, should be estimated in the inhomogeneous and transient plasmas. It requires that the diffusion length (\uf044x) of species, during a period of the order of the relaxation time (\u03c4rel) to the equilibrium, is shorter than the variation length of temperature and electron number density in the plasma. The condition for LTE at the position x can be expressed as [34], \n\nthe diffusion length \uf044x is expressed as [34], \n\n( ) \n\nwhere the MA is the relative mass of the species considered. Generally, the diffusion length must be at least one order of magnitude shorter than the plasma dimension. For Cu element, the value of MA is 29. The diffusion length \uf044x is estimated as ~1.92 \u03bcm, while the plasma diameter can be estimated at ~1 mm. It means that the LTE is validated when the plasma is inhomogeneous and transient in this work.",
+        "snippetKind": "body"
+      }
+    },
+    {
+      "score": 0.6483306043254856,
+      "paper": {
+        "corpusId": "246210291",
+        "title": "Optical diagnostics of laser-produced plasmas",
+        "authors": [
+          "S. S. Harilal",
+          "M. Phillips",
+          "D. Froula",
+          "K. Anoop",
+          "R. Issac",
+          "F. Beg"
+        ],
+        "openAccessInfo": {
+          "license": null,
+          "status": "GREEN",
+          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://arxiv.org/abs/2201.08783, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        }
+      },
+      "snippet": {
+        "text": "But it must be pointed out that the McWhirter criterion, which is derived for homogeneous and optically thin plasma, may be a necessary condition but not a sufficient condition to ensure LTE for a transient and inhomogeneous plasma like an LPP.In other words, the minimum electron requirement according to the McWhirter criterion warrants that the LTE conditions may exist in the plasma, but not with certainty.According to Cristoforetti et al. (2010), the mere use of the McWhirter criterion alone to assess the existence of the LTE in laser-induced plasmas should not be encouraged.Considering the existence of large gradients in fundamental parameters of the LPP with space and time, a significant deviation from LTE can be expected if the measurements were performed in a spatially and temporally integrated manner.Instead, the assumption of partial LTE may be valid for spatially and temporally resolved spectral analysis.The LTE is not a valid assumption for plasmas with low densities and/or high temperatures, which are typically called non-equilibrium plasmas or non-LTE plasmas.Examples of non-equilibrium plasmas include inertial and magnetic confinement fusion plasmas, as well as astrophysical and processing plasmas.The collisionradiative (CR) model is typically used to describe non-LTE plasmas, where the local population distribution is described by balancing local collisional processes and non-local radiative processes.The CR model uses multilevel atomic rate equations and radiation transport equations for calculating atomic-level population (Chung et al., 2005;Ralchenko, 2016).",
+        "snippetKind": "body"
+      }
+    },
+    {
+      "score": 0.604562673279863,
+      "paper": {
+        "corpusId": "259345842",
+        "title": "Radial characteristics of laser-induced plasma under the influence of air pressure",
+        "authors": [
+          "H. Yuan",
+          "W. Ke",
+          "J. Liu",
+          "M.-Y. Chen",
+          "X. Wang",
+          "A.-J. Yang",
+          "Jifeng Chu",
+          "D.-X. Liu",
+          "M.-Z. Rong"
+        ],
+        "openAccessInfo": {
+          "license": "CCBYNCND",
+          "status": "HYBRID",
+          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://api.unpaywall.org/v2/10.1088/1361-6463/ace197?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.1088/1361-6463/ace197, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        }
+      },
+      "snippet": {
+        "text": "The McWhirter criterion is commonly used by researchers to study the LTE of LIP [17,27,28]. According to the McWhirter criterion, the plasma can be considered in LTE when the deexcitation rate resulting from electron collisions with atoms or ions is at least ten times greater than the spontaneous emission rate, and the collision process is dominant in LIP. The McWhirter criterion can be expressed as [28]: \n\nwhere n e is the electron density of the LIP, T is the absolute temperature of the LIP, and \u2206E is the largest energy difference between the ground state and the excited state. \n\nWith regard to the transient plasma induced by a pulsed laser, the McWhirter criterion is only a necessary condition, not a sufficient condition for the LIP in LTE; further investigation of electron temperature and electron density of LIP is needed [29].",
+        "snippetKind": "body"
+      }
+    },
+    {
+      "score": 0.5911842531521865,
+      "paper": {
+        "corpusId": "247869279",
+        "title": "Comparison of Mg/Ca concentration series from Patella depressa limpet shells using CF-LIBS and LA-ICP-MS.",
+        "authors": [
+          "M. Mart\u00ednez-Minchero",
+          "A. Cobo",
+          "A. M\u00e9ndez-Vicente",
+          "J. Pisonero",
+          "N. Bordel",
+          "Igor Guti\u00e9rrez-Zugasti",
+          "Patrick Roberts",
+          "A. Arrizabalaga",
+          "J. Valdiande",
+          "J. Mirapeix",
+          "J. L\u00f3pez-Higuera",
+          "A. Garc\u00eda-Esc\u00e1rzaga"
+        ],
+        "openAccessInfo": {
+          "license": null,
+          "status": "GREEN",
+          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://api.unpaywall.org/v2/10.2139/ssrn.4068706?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.2139/ssrn.4068706, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        }
+      },
+      "snippet": {
+        "text": "To assess the LTE conditions, the McWhirter criterion has been used [60]. Plasma temperatures obtained from the Saha-Boltzmann plots (see Table 3) are around 7500 K; from this, minimum electronic density to achieve LTE conditions should be 1.8E16 cm \u2212 3 , while our average value is 5.7E16cm \u2212 3 . As an additional necessary condition for LTE [58], we have verified that the diffusion length of a non-homogeneous, non-stationary plasma (calculated in our case as 0.025 mm) is much shorter than the variation length (with typical values of a few mm in our experimental conditions). \n\nThe calculations required to obtain the concentrations at each spatial point were carried out by a Matlab implementation of the CF-LIBS algorithm described before in section 2.4. The code is available at htt ps://github.com/acobo/CFLIBS.",
+        "snippetKind": "body"
+      }
+    },
+    {
+      "score": 0.560283569599863,
+      "paper": {
+        "corpusId": "233608459",
+        "title": "Chemical Analysis of Thermoluminescent Colorless Topaz Crystal Using Laser-Induced Breakdown Spectroscopy",
+        "authors": [
+          "S. Abbasi",
+          "M. Rafique",
+          "T. Khan",
+          "A. Khan",
+          "Nasar Ahmad",
+          "M. Faruque",
+          "Mayeen Uddin Khandaker",
+          "P. Ahmad",
+          "A. Saboor"
+        ],
+        "openAccessInfo": {
+          "license": "CCBY",
+          "status": "GOLD",
+          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://api.unpaywall.org/v2/10.3390/MIN11040367?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.3390/MIN11040367, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        }
+      },
+      "snippet": {
+        "text": "CF-LIBS methodology [28] can be employed for quantitative analysis subject to the conditions that plasma is; (a) at local thermodynamic equilibrium (LTE), (b) optically thin, and (c) of stoichiometric ablation. The existence of LTE is an essential condition in the CF-LIBS method, and to accomplish this condition, atomic states should be populated and depopulated predominantly by electron collisions instead of radiation. This could happen if the electron number density (n e ) is sufficiently high. For a high collision rate, the required minimum value of n e is given by the McWhirter criterion [43]: \n\nwhere T e and \u2206E are electron temperature, and the energy difference between the states expected to be in LTE, the McWhirter criterion for LTE in transient and inhomogeneous plasma is necessary, but not sufficient condition. In order to check the existence of LTE, Cristoforetti et al. [44] have suggested another criterion. According to them, in time duration of the order of atoms/ions relaxation time, the diffusion length (D \u03bb ) should be ten times less than the characteristic variation length (d) of electron number density and temperature in the plasma. Generally, the value of d \u2248 f u/(dT(x)/dx) is considered as plasma diameter or fraction of it. In this expression, T(x) is electron temperature at position x in plasma, and dT(x)/dx shows the variation in temperature with position within the plasma. D \u03bb (cm) can be estimated from the following expression: \n\nwhere \u2206E(eV), k B T(eV), n e cm \u22123 , M A , f 12 , and < g > are upper-level energy, plasma temperature, electron number density, atomic mass, oscillator strength and gaunt factor, respectively. \n\nTo verify the condition of optically thin plasma, the intensity ratio method can be used given by the following expression [45]:",
+        "snippetKind": "body"
+      }
+    },
+    {
+      "score": 0.5310346771732525,
+      "paper": {
+        "corpusId": "11283051",
+        "title": "Laser Induced Breakdown Spectroscopy for Elemental Analysis in Environmental, Cultural Heritage and Space Applications: A Review of Methods and Results",
+        "authors": [
+          "R. Gaudiuso",
+          "M. Dell\u2019Aglio",
+          "O. De Pascale",
+          "G. Senesi",
+          "A. De Giacomo"
+        ],
+        "openAccessInfo": {
+          "license": "CCBY",
+          "status": "GOLD",
+          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://pmc.ncbi.nlm.nih.gov/articles/PMC3231154, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        }
+      },
+      "snippet": {
+        "text": "The validity of this assumption can be further ensured by means of appropriate experimental approaches, such as choice of temporal and spatial regions suitable for spectra detection, and methods of data treatment for spatial resolution, such as the Abel inversion [59]. \n\nAs for the LTE condition, it is common practice in the LIBS literature to consider that the elementary balances between material particles are in equilibrium, while the light-matter balance is not, if the Boltzmann distribution (see next section) and the McWhirter criterion hold. This criterion states the existence of a critical value for electron density N e , that is: \n\nwhere T is the plasma temperature and \u2206E nm is the maximum energy gap between two adjacent transition levels n and m. Though a detailed discussion about the LTE condition in LIPs is beyond the scope of the present paper, it is useful to mention here that the McWhirter criterion is actually only a necessary condition for LTE, but its use has been widely documented for all analytical purposes in LIBS literature (see for example [69] and references therein). A further requirement is that the acquisition time parameters are accurately chosen to make sure that the Saha equilibrium of ionization/recombination reactions is established in a time shorter than that associated to the change of plasma parameters. For details about the assessment of LTE in LIPs, the interested reader can refer to [52,70,71].",
+        "snippetKind": "body"
+      }
+    },
+    {
+      "score": 0.5300091190369332,
+      "paper": {
+        "corpusId": "246210291",
+        "title": "Optical diagnostics of laser-produced plasmas",
+        "authors": [
+          "S. S. Harilal",
+          "M. Phillips",
+          "D. Froula",
+          "K. Anoop",
+          "R. Issac",
+          "F. Beg"
+        ],
+        "openAccessInfo": {
+          "license": null,
+          "status": "GREEN",
+          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://arxiv.org/abs/2201.08783, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        }
+      },
+      "snippet": {
+        "text": "For the temperature and density measurement employing spectroscopic tools, it is commonly assumed that the plasma is in LTE (except the electron density measurement using Stark broadening).Under thermal equilibrium (TE), the population distribution of atoms or ions at various energy levels in a plasma is related to the temperature and the density through a Boltzmann distribution, the population distributions of atoms of adjacent ions states are described by a Saha-Boltzmann relation and the intensity of radiation is given by the Planck function.However, it is challenging to establish TE in LPPs.So, the measurement of various temperatures in the LPP is carried out under the assumption of LTE.\n\nThe existence of LTE in a transient system such as LPP requires that the electron-atom and electron-ion collisional processes occur sufficiently fast and dominate the radiative processes.The radiation processes in a LTE plasma are not following a Planck function; instead, it depends on local plasma conditions along with population distributions and atomic transition probabilities.LTE is a reasonably valid assumption for LPPs with relatively high densities and low plasma temperatures.In these scenarios, the population distributions at any time during plasma evolution are determined by the local plasma conditions set by Boltzmann and Saha relations.Even if there is a departure from LTE, a part of the energy levels favor collisional transitions over radiative transitions and those plasmas are considered to in partial LTE.\n\nThere exist several articles discussing the existence of LTE in an LPP (Cristoforetti et al., 2010;Zhang et al., 2014), and still, it is a debated topic specifically when and where the LPP is considered to be in LTE or partial LTE.One of the most commonly utilized methods for validating the existence of LTE in LPP is the McWhirter criterion (McWhirter, 1969), which states that the minimum density for LTE should be\n\nwhere T and \u2206E (the energy difference between upper and lower energy levels) are in eV.But it must be pointed out that the McWhirter criterion, which is derived for homogeneous and optically thin plasma, may be a necessary condition but not a sufficient condition to ensure LTE for a transient and inhomogeneous plasma like an LPP.",
+        "snippetKind": "body"
+      }
+    },
+    {
+      "score": 0.5279199047167678,
+      "paper": {
+        "corpusId": "233608459",
+        "title": "Chemical Analysis of Thermoluminescent Colorless Topaz Crystal Using Laser-Induced Breakdown Spectroscopy",
+        "authors": [
+          "S. Abbasi",
+          "M. Rafique",
+          "T. Khan",
+          "A. Khan",
+          "Nasar Ahmad",
+          "M. Faruque",
+          "Mayeen Uddin Khandaker",
+          "P. Ahmad",
+          "A. Saboor"
+        ],
+        "openAccessInfo": {
+          "license": "CCBY",
+          "status": "GOLD",
+          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://api.unpaywall.org/v2/10.3390/MIN11040367?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.3390/MIN11040367, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        }
+      },
+      "snippet": {
+        "text": "For the Si-I line at 288.20 nm, the energy difference between states is \u2206E = 4.3 eV. McWhirter criterion suggests that for plasma temperature of 12,660 K, a value of n e (cm \u22123 ) \u22651.4 \u00d7 10 16 would be required for LTE to existing. The McWhirter criterion was also verified for various spectral lines of identified minor and major elements in emission spectra and the results indicated the existence of LTE condition. \n\nIn order to check the existence of LTE, another criterion suggested by Cristoforetti et al. [44] was also verified. For the calculation of diffusion length (D \u03bb ), values of f 12 , and < g > were obtained from the NIST database and Cristoforetti et al., respectively [44,48]. For the selected emission lines of Si and Al, the calculated values of D \u03bb given in Table 2, were found to be 10 times less than the assumed characteristic variation length (d) of 2 mm. This result further validates the LTE assumption.",
+        "snippetKind": "body"
+      }
+    },
+    {
+      "score": 0.49825162292714986,
+      "paper": {
+        "corpusId": "272762678",
+        "title": "Compositional analysis of Swertia chirayita medicinal plant using laser-induced breakdown spectroscopy and ICP-MS",
+        "authors": [
+          "Habib ur Rehman",
+          "Najam Ul Hassan",
+          "Mohsan Jelani",
+          "Kaseb D. Alanazi",
+          "Nasar Ahmed",
+          "T. Ullah",
+          "M. Javed",
+          "Khaled Fahmi Fawy"
+        ],
+        "openAccessInfo": {
+          "license": "CCBY",
+          "status": "GOLD",
+          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://pmc.ncbi.nlm.nih.gov/articles/PMC11414975, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        }
+      },
+      "snippet": {
+        "text": "When utilizing the McWhirter criteria, number densities are calculated that are much lower than when using the Stark broadening parameters in the range (2.2 \u00b1 0.1) \u00d7 10 15 cm -3 . The electron number density obtained using McWhirter criteria is substantially less than that found by Stark broadening parameters. Therefore, the plasma can be near to LTE.",
+        "snippetKind": "body"
+      }
+    }
+  ],
+  "retrievalVersion": "pa1-v1"
+}

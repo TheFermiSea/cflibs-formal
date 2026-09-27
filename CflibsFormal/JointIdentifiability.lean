@@ -14,7 +14,7 @@ temperature equality `T₁ = T₂` was **not** extracted from the observations `
 delivered by a separately *assumed* two-line Boltzmann-ratio hypothesis `hTratio` on a
 distinct-energy pair. Physically the CF-LIBS solver never assumes that ratio — it *measures*
 at least two lines per species and fits `(T, composition)` simultaneously. This module models
-exactly that: a **two-line** observation map, from which the temperature is now *derived*.
+that step: a **two-line** observation map, from which the temperature is now *derived*.
 
 * `observe₂` — the two-line observation map: for species `s` it reports the ordered pair of
   integrated intensities of two emitting lines `emitA s`, `emitB s`, reusing `Inverse.observe`
@@ -31,7 +31,12 @@ exactly that: a **two-line** observation map, from which the temperature is now 
 Both `temperature_identifiability` and `density_identifiability` are reused verbatim (neither is
 reproven). *Honest scope:* two lines per species is the **minimal** multi-line case; the full
 `n`-line ordinary-least-squares slope fit and its own identifiability live in the
-`Alt`/`LeastSquares` layer and are not addressed here.
+`Alt`/`LeastSquares` layer and are not addressed here. Two caveats of `general_identifiability`
+remain: the statement is over the shared-catalog `PlasmaParams` (one level table and one
+partition function for every species, a modeling reduction; published scope REDUCED), and it
+assumes a known, equal calibration `hFeq` rather than the calibration-free setting. `hFeq` is
+removable for the stated conclusion (see the theorem's docstring), but that version is not
+formalized here.
 -/
 
 namespace CflibsFormal
@@ -74,12 +79,23 @@ too (equal numerators over equal denominators), and `temperature_identifiability
 `T₁ = T₂` from that ratio alone. Composition then follows exactly as in `general_identifiability`:
 once temperatures are matched, `density_identifiability` forces equal `N s` for every species
 (hence equal closure composition). So `(T, composition)` is jointly identifiable from the
-observations alone, given ≥ 2 distinct-energy lines on at least one species.
+two-line observations, given ≥ 2 distinct-energy lines on at least one species, known shared
+atomic data (`hgeq`, `hEeq`, `hAeq`) and an equal calibration (`hFeq`). It is not
+identifiability "from the observations alone".
 
 Assembled strictly from the already-proven `temperature_identifiability` and
 `density_identifiability` (neither reproven). *Honest scope:* two lines per species is the
 minimal multi-line case; the full `n`-line ordinary-least-squares slope fit is the
 `Alt`/`LeastSquares` layer's concern.
+
+*Model and calibration.* The statement is over `PlasmaParams`: one level catalog, hence one
+partition function `U(T)`, serves every species. That is a modeling reduction (real elements
+have their own `U_s(T)`), so the published scope is REDUCED. `hFeq` assumes both parameter
+sets carry the same known calibration, which is not the calibration-free setting, and it is
+stronger than the conclusion needs: the temperature step uses only a line ratio, in which
+`Fcal` cancels, and in the density step `Fcal` multiplies every observation, so with
+`Fcal₁ ≠ Fcal₂` the densities rescale by `Fcal₂/Fcal₁` and closure is scale-invariant. That
+`hFeq`-free version is not formalized in this repository.
 
 Non-vacuous: `species = Fin 1`, `levelIndex = Fin 2`, `kB = Fcal₁ = Fcal₂ = 1`,
 `emitA = fun _ => 0`, `emitB = fun _ => 1`, `p₁ = p₂` with `T = N = g = A = 1`, `E = ![0,1]`;

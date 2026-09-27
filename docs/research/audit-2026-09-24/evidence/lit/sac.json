@@ -1,0 +1,287 @@
+{
+  "total": 31,
+  "offset": 0,
+  "next": 8,
+  "data": [
+    {
+      "paperId": "4ddb355ea36c1858fefd5d0fc584b9914da399ce",
+      "externalIds": {
+        "MAG": "2058501695",
+        "DOI": "10.1039/C4JA00470A",
+        "CorpusId": 96772049
+      },
+      "title": "A method for improving the accuracy of calibration-free laser-induced breakdown spectroscopy (CF-LIBS) using determined plasma temperature by genetic algorithm (GA)",
+      "venue": "",
+      "year": 2015,
+      "citationCount": 41,
+      "authors": [
+        {
+          "authorId": "2144063316",
+          "name": "Juan Dong"
+        },
+        {
+          "authorId": "2155277632",
+          "name": "Long Liang"
+        },
+        {
+          "authorId": "2049043939",
+          "name": "Jiao Wei"
+        },
+        {
+          "authorId": "48176448",
+          "name": "Hong-Sheng Tang"
+        },
+        {
+          "authorId": "2009789780",
+          "name": "Tian-Long Zhang"
+        },
+        {
+          "authorId": "47008635",
+          "name": "Xiao-Feng Yang"
+        },
+        {
+          "authorId": "2117843501",
+          "name": "Kang Wang"
+        },
+        {
+          "authorId": "2108839992",
+          "name": "Hua Li"
+        }
+      ]
+    },
+    {
+      "paperId": "cbb8474fe166de3667b455c9da224967256e2aa6",
+      "externalIds": {
+        "MAG": "2062174987",
+        "DOI": "10.1039/C4RA10132D",
+        "CorpusId": 96975077
+      },
+      "title": "A single-beam-splitting technique combined with a calibration-free method for field-deployable applications using laser-induced breakdown spectroscopy",
+      "venue": "",
+      "year": 2015,
+      "citationCount": 13,
+      "authors": [
+        {
+          "authorId": "2153556105",
+          "name": "Mingjun Xu"
+        },
+        {
+          "authorId": "47360318",
+          "name": "Qing-Yu Lin"
+        },
+        {
+          "authorId": "2052595443",
+          "name": "Guang Yang"
+        },
+        {
+          "authorId": "8132121",
+          "name": "Tao-Ran Xu"
+        },
+        {
+          "authorId": "2009789780",
+          "name": "Tian-Long Zhang"
+        },
+        {
+          "authorId": null,
+          "name": "Xu Wang"
+        },
+        {
+          "authorId": "39567350",
+          "name": "Shuai Wang"
+        },
+        {
+          "authorId": "2076182472",
+          "name": "Fang Bian"
+        },
+        {
+          "authorId": "145659087",
+          "name": "Y. Duan"
+        }
+      ]
+    },
+    {
+      "paperId": "a2598d7bcb59165d849f6a5c09eb8e20f497c068",
+      "externalIds": {
+        "MAG": "1968981286",
+        "DOI": "10.4236/OPJ.2015.53007",
+        "CorpusId": 38943681
+      },
+      "title": "Self-Absorption Effects on Electron Temperature-Measurements Utilizing Laser Induced Breakdown Spectroscopy (LIBS)-Techniques",
+      "venue": "",
+      "year": 2015,
+      "citationCount": 42,
+      "authors": [
+        {
+          "authorId": "40658417",
+          "name": "S. Mansour"
+        }
+      ]
+    },
+    {
+      "paperId": "624cb607c3dfadc83f391f1db73f20ca95abd053",
+      "externalIds": {
+        "MAG": "841638186",
+        "DOI": "10.1016/J.SAB.2015.06.009",
+        "CorpusId": 45357433
+      },
+      "title": "Calibration-free analysis of immersed brass alloys using long-ns-duration pulse laser-induced breakdown spectroscopy with and without correction for nonstoichiometric ablation",
+      "venue": "",
+      "year": 2015,
+      "citationCount": 52,
+      "authors": [
+        {
+          "authorId": "48334905",
+          "name": "Tomoko Takahashi"
+        },
+        {
+          "authorId": "2050699",
+          "name": "B. Thornton"
+        },
+        {
+          "authorId": "2059204304",
+          "name": "K. Ohki"
+        },
+        {
+          "authorId": "46676889",
+          "name": "T. Sakka"
+        }
+      ]
+    },
+    {
+      "paperId": "7fbb53aad5f78fe17fccddc641c7c7c8330e8bb9",
+      "externalIds": {
+        "MAG": "2034640135",
+        "DOI": "10.1016/J.SAB.2015.02.004",
+        "CorpusId": 96201952
+      },
+      "title": "Calibration-free analysis of steel slag by laser-induced breakdown spectroscopy with combined UV and VIS spectra",
+      "venue": "",
+      "year": 2015,
+      "citationCount": 31,
+      "authors": [
+        {
+          "authorId": "115639487",
+          "name": "P. Kolmhofer"
+        },
+        {
+          "authorId": "2481188854",
+          "name": "S. Eschlb\u00f6ck-Fuchs"
+        },
+        {
+          "authorId": "97735904",
+          "name": "N. Huber"
+        },
+        {
+          "authorId": "2054171914",
+          "name": "R. R\u00f6\u00dfler"
+        },
+        {
+          "authorId": "144580192",
+          "name": "J. Heitz"
+        },
+        {
+          "authorId": "12706145",
+          "name": "J. Pedarnig"
+        }
+      ]
+    },
+    {
+      "paperId": "c577ed8e9545acb2deb83bd283b113c1bb6f7696",
+      "externalIds": {
+        "MAG": "2291265888",
+        "DOI": "10.1049/CJE.2015.07.006",
+        "CorpusId": 61845858
+      },
+      "title": "Nonlinearity Calibration for Pipelined ADCs by Splitting Capacitors with Self-Tracking Comparator Thresholds",
+      "venue": "",
+      "year": 2015,
+      "citationCount": 0,
+      "authors": [
+        {
+          "authorId": "2446823978",
+          "name": "Ke Wang"
+        },
+        {
+          "authorId": "1886389",
+          "name": "Chaojie Fan"
+        },
+        {
+          "authorId": "47538328",
+          "name": "Wenjie Pan"
+        },
+        {
+          "authorId": "46618405",
+          "name": "Jianjun Zhou"
+        }
+      ]
+    },
+    {
+      "paperId": "b2f6b120b839c248055f92110c1a7bb72efb74ff",
+      "externalIds": {
+        "MAG": "2157258107",
+        "DOI": "10.1039/C4JA00421C",
+        "CorpusId": 98186394
+      },
+      "title": "Quantitative and classification analysis of slag samples by laser induced breakdown spectroscopy (LIBS) coupled with support vector machine (SVM) and partial least square (PLS) methods",
+      "venue": "",
+      "year": 2015,
+      "citationCount": 99,
+      "authors": [
+        {
+          "authorId": "2009789780",
+          "name": "Tian-Long Zhang"
+        },
+        {
+          "authorId": "94088935",
+          "name": "Shang-Qian Wu"
+        },
+        {
+          "authorId": "2144063316",
+          "name": "Juan Dong"
+        },
+        {
+          "authorId": "2049043939",
+          "name": "Jiao Wei"
+        },
+        {
+          "authorId": "2117843501",
+          "name": "Kang Wang"
+        },
+        {
+          "authorId": "48176448",
+          "name": "Hong-Sheng Tang"
+        },
+        {
+          "authorId": "47008635",
+          "name": "Xiao-Feng Yang"
+        },
+        {
+          "authorId": "2108839992",
+          "name": "Hua Li"
+        }
+      ]
+    },
+    {
+      "paperId": "f59d7d8c489863203ec90c2782f3f85c0c1dcf8c",
+      "externalIds": {
+        "MAG": "1034791930",
+        "DOI": "10.1007/S00340-015-6166-1",
+        "CorpusId": 116996339
+      },
+      "title": "Quantitative analysis of aluminum samples in He ambient gas at different pressures in a thick LIBS plasma",
+      "venue": "",
+      "year": 2015,
+      "citationCount": 9,
+      "authors": [
+        {
+          "authorId": "38270563",
+          "name": "F. Rezaei"
+        },
+        {
+          "authorId": "5060417",
+          "name": "S. H. Tavassoli"
+        }
+      ]
+    }
+  ]
+}

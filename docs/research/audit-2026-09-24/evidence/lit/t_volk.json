@@ -1,0 +1,27 @@
+{
+  "total": 1,
+  "offset": 0,
+  "data": [
+    {
+      "paperId": "3111fb22c7d0606a5f64f40419aaf12bb09f0b93",
+      "externalIds": {
+        "DOI": "10.1039/d4ja00028e",
+        "CorpusId": 268141313
+      },
+      "title": "Mass and mole fractions in calibration-free LIBS",
+      "venue": "Journal of Analytical Atomic Spectrometry",
+      "year": 2024,
+      "citationCount": 1,
+      "authors": [
+        {
+          "authorId": "96732144",
+          "name": "T. V\u00f6lker"
+        },
+        {
+          "authorId": "14727563",
+          "name": "I. Gornushkin"
+        }
+      ]
+    }
+  ]
+}

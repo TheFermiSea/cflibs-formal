@@ -1,0 +1,371 @@
+{
+  "total": 870,
+  "offset": 0,
+  "next": 10,
+  "data": [
+    {
+      "paperId": "8c343689a0fb9738153d19f2c3b38fb47c9237ad",
+      "externalIds": {
+        "DOI": "10.59277/romrepphys.2024.76.605",
+        "CorpusId": 270662372
+      },
+      "title": "Compositional analysis of Silybum marianum plant at reduced pressure using calibration-free LIBS",
+      "venue": "Romanian Reports in Physics",
+      "year": 2024,
+      "citationCount": 2,
+      "authors": [
+        {
+          "authorId": "2307715551",
+          "name": "Qasim M."
+        },
+        {
+          "authorId": "2466390155",
+          "name": "Anwar-Ul-Haq M."
+        },
+        {
+          "authorId": "2307696344",
+          "name": "Shah Amin"
+        },
+        {
+          "authorId": "2134632812",
+          "name": "S. M."
+        },
+        {
+          "authorId": "2467083956",
+          "name": "Haq S. U."
+        },
+        {
+          "authorId": "2126319517",
+          "name": "A. Rameez"
+        },
+        {
+          "authorId": "2466390054",
+          "name": "Aslam Baig M."
+        }
+      ]
+    },
+    {
+      "paperId": "1abc47e17a3452d4a56e4135c7cbded5681e7423",
+      "externalIds": {
+        "DOI": "10.1007/s13369-025-10738-1",
+        "CorpusId": 283066883
+      },
+      "title": "Multi-Technique Analysis of Geochemical Elements in Kesongo Volcanic Mud Using Advanced Calibration-Free LIBS and X-ray Fluorescence Spectroscopy (XRF)",
+      "venue": "The Arabian journal for science and engineering",
+      "year": 2025,
+      "citationCount": 0,
+      "authors": [
+        {
+          "authorId": "2324630223",
+          "name": "A. Khumaeni"
+        },
+        {
+          "authorId": "2363790180",
+          "name": "R. D. Indriana"
+        },
+        {
+          "authorId": "2276383943",
+          "name": "Felix Jonathan"
+        },
+        {
+          "authorId": "2267565082",
+          "name": "Wahyu Setia Budi"
+        },
+        {
+          "authorId": "11344261",
+          "name": "M. Pardede"
+        },
+        {
+          "authorId": "11789773",
+          "name": "R. Hedwig"
+        },
+        {
+          "authorId": "2363780311",
+          "name": "Hendrik Kurniawan"
+        },
+        {
+          "authorId": "2241563054",
+          "name": "K. Kurihara"
+        },
+        {
+          "authorId": "2310414087",
+          "name": "M. A. Gondal"
+        }
+      ]
+    },
+    {
+      "paperId": "a00e13a1796021127beb43a61993bf79d122ff96",
+      "externalIds": {
+        "DOI": "10.1039/d3ja00130j",
+        "CorpusId": 259849504
+      },
+      "title": "Catching up on Calibration-Free LIBS",
+      "venue": "Journal of Analytical Atomic Spectrometry",
+      "year": 2023,
+      "citationCount": 24,
+      "authors": [
+        {
+          "authorId": "14966898",
+          "name": "F. Poggialini"
+        },
+        {
+          "authorId": "13876561",
+          "name": "B. Campanella"
+        },
+        {
+          "authorId": "2267044508",
+          "name": "B. Cocciaro"
+        },
+        {
+          "authorId": "2906844",
+          "name": "G. Lorenzetti"
+        },
+        {
+          "authorId": "2638662",
+          "name": "V. Palleschi"
+        },
+        {
+          "authorId": "2315692",
+          "name": "S. Legnaioli"
+        }
+      ]
+    },
+    {
+      "paperId": "caa4310f331ebf92b81d4700cefbb400f609d370",
+      "externalIds": {
+        "DOI": "10.1016/j.sab.2024.107082",
+        "CorpusId": 274226489
+      },
+      "title": "Towards real-time calibration-free LIBS supported by machine learning",
+      "venue": "Spectrochimica Acta Part B - Atomic Spectroscopy",
+      "year": 2024,
+      "citationCount": 9,
+      "authors": [
+        {
+          "authorId": "114624590",
+          "name": "A. Favre"
+        },
+        {
+          "authorId": "2128322363",
+          "name": "Alexis Abad"
+        },
+        {
+          "authorId": "2315124803",
+          "name": "Alexandre Poux"
+        },
+        {
+          "authorId": "2326779644",
+          "name": "L\u00e9o Gosse"
+        },
+        {
+          "authorId": "51913185",
+          "name": "Ahmad Berjaoui"
+        },
+        {
+          "authorId": "32613208",
+          "name": "V. Morel"
+        },
+        {
+          "authorId": "2268614894",
+          "name": "A. Bultel"
+        }
+      ]
+    },
+    {
+      "paperId": "3111fb22c7d0606a5f64f40419aaf12bb09f0b93",
+      "externalIds": {
+        "DOI": "10.1039/d4ja00028e",
+        "CorpusId": 268141313
+      },
+      "title": "Mass and mole fractions in calibration-free LIBS",
+      "venue": "Journal of Analytical Atomic Spectrometry",
+      "year": 2024,
+      "citationCount": 1,
+      "authors": [
+        {
+          "authorId": "96732144",
+          "name": "T. V\u00f6lker"
+        },
+        {
+          "authorId": "14727563",
+          "name": "I. Gornushkin"
+        }
+      ]
+    },
+    {
+      "paperId": "5dff8182a41190df25e4f1c22d29ed421577a68c",
+      "externalIds": {
+        "DOI": "10.1016/j.apsusc.2026.166623",
+        "CorpusId": 286707744
+      },
+      "title": "Calibration-free LIBS quantification of compacted diatomite: Microstructural effects under infrared excitation",
+      "venue": "Applications of Surface Science",
+      "year": 2026,
+      "citationCount": 1,
+      "authors": [
+        {
+          "authorId": "2301766848",
+          "name": "Sid Ahmed Beldjilali"
+        },
+        {
+          "authorId": "114316289",
+          "name": "N. Belkhir"
+        },
+        {
+          "authorId": null,
+          "name": "Andreas T\u00fcmmel"
+        },
+        {
+          "authorId": "2600197",
+          "name": "S. Hamzaoui"
+        },
+        {
+          "authorId": "2258615982",
+          "name": "Christoph Gerhard"
+        }
+      ]
+    },
+    {
+      "paperId": "91880749eca2e05210f635f7b6c8042a1b6af7a4",
+      "externalIds": {
+        "PubMedCentral": "13418090",
+        "DOI": "10.1002/jbio.70327",
+        "CorpusId": 290645390,
+        "PubMed": "42522992"
+      },
+      "title": "Influence of Sample Preparation Methods for Porcine Tissue: Calibration\u2010Free LIBS for In Vivo Applications",
+      "venue": "Journal of Biophotonics",
+      "year": 2026,
+      "citationCount": 0,
+      "authors": [
+        {
+          "authorId": "2481493312",
+          "name": "Edith B\u00f6hmer"
+        },
+        {
+          "authorId": "119880051",
+          "name": "Oana-Maria Thoma"
+        },
+        {
+          "authorId": "2238551595",
+          "name": "M. Waldner"
+        },
+        {
+          "authorId": "2274532040",
+          "name": "F. Kl\u00e4mpfl"
+        },
+        {
+          "authorId": "2274909445",
+          "name": "M. Schmidt"
+        },
+        {
+          "authorId": "49092884",
+          "name": "M. Hohmann"
+        }
+      ]
+    },
+    {
+      "paperId": "03d766a4cb348a15379f447be60091e1e9fa9709",
+      "externalIds": {
+        "DOI": "10.1007/s12046-023-02202-3",
+        "CorpusId": 260809054
+      },
+      "title": "Investigation of nutrient content in Zingiber officinale and Curcuma longa samples using calibration free-LIBS and ICP-OES techniques",
+      "venue": "S\u0101dhan\u0101",
+      "year": 2023,
+      "citationCount": 4,
+      "authors": [
+        {
+          "authorId": "134273196",
+          "name": "K. Veerappan"
+        },
+        {
+          "authorId": "2106940379",
+          "name": "V. Sathiesh Kumar"
+        },
+        {
+          "authorId": "88381495",
+          "name": "M. Thangaraja"
+        }
+      ]
+    },
+    {
+      "paperId": "c92f15208bc7cdc0d38708711d2ea88389dc2076",
+      "externalIds": {
+        "DOI": "10.1016/j.nexres.2026.102065",
+        "CorpusId": 289597898
+      },
+      "title": "Elemental Characterization of Women\u2019s Commercial Herbal Formulations Using Calibration-Free LIBS with XRF Validation",
+      "venue": "Next Research",
+      "year": 2026,
+      "citationCount": 0,
+      "authors": [
+        {
+          "authorId": "2444634299",
+          "name": "Natasya Yuza"
+        },
+        {
+          "authorId": "2444633827",
+          "name": "Febrika Misna"
+        },
+        {
+          "authorId": "2372716018",
+          "name": "K. Subki"
+        },
+        {
+          "authorId": "2444635793",
+          "name": "Jufadli"
+        },
+        {
+          "authorId": "66509727",
+          "name": "N. Adila"
+        },
+        {
+          "authorId": "13668258",
+          "name": "K. Khairan"
+        },
+        {
+          "authorId": "1584563084",
+          "name": "R. Mitaphonna"
+        },
+        {
+          "authorId": "2386668796",
+          "name": "Nasrullah Idris"
+        }
+      ]
+    },
+    {
+      "paperId": "d0523dbaf6f843b627f3f67ad987c19a3871cf48",
+      "externalIds": {
+        "DOI": "10.1016/j.microc.2026.119246",
+        "CorpusId": 290949861
+      },
+      "title": "A chemically constrained two-step calibration-free LIBS strategy for multi-element quantification in oxide materials",
+      "venue": "Microchemical journal (Print)",
+      "year": 2026,
+      "citationCount": 0,
+      "authors": [
+        {
+          "authorId": "2301766848",
+          "name": "Sid Ahmed Beldjilali"
+        },
+        {
+          "authorId": "114316289",
+          "name": "N. Belkhir"
+        },
+        {
+          "authorId": null,
+          "name": "Andreas T\u00fcmmel"
+        },
+        {
+          "authorId": "2264879962",
+          "name": "S. Hamzaoui"
+        },
+        {
+          "authorId": "2258615982",
+          "name": "Christoph Gerhard"
+        }
+      ]
+    }
+  ]
+}

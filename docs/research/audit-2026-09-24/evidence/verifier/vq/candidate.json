@@ -1,0 +1,16 @@
+{
+  "candidate": "gates/vq/candidate.lean",
+  "theorem": "VQ.target",
+  "passed": true,
+  "checks": {
+    "forbidden": [],
+    "extra_imports": [],
+    "missing_defs": [],
+    "signature_identical": true,
+    "compile_rc": 0,
+    "errors": [],
+    "sorry_warning": false,
+    "axioms": [],
+    "elaborated_type_identical": true
+  }
+}

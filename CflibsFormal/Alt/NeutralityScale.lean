@@ -34,8 +34,11 @@ missing" (Tognoni et al. 2010) exact for the classic closure normalization.
 
 ## Literature
 
-Prior art for neutrality as the normalization: Abbass, Ahmed, Ahmed & Baig, Plasma Chem.
-Plasma Process. 36 (2016) 1287 ("electron density conservation" CF-LIBS, Pb–Sn). Closure failure
+Prior art for neutrality as the normalization: Abbass, Ahmed, Ahmed & Baig, "A Comparative Study
+of Calibration Free Methods for the Elemental Analysis by Laser Induced Breakdown Spectroscopy",
+Plasma Chem. Plasma Process. 36 (2016) 1287–1299, DOI 10.1007/s11090-016-9729-y. Only its
+bibliographic record was checked (Crossref); the paper was not opened, so the description of it
+as "electron density conservation" CF-LIBS on Pb–Sn is unverified. Closure failure
 when elements are missing: Tognoni, Cristoforetti, Legnaioli & Palleschi, Spectrochim. Acta B 65
 (2010) 1. Forward model: Ciucci et al., Appl. Spectrosc. 53 (1999) 960. The identities below are
 algebraic consequences of the repository's own forward model and do not rest on any constant,

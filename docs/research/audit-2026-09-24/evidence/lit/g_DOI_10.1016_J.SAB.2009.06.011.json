@@ -1,0 +1,45 @@
+{
+  "paperId": "237f67fb0c5ad16433f97ecb53b5665340406151",
+  "externalIds": {
+    "MAG": "1984275470",
+    "DOI": "10.1016/J.SAB.2009.06.011",
+    "CorpusId": 93474468
+  },
+  "title": "On the usefulness of a duplicating mirror to evaluate self-absorption effects in laser induced breakdown spectroscopy",
+  "venue": "",
+  "year": 2009,
+  "openAccessPdf": {
+    "url": "",
+    "status": "CLOSED",
+    "license": null,
+    "disclaimer": "Notice: The following paper fields have been elided by the publisher: {'abstract'}. Paper or abstract available at https://api.unpaywall.org/v2/10.1016/J.SAB.2009.06.011?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.1016/J.SAB.2009.06.011, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+  },
+  "journal": {
+    "name": "Spectrochimica Acta Part B: Atomic Spectroscopy",
+    "pages": "702-713",
+    "volume": "64"
+  },
+  "authors": [
+    {
+      "authorId": "14195975",
+      "name": "Heh-Young Moon"
+    },
+    {
+      "authorId": "92118969",
+      "name": "Kathleen K. Herrera"
+    },
+    {
+      "authorId": "12575877",
+      "name": "N. Omenetto"
+    },
+    {
+      "authorId": "2219653857",
+      "name": "Benjamin W. Smith"
+    },
+    {
+      "authorId": "7474149",
+      "name": "J. Winefordner"
+    }
+  ],
+  "abstract": null
+}

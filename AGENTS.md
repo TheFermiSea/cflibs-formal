@@ -21,8 +21,9 @@ changes here as improving measurement accuracy.
 - **Toolchain:** Lean `v4.33.1` + mathlib `v4.33.1` (`lake`). Pinned — do not `lake update`.
 - **Everything is dimensionless** (bare `ℝ`); an additive `Dimensions.lean` layer machine-checks
   homogeneity separately.
-- 72 modules under `CflibsFormal/` (+ `Alt/`) — count via `scripts/stats.sh`; see `docs/module-reference.md` for the index and
-  `docs/theorem-catalog.md` for every result with its scope tag + citation.
+- 82 modules under `CflibsFormal/` (73 top level + 9 in `Alt/`, 2026-09-25) — recount via
+  `scripts/stats.sh`; see `docs/module-reference.md` for the index and `docs/theorem-catalog.md`
+  for every result with its scope tags + citation.
 
 ## The four non-negotiables (a change that breaks any of these is wrong)
 
@@ -35,7 +36,10 @@ changes here as improving measurement accuracy.
    the additive `Dimensions.lean` layer, which must not be wired into the core.
 4. **Honest scoping is the cardinal rule.** A docstring must not claim more than its theorem
    proves. Mark **EXACT** vs **REDUCED** vs **APPROXIMATION** vs **PURE-MATH** honestly (the scope
-   tags in `docs/scope-tags.tsv`; "out of scope" stays a prose docstring caveat, not a scope tag). A
+   tags in `docs/scope-tags.tsv`; "out of scope" stays a prose docstring caveat, not a scope tag).
+   Tags have two axes (`docs/conventions.md` §8): a definition that encodes a physical model
+   carries a *model* tag, a theorem a *relation* tag, and the *published* tag (the weaker of the
+   relation tag and the model tags in the statement; PURE-MATH exempt) is the one to quote. A
    green proof of a vacuous, tautological, or physically-wrong statement is *worthless* — the whole
    point
    of this repo. Audit the *statement*, not just the compile. Every physics module carries a
@@ -47,6 +51,7 @@ changes here as improving measurement accuracy.
 ```bash
 lake build                                          # 1. green build (clean re-elaboration)
 lake exe axiom-audit --root CflibsFormal            # 2. axiom-clean (exit 0)
+lake exe scope-check                                # 2b. scope gate + docs/scope-published.tsv current
 lake exe runLinter CflibsFormal                     # 3. style/structure lint ("Linting passed")
 scripts/kernel-replay.sh --changed origin/main      # 3b. independent kernel replay (leanchecker) of changed modules
 ./scripts/stats.sh                                  # 4. import hygiene + counts (exit 0)
@@ -69,13 +74,14 @@ tool output.
 |---|---|
 | `CONTEXT.md` | The narrative root: architecture, domain glossary, design decisions, modeling scope, verification discipline |
 | `docs/module-reference.md` | **Auto-generated** module index: namespace, role, #results/#defs, base?, citation, imports |
-| `docs/theorem-catalog.md` | **Auto-generated** catalog of every result with its **scope tag** (EXACT/REDUCED/APPROXIMATION/PURE-MATH) + citation + one-line summary — the integrity spine |
-| `docs/scope-tags.tsv` | Curated authoritative scope classification (one row per result). The docs-sync CI gate **fails if any result is untagged** — a new theorem must declare its epistemic status here |
+| `docs/theorem-catalog.md` | **Auto-generated** catalog of every result with its **scope tags** (EXACT/REDUCED/APPROXIMATION/PURE-MATH; `own → published` when they differ) + citation + one-line summary — the integrity spine |
+| `docs/scope-tags.tsv` | Curated authoritative scope classification: one row per result (its *relation* tag) plus one row per definition that encodes a physical model (its *model* tag, e.g. `lineIntensity` REDUCED); an untagged definition inherits the weakest model tag it uses (`docs/conventions.md` §8), so a definition that restates a model without using a tagged definition inherits nothing and needs its own row. The docs-sync CI gate **fails if any result is untagged** — a new theorem must declare its epistemic status here |
+| `docs/scope-published.tsv` | **Auto-generated, committed** by `lake exe scope-check --write`: each theorem's relation tag, its *published* tag (the weaker of the relation tag and the model tags of the definitions in its statement; PURE-MATH exempt) and the model rows that weakened it. `scope-check` fails if it is stale and `gen-docs.sh` fails if it is missing |
 | `docs/dependency-graph.md` | The internal import DAG (reading guide) |
-| `scripts/gen-docs.sh` | Regenerates the two auto docs from source + checks scope-tag completeness (run after adding/removing results) |
+| `scripts/gen-docs.sh` | Regenerates the two auto docs from source + checks scope-tag completeness (run after adding/removing results). It renders published tags from `docs/scope-published.tsv`, so after changing `docs/scope-tags.tsv` run `lake exe scope-check --write` first |
 | `CflibsFormal/` | The spec. Core (`namespace CflibsFormal`) + `Alt/` (alternative estimators, `namespace CflibsFormal.Alt`) |
 | `oracle/` | Float-mirror regression oracle bridging the spec to the Python pipeline |
-| `tools/` | Vendored `axiom-audit` |
+| `tools/` | Vendored `axiom-audit`, and the `scope-check` executable (`ScopeCheck.lean`) |
 | `upstream/` | `SahaUpstream.lean` — mathlib-only Saha seed staged for an eventual physlib PR |
 | `reviews/` | Audit archive (literature-validity, foundation) |
 
@@ -94,5 +100,8 @@ tool output.
 
 green build · axiom-clean (`#print axioms`) · no `sorry` · runLinter clean · import-hygiene clean ·
 oracle un-drifted · **and the statement is audited for non-vacuity + faithful physics + honest
-scope** · classified in `docs/scope-tags.tsv` (EXACT/REDUCED/APPROXIMATION/PURE-MATH + citation) ·
-the auto docs regenerated (`./scripts/gen-docs.sh`).
+scope** · classified in `docs/scope-tags.tsv` (relation tag EXACT/REDUCED/APPROXIMATION/PURE-MATH
+and citation; a new definition that encodes a physical model gets a model row) · published tags
+recomputed and committed (`lake exe scope-check --write`, which rewrites
+`docs/scope-published.tsv`) · then the auto docs regenerated (`./scripts/gen-docs.sh`, which reads
+that file and fails if it is missing or out of step).

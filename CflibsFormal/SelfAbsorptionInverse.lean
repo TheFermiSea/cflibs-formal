@@ -28,16 +28,35 @@ We prove the two-sided result:
   observations at **matched, known** optical depths `tau`, then (with the usual
   nondegeneracy and shared `T` / calibration / atomic data) they have equal densities and
   equal composition. The known positive `SA(tau)` cancels per line, reducing the thick
-  case to the proven thin `density_identifiability` — the exact curve-of-growth correction.
+  case to the proven thin `density_identifiability` — the model left-inverse
+  `lineIntensity_eq_selfAbsorbedIntensity_div`, made injective.
 
 * **LOST (unknown `τ`).** `selfAbsorption_breaks_identifiability`: for fixed atomic data
   and `T`, two **genuinely different** densities at **different** optical depths produce the
   **same** measured thick intensity, because a single line constrains only the product
   `N · SA(τ)`. A concrete, IVT-free witness using `SA(0) = 1` and `SA(1) = 1 - exp(-1)`.
+  `selfAbsorption_breaks_composition_identifiability` lifts it to the closure composition.
 
 Reuses `SelfAbsorption` and `Identifiability` verbatim; nothing is reproven. The only new
 algebraic helper is `lineIntensity_smul_left` (the `N`-linearity of the forward map), the
 root of the density/self-absorption degeneracy.
+
+## Scope — flat profile, free `τ` (read before using)
+
+* **Flat-profile model.** Every observable here is `selfAbsorbedIntensity`, the
+  frequency-integrated `lineIntensity` times the flat-profile (line-centre) escape factor
+  `SA(τ)`. That model carries the model tag APPROXIMATION: for a peaked profile, dividing by
+  `SA(τ₀)` at the line-centre depth `τ₀` over-corrects by 1.4–3.5× at `τ₀ = 3–10` in the audit
+  probes (see the `SelfAbsorption` scope block). The theorems stated over it are exact about
+  this model and publish APPROXIMATION (`docs/conventions.md` §8); `lineIntensity_smul_left`
+  is pure algebra on the thin forward map.
+* **`τ` is a free real per line.** Nothing ties `tau s` to the density it measures. The LOST
+  witnesses use `τ = 0` at a positive density, which a state-bound optical depth excludes
+  (`OpticalDepth.opticalDepth_pos`). With `τ` bound and `σ₀ · ℓ` known, one line identifies
+  the density (`OpticalDepth.thickLineIntensity_injOn`,
+  `OpticalDepth.no_density_alias_of_boundOpticalDepth`); the alias that survives binding is
+  the lumped one — with `σ₀ · ℓ` unknown, one line cannot separate density from opacity
+  (`OpticalDepthBridge.boundOpticalDepth_lumped_alias`).
 
 ## Literature
 
@@ -71,7 +90,8 @@ theorem lineIntensity_smul_left {ι : Type*} [Fintype ι] (kB T N Fcal c : ℝ)
 /-- **Optically-thick observation map.** The self-absorption-aware analogue of
 `Inverse.observe`: the observable for species `s` is the **measured** (self-absorbed)
 intensity of its single emitting line `emit s` at per-line optical depth `tau s`, reusing
-`SelfAbsorption.selfAbsorbedIntensity` verbatim. When `tau ≡ 0` this collapses to
+`SelfAbsorption.selfAbsorbedIntensity` verbatim — so it inherits that definition's
+flat-profile model (model tag APPROXIMATION). When `tau ≡ 0` this collapses to
 `Inverse.observe`, since `SA 0 = 1`. -/
 noncomputable def thickObserve [Fintype levelIndex] (kB Fcal : ℝ)
     (emit : species → levelIndex) (tau : species → ℝ)
@@ -81,9 +101,9 @@ noncomputable def thickObserve [Fintype levelIndex] (kB Fcal : ℝ)
 /-- **PRESERVED (known, matched `τ`) — per-species density identifiability.** If two
 densities produce equal **measured** thick intensities of the same line at the **same**
 known optical depth `tau`, then the densities are equal. The known positive `SA(tau)`
-cancels, reducing to the proven thin `density_identifiability`. This is exactly the
-curve-of-growth correction (`lineIntensity_eq_selfAbsorbedIntensity_div`) made injective:
-self-absorption is invertible when its optical depth is known. -/
+cancels, reducing to the proven thin `density_identifiability`. This is the model left-inverse
+(`lineIntensity_eq_selfAbsorbedIntensity_div`) made injective: within the flat-profile model,
+self-absorption is invertible when its optical depth is known and matched. -/
 theorem thick_density_identifiability {ι : Type*} [Fintype ι] [Nonempty ι]
     {kB T Fcal : ℝ} {g E A : ι → ℝ} {N₁ N₂ : ℝ}
     (hg : ∀ k, 0 < g k) (hFcal : 0 < Fcal) (u : ι) (hA : 0 < A u)
@@ -142,13 +162,18 @@ The smaller `N₁ < N₂` is the classic self-absorption density bias.
 
 Scope (honest): this is a concrete instance of *single-line density* aliasing — the
 measurement constrains only `N · SA(τ)`, so density and self-absorption are not separable
-from one line. It is NOT a composition-level non-identifiability theorem (no `PlasmaParams`
-/ `thickObserve` / `trueComposition` appears): since `trueComposition` is scale-invariant, a
+from one line. It is NOT itself a composition-level theorem (no `PlasmaParams` /
+`thickObserve` / `trueComposition` appears): since `trueComposition` is scale-invariant, a
 common `τ` scaling all species cancels in the closure, so density aliasing does not by
-itself defeat *composition* identifiability. Only the PRESERVED side
-(`thick_composition_identifiability`) operates at the composition level; a genuine
-composition-level LOST theorem (different `trueComposition` from equal `thickObserve` via
-per-species `τ`) is left as follow-up. -/
+itself defeat *composition* identifiability. The composition-level LOST statement, via
+per-species `τ`, is `selfAbsorption_breaks_composition_identifiability` below.
+
+The witness puts `τ₁ = 0` at the positive density `N₁`. That is admissible only because `τ`
+is a free real here; once `τ` is bound to the state it is unreachable
+(`OpticalDepth.opticalDepth_pos`), the single-line alias is excluded when `σ₀ · ℓ` is known
+(`OpticalDepth.no_density_alias_of_boundOpticalDepth`), and the alias that survives is the
+lumped-`σ₀ · ℓ` one (`OpticalDepthBridge.boundOpticalDepth_lumped_alias`). Model: the
+flat-profile `selfAbsorbedIntensity` (see the module scope block). -/
 theorem selfAbsorption_breaks_identifiability {ι : Type*} [Fintype ι]
     (kB T Fcal : ℝ) (g E A : ι → ℝ) (u : ι) (N : ℝ) (hN : 0 < N) :
     ∃ (N₁ N₂ tau₁ tau₂ : ℝ), 0 ≤ tau₁ ∧ 0 ≤ tau₂ ∧ N₁ ≠ N₂ ∧
@@ -184,16 +209,25 @@ re-derived): densities `N₀ ≠ N₀'` at optical depths `τ₀`, `τ₀'` give
 depth `0`). The full thick observation vectors then coincide — species `0` by the aliasing
 equality, species `1` by reflexivity — while the closure fraction of species `1` differs,
 `1 / (N₀ + 1)` vs `1 / (N₀' + 1)`, because `N₀ ≠ N₀'` (`inv_inj`). Both optical-depth vectors
-are certified nonnegative, so they are genuine (physical) optical depths.
+are certified nonnegative; nonnegativity is all that is checked.
 
-This is the DOMINANT self-absorption failure mode for concentrated / high-entropy alloys,
-whose strong lines saturate at species-specific optical depths: it justifies
-**refuse-to-report** whenever the per-species `τ` are unknown, since the composition is then
-formally non-identifiable from the thick spectrum alone. Contrast the PRESERVED result
-`thick_composition_identifiability`: when the optical depths are matched/known — in particular
-a single COMMON `τ` scaling all species, which cancels in the scale-invariant closure (see the
-scope note on `selfAbsorption_breaks_identifiability`) — composition SURVIVES. The gap between
-the two theorems is exactly *per-species / unknown* vs. *common / known* `τ`.
+Physical reach — narrower than the statement's free `τ`. The construction puts `τ = 0` at a
+positive density for both species (species `1` explicitly, at density `1`; species `0` through
+the witness of `selfAbsorption_breaks_identifiability`, at `N₀ = 1 - exp(-1)`), which is
+impossible once `τ` is bound to the state (`OpticalDepth.opticalDepth_pos`).
+So this theorem supports **refuse-to-report** only in the regime it actually models: per-species
+optical depths with nothing tying them to density — physically, `σ₀ · ℓ` unknown and one line
+per species. The reachable single-line witness of that regime is
+`OpticalDepthBridge.boundOpticalDepth_lumped_alias`; with `σ₀ · ℓ` known, one line identifies
+each density (`OpticalDepth.thickLineIntensity_injOn`). A composition-level statement under a
+state-bound `τ`, in either direction, is not proved here. Concentrated / high-entropy alloys,
+whose strong lines saturate at species-specific optical depths, are the motivating case.
+
+Contrast the PRESERVED result `thick_composition_identifiability`: when the optical depths are
+matched/known — in particular a single COMMON `τ` scaling all species, which cancels in the
+scale-invariant closure (see the scope note on `selfAbsorption_breaks_identifiability`) —
+composition SURVIVES. The gap between the two theorems is exactly *per-species / unknown* vs.
+*common / known* `τ`. Model: the flat-profile `selfAbsorbedIntensity` (module scope block).
 
 Self-witnessing: an explicit two-species construction (no abstract existence witness). -/
 theorem selfAbsorption_breaks_composition_identifiability (kB T Fcal : ℝ) (g E A : Fin 1 → ℝ) :

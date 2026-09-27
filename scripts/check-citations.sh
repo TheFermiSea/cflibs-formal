@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# Citation-string hygiene ADVISORY for cflibs-formal. Always exits 0.
+# Citation-string hygiene check for cflibs-formal. Blocking: whitelist membership of every
+# docs/scope-tags.tsv citation (see EXIT CODE below). Everything else is advisory.
 #
 # ============================================================================================
 # WHAT THIS SCRIPT CAN PROVE
@@ -34,7 +35,13 @@
 # locate the claimed sentence/equation, and record one of VERIFIED / CORRECTED / UNVERIFIED /
 # SUSPECT-OR-FABRICATED.
 #
-# Exit code is ALWAYS 0 by design: an offline string check must not be able to certify or block.
+# EXIT CODE.  1 (FAIL) when a docs/scope-tags.tsv column-4 citation string has NO row in
+# docs/citation-whitelist.tsv, when one is whitelisted as SUSPECT (the whitelist says a SUSPECT
+# source must not support any claim), or when either file is missing (fail closed). 0 otherwise.
+# Those are string-membership facts this script can decide offline, so they may block: a
+# citation that enters column 4 without a whitelist row is an unrecorded attribution (PR #6
+# merged "Abbass 2016" that way while this check only warned). Every other section below is
+# advisory and never changes the exit code. Exit 0 still certifies NOTHING about any source.
 # Dependency-light: bash + python3 stdlib only. Read-only. No Lean invocation.
 # ============================================================================================
 set -uo pipefail
@@ -81,16 +88,17 @@ def years_of(s: str) -> set[str]:
     return set(re.findall(r"\b(1[6-9]\d\d|20\d\d)\b", s))
 
 
-print("== citation-integrity ADVISORY (string hygiene only; ALWAYS exit 0) ==")
-print("   Proves: string-level anomalies in this repo.  Proves NOT: that any paper exists,")
-print("   that a DOI resolves, or that an author wrote what is attributed to them.")
+print("== citation-integrity check (string hygiene only) ==")
+print("   BLOCKING (exit 1): a scope-tags citation with no whitelist row, or whitelisted SUSPECT.")
+print("   Everything else is ADVISORY.  Proves: string-level facts about this repo.  Proves NOT:")
+print("   that any paper exists, that a DOI resolves, or that an author wrote what is attributed.")
 print("   Verification lives in .claude/skills/citation-integrity/SKILL.md — open the source.")
 print("")
 
 # --- 1. citation strings from docs/scope-tags.tsv column 4 ----------------------------------
 if not TSV.exists():
-    print(f"check-citations: MISSING {TSV} — nothing to check.")
-    sys.exit(0)
+    print(f"check-citations: FAILED — MISSING {TSV} (fail closed: nothing can be checked).")
+    sys.exit(1)
 
 tsv_counts: Counter = Counter()
 tsv_modules: dict[str, set[str]] = defaultdict(set)
@@ -201,11 +209,11 @@ print("")
 # --- 6. whitelist ----------------------------------------------------------------------------
 if not WL.exists():
     print(f"-- whitelist --")
-    print(f"   MISSING {WL} — off-whitelist and status checks SKIPPED.")
-    print("   Create it (see .claude/skills/citation-integrity/SKILL.md) to enable them.")
+    print(f"   MISSING {WL} — the blocking off-whitelist check cannot run.")
+    print("   Restore it (see .claude/skills/citation-integrity/SKILL.md).")
     print("")
-    print("check-citations: advisory complete (whitelist checks skipped). exit 0")
-    sys.exit(0)
+    print("check-citations: FAILED — whitelist missing (fail closed).")
+    sys.exit(1)
 
 wl_status: dict[str, str] = {}
 wl_year: dict[str, str] = {}
@@ -227,21 +235,41 @@ print(f"   rows: {len(wl_status)}   " +
       "  ".join(f"{s}:{n}" for s, n in sorted(by_status.items())))
 print("   Reminder: a whitelist row records what was DONE, not that a paper exists. Only")
 print("   VERIFIED/CORRECTED rows carry first-hand evidence.")
+# Tracked metric (not a gate): how much of the whitelist, and of the citations actually used in
+# docs/scope-tags.tsv column 4, rests on a primary source that is on record as OPENED.
+first_hand = sum(n for s, n in by_status.items() if s in EVIDENCED)
+used_first_hand = sum(1 for c in tsv_counts if wl_status.get(c) in EVIDENCED)
+rows_first_hand = sum(n for c, n in tsv_counts.items() if wl_status.get(c) in EVIDENCED)
+print(f"   METRIC first-hand whitelist rows (VERIFIED+CORRECTED): {first_hand} of {len(wl_status)}")
+print(f"   METRIC first-hand scope-tags citations: {used_first_hand} of {len(tsv_counts)} strings, "
+      f"{rows_first_hand} of {sum(tsv_counts.values())} cited rows")
 print("")
 
 off = sorted(c for c in tsv_counts if c not in wl_status)
-print(f"-- off-whitelist citations in docs/scope-tags.tsv --")
+print(f"-- off-whitelist citations in docs/scope-tags.tsv (BLOCKING) --")
 if off:
-    print(f"   {len(off)} citation string(s) used in column 4 with NO whitelist row. Each one is")
-    print("   an unrecorded attribution: run the citation-integrity skill, then add a row with")
-    print("   the outcome you actually reached (UNVERIFIED is a legitimate outcome; silence is not).")
+    print(f"   FAIL: {len(off)} citation string(s) used in column 4 with NO whitelist row.")
+    print("   Each one is an unrecorded attribution: run the citation-integrity skill, then add a")
+    print("   row with the outcome you actually reached (UNVERIFIED is a legitimate outcome;")
+    print("   silence is not).")
     for c in off:
         print(f"   OFF-WHITELIST  {c}    [tags: {', '.join(sorted(tsv_modules[c]))}]")
 else:
     print("   (none — every scope-tags citation has a whitelist row)")
     print("   NOTE: the whitelist was seeded FROM this column, so a clean result here is expected")
-    print("   today and proves nothing about the sources. This check bites on FUTURE additions,")
-    print("   which is its purpose as a gate.")
+    print("   and proves nothing about the sources. This check bites on FUTURE additions, which")
+    print("   is its purpose as a gate.")
+print("")
+
+suspect = sorted(c for c in tsv_counts if wl_status.get(c) == "SUSPECT")
+print(f"-- scope-tags citations whitelisted as SUSPECT (BLOCKING) --")
+if suspect:
+    print(f"   FAIL: {len(suspect)} citation string(s) in column 4 are whitelisted SUSPECT, which")
+    print("   the whitelist says must not support any claim. Re-attribute or drop the citation.")
+    for c in suspect:
+        print(f"   SUSPECT-IN-USE  {c}    [tags: {', '.join(sorted(tsv_modules[c]))}]")
+else:
+    print("   (none)")
 print("")
 
 # --- 7. in-use citations whose whitelist row carries no opened source -------------------------
@@ -285,7 +313,14 @@ else:
     print("   (none)")
 print("")
 
-print("check-citations: advisory complete. No verdict rendered — this script cannot open a paper.")
-print("  Next step for anything flagged: .claude/skills/citation-integrity/SKILL.md")
+if off or suspect:
+    print(f"check-citations: FAILED — {len(off)} off-whitelist and {len(suspect)} SUSPECT "
+          "citation string(s) in docs/scope-tags.tsv column 4 (see the BLOCKING sections).")
+    print("  Next step: .claude/skills/citation-integrity/SKILL.md, then a whitelist row that")
+    print("  records the outcome actually reached.")
+    sys.exit(1)
+print("check-citations: blocking checks passed; the rest is advisory. No verdict rendered on any")
+print("  source — this script cannot open a paper. Next step for anything flagged:")
+print("  .claude/skills/citation-integrity/SKILL.md")
 sys.exit(0)
 PY

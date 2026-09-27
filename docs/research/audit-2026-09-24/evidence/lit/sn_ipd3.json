@@ -1,0 +1,188 @@
+{
+  "data": [
+    {
+      "score": 0.47398743787936404,
+      "paper": {
+        "corpusId": "280130670",
+        "title": "Compressed ultrafast photography of plasmas formed from laser breakdown of dense gases reveals that internal processes dominate evolution at early times.",
+        "authors": [
+          "Peng Wang",
+          "Y. N. Mishra",
+          "Seth Pree",
+          "Lihong V. Wang",
+          "Dag Hanstorp",
+          "John P. Koulakis",
+          "D. Krimans",
+          "Seth Putterman"
+        ],
+        "openAccessInfo": {
+          "license": null,
+          "status": null,
+          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://arxiv.org/abs/2507.04608, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        }
+      },
+      "snippet": {
+        "text": "The value of x calculated from red and green emissivities is regarded as a lower bound as these values are close to one. \n\nSaha's equation applies to an isolated atom and this version applies when only neutrals and singly ionized atoms are present so that doubly ionized atoms are inconsequential. In a dense gas the ionization potential is lowered by screening which leads to an effective ionization potential [22,23], \n\nwhere \u039b = 3x 1/3 \u0393 1 3/2 (for x < 1). Calculations of the level of ionization based on the bare (7) and supplemented Saha equations (8) are plotted in solid and dashed blue curves in figure 9. Both lie well below the minimum level of ionization observed and cannot account for the observed opacity based upon the attenuation of light being due to inverse Bremsstrahlung. Either opacity is due to different dynamics, or some new processes [35] is contributing to a further lowering of the ionization energy.",
+        "snippetKind": "body"
+      }
+    },
+    {
+      "score": 0.45340933425755237,
+      "paper": {
+        "corpusId": "119186939",
+        "title": "Saha Equation Normalized to Total Atomic Number Density",
+        "authors": [
+          "J. Fowler"
+        ],
+        "openAccessInfo": {
+          "license": null,
+          "status": null,
+          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://arxiv.org/abs/1209.1111, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        }
+      },
+      "snippet": {
+        "text": "The Saha equation describes the relative number density of consecutive ionization levels of a given atomic species under conditions of thermodynamic equilibrium in an ionized gas. Because the number density in the denominator may be very small, special steps must be taken to ensure numerical stability. In this paper we recast the equation into a form in which each ionization fraction is normalized by the total number density of the atomic species, analogous to the Boltzmann equation describing the distribution of excitation states for a given ion.",
+        "snippetKind": "abstract"
+      }
+    },
+    {
+      "score": 0.4334384651725226,
+      "paper": {
+        "corpusId": "118678899",
+        "title": "The thermodynamical instability induced by pressure ionization in fluid helium",
+        "authors": [
+          "Qiong Li",
+          "Hai-Feng Liu",
+          "Gong-Mu Zhang",
+          "Yan-Hong Zhao",
+          "Guo Lu",
+          "Ming-Feng Tian",
+          "Hai-Feng Song"
+        ],
+        "openAccessInfo": {
+          "license": null,
+          "status": "GREEN",
+          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://arxiv.org/abs/1609.03061, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        }
+      },
+      "snippet": {
+        "text": "The chemical picture assumes the existence of distinguishable chemical species -molecules, atoms, ions and electrons, which are interacting and reacting in equilibrium. For partially ionized plasma of helium, the chemical species include He, He + , He 2+ and e, and the plasma composition is determined by ionization equilibrium equations, which are derived by minimizing the free energy density with respect to the abundances of ionic species. The well-known Saha equation is established for non-interacting classical systems. Nevertheless, generally the interactions between plasma particles and the quantum nature of free electrons cannot be neglected. As a result, the general ionization equilibrium equations can be reformed as follows, \n\n(1) which are also called generalized Saha equations. In comparison with Saha equation, the isolated ionization potential I i is replaced by the effective ionization potential \n\nwhich includes the chemical potential shift contributed by the interacting part of the free energy and is known as pressure-induced ionization potential lowering. Obviously, the plasma composition is determined by the effective ionization potentials, which are in turn determined by the interacting part of the free energy function. Therefore, the construction of the free energy function is of fundamental importance.",
+        "snippetKind": "body"
+      }
+    },
+    {
+      "score": 0.4296464413165846,
+      "paper": {
+        "corpusId": "225169778",
+        "title": "A prospective microwave plasma source for in situ spaceflight applications",
+        "authors": [
+          "B. Farcy",
+          "R. Arevalo",
+          "Mazdak Taghioskoui",
+          "William F. McDonough",
+          "M. Benna",
+          "William B. Brinckerhoff"
+        ],
+        "openAccessInfo": {
+          "license": "CCBYNC",
+          "status": "HYBRID",
+          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://api.unpaywall.org/v2/10.1039/d0ja00198h?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.1039/d0ja00198h, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        }
+      },
+      "snippet": {
+        "text": "Our results show that the Saha equation produces ionization efficiency estimates within 2-5% of measured ratios, validating our use of the Saha equation for these models (see ESI \u2020 for more details). \n\nAlthough our Langmuir probe measurements of plasma T e range from 10 000-35 000 K ($1-3 eV), plasma T gas measurements are much lower, in the range of 340-510 K based on measurements taken with the handheld IR thermal imager. Because there is a divergence between gas and electron temperatures, the plasma is not at a local thermal equilibrium (LTE). Non-LTE plasmas are common in low pressure systems. Previous estimates for Saha ionization, carried out by Niu & Houk on a commercial plasma at atmospheric pressure, 31 assumes a plasma at LTE where T \u00bc T i \u00bc T e \u00bc T gas \u00bc 7500 K. However, Chen & Han assessed the Saha equation for a non-LTE plasma, 37 and found that T e is the appropriate temperature to use as an input for the non-LTE Saha equation, as electron collisions are the dominant mechanism of ionization. Therefore, we use the framework of the Saha equation established by Niu & Houk, 31 (eqn (8) and ( 9)) with values of T e converted to K (1 eV \u00bc 11 600 K) input as the plasma temperature. \n\nBecause N e and T e have been directly measured in the plasma via Langmuir probe, we apply this data to the Saha equation to calculate the change in analyte ionization. The curves in Fig. 6 model the degree of ionization as a function of \ue103rst ionization potential for a range of plasma power inputs. These curves predict the ionization efficiency of an analyte as a function of plasma power. \n\nThe estimated ionization models for this low power plasma suggest equal, and in some cases better, ionization efficiencies compared to commercial ICPMS plasmas. 31 Commercial plasmas at atmospheric pressure typically have N e values of 10 21 m \u00c03 , whereas this plasma is measured to have N e values of 10 17 -10 18 m \u00c03 .",
+        "snippetKind": "body"
+      }
+    },
+    {
+      "score": 0.41978499980662026,
+      "paper": {
+        "corpusId": "14588867",
+        "title": "Solar Models: Influence of Equation of State and Opacity",
+        "authors": [
+          "M. Y\u0131ld\u0131z",
+          "N. Kiziloglu"
+        ],
+        "openAccessInfo": {
+          "license": null,
+          "status": null,
+          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://arxiv.org/abs/astro-ph/9706228, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        }
+      },
+      "snippet": {
+        "text": "To find equilibrium number of particles it is necessary to minimize the free energy using stoichiometric relations describing ionization (or dissociation) processes. Then the Saha equation is obtained with ionization potential I l k of l-times ionized k-type atom: \n\nwhere \n\nwith N being the total number of particles in the system including electrons. Two remarks are called for Eq. ( 15) which includes degeneracy of electrons and the Coulomb interaction. First, any additional term to the free energy appears with its partial derivative with respect to the number density of particles and as an argument of the exponential in the Saha equation. Second, both of the terms coming from the free energies of the degenerate electrons and the Coulomb interaction behave like processes lowering ionization potential. Therefore, some of the early works on EOS (Harris 1964;Graboske et al. 1969) treated ionization potential somehow as a function of the thermodynamical variables.",
+        "snippetKind": "body"
+      }
+    },
+    {
+      "score": 0.4189674696658428,
+      "paper": {
+        "corpusId": "250668057",
+        "title": "Mott transition in electron\u2013hole plasmas",
+        "authors": [
+          "D. Semkat",
+          "F. Richter",
+          "D. Kremp",
+          "G. Manzke",
+          "W.-D. Kraeft",
+          "K. Henneberger"
+        ],
+        "openAccessInfo": {
+          "license": null,
+          "status": "GOLD",
+          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://api.unpaywall.org/v2/10.1088/1742-6596/220/1/012005?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.1088/1742-6596/220/1/012005, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        }
+      },
+      "snippet": {
+        "text": "[15,16,17,2]. While for a non-degenerate EHP, from Eq. ( 5), a Saha equation can be derived immediately [1,18], the situation is more complicated in the case of arbitrary degeneracy. Then, the degree of ionization \u03b1 has to be determined directly from Eq. ( 5) which reads in terms of \u03b1 and \n\nEquation ( 11) represents a form of the MAL which allows for the determination of the degree of ionization \u03b1 as a function of density and temperature and, therefore, can be regarded as a generalized Saha equation. The degree of ionization is given implicitly by Eq. ( 11) and has to be obtained numerically [8,9]. If an excitonic condensate is present, on the r.h.s. of Eq. ( 7) the density of condensed excitons occurs as an additional term, for the numerical treatment see Ref. [19].",
+        "snippetKind": "body"
+      }
+    },
+    {
+      "score": 0.41725781560918496,
+      "paper": {
+        "corpusId": "276713081",
+        "title": "Improved Ionization Potential Depression Model Incorporating Dynamical Structure Factors and Electron Degeneracy for Non-Ideal Plasma Composition",
+        "authors": [
+          "Y. Seitkozhanov",
+          "K. Dzhumagulova",
+          "E. Shalenov"
+        ],
+        "openAccessInfo": {
+          "license": "CCBY",
+          "status": "GOLD",
+          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://pmc.ncbi.nlm.nih.gov/articles/PMC11941424, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        }
+      },
+      "snippet": {
+        "text": "To solve the Saha equation after including the ionization potential depression (IPD), the next iterative procedure is applied: \n\n1. \n\nInitial guess: Start with an initial guess for \u03b1 e . Also, find \u2206I i by using another model explicitly expressed in terms of n H and \u03b1 e . For instance, \n\nwhere Z eff = (i + 1) is the effective charge state of the ion [40].",
+        "snippetKind": "body"
+      }
+    },
+    {
+      "score": 0.4146163164801583,
+      "paper": {
+        "corpusId": "225169778",
+        "title": "A prospective microwave plasma source for in situ spaceflight applications",
+        "authors": [
+          "B. Farcy",
+          "R. Arevalo",
+          "Mazdak Taghioskoui",
+          "William F. McDonough",
+          "M. Benna",
+          "William B. Brinckerhoff"
+        ],
+        "openAccessInfo": {
+          "license": "CCBYNC",
+          "status": "HYBRID",
+          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://api.unpaywall.org/v2/10.1039/d0ja00198h?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.1039/d0ja00198h, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        }
+      },
+      "snippet": {
+        "text": "The plasma described here is being developed to ionize injected samples for chemical and isotopic analyses. Therefore, steps must be taken to estimate the ionization efficiency of the plasma on individual organic (molecular) and elemental (atomic) species. The ion/neutral ratio calculated in the previous section is speci\ue103c to the plasma gas itself, but the parameters measured via Langmuir probe, namely T e and N e , can inform the ionization efficiencies of other elements using the Saha equation. \n\nThe Saha equation [31][32][33][34][35] is: \n\nwhere K ion is the ionization constant, N e , N i , and N o are the electron, ion, and neutral population densities, g is the statistical weight of an electron transition, h is Planck's constant, and E i is the \ue103rst ionization energy of an element. Values for g for both ion and neutral species were taken from the NIST atomic spectroscopy database. 36 Niu & Houk reduced this version of the Saha equation to eliminate the use of constants, 31 and the log of the equation can be written as: \n\nUsing the ionization constant (K ion ), the proportion of input sample ions to neutrals (a i ) is: \n\nIn order to gain con\ue103dence in our use of the Saha equation, we performed an additional experimental check on the Saha ionization of an analyte in a plasma environment. We performed a series of ICP-OES measurements on the ion/neutral ratio of three elemental samples (Mg, La, and Zn), as well as on the T e and N e values of the plasma itself. The values for T e and N e were input into the Saha equation, and the Sahapredicted ionization efficiency was compared to the directly measured ion/neutral ratio from line emission intensities. Our results show that the Saha equation produces ionization efficiency estimates within 2-5% of measured ratios, validating our use of the Saha equation for these models (see ESI \u2020 for more details).",
+        "snippetKind": "body"
+      }
+    }
+  ],
+  "retrievalVersion": "pa1-v1"
+}

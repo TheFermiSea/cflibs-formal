@@ -14,33 +14,41 @@ import CflibsFormal.LineSelection
 `σ²/SS_E` (`Alt.OLSVariance.olsSlope_variance_eq`). This module answers the two follow-up
 questions that framing raises.
 
-1. **Is `σ²/SS_E` the best any estimator can do?** Under the textbook identification, yes. For
-   the Gaussian linear model `yₖ = α + β Eₖ + εₖ`, `εₖ ~ N(0, σ²)` i.i.d., the Fisher information
-   for the slope `β` is `I(β) = SS_E/σ²`, which this module *defines* as `fisherInfoSlope` (see
+1. **Is `σ²/SS_E` the best any estimator can do?** For Gaussian noise with one common variance,
+   yes, by the textbook Cramér–Rao theorem, which is **not** proved here. For the Gaussian
+   linear model `yₖ = α + β Eₖ + εₖ`, `εₖ ~ N(0, σ²)` i.i.d., the Fisher information for the
+   slope `β` is `I(β) = SS_E/σ²`, which this module *defines* as `fisherInfoSlope` (see
    *Honest limitations*: the likelihood, the score and the Cramér–Rao inequality itself are NOT
    formalized). What IS proven: `crlb_slope` (`σ²/SS_E = I(β)⁻¹`, algebra on that definition) and
-   `olsSlope_attains_crlb` (the landed OLS variance equals `I(β)⁻¹`). The reading "OLS is
-   efficient — no unbiased estimator extracts more slope (hence temperature) precision from the
-   same lines under the same noise" is the textbook Cramér–Rao conclusion applied to that
-   identity; it is prose, not a theorem of this module.
-2. **Can adding a line to the Boltzmann plot ever hurt?** No. The one-pass variance update
+   `olsSlope_attains_crlb` (the landed OLS variance equals the closed form `I(β)⁻¹`). The reading
+   "OLS is efficient — no unbiased estimator extracts more slope (hence temperature) precision
+   from the same lines under the same noise" is the textbook Cramér–Rao conclusion applied to
+   that identity; it is prose, not a theorem of this module.
+2. **Can adding a line to the Boltzmann plot ever hurt?** Not while every line has the same noise
+   variance, which is the only case treated here. The one-pass variance update
    `spreadOn_insert` gives the *exact* gain from adjoining a new line `k` to a selected set `S`:
    `SS_E(S ∪ {k}) = SS_E(S) + (|S|/(|S|+1))·(Eₖ − Ē_S)²`.
    The increment is a nonnegative multiple of a square, so the spread is monotone under
    insertion (`spreadOn_insert_ge`) and under inclusion (`spreadOn_mono`), the Fisher
-   information is monotone (`fisherInfo_insert_ge`), and the Cramér–Rao bound can only fall
+   information is monotone (`fisherInfo_insert_ge`), and the closed form `σ²/SS_E` can only fall
    (`crlb_insert_le`). The increment vanishes **iff** the new line sits exactly at the current
    mean energy (`spreadOn_insert_eq_iff`, `no_gain_iff`), and is strictly positive otherwise
-   (`spreadOn_insert_lt_iff`) — the quantitative *no-gain criterion*.
+   (`spreadOn_insert_lt_iff`) — the quantitative *no-gain criterion*. With unequal per-line noise
+   the answer changes for OLS: `E = (0, 1)` with `σ = 1` gives slope variance `2`, and adding a
+   line at `E = 2` with `σ = 100` raises it to `2500.25` (hand arithmetic; not formalized). The
+   weighted-least-squares version of the monotonicity is not proved here.
 
 ## What is proven
 
 * `fisherInfoSlope E σ := energySpread E / σ²` — the Fisher information for the slope, **defined
   as its closed form** (see the honesty note on the definition).
-* `crlb_slope : σ²/SS_E = (fisherInfoSlope E σ)⁻¹` — the Cramér–Rao bound (unconditional
-  algebra); `fisherInfoSlope_pos` makes it a genuine positive number under the spread gate.
+* `crlb_slope : σ²/SS_E = (fisherInfoSlope E σ)⁻¹` — the closed form that the Gaussian-model
+  Cramér–Rao bound takes, as unconditional algebra on the definition (not a Cramér–Rao
+  inequality); `fisherInfoSlope_pos` makes it a genuine positive number under the spread gate.
 * `olsSlope_attains_crlb : Var(β̂) = (fisherInfoSlope E σ)⁻¹` under exactly the Gauss–Markov
-  hypotheses of `olsSlope_variance_eq` — OLS is efficient.
+  hypotheses of `olsSlope_variance_eq` — OLS attains `σ²/SS_E`, the Gaussian-model Fisher bound
+  as defined. That OLS is *efficient* is the textbook reading, not a theorem here. The `crlb`
+  in these names refers to this closed form; none of them is a Cramér–Rao theorem.
 * `sum_sq_sub_eq_spreadOn_add` — the parallel-axis identity
   `∑_{j∈S} (Eⱼ − c)² = spreadOn E S + |S|·(Ē_S − c)²`: the mean minimizes the sum of squared
   deviations, with an explicit excess. This is the engine behind the update.
@@ -54,10 +62,10 @@ Explicit `Fin 3` data. Pool `E = (0, 2, 10)`, current selection `S = {0, 1}` (me
 `2`): adjoining the far line `E₂ = 10` raises the spread to `56 = 2 + (2/3)·(10 − 1)²`, strictly
 (`nonvacuity_far_line`). Pool `E' = (0, 2, 1)`: the candidate `E'₂ = 1` sits at the mean of
 `{0, 1}` and adjoining it leaves the spread at `2` (`nonvacuity_line_at_mean`, an instance of
-`spreadOn_insert_eq_iff`). The Cramér–Rao bound is attained with numbers on a genuine probability
-space: on the fair-coin Rademacher model of `LineSelection` (`σ = 1`) with the wide pair
-`E = (0, 3)`, `fisherInfoSlope = 9/2` and the OLS slope variance equals its inverse `2/9`
-(`nonvacuity_crlb_attained`, an instance of `olsSlope_attains_crlb`).
+`spreadOn_insert_eq_iff`). The identity `Var(β̂) = (fisherInfoSlope E σ)⁻¹` is exercised with
+numbers on a genuine probability space: on the fair-coin Rademacher model of `LineSelection`
+(`σ = 1`) with the wide pair `E = (0, 3)`, `fisherInfoSlope = 9/2` and the OLS slope variance
+equals its inverse `2/9` (`nonvacuity_crlb_attained`, an instance of `olsSlope_attains_crlb`).
 
 ## Literature and scope
 
@@ -65,9 +73,11 @@ space: on the fair-coin Rademacher model of `LineSelection` (`σ = 1`) with the 
 is a statement about the finite-sample variance of an ordinary-least-squares slope and about the
 sum of squared deviations of a finite family of abscissae. The *physics reading* is prose only:
 for the Boltzmann plot `yₖ = log(Iₖ/(gₖAₖ))` against upper-level energy `Eₖ` the slope is
-`β = −1/(k_B T)`, so `(fisherInfoSlope)⁻¹ = σ²/SS_E` is the Cramér–Rao floor on the variance of
-the inverse temperature, and "a candidate line adds temperature information iff its upper-level
-energy differs from the mean of the lines already used" is the actionable no-gain rule.
+`β = −1/(k_B T)`, so for Gaussian ordinates with one common variance
+`(fisherInfoSlope)⁻¹ = σ²/SS_E` is, by the textbook theorem (not proved here), the Cramér–Rao
+floor for unbiased estimators of the inverse temperature, and "a candidate line adds temperature
+information iff its upper-level energy differs from the mean of the lines already used" is the
+actionable no-gain rule.
 
 Citation: **—** (pure mathematics). The information inequality is due to
 H. Cramér, *Mathematical Methods of Statistics*, Princeton Mathematical Series **9**, Princeton
@@ -81,7 +91,8 @@ B. P. Welford, "Note on a Method for Calculating Corrected Sums of Squares and P
 analogue of is N. E. Batalha and M. R. Line, "Information Content Analysis for Selection of
 Optimal JWST Observing Modes for Transiting Exoplanet Atmospheres," *The Astronomical Journal*
 **153** (2017) 151, doi:10.3847/1538-3881/aa5faa. The Gauss–Markov variance law this module builds
-on is `Alt.OLSVariance.olsSlope_variance_eq` (Aitken 1935, cited there).
+on is the homoscedastic `Alt.OLSVariance.olsSlope_variance_eq`; `Alt.OLSVariance` cites Aitken
+1935, whose generalized (weighted) form is not what is used here.
 
 ## Honest limitations
 
@@ -96,9 +107,11 @@ on is `Alt.OLSVariance.olsSlope_variance_eq` (Aitken 1935, cited there).
   estimators — is specific to Gaussian noise; for non-Gaussian noise of the same variance the
   Fisher information can exceed `SS_E/σ²` and a nonlinear unbiased estimator can beat OLS.
 * **Design monotonicity, not line usability.** "Adding a line never hurts" ranks designs under a
-  common homoscedastic noise law. A line that is self-absorbed, blended, or has an unreliable
-  `gA` violates the model, not the theorem; whether a candidate is *admissible* is decided by the
-  pipeline's other gates, exactly as in `LineSelection`.
+  common homoscedastic noise law. Under unequal per-line noise it is false for OLS (see item 2
+  above: slope variance `2` becomes `2500.25` when a `σ = 100` line is added). A line that is
+  self-absorbed, blended, or has an unreliable `gA` violates the model, not the theorem; whether a
+  candidate is *admissible* is decided by the pipeline's other gates, exactly as in
+  `LineSelection`.
 * **The mean is the current selection's mean.** `no_gain_iff` compares `Eₖ` with `Ē_S`, the mean
   of the lines *already selected*, not with any fixed reference energy; the criterion is
   sequential and depends on `S`.
@@ -142,13 +155,15 @@ noncomputable def fisherInfoSlope (E : ι → ℝ) (σ : ℝ) : ℝ := energySpr
 theorem fisherInfoSlope_nonneg (E : ι → ℝ) (σ : ℝ) : 0 ≤ fisherInfoSlope E σ :=
   div_nonneg (energySpread_nonneg E) (sq_nonneg σ)
 
-/-- The Fisher information is strictly positive under the spread gate (`0 < SS_E`, the pipeline's
-C1 certificate `energySpreadCert_iff`) and nondegenerate noise (`σ ≠ 0`). -/
+/-- The Fisher information is strictly positive under the spread gate (`0 < SS_E`, the condition
+of the C1 certificate, `energySpreadCert_iff`) and nondegenerate noise (`σ ≠ 0`). -/
 theorem fisherInfoSlope_pos (E : ι → ℝ) (σ : ℝ) (hE : 0 < energySpread E) (hσ : σ ≠ 0) :
     0 < fisherInfoSlope E σ :=
   div_pos hE (by positivity)
 
-/-- **The Cramér–Rao lower bound for the slope**: `σ²/SS_E = I(β)⁻¹`. This is unconditional
+/-- **The closed form of the Gaussian-model Cramér–Rao bound for the slope, as algebra on the
+definition: `σ²/SS_E = (fisherInfoSlope E σ)⁻¹`.** This is not a Cramér–Rao inequality:
+`fisherInfoSlope` is defined, not derived. The identity is unconditional
 field algebra (`(a/b)⁻¹ = b/a`; in the degenerate cases `SS_E = 0` or `σ = 0` Lean's `x/0 = 0`
 convention makes both sides `0`). The *meaningful* case is `0 < SS_E` and `σ ≠ 0`, where
 `fisherInfoSlope_pos` makes the bound a genuine positive number. -/
@@ -157,7 +172,9 @@ theorem crlb_slope (E : ι → ℝ) (σ : ℝ) : σ ^ 2 / energySpread E = (fish
 
 variable {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω} [IsProbabilityMeasure μ]
 
-/-- **OLS attains the Cramér–Rao bound — OLS is efficient.** Under the Gauss–Markov hypotheses of
+/-- **`Var(OLS slope) = (fisherInfoSlope E σ)⁻¹`: OLS attains `σ²/SS_E`, the Gaussian-model
+Fisher bound as defined (Fisher information is defined, not derived).** Under the Gauss–Markov
+hypotheses of
 `Alt.OLSVariance.olsSlope_variance_eq`, carried here verbatim (zero-mean is not needed for the
 variance; `L²`, pairwise uncorrelated, homoscedastic with common `σ²`), the variance of the OLS
 slope equals `(fisherInfoSlope E σ)⁻¹ = σ²/SS_E`. **What this theorem proves** is that identity
@@ -273,17 +290,20 @@ theorem spreadOn_mono (E : ι → ℝ) {S T : Finset ι} (hST : S ⊆ T) :
   have h := key T
   rwa [Finset.union_eq_right.mpr hST] at h
 
-/-- **Adding a line never decreases the Fisher information** of the selected sub-design
+/-- **Adding a line never decreases the Fisher information, as defined here, under one common
+noise level `σ` for every line.** The information is that of the selected sub-design
 (`fisherInfoSlope` of the restriction of `E` to the selected lines). -/
 theorem fisherInfo_insert_ge (E : ι → ℝ) (S : Finset ι) (k : ι) (σ : ℝ) :
     fisherInfoSlope (fun j : ↥S => E j.1) σ
       ≤ fisherInfoSlope (fun j : ↥(insert k S) => E j.1) σ :=
   div_le_div_of_nonneg_right (spreadOn_insert_ge E S k) (sq_nonneg σ)
 
-/-- **Adding a line never increases the Cramér–Rao bound.** Under the spread gate on the current
-selection (`0 < spreadOn E S`, i.e. `S` already has two distinct upper-level energies — the
-pipeline's C1 certificate), the Cramér–Rao floor `(fisherInfoSlope)⁻¹ = σ²/SS_E` of the enlarged
-selection is at most that of the current one. The gate is genuinely needed: for a degenerate `S`
+/-- **Adding a line never increases the closed-form bound `σ²/SS_E`.** Under the spread gate on
+the current selection (`0 < spreadOn E S`, i.e. `S` already has two distinct upper-level energies —
+the condition of the C1 certificate), the closed form `(fisherInfoSlope)⁻¹ = σ²/SS_E` of the
+enlarged selection is at most that of the current one, with one common `σ` for every line. It is
+the Cramér–Rao floor only under the textbook Gaussian reading (not proved here). The gate is
+genuinely needed: for a degenerate `S`
 the true bound is infinite while Lean's `σ²/0 = 0`. -/
 theorem crlb_insert_le (E : ι → ℝ) (S : Finset ι) (k : ι) (σ : ℝ) (hS : 0 < spreadOn E S) :
     (fisherInfoSlope (fun j : ↥(insert k S) => E j.1) σ)⁻¹
@@ -369,8 +389,8 @@ theorem nonvacuity_line_at_mean :
     Finset.sum_pair h01, Finset.card_pair h01]
   norm_num
 
-/-- **Non-vacuity — the Cramér–Rao bound is attained, with numbers, on a genuine probability
-space.** On the fair-coin Rademacher model of `LineSelection` (`σ = 1`, a real
+/-- **Non-vacuity — `Var(β̂) = (fisherInfoSlope E σ)⁻¹` holds with numbers on a genuine
+probability space.** On the fair-coin Rademacher model of `LineSelection` (`σ = 1`, a real
 `IsProbabilityMeasure` with nondegenerate noise) and the wide pair `E = (0, 3)`, the Fisher
 information is `9/2` and the OLS slope variance equals its inverse, `2/9` (the value computed
 independently in `nonvacuity_rademacher_values`). Every hypothesis of `olsSlope_attains_crlb` is

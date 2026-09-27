@@ -1,0 +1,285 @@
+{
+  "total": 57,
+  "offset": 0,
+  "next": 8,
+  "data": [
+    {
+      "paperId": "056672503334a3894f6152ddfd6df0999b2bc5a2",
+      "externalIds": {
+        "MAG": "804495200",
+        "DOI": "10.7567/JJAP.54.076101",
+        "CorpusId": 93479841
+      },
+      "title": "Experimental study of laser-induced air plasma using a Nomarski interferometer",
+      "venue": "",
+      "year": 2015,
+      "citationCount": 6,
+      "authors": [
+        {
+          "authorId": "31510800",
+          "name": "Seong Y. Oh"
+        },
+        {
+          "authorId": "50554168",
+          "name": "C. Lim"
+        },
+        {
+          "authorId": "2463344342",
+          "name": "Yong-Ha Sung"
+        },
+        {
+          "authorId": "30773182",
+          "name": "S. Nam"
+        },
+        {
+          "authorId": "2294921",
+          "name": "Jaemin Han"
+        }
+      ]
+    },
+    {
+      "paperId": "be4bca606427f409c0059bc29e0dc821593f2dde",
+      "externalIds": {
+        "CorpusId": 102494712
+      },
+      "title": "The effect of electric pre-ionization on the laser-induced breakdown of helium",
+      "venue": "",
+      "year": 2015,
+      "citationCount": 0,
+      "authors": [
+        {
+          "authorId": "67022011",
+          "name": "Roel Burgwal"
+        }
+      ]
+    },
+    {
+      "paperId": "6da8362e0a57e4f6687156db2bb09feafbede2a9",
+      "externalIds": {
+        "MAG": "2239334487",
+        "DOI": "10.1088/0031-8949/90/9/095603",
+        "CorpusId": 123866731
+      },
+      "title": "Intense field induced excitation and ionization of an atom confined in a dense quantum plasma",
+      "venue": "",
+      "year": 2015,
+      "citationCount": 17,
+      "authors": [
+        {
+          "authorId": null,
+          "name": "Shalini Lumb"
+        },
+        {
+          "authorId": null,
+          "name": "Sonia Lumb"
+        },
+        {
+          "authorId": "20431057",
+          "name": "D. Munjal"
+        },
+        {
+          "authorId": "144430847",
+          "name": "V. Prasad"
+        }
+      ]
+    },
+    {
+      "paperId": "acf2895e6c59c2252a23a7c67910aa8b90340c75",
+      "externalIds": {
+        "MAG": "2474342916",
+        "DOI": "10.1103/PHYSREVE.92.011101",
+        "CorpusId": 35740445,
+        "PubMed": "26274117"
+      },
+      "title": "Role of the ionization potential in nonequilibrium metals driven to absorption saturation.",
+      "venue": "Physical review. E, Statistical, nonlinear, and soft matter physics",
+      "year": 2015,
+      "citationCount": 5,
+      "authors": [
+        {
+          "authorId": "2575380",
+          "name": "R. Mincigrucci"
+        },
+        {
+          "authorId": "40510411",
+          "name": "F. Bencivenga"
+        },
+        {
+          "authorId": "153937607",
+          "name": "F. Capotondi"
+        },
+        {
+          "authorId": "4917139",
+          "name": "E. Principi"
+        },
+        {
+          "authorId": "47009196",
+          "name": "E. Giangrisostomi"
+        },
+        {
+          "authorId": "46441137",
+          "name": "A. Battistoni"
+        },
+        {
+          "authorId": "48067232",
+          "name": "M. Caputo"
+        },
+        {
+          "authorId": "4227269",
+          "name": "F. Casolari"
+        },
+        {
+          "authorId": "5034315",
+          "name": "A. Gessini"
+        },
+        {
+          "authorId": "3557772",
+          "name": "M. Manfredda"
+        },
+        {
+          "authorId": "3722366",
+          "name": "E. Pedersoli"
+        },
+        {
+          "authorId": "5107972",
+          "name": "C. Masciovecchio"
+        }
+      ]
+    },
+    {
+      "paperId": "ba0e22f5ddccb0660dc59544250d8dcfc5965774",
+      "externalIds": {
+        "MAG": "1454762387",
+        "DOI": "10.1117/12.2186920",
+        "CorpusId": 118483814
+      },
+      "title": "The study of gas species on THz generation from laser-induced air plasma",
+      "venue": "SPIE Optical Engineering + Applications",
+      "year": 2015,
+      "citationCount": 0,
+      "authors": [
+        {
+          "authorId": "153198973",
+          "name": "Ji Zhao"
+        },
+        {
+          "authorId": "50081600",
+          "name": "Liangliang Zhang"
+        },
+        {
+          "authorId": "2107904161",
+          "name": "Yijian Wu"
+        },
+        {
+          "authorId": "48865377",
+          "name": "Tong Wu"
+        },
+        {
+          "authorId": "2087113585",
+          "name": "Hui Yuan"
+        },
+        {
+          "authorId": "2111385694",
+          "name": "Cun-Lin Zhang"
+        },
+        {
+          "authorId": "97522173",
+          "name": "Yuejin Zhao"
+        }
+      ]
+    },
+    {
+      "paperId": "0f591f3a4f6b3fd2c3bf4a9a912d0df1084a7ca2",
+      "externalIds": {
+        "MAG": "1549889628",
+        "DOI": "10.1063/1.4922909",
+        "CorpusId": 118808046
+      },
+      "title": "The equation of state and ionization equilibrium of dense aluminum plasma with conductivity verification",
+      "venue": "",
+      "year": 2015,
+      "citationCount": 21,
+      "authors": [
+        {
+          "authorId": "2119043561",
+          "name": "Kun Wang"
+        },
+        {
+          "authorId": "3065089",
+          "name": "Zong-Qian Shi"
+        },
+        {
+          "authorId": "5693856",
+          "name": "Yuan-Jie Shi"
+        },
+        {
+          "authorId": "144686301",
+          "name": "J. Bai"
+        },
+        {
+          "authorId": "46365509",
+          "name": "Jian Wu"
+        },
+        {
+          "authorId": "145024761",
+          "name": "S. Jia"
+        }
+      ]
+    },
+    {
+      "paperId": "b97dbe8b2bb6e15071eadeda30ea8bb93b90f632",
+      "externalIds": {
+        "MAG": "3004346166",
+        "CorpusId": 218130271
+      },
+      "title": "Quantification of Salt Anions Using Laser-Induced Breakdown Spectroscopy (LIBS)",
+      "venue": "",
+      "year": 2015,
+      "citationCount": 5,
+      "authors": [
+        {
+          "authorId": "2246940744",
+          "name": "D. E. Anderson"
+        },
+        {
+          "authorId": "3477693",
+          "name": "B. Ehlmann"
+        },
+        {
+          "authorId": "47624757",
+          "name": "S. Clegg"
+        }
+      ]
+    },
+    {
+      "paperId": "670998290943c1f79f13ea916d70b8fbf26d7082",
+      "externalIds": {
+        "MAG": "2044246757",
+        "DOI": "10.1016/J.SAB.2014.12.002",
+        "CorpusId": 98263868
+      },
+      "title": "Influence of dispersion agents on particle size and concentration determined by laser-induced breakdown detection \u2606",
+      "venue": "",
+      "year": 2015,
+      "citationCount": 6,
+      "authors": [
+        {
+          "authorId": "143864772",
+          "name": "N. Fedotova"
+        },
+        {
+          "authorId": "6150446",
+          "name": "R. Kaegi"
+        },
+        {
+          "authorId": "37265724",
+          "name": "J. Koch"
+        },
+        {
+          "authorId": "92665087",
+          "name": "D. G\u00fcnther"
+        }
+      ]
+    }
+  ]
+}

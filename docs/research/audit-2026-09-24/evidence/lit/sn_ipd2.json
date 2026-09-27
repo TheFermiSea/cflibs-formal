@@ -1,0 +1,189 @@
+{
+  "data": [
+    {
+      "score": 0.5818692304369526,
+      "paper": {
+        "corpusId": "250689992",
+        "title": "Apparent excitation temperature in laser-induced plasmas",
+        "authors": [
+          "J. A. Aguilera",
+          "C. Arag\u00f3n"
+        ],
+        "openAccessInfo": {
+          "license": null,
+          "status": "GOLD",
+          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://api.unpaywall.org/v2/10.1088/1742-6596/59/1/046?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.1088/1742-6596/59/1/046, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        }
+      },
+      "snippet": {
+        "text": "The asterisks indicate that the magnitudes are modified as follows: the left-hand side of the equation (the ordinate of the Saha-Boltzmann plot) includes the subtraction of a correction term that depends on the temperature and the electron density N e \n\nAlso, the upper level energies (the abscissas of the Saha-Boltzmann plot) have been modified by adding to them the ionization energy of the lower ionization stages, that is, the energy scale begins in the ground state of the neutral atom. For the z ions, the correction is \n\nwhere is the ionization energy of species k for isolated systems (eV) and is the correction of this quantity for interactions in the plasma. These modifications have only effect for ion lines (z 1) and are introduced in equation 1a in order to include the data of the different ionization stages in the Saha-Boltzmann plot. \n\nThe validity of the Saha-Boltzmann plot to obtain the local electronic temperature depends on the validity of the excitation (Boltzmann) and ionisation (Saha) equilibrium equations, which are satisfied in a plasma in local thermodynamic equilibrium (LTE). In the previous work [1], where the laser-induced plasmas were generated and detected in similar conditions, the hypothesis of the existence of LTE was supported by the experimental verification that, in local measurements, the values for the temperature deduced from Boltzmann plots obtained with neutral atom and ion emission lines were coincident among them within the experimental error, and also coincide with the temperature deduced from the Saha-Boltzmann plot. In the present work, the determination of the local temperature has been carried out using the Saha-Boltzmann plot, which provides more accurate results than the Boltzmann plot, due to the higher spread in the values of the energy levels of the neutral atom and ion emission lines involved. The Fe lines selected to obtain the plots were the same as those of the previous work [1], where they are listed with their spectroscopic data.",
+        "snippetKind": "body"
+      }
+    },
+    {
+      "score": 0.5647539026004128,
+      "paper": {
+        "corpusId": "285500380",
+        "title": "Optical Characterization of Neem Leaf by Laser\u2002Beam Scanning Spectroscopy (LIBS) and its spectral Properties",
+        "authors": [
+          "N. Hazim",
+          "Alyaa Hussein Ali"
+        ],
+        "openAccessInfo": {
+          "license": "CCBY",
+          "status": "GOLD",
+          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://api.unpaywall.org/v2/10.30526/39.1.4216?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.30526/39.1.4216, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        }
+      },
+      "snippet": {
+        "text": "Application of the Boltzmann equation, which relates the intensity of the spectral line (I), the number of atoms in a given energy level, and the temperature, allows the plasma temperature to be accurately estimated 17,18 . The average temperature of the plasma can be expressed by the temperature (T) as determined using this technique, based on Equation 1 19,20 : T= \n\nThe Saha-Boltzmann equation is a fundamental tool for analyzing advanced stages of spectral line ionization. It depends on several factors, including the intensity of the spectral lines (I), the statistical weight (g), the conversion probability (A), as well as the wavelength (\u03bb) and the energy of the excited state (E). The Boltzmann constant (K) also plays an important role in calculating this relationship 20,21 : \n\n( \n\nWhere: X z represents the ionization potential of an organism at the second ionization level, measured in electron volts (eV) 22 . I 2 represents the intensity of the spectral transition from level 2 to level 1, \u03bb is the wavelength associated with this transition, and is considered within the acceptable range. \n\nDetermines the statistical weight of this transition, while A 2 refers to its probability of occurrence. The symbol z is used to indicate the ionization stage of the species studied [23][24][25][26] . The frequency of the generated plasma can be calculated using the equation provided for this purpose, 27 : \u221a (4) Plasma frequency is one of its fundamental properties, directly dependent on its density. Typically, low values of Result in a significantly higher plasma frequency 20 . Where charged particles interact to reduce the influence of surrounding electric fields. The Debye length (\u03bb D ) is defined as the distance at which this effect occurs. Quasi-neutrality in plasmas occurs as a result of the Debye shielding effect, where charged particles reduce the influence of surrounding electric fields. The Debye length (\u03bbD) is determined based on this distance 28,29 : \n\nN D denotes the density of particles at the Debye surface, which depends on the electron density and temperature. The existence of a plasma is conditional upon N D >>>1 30 : (6)",
+        "snippetKind": "body"
+      }
+    },
+    {
+      "score": 0.5587393068307245,
+      "paper": {
+        "corpusId": "67788121",
+        "title": "Determination of excitation temperature in laser-induced plasmas using columnar density Saha-Boltzmann plot",
+        "authors": [
+          "Ali Safi",
+          "S. H. Tavassoli",
+          "G. Cristoforetti",
+          "S. Legnaioli",
+          "V. Palleschi",
+          "F. Rezaei",
+          "E. Tognoni"
+        ],
+        "openAccessInfo": {
+          "license": "CCBYNCND",
+          "status": "GOLD",
+          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://pmc.ncbi.nlm.nih.gov/articles/PMC6370548, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        }
+      },
+      "snippet": {
+        "text": "In this section, the basic theoretical framework for calculating the ground-level temperature of an element through a modified Saha-Boltzmann plot called 'Columnar Density Saha-Boltzmann (CD-SB)' plot is outlined. A more detailed description of this method is available in Ref. [27]. \n\nSimilar to other LIBS methodologies, in the CD-SB plot method it is assumed that plasma is spatially homogenous in the measurement time interval. In order to obtain ground level temperature, the ratios of number densities between successive ionization stages can be expressed by the Saha-Eggert equation [28]: \n\nwhere superscripts I and II respectively refer to the neutral and singly ionized species of the element, U is the partition function of the species (dimensionless), n e (cm \u00c03 ) is the free electron density, E ion (eV) is the first ionization energy of the element, T (K) represents the electron temperature, h (eV s) is the Planck constant, k B (eV K \u00c01 ) is the Boltzmann constant, and m e (g) is the electron mass. \n\nEq. ( 1) can be written in terms of the number density of the lower level of an ionic transition: \n\nwhere E II i (eV) is the lower level energy of the ionic transition and g II i is the degeneracy of the i level. Multiplying both sides of Eq. ( 2) by the optical path length l and taking the natural logarithm, the coordinates of the spectral lines in the columnar density Saha-Boltzmann plane are given: \n\nx \u00bc E I i for neutral lines \n\nThis modified Saha-Boltzmann expression is similar to the classical Saha-Boltzmann plot, the slope of the linear plot being related to the plasma temperature. Comparing it with the conventional Saha-Boltzmann plot, however, it is evident that some differences exist between them in the calculation of plasma temperature. In particular, variable y is determined by using the columnar density (n i l) rather than line intensity for both atomic and ionic lines of the desired elements. In addition, coordinate x represents the lower (rather than the upper) level energy values.",
+        "snippetKind": "body"
+      }
+    },
+    {
+      "score": 0.5557521392386995,
+      "paper": {
+        "corpusId": "139766990",
+        "title": "Study and Analysis the Wisdom Tooth structural and Optical Characteristic by Using LIBS, SEM and EDS",
+        "authors": [
+          "Asmaa N. Ahmed",
+          "Ashraf M. Alattara",
+          "Ruaa A. Mohammed"
+        ],
+        "openAccessInfo": {
+          "license": "CCBY",
+          "status": "GOLD",
+          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://api.unpaywall.org/v2/10.1088/1742-6596/1178/1/012011?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.1088/1742-6596/1178/1/012011, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        }
+      },
+      "snippet": {
+        "text": "compare with other groups. Finally the plasma parameters can be used to determine electrons temperature and electron density according to Boltzmann equation and Saha-Boltzmann equation, respectively [10,11]. According to the Saha-Boltzmann equation electron density can be deduced from the intensity relation of two lines matching to different ionization stages [10,11].\n\nWhere \u202b\u0749\u0727\u202c and \u202b\u0746\u0727\u202c are the upper level energies of neutral and single ionized transitions, \u202b\u0727\u202cion is the ionization energy and \u074a\u0741 is the electron density. The Debye length is the measure of the penetration depth of the external electrostatic fields, i.e. of the boundary charge sheath thickness. The applied electrical potential will therefore develop mostly near surface, over a distance \u03bbD, called the Debye length and defined by [13].\n\nWhere \u03b5\u2092 is permittivity of free space, kB the Boltzmann constant and e2 electron charge. It can be exhibited that the Debye length is a function of electron temperature (Te), and plasma density ne \u2245 ni (assuming singly charged ions). The plasma frequency of electron (\u07f1p) can be calculated by [13].",
+        "snippetKind": "body"
+      }
+    },
+    {
+      "score": 0.5215828578698963,
+      "paper": {
+        "corpusId": "249243944",
+        "title": "A Brief Review of Calibration-Free Laser-Induced Breakdown Spectroscopy",
+        "authors": [
+          "Ning Zhang",
+          "Tianxue Ou",
+          "Mei Wang",
+          "Zhanjian Lin",
+          "Chao Lv",
+          "Yuzhi Qin",
+          "Jiaming Li",
+          "Han Yang",
+          "Nan Zhao",
+          "Qing-Mao Zhang"
+        ],
+        "openAccessInfo": {
+          "license": "CCBY",
+          "status": "GOLD",
+          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://api.unpaywall.org/v2/10.3389/fphy.2022.887171?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.3389/fphy.2022.887171, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        }
+      },
+      "snippet": {
+        "text": "The methods based on the Boltzmann plot and the Saha-Boltzmann plot both have significant limitations: (I) optical thinness is needed; (II) the plasma electron temperature cannot be accurately deduced by the slope of the Boltzmann or Saha-Boltzmann plot when only a small number of spectral lines for elements in the same ionization state can be observed. \n\nThe column density Saha-Boltzmann (CD-SB) method can effectively overcome the aforementioned limitations [51], where the column density of the ground state can be directly calculated. Furthermore, the presence of self-absorption in the resonance lines ensures long-term atomic evolution [52]. This method proposed by Cristoforetti and Tognoni opened up a new avenue for accurate plasma temperature calculation (the columnar density Saha-Boltzmann plot, shown in Figure 5 [51]). \n\nSimilar to the conventional CF-LIBS method, the plasma is assumed to be spatially homogeneous over the measured time interval in the CD-SB plot method. Equation 13 can be rewritten according to [51]: \n\nThis equation describes the equilibrium population of different ionization stages in terms of the number density of the lower level of an ionic transition ( n II i l ). E II i is the energy of the ionic transition at the lower energy level, and \u0394E ion is the reduced ionization energy due to the plasma environment, which is 1-2 orders of magnitude lower than the sum of ( E II i + E ion ) and is generally negligible. The columnar density n I l can be determined as the following: \n\nwhere \u03bb 0 and \u0394\u03bb 0 are in _ A units; the value of k(\u03bb 0 )l can be evaluated by the self-absorption coefficient, and f is the line oscillator strength. \n\nSimilarly, the Boltzmann Equation can be rewritten as \n\nwhere E I i is the energy of the atomic transition at the lower energy level i. \n\nCombining Equations 17, 19, the column density Saha-Boltzmann equation can take the following format: \n\nwhere m \u2212 1 k B T and q ln n I l U I (T) ; for atomic lines, x p E I i and y p ln n I i l g I i ; for ionic lines,",
+        "snippetKind": "body"
+      }
+    },
+    {
+      "score": 0.5108922233198464,
+      "paper": {
+        "corpusId": "257167405",
+        "title": "LIBS assisted PCA analysis of multiple rare-earth elements (La, Ce, Nd, Sm, and Yb) in phosphorite deposits",
+        "authors": [
+          "A. Fayyaz",
+          "H. Asghar",
+          "A. Alshehri",
+          "T. Alrebdi"
+        ],
+        "openAccessInfo": {
+          "license": "CCBY",
+          "status": "GOLD",
+          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://pmc.ncbi.nlm.nih.gov/articles/PMC9989654, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        }
+      },
+      "snippet": {
+        "text": "This linear relationship (refer Eq. ( 6)) gives the electron temperature (slope ~1/kT) by constructing the ln (I\u03bb/A k g k ) term as a function of the upper-level energy. The error can be minimized to improve the accuracy of the temperature measurement using multiple emission spectral lines. However, for high temperatures, the line intensities ratios from several ionization stages can be associated with the plasma temperature using a relation similar to the Boltzmann equation. Because the energy spans in a separate ionization level at high temperatures are not too large to make precise temperature measurements. Higher energy spans are achievable by employing transitions from several ionization phases utilizing the Saha-Boltzmann's equation; \n\nHere, E \u221e is the ionization-energy, N e is the electron-density, subscripts 1 and 2 refer to the different ionization stages, and \u0394E is the ionization-energy correction owing to minor scale polarization of the optical plasma [54,55]. Eq. ( 7) is similar to the Boltzmann equation however includes the T 3/2 factor and an electron number density. The T 3/2 factor in Eq. ( 7) prevents the application of the Saha equation through multiple lines in the Boltzmann equation. A temperature measurement using the Saha equation can also be performed after simplification of Eq. ( 7). Eq. ( 7) can be simplified by taking the natural log; \n\n\u21d2 ln \n\nNow, Eq. ( 8) can be utilized to plot both the species such as atomic (I) and ionic (II) on the same Boltzmann-type plot. In Eq. ( 8), two major differences such as the upper-level energy difference, and the first term has been transformed. To draw atomic and ionic lines on the same plot, we adjust the abscissa values of the ionic energy levels (E J z * ) only, by inserting modified ionization-energy such as [56] to the ion energy levels and finally, we modify the Saha-Boltzmann relation for the emission line emissivity of an ingredient element as; ln",
+        "snippetKind": "body"
+      }
+    },
+    {
+      "score": 0.5044031008359506,
+      "paper": {
+        "corpusId": "289973124",
+        "title": "Spatiotemporal Dynamics of Hydrogen Plasma Smelting Reduction of iron ore: A Multi-Species Diagnostic Approach",
+        "authors": [
+          "Ram Krushna Mohanta",
+          "Kai Lopez",
+          "Sai Vishnu Korsipati",
+          "H. Sitaraman",
+          "Laxminarayan L. Raja",
+          "N. Leick",
+          "Seetharaman Sridhar"
+        ],
+        "openAccessInfo": {
+          "license": null,
+          "status": null,
+          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://arxiv.org/abs/2607.06840, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        }
+      },
+      "snippet": {
+        "text": "Where   is the electron density in  \u22123 and \u0394  is the full width at half maximum in nm. This calculation was performed for three experimental replicates at each spatial position, with the mean and standard deviation reported. \n\n1.2. Saha-Boltzmann Method for determining Plasma temperature \n\nWhile electron density provides insight into the species concentration in the plasma, the plasma excitation temperature (  ) serves as the primary indicator of the energetic state of the system. In this study,   was determined using the Saha-Boltzmann method, which extends the standard Boltzmann plot technique by incorporating emission lines from successive ionization stages (neutral Ar I and singly ionized Ar II). \n\nThe standard Boltzmann plot method, using only neutral lines, is often prone to large uncertainties due to the relatively small energy spread of the upper states (\u0394  ~ 1 \u2212 3). \n\nBy including ionic lines (Ar II), the energy range is effectively extended by the ionization potential of argon (  ~ 15.76 ), creating a much larger lever arm for the linear regression and significantly improving the accuracy of the temperature determination. \n\nAssuming Local Thermodynamic Equilibrium (LTE), the population densities of atomic and ionic states are coupled via the Saha-Eggert equation. The linearized Saha-Boltzmann equation is expressed as [6]: \n\nwhere   , ,   and   are the integrated line intensity, wavelength, statistical weight, and transition probability, respectively. The term on the left-hand side, denoted with an *, represents the \"Saha-shifted\" intensity. For neutral lines (Ar I), this is simply the natural logarithm of the normalized intensity. For ionic lines (Ar II), a correction term (Saha shift) is subtracted to account for the ionization equilibrium:  datasets. The procedure, based on the method described by Aydin et al. [7], proceeded as follows: \n\n1. Line Selection: A comprehensive set of Ar I and Ar II lines, as well as candidate Fe I lines, within the 300-800 nm range was initially selected. Atomic data (  ,   ,   ) \n\nwere sourced from the NIST Atomic Spectra Database [8]. The investigated Argon and hydrogen emission lines are listed in Table S1.",
+        "snippetKind": "body"
+      }
+    },
+    {
+      "score": 0.5009049881786615,
+      "paper": {
+        "corpusId": "290003051",
+        "title": "Modeling of vacuum arc cathode spot erosion with consideration of ion species distribution and electron energy processes in cathode plasma cloud",
+        "authors": [
+          "Xinyi Liu",
+          "Li-Jun Wang",
+          "Runming Zhang",
+          "Cong Wang",
+          "Hong-Jian Wang"
+        ],
+        "openAccessInfo": {
+          "license": "CCBYNCND",
+          "status": "HYBRID",
+          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://api.unpaywall.org/v2/10.1088/1361-6463/ae86ff?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.1088/1361-6463/ae86ff, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        }
+      },
+      "snippet": {
+        "text": "The incorporation of these corrected parameters enables the Saha equation to more accurately capture the actual plasma conditions in the near-cathode region. \n\nUnder the intense electric field in the near-cathode region, the image charge effect (Schottky effect) lowers the potential barrier for electron escape, thereby reducing the atomic ionization energy. The present model incorporates an electric field correction to quantitatively describe this process: \n\nwhere \u2206E field represents the lowering of the ionization energy caused by the electric field correction. \n\nConcurrently, within the dense plasma, strong Coulomb interactions among charged particles induce a significant electrostatic shielding effect. Therefore, the Debye-H\u00fcckel model is employed to calculate the reduction in the ionization energy threshold caused by this shielding effect: \n\n1 e e 2 4\u03c0 \u03b5 0 \u03bb D (24) where \u2206E Debye is the reduction induced by the Debye correction and \u03bb D is the Debye length. \n\nIn the complex near-cathode region, the electric field correction and the Debye correction typically undergo nonlinear coupling. To simplify the calculation, the present model neglects this nonlinear interaction and assumes that the impacts of these two corrections on the ionization energy are linearly superimposed. Based on the assumption of linear superposition, the final effective ionization energy for the ith charge state ion can be expressed as: \n\nOn the other hand, in the near-cathode region of the spot, the electron energy distribution exhibits an enhanced high-energy tail [34]. Although high-energy electrons account for only a small fraction, they can still have a significant effect on the ionization rate, especially for the second and third ionization stages of Cu. Therefore, these high-energy electrons cannot be neglected. In this work, an effective electron temperature T eff e is introduced to reflect the enhancement of the ionization process caused by highenergy electrons, using the following empirical correction: \n\nwhere T e eff is the effective electron temperature, and \u03b3 is an empirical coefficient, typically ranging from 1.2 to 2.0. \n\nSolving the modified Saha equation yields the populations of ions in various charge states; consequently, the mean charge state z i is given by: \n\nThe present model incorporates the electron energy balance equation at the sheath edge to determine the electron temperature [14,15]:",
+        "snippetKind": "body"
+      }
+    }
+  ],
+  "retrievalVersion": "pa1-v1"
+}

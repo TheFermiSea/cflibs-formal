@@ -1,0 +1,360 @@
+{
+  "total": 695,
+  "offset": 0,
+  "next": 10,
+  "data": [
+    {
+      "paperId": "59a7f3987d6e3162c879edf2134bfcc1433af68e",
+      "externalIds": {
+        "DOI": "10.46770/as.2022.136",
+        "CorpusId": 252618217
+      },
+      "title": "Correction Of Self-Absorption Effect In Laser-Induced Breakdown Spectroscopy Analysis For Sea Salt Aerosols Using A Duplicating Mirror",
+      "venue": "Atomic spectroscopy",
+      "year": 2022,
+      "citationCount": 2,
+      "authors": [
+        {
+          "authorId": "95637811",
+          "name": "Lianbo Guo"
+        }
+      ]
+    },
+    {
+      "paperId": "237f67fb0c5ad16433f97ecb53b5665340406151",
+      "externalIds": {
+        "MAG": "1984275470",
+        "DOI": "10.1016/J.SAB.2009.06.011",
+        "CorpusId": 93474468
+      },
+      "title": "On the usefulness of a duplicating mirror to evaluate self-absorption effects in laser induced breakdown spectroscopy",
+      "venue": "",
+      "year": 2009,
+      "citationCount": 121,
+      "authors": [
+        {
+          "authorId": "14195975",
+          "name": "Heh-Young Moon"
+        },
+        {
+          "authorId": "92118969",
+          "name": "Kathleen K. Herrera"
+        },
+        {
+          "authorId": "12575877",
+          "name": "N. Omenetto"
+        },
+        {
+          "authorId": "2219653857",
+          "name": "Benjamin W. Smith"
+        },
+        {
+          "authorId": "7474149",
+          "name": "J. Winefordner"
+        }
+      ]
+    },
+    {
+      "paperId": "f8c107d2e10b741149de1f6bab55175ec0626570",
+      "externalIds": {
+        "DOI": "10.1364/oe.553562",
+        "CorpusId": 276665638,
+        "PubMed": "40798096"
+      },
+      "title": "Time-resolved characteristics and self-absorption correction of laser-induced plasma in a transient electric field.",
+      "venue": "Optics Express",
+      "year": 2025,
+      "citationCount": 1,
+      "authors": [
+        {
+          "authorId": "2005474402",
+          "name": "Boping Xu"
+        },
+        {
+          "authorId": "2213608674",
+          "name": "Pei-Qi Yin"
+        },
+        {
+          "authorId": "2315804944",
+          "name": "Jia-Jia Hou"
+        },
+        {
+          "authorId": "2109541512",
+          "name": "Jie Tang"
+        },
+        {
+          "authorId": "2109546094",
+          "name": "Dacheng Zhang"
+        }
+      ]
+    },
+    {
+      "paperId": "8227036cb0275949b5be46219060652f33e75b22",
+      "externalIds": {
+        "DOI": "10.1016/j.sab.2025.107350",
+        "CorpusId": 282039193
+      },
+      "title": "Accurate simulation of the CN emission spectra in laser-induced plasma: a joint impact of robust line list, non-LTE conditions and self-absorption effect",
+      "venue": "Spectrochimica Acta Part B: Atomic Spectroscopy",
+      "year": 2025,
+      "citationCount": 0,
+      "authors": [
+        {
+          "authorId": "13681673",
+          "name": "S. Zaytsev"
+        },
+        {
+          "authorId": "94850979",
+          "name": "V. Terashkevich"
+        }
+      ]
+    },
+    {
+      "paperId": "ce2566f29a7b812c54f74f8c1c9c2c7e851be767",
+      "externalIds": {
+        "DOI": "10.1016/j.sab.2024.106958",
+        "CorpusId": 270208303
+      },
+      "title": "Full correction of the self-absorption of laser-induced plasma beryllium emissions via sample preparation",
+      "venue": "Spectrochimica Acta Part B: Atomic Spectroscopy",
+      "year": 2024,
+      "citationCount": 2,
+      "authors": [
+        {
+          "authorId": "2188209687",
+          "name": "Hui Chen"
+        },
+        {
+          "authorId": "15281848",
+          "name": "Zhuhai Chen"
+        },
+        {
+          "authorId": "2332261999",
+          "name": "R. Luo"
+        },
+        {
+          "authorId": "2118380025",
+          "name": "Yuehua Chen"
+        },
+        {
+          "authorId": "2261259019",
+          "name": "Shuolei Wei"
+        },
+        {
+          "authorId": "2188062669",
+          "name": "Guanqin Mo"
+        },
+        {
+          "authorId": "2261258142",
+          "name": "Tao Xu"
+        }
+      ]
+    },
+    {
+      "paperId": "aee5f5f9ad8368e31d86d164f70754ab2aae78c1",
+      "externalIds": {
+        "DOI": "10.1364/ol.579755",
+        "CorpusId": 282285890,
+        "PubMed": "41185270"
+      },
+      "title": "Multielemental self-absorption effect reduction in laser-induced breakdown spectroscopy by 10.6\u2009\u00b5m high-repetition-frequency laser irradiation.",
+      "venue": "Optics Letters",
+      "year": 2025,
+      "citationCount": 0,
+      "authors": [
+        {
+          "authorId": "2370044639",
+          "name": "Lize Ming"
+        },
+        {
+          "authorId": "2274303156",
+          "name": "Qiu-Yun Wang"
+        },
+        {
+          "authorId": "2274417766",
+          "name": "Hai-Long Yu"
+        },
+        {
+          "authorId": "2190014670",
+          "name": "Xun Gao"
+        },
+        {
+          "authorId": "84209587",
+          "name": "Yin-Ping Dou"
+        },
+        {
+          "authorId": "2243951833",
+          "name": "Jing-Quan Lin"
+        }
+      ]
+    },
+    {
+      "paperId": "588cb2544982126e11c81d2d160aa0f52f26dae9",
+      "externalIds": {
+        "DOI": "10.1016/j.optlastec.2025.114301",
+        "CorpusId": 283200966
+      },
+      "title": "Self-absorption reduction in laser-induced breakdown spectroscopy based on plasma spatial modulation",
+      "venue": "Optics &amp; Laser Technology",
+      "year": 2026,
+      "citationCount": 2,
+      "authors": [
+        {
+          "authorId": "2331688724",
+          "name": "Xiao Yuan"
+        },
+        {
+          "authorId": "2150980657",
+          "name": "Li Liu"
+        },
+        {
+          "authorId": "2293084595",
+          "name": "Yi-Ming Zou"
+        },
+        {
+          "authorId": "2261744380",
+          "name": "Zhong-Qi Hao"
+        },
+        {
+          "authorId": "2467661482",
+          "name": "Shu-Qi Yang"
+        },
+        {
+          "authorId": "2331273580",
+          "name": "Sutong Guo"
+        },
+        {
+          "authorId": "2331200883",
+          "name": "Zengcai Ouyang"
+        },
+        {
+          "authorId": "2366131069",
+          "name": "Yu Rao"
+        },
+        {
+          "authorId": "10271991",
+          "name": "Jiulin Shi"
+        }
+      ]
+    },
+    {
+      "paperId": "8f8627cafe28724e92dde1817a6cde027b5391d2",
+      "externalIds": {
+        "DOI": "10.1088/1361-6595/ae0fe0",
+        "CorpusId": 281907616
+      },
+      "title": "Enhancement of EUV emission by reduction of self-absorption in laser produced plasma with Xe gas-mixture target",
+      "venue": "Plasma Sources Science & Technology",
+      "year": 2025,
+      "citationCount": 1,
+      "authors": [
+        {
+          "authorId": "2282088040",
+          "name": "Chao-Hui Wang"
+        },
+        {
+          "authorId": "2282396342",
+          "name": "Zhuo Xie"
+        },
+        {
+          "authorId": "84209587",
+          "name": "Yin-Ping Dou"
+        },
+        {
+          "authorId": "2282097432",
+          "name": "Zhi-Lin Wen"
+        },
+        {
+          "authorId": "2343468887",
+          "name": "Shao-Kang Wang"
+        },
+        {
+          "authorId": "2343223104",
+          "name": "Zhen-Wei Pu"
+        },
+        {
+          "authorId": "2282162516",
+          "name": "Jing-Quan Lin"
+        }
+      ]
+    },
+    {
+      "paperId": "353cd3639ec2237814628e4bd05df1b879031b51",
+      "externalIds": {
+        "DOI": "10.1080/00032719.2024.2400269",
+        "CorpusId": 272543365
+      },
+      "title": "Self-Absorption Correction for Laser-Induced Breakdown Spectroscopy (LIBS) Using Column Density-Saha-Boltzmann (CD-SB) Theory",
+      "venue": "Analytical Letters",
+      "year": 2024,
+      "citationCount": 2,
+      "authors": [
+        {
+          "authorId": "2117691798",
+          "name": "Xiao-Mei Lin"
+        },
+        {
+          "authorId": "2301557123",
+          "name": "Ke Ding"
+        },
+        {
+          "authorId": "2268024139",
+          "name": "Yao Li"
+        },
+        {
+          "authorId": "2108716898",
+          "name": "Yu-Tao Huang"
+        },
+        {
+          "authorId": "2134825073",
+          "name": "Jiang-Fei Yang"
+        },
+        {
+          "authorId": "2293420507",
+          "name": "Yongkang Ren"
+        },
+        {
+          "authorId": "2293522905",
+          "name": "Xin Zhen"
+        },
+        {
+          "authorId": "29068054",
+          "name": "C. Che"
+        },
+        {
+          "authorId": "51270702",
+          "name": "Jing-Jun Lin"
+        }
+      ]
+    },
+    {
+      "paperId": "9bbd28159f7b9563ee1794e5604a6d3598c476a0",
+      "externalIds": {
+        "DOI": "10.7498/aps.73.20231541",
+        "CorpusId": 265634185
+      },
+      "title": "Quantitative Analysis method of laser-induced breakdown spectroscopy based on temperature iterative correction of self-absorption effect",
+      "venue": "Acta Physica Sinica",
+      "year": 2024,
+      "citationCount": 0,
+      "authors": [
+        {
+          "authorId": "2315804944",
+          "name": "Jia-Jia Hou"
+        },
+        {
+          "authorId": "2109546094",
+          "name": "Dacheng Zhang"
+        },
+        {
+          "authorId": "1657181539",
+          "name": "Zhong-Qi Feng"
+        },
+        {
+          "authorId": "2146281423",
+          "name": "Jiang-Feng Zhu"
+        }
+      ]
+    }
+  ]
+}

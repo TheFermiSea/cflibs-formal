@@ -1,0 +1,31 @@
+{
+  "paperId": "82f72156a6aa8be2b23873c4a5a829f135116585",
+  "externalIds": {
+    "MAG": "2896435416",
+    "DOI": "10.1016/J.JQSRT.2018.10.029",
+    "CorpusId": 126364735
+  },
+  "title": "Error analysis in optimization problems relevant for calibration-free laser-induced breakdown spectroscopy",
+  "venue": "Journal of Quantitative Spectroscopy and Radiative Transfer",
+  "year": 2019,
+  "openAccessPdf": {
+    "url": "",
+    "status": "CLOSED",
+    "license": null,
+    "disclaimer": "Notice: Paper or abstract available at https://api.unpaywall.org/v2/10.1016/J.JQSRT.2018.10.029?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.1016/J.JQSRT.2018.10.029, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+  },
+  "journal": {
+    "name": "Journal of Quantitative Spectroscopy and Radiative Transfer"
+  },
+  "authors": [
+    {
+      "authorId": "103518493",
+      "name": "J. J. Maali"
+    },
+    {
+      "authorId": "2178060",
+      "name": "S. V. Shabanov"
+    }
+  ],
+  "abstract": "Abstract In the calibration-free laser-induced breakdown spectroscopy (CF LIBS) the spectral parameters of the emitted light (line positions, width, and optical depth) can be extracted by fitting the spectral data into a suitable (model) solution to the radiative transfer equation. It is shown that, unless some additional information about possible values of the spectral parameters is invoked, relative uncertainties in the values of the spectral parameters estimated by fitting the spectral data into the solution to the radiative transfer equation cannot be made small because there exist large (correlated) variations of the spectral parameters about their optimal values under which the fit error remains less than a preassigned (small) value. The same holds for costs functions used in Monte Carlo CF LIBS methods. A quantitative error analysis is carried for the entire range of optical depth used in CF LIBS (from 10 \u2212 4 to 102). As a remedy for this fundamental deficiency in accuracy, a novel method that is based on integral characteristics of the spectral data, does not use any fitting procedure, and, hence, is free of the noted deficiencies, is developed to determine the spectral parameters. It is applicable to all spectral lines with optical depths from 10 \u2212 4 to 102 so that all such lines can be utilized to improve the accuracy of techniques like the Saha\u2013Boltzmann plot method."
+}

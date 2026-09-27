@@ -1,0 +1,65 @@
+=== mutate-check — spec-mutation audit (discipline Gate 5) ===
+repo:    /home/brian/.local/share/openprover/lean-main
+workdir: docs/research/audit-2026-09-24/evidence/gates/mutate-check.yRqva7   (all mutations are applied to COPIES; CflibsFormal/ is never touched)
+method:  lake env lean <copy>   (no lake build — shared .lake stays untouched)
+
+baseline  CflibsFormal/Closure.lean                OK (unmutated copy typechecks)
+baseline  CflibsFormal/Identifiability.lean        OK (unmutated copy typechecks)
+baseline  CflibsFormal/PartialLTE.lean             OK (unmutated copy typechecks)
+baseline  CflibsFormal/Saha.lean                   OK (unmutated copy typechecks)
+baseline  CflibsFormal/SelfAbsorption.lean         OK (unmutated copy typechecks)
+
+[M1] CflibsFormal/Saha.lean :: log_sahaFactor   (class=content)
+      mutation: Saha exponent sign: the Boltzmann/Saha term -chi/(kB T) flipped to +chi/(kB T)
+      applied:  '- chi / (kB * T)'  ->  '+ chi / (kB * T)'   (statement lines 136-145)
+      RESULT:   killed (at the mutated theorem)
+                first error: M1_Saha.lean:145:28: error: unsolved goals
+
+[M2] CflibsFormal/Saha.lean :: electronDensity_antitone   (class=content)
+      mutation: Density-diagnostic monotonicity direction: n_e = S/R is antitone in R, mutated to monotone
+      applied:  'StrictAntiOn'  ->  'StrictMonoOn'   (statement lines 120-124)
+      RESULT:   killed (at the mutated theorem)
+                first error: M2_Saha.lean:129:2: error: Type mismatch
+
+[M3] CflibsFormal/SelfAbsorption.lean :: selfAbsorbedIntensity_lt_lineIntensity   (class=content)
+      mutation: Self-absorption bias direction: I_meas < I_thin flipped to I_meas > I_thin
+      applied:  'k tau < lineIntensity'  ->  'k tau > lineIntensity'   (statement lines 175-178)
+      RESULT:   killed (at the mutated theorem)
+                first error: M3_SelfAbsorption.lean:186:2: error: Type mismatch
+
+[M4] CflibsFormal/PartialLTE.lean :: mcwhirter_iff_thermalizationLimit   (class=content)
+      mutation: McWhirter bound direction: C*sqrt(T)*dE^3 <= n_e flipped to >=
+      applied:  'dE ^ 3 ≤ ne'  ->  'dE ^ 3 ≥ ne'   (statement lines 87-89)
+      RESULT:   killed (at the mutated theorem)
+                first error: M4_PartialLTE.lean:89:71: error: unsolved goals
+
+[M5] CflibsFormal/PartialLTE.lean :: mcwhirter_iff_thermalizationLimit   (class=hyp-drop)
+      mutation: Drop the hypothesis the docstring calls load-bearing (0 <= ne, needed for the real cube root)
+      applied:  ' (hne : 0 ≤ ne)'  ->  ''   (statement lines 87-89)
+      RESULT:   killed (at the mutated theorem)
+                first error: nonzeroness
+
+[M6] CflibsFormal/Closure.lean :: composition_sum_one   (class=hyp-drop)
+      mutation: Closure sum-to-one: drop the positive-total hypothesis (without it n = 0 gives sum 0, not 1)
+      applied:  '(hN : 0 < totalDensity n) '  ->  ''   (statement lines 61-62)
+      RESULT:   killed (at the mutated theorem)
+                first error: M6_Closure.lean:64:35: error(lean.unknownIdentifier): Unknown identifier `hN.ne'`
+
+[M7] CflibsFormal/Identifiability.lean :: temperature_identifiability   (class=content)
+      mutation: Identifiability: negate the distinct-energy premise, which temperature_degeneracy says makes T unidentifiable
+      applied:  'hE : E i ≠ E j'  ->  'hE : E i = E j'   (statement lines 123-132)
+      RESULT:   killed (at the mutated theorem)
+                first error: M7_Identifiability.lean:143:47: error: Application type mismatch: The argument
+
+=== summary ===
+M1   content   log_sahaFactor                     killed (at the mutated theorem)
+M2   content   electronDensity_antitone           killed (at the mutated theorem)
+M3   content   selfAbsorbedIntensity_lt_lineIntensity killed (at the mutated theorem)
+M4   content   mcwhirter_iff_thermalizationLimit  killed (at the mutated theorem)
+M5   hyp-drop  mcwhirter_iff_thermalizationLimit  killed (at the mutated theorem)
+M6   hyp-drop  composition_sum_one                killed (at the mutated theorem)
+M7   content   temperature_identifiability        killed (at the mutated theorem)
+
+killed=7  survived=0  mutation-errors=0
+All mutants killed: every audited statement changed meaning when perturbed.
+exit=0

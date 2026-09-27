@@ -1,0 +1,9 @@
+inverse-ident draft (durable before final StructuredOutput)
+Executed evidence:
+- gate.py: Lean L1*L2 = 6.1e3/1.2e4/5.4e4 on [10.5,11.5]/[10,12]/[9,13] kK; L1/sup|S'|/R = 1149/1008/838; Lean-model local gain 2.386.
+- pipeline_gain.py (pipeline's own _fit_saha_boltzmann_graph + _estimate_ne_from_sb_offset): gain numeric = closed form
+  0.96394 (1 el), 0.99991 (tight), 0.90076 (DED-like 3 el), 1.15789 constructed; damped GS from 11100 K runs away 11035.6 -> 11165.3 K (iters 8..40).
+- c1c2_dummies.py: pipeline C2 passed=True with [x|dummies|ion] rank 3<4; C1 passed=True (SS_E=0.459) with [x|dummies] rank 2<3.
+- ModelBDegenerate.lean: modelB_consistent_offset_degenerate (axiom-clean).
+- SoundVacuity.lean: no_sound_estimator_of_distinct_emit, joint_identifiability_calibrationFree (axiom-clean).
+Findings F1..F14, frontier FI1..FI4 as in final output.

@@ -28,7 +28,7 @@ One row per module under `CflibsFormal/`. *Base* = imports no `CflibsFormal` mod
 | `CompositionIdentifiability.lean` | `CflibsFormal` | 3 | 1 | – | – | multi-line / many-element composition identifiability |
 | `CompositionRobustness.lean` | `CflibsFormal` | 5 | 1 | – | – | Whole-composition-vector error propagation |
 | `ConditionNumber.lean` | `CflibsFormal` | 15 | 0 | – | ✓ | the condition number as an ERROR-AMPLIFICATION factor |
-| `ConformalCoverage.lean` | `CflibsFormal` | 3 | 1 | ✓ | ✓ | split-conformal coverage (the refuse-to-report gate) |
+| `ConformalCoverage.lean` | `CflibsFormal` | 3 | 1 | ✓ | ✓ | the rank-counting step behind split-conformal coverage |
 | `Continuum.lean` | `CflibsFormal` | 6 | 5 | ✓ | ✓ | the continuum background |
 | `CurveOfGrowth.lean` | `CflibsFormal` | 10 | 2 | – | ✓ | the curve of growth and multi-line self-absorption |
 | `DifferentialEstimator.lean` | `CflibsFormal` | 11 | 2 | – | ✓ | the reference-differenced (line-by-line) estimator |
@@ -36,7 +36,7 @@ One row per module under `CflibsFormal/`. *Base* = imports no `CflibsFormal` mod
 | `DoubletChannel.lean` | `CflibsFormal` | 22 | 1 | – | ✓ | The doublet channel — the second observable that breaks the `N`–`τ` alias |
 | `EquivalentWidth.lean` | `CflibsFormal` | 20 | 2 | ✓ | ✓ | the equivalent-width curve of growth |
 | `ErrorBudget.lean` | `CflibsFormal` | 19 | 2 | – | – | the error-propagation chain and DERIVED reliability thresholds |
-| `EvaluatorSoundness.lean` | `CflibsFormal` | 6 | 5 | – | ✓ | evaluator soundness (what passing the hard certificate gate buys) |
+| `EvaluatorSoundness.lean` | `CflibsFormal` | 6 | 5 | – | ✓ | evaluator soundness (which hard-gate clauses feed which theorem) |
 | `FisherLineSelection.lean` | `CflibsFormal` | 19 | 1 | – | ✓ | Fisher information, the Cramér–Rao bound, and "adding a line never hurts" |
 | `ForwardMap.lean` | `CflibsFormal` | 3 | 1 | – | – | Part 4: the optically-thin forward map |
 | `ForwardMapEnergy.lean` | `CflibsFormal` | 5 | 1 | – | ✓ | the energy-intensity forward map and convention equivalence |
@@ -44,7 +44,7 @@ One row per module under `CflibsFormal/`. *Base* = imports no `CflibsFormal` mod
 | `HydrogenStark.lean` | `CflibsFormal` | 4 | 2 | ✓ | ✓ | the hydrogen-line (Balmer) Stark electron-density diagnostic |
 | `Identifiability.lean` | `CflibsFormal` | 7 | 0 | – | – | Part 5: identifiability of the inverse problem |
 | `InhomogeneityBias.lean` | `CflibsFormal` | 27 | 9 | – | ✓ | Inhomogeneity bias: the sign of the Boltzmann-plot error is a theorem |
-| `IntervalEnclosure.lean` | `CflibsFormal` | 7 | 2 | – | ✓ | a verified ε-ball enclosure for the OLS forward map |
+| `IntervalEnclosure.lean` | `CflibsFormal` | 7 | 2 | – | ✓ | a Lipschitz bound on the OLS design normal matrix |
 | `Inverse.lean` | `CflibsFormal` | 3 | 6 | – | – | Part 6: the algorithm-agnostic inverse-problem framework |
 | `JointConvergence.lean` | `CflibsFormal` | 1 | 0 | – | ✓ | the joint `(T, n_e)` outer-loop contraction (Frontier) |
 | `JointIdentifiability.lean` | `CflibsFormal` | 1 | 1 | – | – | Part 7: joint (temperature, composition) identifiability |

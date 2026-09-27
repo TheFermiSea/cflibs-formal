@@ -1,0 +1,201 @@
+{
+  "data": [
+    {
+      "score": 0.5662492357607339,
+      "paper": {
+        "corpusId": "263800186",
+        "title": "A numerical procedure for understanding the self-absorption effects in laser induced breakdown spectroscopy",
+        "authors": [
+          "Lekha Mary John",
+          "K. Anoop"
+        ],
+        "openAccessInfo": {
+          "license": "CCBY",
+          "status": "GOLD",
+          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://pmc.ncbi.nlm.nih.gov/articles/PMC10561633, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        }
+      },
+      "snippet": {
+        "text": "Fig. 8(a) shows the Boltzmann plot without selfabsorption, and the R 2 value before introducing selfabsorption is almost equal to one for all species, and the temperature evaluated from the slope is also 1 eV for all species. With self-absorption the temperature calculated using Boltzmann plot has signi\ue103cantly diverged from the simulated temperature (Ca I -1.00 eV, Ca II -1.48 eV, Mg I -1.04 eV, and Mg II -1.48 eV), and the R 2 value of the linear regression is also less than one as shown in Fig. 8(b). For low upper levels energies, the self-absorption effect reduces emission intensity below their theoretical value. 11 Therefore, the estimated plasma temperatures are higher than the actual plasma temperature. \n\nThe scattered points in the Boltzmann plot are mainly due to the resonance lines in each species. 4 As a result, we do not incorporate resonance lines when plotting the Boltzmann plot; this is depicted in the Fig. 8(c). Then the lines are more linear, and the R 2 value is high. Temperature was estimated from the slope of different species in the plasma is near to simulated temperature (Ca I -1.00 eV, Ca II -1.07 eV, Mg I -1.00 eV, and Mg II -1.08 eV). The elemental composition is then determined using calibration-free LIBS (CF-LIBS). 22 We estimated the abundance of neutral and \ue103rst ionized species in the plasma using the y-intercept of the Boltzmann equation (eqn (10)). And the abundance of second ionized species is estimated using Saha-ionization equation (eqn (1)). A small change in the slope of the Boltzmann plot can affect the y-intercept and the species abundance estimation. 38 We determined the concentration of various elements in the plasma, and the results are summarized in Table 2 (placed in the last section of manuscript). The results clearly show that the quantitative results deviate from the standard concentration if we include self-absorbed lines for the quantitative analysis, especially resonance lines.",
+        "snippetKind": "body"
+      }
+    },
+    {
+      "score": 0.47407387813710244,
+      "paper": {
+        "corpusId": "229343290",
+        "title": "A Review of Underwater Laser-induced Breakdown Spectroscopy of Submerged Solids",
+        "authors": [
+          "Ayumu Matsumoto",
+          "T. Sakka"
+        ],
+        "openAccessInfo": {
+          "license": null,
+          "status": "GOLD",
+          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://api.unpaywall.org/v2/10.2116/analsci.20R007?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.2116/analsci.20R007, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        }
+      },
+      "snippet": {
+        "text": "Self-absorption of emission lines reduces the accuracy of the quantitative analysis. 128 en we use self-absorbed lines in the calibration curve method, the emission intensity saturates with increasing the concentration in the sample. 31 In the case of CF-LIBS, the concentration in the sample is sometimes underestimated due to the self-absorbed lines. The self-absorption effect is serious for resonance emission lines. In contrast, the effect is less significant for non-resonance lines. 131 Although the intensity of resonance emission lines is considerably higher than that of non-resonance lines, it is preferable to use non-resonance lines for the quantitative analysis. On the other hand, the self-absorption effect can be compensated by the analysis of the spectral line profile 32 and an internal reference method. 131 Jabbar et al. \n\nhave performed long-pulse underwater LIBS, and examined the effect of self-absorption correction upon the CF-LIBS analysis. 97 e self-absorption effect can be evaluated by comparing the experimental and theoretical values of intensity ratio between resonance and non-resonance emission lines. 131 Also, in case of doublet lines, their theoretical intensity ratio is approximated by the ratio of the Einstein coefficients of the transitions, since the difference in the Boltzmann factors of the nearby levels is negligible. When self-absorption is dominant, the ratio deviates from the theoretical value and approaches to 1.0. As the density increases, the spectral lines become continuous and eventually end up in a black body-like spectrum. 102 Therefore, the self-absorption effect can also be evaluated by the intensity ratio of doublet lines. Matsumoto et al. have measured Al resonance lines at different spatial positions of the long-pulse produced plasma in water and evaluated the self-absorption effect. 57 This work suggests that the density of the plasma periphery is low enough to give negligible self-absorption effects and that performance of quantitative measurements can be improved by the position-selective detection.",
+        "snippetKind": "body"
+      }
+    },
+    {
+      "score": 0.4573172632836051,
+      "paper": {
+        "corpusId": "270945549",
+        "title": "Near\u2010Infrared Thermometer Based on Stark Energy Levels of Yb3+ in Garnet",
+        "authors": [
+          "Qixuan Zhang",
+          "J. Ueda",
+          "Rui-Lin Zheng",
+          "Setsuhisa Tanabe"
+        ],
+        "openAccessInfo": {
+          "license": "CCBY",
+          "status": "HYBRID",
+          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://api.unpaywall.org/v2/10.1002/pssa.202400302?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.1002/pssa.202400302, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        }
+      },
+      "snippet": {
+        "text": "When the temperature drops below 200 K, the position of the plot gradually deviates from the linear fit, shifting upward as the temperature decreases. This is due to the fact that k B T \u226b \u0394E gradually becomes invalid as the temperature drops below a certain threshold (in this time the threshold is 200 K), leading to the Boltzmann equilibrium no longer being sustained at temperatures below 200 K. [34] It is worth nothing that at temperatures below 200 K, the heating effect of the excitation source on the sample causes the actual temperature of the sample to gradually deviate toward higher temperatures from the temperature displayed by the temperature controller as the temperature decreases (therefore, subsequent analysis focuses on data within the temperature range of 200-400 K). Calculating the value of \u0394E II-I based on the slope of the line (\u00c0\u0394E Z 2 \u00c0Z 1 /k B ) yields a value of 310 cm \u00c01 . This differs significantly from the actual value of 444 cm \u00c01 obtained from  deconvolution analysis in Section 3.2, suggesting that the selfabsorption effect of Yb 3\u00fe changes the intensity ratio of peaks B and F to varying degrees. [31] n contrast, to investigate the optical performance of Yb 3\u00fedoped GAGG thermometers when the self-absorption effect is minimized, temperature dependence of LIR value of Yb 0.03 Gd 2.97 AGG was also subjected to linear fitting based on the Arrhenius formula. LIR = I B /I F values under different temperatures were fitted using the Arrhenius formula shown in Equation ( 1) and the result shown in Figure 9. The linear fitting from 200 to 400 K shows good agreement. Calculating the value of \u0394E Z 2 \u00c0Z 1 based on the slope of the line (\u00c0\u0394E Z 2 \u00c0Z 1 /k B ) yields a value of 443 cm \u00c01 , which closely aligns with the actual values obtained from the deconvolution analysis. This suggests that when the Yb 3\u00fe concentration is sufficiently low, to the extent that the self-absorption effect no longer significantly impacts the relative intensities of peaks, the ultimately measured LIR value can accurately reflect the population ratio of corresponding energy levels I and II, which follows Boltzmann distribution.",
+        "snippetKind": "body"
+      }
+    },
+    {
+      "score": 0.44721527498454633,
+      "paper": {
+        "corpusId": "233608459",
+        "title": "Chemical Analysis of Thermoluminescent Colorless Topaz Crystal Using Laser-Induced Breakdown Spectroscopy",
+        "authors": [
+          "S. Abbasi",
+          "M. Rafique",
+          "T. Khan",
+          "A. Khan",
+          "Nasar Ahmad",
+          "M. Faruque",
+          "Mayeen Uddin Khandaker",
+          "P. Ahmad",
+          "A. Saboor"
+        ],
+        "openAccessInfo": {
+          "license": "CCBY",
+          "status": "GOLD",
+          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://api.unpaywall.org/v2/10.3390/MIN11040367?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.3390/MIN11040367, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        }
+      },
+      "snippet": {
+        "text": "where \u03bb R, I mn \u03bb R , A mn , and g mn are the wavelength, spectral line intensity, transition probability, and statistical weight of standard reference line related to the transition between energy levels m and n, while I ba \u03bb , A ba and g ba are the spectral line intensity, transition probability and statistical weight of other spectral lines related to the transition between energy levels a and b. E m and E b are the upper-level energies of the internal reference line and other spectral lines, respectively and T e is the electron temperature previously obtained from the Boltzmann plot without correction for self-absorption. Intensity correction was done by dividing the experimentally observed intensity of a line by the self-absorption coefficient f \u03bb as follows: \n\nAfter self-absorption correction, the intensities values were used in Equation ( 8), and the Boltzmann plot was re-plotted. T e was obtained from the slope of the Boltzmann plot, and the process was repeated until a negligible difference in the temperature reached up, and a best-fit to the line was obtained. The Boltzmann plots for 37.6 J\u2022cm \u22122 without and with self-absorption correction are shown in Figure 5a,b, respectively. With self-absorption correction, an excellent linear fit was obtained with an R 2 value of 99.9%, and the T e values were 10,724 \u00b1 536 K and 12,660 \u00b1 633 K without and with correction of self-absorption, respectively. The correspondence T e plot with self-absorption correction for the different fluence values is shown in Figure 5c. As expected, T e values were increased by increasing the laser fluence.",
+        "snippetKind": "body"
+      }
+    },
+    {
+      "score": 0.43888793203114124,
+      "paper": {
+        "corpusId": "249243944",
+        "title": "A Brief Review of Calibration-Free Laser-Induced Breakdown Spectroscopy",
+        "authors": [
+          "Ning Zhang",
+          "Tianxue Ou",
+          "Mei Wang",
+          "Zhanjian Lin",
+          "Chao Lv",
+          "Yuzhi Qin",
+          "Jiaming Li",
+          "Han Yang",
+          "Nan Zhao",
+          "Qing-Mao Zhang"
+        ],
+        "openAccessInfo": {
+          "license": "CCBY",
+          "status": "GOLD",
+          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://api.unpaywall.org/v2/10.3389/fphy.2022.887171?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.3389/fphy.2022.887171, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        }
+      },
+      "snippet": {
+        "text": "Taking the matrix as part of the analysis interest, CF-LIBS can effectively avoid the matrix effect. It is based on basic assumptions of chemometric ablation, local thermal equilibrium, and optical thinness to describe the spectral intensity by mathematical models. The plasma electron temperature and elemental ratio are obtained by the slope and intercept of the Boltzmann plot. After normalization, the concentration of each element can be obtained. Generally speaking, the higher the linearity of the fitted lines for individual elements (same ionized state) and the more parallel the fitted lines for different elements, the higher will be the accuracy of the calculated results. The accuracy of the plasma electron temperature calculated by the Boltzmann plot method is low when only a small number of spectral lines of species in the same ionized state can be observed, or the corresponding energy level distribution range is small. The method of the Saha-Boltzmann plot was a modified method for solving this problem. CD-SB is another modified method, which can directly use atomic and ionic lines in the ground state. According to classical radiation theory, self-absorption exists. The selfabsorption will inevitably affect the calculation of the plasma temperature and CF-LIBS accuracy. The methods for mitigating self-absorption are required, including the COG method, the selfabsorption coefficient method, and the microwave-assisted and geometrical optical configuration methods. In recent years, CF-LIBS attracts increasing attention in a variety of fields, such as environmental protection, explorations of space, cultural heritage preservation, and geological survey.",
+        "snippetKind": "body"
+      }
+    },
+    {
+      "score": 0.4349654131272437,
+      "paper": {
+        "corpusId": "249243944",
+        "title": "A Brief Review of Calibration-Free Laser-Induced Breakdown Spectroscopy",
+        "authors": [
+          "Ning Zhang",
+          "Tianxue Ou",
+          "Mei Wang",
+          "Zhanjian Lin",
+          "Chao Lv",
+          "Yuzhi Qin",
+          "Jiaming Li",
+          "Han Yang",
+          "Nan Zhao",
+          "Qing-Mao Zhang"
+        ],
+        "openAccessInfo": {
+          "license": "CCBY",
+          "status": "GOLD",
+          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://api.unpaywall.org/v2/10.3389/fphy.2022.887171?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.3389/fphy.2022.887171, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        }
+      },
+      "snippet": {
+        "text": "After the last iteration, the Boltzmann plot may reveal that the fitted lines for various elements are not parallel. Eventually, setting the initial temperature of the element with the highest temperature estimated as the mean value of the temperatures determined by all elements may not be the best choice. \n\nThe self-absorption coefficient can be also expressed as [77] SA \u0394\u03bb \u0394\u03bb \n\nwhere \u03b1 \u22120.54; \u0394\u03bb is the FWHM of the actual measured spectral line, and the Stark broadening can be separated t by the deconvolution method. The deconvolution method, however, is excessively time-consuming and can be approximated in the computation by assessing the actual measured width minus the Gauss instrumental broadening \u0394\u03bb \u2248 \u0394\u03bb actual \u2212 \u0394\u03bb 2 Gauss /\u0394\u03bb actual ; \u0394\u03bb 0 is the line FWHM, generally calculated by the H \u03b1 line. Using the H \u03b1 line for electron density measurement has the distinct advantage of providing a result that is not affected by self-absorption. Furthermore, there is also no need to scrounge around for electronic collision parameters [78,79]. The specific formula for calculating the electron number density using the H \u03b1 is as follows: \n\nwhere \u03b1 1/2 is the half-width of the reduced Stark profiles and is a weak function of electron density and temperature, whose value can be found in [80]. Mansour obtained a more accurate electron temperature by analyzing the electron density ratio of the observation line to the optically thin H \u03b1 line, corrected for the self-absorption effect of the aluminum atomic line [81]. Similarly, Iqbal et al. compared the effect of self-absorption correction on the emission intensity of spectral lines using the internal reference line and density methods, respectively [82]. \n\nBased on Sun's method, Yang et al. proposed a modified method [83]: the spectral intensity was first corrected using the IRSAC method, and second the self-absorption effect was calculated, according to the electron number density and theoretical broadening.",
+        "snippetKind": "body"
+      }
+    },
+    {
+      "score": 0.4229918221154659,
+      "paper": {
+        "corpusId": "251821154",
+        "title": "Hydrogen plasma smelting reduction process monitoring with optical emission spectroscopy \u2013 Establishing the basis for the method",
+        "authors": [
+          "H. Pauna",
+          "Daniel Ernst",
+          "M. Zarl",
+          "M. Aula",
+          "J. Schenk",
+          "M. Huttula",
+          "T. Fabritius"
+        ],
+        "openAccessInfo": {
+          "license": "CCBY",
+          "status": "HYBRID",
+          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://api.unpaywall.org/v2/10.1016/j.jclepro.2022.133755?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.1016/j.jclepro.2022.133755, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        }
+      },
+      "snippet": {
+        "text": "Absorption can also happen if e.g. an Ar atom near the core of the plasma emits a photon that is absorbed by another Ar atom near the edges of the plasma, a phenomenon called self-absorption (SA). SA is quite common in plasmas where the content of a constituent within the plasma is high, for example, Ar and H 2 in this case. Generally, SA affects the most intensive emission lines, whereas low-intensity emission lines remain mostly unaffected. Thus, a low-intensity emission line that is not prone to SA was selected as a reference line for an SA compensation algorithm to study the effect of SA on plasma temperatures. \n\nFirst, the plasma temperature T plasma was calculated with Equation (1) and that temperature was used as a starting point for the algorithm. Then, the intensity of the reference line was used to calculate the theoretical intensity of the other emission lines using the T plasma . A new plasma temperature was calculated using these new line intensities. If coefficient of determination R 2 > 0.95 was achieved for the Boltzmann plot, the T plasma was taken as a corrected plasma temperature. If R 2 was lower than 0.95 after 100 iterations, it was assumed that SA made the temperature analysis unreliable for that instance. These instances were disregarded in the temperature analysis. However, when the SA algorithm converged, it provided temperatures that were on average 500 K lower than the original temperatures. This is an expected result since the SA decreases the intensity of those lines with the lowest excitation energies (Sun and Yu, 2009), which in turn results in lower plasma temperatures when calculated with Equation (1). An example of Lorentzian fit to H \u03b1 line, Boltzmann plot, and flowchart for the algorithm is displayed in Fig. 3. The temperatures that have been presented in this article are those that were analyzed with the SA algorithm.",
+        "snippetKind": "body"
+      }
+    },
+    {
+      "score": 0.42260839938692196,
+      "paper": {
+        "corpusId": "272762678",
+        "title": "Compositional analysis of Swertia chirayita medicinal plant using laser-induced breakdown spectroscopy and ICP-MS",
+        "authors": [
+          "Habib ur Rehman",
+          "Najam Ul Hassan",
+          "Mohsan Jelani",
+          "Kaseb D. Alanazi",
+          "Nasar Ahmed",
+          "T. Ullah",
+          "M. Javed",
+          "Khaled Fahmi Fawy"
+        ],
+        "openAccessInfo": {
+          "license": "CCBY",
+          "status": "GOLD",
+          "disclaimer": "Notice: This snippet is extracted from the open access paper or abstract available at https://pmc.ncbi.nlm.nih.gov/articles/PMC11414975, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+        }
+      },
+      "snippet": {
+        "text": "The plasma may be defined by its temperature (T), which is an important quantity. The plasma temperature was calculated using the Boltzmann plot method [24]. The Boltzmann plot was made using the Ca (I) and Mg (I) lines. Due to experimental irregularities and self-absorption, the data are given with a 10% inaccuracy. The Boltzmann figure was created using the spectroscopic parameters listed in Table 1. Self-absorption is the result of photon absorption in laserinduced plasma. Self-absorption may be considered when the lowest level of transitions is near the ground state. There appears to be a self-reversal drop at the front of the queue when there is a lot of self-absorption. Saturated lines must be avoided while measuring plasma temperature since they cannot provide valuable information. The Boltzmann plot consisting of Ca (I) lines of all samples is shown in Fig 3(A). The average plasma temperature for Ca (I) of all samples is (10652\u00b11000) K. Fig 3(B) shows that the average plasma temperature of Ti (I), Si (I), Fe (I) Ca (I), and Mg (I) of roots sample is to be of (10054\u00b11000) K.",
+        "snippetKind": "body"
+      }
+    }
+  ],
+  "retrievalVersion": "pa1-v1"
+}

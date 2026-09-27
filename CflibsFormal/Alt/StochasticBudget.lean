@@ -41,6 +41,18 @@ Gauss–Markov hypotheses), with `wₖ = olsWeight E k = (Eₖ − Ē)/SS_E`, `�
   convention `Ē = 0` (`ErrorBudget.olsIntercept_stable_centered`).
 * `alphaHat_memLp_two` / `alphaHat_chebyshev` — the intercept `L²` membership and **the intercept
   tail bound** `μ {ω | δ ≤ |α̂(ω) − α|} ≤ σ²(1/n + Ē²/SS_E)/δ²`.
+* `temp_slope_event_subset` / `temp_tail_transfer` — the slope tail pushed through the reader
+  `T = 1/(k_B·x)` on the sign-normalized branch `β = 1/(k_B T) > 0`: a temperature miss of at
+  least `ε_T` forces a slope miss of at least `ε_T/(k_B T (T + ε_T))`, so Chebyshev bounds its
+  probability.
+* `density_event_subset` / `density_tail_species` — the intercept tail pushed through the density
+  reader `N = exp(b)·U/Fcal` at fixed `U` and `Fcal` (known `T`): an absolute density miss of at
+  least `τ` forces an intercept miss of at least `log(1 + τ/N)`.
+* `composition_tail_union` — a union bound over species for those **density** deviations. Despite
+  its name it does **not** bound composition fractions `C_s = N_s/∑N`: the step from density
+  deviations to a composition tail is not proved here.
+* `olsSlope_subGaussian_tail` — a sub-Gaussian (exponential) slope tail under **independent**
+  sub-Gaussian noise, replacing Chebyshev's polynomial tail.
 
 ## Honest scope
 
@@ -52,9 +64,11 @@ Gauss–Markov hypotheses), with `wₖ = olsWeight E k = (Eₖ − Ē)/SS_E`, `�
   identity
   `olsSlope_variance_eq` nor the attainable worst-case bound `relDensity_le`.
 * **The classical Gauss–Markov hypothesis — pairwise uncorrelatedness, NOT independence.** Inherited
-  verbatim from `Alt.OLSVariance`: the variance and tail results need only `cov(εᵢ,εⱼ) = 0` for
-  `i ≠ j` (with homoscedasticity and zero mean), strictly weaker than the mutual independence
-  `iIndepFun`. Zero-mean noise (`hmean0`) is load-bearing for the *tail* bounds: it is what makes
+  verbatim from `Alt.OLSVariance`: the variance and Chebyshev tail results need only
+  `cov(εᵢ,εⱼ) = 0` for `i ≠ j` (with homoscedasticity and zero mean), strictly weaker than the
+  mutual independence `iIndepFun`. The exception is `olsSlope_subGaussian_tail`, which assumes
+  mutual independence (`hindep`) and sub-Gaussian noise instead of the second-moment hypotheses.
+  Zero-mean noise (`hmean0`) is load-bearing for the *tail* bounds: it is what makes
   `β`
   (resp. `α`) the mean, so that the event centred at the truth `{ω | δ ≤ |X ω − truth|}` is the
   centred Chebyshev event `{ω | δ ≤ |X ω − 𝔼X|}`.
@@ -69,19 +83,32 @@ Gauss–Markov hypotheses), with `wₖ = olsWeight E k = (Eₖ − Ē)/SS_E`, `�
   is the probability that the intercept (which carries the species concentration via
   `N = exp(b)·U/Fcal`, `ErrorBudget.relDensity_le`) misses by more than `δ`. No physical constant
   enters any Lean statement.
+* **One common ordinate variance.** Every Chebyshev result assumes the same variance `σ²` on every
+  line (`hhom`). Real Boltzmann-plot ordinates are heteroscedastic (weak lines are noisier, and
+  `gA` uncertainties differ by line), so applying these bounds to a real plot needs a
+  heteroscedastic version, which is not proved here.
+* **Density, not composition.** `density_tail_species` and `composition_tail_union` bound
+  deviations of the recovered per-species *density* `N̂_s` (at a known `T`, with `U` and `Fcal`
+  fixed); the composition fractions are not reached.
+* **The probabilistic witnesses are degenerate.** Every witness that instantiates the probability
+  hypotheses uses zero noise (`σ = 0`) on `Measure.dirac`; the bound magnitudes are checked
+  separately in plain arithmetic. A nondegenerate witness (e.g. the Rademacher model of
+  `LineSelection`) is not provided here.
 
 ## Literature
 
 The slope and intercept variances `σ²/Sₓₓ` and `σ²·(1/n + x̄²/Sₓₓ)` under zero-mean, homoscedastic,
-uncorrelated errors are the Gauss–Markov laws; their modern (generalized least squares) form is
-A. C. Aitken, "On Least Squares and Linear Combination of Observations," *Proceedings of the Royal
-Society of Edinburgh* **55** (1935) 42–48, and the closed forms are standard, e.g. N. R. Draper and
-H. Smith, *Applied Regression Analysis*, 3rd ed., Wiley-Interscience (1998), Ch. 1–2. The tail
-bounds
+uncorrelated errors are the Gauss–Markov laws, and the closed forms are standard, e.g.
+N. R. Draper and H. Smith, *Applied Regression Analysis*, 3rd ed., Wiley-Interscience (1998),
+Ch. 1–2. Their generalized-least-squares (weighted, possibly correlated) form is A. C. Aitken,
+"On Least Squares and Linear Combination of Observations," *Proceedings of the Royal Society of
+Edinburgh* **55** (1935) 42–48; that form is not used or proved here. The Chebyshev tail bounds
 are Chebyshev's inequality (`Mathlib`'s `ProbabilityTheory.meas_ge_le_variance_div_sq`) applied to
-those variances. In the CF-LIBS setting the multi-line least-squares Boltzmann-plot fit is reviewed
-in Tognoni, E.; Cristoforetti, G.; Legnaioli, S.; Palleschi, V. "Calibration-Free Laser-Induced
-Breakdown Spectroscopy: State of the art." *Spectrochimica Acta Part B* **65** (2010) 1–14; the
+those variances; the sub-Gaussian tail uses `Mathlib`'s `HasSubgaussianMGF` API (sum of
+independent sub-Gaussian terms, then its tail bound `measure_ge_le`). In the CF-LIBS setting the
+multi-line least-squares Boltzmann-plot fit is reviewed in Tognoni, E.; Cristoforetti, G.;
+Legnaioli, S.; Palleschi, V. "Calibration-Free Laser-Induced Breakdown Spectroscopy: State of the
+art." *Spectrochimica Acta Part B* **65** (2010) 1–14; the
 intercept-borne concentration is Ciucci, A.; Corsi, M.; Palleschi, V.; Rastelli, S.; Salvetti, A.;
 Tognoni, E. *Applied Spectroscopy* **53** (1999) 960–964. This module is the probabilistic tail
 companion of the deterministic worst-case budget in `CflibsFormal.ErrorBudget`, feeding the exact
@@ -344,6 +371,12 @@ sign-normalized branch `β = 1/(k_B·T)`. -/
 noncomputable def tempHat (kB : ℝ) (E : ι → ℝ) (α β : ℝ) (ε : ι → Ω → ℝ) (ω : Ω) : ℝ :=
   tempOfSlope kB (betaHat E α β ε ω)
 
+/-- **Temperature miss ⇒ slope miss (deterministic event inclusion).** For `0 < k_B`, `0 < T` and
+`0 < ε_T`: if the reader `1/(k_B·x)` misses `T` by at least `ε_T`, then the slope `x` misses
+`1/(k_B T)` by at least `ε_T/(k_B T (T + ε_T))`. Pointwise real algebra, no probability (proved by
+contraposition: a slope inside that margin is positive and reads a temperature within `ε_T` of
+`T`). It is stated on the sign-normalized branch `x ≈ 1/(k_B T) > 0`; the physical Boltzmann-plot
+slope is `−1/(k_B T)`, so it applies to the negated slope. -/
 theorem temp_slope_event_subset {kB T epsT x : ℝ}
     (hkB : 0 < kB) (hT : 0 < T) (hepsT : 0 < epsT)
     (hx : epsT ≤ |1 / (kB * x) - T|) :
@@ -384,6 +417,15 @@ theorem temp_slope_event_subset {kB T epsT x : ℝ}
     · nlinarith [hy, h1, hkBx]
   exact absurd hx (not_le.mpr hfinal)
 
+/-- **Temperature tail bound (Chebyshev; REDUCED).** On the sign-normalized branch
+`β = 1/(k_B T)` and under the homoscedastic, uncorrelated, zero-mean noise hypotheses of
+`olsSlope_chebyshev`, the probability that the recovered temperature `T̂ = 1/(k_B·β̂)` misses `T`
+by at least `ε_T` is at most `σ²·k_B²·T²·(T + ε_T)²/(SS_E·ε_T²)`. Proof: `temp_slope_event_subset`
+puts the temperature event inside the slope event with margin `δ = ε_T/(k_B T (T + ε_T))`, and
+`olsSlope_chebyshev` bounds that. The physical Boltzmann-plot slope is `−1/(k_B T)`; `hβ` fixes the
+positive branch, so the model ordinates here are the negated Boltzmann-plot ordinates. The bound is
+Chebyshev-slack (never attained), and the only witness below that instantiates the probability
+hypotheses uses zero noise on `Measure.dirac`. -/
 theorem temp_tail_transfer [Nonempty ι] (E : ι → ℝ) (α β σ : ℝ) (ε : ι → Ω → ℝ)
     {kB T epsT : ℝ}
     (hvar : 0 < ∑ k, (E k - mean E) ^ 2) (hkB : 0 < kB) (hT : 0 < T) (hepsT : 0 < epsT)
@@ -446,8 +488,17 @@ example :
           / ((∑ k, (![0, 1, 2] k - mean ![0, 1, 2]) ^ 2) * (10 : ℝ) ^ 2) < 1 := by
   constructor <;> (simp [mean, Fin.sum_univ_three]; norm_num)
 
-/-! ## Composition tail — per-species density bound and the union over species -/
+/-! ## Density tail — per-species bound and the union over species (not a composition tail)
 
+Both results below bound deviations of the recovered per-species *density*. The step to the
+composition fractions `C_s = N_s/∑ N` is not taken here, despite the name `composition_tail_union`.
+-/
+
+/-- **Density miss ⇒ intercept miss (deterministic event inclusion).** For `0 < U`, `0 < Fcal` and
+`0 < τ`: if the density read off an intercept `b̂`, `exp(b̂)·U/Fcal`, misses the true
+`N = exp(b)·U/Fcal` by at least `τ`, then `|b̂ − b| ≥ log(1 + τ/N)`. Pointwise real algebra via
+`ErrorBudget.relDensity_le`; `U` and `Fcal` are the same fixed numbers on both sides (a known
+temperature). -/
 theorem density_event_subset {b bHat U Fcal τ : ℝ}
     (hU : 0 < U) (hFcal : 0 < Fcal) (hτ : 0 < τ)
     (h : τ ≤ |Real.exp bHat * U / Fcal - Real.exp b * U / Fcal|) :
@@ -475,6 +526,13 @@ density reader; `density_tail_species` bounds its tail around the true `N = exp(
 noncomputable def densityHat (E : ι → ℝ) (α β U Fcal : ℝ) (ε : ι → Ω → ℝ) (ω : Ω) : ℝ :=
   Real.exp (alphaHat E α β ε ω) * U / Fcal
 
+/-- **Per-species density tail bound (Chebyshev; REDUCED).** Under the homoscedastic,
+uncorrelated, zero-mean noise hypotheses of `alphaHat_chebyshev`, the probability that the density
+reader `N̂ = exp(α̂)·U/Fcal` misses `N = exp(α)·U/Fcal` by at least `τ` is at most
+`σ²·(1/n + Ē²/SS_E)/log(1 + τ/N)²`. Proof: `density_event_subset`, then `alphaHat_chebyshev`. `U`
+and `Fcal` are fixed numbers (a known temperature), so the extra error of `U(T̂)` at a fitted
+temperature is not included. The only witness below that instantiates the probability hypotheses
+uses zero noise on `Measure.dirac`. -/
 theorem density_tail_species [Nonempty ι] (E : ι → ℝ) (α β σ U Fcal τ : ℝ) (ε : ι → Ω → ℝ)
     (hvar : 0 < ∑ k, (E k - mean E) ^ 2) (hU : 0 < U) (hFcal : 0 < Fcal) (hτ : 0 < τ)
     (hL2 : ∀ k, MemLp (ε k) 2 μ) (hmean0 : ∀ k, μ[ε k] = 0)
@@ -498,6 +556,15 @@ theorem density_tail_species [Nonempty ι] (E : ι → ℝ) (α β σ U Fcal τ 
   exact alphaHat_chebyshev E α β σ (Real.log (1 + τ / (Real.exp α * U / Fcal))) ε
     hvar hδpos hL2 hmean0 huncorr hhom
 
+/-- **Union bound over species for DENSITY deviations (not composition fractions).** The
+probability that at least one species' recovered density `N̂_s` misses its true
+`N_s = exp(α_s)·U_s/Fcal_s` by at least `τ` is at most the sum over species of the
+`density_tail_species` bounds. Proof: `measure_biUnion_finset_le`, then `density_tail_species` per
+species; no independence between species is needed. Despite the name, the conclusion is about
+`densityHat`, not the composition fractions `C_s = N_s/∑ N`; turning it into a composition tail
+(for example through `composition_abs_sub_le_uniform`) is not proved here. The same absolute
+tolerance `τ` applies to every species, and each species' noise is homoscedastic with its own
+`σ_s`. The only witness below uses one species and zero noise on `Measure.dirac`. -/
 theorem composition_tail_union [Nonempty ι] {κ : Type*} [Fintype κ]
     (E : κ → ι → ℝ) (α β σ U Fcal : κ → ℝ) (τ : ℝ) (ε : κ → ι → Ω → ℝ)
     (hvar : ∀ s, 0 < ∑ k, (E s k - mean (E s)) ^ 2)
@@ -571,6 +638,14 @@ example :
 /-! ## Sub-Gaussian upgrade of the slope tail (`olsSlope_subGaussian_tail`) -/
 
 omit [IsProbabilityMeasure μ] in
+/-- **Sub-Gaussian slope tail (REDUCED).** If the line noises are mutually independent
+(`hindep : iIndepFun ε μ`) and each is sub-Gaussian with the same variance proxy `c`
+(`HasSubgaussianMGF (ε k) c μ`), then `μ.real {δ ≤ |β̂ − β|} ≤ 2·exp(−δ²·SS_E/(2c))` for `δ ≥ 0`:
+an exponential tail in place of Chebyshev's `σ²/(SS_E·δ²)`. Proof: `β̂ − β = ∑ₖ wₖ εₖ`
+(`olsSlope_estimator_eq`) is sub-Gaussian with proxy `c·∑ₖ wₖ² = c/SS_E`, and the two one-sided
+tails add. Unlike the Chebyshev results this needs independence, not just uncorrelatedness, and
+the common proxy `c` is its homoscedasticity assumption. The witness below checks only that the
+right-hand side is in `(0, 1)` at `δ = 3`, `c = 1`, `E = (0, 1, 2)`. -/
 theorem olsSlope_subGaussian_tail [Nonempty ι] (E : ι → ℝ) (α β : ℝ) (ε : ι → Ω → ℝ)
     {c : NNReal} {δ : ℝ}
     (hvar : 0 < ∑ k, (E k - mean E) ^ 2) (hδ : 0 ≤ δ) (hc : 0 < c)

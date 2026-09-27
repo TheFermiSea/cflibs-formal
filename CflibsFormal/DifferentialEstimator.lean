@@ -49,11 +49,14 @@ Results:
   slope `−(β_s − β_r)`. Still no `A`, `g`, `Fcal`. Hence a *differential Boltzmann plot*:
   `differentialSlope_eq_neg_dbeta` (OLS over any line set with positive energy spread) and
   `differentialSlope_two_lines` (two lines, `E 0 ≠ E 1`) recover `Δβ` from the slope.
-* `differentialRatio_error_bound` — **REDUCED, first order in `|T_s − T_r|`.** On a temperature
+* `differentialRatio_error_bound` — **REDUCED, linear in `|T_s − T_r|`.** On a temperature
   floor `Tmin`, `|log (I_s k/I_r k) − log (N_s/N_r)| ≤ (|E_k| + (∑ g_j E_j)/U(Tmin))·δ/(k_B Tmin²)`
   whenever `|T_s − T_r| ≤ δ`. Explicit constants only: the inverse-temperature leg uses
   `Analysis.inv_kT_sub_le`, the partition-function leg uses
-  `PartitionLipschitz.partitionFunction_lipschitz_temp` and the floor `U(Tmin) ≤ U(T)`.
+  `PartitionLipschitz.partitionFunction_lipschitz_temp` and the floor `U(Tmin) ≤ U(T)`. The
+  partition-function constant makes it uninformative for real level lists unless the
+  temperatures nearly match: for NIST Fe I levels on an 8000 K floor the bound exceeds 1 once
+  `δ` passes about 6 K (see *Non-vacuity range*).
 * `differentialRatio_selfAbsorption_residual` — **EXACT, honest non-cancellation.** With
   measured intensities `I · SA(τ)`, the ratio is `N_s/N_r · SA(τ_s k)/SA(τ_r k)`;
   `differentialRatio_selfAbsorption_cancels_iff` shows the residual is `1` **iff**
@@ -94,6 +97,25 @@ table does for `combinedSahaBoltzmannSlope`; no bibliographic detail is re-asser
 Scope: single-zone LTE, optically thin or curve-of-growth-corrected lines, one species per
 `ι`, the reference and sample sharing the *same* level set and Einstein coefficients (the same
 species). No noise model is attached; the noise transfer of a two-spectrum ratio is out of scope.
+
+The **EXACT**/**REDUCED** labels above say how exactly each result holds for the model it is
+stated over. The published scope of a result is the weaker of that label and the model tags of
+the definitions its statement uses (`lineIntensity`, `selfAbsorbedIntensity`); see
+`docs/scope-tags.tsv` and the generated `docs/scope-published.tsv`.
+
+## Non-vacuity range
+
+`differentialRatio_error_bound` is true but loose for real atoms, and at realistic temperature
+mismatches it bounds nothing useful. Its partition-function term `(∑_j g_j E_j)/U(Tmin)` stands
+in for the exact sensitivity `|d(ln U)/dβ| = ⟨E⟩` (the mean excitation energy). For Fe I with the
+NIST level list (2026-09-24 audit, finding U-01, companion level data), `∑ gE = 4.02e4 eV` and
+`U(8000 K) = 42.8`, so the term is 940 eV at `Tmin = 8000 K`, against `⟨E⟩ = 2.12 eV` at
+12 000 K and `|E_k| = 3.3–6.6 eV` for typical Boltzmann-plot lines (U-01: about 200 times the
+`|E_k|` term). On that floor the term adds 0.17 per kelvin of `δ` to the log-ratio bound: 8.5 at
+`δ = 50 K` and 17 at `δ = 100 K` (a factor up to `e^17` on `N_s/N_r`), where the `|E_k|` term
+gives 0.03–0.12. The bound falls below 1 only for `δ ≲ 5.8 K`, and below 0.1 (about a 10 % ratio
+error) only for `δ ≲ 0.6 K`. (The `δ` figures were computed for this note from the audit's
+script and level data.) A tighter partition leg, through the mean excitation energy, is open.
 -/
 
 namespace CflibsFormal
@@ -273,7 +295,7 @@ private lemma abs_log_sub_log_le_of_floor {a b m : ℝ} (hm : 0 < m) (ha : m ≤
   rw [abs_sub_comm]
   exact key hb ha
 
-/-- **REDUCED first-order error bound for an unmatched temperature.** On a temperature floor
+/-- **REDUCED error bound, linear in the temperature mismatch.** On a temperature floor
 `0 < Tmin ≤ T_s, T_r`, with `k_B > 0`, `g_k > 0`, level energies `E_k ≥ 0` and
 `|T_s − T_r| ≤ δ`, the differential log-ratio deviates from `log (N_s/N_r)` by at most
   `(|E_k| + (∑_j g_j E_j) / U(Tmin)) · δ / (k_B Tmin²)`.
@@ -284,7 +306,13 @@ Derivation (all constants explicit): by `logDifferentialRatio_affine_in_E` the d
 Lipschitz constant of `PartitionLipschitz.partitionFunction_lipschitz_temp` and the floor
 `U(Tmin) ≤ U(T)` for `T ≥ Tmin` (`SahaStability.partitionFunction_mono_temp`, valid because
 `E_k ≥ 0`). Reduction: the bound is a first-order (Lipschitz) envelope in `|T_s − T_r|` with
-`Tmin`-floor over-estimates in both legs; the identity it starts from is exact. -/
+`Tmin`-floor over-estimates in both legs; the identity it starts from is exact. It is a rigorous
+bound for every `δ`, not a truncated expansion.
+
+Loose for real atoms: for Fe I with the NIST level list, `(∑ g_j E_j)/U(Tmin)` is 940 eV at
+`Tmin = 8000 K` against a mean excitation energy of about 2.1 eV, so at `δ = 100 K` the
+right-hand side is about 17 in log units, and it drops below 1 only for `δ ≲ 5.8 K` (module
+*Non-vacuity range*). -/
 theorem differentialRatio_error_bound [Nonempty ι]
     {kB Tmin Ts Tr Ns Nr Fcal δ : ℝ} {g E A : ι → ℝ}
     (hkB : 0 < kB) (hTmin : 0 < Tmin) (hTs : Tmin ≤ Ts) (hTr : Tmin ≤ Tr)

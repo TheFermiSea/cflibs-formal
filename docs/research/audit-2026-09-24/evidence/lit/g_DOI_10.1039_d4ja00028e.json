@@ -1,0 +1,30 @@
+{
+  "paperId": "3111fb22c7d0606a5f64f40419aaf12bb09f0b93",
+  "externalIds": {
+    "DOI": "10.1039/d4ja00028e",
+    "CorpusId": 268141313
+  },
+  "title": "Mass and mole fractions in calibration-free LIBS",
+  "venue": "Journal of Analytical Atomic Spectrometry",
+  "year": 2024,
+  "openAccessPdf": {
+    "url": "https://pubs.rsc.org/en/content/articlepdf/2024/ja/d4ja00028e",
+    "status": "HYBRID",
+    "license": "CCBY",
+    "disclaimer": "Notice: Paper or abstract available at https://api.unpaywall.org/v2/10.1039/d4ja00028e?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.1039/d4ja00028e, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+  },
+  "journal": {
+    "name": "Journal of Analytical Atomic Spectrometry"
+  },
+  "authors": [
+    {
+      "authorId": "96732144",
+      "name": "T. V\u00f6lker"
+    },
+    {
+      "authorId": "14727563",
+      "name": "I. Gornushkin"
+    }
+  ],
+  "abstract": "Importance of mole or mass fraction representations of concentrations in CF-LIBS."
+}

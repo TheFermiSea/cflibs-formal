@@ -1,0 +1,204 @@
+{
+  "total": 45,
+  "offset": 0,
+  "next": 8,
+  "data": [
+    {
+      "paperId": "3bb9500a392879da8540f9bd639732d0ce724db9",
+      "externalIds": {
+        "MAG": "2564162861",
+        "CorpusId": 99282742
+      },
+      "title": "Effect of Gas Flow Rate on The Electron Temperature, Electron Density and Gas temperature for Atmospheric Microwave Plasma Jet",
+      "venue": "",
+      "year": 2015,
+      "citationCount": 7,
+      "authors": [
+        {
+          "authorId": "93222516",
+          "name": "H. Humud"
+        },
+        {
+          "authorId": "93412178",
+          "name": "Q. A. Abbas"
+        },
+        {
+          "authorId": "93196777",
+          "name": "A. F. Rauuf"
+        }
+      ]
+    },
+    {
+      "paperId": "c6308c04b1867de7099af610c128e6f4a3b9344e",
+      "externalIds": {
+        "MAG": "2279629278",
+        "CorpusId": 41406829
+      },
+      "title": "Simultaneous Spectroscopic Determination of Ion Temperature, Electron Density, and Magnetic Field for the ZaP-HD Experiment",
+      "venue": "",
+      "year": 2015,
+      "citationCount": 0,
+      "authors": [
+        {
+          "authorId": "51913097",
+          "name": "L. McGonigle"
+        }
+      ]
+    },
+    {
+      "paperId": "6e95811f41aea11b41f63cd0b4a444305ae83e46",
+      "externalIds": {
+        "MAG": "2180837850",
+        "DOI": "10.1063/1.4936251",
+        "CorpusId": 98844591
+      },
+      "title": "Axial- and radial-resolved electron density and excitation temperature of aluminum plasma induced by nanosecond laser: Effect of the ambient gas composition and pressure",
+      "venue": "",
+      "year": 2015,
+      "citationCount": 6,
+      "authors": [
+        {
+          "authorId": "92347062",
+          "name": "M. Dawood"
+        },
+        {
+          "authorId": "49047336",
+          "name": "A. Hamdan"
+        },
+        {
+          "authorId": "27082692",
+          "name": "J. Margot"
+        }
+      ]
+    },
+    {
+      "paperId": "63166818c0710828742deda28c47c543609d58ca",
+      "externalIds": {
+        "MAG": "2010215382",
+        "DOI": "10.1109/TPS.2015.2394441",
+        "CorpusId": 6144341
+      },
+      "title": "Determination of Spectroscopic Temperatures and Electron Density in Rotating Gliding Arc Discharge",
+      "venue": "IEEE Transactions on Plasma Science",
+      "year": 2015,
+      "citationCount": 50,
+      "authors": [
+        {
+          "authorId": "26907299",
+          "name": "Ang-Jian Wu"
+        },
+        {
+          "authorId": "3464035",
+          "name": "Hao Zhang"
+        },
+        {
+          "authorId": "93705621",
+          "name": "Xiao-Dong Li"
+        },
+        {
+          "authorId": "12377662",
+          "name": "Shengyong Lu"
+        },
+        {
+          "authorId": "144730557",
+          "name": "Chang-Ming Du"
+        },
+        {
+          "authorId": "2263852512",
+          "name": "Jian-hua Yan"
+        }
+      ]
+    },
+    {
+      "paperId": "a2598d7bcb59165d849f6a5c09eb8e20f497c068",
+      "externalIds": {
+        "MAG": "1968981286",
+        "DOI": "10.4236/OPJ.2015.53007",
+        "CorpusId": 38943681
+      },
+      "title": "Self-Absorption Effects on Electron Temperature-Measurements Utilizing Laser Induced Breakdown Spectroscopy (LIBS)-Techniques",
+      "venue": "",
+      "year": 2015,
+      "citationCount": 42,
+      "authors": [
+        {
+          "authorId": "40658417",
+          "name": "S. Mansour"
+        }
+      ]
+    },
+    {
+      "paperId": "d55d362ff2d92694086bbff7579ab1ed37bf7226",
+      "externalIds": {
+        "MAG": "2092785039",
+        "DOI": "10.1140/EPJD/E2014-50704-3",
+        "CorpusId": 122500621
+      },
+      "title": "Spectroscopic measurements of plasma temperatures and electron number density in a uranium hollow cathode discharge lamp",
+      "venue": "",
+      "year": 2015,
+      "citationCount": 6,
+      "authors": [
+        {
+          "authorId": "94455449",
+          "name": "M. Shah"
+        },
+        {
+          "authorId": "34778748",
+          "name": "B. M. Suri"
+        },
+        {
+          "authorId": "144410376",
+          "name": "G. P. Gupta"
+        }
+      ]
+    },
+    {
+      "paperId": "3f80557c9cd7f6285772fda25e2229142477ed04",
+      "externalIds": {
+        "DOI": "10.1140/epjd/e2014-50704-3",
+        "CorpusId": 254140710
+      },
+      "title": "Spectroscopic measurements of plasma temperatures and electron number density in a uranium hollow cathode discharge lamp",
+      "venue": "European Physical Journal D : Atomic, Molecular and Optical Physics",
+      "year": 2015,
+      "citationCount": 0,
+      "authors": [
+        {
+          "authorId": "94455449",
+          "name": "M. Shah"
+        },
+        {
+          "authorId": "34778748",
+          "name": "B. M. Suri"
+        },
+        {
+          "authorId": "144410376",
+          "name": "G. P. Gupta"
+        }
+      ]
+    },
+    {
+      "paperId": "5759aa33ddbafa759ae8820a55e3e7be81120b11",
+      "externalIds": {
+        "MAG": "2213899007",
+        "DOI": "10.1088/0022-3727/48/32/325201",
+        "CorpusId": 101778618
+      },
+      "title": "Stark width measurements and Boltzmann plots of W I in nanosecond laser-induced plasmas",
+      "venue": "",
+      "year": 2015,
+      "citationCount": 30,
+      "authors": [
+        {
+          "authorId": "49018721",
+          "name": "D. Nishijima"
+        },
+        {
+          "authorId": "48455110",
+          "name": "R. Doerner"
+        }
+      ]
+    }
+  ]
+}

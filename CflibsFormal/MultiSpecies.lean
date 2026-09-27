@@ -155,8 +155,9 @@ shared `partitionFunction kB T g E`; each species carries its own `U_s(T)` while
 line contributes its own `(g s, E s, A s)`. Setting `Us := partitionFunction kB T g E` gives
 back `deNormalizedDensity` definitionally (`deNormalizedDensity_eq_deNormalizedDensityPerU`).
 Discharges the shared-`U` reduction of `docs/SOLVER_FORMALIZATION_GAPS.md` gap #7.
-**Scope EXACT** for the CF-LIBS internal-standard (one designated line per species) reader:
-the per-species inverse is written exactly, with `U_s` an unconstrained physical input. -/
+Exact inverse of `lineIntensityPerU` for the CF-LIBS internal-standard (one designated line per
+species) reader, with `U_s` an unconstrained physical input. Model tag REDUCED, inherited from
+`lineIntensityPerU` (photon-rate form; `docs/conventions.md` §8). -/
 noncomputable def deNormalizedDensityPerU (kB T Fcal Us : ℝ) (g E A : ι → ℝ)
     (s : ι) (I : ℝ) : ℝ :=
   I * Us / (Fcal * A s * g s * boltzmannFactor kB T (E s))
@@ -166,8 +167,9 @@ species `s`'s designated line with species `s`'s *own* partition function `Us`:
 `I = Fcal · A s · N · g s · exp(-E s/(k_B T)) / U_s`.
 This is `ForwardMap.lineIntensity` with the shared partition function replaced by a
 per-species scalar; `lineIntensity_eq_lineIntensityPerU` records that the shared-family
-forward map is the special case `Us := partitionFunction kB T g E`. **Scope EXACT** (single
-designated line per species; `U_s` a free positive input). -/
+forward map is the special case `Us := partitionFunction kB T g E`. Model tag REDUCED, like
+`lineIntensity`: the same photon-rate (λ-free) convention (single designated line per species;
+`U_s` a free positive input; `docs/conventions.md` §8). -/
 noncomputable def lineIntensityPerU (kB T N Fcal Us : ℝ) (g E A : ι → ℝ) (s : ι) : ℝ :=
   Fcal * A s * (N * g s * boltzmannFactor kB T (E s) / Us)
 

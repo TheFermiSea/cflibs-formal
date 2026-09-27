@@ -13,6 +13,14 @@ So everything below is a **MISSING property the solvers rely on** — not a brok
 51 runtime solver checks were derived from *proven* theorems; these gaps are where the
 strict solver would step outside the verified envelope.
 
+**Scope words (2026-09-25).** An EXACT / REDUCED written beside a theorem below is its
+*relation* tag: how exactly it holds for the model it is stated over. Since the owner decision
+of 2026-09-24 (`docs/conventions.md` §8) the tag to quote for physics is the *published* one in
+`docs/scope-published.tsv`: the weaker of the relation tag and the model tags of the definitions
+in the statement (for example `lineIntensity` REDUCED, `selfAbsorbedIntensity` APPROXIMATION).
+"Addressed" and "closed" below mean a theorem exists, not that it holds for real plasmas beyond
+its published scope.
+
 ---
 
 ## Tier 1 — load-bearing (strict-mode trust gates depend on these; prove first)
@@ -33,8 +41,11 @@ strict solver would step outside the verified envelope.
      `leastSquaresResidual_eq_zero_iff` (zero minimal residual ⟺ on-manifold), and
      `Alt.olsBoltzmann_forward_feasible` shows the noise-free forward spectrum has zero
      residual, i.e. the projection inverse coincides with the identifiable inverse there —
-     which is *why* `leastSquares_sound` holds on the fixpoint (`Sound` discharged
-     on-manifold; off-manifold there is no ground-truth `(T,N)` to be `Sound` against).
+     which is *why* `leastSquares_sound` holds on the fixpoint. That theorem is a composition
+     equality at known `T` on the noise-free forward spectrum over per-species atomic data. It
+     is not an instance of the `Inverse.Sound` contract, which (by an informal argument in `Inverse.lean`, not formalized) is satisfiable only when every
+     species emits on one shared level (`Inverse.lean`). Off-manifold there is no ground-truth
+     `(T,N)` to recover.
 
    **Residual:** ✅ existence leg closed (2026-07-02) — `NonlinearLeastSquares.lean`:
    `nlObjective_exists_min` (a minimizer of the nonlinear joint `(T, N)` objective exists on
@@ -49,7 +60,8 @@ strict solver would step outside the verified envelope.
    multi-species `(T, n_e, composition)` fit.
 
 2. **Atomic-data perturbation channel.** ✅ **Addressed** in `AtomicDataPerturbation.lean`
-   (2026-07-02). `classicDensity_aliasing` (EXACT): inverting the true spectrum with wrong
+   (2026-07-02). `classicDensity_aliasing` (relation EXACT; publishes REDUCED via the
+   `lineIntensity` model): inverting the true spectrum with wrong
    atomic data returns `N̂ = N·ρ_true/ρ_wrong` — finite, arbitrarily biased, with no
    self-diagnosing signature, which is *why* the only sound runtime response to
    missing/NULL data is refusal. `classicDensity_aliasing_error` (lumped relative response
@@ -67,9 +79,16 @@ strict solver would step outside the verified envelope.
    two-sided sensitivity bound (2026-07-02): `sahaFactor_lipschitz_temp` (channelwise —
    thermal bracket + exponential + partition-ratio via `PartitionLipschitz` — assembled
    into an explicit Lipschitz constant on a `[Tmin,Tmax]` box) and
-   `electronDensityFromRatio_lipschitz_temp` (the `(ΔT, ΔR)` budget is complete).
-   MONOTONICITY stays honestly open (`dS/dT` sign-indefinite through `U_{z+1}/U_z`) — but
-   the runtime error budget needs the bound, not the sign. The
+   `electronDensityFromRatio_lipschitz_temp` (the `(ΔT, ΔR)` budget is complete). The
+   bound is valid but loose: on tabulated level lists `sahaFactorLipConst` is about
+   10⁶–10⁸ times the true `sup |dS/dT|` (audit 2026-09-24, finding PS-03).
+   MONOTONICITY is ✅ closed under a level-truncation hypothesis (Frontier 02):
+   `sahaFactor_strictMonoOn_temp` and `electronDensityFromRatio_strictMonoOn_temp` hold when
+   the lower-stage level list is truncated at or below the `χ` used in the exponent (`hEχ`;
+   `χ − Δχ` when ionization-potential depression lowers it). Unconditionally `dS/dT` is
+   sign-indefinite through `U_{z+1}/U_z`, and untruncated tabulated lists violate `hEχ` for
+   202 of 324 species in the companion's production database (finding PS-06), so the
+   truncation is an obligation on the caller. The
    design-matrix leg is ✅ closed (2026-07-02) — `OLS.lean`: `det_designNormalMatrix`
    (`det = n·SS_E`, the Lagrange/variance identity) and `designNormalMatrix_det_ne_zero_iff`
    (nonsingular ⟺ positive energy spread), so the OLS `hvar` hypothesis IS the exact rank
@@ -103,14 +122,22 @@ strict solver would step outside the verified envelope.
    (2026-07-02) — `PartitionLipschitz.lean`: `partitionFunction_two_point_bound`
    (`|U(T₁)−U(T₂)| ≤ (∑g·E)·|Δ(1/k_BT)|`), `partitionFunction_lipschitz_temp` (explicit
    constant `(∑g·E)/(k_B·Tmin²)`), `partitionFunction_relative_error_temp` (the `δ_U` a
-   density bound consumes). ✅ **FULLY CLOSED** (2026-07-02): the T-split bridge now exists —
-   `classicDensity_temperature_aliasing` (EXACT wrong-T aliasing identity),
+   density bound consumes). ✅ **CLOSED as a composed theorem** (2026-07-02; not as a usable
+   error budget, see *Non-vacuity* below): the T-split bridge now exists —
+   `classicDensity_temperature_aliasing` (wrong-T aliasing identity; relation EXACT, publishes
+   REDUCED via `lineIntensity`),
    `classicDensity_temperature_aliasing_error` (bounded by `|T̂−T|` via the exp channel +
    `PartitionLipschitz`), `classicComposition_temperature_error` — and the end-to-end chain
    is composed in `NoiseToComposition.lean`: `noise_to_temperatureGap` → `noise_to_density`
    → **`noise_to_composition`** (per-line ordinate noise `ε_k` ⇒ explicit `|Ĉ_s − C_s|`
    bound through SS_E, `∑g·E`, and the temperature box — the composed bound this gap
    originally demanded). Each link's reductions compound and are restated in-module.
+   **Non-vacuity (audit 2026-09-24, finding U-01):** the composed bound is true but says
+   nothing at realistic parameters. On NIST Fe I / Cr I / Ni I level lists at 0.5–5 % per-line
+   noise it evaluates to 26–1.42·10³, where a composition error is at most 1. The Fe and Ni
+   bounds both fall below 1 only when the level lists are truncated at 1 eV and the noise is at
+   most 2 %. The loose leg is the partition-function channel, whose `∑g·E` constant comes from
+   the `exp ≤ 1` step in `PartitionLipschitz` (`NoiseToComposition`, *Non-vacuity range*).
 
 6. **Coupled Saha–closure–charge fixed point.** ✅ **Addressed (reduced core)** in
    `SahaEquilibrium.lean` (2026-07-02): the single-element, two-stage, fixed-T system
@@ -130,24 +157,48 @@ strict solver would step outside the verified envelope.
    b=3/2, q=√2/2`). The multi-element coupled iteration's convergence is now ✅ closed
    (2026-07-09): `dampedMultiElementIter_tendsto` (the unconditional damped Krasnoselskii–Mann
    map) and `multiElementIonized_iter_tendsto` (the literal direct iteration, via the monotone
-   even/odd subsequence argument). Still open: the outer T-iteration.
+   even/odd subsequence argument). The outer T-iteration is **addressed only as a reduced
+   model** (Frontier 04): `OuterLoopModelB.outerLoop_contracts`,
+   `SahaRangeEnclosure.outerLoop_contracts_apriori` (density-box invariance discharged
+   a-priori) and `JointConvergence.jointConvergence` (the same 1-D composite unrolled, under
+   the stronger gate `max(L₁, L₂) < 1`) prove box contraction for a *frozen-offset, fixed-`R`*
+   loop. The Saha offset is frozen at a reference `T`, while the density leg `n_e = S(T)/R`
+   uses the current `T` and a fixed stage ratio `R`. With the offset evaluated at the current
+   `T` the Saha coupling cancels: the composite then depends on `T` only through
+   `U_z(T)/U_{z+1}(T)`, and is constant when the offset is `log S(T)` (audit 2026-09-24,
+   finding INV-01; the scratch witness `modelB_consistent_offset_degenerate` is not yet
+   landed). The product gate `L₁·L₂ < 1` is a sufficient condition that fails on realistic
+   data: it evaluates to 6×10³–5×10⁴ on the audit's Ti-like test case (findings PS-03,
+   INV-03), so it is not a usable runtime certificate. **Still open:** a theorem about the
+   pipeline's actual outer loop (`iterative.py`: stage ratio re-derived from intercepts at the
+   current `T`, ion abscissae shifted by the ionization energy, one intercept per element,
+   0.5-damped Gauss–Seidel with holds), which none of these results models.
 
 7. **Multi-species per-U generalization.** ✅ **Addressed** in `MultiSpecies.lean`
    (2026-07-02): `deNormalizedDensityPerU` / `lineIntensityPerU` with genuinely
    per-species `U_s`; `density_ratio_from_intensities_perU` and
    `speciesComposition_ratio_from_intensities_perU` prove ratio/relative-composition
    recovery with `U_s ≠ U_t`; `rfl` bridges + `_ofPerU` corollaries re-derive the old
-   shared-U theorems as literal `Us := partitionFunction` specializations (the shared-U
-   reduction is fully discharged, not siblinged).
+   shared-U theorems as literal `Us := partitionFunction` specializations. That lift covers
+   the `MultiSpecies` ratio theorems only. Shared-U cross-species results elsewhere remain a
+   modeling reduction (REDUCED), and the `PlasmaParams` identifiability layer (`Inverse`,
+   `JointIdentifiability`, `CompositionIdentifiability`, `SelfAbsorptionInverse`,
+   `OLSIdentifiability`) still uses one level catalog, hence one `U(T)`, for every species
+   (model tag REDUCED; audit 2026-09-24, finding ARCH-03). **Still open:** per-species level
+   tables in `PlasmaParams`, the migration ARCH-03 recommends.
 
 8. **Joint (T, composition) from ≥2 lines/species.** ✅ **Addressed (two-line case)** in
    `JointIdentifiability.lean` (2026-07-02): `observe₂` (two emitting levels per species)
    and `joint_identifiability` — equal two-line observations + one distinct-energy pair on
    some species ⇒ equal T AND equal composition, with NO assumed ratio hypothesis: the
    temperature is extracted from `hObs` itself, discharging `general_identifiability`'s
-   `hTratio` caveat. **Residual:** full n-line OLS-fit identifiability (the
-   `Alt/LeastSquares` layer's concern) and the nonlinear joint least-squares inverse
-   (gap #1 residual).
+   `hTratio` caveat. Scope: it is stated over the shared-catalog `PlasmaParams` (one level
+   table and one `U(T)` for all species), so it publishes REDUCED, and it assumes a known,
+   equal calibration `hFeq`, which is not the calibration-free setting. `hFeq` is stronger than
+   the conclusion needs (closure is scale-invariant), but that `hFeq`-free version is not
+   formalized here (audit 2026-09-24, finding INV-08). **Residual:** full n-line OLS-fit
+   identifiability (the `Alt/LeastSquares` layer's concern) and the nonlinear joint
+   least-squares inverse (gap #1 residual).
 
 ## Tier 2 — self-absorption / regime coverage
 
@@ -157,8 +208,16 @@ strict solver would step outside the verified envelope.
    construction with per-species τ's whose thick observation vectors are IDENTICAL while
    the closure compositions DIFFER (species 0 reuses the per-line aliasing verbatim,
    species 1 fixed). Honest contrast retained: composition *survives* under matched/known
-   τ (`thick_density_identifiability`); the LOST/PRESERVED boundary is exactly per-species
-   vs common/known optical depth. Justifies refuse-to-report under unknown per-species τ.
+   τ (`thick_density_identifiability`); in this model, with τ a free real per line, the
+   LOST/PRESERVED boundary is exactly per-species vs common/known optical depth. The model is
+   the flat-profile `selfAbsorbedIntensity` (model tag APPROXIMATION), so these results publish
+   APPROXIMATION. Refuse-to-report is justified only where τ is unconstrained by density:
+   `σ₀·ℓ` unknown and one line per species. The witnesses put τ = 0 at a positive density,
+   which a state-bound optical depth excludes (`OpticalDepth.opticalDepth_pos`); the reachable
+   single-line witness is `OpticalDepthBridge.boundOpticalDepth_lumped_alias`, and with
+   `σ₀·ℓ` known one line identifies each density (`OpticalDepth.thickLineIntensity_injOn`).
+   A composition-level statement under a state-bound τ is not proved (audit 2026-09-24,
+   finding LF-15).
 10. **Thick-regime curve of growth.** ✅ **Partially addressed** in `EquivalentWidth.lean`
     (2026-07-02): `slabCurve_forward_lipschitz` (saturation kills forward sensitivity —
     response decays like `e^{−τ}`), `slabCurve_inverse_lipschitz` (the COG-inverse
@@ -176,10 +235,15 @@ strict solver would step outside the verified envelope.
 11. **Matrix-effect invariance under per-shot (T, n_e) variation.** ✅ **Partially
     addressed** in `MatrixEffects.lean` (2026-07-02): `homologousPair_ratio_closed_form` +
     `homologousPair_ratio_temperature_invariant` — energy-matched (homologous) cross-species
-    line pairs have EXACTLY T-invariant intensity ratios (the shared `U(T)` cancels, no
-    matched-U assumption smuggled); `nonHomologousPair_ratio_temperature_dependent` proves
-    the invariance hinges on the energy match; per-species-U variants state the `U_t/U_s`
-    residual explicitly. **Residual:** the quantitative `|ΔE| ≠ 0` per-shot drift bound
+    line pairs have T-invariant intensity ratios in the shared-catalog model: one `(g, E, A)`
+    family, hence one `U(T)`, serves both species (`U_s ≡ U_t`), and that shared `U(T)`
+    cancels. This is a modeling reduction (REDUCED), not a per-shot-`T` guarantee for a real
+    element pair, whose ratio carries the factor `U_t(T)/U_s(T)`. The faithful per-species form
+    is `homologousPair_ratio_perU_closed_form`, which states that `U_t/U_s` residual explicitly;
+    its frozen-`U` invariance `homologousPair_ratio_perU_temperature_invariant` is likewise
+    REDUCED. What energy matching does remove exactly is the Boltzmann-exponential channel;
+    `nonHomologousPair_ratio_temperature_dependent` proves the invariance hinges on the energy
+    match. **Residual:** the quantitative `|ΔE| ≠ 0` per-shot drift bound
     (its same-species engine is `temperature_ratio_near_degenerate`); per-shot n_e enters
     only through Saha stage shuffling, outside this module's Boltzmann-only encoding.
 12. **Continuous spatial (Abel) inverse + full-Voigt regime** (`SpatialForward.lean`,
@@ -195,7 +259,10 @@ strict solver would step outside the verified envelope.
 - **LTE validity** (gap #24): a hypothesis in every Boltzmann/Saha theorem (correctly —
   it is measurement-dependent). The spec *provides* `mcWhirterBound` (`StarkBroadening.lean`).
   → Strict mode must evaluate McWhirter on the measured n_e + cross-check Stark/Saha n_e
-  agreement, and refuse when LTE is unsupported.
+  agreement, and refuse when LTE is unsupported. Passing McWhirter is necessary for LTE, not
+  sufficient (`PartialLTE`), and its constant `1.6·10¹²` presumes `n_e` in cm⁻³, `T` in K and
+  `ΔE` in eV. The Stark/Saha cross-check has no certificate yet (C8 in
+  `docs/frontiers/12-runtime-certificates.md`).
 - **Unobserved ionization stage** (gap #25): `saha_joint_identifiability` *requires* both
   a neutral and an observed ion line. Any single-stage n_e inference (the pressure-balance
   fallback) is outside the envelope. → The hypothesis is the gate: refuse n_e when no ion

@@ -1,0 +1,243 @@
+{
+  "total": 5,
+  "offset": 0,
+  "data": [
+    {
+      "paperId": "0feea962a27b42212cae2f10011b46b2caf7a07c",
+      "externalIds": {
+        "DOI": "10.56530/spectroscopy.yd8979k2",
+        "CorpusId": 263635124
+      },
+      "title": "Overcoming the Matrix Effect in the Elemental Analysis of Steel: An Interview with 2023 Meggers Award Winner Johannes Pedarnig",
+      "year": 2023,
+      "journal": {
+        "name": "Spectroscopy"
+      },
+      "authors": [
+        {
+          "authorId": "2344320913",
+          "name": "John Chasse"
+        }
+      ]
+    },
+    {
+      "paperId": "fd82643a65cfba8e2f59d4d0e8106617ba22f6ce",
+      "externalIds": {
+        "DOI": "10.1088/1741-4326/ad52a5",
+        "CorpusId": 270197534
+      },
+      "title": "First results of laser-induced desorption - quadrupole mass spectrometry (LID-QMS) at JET",
+      "year": 2024,
+      "journal": {
+        "name": "Nuclear Fusion",
+        "volume": "64"
+      },
+      "authors": [
+        {
+          "authorId": "92142634",
+          "name": "M. Zlobinski"
+        },
+        {
+          "authorId": "2288769380",
+          "name": "G. Sergienko"
+        },
+        {
+          "authorId": "123024783",
+          "name": "I. Jepu"
+        },
+        {
+          "authorId": "2141479025",
+          "name": "C. Rowley"
+        },
+        {
+          "authorId": "145851579",
+          "name": "A. Widdowson"
+        },
+        {
+          "authorId": "2304233289",
+          "name": "R. Ellis"
+        },
+        {
+          "authorId": "2295350757",
+          "name": "D. Kos"
+        },
+        {
+          "authorId": "2248617243",
+          "name": "I. Coffey"
+        },
+        {
+          "authorId": "2304285961",
+          "name": "M. Fortune"
+        },
+        {
+          "authorId": "152132328",
+          "name": "D. Kinna"
+        },
+        {
+          "authorId": "11510681",
+          "name": "M. Beldishevski"
+        },
+        {
+          "authorId": "51020343",
+          "name": "A. Krimmer"
+        },
+        {
+          "authorId": "30200589",
+          "name": "H. Lambertz"
+        },
+        {
+          "authorId": "2304283947",
+          "name": "A. Terra"
+        },
+        {
+          "authorId": "2287242826",
+          "name": "A. Huber"
+        },
+        {
+          "authorId": "10367508",
+          "name": "S. Brezinsek"
+        },
+        {
+          "authorId": "49328701",
+          "name": "T. Dittmar"
+        },
+        {
+          "authorId": "2304284975",
+          "name": "M. Flebbe"
+        },
+        {
+          "authorId": "2304208614",
+          "name": "Rong-Xing Yi"
+        },
+        {
+          "authorId": "116469258",
+          "name": "R. Rayaprolu"
+        },
+        {
+          "authorId": "2291591778",
+          "name": "J. Figueiredo"
+        },
+        {
+          "authorId": "2298339934",
+          "name": "P. Blatchford"
+        },
+        {
+          "authorId": "19305254",
+          "name": "S. Silburn"
+        },
+        {
+          "authorId": "2287084027",
+          "name": "Emmanuelle Tsitrone"
+        },
+        {
+          "authorId": "2261418207",
+          "name": "E. Joffrin"
+        },
+        {
+          "authorId": "2249268161",
+          "name": "K. Krieger"
+        },
+        {
+          "authorId": "2237901306",
+          "name": "Y. Corre"
+        },
+        {
+          "authorId": "1942679",
+          "name": "A. Hakola"
+        },
+        {
+          "authorId": "11231674",
+          "name": "J. Likonen"
+        }
+      ]
+    },
+    {
+      "paperId": "1c1d8b3d1b9ba3f9b2d72bc3a766cb4121b6a8f6",
+      "externalIds": {
+        "DOI": "10.1149/ma2025-02683298mtgabs",
+        "CorpusId": 283345998
+      },
+      "title": "(Invited)\n Laser Ablation of Electrodes for High-Throughput Manufacturing and Analytics of 3D Electrodes for Advanced 3D Battery Concept",
+      "year": 2025,
+      "journal": {
+        "name": "ECS Meeting Abstracts"
+      },
+      "authors": [
+        {
+          "authorId": "2333625807",
+          "name": "W. Pfleging"
+        },
+        {
+          "authorId": "2165571573",
+          "name": "Y. Sterzl"
+        },
+        {
+          "authorId": "2225865929",
+          "name": "N. Stra\u00dfburger"
+        },
+        {
+          "authorId": "2291288282",
+          "name": "Carolyn Reinhold"
+        },
+        {
+          "authorId": "2055690893",
+          "name": "P. Zhu"
+        },
+        {
+          "authorId": "37989406",
+          "name": "Jhanis J. Gonz\u00e1lez"
+        },
+        {
+          "authorId": "2396393463",
+          "name": "J. Yoo"
+        },
+        {
+          "authorId": "2405761479",
+          "name": "Rick Russo"
+        }
+      ]
+    },
+    {
+      "paperId": "aad9bc1c21b363495adaa18d3a94b446555c9e5a",
+      "externalIds": {
+        "DOI": "10.1149/ma2026-01241300mtgabs",
+        "CorpusId": 290318663
+      },
+      "title": "(Invited) In situ\n Raman Spectroscopy of Plasma-Liquid Interaction Using Probe Molecules",
+      "year": 2026,
+      "journal": {
+        "name": "ECS Meeting Abstracts"
+      },
+      "authors": [
+        {
+          "authorId": "1394496217",
+          "name": "Kasidapa Polprasarn"
+        },
+        {
+          "authorId": "2243597413",
+          "name": "David Pai"
+        }
+      ]
+    },
+    {
+      "paperId": "35208ca71e41a155b6fd1de7716074fc8a4e15c1",
+      "externalIds": {
+        "DOI": "10.1126/science.adk1833",
+        "CorpusId": 271769313,
+        "PubMed": "39116221"
+      },
+      "title": "Ultrafast studies of elusive chemical reactions in the gas phase",
+      "year": 2024,
+      "journal": {
+        "name": "Science",
+        "volume": "385"
+      },
+      "authors": [
+        {
+          "authorId": "2251918603",
+          "name": "Marcos Dantus"
+        }
+      ]
+    }
+  ]
+}

@@ -83,13 +83,69 @@ in explicit non-sharp constants, not in the algebra. What is delivered:
 * `noise_to_temperatureGap` — noise ⇒ temperature gap (`ErrorBudget` + Tmax scaling).
 * `noise_to_density` — noise ⇒ per-species recovered-density error (single species).
 * `noise_to_composition` — **HEADLINE**: noise ⇒ recovered-composition error, the composed
-  end-to-end bound with constant explicit in the noise inputs.
+  end-to-end bound with constant explicit in the noise inputs. At realistic LIBS parameters that
+  constant is far above 1, so the bound is true but says nothing there (see *Non-vacuity range*).
 
 What remains open (unchanged from the constituent modules): the temperature leg's
 density/composition coupling is threaded here through the *temperature* channel only (the same-`g`
 `U`-shift and Boltzmann shift at `T̂ ≠ T`); an independent atomic-data (`g, A, E`) error channel
 exists (`classicComposition_atomicData_error`) but is NOT jointly composed with the temperature
 channel in a single constant here — the two error budgets are still to be added by the caller.
+
+## Non-vacuity range
+
+A composition error `|Ĉ_s − C_s|` is at most 1. At realistic LIBS parameters the right-hand side
+of `noise_to_composition` is 26 to 1.42e3, so the theorem holds there but bounds nothing.
+
+Source: the 2026-09-24 audit (finding U-01, item RF-12; script
+`evidence/uncertainty/n2c_vacuity.py` of that audit, re-run for this note). The script evaluates
+`noiseTempGapBound`, `tempResponseErrorBoundOfGap` and `compositionErrorBound` as defined here, on
+NIST ASD level lists for Fe I, Cr I and Ni I (from the companion's atomic database; truncating
+them at the ionization potential leaves every number below unchanged). Setup: a steel-like
+`C = (0.70, 0.19, 0.11)` for Fe, Cr, Ni, so `Nmax = 0.70`; a 10-line Fe I temperature plot with
+`E_T` evenly spaced over 3.3–6.6 eV; one uniform per-line `ε`; analysis lines with
+`E_u ≈ 3.3–3.5 eV`; `k0` the ground level; `Φ` the largest per-species envelope at `dmax`; and
+the best case `Ŝ = S`.
+
+| `ε` | box (K) | `dmax` (K) | `Φ` (Fe I) | bound, Ni | bound, Fe |
+|---|---|---|---|---|---|
+| 0.5 % | [9000, 11000] | 43 | 28.2 | 26.3 | 61.2 |
+| 1 % | [8000, 12000] | 103 | 88.9 | 82.8 | 193 |
+| 5 % | [8000, 12000] | 513 | 653 | 608 | 1.42e3 |
+
+The temperature leg is informative (`dmax` is 0.4–5 % of 10 000 K). The loss is in the density
+leg, through the `U` channel of `tempResponseErrorBoundOfGap`: `(∑ₖ gₖEₖ)·d/(kB·Tmin²)` over the
+single-term floor `g_{k0}·exp(−E_{k0}/(kB·Tmin))`. Its constant `∑ₖ gₖEₖ` comes from the
+`exp(…) ≤ 1` step behind `PartitionLipschitz.partitionFunction_lipschitz_temp`. The exact
+sensitivity is `d(ln U)/dβ = −⟨E⟩` (the mean excitation energy), so the channel over-states it by
+about `∑ₖ gₖEₖ/(g₀·⟨E⟩)`. For Fe I, `∑ gE = 4.02e4 eV`, `g₀ = 9` and `⟨E⟩ = 2.12 eV` at 12 000 K,
+a factor near 2×10³; at `ε = 1 %` in [8000, 12000] K the channel is 83.1 where the log-derivative
+form gives 0.040.
+
+The full grid is `ε ∈ {0.5, 1, 2, 5} %` over the boxes [8000, 12000] and [9000, 11000] K; the
+table shows three of its cells. Every cell with the full level lists is above 1. The Fe and Ni
+bounds are both below 1 only when the level lists are truncated to `E ≤ 1 eV` and `ε ≤ 2 %`
+(for example Ni 0.040 and Fe 0.093 at 0.5 % in [9000, 11000] K; Ni 0.28 and Fe 0.65 at 2 % in
+[8000, 12000] K; at 5 % the Fe bound stays at 1.23–2.31). Such a list is not the atom's
+partition function, so the bound is not informative for the physical `U` at realistic noise.
+With a 3 eV truncation only the Ni bound falls below 1, in three of the eight cells (0.95 at 1 %
+in [9000, 11000] K; 0.71 and 0.47 at 0.5 % in [8000, 12000] and [9000, 11000] K); the Fe bound
+never does (smallest 1.09). `Certificates` states the same condition.
+
+The composition leg is also abundance-blind (audit finding LIT-05). It turns the per-species
+*relative* envelope `Φ` into one *absolute* tolerance `Nmax·Φ`, so for a minor species the bound
+can exceed that species' own fraction. One scenario, recomputed for this note:
+`N = (0.995, 0.005)` (`S = 1`), every recovered density within `Φ = 5 %` of its true value, so
+the tolerance is `Nmax·Φ = 0.04975`. Over all such `N̂` the minor species' error is largest with
+the major 5 % low and the minor 5 % high: `Ŝ = 0.9505`, `|ΔC| = 0.00525/0.9505 − 0.005 = 5.23e-4`.
+At that same `N̂`, `compositionErrorBound` gives
+`0.04975/0.9505 + (0.005/0.9505)·2·0.04975 = 0.05234 + 0.00052 = 0.0529`: 101 times the error and
+10.6 times the minor fraction itself. A relative bound `2Φ/(1 − Φ)·C_s = 5.26e-4` would be nearly
+tight (hand algebra; not in the library).
+
+No witness below exercises the headline with a nonzero composition error (audit U-13). A tighter
+partition-function leg (the mean-excitation-energy, log-derivative bound) and a relative,
+abundance-aware closure bound are the open repairs. Neither is in the library yet.
 -/
 
 namespace CflibsFormal
@@ -111,7 +167,10 @@ noncomputable def noiseTempGapBound (kB Tmax : ℝ) (ET epsT : ιT → ℝ) : �
 /-- **Gap-form temperature-response error bound.** Identical to
 `AtomicDataPerturbation.tempResponseErrorBound` but parametrized by the temperature gap `d` directly
 (rather than by `|T̂ − T|`), so it can be evaluated at the worst-case gap `dmax` and its
-monotonicity in `d` can be stated. Pure algebraic packaging; not an estimator. -/
+monotonicity in `d` can be stated. Pure algebraic packaging; not an estimator. Its `U` channel,
+`(∑ₖ gₖEₖ)·d/(kB·Tmin²)/(g_{k0}·exp(−E_{k0}/(kB·Tmin)))`, is the dominant loose term: it exceeds the
+exact partition-function sensitivity by about `∑ₖ gₖEₖ/(g₀·⟨E⟩)` (near 2×10³ for Fe I), which is
+why the composed bound is vacuous at realistic parameters (module *Non-vacuity range*). -/
 noncomputable def tempResponseErrorBoundOfGap (kB Tmin d : ℝ) (g E : ι → ℝ) (u k0 : ι) : ℝ :=
   ((Real.exp (E u * d / (kB * Tmin ^ 2)) - 1)
       + (∑ k, g k * E k) * d / (kB * Tmin ^ 2)
@@ -187,7 +246,8 @@ noise:
 Derivation: `|T̂ − T| = T·(|T̂ − T|/T) ≤ T·kB·T̂·S` (the temperature identity), then `T, T̂ ≤ Tmax`
 gives `T·T̂ ≤ Tmax²`. Reduction: the deterministic worst-case slope bound of `temp_rel_error_hetero`
 plus the `Tmax` over-estimate; the Boltzmann-plot slope/temperature identification is inherited as a
-hypothesis (`hβ`, `hβHat`). -/
+hypothesis (`hβ`, `hβHat`). This leg is informative at realistic parameters: `dmax` is 43–513 K
+for 0.5–5 % noise in the module's *Non-vacuity range* setup. -/
 theorem noise_to_temperatureGap [Nonempty ιT]
     {kB Tmin Tmax T That : ℝ} {ET yT yHatT epsT : ιT → ℝ}
     (hkB : 0 < kB) (hTmin : 0 < Tmin)
@@ -231,7 +291,9 @@ replaced by the noise-derived worst-case gap `dmax = noiseTempGapBound kB Tmax E
   `|N̂ − N| ≤ N · tempResponseErrorBoundOfGap kB Tmin dmax g E u k0`.
 The exp-channel smallness `hsmall` is required at `dmax` (the worst case), whence it holds at the
 actual gap. Reduction: inherits the temperature and density legs' reductions (worst-case slope,
-`Tmax` over-estimate, non-sharp response constants). -/
+`Tmax` over-estimate, non-sharp response constants). Those constants make the relative factor
+`tempResponseErrorBoundOfGap … dmax …` 28 to 653 for Fe I with the NIST level list at 0.5–5 %
+noise (module *Non-vacuity range*), so the bound allows `|N̂ − N|` up to 28–653 times `N`. -/
 theorem noise_to_density [Nonempty ι] [Nonempty ιT]
     {kB Tmin Tmax T That Fcal N : ℝ} {ET yT yHatT epsT : ιT → ℝ}
     {g E A : ι → ℝ} {u k0 : ι}
@@ -277,7 +339,13 @@ per-species smallness `hδp1` and envelope `henv` at the actual gap from those a
 `AtomicDataPerturbation.classicComposition_temperature_error` (the verbatim density → composition
 leg, i.e. `CompositionRobustness.composition_abs_sub_le_bound`). Reduction: the reductions
 of all three legs (see the module Honest-scope note); `hsmallmax`/`henvmax` are stated at the
-worst-case gap. -/
+worst-case gap.
+
+Non-vacuity: the theorem is true but uninformative at realistic parameters. A composition error
+is at most 1, and with NIST Fe/Cr/Ni level lists at 0.5–5 % noise in ±1–2 kK temperature boxes
+the right-hand side is 26 to 1.42e3 (module *Non-vacuity range*, audit finding U-01). The cause
+is the `U` channel of `tempResponseErrorBoundOfGap`. The bound is also abundance-blind: the
+absolute tolerance `Nmax·Φ` can exceed a minor species' own fraction. -/
 theorem noise_to_composition [Nonempty ι] [Nonempty κ] [Nonempty ιT]
     {kB Tmin Tmax T That Fcal Φ Nmax : ℝ} {ET yT yHatT epsT : ιT → ℝ}
     {N : κ → ℝ} {g E A : κ → ι → ℝ} {u k0 : κ → ι}
@@ -356,7 +424,9 @@ identifications fixing `T = 1 ≠ T̂ = 2/3`, the temperature box, positive nond
 the worst-case exp-channel smallness, and the uniform envelope `Φ = 0` — are jointly satisfiable.
 This is a single-species (`Fin 1`) instance, so the composition LHS is structurally `0` and the
 headline bound is not numerically exercised by this witness; the preceding temperature-gap witness
-does state a concrete inequality. -/
+does state a concrete inequality. With `E = 0` the temperature channel is also inert. No witness
+in this file has two species and `E_u > 0`, so none gives the chain a nonzero composition error
+(audit U-13). -/
 example : True := by
   have _h := noise_to_composition (kB := 1) (Tmin := 1 / 2) (Tmax := 2) (T := 1) (That := 2 / 3)
     (Fcal := 1) (Φ := 0) (Nmax := 4) (ET := nvN2cET) (yT := nvN2cYt) (yHatT := nvN2cYhat)

@@ -1,0 +1,342 @@
+{
+  "total": 16,
+  "offset": 0,
+  "next": 8,
+  "data": [
+    {
+      "paperId": "fc6f2f42fa71ca7a826d40ecee606958fb3c6b5e",
+      "externalIds": {
+        "MAG": "2496243424",
+        "DOI": "10.1007/s11090-016-9729-y",
+        "CorpusId": 100571046
+      },
+      "title": "A Comparative Study of Calibration Free Methods for the Elemental Analysis by Laser Induced Breakdown Spectroscopy",
+      "venue": "Plasma chemistry and plasma processing",
+      "year": 2016,
+      "citationCount": 61,
+      "authors": [
+        {
+          "authorId": "92868761",
+          "name": "Qaswer Abbass"
+        },
+        {
+          "authorId": "97327687",
+          "name": "Nasar Ahmed"
+        },
+        {
+          "authorId": "49580248",
+          "name": "R. Ahmed"
+        },
+        {
+          "authorId": "152999442",
+          "name": "M. A. Baig"
+        }
+      ]
+    },
+    {
+      "paperId": "4f501ac659b0c5df0567f8064f302cc192535374",
+      "externalIds": {
+        "DOI": "10.1007/s10812-023-01513-x",
+        "CorpusId": 257523107
+      },
+      "title": "Determination of the Gold Alloys Composition by Laser-Induced Plasma Spectroscopy Using an Algorithm for Matching Experimental and Calculated Values of Electron Number Density",
+      "venue": "Journal of Applied Spectroscopy",
+      "year": 2023,
+      "citationCount": 3,
+      "authors": [
+        {
+          "authorId": "144229479",
+          "name": "Z. Farooq"
+        },
+        {
+          "authorId": "94322627",
+          "name": "R. Ali"
+        },
+        {
+          "authorId": "97327687",
+          "name": "Nasar Ahmed"
+        },
+        {
+          "authorId": "2404893403",
+          "name": "M. Fahad"
+        },
+        {
+          "authorId": "97285690",
+          "name": "A. Ahmad"
+        },
+        {
+          "authorId": "49280609",
+          "name": "M. Yaseen"
+        },
+        {
+          "authorId": "13391643",
+          "name": "M. H. Mahmood"
+        },
+        {
+          "authorId": "2113619914",
+          "name": "Sajjad Hussain"
+        },
+        {
+          "authorId": "2296096524",
+          "name": "I. Rehan"
+        },
+        {
+          "authorId": "2118815524",
+          "name": "M. Khan"
+        },
+        {
+          "authorId": "46455534",
+          "name": "T. Jan"
+        },
+        {
+          "authorId": "4093248",
+          "name": "M. A. Qayyum"
+        },
+        {
+          "authorId": "2052665038",
+          "name": "Muhammad Afzal"
+        },
+        {
+          "authorId": "87070698",
+          "name": "M. Mahr"
+        },
+        {
+          "authorId": "49507205",
+          "name": "M. Shafique"
+        }
+      ]
+    },
+    {
+      "paperId": "27bd503efdda84e3e58307ce399f7a3101106eb2",
+      "externalIds": {
+        "MAG": "3003581601",
+        "DOI": "10.1364/ao.379641",
+        "CorpusId": 212950895,
+        "PubMed": "32225797"
+      },
+      "title": "Electron number density conservation model combined with a self-absorption correction methodology for analysis of nanostructure plasma using laser-induced breakdown spectroscopy.",
+      "venue": "Applied Optics",
+      "year": 2020,
+      "citationCount": 1,
+      "authors": [
+        {
+          "authorId": "144229479",
+          "name": "Z. Farooq"
+        },
+        {
+          "authorId": "94322627",
+          "name": "R. Ali"
+        },
+        {
+          "authorId": "97285690",
+          "name": "A. Ahmad"
+        },
+        {
+          "authorId": "1565788739",
+          "name": "M. Yaseen"
+        },
+        {
+          "authorId": "13391643",
+          "name": "M. H. Mahmood"
+        },
+        {
+          "authorId": "2404893403",
+          "name": "M. Fahad"
+        },
+        {
+          "authorId": "144670147",
+          "name": "M. N. Hussain"
+        },
+        {
+          "authorId": "2296096524",
+          "name": "I. Rehan"
+        },
+        {
+          "authorId": "5133829",
+          "name": "M. Z. Khan"
+        },
+        {
+          "authorId": "118052571",
+          "name": "Ramiza"
+        },
+        {
+          "authorId": "145404344",
+          "name": "M. U. Farooq"
+        },
+        {
+          "authorId": "4093248",
+          "name": "M. A. Qayyum"
+        },
+        {
+          "authorId": "2065916367",
+          "name": "M. Shafique"
+        }
+      ]
+    },
+    {
+      "paperId": "a964d6080a7b85c526e0f6987ffed9c6f0ffd949",
+      "externalIds": {
+        "MAG": "2809713536",
+        "DOI": "10.1177/0003702818789959",
+        "CorpusId": 49678015,
+        "PubMed": "29972315"
+      },
+      "title": "Calibration-Free Laser-Induced Plasma Analysis of Nanoparticle-Doped Material Using Self-Absorption Correction Methodologies",
+      "venue": "Applied Spectroscopy",
+      "year": 2018,
+      "citationCount": 9,
+      "authors": [
+        {
+          "authorId": "144229479",
+          "name": "Z. Farooq"
+        },
+        {
+          "authorId": "94322627",
+          "name": "R. Ali"
+        },
+        {
+          "authorId": "2112248782",
+          "name": "Asghar Ali"
+        },
+        {
+          "authorId": "2443904653",
+          "name": "Tayyaba Mubeen"
+        },
+        {
+          "authorId": "46455534",
+          "name": "T. Jan"
+        },
+        {
+          "authorId": "34978618",
+          "name": "H. Anwar"
+        }
+      ]
+    },
+    {
+      "paperId": "6bb6069ebacba102a60d7e9962d9bfac1b9280b1",
+      "externalIds": {
+        "MAG": "2181276117",
+        "DOI": "10.1134/S1063780X15090019",
+        "CorpusId": 124475994
+      },
+      "title": "Determination of a brass alloy concentration composition using calibration-free laser-induced breakdown spectroscopy",
+      "venue": "",
+      "year": 2015,
+      "citationCount": 12,
+      "authors": [
+        {
+          "authorId": "1391555374",
+          "name": "M. Achouri"
+        },
+        {
+          "authorId": "1403268367",
+          "name": "T. Baba-Hamed"
+        },
+        {
+          "authorId": "13665200",
+          "name": "S. Beldjilali"
+        },
+        {
+          "authorId": "11756586",
+          "name": "A. Belasri"
+        }
+      ]
+    },
+    {
+      "paperId": "4a3aa72218bab73d807d84c4841126cdb43509b8",
+      "externalIds": {
+        "DOI": "10.1134/S1063780X15090019",
+        "CorpusId": 255229220
+      },
+      "title": "Determination of a brass alloy concentration composition using calibration-free laser-induced breakdown spectroscopy",
+      "venue": "Plasma Physics Reports",
+      "year": 2015,
+      "citationCount": 0,
+      "authors": [
+        {
+          "authorId": "122397091",
+          "name": "M. Achouri"
+        },
+        {
+          "authorId": "1403268367",
+          "name": "T. Baba-Hamed"
+        },
+        {
+          "authorId": "13665200",
+          "name": "S. Beldjilali"
+        },
+        {
+          "authorId": "11756586",
+          "name": "A. Belasri"
+        }
+      ]
+    },
+    {
+      "paperId": "15f2ebf26e6fe06061e00916b919131695f544c1",
+      "externalIds": {
+        "DOI": "10.1016/j.jdent.2025.106266",
+        "CorpusId": 283361566,
+        "PubMed": "41314373"
+      },
+      "title": "Measuring elemental compositional effect of diabetes on dental hard tissues: Laser-induced Breakdown Spectroscopy, a potential tool.",
+      "venue": "E -journal of dentistry",
+      "year": 2025,
+      "citationCount": 2,
+      "authors": [
+        {
+          "authorId": "2364159859",
+          "name": "Muhammad Mustafa Dastageer"
+        },
+        {
+          "authorId": "2321015693",
+          "name": "Khurram Siraj"
+        },
+        {
+          "authorId": "2244327892",
+          "name": "Shazia Naz"
+        },
+        {
+          "authorId": "2087857576",
+          "name": "M. A. Israr"
+        },
+        {
+          "authorId": "2395047649",
+          "name": "Sami-ul-Haq"
+        },
+        {
+          "authorId": "2282433783",
+          "name": "M. Qasim"
+        }
+      ]
+    },
+    {
+      "paperId": "461da210e5cd4b5d3494375ac329885cd89561ad",
+      "externalIds": {
+        "DOI": "10.1088/1757-899X/1300/1/012006",
+        "CorpusId": 269323192
+      },
+      "title": "Deep Learning Neural Network (DNN) Coupled Laser Induced Breakdown Spectroscopy for Quantitative Analysis of Copper Alloys",
+      "venue": "IOP Conference Series: Materials Science and Engineering",
+      "year": 2024,
+      "citationCount": 0,
+      "authors": [
+        {
+          "authorId": "2293404968",
+          "name": "Leya Pauly"
+        },
+        {
+          "authorId": "2297988206",
+          "name": "Lekha Mary John"
+        },
+        {
+          "authorId": "2161390223",
+          "name": "M. S. Suryan Sivadas"
+        },
+        {
+          "authorId": "2287482028",
+          "name": "K. K. Anoop"
+        }
+      ]
+    }
+  ]
+}

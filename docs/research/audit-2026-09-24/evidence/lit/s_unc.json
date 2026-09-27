@@ -1,0 +1,368 @@
+{
+  "total": 209,
+  "offset": 0,
+  "next": 10,
+  "data": [
+    {
+      "paperId": "43d1738d079a182380c6057ed61c20161b1d23ec",
+      "externalIds": {
+        "MAG": "2902915591",
+        "CorpusId": 126246313
+      },
+      "title": "Application of two calibration-free LIBS techniques for synthetic spectra of cement samples",
+      "venue": "",
+      "year": 2018,
+      "citationCount": 0,
+      "authors": [
+        {
+          "authorId": "96732144",
+          "name": "T. V\u00f6lker"
+        }
+      ]
+    },
+    {
+      "paperId": "0d8fa1db68447599f438a495d80f2f8f8beb890b",
+      "externalIds": {
+        "DOI": "10.1051/e3sconf/202234502008",
+        "CorpusId": 247803834
+      },
+      "title": "Evaluation of pressure and species concentration measurement using uncertainty propagation",
+      "venue": "E3S Web of Conferences",
+      "year": 2022,
+      "citationCount": 1,
+      "authors": [
+        {
+          "authorId": "121768597",
+          "name": "G. Stefopoulos"
+        },
+        {
+          "authorId": "46418762",
+          "name": "S. Rigas"
+        },
+        {
+          "authorId": "51017789",
+          "name": "Panagiotis Tsirikoglou"
+        },
+        {
+          "authorId": "3111142",
+          "name": "A. Kalfas"
+        }
+      ]
+    },
+    {
+      "paperId": "7042377c19a41b5ad204a3780434d70e3cb64719",
+      "externalIds": {
+        "DOI": "10.3390/chemosensors14090209",
+        "CorpusId": 292231357
+      },
+      "title": "Calibration Method and Uncertainty Evaluation for X-Ray Fluorescence Chlorine Analyzers",
+      "venue": "Chemosensors",
+      "year": 2026,
+      "citationCount": 0,
+      "authors": [
+        {
+          "authorId": "2382442192",
+          "name": "Dong-Hao Xie"
+        },
+        {
+          "authorId": null,
+          "name": "Meng-Na Zhou"
+        },
+        {
+          "authorId": null,
+          "name": "Huan Liu"
+        },
+        {
+          "authorId": null,
+          "name": "Xian-Lei Chen"
+        },
+        {
+          "authorId": "2303309254",
+          "name": "Jiang-Huan Shi"
+        },
+        {
+          "authorId": "2298771983",
+          "name": "Yin-Bao Cheng"
+        }
+      ]
+    },
+    {
+      "paperId": "4d54f2f8500fad06fd1438f22581877c81db8d26",
+      "externalIds": {
+        "DBLP": "journals/corr/abs-1906-08597",
+        "PubMedCentral": "6684658",
+        "MAG": "2950259063",
+        "ArXiv": "1906.08597",
+        "DOI": "10.1038/s41598-019-47751-y",
+        "CorpusId": 195218599,
+        "PubMed": "31388047"
+      },
+      "title": "Machine Learning Allows Calibration Models to Predict Trace Element Concentration in Soils with Generalized LIBS Spectra",
+      "venue": "Scientific Reports",
+      "year": 2019,
+      "citationCount": 106,
+      "authors": [
+        {
+          "authorId": "2118830791",
+          "name": "Chen Sun"
+        },
+        {
+          "authorId": "2030249",
+          "name": "Ye Tian"
+        },
+        {
+          "authorId": "2148990137",
+          "name": "Liang Gao"
+        },
+        {
+          "authorId": "2199197933",
+          "name": "Y. Niu"
+        },
+        {
+          "authorId": "2009789780",
+          "name": "Tian-Long Zhang"
+        },
+        {
+          "authorId": "2127040685",
+          "name": "Hua Li"
+        },
+        {
+          "authorId": "2108444979",
+          "name": "Yuqing Zhang"
+        },
+        {
+          "authorId": "52208176",
+          "name": "Zengqi Yue"
+        },
+        {
+          "authorId": "1405355041",
+          "name": "Nicole Delepine-Gilon"
+        },
+        {
+          "authorId": "2151480850",
+          "name": "Jin Yu"
+        }
+      ]
+    },
+    {
+      "paperId": "82f72156a6aa8be2b23873c4a5a829f135116585",
+      "externalIds": {
+        "MAG": "2896435416",
+        "DOI": "10.1016/J.JQSRT.2018.10.029",
+        "CorpusId": 126364735
+      },
+      "title": "Error analysis in optimization problems relevant for calibration-free laser-induced breakdown spectroscopy",
+      "venue": "Journal of Quantitative Spectroscopy and Radiative Transfer",
+      "year": 2019,
+      "citationCount": 7,
+      "authors": [
+        {
+          "authorId": "103518493",
+          "name": "J. J. Maali"
+        },
+        {
+          "authorId": "2178060",
+          "name": "S. V. Shabanov"
+        }
+      ]
+    },
+    {
+      "paperId": "91006b6f4dae224345c3647a98f3cccadc0d6e47",
+      "externalIds": {
+        "ArXiv": "1810.10904",
+        "MAG": "2897811714",
+        "DOI": "10.1016/j.ijadhadh.2018.10.012",
+        "CorpusId": 53488101
+      },
+      "title": "Construction and calibration of a goniometer to measure contact angles and calculate the surface free energy in solids with uncertainty analysis",
+      "venue": "International Journal of Adhesion and Adhesives",
+      "year": 2018,
+      "citationCount": 27,
+      "authors": [
+        {
+          "authorId": "145561310",
+          "name": "Jonathan M. Schuster"
+        },
+        {
+          "authorId": "92076046",
+          "name": "C. Schvezov"
+        },
+        {
+          "authorId": "8659779",
+          "name": "M. Rosenberger"
+        }
+      ]
+    },
+    {
+      "paperId": "61d8ed67397fb193107fdf707954b53d7a4e0fbd",
+      "externalIds": {
+        "DOI": "10.1007/s11467-022-1195-9",
+        "CorpusId": 252358720
+      },
+      "title": "A calibration-free model for laser-induced breakdown spectroscopy using non-gated detectors",
+      "venue": "Frontiers of Physics",
+      "year": 2022,
+      "citationCount": 8,
+      "authors": [
+        {
+          "authorId": "22612913",
+          "name": "Zong-Yu Hou"
+        },
+        {
+          "authorId": "80580532",
+          "name": "Wei-Lun Gu"
+        },
+        {
+          "authorId": "48779292",
+          "name": "Tianqi Li"
+        },
+        {
+          "authorId": "2108193890",
+          "name": "Zhe Wang"
+        },
+        {
+          "authorId": "2154884135",
+          "name": "Liang Li"
+        },
+        {
+          "authorId": "2159109468",
+          "name": "Xiang Yu"
+        },
+        {
+          "authorId": "2239169853",
+          "name": "Yecai Zhang"
+        },
+        {
+          "authorId": "2117943204",
+          "name": "Zijun Liu"
+        }
+      ]
+    },
+    {
+      "paperId": "6ee14cf159ad2a4406cfa38bdba5a5955f7657b6",
+      "externalIds": {
+        "ArXiv": "2606.16214",
+        "DBLP": "journals/corr/abs-2606-16214",
+        "DOI": "10.48550/arXiv.2606.16214",
+        "CorpusId": 289301914
+      },
+      "title": "Calibrated Sampling-Free Uncertainty Estimation in Bayesian Deep Learning",
+      "venue": "arXiv.org",
+      "year": 2026,
+      "citationCount": 0,
+      "authors": [
+        {
+          "authorId": "2361259333",
+          "name": "T. J. Wieczorek"
+        },
+        {
+          "authorId": "2448009089",
+          "name": "Leonardo Andrade"
+        },
+        {
+          "authorId": "2260340384",
+          "name": "Thomas M\u00f6llenhoff"
+        },
+        {
+          "authorId": "2302810630",
+          "name": "Marcus Rohrbach"
+        }
+      ]
+    },
+    {
+      "paperId": "eb6791663e3d275b8f2483477169040866f833f3",
+      "externalIds": {
+        "DOI": "10.1088/2058-6272/ad2670",
+        "CorpusId": 267507663
+      },
+      "title": "Accurate method based on data filtering for quantitative multi-element analysis of soils using CF-LIBS",
+      "venue": "Plasma Science and Technology",
+      "year": 2024,
+      "citationCount": 3,
+      "authors": [
+        {
+          "authorId": "2087066770",
+          "name": "W. Han"
+        },
+        {
+          "authorId": "12800534",
+          "name": "Dui-Xiong Sun"
+        },
+        {
+          "authorId": "2283319076",
+          "name": "Guo-Ding Zhang"
+        },
+        {
+          "authorId": "2280282728",
+          "name": "Guanghui Dong"
+        },
+        {
+          "authorId": "2403532702",
+          "name": "Xiaona Cui"
+        },
+        {
+          "authorId": "2292216032",
+          "name": "Jin-Cheng Shen"
+        },
+        {
+          "authorId": "2283090951",
+          "name": "Hao-Liang Wang"
+        },
+        {
+          "authorId": "2278587175",
+          "name": "Denghong Zhang"
+        },
+        {
+          "authorId": "2157527408",
+          "name": "Chen-Zhong Dong"
+        },
+        {
+          "authorId": "50708921",
+          "name": "Mao-Gen Su"
+        }
+      ]
+    },
+    {
+      "paperId": "4c4e96a9c93179b398ddaa0fc054f6bbb334a72e",
+      "externalIds": {
+        "DOI": "10.1016/j.aca.2021.339008",
+        "CorpusId": 238582424,
+        "PubMed": "34627502"
+      },
+      "title": "A method for improving the accuracy of calibration-free laser-induced breakdown spectroscopy by exploiting self-absorption.",
+      "venue": "Analytica Chimica Acta",
+      "year": 2021,
+      "citationCount": 24,
+      "authors": [
+        {
+          "authorId": "1720826218",
+          "name": "Zhen-Lin Hu"
+        },
+        {
+          "authorId": "2156361602",
+          "name": "Feng Chen"
+        },
+        {
+          "authorId": "2109952292",
+          "name": "Deng Zhang"
+        },
+        {
+          "authorId": "2903729",
+          "name": "Yan-Wu Chu"
+        },
+        {
+          "authorId": "2154843605",
+          "name": "Weiliang Wang"
+        },
+        {
+          "authorId": "48066366",
+          "name": "Yun Tang"
+        },
+        {
+          "authorId": "95637811",
+          "name": "Lianbo Guo"
+        }
+      ]
+    }
+  ]
+}
