@@ -1191,9 +1191,10 @@ theorem stepW_pairRatio_not_injOn :
 
 /-- **Pair-ratio identifiability is not profile-generic.** For the two-step profile
 `ψ = 1_[0,1] + (1/100) · 1_[0,20]`, the `r = 2` pair ratio `n ↦ W(2n) / W(n)` of equivalent
-widths `W = equivWidth ψ` is not injective on column densities `n ∈ (0, ∞)`:
-`R(1) ≈ 1.5077 > R(3) ≈ 1.3905 < R(10) ≈ 1.5826`, so levels just above the interior minimum
-(`≈ 1.3822` at `n ≈ 2.42`) are attained at two column densities.
+widths `W = equivWidth ψ` is not injective on column densities `n ∈ (0, ∞)`: the formal proof
+shows `R(1) > 29/20 > R(3)` and `R(10) > 29/20`, so two distinct column densities attain a
+common ratio value. Numerical evaluation (not part of the proof) gives `R(1) ≈ 1.5077`,
+`R(3) ≈ 1.3905`, `R(10) ≈ 1.5826` and an interior minimum `≈ 1.3822` at `n ≈ 2.42`.
 
 For the flat kernel `1_[0,1]` the same ratio is `cogRatio 2 1` (`W(τ) = 1 - exp (-τ)`,
 `equivWidth_rectangular`), which is injective on `(0, ∞)` (`cogRatio_injOn`). So `cogRatio_injOn`

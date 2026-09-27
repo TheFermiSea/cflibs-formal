@@ -12,7 +12,7 @@ statements about the recovered slope, intercept, temperature, and composition.*
 > repo classification is **`REDUCED`** — matching `temp_rel_error_le` (REDUCED, a
 > slackened bound), and distinct from the exact *identities* `olsSlope_variance_eq` /
 > `alphaHat_variance_eq` (EXACT relation; published REDUCED via the `alphaHat` model tag since 2026-09-27) and the *attainable* worst-case bound `relDensity_le`
-> (EXACT). M3's variance identity stays an EXACT relation (published REDUCED via `betaHat` since 2026-09-27). Grades (A/B/C, reachability) are
+> (EXACT). M3's variance identity stays an EXACT relation (published REDUCED via `alphaHat` since 2026-09-27). Grades (A/B/C, reachability) are
 > unaffected by this documentation-axis correction.
 
 ---

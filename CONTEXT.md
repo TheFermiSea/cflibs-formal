@@ -246,7 +246,8 @@ The original **~186-result corpus** was adversarially validated (verdict: sound-
 zero blockers; all findings fixed) and given a whole-corpus **literature-validity audit**
 (`reviews/literature-validity-audit.md`): 69 faithful / 33 reduced / 5 idealized / 78 pure-math,
 **0 divergent, 0 unverified citations, 1 minor docstring over-reach (fixed)**. Subsequent additions
-to the current 756-result corpus (the frontier and architectural-review deepening sweeps) are
+to the corpus since then (756 results by 2026-09-25, 799 by 2026-09-27: the frontier and
+architectural-review deepening sweeps and the frontier landings) are
 individually author-plus-independent-audit reviewed rather than re-covered by that one-time audit.
 The 2026-09-24 deep audit later corrected several citations (wrong authors, a title with no
 bibliographic record, wrong metadata); the current per-citation status, and whether a primary
