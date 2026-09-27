@@ -236,8 +236,8 @@ Gates 1–4 are automated in CI (`.github/workflows/lean_action_ci.yml`).
 
 ## Status
 
-82 modules, 756 named results (theorem/lemma) + 219 defs (counts via `scripts/stats.sh`,
-2026-09-25). CI gates: axiom-cleanliness (`tools/`), style/structure lint (`runLinter`),
+90 modules, 799 named results (theorem/lemma) + 241 defs (counts via `scripts/stats.sh`,
+2026-09-27). CI gates: axiom-cleanliness (`tools/`), style/structure lint (`runLinter`),
 docs-sync + scope-tag completeness (`scripts/gen-docs.sh`), import-hygiene (`scripts/stats.sh`),
 the declaration-granular scope gate (`lake exe scope-check`, which also checks that the published
 tags in `docs/scope-published.tsv` are current), and the module-level scope-consistency advisory
