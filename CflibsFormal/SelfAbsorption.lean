@@ -7,6 +7,7 @@ import Mathlib
 import CflibsFormal.Analysis
 import CflibsFormal.ForwardMap
 import CflibsFormal.Boltzmann
+import CflibsFormal.OLS
 
 /-!
 # Saha–Boltzmann formalization — self-absorption / optical-thickness-aware forward map
@@ -45,6 +46,10 @@ We prove:
   model's output at `τ` by `SA(τ)` returns the optically-thin `lineIntensity`, for every
   `τ ≥ 0`. It is algebra on the model; it does not check that a given `τ` is the true optical
   depth.
+* `olsSlope_selfAbsorbed_ge` — the **sign of the self-absorption temperature bias**: if `τ`
+  does not increase with upper-level energy, adding `log SA(τ k)` to the Boltzmann-plot
+  ordinates can only raise the OLS slope. The sign is fixed by the `τ`-vs-`E_upper` ordering,
+  which is an assumption about the line set.
 
 ## Scope — flat profile / line-centre escape factor (read before using)
 
@@ -306,5 +311,91 @@ theorem lineIntensity_eq_selfAbsorbedIntensity_div {kB T N Fcal : ℝ}
   have hSA : selfAbsorptionFactor tau ≠ 0 := (selfAbsorptionFactor_pos htau).ne'
   unfold selfAbsorbedIntensity
   rw [mul_div_cancel_right₀ _ hSA]
+
+/-- OLS slope is additive in the ordinates (centred form). -/
+private theorem olsSlope_add' [Nonempty ι] (E f h : ι → ℝ) :
+    olsSlope E (fun k => f k + h k) = olsSlope E f + olsSlope E h := by
+  rw [olsSlope_eq_centered, olsSlope_eq_centered, olsSlope_eq_centered, ← add_div]
+  congr 1
+  rw [← Finset.sum_add_distrib]
+  refine Finset.sum_congr rfl (fun k _ => ?_)
+  ring
+
+/-- Centred covariance of two similarly ordered sequences is nonnegative (Chebyshev). -/
+private theorem centered_cov_nonneg [Nonempty ι] (E z : ι → ℝ)
+    (hmono : ∀ i j, E i < E j → z i ≤ z j) : 0 ≤ ∑ k, (E k - mean E) * z k := by
+  have hM : Monovary z E := fun i j h => hmono i j h
+  have hC := hM.sum_mul_sum_le_card_mul_sum
+  have hn : (0 : ℝ) < Fintype.card ι := by exact_mod_cast Fintype.card_pos
+  have hsplit : ∑ k, (E k - mean E) * z k = ∑ k, z k * E k - mean E * ∑ k, z k := by
+    rw [Finset.mul_sum, ← Finset.sum_sub_distrib]
+    exact Finset.sum_congr rfl (fun k _ => by ring)
+  rw [hsplit, mean]
+  have : (∑ k, E k) / (Fintype.card ι : ℝ) * ∑ k, z k
+      = ((∑ k, z k) * ∑ k, E k) / Fintype.card ι := by
+    ring
+  rw [this, sub_nonneg, div_le_iff₀ hn]
+  linarith
+
+omit [Fintype ι] in
+/-- `log SA(τ k)` is nondecreasing along `E` when `τ` is antitone in `E`. -/
+private theorem logSA_mono {E τ : ι → ℝ} (hτ : ∀ k, 0 < τ k)
+    (hanti : ∀ i j, E i < E j → τ j ≤ τ i) :
+    ∀ i j, E i < E j →
+      Real.log (selfAbsorptionFactor (τ i)) ≤ Real.log (selfAbsorptionFactor (τ j)) := by
+  intro i j hij
+  apply Real.log_le_log (selfAbsorptionFactor_pos (hτ i).le)
+  exact selfAbsorptionFactor_strictAntiOn.antitoneOn (hτ j) (hτ i) (hanti i j hij)
+
+/-- **If optical depth falls with upper-level energy, self-absorption can only raise the
+Boltzmann-plot slope.**
+Lines `k` have upper-level energies `E k`, optically thin Boltzmann-plot ordinates `y k`, and
+optical depths `τ k > 0`. In the flat-profile slab model the measured intensity is the thin
+intensity times `SA(τ) = (1 − exp(−τ))/τ` (`selfAbsorptionFactor`), so the measured ordinate is
+`y k + log (SA (τ k))`. If `τ` does not increase with upper-level energy (`E i < E j → τ j ≤ τ i`:
+resonance and low-lying lines are the most absorbed), then the ordinary-least-squares slope of the
+self-absorbed plot is at least the thin slope:
+`olsSlope E y ≤ olsSlope E (fun k => y k + log (SA (τ k)))`.
+If the thin slope is `−1/(kB T) < 0`, the self-absorbed slope is at least that value. If the
+self-absorbed slope is still negative, the apparent temperature is at least `T` (a separate lemma,
+not part of this statement); the slope can also reach or cross `0`.
+
+Mechanism: `SA` is strictly decreasing on `τ > 0`, so `z k = log (SA (τ k))` is nondecreasing
+along `E`; the centred covariance `∑ (E k − Ē) z k` of two similarly ordered sequences is `≥ 0`,
+and the OLS slope is additive in the ordinates.
+
+What it does not say: the sign is fixed by the ordering of `τ` against `E_upper`. With the
+opposite ordering the slope can decrease (a two-line witness is a separate target). Which
+ordering real line sets have is not decided here; it is an empirical, per-line-set question.
+
+Hypotheses.
+* `hτ : ∀ k, 0 < τ k`: puts every `τ k` in the domain `(0, ∞)` of
+  `selfAbsorptionFactor_strictAntiOn` and makes `SA (τ k) > 0`, so the logarithm is monotone
+  there.
+* `hanti`: the ordering assumption. It is stated for strictly ordered energies only, so lines
+  sharing an upper level (multiplets) may have different `τ`; equal-energy pairs contribute `0`
+  to the covariance. It is an assumption about the line set, not a physical law: `τ` depends on
+  the lower-level population and `gf`, and must be checked per line set.
+* `[Nonempty ι]`: not logically needed (with no lines both slopes are `0`); kept because the
+  repo's centred-slope lemmas (`olsSlope_eq_centered`) carry it.
+No energy-spread hypothesis is needed: with `∑ (E k − Ē)² = 0` both slopes are `0` by the
+totalized division in `olsSlope`.
+
+Scope: relation REDUCED (unweighted OLS at a single temperature, a reduction of the pipeline's
+weighted fit); published APPROXIMATION via `selfAbsorptionFactor`, whose model tag records the
+flat, line-centre escape factor applied to the integrated line intensity (module scope block).
+
+Literature: Gornushkin et al. 1999 (Spectrochim. Acta B 54, 491) for the slab curve of growth and
+`SA(τ) = (1 − exp(−τ))/τ`; Bulajic et al. 2002 (Spectrochim. Acta B 57, 339) for self-absorption
+correction in CF-LIBS. -/
+theorem olsSlope_selfAbsorbed_ge [Nonempty ι] {E y τ : ι → ℝ} (hτ : ∀ k, 0 < τ k)
+    (hanti : ∀ i j, E i < E j → τ j ≤ τ i) :
+    olsSlope E y ≤ olsSlope E (fun k => y k + Real.log (selfAbsorptionFactor (τ k))) := by
+  rw [olsSlope_add' E y (fun k => Real.log (selfAbsorptionFactor (τ k)))]
+  have h0 : 0 ≤ olsSlope E (fun k => Real.log (selfAbsorptionFactor (τ k))) := by
+    rw [olsSlope_eq_centered]
+    exact div_nonneg (centered_cov_nonneg E _ (logSA_mono hτ hanti))
+      (Finset.sum_nonneg (fun k _ => sq_nonneg _))
+  linarith
 
 end CflibsFormal

@@ -82,8 +82,10 @@ physical density `N` rather than about an unmoored parameter.
   lower level but a much larger `f λ²` can easily be the more opaque one; (ii) it is precisely
   the shared `σ₀ · ℓ` that makes it cancel in `S₁/S₂`, so the calibration-free ratio lemma is a
   statement about equal-`σ₀` lines, and for genuinely distinct `σ₀₁ ≠ σ₀₂` the ratio `σ₀₂/σ₀₁`
-  survives in the prefactor. Extending these to per-line `σ₀ᵢ` is open work; nothing here
-  covers it. `Fcal` cancels unconditionally and is unaffected by this restriction.
+  survives in the prefactor. Only the optical-depth ratio is extended to per-line `σ₀ᵢ`:
+  `perLine_tauRatio` (end of module), with `σ₀ᵢ = κ0ᵢ · (1 − exp(−xᵢ))` carrying the
+  stimulated-emission factor. The statements listed above remain shared-`σ₀` results. `Fcal`
+  cancels unconditionally and is unaffected by this restriction.
 * Nothing here is new physics: every physical fact is imported. This module contains
   rewriting bridges and specializations, plus one counterexample.
 
@@ -115,6 +117,8 @@ ratio is non-monotone inside line-centre depths
 * Cristoforetti and Tognoni, "Calculation of elemental columnar density from self-absorbed
   lines", *Spectrochim. Acta Part B* **79–80** (2013) 63 — the multi-line column-density
   inversion whose ratio observable is restated here at a state-bound `τ`.
+* H. R. Griem, *Principles of Plasma Spectroscopy*, Cambridge University Press (1997) — LTE line
+  absorption with the negative-absorption factor `1 − exp(−hν/(k_B T))` (`perLine_tauRatio`).
 -/
 
 namespace CflibsFormal
@@ -465,5 +469,40 @@ example : ∃ N₁ N₂ sigma₁ sigma₂ : ℝ, 0 < N₁ ∧ 0 < N₂ ∧ 0 < s
       = thickLineIntensity 1 1 N₂ 1 sigma₂ 1 ![1, 1, 1] ![0, 1, 2] ![1, 1, 1] 2 0 := by
   have hg : ∀ k : Fin 3, (0 : ℝ) < ![1, 1, 1] k := by intro k; fin_cases k <;> norm_num
   exact boundOpticalDepth_lumped_alias hg one_pos 2 0
+
+/-- **Per-line optical-depth ratio.** Two lines of one species in one LTE slab (common `k_B`,
+`T`, `N`, `ℓ`, level data `g`, `E`), with lower levels `l1`, `l2` and their own line-centre
+cross-sections `σ0ᵢ = κ0ᵢ · (1 - exp (-xᵢ))`, `xᵢ = hνᵢ/(k_B T) = (E_uᵢ - E_lᵢ)/(k_B T)`.
+Then `τ₁ / τ₂ = σ01 g_l1 e^(-E_l1/kT) / (σ02 g_l2 e^(-E_l2/kT))`: the density `N`, the path
+`ℓ` and the partition function cancel, and the stimulated-emission ratio
+`(1 - exp (-x1)) / (1 - exp (-x2))` survives. This generalizes the shared-`σ0` two-line
+statements of this module to distinct `σ0ᵢ` (for the optical-depth ratio only).
+
+The guards are the verdict's: `hN`, `hell`, `hg` are needed (without them the left side is a
+`0 / 0`); `hσ2` is a domain guard (at `σ02 = 0` both sides are `0` in Lean). Nonemptiness of
+`ι` is not assumed: it follows from `l1 : ι`.
+
+Non-vacuity (the audit's two-line witness): `ι = Fin 2`, `l1 = 0`, `l2 = 1`, `E = ![0, 1]`,
+`κ01 = 2`, `κ02 = 3`, `x1 = 0.5`, `x2 = 1.5`, with `kB = T = N = ℓ = 1` and `g = 1`: two distinct
+lower levels, distinct cross-sections and distinct stimulated-emission factors, and every
+hypothesis holds.
+
+Scope: REDUCED (homogeneous single-temperature slab, flat line-centre cross-section; the
+dependence of `κ0ᵢ` on `A`, `g_u`, `λ` and `φ(0)` is NOT modelled, it is the abstract input).
+Literature: Griem 1997 (LTE absorption with the negative-absorption factor). -/
+theorem perLine_tauRatio {kB T N ell κ01 κ02 x1 x2 : ℝ}
+    {g E : ι → ℝ} {l1 l2 : ι} (hN : N ≠ 0) (hell : ell ≠ 0) (hg : ∀ k, 0 < g k)
+    (hσ2 : κ02 * (1 - Real.exp (-x2)) ≠ 0) :
+    opticalDepth kB T N (κ01 * (1 - Real.exp (-x1))) ell g E l1
+        / opticalDepth kB T N (κ02 * (1 - Real.exp (-x2))) ell g E l2
+      = κ01 * (1 - Real.exp (-x1)) * g l1 * boltzmannFactor kB T (E l1)
+        / (κ02 * (1 - Real.exp (-x2)) * g l2 * boltzmannFactor kB T (E l2)) := by
+  have : Nonempty ι := ⟨l1⟩
+  have hU : partitionFunction kB T g E ≠ 0 := (partitionFunction_pos hg).ne'
+  have hg2 : g l2 ≠ 0 := (hg l2).ne'
+  have hb2 : boltzmannFactor kB T (E l2) ≠ 0 := (boltzmannFactor_pos _ _ _).ne'
+  obtain ⟨hk2, hs2⟩ := mul_ne_zero_iff.mp hσ2
+  unfold opticalDepth population
+  field_simp
 
 end CflibsFormal

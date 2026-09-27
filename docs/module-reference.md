@@ -14,7 +14,7 @@ One row per module under `CflibsFormal/`. *Base* = imports no `CflibsFormal` mod
 | `Alt/CSigmaCurveOfGrowth.lean` | `CflibsFormal.Alt` | 7 | 2 | – | ✓ | The Cσ curve of growth — self-absorption droop below the universal line |
 | `Alt/GaussMarkov.lean` | `CflibsFormal.Alt` | 7 | 1 | – | ✓ | Gauss–Markov optimality (BLUE) for the OLS Boltzmann-plot slope |
 | `Alt/LeastSquares.lean` | `CflibsFormal.Alt` | 6 | 3 | – | ✓ | the multi-line ordinary-least-squares Boltzmann-plot estimator |
-| `Alt/NeutralityScale.lean` | `CflibsFormal.Alt` | 5 | 2 | – | ✓ | Neutrality scale — the calibration factor from charge neutrality instead of closure |
+| `Alt/NeutralityScale.lean` | `CflibsFormal.Alt` | 6 | 2 | – | ✓ | Neutrality scale — the calibration factor from charge neutrality instead of closure |
 | `Alt/OLSAtomicDataPerturbation.lean` | `CflibsFormal.Alt` | 6 | 2 | – | ✓ | per-line atomic-data error in the OLS density reader |
 | `Alt/OLSVariance.lean` | `CflibsFormal.Alt` | 7 | 1 | – | ✓ | the Gauss–Markov variance law for the OLS Boltzmann-plot slope |
 | `Alt/SelfAbsorbed.lean` | `CflibsFormal.Alt` | 5 | 1 | – | – | the self-absorption-corrected composition estimator (alternative) |
@@ -24,7 +24,7 @@ One row per module under `CflibsFormal/`. *Base* = imports no `CflibsFormal` mod
 | `Boltzmann.lean` | `CflibsFormal` | 8 | 4 | ✓ | – | Part 1: the Boltzmann distribution |
 | `Certificates.lean` | `CflibsFormal` | 12 | 12 | – | ✓ | runtime certificates (the typed bridge) |
 | `Classic.lean` | `CflibsFormal.Classic` | 5 | 2 | – | – | the classic calibration-free algorithm, assembled and sound |
-| `Closure.lean` | `CflibsFormal` | 6 | 2 | – | – | Closure of species composition |
+| `Closure.lean` | `CflibsFormal` | 7 | 2 | – | – | Closure of species composition |
 | `CompositionIdentifiability.lean` | `CflibsFormal` | 3 | 1 | – | – | multi-line / many-element composition identifiability |
 | `CompositionRobustness.lean` | `CflibsFormal` | 5 | 1 | – | – | Whole-composition-vector error propagation |
 | `ConditionNumber.lean` | `CflibsFormal` | 15 | 0 | – | ✓ | the condition number as an ERROR-AMPLIFICATION factor |
@@ -34,8 +34,9 @@ One row per module under `CflibsFormal/`. *Base* = imports no `CflibsFormal` mod
 | `DifferentialEstimator.lean` | `CflibsFormal` | 11 | 2 | – | ✓ | the reference-differenced (line-by-line) estimator |
 | `Dimensions.lean` | `CflibsFormal` | 16 | 15 | ✓ | – | a dimensional-analysis layer |
 | `DoubletChannel.lean` | `CflibsFormal` | 22 | 1 | – | ✓ | The doublet channel — the second observable that breaks the `N`–`τ` alias |
-| `EquivalentWidth.lean` | `CflibsFormal` | 20 | 2 | ✓ | ✓ | the equivalent-width curve of growth |
+| `EquivalentWidth.lean` | `CflibsFormal` | 21 | 3 | ✓ | ✓ | the equivalent-width curve of growth |
 | `ErrorBudget.lean` | `CflibsFormal` | 19 | 2 | – | – | the error-propagation chain and DERIVED reliability thresholds |
+| `EscapeFactor.lean` | `CflibsFormal` | 2 | 0 | – | ✓ | Profile escape factor versus the flat-slab self-absorption factor |
 | `EvaluatorSoundness.lean` | `CflibsFormal` | 6 | 5 | – | ✓ | evaluator soundness (which hard-gate clauses feed which theorem) |
 | `FisherLineSelection.lean` | `CflibsFormal` | 19 | 1 | – | ✓ | Fisher information, the Cramér–Rao bound, and "adding a line never hurts" |
 | `FixedEffectsDesign.lean` | `CflibsFormal` | 3 | 4 | ✓ | ✓ | the fixed-effects (element-dummy) weighted Boltzmann design |
@@ -66,8 +67,8 @@ One row per module under `CflibsFormal/`. *Base* = imports no `CflibsFormal` mod
 | `OLSConditioning.lean` | `CflibsFormal` | 1 | 0 | – | ✓ | quantitative conditioning of the Boltzmann-plot normal matrix |
 | `OLSIdentifiability.lean` | `CflibsFormal` | 11 | 1 | – | ✓ | n-line Boltzmann-plot identifiability (design-map injectivity) |
 | `OpacityBroadening.lean` | `CflibsFormal` | 27 | 5 | – | ✓ | opacity broadening: a DERIVED budget for the Stark opacity guard |
-| `OpticalDepth.lean` | `CflibsFormal` | 17 | 4 | – | ✓ | Optical depth bound to the plasma state — closing the free-`τ` gap |
-| `OpticalDepthBridge.lean` | `CflibsFormal` | 9 | 0 | – | ✓ | Wiring the state-bound optical depth into the free-`τ` corpus |
+| `OpticalDepth.lean` | `CflibsFormal` | 18 | 6 | – | ✓ | Optical depth bound to the plasma state — closing the free-`τ` gap |
+| `OpticalDepthBridge.lean` | `CflibsFormal` | 10 | 0 | – | ✓ | Wiring the state-bound optical depth into the free-`τ` corpus |
 | `OracleAnchors.lean` | `CflibsFormal` | 0 | 0 | – | ✓ | oracle fixture anchors (machine-checked spec ↔ fixtures link) |
 | `OuterLoopModelB.lean` | `CflibsFormal` | 1 | 0 | – | – | the outer temperature iteration, Model B headline (Frontier 04) |
 | `PartialLTE.lean` | `CflibsFormal` | 6 | 2 | – | ✓ | the partial-LTE thermalization limit |
@@ -75,6 +76,7 @@ One row per module under `CflibsFormal/`. *Base* = imports no `CflibsFormal` mod
 | `ProfiledTUniqueness.lean` | `CflibsFormal` | 10 | 1 | – | ✓ | `T`-uniqueness of the profiled fit, and the joint `(T, N)` corollary |
 | `ProfiledUnimodality.lean` | `CflibsFormal` | 3 | 0 | – | ✓ | strict unimodality of the profiled temperature objective |
 | `RadiativeTransferDepth.lean` | `CflibsFormal` | 7 | 3 | – | ✓ | depth-structured radiative transfer (the N-zone stack) |
+| `RatioModeSensitivity.lean` | `CflibsFormal` | 1 | 0 | ✓ | ✓ | Ratio-mode sensitivity to the assumed temperature |
 | `RefuseToReport.lean` | `CflibsFormal` | 1 | 1 | ✓ | ✓ | the refuse-to-report policy (certified abstention) |
 | `Robustness.lean` | `CflibsFormal` | 5 | 2 | – | – | Robustness / error-propagation bounds |
 | `Saha.lean` | `CflibsFormal` | 6 | 4 | – | – | Part 2: the Saha ionization equilibrium |
@@ -83,17 +85,17 @@ One row per module under `CflibsFormal/`. *Base* = imports no `CflibsFormal` mod
 | `SahaInverse.lean` | `CflibsFormal` | 3 | 2 | – | ✓ | Part 6: coupling Saha into the inverse problem |
 | `SahaRangeEnclosure.lean` | `CflibsFormal` | 3 | 0 | – | ✓ | an a-priori Saha `S(T)`-range enclosure (Frontier 04) |
 | `SahaStability.lean` | `CflibsFormal` | 16 | 2 | – | ✓ | Part 2b: stability of the `n_e` diagnostic |
-| `SelfAbsorption.lean` | `CflibsFormal` | 10 | 3 | – | ✓ | self-absorption / optical-thickness-aware forward map |
+| `SelfAbsorption.lean` | `CflibsFormal` | 11 | 3 | – | ✓ | self-absorption / optical-thickness-aware forward map |
 | `SelfAbsorptionInverse.lean` | `CflibsFormal` | 5 | 1 | – | ✓ | Self-absorption coupled into the inverse problem — identifiability preserved vs. lost |
 | `SelfReversal.lean` | `CflibsFormal` | 4 | 1 | ✓ | ✓ | self-reversal (the two-zone line dip) |
 | `SpatialForward.lean` | `CflibsFormal` | 11 | 4 | ✓ | ✓ | spatially-resolved (discrete Abel / onion-peeling) forward model |
 | `StarkBroadening.lean` | `CflibsFormal` | 7 | 4 | – | ✓ | Stark broadening + the McWhirter LTE criterion |
-| `StarkOpacityGuard.lean` | `CflibsFormal` | 8 | 1 | – | ✓ | opacity guard for the Stark electron-density diagnostic |
+| `StarkOpacityGuard.lean` | `CflibsFormal` | 9 | 1 | – | ✓ | opacity guard for the Stark electron-density diagnostic |
 | `StarkShift.lean` | `CflibsFormal` | 9 | 3 | ✓ | ✓ | the Stark line-shift electron-density diagnostic |
 | `TemporalEvolution.lean` | `CflibsFormal` | 8 | 7 | – | ✓ | time-resolved (gate-delayed) recovery |
 | `TwoDCOS.lean` | `CflibsFormal` | 8 | 3 | ✓ | ✓ | 2DCOS-LIBS formalization — Noda two-dimensional correlation algebra |
 | `TwoDCOSOrder.lean` | `CflibsFormal` | 11 | 1 | – | ✓ | 2DCOS-LIBS formalization — the sequential-order (lead/lag) sign algebra |
 | `VoigtErrorEnclosure.lean` | `CflibsFormal` | 5 | 0 | – | ✓ | a non-circular error enclosure for the Voigt FWHM |
 | `VoigtWidth.lean` | `CflibsFormal` | 7 | 1 | ✓ | ✓ | the Voigt FWHM combination (Olivero–Longbothum) |
-| **87 modules** | | **787** | **237** | | | |
+| **89 modules** | | **797** | **240** | | | |
 

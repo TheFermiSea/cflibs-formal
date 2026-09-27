@@ -26,6 +26,7 @@ import CflibsFormal.Dimensions
 import CflibsFormal.DoubletChannel
 import CflibsFormal.EquivalentWidth
 import CflibsFormal.ErrorBudget
+import CflibsFormal.EscapeFactor
 import CflibsFormal.EvaluatorSoundness
 import CflibsFormal.FisherLineSelection
 import CflibsFormal.FixedEffectsDesign
@@ -65,6 +66,7 @@ import CflibsFormal.PartitionLipschitz
 import CflibsFormal.ProfiledTUniqueness
 import CflibsFormal.ProfiledUnimodality
 import CflibsFormal.RadiativeTransferDepth
+import CflibsFormal.RatioModeSensitivity
 import CflibsFormal.RefuseToReport
 import CflibsFormal.Robustness
 import CflibsFormal.Saha

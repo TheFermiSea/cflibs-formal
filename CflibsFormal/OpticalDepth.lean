@@ -97,6 +97,10 @@ LTE optical depth by exactly that factor; (ii) `S = I_thin/τ` is therefore the 
 visible LIBS lines (`E_u − E_l ≈ 2.5 eV`, `k_B T ≈ 1 eV`) the omitted factor is ≈ 0.92.
 Each result below is an exact statement about the DEFINED `opticalDepth`; this paragraph
 records how far that definition sits from the full LTE absorption coefficient.
+`lineOpacity` (end of module) is the coefficient WITH the factor, and `source_eq_planck`
+shows that with it, LTE populations and the Einstein–Milne relation, the line source function
+`ε/κ` is the Planck function `B₀/(exp x − 1)`, not its Wien limit. The two are not wired
+together: `opticalDepth` is unchanged.
 
 * Gornushkin, Anzano, King, Smith, Omenetto, Winefordner, "Curve of growth methodology applied
   to laser-induced plasma emission spectroscopy", *Spectrochim. Acta Part B* **54** (1999)
@@ -110,6 +114,10 @@ records how far that definition sits from the full LTE absorption coefficient.
   `σ_ℓ` (Eqs. 4, 18) also carries the stimulated-emission factor, the ionization fraction and the
   `1/Δλ_L` line-shape average, which `effectiveCrossSection` does not. A corrigendum, *JQSRT*
   **159** (2015) 94–95, DOI 10.1016/j.jqsrt.2015.03.001, was not opened.
+* H. R. Griem, *Principles of Plasma Spectroscopy*, Cambridge University Press (1997) — LTE line
+  emission and absorption with the stimulated-emission (negative-absorption) factor, and
+  Kirchhoff's law (`source_eq_planck`). The coefficients stay abstract here, so no constant is
+  taken from the source.
 -/
 
 namespace CflibsFormal
@@ -515,5 +523,50 @@ example {N₁ N₂ : ℝ} (h1 : 0 < N₁) (h2 : 0 < N₂)
   have hg : ∀ k : Fin 2, (0 : ℝ) < ![1, 1] k := by intro k; fin_cases k <;> norm_num
   exact thickLineIntensity_injOn hg one_pos hg one_pos one_pos 1 0
     (Set.mem_Ioi.mpr h1) (Set.mem_Ioi.mpr h2) hobs
+
+/-! ### Kirchhoff-consistent line opacity and the Planck source function
+
+The coefficients `κ0`, `ε0` and `B0` stay abstract (owner decision D19: the frequency form is
+canonical, `x = hν/(k_B T)`; no numeric Planck constant enters). -/
+
+/-- **LTE line opacity with stimulated emission** `κ = κ0 · n_l · (1 - exp (-x))`, where
+`x = hν/(k_B T)` and `κ0` is the abstract absorption coefficient per lower-level particle
+(frequency form: `κ0 ∝ hν · B_lu · φ`). The factor `1 - exp (-x)` is the negative-absorption
+correction that `opticalDepth` omits (module scope block). Writing the correction through `x`
+alone presupposes LTE level populations; `source_eq_planck` states that as `hpop`. -/
+noncomputable def lineOpacity (κ0 nl x : ℝ) : ℝ := κ0 * nl * (1 - Real.exp (-x))
+
+/-- **Line emissivity** `ε = ε0 · n_u`, with `ε0 ∝ hν · A_ul · φ` kept abstract. -/
+noncomputable def lineEmissivity (ε0 nu : ℝ) : ℝ := ε0 * nu
+
+/-- **Kirchhoff: the line source function is the Planck function.** If the level populations
+are in the LTE Boltzmann ratio `n_u / n_l = (g_u / g_l) · exp (-x)` (`hpop`) and the emission and
+absorption coefficients obey the Einstein-Milne relation `ε0 · g_u / g_l = κ0 · B0` (`hein`, with
+`B0 = 2hν³/c²` in the frequency form), then `ε / κ = B0 / (exp x - 1)`, i.e. `B_ν(T)`.
+
+The right side is free of the total density, the partition function, `A_ul` and the path
+length: all of that cancels. All the physics is in `hpop` and `hein`; the identity is algebra.
+This is the relation the Wien-limit `lteSourceStrength` does not satisfy (audit finding LF-02).
+
+Hypotheses. `hκ` is load-bearing: at `κ0 = 0` the left side is `0` (Lean's `a / 0 = 0`) while
+`hein` leaves `B0` free. `hx` and `hnl` are kept as physical-regime guards (`hν > 0`, a populated
+lower level). They are not logically sharp: at `x = 0` or `n_l = 0` both sides are `0` by
+`a / 0 = 0`, so dropping them buys only such junk values.
+
+Scope: EXACT given `hpop` and `hein` (LTE, a single transition, coefficients abstract).
+Literature: Griem 1997 (LTE emission and absorption, Kirchhoff's law). -/
+theorem source_eq_planck {κ0 ε0 B0 nl nu x gu gl : ℝ} (hx : 0 < x) (hκ : 0 < κ0) (hnl : 0 < nl)
+    (hpop : nu / nl = gu / gl * Real.exp (-x)) (hein : ε0 * gu / gl = κ0 * B0) :
+    lineEmissivity ε0 nu / lineOpacity κ0 nl x = B0 / (Real.exp x - 1) := by
+  have hnu : nu = gu / gl * Real.exp (-x) * nl := (div_eq_iff hnl.ne').mp hpop
+  have hnum : ε0 * nu = κ0 * B0 * nl * Real.exp (-x) := by
+    rw [hnu]; linear_combination (nl * Real.exp (-x)) * hein
+  have h1 : Real.exp x - 1 ≠ 0 := by
+    have := Real.add_one_lt_exp hx.ne'; exact (by linarith : (0 : ℝ) < Real.exp x - 1).ne'
+  have hκ' : κ0 ≠ 0 := hκ.ne'
+  have hnl' : nl ≠ 0 := hnl.ne'
+  unfold lineEmissivity lineOpacity
+  rw [hnum, Real.exp_neg]
+  field_simp
 
 end CflibsFormal

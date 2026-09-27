@@ -9,9 +9,9 @@
 
 A result shows `own → published` when the two differ (with the definitions that weakened it), and a single tag when they agree. A definition with its own row shows `model TAG`.
 
-**Own-tag mix** (787 results): **EXACT** 162 · **REDUCED** 229 · **APPROXIMATION** 4 · **PURE-MATH** 392
+**Own-tag mix** (797 results): **EXACT** 164 · **REDUCED** 232 · **APPROXIMATION** 4 · **PURE-MATH** 397
 
-**Published-tag mix** (787 results; 137 weakened by a model tag): **EXACT** 60 · **REDUCED** 270 · **APPROXIMATION** 65 · **PURE-MATH** 392
+**Published-tag mix** (797 results; 139 weakened by a model tag): **EXACT** 61 · **REDUCED** 273 · **APPROXIMATION** 66 · **PURE-MATH** 397
 
 `EXACT` = an exact theorem about the model it is stated over · `REDUCED` = exact only after a stated reduction (a dimensionless/lumped-factor form) · `APPROXIMATION` = the statement itself is approximate (documented idealization / limiting case) · `PURE-MATH` = infrastructure lemma, no physical claim. Classification cross-checked against `reviews/literature-validity-audit.md`.
 
@@ -140,6 +140,7 @@ A result shows `own → published` when the two differ (with the definitions tha
 - `EXACT → REDUCED` · `neutralityScale_eq_Fcal` — Exact recovery.  _[Ciucci 1999]_  (via `lineIntensity`)
 - `EXACT → REDUCED` · `neutralityScale_undetected` — Undetected species.  _[Ciucci 1999]_  (via `lineIntensity`)
 - `EXACT → REDUCED` · `closureEstimate_bias` — Closure bias from an undetected species.  _[Tognoni 2010]_  (via `lineIntensity`)
+- `EXACT → REDUCED` · `neutrality_closure_same_ratio` — Closure and neutrality readers return the same ratios, with per-species `U_s`.  _[Tognoni 2010]_  (via `lineIntensityPerU`)
 
 ## `Alt/OLSAtomicDataPerturbation.lean`  (CflibsFormal.Alt)
 *per-line atomic-data error in the OLS density reader*
@@ -325,6 +326,7 @@ A result shows `own → published` when the two differ (with the definitions tha
 - `PURE-MATH` · `composition_le_one` — Each number fraction is at most one (right end of the unit interval).
 - `EXACT` · `composition_mem_stdSimplex` — Closure as simplex membership.  _[Ciucci 1999]_
 - `EXACT` · `composition_smul_invariant` — Scale invariance.  _[Ciucci 1999]_
+- `PURE-MATH` · `ratio_mode_normalization_invariant` — Ratio mode ignores every common-mode normalization.
 
 ## `CompositionIdentifiability.lean`  (CflibsFormal)
 *multi-line / many-element composition identifiability*
@@ -512,6 +514,7 @@ A result shows `own → published` when the two differ (with the definitions tha
 **Definitions**
 - `equivWidth` — Equivalent width (curve of growth).
 - `lorentzian` — The (normalized) Lorentzian profile `L(x) = (1/π)·1/(1+x²)` — the natural / pressure- broadening line shape, a unit-area probability density (`∫L = 1`, `lore…
+- `stepProfile` — Two-step line profile `ψ = 1_[0,1] + η · 1_[0,M]`: height `1 + η` on `[0, 1]` and `η` on `(1, M]` when `M ≥ 1`.
 
 **Results**
 - `PURE-MATH` · `equivWidth_integrand_integrable` — The equivalent-width integrand `1 - exp(-(τφ))` is integrable: it is sandwiched `0 ≤ 1 - exp(-(τφ)) ≤ τφ` (from `1 - exp(-y) ≤ y`) by the integrable dominati…
@@ -534,6 +537,7 @@ A result shows `own → published` when the two differ (with the definitions tha
 - `PURE-MATH` · `integral_one_sub_exp_neg_inv_sq` — M2 (analytic crux) — the limit integral `∫_ℝ (1 − e^{−1/u²}) du = 2√π` (PURE-MATH).
 - `PURE-MATH` · `tendsto_integral_g_beta` — M3 (dominated convergence) — the rescaled integral converges (PURE-MATH).
 - `EXACT` · `equivWidth_lorentzian_sqrt_sharp` — M4 — the sharp Ladenburg–Reiche wing constant `C = 2` (EXACT, within the model).  _[Ladenburg–Reiche 1913]_
+- `PURE-MATH` · `equivWidth_stepProfile` — Closed-form equivalent width of the two-step profile.
 
 ## `ErrorBudget.lean`  (CflibsFormal)
 *the error-propagation chain and DERIVED reliability thresholds*
@@ -562,6 +566,13 @@ A result shows `own → published` when the two differ (with the definitions tha
 - `REDUCED` · `olsIntercept_stable_hetero` — Intercept sensitivity, HETEROSCEDASTIC (per-line budget, centered convention).  _[Tognoni 2010]_
 - `REDUCED` · `combinedSlope_offset_lipschitz` — Offset→slope sensitivity of the combined Saha–Boltzmann slope (`REDUCED`; Aguilera & Aragón 2007).  _[Aguilera & Aragón 2007]_
 - `REDUCED` · `combinedSlopeTempUpdate_lipschitz` — `T`-leg Lipschitz constant of the Model-B outer loop (`REDUCED`; Aguilera & Aragón 2007).  _[Aguilera & Aragón 2007]_
+
+## `EscapeFactor.lean`  (CflibsFormal)
+*Profile escape factor versus the flat-slab self-absorption factor*
+
+**Results**
+- `PURE-MATH` · `inv_sub_inv_exp_sub_one_mem` — The log slab self-absorption factor has slope in `(−1/2, 0)`.
+- `PURE-MATH` · `escape_ge_slab` — The profile escape factor bounds the flat-slab factor from above.
 
 ## `EvaluatorSoundness.lean`  (CflibsFormal)
 *evaluator soundness (which hard-gate clauses feed which theorem)*
@@ -1162,6 +1173,8 @@ A result shows `own → published` when the two differ (with the definitions tha
 - `effectiveCrossSection` — Boltzmann-weighted line cross-section `σ_ℓ(T) = σ₀ · g_l · exp(−E_l/(k_B T)) / U(T)`: the line-center cross-section reduced by the LTE *fraction* of the spec…
 - `lteSourceStrength` — LTE line source strength `S = I_thin / τ`, written out in closed form: `S = Fcal · A_u · g_u · exp(−E_u/(k_B T)) / (σ₀ · ℓ · g_l · exp(−E_l/(k_B T)))`.
 - `thickLineIntensity` — State-coupled thick line intensity.
+- `lineOpacity` — LTE line opacity with stimulated emission `κ = κ0 · n_l · (1 - exp (-x))`, where `x = hν/(k_B T)` and `κ0` is the abstract absorption coefficient per lower-l…
+- `lineEmissivity` — Line emissivity `ε = ε0 · n_u`, with `ε0 ∝ hν · A_ul · φ` kept abstract.
 
 **Results**
 - `PURE-MATH` · `opticalDepth_eq_linear` — `τ` is exactly linear in the total density: `τ = (σ_ℓ(T) · ℓ) · N`.
@@ -1181,6 +1194,7 @@ A result shows `own → published` when the two differ (with the definitions tha
 - `REDUCED → APPROXIMATION` · `no_density_alias_of_boundOpticalDepth` — The single-line density alias cannot be reproduced.  _[Gornushkin 1999]_  (via `selfAbsorbedIntensity`)
 - `APPROXIMATION` · `csigma_density_droop_bound` — The Cσ density droop at a STATE-BOUND optical depth.  _[Aragón & Aguilera 2014]_
 - `APPROXIMATION` · `csigma_density_injOn` — Injectivity of the Cσ ordinate in the density, at a state-bound `τ`.  _[Aragón & Aguilera 2014]_
+- `EXACT` · `source_eq_planck` — Kirchhoff: the line source function is the Planck function.  _[Griem 1997]_
 
 ## `OpticalDepthBridge.lean`  (CflibsFormal)
 *Wiring the state-bound optical depth into the free-`τ` corpus*
@@ -1195,6 +1209,7 @@ A result shows `own → published` when the two differ (with the definitions tha
 - `REDUCED → APPROXIMATION` · `thickLineIntensity_ratio_strictAntiOn_density` — THE TWO-LINE PAYOFF, at the bound `τ`.  _[Cristoforetti–Tognoni 2013]_  (via `selfAbsorbedIntensity`)
 - `REDUCED → APPROXIMATION` · `thickLineIntensity_ratio_injOn_density` — Injectivity of the measured two-line ratio in the density — flat kernel only.  _[Cristoforetti–Tognoni 2013]_  (via `selfAbsorbedIntensity`)
 - `REDUCED → APPROXIMATION` · `boundOpticalDepth_lumped_alias` — Binding `τ` to `(T, N)` does NOT by itself break the density alias.  _[Gornushkin 1999]_  (via `selfAbsorbedIntensity`)
+- `REDUCED` · `perLine_tauRatio` — Per-line optical-depth ratio.  _[Griem 1997]_
 
 ## `OuterLoopModelB.lean`  (CflibsFormal)
 *the outer temperature iteration, Model B headline (Frontier 04)*
@@ -1267,6 +1282,12 @@ A result shows `own → published` when the two differ (with the definitions tha
 - `EXACT` · `rtFormal_const` — Constant source recovers the slab (exact).  _[Gornushkin 1999]_
 - `EXACT` · `rtFormal_sandwich` — The continuous sandwich (exact).  _[Gornushkin 1999]_
 - `PURE-MATH` · `rtFormalLinear` — Linear (Eddington–Barbier) source — exact evaluation.
+
+## `RatioModeSensitivity.lean`  (CflibsFormal)
+*Ratio-mode sensitivity to the assumed temperature*
+
+**Results**
+- `PURE-MATH` · `ratioEstimate_hasDerivAt` — Exact `β`-derivative of the two-stage ratio-mode log-ratio.
 
 ## `RefuseToReport.lean`  (CflibsFormal)
 *the refuse-to-report policy (certified abstention)*
@@ -1431,6 +1452,7 @@ A result shows `own → published` when the two differ (with the definitions tha
 - `EXACT → APPROXIMATION` · `slabIntensity_eq_thin_mul_SA` — Curve-of-growth identity (DERIVED, not definitional).  _[Gornushkin 1999]_  (via `selfAbsorptionFactor`)
 - `EXACT → APPROXIMATION` · `selfAbsorbedIntensity_eq_slab` — The model intensity is a slab intensity at a single optical depth.  _[Gornushkin 1999]_  (via `selfAbsorbedIntensity`)
 - `PURE-MATH` · `lineIntensity_eq_selfAbsorbedIntensity_div` — Model left-inverse of the flat-profile correction.
+- `REDUCED → APPROXIMATION` · `olsSlope_selfAbsorbed_ge` — If optical depth falls with upper-level energy, self-absorption can only raise the Boltzmann-plot slope.  _[Gornushkin 1999]_  (via `selfAbsorptionFactor`)
 
 ## `SelfAbsorptionInverse.lean`  (CflibsFormal)
 *Self-absorption coupled into the inverse problem — identifiability preserved vs. lost*
@@ -1508,6 +1530,7 @@ A result shows `own → published` when the two differ (with the definitions tha
 - `REDUCED` · `starkDensity_biased_high` — Bias direction of the Stark diagnostic under opacity broadening.  _[Griem 1974]_
 - `REDUCED` · `starkDensity_div_budget_le` — The opacity budget bounds the true density from below.  _[Griem 1974]_
 - `REDUCED` · `starkDensity_brackets_true` — Two-sided bracket for the true electron density.  _[Griem 1974]_
+- `REDUCED` · `stark_bracket_rho` — Stark electron-density bracket with a Stark-parameter grade and an opacity budget.  _[Griem 1974]_
 - `REDUCED` · `stark_lte_gate_one_directional` — The shipped LTE gate is one-directional (NEGATIVE result).  _[Cristoforetti 2010]_
 - `REDUCED` · `starkOpacity_certificate_sound` — Soundness of the repaired certificate.  _[Cristoforetti 2010]_
 - `PURE-MATH` · `starkOpacityLteCert_imp_mcWhirterCert` — The repaired certificate is a tightening, not a weakening.

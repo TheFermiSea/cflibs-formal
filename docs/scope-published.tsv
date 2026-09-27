@@ -55,6 +55,7 @@ Alt/NeutralityScale.lean	lineIntensity_linear	theorem	EXACT	REDUCED	lineIntensit
 Alt/NeutralityScale.lean	lineIntensity_ratio	theorem	EXACT	REDUCED	lineIntensity
 Alt/NeutralityScale.lean	neutralityScale_eq_Fcal	theorem	EXACT	REDUCED	lineIntensity
 Alt/NeutralityScale.lean	neutralityScale_undetected	theorem	EXACT	REDUCED	lineIntensity
+Alt/NeutralityScale.lean	neutrality_closure_same_ratio	theorem	EXACT	REDUCED	lineIntensityPerU
 Alt/OLSAtomicDataPerturbation.lean	olsComposition_atomicData_error	theorem	REDUCED	REDUCED	—
 Alt/OLSAtomicDataPerturbation.lean	olsDensity_aliasing_A	theorem	EXACT	REDUCED	lineIntensity
 Alt/OLSAtomicDataPerturbation.lean	olsDensity_aliasing_A_error	theorem	REDUCED	REDUCED	—
@@ -139,6 +140,7 @@ Closure.lean	composition_mem_stdSimplex	theorem	EXACT	EXACT	—
 Closure.lean	composition_nonneg	theorem	PURE-MATH	PURE-MATH	—
 Closure.lean	composition_smul_invariant	theorem	EXACT	EXACT	—
 Closure.lean	composition_sum_one	theorem	EXACT	EXACT	—
+Closure.lean	ratio_mode_normalization_invariant	theorem	PURE-MATH	PURE-MATH	—
 Closure.lean	totalDensity_pos	theorem	PURE-MATH	PURE-MATH	—
 CompositionIdentifiability.lean	compositionIdentifiable	theorem	EXACT	REDUCED	PlasmaParams,lineIntensity
 CompositionIdentifiability.lean	compositionIdentifiable_T	theorem	EXACT	REDUCED	PlasmaParams,lineIntensity
@@ -244,6 +246,7 @@ EquivalentWidth.lean	equivWidth_lorentzian_sqrt_upper	theorem	EXACT	EXACT	—
 EquivalentWidth.lean	equivWidth_mono	theorem	EXACT	EXACT	—
 EquivalentWidth.lean	equivWidth_nonneg	theorem	PURE-MATH	PURE-MATH	—
 EquivalentWidth.lean	equivWidth_rectangular	theorem	EXACT	EXACT	—
+EquivalentWidth.lean	equivWidth_stepProfile	theorem	PURE-MATH	PURE-MATH	—
 EquivalentWidth.lean	equivWidth_weakLine	theorem	EXACT	EXACT	—
 EquivalentWidth.lean	integral_one_sub_exp_neg_inv_sq	theorem	PURE-MATH	PURE-MATH	—
 EquivalentWidth.lean	lorentzian_integrable	theorem	PURE-MATH	PURE-MATH	—
@@ -274,6 +277,8 @@ ErrorBudget.lean	requiredEnergySpread_sufficient	theorem	REDUCED	REDUCED	—
 ErrorBudget.lean	temp_rel_error_eq	theorem	EXACT	EXACT	—
 ErrorBudget.lean	temp_rel_error_hetero	theorem	REDUCED	REDUCED	—
 ErrorBudget.lean	temp_rel_error_le	theorem	REDUCED	REDUCED	—
+EscapeFactor.lean	escape_ge_slab	theorem	PURE-MATH	PURE-MATH	—
+EscapeFactor.lean	inv_sub_inv_exp_sub_one_mem	theorem	PURE-MATH	PURE-MATH	—
 EvaluatorSoundness.lean	gateCore_composition_error_le	theorem	REDUCED	REDUCED	—
 EvaluatorSoundness.lean	hardGateBundle_composition_error_le	theorem	REDUCED	REDUCED	—
 EvaluatorSoundness.lean	hardGateBundle_implies_noise_to_composition_hyps	theorem	PURE-MATH	PURE-MATH	—
@@ -591,6 +596,7 @@ OpticalDepth.lean	opticalDepth_eq_linear	theorem	PURE-MATH	PURE-MATH	—
 OpticalDepth.lean	opticalDepth_knownTauCert	theorem	REDUCED	REDUCED	—
 OpticalDepth.lean	opticalDepth_pos	theorem	REDUCED	REDUCED	—
 OpticalDepth.lean	opticalDepth_strictMono_density	theorem	REDUCED	REDUCED	—
+OpticalDepth.lean	source_eq_planck	theorem	EXACT	EXACT	—
 OpticalDepth.lean	thickLineIntensity_eq_slab	theorem	REDUCED	APPROXIMATION	selfAbsorbedIntensity
 OpticalDepth.lean	thickLineIntensity_injOn	theorem	REDUCED	APPROXIMATION	selfAbsorbedIntensity
 OpticalDepth.lean	thickLineIntensity_strictMonoOn	theorem	REDUCED	APPROXIMATION	selfAbsorbedIntensity
@@ -598,6 +604,7 @@ OpticalDepthBridge.lean	boundOpticalDepth_lumped_alias	theorem	REDUCED	APPROXIMA
 OpticalDepthBridge.lean	boundSelfAbsorptionFactor_strictAntiOn_density	theorem	REDUCED	APPROXIMATION	selfAbsorptionFactor
 OpticalDepthBridge.lean	effectiveCrossSection_lt_of_energy_lt	theorem	REDUCED	REDUCED	—
 OpticalDepthBridge.lean	lteSourceStrength_ratio_calibration_free	theorem	PURE-MATH	PURE-MATH	—
+OpticalDepthBridge.lean	perLine_tauRatio	theorem	REDUCED	REDUCED	—
 OpticalDepthBridge.lean	thickLineIntensity_eq_cogIntensity	theorem	REDUCED	APPROXIMATION	cogIntensity,selfAbsorbedIntensity
 OpticalDepthBridge.lean	thickLineIntensity_lt_lineIntensity_of_pos_density	theorem	REDUCED	APPROXIMATION	selfAbsorbedIntensity
 OpticalDepthBridge.lean	thickLineIntensity_ratio_eq_source_mul_cogRatio	theorem	REDUCED	APPROXIMATION	cogRatio,selfAbsorbedIntensity
@@ -633,6 +640,7 @@ RadiativeTransferDepth.lean	rtEmergent_uniform	theorem	EXACT	EXACT	—
 RadiativeTransferDepth.lean	rtFormalLinear	theorem	PURE-MATH	PURE-MATH	—
 RadiativeTransferDepth.lean	rtFormal_const	theorem	EXACT	EXACT	—
 RadiativeTransferDepth.lean	rtFormal_sandwich	theorem	EXACT	EXACT	—
+RatioModeSensitivity.lean	ratioEstimate_hasDerivAt	theorem	PURE-MATH	PURE-MATH	—
 RefuseToReport.lean	pasPolicy_guarantees	theorem	PURE-MATH	PURE-MATH	—
 Robustness.lean	logRatioIntercept_stable	theorem	PURE-MATH	PURE-MATH	—
 Robustness.lean	logRatioIntercept_stable_sharp	theorem	PURE-MATH	PURE-MATH	—
@@ -709,6 +717,7 @@ SahaStability.lean	saha_inv_lipschitz	theorem	PURE-MATH	PURE-MATH	—
 SahaStability.lean	saha_ratio_cancel	theorem	PURE-MATH	PURE-MATH	—
 SahaStability.lean	thermalBracket_strictMono	theorem	PURE-MATH	PURE-MATH	—
 SelfAbsorption.lean	lineIntensity_eq_selfAbsorbedIntensity_div	theorem	PURE-MATH	PURE-MATH	—
+SelfAbsorption.lean	olsSlope_selfAbsorbed_ge	theorem	REDUCED	APPROXIMATION	selfAbsorptionFactor
 SelfAbsorption.lean	selfAbsorbedIntensity	def	APPROXIMATION	APPROXIMATION	—
 SelfAbsorption.lean	selfAbsorbedIntensity_eq_slab	theorem	EXACT	APPROXIMATION	selfAbsorbedIntensity
 SelfAbsorption.lean	selfAbsorbedIntensity_le_lineIntensity	theorem	EXACT	APPROXIMATION	selfAbsorbedIntensity
@@ -755,6 +764,7 @@ StarkOpacityGuard.lean	starkDensity_div_budget_le	theorem	REDUCED	REDUCED	—
 StarkOpacityGuard.lean	starkDensity_mono_width	theorem	PURE-MATH	PURE-MATH	—
 StarkOpacityGuard.lean	starkOpacityLteCert_imp_mcWhirterCert	theorem	PURE-MATH	PURE-MATH	—
 StarkOpacityGuard.lean	starkOpacity_certificate_sound	theorem	REDUCED	REDUCED	—
+StarkOpacityGuard.lean	stark_bracket_rho	theorem	REDUCED	REDUCED	—
 StarkOpacityGuard.lean	stark_lte_gate_one_directional	theorem	REDUCED	REDUCED	—
 StarkOpacityGuard.lean	stark_lte_gate_sound_of_opticallyThin	theorem	REDUCED	REDUCED	—
 StarkShift.lean	shiftWidthRatio_indep_ne	theorem	REDUCED	REDUCED	—

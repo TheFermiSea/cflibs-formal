@@ -6,6 +6,7 @@ Authors: Brian Squires
 import Mathlib
 import CflibsFormal.ForwardMap
 import CflibsFormal.Saha
+import CflibsFormal.MultiSpecies
 
 /-!
 # Neutrality scale — the calibration factor from charge neutrality instead of closure
@@ -31,6 +32,9 @@ whenever `n_e = ∑ s, N s * R s` holds over the species that were summed
 **charge share** when one is missing (`neutralityScale_undetected`). The
 companion `closureEstimate_bias` makes "closure fails when elements are
 missing" (Tognoni et al. 2010) exact for the classic closure normalization.
+`neutrality_closure_same_ratio` shows that the two normalizations cannot disagree
+on a ratio: with per-species partition functions (`MultiSpecies.lineIntensityPerU`)
+both readers return `N a / N b` exactly.
 
 ## Literature
 
@@ -195,5 +199,48 @@ theorem closureEstimate_bias
     rw [hden]; exact div_ne_zero hSne haddne
   field_simp [hSne, haddne, hFne, hdenne]
   ring
+
+omit [Fintype ι] in
+/-- **Closure and neutrality readers return the same ratios, with per-species `U_s`.**
+Species `s` is observed through its designated line `emit s` with its own partition function
+`U s`: `I s = lineIntensityPerU kB T (N s) Fcal (U s) g E A (emit s)`, and `unitI s` is the same
+line at the unit point `N = 1, Fcal = 1`. Then (i) the closure estimate gives
+`closureEstimate I unitI a / closureEstimate I unitI b = N a / N b`, and (ii) for every stage-ratio
+vector `R` and electron density `ne` whose neutrality scale is nonzero, the neutrality-normalized
+per-unit intensities give the same ratio `N a / N b`.
+
+Reading: `U s` cancels in `I s / unitI s = Fcal * N s`, so both readers are ratio-exact for any
+per-species partition functions, and (ii) holds for any `R`, `ne`, including an `ne` that carries
+the charge of an undetected species. Normalization choice cannot change a ratio. This says
+nothing about the accuracy of the absolute composition or of `Fcal`.
+
+Hypotheses: `hFcal` (at `Fcal = 0` every closure estimate is `0`); `hN` (makes `∑ N ≠ 0`; at
+`∑ N = 0` the closure estimates are `0`); `hunit` (division by the unit-point intensity);
+`hI`, `hu` define the data.
+
+Scope: EXACT relation (algebra on the forward model), published REDUCED via
+`lineIntensityPerU` (the λ-free photon-rate form: an LTE, optically thin, single-`T` model; one
+designated line per species). Literature: Tognoni et al. 2010 (closure over observed
+species). -/
+theorem neutrality_closure_same_ratio {kB T Fcal : ℝ} {g E A : ι → ℝ} {N U : κ → ℝ}
+    {emit : κ → ι} {I unitI : κ → ℝ} (hFcal : 0 < Fcal) (hN : ∀ s, 0 < N s)
+    (hI : ∀ s, I s = lineIntensityPerU kB T (N s) Fcal (U s) g E A (emit s))
+    (hu : ∀ s, unitI s = lineIntensityPerU kB T 1 1 (U s) g E A (emit s))
+    (hunit : ∀ s, 0 < unitI s) (a b : κ) :
+    closureEstimate I unitI a / closureEstimate I unitI b = N a / N b ∧
+      ∀ (R : κ → ℝ) (ne : ℝ), neutralityScale I unitI R ne ≠ 0 →
+        ((I a / unitI a) / neutralityScale I unitI R ne)
+            / ((I b / unitI b) / neutralityScale I unitI R ne) = N a / N b := by
+  have key : ∀ s, I s / unitI s = Fcal * N s := fun s => by
+    have := (hunit s).ne'
+    rw [hu] at this ⊢
+    rw [hI, div_eq_iff this]; unfold lineIntensityPerU; ring
+  have hS : 0 < ∑ t, N t := Finset.sum_pos (fun t _ => hN t) ⟨a, Finset.mem_univ a⟩
+  refine ⟨?_, fun R ne hne => ?_⟩
+  · unfold closureEstimate
+    simp only [key, ← Finset.mul_sum]
+    field_simp [hFcal.ne', hS.ne']
+  · rw [div_div_div_cancel_right₀ hne, key, key]
+    field_simp [hFcal.ne']
 
 end CflibsFormal.Alt
