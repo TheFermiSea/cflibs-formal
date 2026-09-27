@@ -43,6 +43,8 @@ namespace CflibsFormal
 
 variable {P L : Type*} [Fintype P] [Fintype L] [DecidableEq L]
 
+/-- For a strictly row-diagonally-dominant matrix with margin `δ`, every component of `x` is
+bounded by the sup norm of `A x` divided by `δ`. -/
 private theorem linfty_le_of_rowDiagDominant [Nonempty L]
     (A : Matrix L L ℝ) {δ : ℝ} (hδ : 0 < δ)
     (hdom : ∀ k, δ + ∑ j ∈ univ.erase k, |A k j| ≤ |A k k|) (x : L → ℝ) :
@@ -74,6 +76,8 @@ private theorem linfty_le_of_rowDiagDominant [Nonempty L]
   nlinarith [hi0 i (mem_univ i), hkey, hsup, abs_nonneg (x i)]
 
 omit [DecidableEq L] in
+/-- The normal equations under a misspecified kernel give the error identity
+`Kᵀ K (Î − I) = Kᵀ ((K̃ − K) I + η)`. -/
 private theorem normal_error_identity (K Kt : Matrix P L ℝ) (I Ihat : L → ℝ) (η : P → ℝ)
     (hnormal : (Kᵀ * K).mulVec Ihat = Kᵀ.mulVec (Kt.mulVec I + η)) :
     (Kᵀ * K).mulVec (Ihat - I) = Kᵀ.mulVec ((Kt - K).mulVec I + η) := by

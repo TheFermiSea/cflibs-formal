@@ -492,6 +492,9 @@ private theorem exp_shift {kB T T' b e : ℝ} (hT' : 1 / (kB * T') = 1 / (kB * T
   rw [div_eq_mul_one_div, hT', div_eq_mul_one_div (-e) (kB * T)]
   ring
 
+/-- Under the energy-affine `gA` error `A' = A · exp(−(α + b·E))`, the Boltzmann ordinate read
+with `A'` at `T` equals the one read with the true `A` at the shifted temperature `T'` and the
+rescaled density `N · e^α · U(T')/U(T)`. -/
 private theorem ordinate_arg_eq [Nonempty ι] {kB T T' N Fcal α b : ℝ} {g E A A' : ι → ℝ}
     (hg : ∀ k, 0 < g k) (hA : ∀ k, 0 < A k)
     (haff : ∀ k, A' k = A k * Real.exp (-(α + b * E k)))

@@ -183,6 +183,7 @@ theorem fe_identifiable_iff (grp : ι → κ) (w x : ι → ℝ) (hw : ∀ k, 0 
     · exact absurd h hS.ne'
 
 
+/-- The weighted group mean is linear in the response. -/
 private theorem gMean_add_smul (grp : ι → κ) (w y s : ι → ℝ) (c : ℝ) (e : κ) :
     gMean grp w (fun k => y k + c * s k) e = gMean grp w y e + c * gMean grp w s e := by
   unfold gMean
@@ -193,6 +194,7 @@ private theorem gMean_add_smul (grp : ι → κ) (w y s : ι → ℝ) (c : ℝ) 
     exact sum_congr rfl (fun k _ => by ring)
   rw [this, add_div, mul_div_assoc]
 
+/-- The within-group cross product is linear in its second argument. -/
 private theorem withinCross_add_smul (grp : ι → κ) (w x y s : ι → ℝ) (c : ℝ) :
     withinCross grp w x (fun k => y k + c * s k)
       = withinCross grp w x y + c * withinCross grp w x s := by

@@ -152,6 +152,7 @@ example : ‖ilr (![1, 2, 4] : Fin 3 → ℝ) - ilr ![1, 1, 1]‖ ≠ 0 := by
 /-! ## Log-error certificate for the Aitchison distance (frontier FT-03) -/
 
 omit [Nonempty ι] in
+/-- The Aitchison distance as the Euclidean norm of the clr difference. -/
 private theorem aitchisonDist_eq_sqrt (x y : ι → ℝ) :
     aitchisonDist y x = Real.sqrt (∑ s, (clr y s - clr x s) ^ 2) := by
   rw [aitchisonDist, EuclideanSpace.norm_eq]
@@ -160,6 +161,7 @@ private theorem aitchisonDist_eq_sqrt (x y : ι → ℝ) :
   simp [clrE, Real.norm_eq_abs, sq_abs]
 
 omit [Nonempty ι] in
+/-- A clr difference is the log-ratio `log (y s / x s)` minus its mean over the parts. -/
 private theorem clr_sub_eq_centered_log {x y : ι → ℝ} (hx : ∀ k, 0 < x k)
     (hy : ∀ k, 0 < y k) (s : ι) :
     clr y s - clr x s
@@ -168,6 +170,7 @@ private theorem clr_sub_eq_centered_log {x y : ι → ℝ} (hx : ∀ k, 0 < x k)
   ring
 
 omit [Nonempty ι] in
+/-- Centering at the mean minimizes the sum of squares: no other center `c` does better. -/
 private theorem sum_sq_centered_le [Nonempty ι] (e : ι → ℝ) (c : ℝ) :
     ∑ s, (e s - (∑ j, e j) / (Fintype.card ι : ℝ)) ^ 2 ≤ ∑ s, (e s - c) ^ 2 := by
   have hD : (Fintype.card ι : ℝ) ≠ 0 := Nat.cast_ne_zero.mpr Fintype.card_ne_zero
