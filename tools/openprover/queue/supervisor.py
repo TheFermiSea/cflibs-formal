@@ -25,7 +25,9 @@ step's meta.toml, advisor included) reaches OPENPROVER_DAILY_PLANNER_USD (defaul
 equivalent), new non-pilot attempts are planned by the local model (qwen38-local) with no
 advisor. Running attempts keep their per-attempt cap.
 
-One run per healthy node. A node whose /health fails is restarted once over ssh; if it is still
+`runs` slots per healthy node (fleet.json, default 1), all served by the node's one llama-server;
+`slot_planners[k]` overrides slot k's planner (2026-09-27: [null, "qwen38-local"], so each node runs
+one Claude-planned and one locally planned attempt). A node whose /health fails is restarted once over ssh; if it is still
 down it is skipped for 30 minutes. Running jobs are watched too: a node that fails two consecutive
 health checks mid-run is restarted, and if that fails the run is terminated and requeued without
 charging an attempt; five consecutive failed planner calls (the Claude CLI refusing, e.g. at the
@@ -122,15 +124,37 @@ def planner_usd_24h() -> float:
     return total
 
 
-def choose_planner(tid: str, cfg: dict) -> tuple[str, str | None]:
-    """(planner, advisor) for a new attempt: the target's own, or the local planner over the cap."""
-    if cfg["planner"] in CLAUDE_PLANNERS and not cfg["pilot"]:
+def choose_planner(tid: str, cfg: dict, override: str | None = None) -> tuple[str, str | None, str | None]:
+    """(planner, advisor, why) for a new attempt: the slot's override if it has one (pilot targets
+    keep their own), else the target's; a Claude planner over the daily cap becomes the local one."""
+    planner, advisor, why = cfg["planner"], cfg["advisor"], None
+    if override and not cfg["pilot"] and override != planner:
+        planner, advisor, why = override, None, "slot"
+    if planner in CLAUDE_PLANNERS and not cfg["pilot"]:
         spent = planner_usd_24h()
         if spent >= DAILY_PLANNER_USD:
             log(f"{tid}: Claude planner spend ${spent:.2f} in the last 24 h >= "
                 f"${DAILY_PLANNER_USD:.0f} cap, planning with {LOCAL_PLANNER}")
-            return LOCAL_PLANNER, None
-    return cfg["planner"], cfg["advisor"]
+            return LOCAL_PLANNER, None, "cap"
+    return planner, advisor, why
+
+
+def slots(fleet: list) -> list[tuple[str, dict, str | None]]:
+    """(slot key, node, planner override) for each run slot: `runs` per node (default 1), with
+    `slot_planners[k]` overriding the planner of slot k (e.g. [null, "qwen38-local"])."""
+    out = []
+    for node in fleet:
+        over = node.get("slot_planners", [])
+        for k in range(node.get("runs", 1)):
+            out.append((f"{node['name']}#{k}", node, over[k] if k < len(over) else None))
+    return out
+
+
+def kill(job: dict) -> None:
+    try:
+        os.killpg(job["proc"].pid, 15)
+    except ProcessLookupError:
+        pass
 
 
 def trailing_llm_errors(run_dir: Path) -> int:
@@ -156,14 +180,14 @@ def candidates(run_dir: Path) -> list[Path]:
     return c + sorted((run_dir / "repo").rglob("*.lean")) if (run_dir / "repo").exists() else c
 
 
-def start(tid: str, node: dict) -> dict:
+def start(tid: str, node: dict, slot: str | None = None, override: str | None = None) -> dict:
     d = Q / "running" / tid
     cfg = target_cfg(d)
     used = [int(m.group(1)) for p in RUNS.glob(f"{tid}-*")
             if (m := re.fullmatch(rf"{re.escape(tid)}-(\d+)(?:\.log)?", p.name))]
     attempt = max(used, default=0) + 1  # never reuse a run dir: OpenProver would resume it
     run_dir = RUNS / f"{tid}-{attempt}"
-    planner, advisor = choose_planner(tid, cfg)
+    planner, advisor, why = choose_planner(tid, cfg, override)
     cmd = [str(HOME / "venv/bin/openprover"), str(run_dir), "--headless", "--autonomous",
            "--planner-model", planner, "--worker-model", cfg["worker"],
            "--provider-url", f"http://{node['host']}:{node['port']}",
@@ -185,15 +209,16 @@ def start(tid: str, node: dict) -> dict:
             "advisor_every": cfg["advisor_every"] if advisor else None,
             "advisor_max": cfg["advisor_max"] if advisor else None,
             "history_budget": cfg["history_budget"], "pilot": cfg["pilot"],
-            "fallback": planner != cfg["planner"]}
+            "slot": slot or node["name"], "planner_override": why}
     Path(f"{run_dir}.planner.json").write_text(json.dumps(plan, indent=2))
     out = open(f"{run_dir}.log", "w")
     proc = subprocess.Popen(cmd, cwd=HOME / "leanproj", stdout=out, stderr=subprocess.STDOUT,
                             start_new_session=True, env=env)
-    log(f"{tid}: attempt {attempt} started on {node['name']} (pid {proc.pid}; planner {planner}"
-        f"{f' + advisor {advisor}' if advisor else ''})")
-    return {"tid": tid, "node": node["name"], "proc": proc, "run_dir": run_dir, "attempt": attempt,
-            "started": time.time(), "cfg": cfg, "plan": plan, "unhealthy": 0, "abort": None}
+    log(f"{tid}: attempt {attempt} started on {slot or node['name']} (pid {proc.pid}; planner {planner}"
+        f"{f' + advisor {advisor}' if advisor else ''}{f', {why} override' if why else ''})")
+    return {"tid": tid, "node": node["name"], "node_cfg": node, "slot": slot or node["name"],
+            "proc": proc, "run_dir": run_dir, "attempt": attempt, "started": time.time(),
+            "cfg": cfg, "plan": plan, "unhealthy": 0, "abort": None}
 
 
 def finish(job: dict) -> None:
@@ -254,7 +279,7 @@ def write_status(jobs: dict, down: dict) -> None:
     st = {"at": now(),
           "planner_usd_24h": round(planner_usd_24h(), 2), "daily_planner_cap_usd": DAILY_PLANNER_USD,
           "running": {n: {"target": j["tid"], "attempt": j["attempt"], "planner": j["plan"]["planner"],
-                          "advisor": j["plan"]["advisor"],
+                          "advisor": j["plan"]["advisor"], "planner_override": j["plan"]["planner_override"],
                           "hours": round((time.time() - j["started"]) / 3600, 2)} for n, j in jobs.items()},
           "nodes_down_until": {n: datetime.fromtimestamp(t, timezone.utc).isoformat(timespec="seconds")
                                for n, t in down.items()},
@@ -263,16 +288,23 @@ def write_status(jobs: dict, down: dict) -> None:
 
 
 def tick(fleet: list, jobs: dict, down: dict) -> None:
-    """One supervisor poll: reap, watch and dispatch."""
-    for name, job in list(jobs.items()):
+    """One supervisor poll: reap, watch and dispatch. `jobs` is keyed by slot ("infer-01#0")."""
+    node_ok: dict[str, bool] = {}  # one /health request per node per poll
+
+    def ok(node: dict) -> bool:
+        if node["name"] not in node_ok:
+            node_ok[node["name"]] = healthy(node)
+        return node_ok[node["name"]]
+
+    for key, job in list(jobs.items()):
         if job["proc"].poll() is not None:
             finish(job)
-            del jobs[name]
+            del jobs[key]
             continue
         if job["abort"]:
             continue  # already signalled; wait for the process to exit
-        node = next(n for n in fleet if n["name"] == name)
-        job["unhealthy"] = 0 if healthy(node) else job["unhealthy"] + 1
+        node, name = job["node_cfg"], job["node"]
+        job["unhealthy"] = 0 if ok(node) else job["unhealthy"] + 1
         usd = planner_usd(job["run_dir"])
         if time.time() - job["started"] > WALL_S:
             job["abort"] = "wall"
@@ -289,29 +321,39 @@ def tick(fleet: list, jobs: dict, down: dict) -> None:
             log(f"{job['tid']}: {PLANNER_ERR_STEPS}+ consecutive planner errors (Claude CLI; quota?), "
                 f"terminating (not charged) and pausing dispatch {pause // 60} min "
                 f"(outage #{PLANNER_DOWN_STREAK[0]} in a row)")
-        elif job["unhealthy"] >= UNHEALTHY_POLLS and not restart(node):
-            job["abort"] = "infra"
-            down[name] = time.time() + NODE_BACKOFF_S
-            log(f"{job['tid']}: {name} down mid-run and restart failed, terminating (not charged)")
+        elif job["unhealthy"] >= UNHEALTHY_POLLS:
+            siblings = [j for j in jobs.values() if j["node"] == name and not j["abort"]]
+            if restart(node):  # one server serves every slot on the node
+                node_ok[name] = True
+                for j in siblings:
+                    j["unhealthy"] = 0
+            else:
+                down[name] = time.time() + NODE_BACKOFF_S
+                for j in siblings:
+                    j["abort"] = "infra"
+                    log(f"{j['tid']}: {name} down mid-run and restart failed, terminating (not charged)")
+                    if j is not job:
+                        kill(j)
         if job["abort"]:
-            os.killpg(job["proc"].pid, 15)
+            kill(job)
     if down.get("*", 0) > time.time():
         return  # global pause (planner outage)
-    for node in fleet:
+    for key, node, override in slots(fleet):
         n = node["name"]
-        if n in jobs or down.get(n, 0) > time.time():
+        if key in jobs or down.get(n, 0) > time.time():
             continue
         pending = sorted((Q / "pending").iterdir(), key=lambda p: p.stat().st_mtime)
         if not pending:
             break
-        if not healthy(node) and not restart(node):
+        if not ok(node) and not restart(node):
             down[n] = time.time() + NODE_BACKOFF_S
             log(f"{n}: still down, skipping for {NODE_BACKOFF_S // 60} min")
             continue
+        node_ok[n] = True
         down.pop(n, None)
         tid = pending[0].name
         shutil.move(str(pending[0]), Q / "running" / tid)
-        jobs[n] = start(tid, node)
+        jobs[key] = start(tid, node, key, override)
 
 
 def main() -> None:
@@ -329,7 +371,7 @@ def main() -> None:
     fleet = json.loads((HOME / "fleet.json").read_text())
     jobs: dict[str, dict] = {}
     down: dict[str, float] = {}
-    log(f"supervisor up; fleet {[n['name'] for n in fleet]}")
+    log(f"supervisor up; slots {[(k, o) for k, _, o in slots(fleet)]}")
     while True:
         tick(fleet, jobs, down)
         write_status(jobs, down)

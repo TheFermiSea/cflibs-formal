@@ -19,7 +19,7 @@ Installed state (outside the repo, survives branch switches):
   lean-main/   git worktree of origin/main; .lake/packages symlinked to the main checkout's
   leanproj/    symlinks into lean-main (OpenProver writes OpenProver-<id>/ here)
   bin/         deployed copies of supervisor.py and verify.py (the unit runs these)
-  fleet.json   the three nodes, port 8081
+  fleet.json   the three nodes, port 8081; per node "runs": 2, "slot_planners": [null, "qwen38-local"]
   queue/{pending,running,done,parked}/<id>/   target.json + statement.lean + dossier.md
   runs/<id>-<n>/ and runs/<id>-<n>.log        OpenProver run records
   results/<id>/  PROOF.lean + statement.lean + verdict.json for every verified target
@@ -95,6 +95,14 @@ tail -f ~/.local/share/openprover/supervisor.log
 sudo systemctl restart openprover-queue            # kills running proofs; they are requeued
 cp tools/openprover/queue/*.py ~/.local/share/openprover/bin/   # deploy a change, then restart
 ```
+
+**Two runs per node (owner, 2026-09-27).** Each llama-server has 4 slots and 131072 tokens of unified
+KV, but a run keeps at most one Qwen request in flight (every spawn so far had one worker) and the GPU
+idles during planner calls and Lean checks. Measured on infer-01: 41 tok/s aggregate for one stream,
+59 for two (1.45x), 75 for four. A second model instance does not fit (29.9 of 32.8 GB used). So each
+node runs two attempts against its one server: slot 0 with the target's planner (Opus, under the
+daily cap), slot 1 planned by `qwen38-local`, which keeps Claude planner spend at three runs. A failed
+node restart aborts both of its runs uncharged.
 
 A node whose `/health` fails is restarted once (`systemctl restart llm-server@qwen38` over ssh)
 and skipped for 30 minutes if it stays down; the same check runs on nodes with a job in flight
