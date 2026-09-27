@@ -146,8 +146,9 @@ def slots(fleet: list) -> list[tuple[str, dict, str | None]]:
     for node in fleet:
         over = node.get("slot_planners", [])
         for k in range(node.get("runs", 1)):
-            out.append((f"{node['name']}#{k}", node, over[k] if k < len(over) else None))
-    return out
+            out.append((k, f"{node['name']}#{k}", node, over[k] if k < len(over) else None))
+    # slot 0 of every node before any slot 1: spreads load and fills the Claude-planned slots first
+    return [s[1:] for s in sorted(out, key=lambda s: s[0])]
 
 
 def kill(job: dict) -> None:
