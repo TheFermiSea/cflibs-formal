@@ -300,6 +300,8 @@ the Qwen control, which the dry run will price in rounds and wall-clock.
 
 ### 10.4 Deployment plan for the Worker (Phase 0; do not touch a node before the advisor gate)
 
+> 2026-09-27 (D20): the queue planner is Opus 5.5 under a $60/day cap with a local Qwen fallback, and each node runs two attempts (slot 1 planned locally). Details, costs and the pilot: `tools/openprover/queue/README.md`.
+
 1. **Node:** one node only (the GPU is exclusive). Survey of 2026-09-20: `llm-server@qwen38` was
    inactive and the GPU idle on all three nodes, each runs two GitHub Actions runners for the companion,
    RAM in use 26–36 GB of 251. **Worker = infer-02** (7.5 TB free, lowest RAM use); **control = infer-01**
