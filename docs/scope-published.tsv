@@ -8,6 +8,7 @@ Aitchison.lean	closure_sum_one	theorem	PURE-MATH	PURE-MATH	—
 Aitchison.lean	clr_sum_zero	theorem	PURE-MATH	PURE-MATH	—
 Aitchison.lean	softmax_log_eq_closure	theorem	PURE-MATH	PURE-MATH	—
 Aitchison.lean	softmax_sum_one	theorem	PURE-MATH	PURE-MATH	—
+AitchisonIsometry.lean	aitchisonDist_le_logErr	theorem	PURE-MATH	PURE-MATH	—
 AitchisonIsometry.lean	clrE_mem	theorem	PURE-MATH	PURE-MATH	—
 AitchisonIsometry.lean	ilr_inner	theorem	PURE-MATH	PURE-MATH	—
 AitchisonIsometry.lean	ilr_isometry	theorem	PURE-MATH	PURE-MATH	—
@@ -83,6 +84,7 @@ Alt/StochasticBudget.lean	density_event_subset	theorem	PURE-MATH	PURE-MATH	—
 Alt/StochasticBudget.lean	density_tail_species	theorem	REDUCED	REDUCED	—
 Alt/StochasticBudget.lean	olsSlope_chebyshev	theorem	REDUCED	REDUCED	—
 Alt/StochasticBudget.lean	olsSlope_subGaussian_tail	theorem	REDUCED	REDUCED	—
+Alt/StochasticBudget.lean	olsSlope_subGaussian_tail_hetero	theorem	REDUCED	REDUCED	—
 Alt/StochasticBudget.lean	temp_slope_event_subset	theorem	PURE-MATH	PURE-MATH	—
 Alt/StochasticBudget.lean	temp_tail_transfer	theorem	REDUCED	REDUCED	—
 Analysis.lean	abs_exp_sub_le	theorem	PURE-MATH	PURE-MATH	—
@@ -99,6 +101,7 @@ Analysis.lean	sym2x2_quadForm	theorem	PURE-MATH	PURE-MATH	—
 Analysis.lean	sym2x2_upper	theorem	PURE-MATH	PURE-MATH	—
 Analysis.lean	temp_exp_diff_lower	theorem	PURE-MATH	PURE-MATH	—
 AtomicDataPerturbation.lean	classicComposition_atomicData_error	theorem	REDUCED	REDUCED	—
+AtomicDataPerturbation.lean	classicComposition_atomicData_error_rel	theorem	REDUCED	REDUCED	—
 AtomicDataPerturbation.lean	classicComposition_temperature_error	theorem	REDUCED	REDUCED	—
 AtomicDataPerturbation.lean	classicDensity_aliasing	theorem	EXACT	REDUCED	lineIntensity
 AtomicDataPerturbation.lean	classicDensity_aliasing_error	theorem	REDUCED	REDUCED	—
@@ -296,6 +299,9 @@ FisherLineSelection.lean	spreadOn_mono	theorem	PURE-MATH	PURE-MATH	—
 FisherLineSelection.lean	spreadOn_nonneg	theorem	PURE-MATH	PURE-MATH	—
 FisherLineSelection.lean	sum_sq_sub_eq_spreadOn_add	theorem	PURE-MATH	PURE-MATH	—
 FisherLineSelection.lean	sum_sub_finsetMean	theorem	PURE-MATH	PURE-MATH	—
+FixedEffectsDesign.lean	feSlope_add_smul	theorem	PURE-MATH	PURE-MATH	—
+FixedEffectsDesign.lean	feSlope_isMin	theorem	PURE-MATH	PURE-MATH	—
+FixedEffectsDesign.lean	fe_identifiable_iff	theorem	PURE-MATH	PURE-MATH	—
 ForwardMap.lean	boltzmann_plot_intensity	theorem	REDUCED	REDUCED	—
 ForwardMap.lean	lineIntensity	def	REDUCED	REDUCED	—
 ForwardMap.lean	lineIntensity_pos	theorem	PURE-MATH	PURE-MATH	—
@@ -305,6 +311,7 @@ ForwardMapEnergy.lean	lineIntensityEnergy_eq_lineIntensity	theorem	REDUCED	REDUC
 ForwardMapEnergy.lean	lineIntensityEnergy_mul_lam	theorem	REDUCED	REDUCED	—
 ForwardMapEnergy.lean	lineIntensityEnergy_pos	theorem	PURE-MATH	PURE-MATH	—
 ForwardMapEnergy.lean	temperature_from_two_lines_wavelength	theorem	EXACT	EXACT	—
+HeteroAtomicData.lean	affine_gA_observational_equiv	theorem	EXACT	REDUCED	lineIntensity
 HeteroAtomicData.lean	heteroSlopeBound_const	theorem	PURE-MATH	PURE-MATH	—
 HeteroAtomicData.lean	heteroSlopeBound_le_global	theorem	PURE-MATH	PURE-MATH	—
 HeteroAtomicData.lean	heteroSlopeBound_lt_global_witness	theorem	PURE-MATH	PURE-MATH	—
@@ -373,6 +380,7 @@ JointConvergence.lean	exists_weights_iff	theorem	PURE-MATH	PURE-MATH	—
 JointConvergence.lean	jointConvergence	theorem	REDUCED	REDUCED	—
 JointConvergence.lean	tDamped_mobius_converges	theorem	PURE-MATH	PURE-MATH	—
 JointIdentifiability.lean	joint_identifiability	theorem	EXACT	REDUCED	PlasmaParams,lineIntensity
+KernelLineExtraction.lean	kernelLS_error_linfty	theorem	PURE-MATH	PURE-MATH	—
 LadenburgReiche.lean	equivWidth_lorentzianG_isEquivalent	theorem	EXACT	EXACT	—
 LadenburgReiche.lean	equivWidth_lorentzianG_scaled	theorem	EXACT	EXACT	—
 LadenburgReiche.lean	equivWidth_lorentzianG_sqrt_sharp	theorem	EXACT	EXACT	—
@@ -457,6 +465,9 @@ MultiSpecies.lean	speciesComposition_mem_stdSimplex	theorem	EXACT	EXACT	—
 MultiSpecies.lean	speciesComposition_ratio	theorem	PURE-MATH	PURE-MATH	—
 MultiSpecies.lean	speciesComposition_ratio_from_intensities_perU	theorem	EXACT	REDUCED	lineIntensityPerU
 MultiSpecies.lean	speciesComposition_sum_one	theorem	EXACT	EXACT	—
+NoiseGainFloor.lean	gMean_const_eq_wMean	theorem	PURE-MATH	PURE-MATH	—
+NoiseGainFloor.lean	interceptDiff_noiseGain	theorem	PURE-MATH	PURE-MATH	—
+NoiseGainFloor.lean	wls_min_noiseGain	theorem	PURE-MATH	PURE-MATH	—
 NoiseToComposition.lean	noise_to_composition	theorem	REDUCED	REDUCED	—
 NoiseToComposition.lean	noise_to_density	theorem	REDUCED	REDUCED	—
 NoiseToComposition.lean	noise_to_temperatureGap	theorem	REDUCED	REDUCED	—
@@ -622,6 +633,7 @@ RadiativeTransferDepth.lean	rtEmergent_uniform	theorem	EXACT	EXACT	—
 RadiativeTransferDepth.lean	rtFormalLinear	theorem	PURE-MATH	PURE-MATH	—
 RadiativeTransferDepth.lean	rtFormal_const	theorem	EXACT	EXACT	—
 RadiativeTransferDepth.lean	rtFormal_sandwich	theorem	EXACT	EXACT	—
+RefuseToReport.lean	pasPolicy_guarantees	theorem	PURE-MATH	PURE-MATH	—
 Robustness.lean	logRatioIntercept_stable	theorem	PURE-MATH	PURE-MATH	—
 Robustness.lean	logRatioIntercept_stable_sharp	theorem	PURE-MATH	PURE-MATH	—
 Robustness.lean	twoLineBeta_continuous	theorem	PURE-MATH	PURE-MATH	—

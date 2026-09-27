@@ -28,6 +28,7 @@ import CflibsFormal.EquivalentWidth
 import CflibsFormal.ErrorBudget
 import CflibsFormal.EvaluatorSoundness
 import CflibsFormal.FisherLineSelection
+import CflibsFormal.FixedEffectsDesign
 import CflibsFormal.ForwardMap
 import CflibsFormal.ForwardMapEnergy
 import CflibsFormal.HeteroAtomicData
@@ -39,6 +40,7 @@ import CflibsFormal.Inverse
 import CflibsFormal.IpdSahaInverse
 import CflibsFormal.JointConvergence
 import CflibsFormal.JointIdentifiability
+import CflibsFormal.KernelLineExtraction
 import CflibsFormal.LadenburgReiche
 import CflibsFormal.LeastSquaresFit
 import CflibsFormal.LineBroadening
@@ -46,6 +48,7 @@ import CflibsFormal.LineSelection
 import CflibsFormal.MatrixEffects
 import CflibsFormal.MatrixIonizationCoupling
 import CflibsFormal.MultiSpecies
+import CflibsFormal.NoiseGainFloor
 import CflibsFormal.NoiseToComposition
 import CflibsFormal.NonLTEKinetics
 import CflibsFormal.NonlinearLeastSquares
@@ -62,6 +65,7 @@ import CflibsFormal.PartitionLipschitz
 import CflibsFormal.ProfiledTUniqueness
 import CflibsFormal.ProfiledUnimodality
 import CflibsFormal.RadiativeTransferDepth
+import CflibsFormal.RefuseToReport
 import CflibsFormal.Robustness
 import CflibsFormal.Saha
 import CflibsFormal.SahaContraction

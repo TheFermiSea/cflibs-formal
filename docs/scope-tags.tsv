@@ -158,6 +158,7 @@ AtomicDataPerturbation.lean	classicDensity_temperature_aliasing	EXACT	Tognoni 20
 AtomicDataPerturbation.lean	classicDensity_aliasing_error_energy	REDUCED	Tognoni 2010
 AtomicDataPerturbation.lean	classicDensity_temperature_aliasing_error	REDUCED	Tognoni 2010
 AtomicDataPerturbation.lean	classicComposition_temperature_error	REDUCED	Tognoni 2010
+AtomicDataPerturbation.lean	classicComposition_atomicData_error_rel	REDUCED	Tognoni 2010
 Identifiability.lean	density_identifiability	EXACT	Ciucci 1999
 Identifiability.lean	electron_density_identifiability	EXACT	Saha–Eggert (Griem)
 Inverse.lean	PlasmaParams	REDUCED	Ciucci 1999
@@ -482,6 +483,7 @@ Alt/StochasticBudget.lean	density_event_subset	PURE-MATH	—
 Alt/StochasticBudget.lean	density_tail_species	REDUCED	Tognoni 2010
 Alt/StochasticBudget.lean	composition_tail_union	REDUCED	Tognoni 2010
 Alt/StochasticBudget.lean	olsSlope_subGaussian_tail	REDUCED	—
+Alt/StochasticBudget.lean	olsSlope_subGaussian_tail_hetero	REDUCED	—
 Certificates.lean	energySpread_certificate_sound	REDUCED	Tognoni 2010
 Certificates.lean	jointRank_certificate_sound	REDUCED	Aguilera & Aragón 2007
 Certificates.lean	conditioning_certificate_sound	PURE-MATH	—
@@ -505,6 +507,7 @@ TwoDCOS.lean	asyncMatrix_singleDriver_zero	PURE-MATH	—
 AitchisonIsometry.lean	clrE_mem	PURE-MATH	—
 AitchisonIsometry.lean	ilr_isometry	PURE-MATH	—
 AitchisonIsometry.lean	ilr_inner	PURE-MATH	—
+AitchisonIsometry.lean	aitchisonDist_le_logErr	PURE-MATH	—
 TwoDCOSOrder.lean	B_eq_sum	PURE-MATH	—
 TwoDCOSOrder.lean	B_antisymm	PURE-MATH	—
 TwoDCOSOrder.lean	B_add_left	PURE-MATH	—
@@ -781,6 +784,7 @@ HeteroAtomicData.lean	temp_rel_error_atomicData_hetero	REDUCED	Tognoni 2010
 HeteroAtomicData.lean	heteroSlopeBound_lt_global_witness	PURE-MATH	—
 HeteroAtomicData.lean	nvP_heteroSlopeBound_value	PURE-MATH	—
 HeteroAtomicData.lean	nvP_slope_bias_eq_log	EXACT	Tognoni 2010
+HeteroAtomicData.lean	affine_gA_observational_equiv	EXACT	Tognoni 2010
 Alt/NeutralityScale.lean	neutralityScale_eq_Fcal	EXACT	Ciucci 1999
 Alt/NeutralityScale.lean	neutralityScale_undetected	EXACT	Ciucci 1999
 Alt/NeutralityScale.lean	closureEstimate_bias	EXACT	Tognoni 2010
@@ -789,3 +793,11 @@ Alt/NeutralityScale.lean	lineIntensity_ratio	EXACT	Ciucci 1999
 IpdSahaInverse.lean	ipdLogMap_root_subsingleton	PURE-MATH	—
 IpdSahaInverse.lean	ipdLogMap_contracts	PURE-MATH	—
 IpdSahaInverse.lean	ipdInverse_twoPoint_sensitivity	PURE-MATH	—
+FixedEffectsDesign.lean	fe_identifiable_iff	PURE-MATH	—
+FixedEffectsDesign.lean	feSlope_add_smul	PURE-MATH	—
+FixedEffectsDesign.lean	feSlope_isMin	PURE-MATH	—
+NoiseGainFloor.lean	gMean_const_eq_wMean	PURE-MATH	—
+NoiseGainFloor.lean	wls_min_noiseGain	PURE-MATH	—
+NoiseGainFloor.lean	interceptDiff_noiseGain	PURE-MATH	—
+KernelLineExtraction.lean	kernelLS_error_linfty	PURE-MATH	—
+RefuseToReport.lean	pasPolicy_guarantees	PURE-MATH	—

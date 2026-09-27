@@ -9,9 +9,9 @@
 
 A result shows `own → published` when the two differ (with the definitions that weakened it), and a single tag when they agree. A definition with its own row shows `model TAG`.
 
-**Own-tag mix** (775 results): **EXACT** 161 · **REDUCED** 227 · **APPROXIMATION** 4 · **PURE-MATH** 383
+**Own-tag mix** (787 results): **EXACT** 162 · **REDUCED** 229 · **APPROXIMATION** 4 · **PURE-MATH** 392
 
-**Published-tag mix** (775 results; 136 weakened by a model tag): **EXACT** 60 · **REDUCED** 267 · **APPROXIMATION** 65 · **PURE-MATH** 383
+**Published-tag mix** (787 results; 137 weakened by a model tag): **EXACT** 60 · **REDUCED** 270 · **APPROXIMATION** 65 · **PURE-MATH** 392
 
 `EXACT` = an exact theorem about the model it is stated over · `REDUCED` = exact only after a stated reduction (a dimensionless/lumped-factor form) · `APPROXIMATION` = the statement itself is approximate (documented idealization / limiting case) · `PURE-MATH` = infrastructure lemma, no physical claim. Classification cross-checked against `reviews/literature-validity-audit.md`.
 
@@ -44,6 +44,7 @@ A result shows `own → published` when the two differ (with the definitions tha
 - `PURE-MATH` · `clrE_mem` — `clr x` lands in the clr-hyperplane `∑ = 0` — this is `clr_sum_zero` transported to `EuclideanSpace`.
 - `PURE-MATH` · `ilr_isometry` — The ilr isometry (headline).
 - `PURE-MATH` · `ilr_inner` — ilr preserves inner products (companion corollary).
+- `PURE-MATH` · `aitchisonDist_le_logErr` — Log-error certificate for the Aitchison distance.
 
 ## `Alt/CSigma.lean`  (CflibsFormal.Alt)
 *the C-sigma (Cσ) single-line method (alternative estimator)*
@@ -206,6 +207,7 @@ A result shows `own → published` when the two differ (with the definitions tha
 - `REDUCED` · `density_tail_species` — Per-species density tail bound (Chebyshev; REDUCED).  _[Tognoni 2010]_
 - `REDUCED` · `composition_tail_union` — Union bound over species for DENSITY deviations (not composition fractions).  _[Tognoni 2010]_
 - `REDUCED` · `olsSlope_subGaussian_tail` — Sub-Gaussian slope tail (REDUCED).
+- `REDUCED` · `olsSlope_subGaussian_tail_hetero` — Heteroscedastic sub-Gaussian tail of the OLS Boltzmann slope.
 
 ## `Analysis.lean`  (CflibsFormal)
 *Shared analysis scaffolding*
@@ -243,6 +245,7 @@ A result shows `own → published` when the two differ (with the definitions tha
 - `REDUCED` · `classicDensity_aliasing_error_energy` — REDUCED energy-channel isolation (gap #2 residual).  _[Tognoni 2010]_
 - `REDUCED` · `classicDensity_temperature_aliasing_error` — REDUCED temperature-error bound.  _[Tognoni 2010]_
 - `REDUCED` · `classicComposition_temperature_error` — REDUCED composition corollary (temperature channel).  _[Tognoni 2010]_
+- `REDUCED` · `classicComposition_atomicData_error_rel` — Relative closure bound for the classic reader under atomic-data error.  _[Tognoni 2010]_
 
 ## `Boltzmann.lean`  (CflibsFormal)
 *Part 1: the Boltzmann distribution*
@@ -605,6 +608,20 @@ A result shows `own → published` when the two differ (with the definitions tha
 - `PURE-MATH` · `nonvacuity_line_at_mean` — Non-vacuity — a line at the current mean adds nothing.
 - `PURE-MATH` · `nonvacuity_crlb_attained` — Non-vacuity — `Var(β̂) = (fisherInfoSlope E σ)⁻¹` holds with numbers on a genuine probability space.
 
+## `FixedEffectsDesign.lean`  (CflibsFormal)
+*the fixed-effects (element-dummy) weighted Boltzmann design*
+
+**Definitions**
+- `gMean` — Weighted group mean.
+- `withinCross` — Weighted within-group cross product.
+- `withinSS` — Weighted within-group sum of squares `SS_W = ∑_k w k * (x k − x̄_{grp k})²`, i.e.
+- `feSlope` — Fixed-effects (within-element) slope `β̂ = withinCross grp w x y / withinSS grp w x`: the weighted least-squares common slope of the model `y k = a (grp k) +…
+
+**Results**
+- `PURE-MATH` · `fe_identifiable_iff` — The common slope of a fixed-effects design is identifiable iff `SS_W > 0`.
+- `PURE-MATH` · `feSlope_add_smul` — The fixed-effects slope is linear in the ordinates.
+- `PURE-MATH` · `feSlope_isMin` — The fixed-effects estimator is the weighted least-squares fit.
+
 ## `ForwardMap.lean`  (CflibsFormal)
 *Part 4: the optically-thin forward map*
 
@@ -647,6 +664,7 @@ A result shows `own → published` when the two differ (with the definitions tha
 - `PURE-MATH` · `heteroSlopeBound_lt_global_witness` — NON-VACUITY / strict-improvement witness (the point of the whole module).
 - `PURE-MATH` · `nvP_heteroSlopeBound_value` — The physical witness's bound is genuinely non-zero: `heteroSlopeBound = 3/2`, so the preceding `example` is not a vacuous `|·| ≤ 0` statement.
 - `EXACT → REDUCED` · `nvP_slope_bias_eq_log` — The physical witness's slope bias is NOT zero — the `example` above is bracketed by two non-zero numbers, `0 < |Δβ| = |log (2/3)| ≤ 3/2`, not a `0 ≤ 3/2` col…  _[Tognoni 2010]_  (via `lineIntensity`)
+- `EXACT → REDUCED` · `affine_gA_observational_equiv` — Energy-affine gA gauge: observational equivalence.  _[Tognoni 2010]_  (via `lineIntensity`)
 
 ## `HydrogenStark.lean`  (CflibsFormal)
 *the hydrogen-line (Balmer) Stark electron-density diagnostic*
@@ -781,6 +799,12 @@ A result shows `own → published` when the two differ (with the definitions tha
 
 **Results**
 - `EXACT → REDUCED` · `joint_identifiability` — Joint (temperature, composition) identifiability — discharging the `hTratio` caveat.  _[Ciucci 1999]_  (via `PlasmaParams`, `lineIntensity`)
+
+## `KernelLineExtraction.lean`  (CflibsFormal)
+*kernel least-squares line extraction under profile misspecification*
+
+**Results**
+- `PURE-MATH` · `kernelLS_error_linfty` — ℓ∞ error of kernel least-squares line extraction under a misspecified profile kernel.
 
 ## `LadenburgReiche.lean`  (CflibsFormal)
 *the sharp Ladenburg–Reiche asymptotic equivalent*
@@ -934,6 +958,24 @@ A result shows `own → published` when the two differ (with the definitions tha
 - `EXACT → REDUCED` · `density_ratio_from_intensities_ofPerU` — Shared-`U` ratio theorem as a special case of the per-`U` one.  _[Ciucci 1999]_  (via `lineIntensity`)
 - `PURE-MATH` · `speciesComposition_ratio` — Composition ratio equals density ratio.
 - `EXACT → REDUCED` · `speciesComposition_ratio_from_intensities_perU` — Relative composition from intensities (per-species `U`).  _[Ciucci 1999]_  (via `lineIntensityPerU`)
+
+## `NoiseGainFloor.lean`  (CflibsFormal)
+*noise-gain floors for the Boltzmann slope and intercept difference*
+
+**Definitions**
+- `wMean` — Weighted mean `Ē_w = (∑_k w k * E k) / ∑_k w k` of the upper-level energies `E` with line weights `w` (in the noise reading, `w k = 1/σ_k²`, the inverse vari…
+- `wSS` — Weighted centred sum of squares `wSS = ∑_k w k * (E k − Ē_w)²`, the weighted energy spread of the Boltzmann plot.
+- `wlsWeight` — Weighted-least-squares slope weight `ω_k = w k * (E k − Ē_w) / wSS`.
+- `pooledSS` — Pooled within-species energy spread `SS = SS_a + SS_b`, with `SS_a = ∑_k (Ea k − mean Ea)²` over the lines of species `a` and `SS_b` likewise for species `b`…
+- `commonSlope` — Common (shared) slope of two Boltzmann plots with separate intercepts: each species' energies and ordinates are centred on that species' own means and one sl…
+- `interceptDiff` — Intercept difference `d̂ = (ȳ_a − β̂ Ē_a) − (ȳ_b − β̂ Ē_b)` of the common-slope fit: the fitted intercept of species `a` minus that of species `b`.
+- `idWeightA` — Weight of species-`a` line `k` in `d̂`: `1/n_a − (Ē_a − Ē_b)(Ea k − Ē_a)/SS`, where `n_a = card ιa`.
+- `idWeightB` — Weight of species-`b` line `k` in `d̂`: `−1/n_b − (Ē_a − Ē_b)(Eb k − Ē_b)/SS`, where `n_b = card ιb`.
+
+**Results**
+- `PURE-MATH` · `gMean_const_eq_wMean` — The weighted mean is the one-group `gMean`.
+- `PURE-MATH` · `wls_min_noiseGain` — WLS attains the minimum noise gain among linear unbiased slope estimators.
+- `PURE-MATH` · `interceptDiff_noiseGain` — The common-slope intercept difference is linear with noise gain `1/n_a + 1/n_b + (Ē_a − Ē_b)²/(SS_a + SS_b)`.
 
 ## `NoiseToComposition.lean`  (CflibsFormal)
 *the end-to-end noise → composition chain (gap #5, the composed bound)*
@@ -1225,6 +1267,15 @@ A result shows `own → published` when the two differ (with the definitions tha
 - `EXACT` · `rtFormal_const` — Constant source recovers the slab (exact).  _[Gornushkin 1999]_
 - `EXACT` · `rtFormal_sandwich` — The continuous sandwich (exact).  _[Gornushkin 1999]_
 - `PURE-MATH` · `rtFormalLinear` — Linear (Eddington–Barbier) source — exact evaluation.
+
+## `RefuseToReport.lean`  (CflibsFormal)
+*the refuse-to-report policy (certified abstention)*
+
+**Definitions**
+- `pasPolicy` — Three-branch refuse-to-report policy: weighted PAS value.
+
+**Results**
+- `PURE-MATH` · `pasPolicy_guarantees` — Guarantees of the three-branch refuse-to-report policy (weighted).
 
 ## `Robustness.lean`  (CflibsFormal)
 *Robustness / error-propagation bounds*
