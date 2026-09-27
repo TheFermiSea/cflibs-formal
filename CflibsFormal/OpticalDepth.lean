@@ -97,6 +97,10 @@ LTE optical depth by exactly that factor; (ii) `S = I_thin/τ` is therefore the 
 visible LIBS lines (`E_u − E_l ≈ 2.5 eV`, `k_B T ≈ 1 eV`) the omitted factor is ≈ 0.92.
 Each result below is an exact statement about the DEFINED `opticalDepth`; this paragraph
 records how far that definition sits from the full LTE absorption coefficient.
+`KirchhoffSource.lineOpacity` is the coefficient WITH the factor, and `source_eq_planck` there
+shows that with it, LTE populations and the Einstein–Milne relation, the line source function
+`ε/κ` is the Planck function `B₀/(exp x − 1)`, not its Wien limit. The two are not wired
+together: `opticalDepth` is unchanged.
 
 * Gornushkin, Anzano, King, Smith, Omenetto, Winefordner, "Curve of growth methodology applied
   to laser-induced plasma emission spectroscopy", *Spectrochim. Acta Part B* **54** (1999)
@@ -110,6 +114,10 @@ records how far that definition sits from the full LTE absorption coefficient.
   `σ_ℓ` (Eqs. 4, 18) also carries the stimulated-emission factor, the ionization fraction and the
   `1/Δλ_L` line-shape average, which `effectiveCrossSection` does not. A corrigendum, *JQSRT*
   **159** (2015) 94–95, DOI 10.1016/j.jqsrt.2015.03.001, was not opened.
+* H. R. Griem, *Principles of Plasma Spectroscopy*, Cambridge University Press (1997) — LTE line
+  emission and absorption with the stimulated-emission (negative-absorption) factor, and
+  Kirchhoff's law (proved as `source_eq_planck` in `KirchhoffSource`, which imports only Mathlib).
+  No constant is taken from the source.
 -/
 
 namespace CflibsFormal

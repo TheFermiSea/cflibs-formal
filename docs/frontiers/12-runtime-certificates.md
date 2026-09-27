@@ -14,6 +14,14 @@
 > * C3 is C1 verbatim. C1 and C2 certify a pooled single-intercept design, not the per-element
 >   fit the solver runs.
 > * C8 and C11 never landed; the C11 product gate cannot pass at realistic parameters.
+> * **[2026-09-27]** Building blocks landed (PR #8), none of them a certificate yet:
+>   `stark_bracket_rho` (`StarkOpacityGuard`) is the Stark-side premise of the error-bar C8;
+>   `dampedMap_contracts`, `tDamped_mobius_converges` and `exists_weights_iff`
+>   (`JointConvergence`, PURE-MATH) are building blocks for the C11 stop certificate;
+>   `pasPolicy_guarantees` (`RefuseToReport`) is the refuse-to-report policy theorem, which takes
+>   an ID from C15 onward when it is wired. For C13, `stepProfile_pairRatio_not_injOn`
+>   (`EquivalentWidth`) is a machine-checked counterexample: pair-ratio injectivity is not
+>   profile-generic, so C13 certifies the flat kernel only.
 > * No certificate conjunction, including the `EvaluatorSoundness` bundle, is an informative
 >   composition-error bound at realistic parameters.
 >

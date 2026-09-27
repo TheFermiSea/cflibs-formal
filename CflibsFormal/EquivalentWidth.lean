@@ -31,6 +31,9 @@ We prove the **weak-line / saturation** structure of the curve of growth, profil
 * `equivWidth_rectangular` — for a **flat (rectangular) profile** of unit area the equivalent width
   is exactly the slab deficit `W(τ) = 1 - exp(-τ)`, tying the integrated curve of growth back to the
   `SelfAbsorption.slabIntensity` / escape-factor kernel and witnessing the results are non-vacuous.
+* `equivWidth_stepProfile` — for the **two-step profile** `stepProfile η M` (height `1 + η` on
+  `[0, 1]`, `η` on `(1, M]`) the equivalent width has the closed form
+  `(1 - exp(-τ(1 + η))) + (M - 1)(1 - exp(-τη))`; a second concrete, non-rectangular instance.
 
 ## Honest scope
 
@@ -937,5 +940,275 @@ theorem equivWidth_lorentzian_sqrt_sharp :
   field_simp
 
 end LadenburgReiche
+
+section StepProfile
+
+/-- **Two-step line profile** `ψ = 1_[0,1] + η · 1_[0,M]`: height `1 + η` on `[0, 1]` and `η`
+on `(1, M]` when `M ≥ 1`. The simplest non-rectangular profile with a closed-form equivalent
+width; at `η = 0` it is the rectangular profile of `equivWidth_rectangular`. -/
+noncomputable def stepProfile (η M : ℝ) : ℝ → ℝ := fun x =>
+  Set.indicator (Set.Icc 0 1) (fun _ => 1) x + η * Set.indicator (Set.Icc 0 M) (fun _ => 1) x
+
+/-- **Closed-form equivalent width of the two-step profile.** For `M ≥ 1` and every `η`, `τ`,
+`equivWidth (stepProfile η M) τ = (1 - exp(-τ(1 + η))) + (M - 1)(1 - exp(-τη))`: the
+integrand is constant on `[0, 1]` and on `(1, M]` and zero elsewhere. At `η = 0` it reduces to
+`equivWidth_rectangular`.
+
+Hypothesis `hM` is needed: for `M < 1` the second step lies inside the first and the closed form
+fails in general (at `M = 0`, `η = τ = 1` the second step is a single point, the true width is
+`1 - exp(-1) ≈ 0.63`, and the right side is `≈ 0.23`).
+
+Scope: PURE-MATH (a closed-form integral). It says nothing about which profile a real line has;
+the step profile is a test profile for profile-generic claims. -/
+theorem equivWidth_stepProfile {η M τ : ℝ} (hM : 1 ≤ M) :
+    equivWidth (stepProfile η M) τ
+      = (1 - Real.exp (-(τ * (1 + η)))) + (M - 1) * (1 - Real.exp (-(τ * η))) := by
+  have hrw : (fun x => 1 - Real.exp (-(τ * stepProfile η M x)))
+      = fun x => Set.indicator (Set.Icc 0 1) (fun _ => 1 - Real.exp (-(τ * (1 + η)))) x
+          + Set.indicator (Set.Ioc 1 M) (fun _ => 1 - Real.exp (-(τ * η))) x := by
+    funext x
+    unfold stepProfile
+    by_cases h1 : x ∈ Set.Icc (0:ℝ) 1
+    · have hM' : x ∈ Set.Icc (0:ℝ) M := ⟨h1.1, by linarith [h1.2]⟩
+      have h2 : x ∉ Set.Ioc (1:ℝ) M := fun h => by linarith [h.1, h1.2]
+      simp only [Set.indicator_of_mem h1, Set.indicator_of_mem hM', Set.indicator_of_notMem h2]
+      ring_nf
+    · by_cases h2 : x ∈ Set.Ioc (1:ℝ) M
+      · have hM' : x ∈ Set.Icc (0:ℝ) M := ⟨by linarith [h2.1], h2.2⟩
+        simp only [Set.indicator_of_notMem h1, Set.indicator_of_mem hM', Set.indicator_of_mem h2]
+        ring_nf
+      · have hM' : x ∉ Set.Icc (0:ℝ) M := by
+          intro h
+          by_cases hx1 : x ≤ (1:ℝ)
+          · exact h1 ⟨h.1, hx1⟩
+          · exact h2 ⟨not_le.mp hx1, h.2⟩
+        simp only [Set.indicator_of_notMem h1, Set.indicator_of_notMem hM',
+          Set.indicator_of_notMem h2]
+        simp
+  have hi1 : Integrable (Set.indicator (Set.Icc (0:ℝ) 1)
+      (fun _ => 1 - Real.exp (-(τ * (1 + η))))) :=
+    (integrable_indicator_iff measurableSet_Icc).2 (integrableOn_const measure_Icc_lt_top.ne)
+  have hi2 : Integrable (Set.indicator (Set.Ioc (1:ℝ) M)
+      (fun _ => 1 - Real.exp (-(τ * η)))) :=
+    (integrable_indicator_iff measurableSet_Ioc).2 (integrableOn_const measure_Ioc_lt_top.ne)
+  rw [equivWidth, hrw, integral_add hi1 hi2, integral_indicator_const _ measurableSet_Icc,
+    integral_indicator_const _ measurableSet_Ioc, measureReal_def, measureReal_def,
+    Real.volume_Icc, Real.volume_Ioc, ENNReal.toReal_ofReal (by norm_num),
+    ENNReal.toReal_ofReal (by linarith)]
+  simp
+
+/-- **Closed form of `equivWidth (stepProfile η M)`** as an explicit function of `τ`
+(`equivWidth_stepProfile`): `(1 - exp(-τ(1 + η))) + (M - 1)(1 - exp(-τη))`. -/
+noncomputable def stepW (η M τ : ℝ) : ℝ :=
+  (1 - Real.exp (-(τ * (1 + η)))) + (M - 1) * (1 - Real.exp (-(τ * η)))
+
+/-- Enclosure `0.99 ≤ exp(-1/100) ≤ 0.9901`, from `1 + x ≤ exp x`. -/
+private theorem stepW_encl_b : (0.99:ℝ) ≤ Real.exp (-(1/100)) ∧ Real.exp (-(1/100)) ≤ 0.9901 := by
+  constructor
+  · have := Real.add_one_le_exp (-(1/100:ℝ)); linarith
+  · have h := Real.add_one_le_exp (1/100:ℝ)
+    rw [Real.exp_neg, inv_le_comm₀ (Real.exp_pos _) (by norm_num)]; linarith
+
+/-- Enclosure `0.3642 ≤ exp(-101/100) ≤ 0.3643`, via `exp(-1/100)/e` and 9-digit bounds on `e`. -/
+private theorem stepW_encl_a :
+    (0.3642:ℝ) ≤ Real.exp (-(101/100)) ∧ Real.exp (-(101/100)) ≤ 0.3643 := by
+  obtain ⟨hb1, hb2⟩ := stepW_encl_b
+  have e : Real.exp (-(101/100:ℝ)) = Real.exp (-(1/100)) / Real.exp 1 := by
+    rw [← Real.exp_sub]; norm_num
+  have h1 := Real.exp_one_gt_d9; have h2 := Real.exp_one_lt_d9
+  rw [e]; constructor
+  · rw [le_div_iff₀ (by linarith)]; nlinarith
+  · rw [div_le_iff₀ (by linarith)]; nlinarith
+
+/-- The pair ratio at `n = 3`, in the enclosed variables, lies below `29/20`. -/
+private theorem stepW_ratio3_lt (a b : ℝ) (ha1 : 0.3642 ≤ a) (ha2 : a ≤ 0.3643)
+    (hb1 : 0.99 ≤ b) (hb2 : b ≤ 0.9901) :
+    ((1 - a^6) + 19*(1 - b^6)) / ((1 - a^3) + 19*(1 - b^3)) < 29/20 := by
+  have hu1 : (0.3642:ℝ)^3 ≤ a^3 := pow_le_pow_left₀ (by norm_num) ha1 3
+  have hu2 : a^3 ≤ (0.3643:ℝ)^3 := pow_le_pow_left₀ (by linarith) ha2 3
+  have hv1 : (0.99:ℝ)^3 ≤ b^3 := pow_le_pow_left₀ (by norm_num) hb1 3
+  have hv2 : b^3 ≤ (0.9901:ℝ)^3 := pow_le_pow_left₀ (by linarith) hb2 3
+  have e6a : a^6 = (a^3)^2 := by ring
+  have e6b : b^6 = (b^3)^2 := by ring
+  rw [e6a, e6b]
+  generalize a^3 = u at *; generalize b^3 = v at *
+  norm_num at hu1 hu2 hv1 hv2
+  rw [div_lt_iff₀ (by nlinarith)]; nlinarith
+
+/-- The pair ratio at `n = 1`, in the enclosed variables, lies above `29/20`. -/
+private theorem stepW_ratio1_gt (a b : ℝ) (ha1 : 0.3642 ≤ a) (ha2 : a ≤ 0.3643)
+    (hb1 : 0.99 ≤ b) (hb2 : b ≤ 0.9901) :
+    (29/20:ℝ) < ((1 - a^2) + 19*(1 - b^2)) / ((1 - a) + 19*(1 - b)) := by
+  norm_num at ha1 ha2 hb1 hb2
+  rw [lt_div_iff₀ (by nlinarith)]
+  nlinarith [mul_nonneg (sub_nonneg.2 ha1) (sub_nonneg.2 ha2),
+    mul_nonneg (sub_nonneg.2 hb1) (sub_nonneg.2 hb2),
+    mul_nonneg (sub_nonneg.2 ha1) (sub_nonneg.2 hb1),
+    mul_nonneg (sub_nonneg.2 ha2) (sub_nonneg.2 hb2)]
+
+/-- The `n = 10` ratio bound in the substituted variables `u = a¹⁰`, `v = b¹⁰`. -/
+private theorem stepW_ratio10_uv (u v : ℝ) (hu0 : 0 ≤ u) (hu1 : u ≤ 1 / 1000) (hv1 : 9 / 10 ≤ v)
+    (hv2 : v ≤ 91 / 100) :
+    (29/20:ℝ) < ((1 - u^2) + 19*(1 - v^2)) / ((1 - u) + 19*(1 - v)) := by
+  rw [lt_div_iff₀ (by nlinarith)]
+  nlinarith [mul_nonneg hu0 hu0, mul_nonneg (sub_nonneg.2 hv1) (sub_nonneg.2 hv2),
+    mul_nonneg (sub_nonneg.2 hu0) (sub_nonneg.2 hu1)]
+
+/-- The pair ratio at `n = 10`, in the enclosed variables, lies above `29/20`. -/
+private theorem stepW_ratio10_gt (a b : ℝ) (ha1 : 0.3642 ≤ a) (ha2 : a ≤ 0.3643)
+    (hb1 : 0.99 ≤ b) (hb2 : b ≤ 0.9901) :
+    (29/20:ℝ) < ((1 - a^20) + 19*(1 - b^20)) / ((1 - a^10) + 19*(1 - b^10)) := by
+  have ha0 : (0:ℝ) ≤ a := by linarith
+  have hu0 : (0:ℝ) ≤ a^10 := pow_nonneg ha0 10
+  have hu1 : a^10 ≤ 1/1000 := by
+    calc a^10 ≤ (0.3643:ℝ)^10 := pow_le_pow_left₀ ha0 ha2 10
+      _ ≤ 1/1000 := by norm_num
+  have hv1 : (9/10:ℝ) ≤ b^10 := by
+    calc (9/10:ℝ) ≤ (0.99:ℝ)^10 := by norm_num
+      _ ≤ b^10 := pow_le_pow_left₀ (by norm_num) hb1 10
+  have hv2 : b^10 ≤ 91/100 := by
+    calc b^10 ≤ (0.9901:ℝ)^10 := pow_le_pow_left₀ (by linarith) hb2 10
+      _ ≤ 91/100 := by norm_num
+  have e20a : a^20 = (a^10)^2 := by ring
+  have e20b : b^20 = (b^10)^2 := by ring
+  rw [e20a, e20b]
+  exact stepW_ratio10_uv (a^10) (b^10) hu0 hu1 hv1 hv2
+
+/-- Power form: this exponential is an integer power of `exp(-101/100)` or `exp(-1/100)`. -/
+private theorem stepW_exp_a6 : Real.exp (-(2 * 3 * (1 + 1/100))) = Real.exp (-(101/100)) ^ 6 := by
+  rw [← Real.exp_nat_mul]; norm_num
+/-- Power form: this exponential is an integer power of `exp(-101/100)` or `exp(-1/100)`. -/
+private theorem stepW_exp_a3 : Real.exp (-(3 * (1 + 1/100))) = Real.exp (-(101/100)) ^ 3 := by
+  rw [← Real.exp_nat_mul]; norm_num
+/-- Power form: this exponential is an integer power of `exp(-101/100)` or `exp(-1/100)`. -/
+private theorem stepW_exp_b6 : Real.exp (-(2 * 3 * (1/100))) = Real.exp (-(1/100)) ^ 6 := by
+  rw [← Real.exp_nat_mul]; norm_num
+/-- Power form: this exponential is an integer power of `exp(-101/100)` or `exp(-1/100)`. -/
+private theorem stepW_exp_b3 : Real.exp (-(3 * (1/100))) = Real.exp (-(1/100)) ^ 3 := by
+  rw [← Real.exp_nat_mul]; norm_num
+/-- Power form: this exponential is an integer power of `exp(-101/100)` or `exp(-1/100)`. -/
+private theorem stepW_exp_a2 : Real.exp (-(2 * 1 * (1 + 1/100))) = Real.exp (-(101/100)) ^ 2 := by
+  rw [← Real.exp_nat_mul]; norm_num
+/-- Power form: this exponential is an integer power of `exp(-101/100)` or `exp(-1/100)`. -/
+private theorem stepW_exp_a1 : Real.exp (-(1 * (1 + 1/100))) = Real.exp (-(101/100)) ^ 1 := by
+  rw [← Real.exp_nat_mul]; norm_num
+/-- Power form: this exponential is an integer power of `exp(-101/100)` or `exp(-1/100)`. -/
+private theorem stepW_exp_b2 : Real.exp (-(2 * 1 * (1/100))) = Real.exp (-(1/100)) ^ 2 := by
+  rw [← Real.exp_nat_mul]; norm_num
+/-- Power form: this exponential is an integer power of `exp(-101/100)` or `exp(-1/100)`. -/
+private theorem stepW_exp_b1 : Real.exp (-(1 * (1/100))) = Real.exp (-(1/100)) ^ 1 := by
+  rw [← Real.exp_nat_mul]; norm_num
+/-- Power form: this exponential is an integer power of `exp(-101/100)` or `exp(-1/100)`. -/
+private theorem stepW_exp_a20 :
+    Real.exp (-(2 * 10 * (1 + 1/100))) = Real.exp (-(101/100)) ^ 20 := by
+  rw [← Real.exp_nat_mul]; norm_num
+/-- Power form: this exponential is an integer power of `exp(-101/100)` or `exp(-1/100)`. -/
+private theorem stepW_exp_a10 : Real.exp (-(10 * (1 + 1/100))) = Real.exp (-(101/100)) ^ 10 := by
+  rw [← Real.exp_nat_mul]; norm_num
+/-- Power form: this exponential is an integer power of `exp(-101/100)` or `exp(-1/100)`. -/
+private theorem stepW_exp_b20 : Real.exp (-(2 * 10 * (1/100))) = Real.exp (-(1/100)) ^ 20 := by
+  rw [← Real.exp_nat_mul]; norm_num
+/-- Power form: this exponential is an integer power of `exp(-101/100)` or `exp(-1/100)`. -/
+private theorem stepW_exp_b10 : Real.exp (-(10 * (1/100))) = Real.exp (-(1/100)) ^ 10 := by
+  rw [← Real.exp_nat_mul]; norm_num
+
+/-- `stepW` at `τ = 6` as a polynomial in the two enclosed exponentials. -/
+private theorem stepW_six : stepW (1/100) 20 (2*3) =
+    (1 - Real.exp (-(101/100)) ^ 6) + 19 * (1 - Real.exp (-(1/100)) ^ 6) := by
+  unfold stepW; rw [stepW_exp_a6, stepW_exp_b6]; norm_num
+/-- `stepW` at `τ = 3` as a polynomial in the two enclosed exponentials. -/
+private theorem stepW_three : stepW (1/100) 20 3 =
+    (1 - Real.exp (-(101/100)) ^ 3) + 19 * (1 - Real.exp (-(1/100)) ^ 3) := by
+  unfold stepW; rw [stepW_exp_a3, stepW_exp_b3]; norm_num
+/-- `stepW` at `τ = 2` as a polynomial in the two enclosed exponentials. -/
+private theorem stepW_two : stepW (1/100) 20 (2*1) =
+    (1 - Real.exp (-(101/100)) ^ 2) + 19 * (1 - Real.exp (-(1/100)) ^ 2) := by
+  unfold stepW; rw [stepW_exp_a2, stepW_exp_b2]; norm_num
+/-- `stepW` at `τ = 1` as a polynomial in the two enclosed exponentials. -/
+private theorem stepW_one : stepW (1/100) 20 1 =
+    (1 - Real.exp (-(101/100))) + 19 * (1 - Real.exp (-(1/100))) := by
+  unfold stepW; rw [stepW_exp_a1, stepW_exp_b1]; norm_num
+/-- `stepW` at `τ = 20` as a polynomial in the two enclosed exponentials. -/
+private theorem stepW_twenty : stepW (1/100) 20 (2*10) =
+    (1 - Real.exp (-(101/100)) ^ 20) + 19 * (1 - Real.exp (-(1/100)) ^ 20) := by
+  unfold stepW; rw [stepW_exp_a20, stepW_exp_b20]; norm_num
+/-- `stepW` at `τ = 10` as a polynomial in the two enclosed exponentials. -/
+private theorem stepW_ten : stepW (1/100) 20 10 =
+    (1 - Real.exp (-(101/100)) ^ 10) + 19 * (1 - Real.exp (-(1/100)) ^ 10) := by
+  unfold stepW; rw [stepW_exp_a10, stepW_exp_b10]; norm_num
+
+/-- The pair ratio `R(3) < 29/20`. -/
+private theorem stepW_f_three : stepW (1/100) 20 (2*3) / stepW (1/100) 20 3 < 29/20 := by
+  rw [stepW_six, stepW_three]
+  exact stepW_ratio3_lt _ _ stepW_encl_a.1 stepW_encl_a.2 stepW_encl_b.1 stepW_encl_b.2
+
+/-- The pair ratio `R(1) > 29/20`. -/
+private theorem stepW_f_one : (29/20:ℝ) < stepW (1/100) 20 (2*1) / stepW (1/100) 20 1 := by
+  rw [stepW_two, stepW_one]
+  exact stepW_ratio1_gt _ _ stepW_encl_a.1 stepW_encl_a.2 stepW_encl_b.1 stepW_encl_b.2
+
+/-- The pair ratio `R(10) > 29/20`. -/
+private theorem stepW_f_ten : (29/20:ℝ) < stepW (1/100) 20 (2*10) / stepW (1/100) 20 10 := by
+  rw [stepW_twenty, stepW_ten]
+  exact stepW_ratio10_gt _ _ stepW_encl_a.1 stepW_encl_a.2 stepW_encl_b.1 stepW_encl_b.2
+
+/-- The pair ratio `n ↦ stepW(2n)/stepW(n)` is continuous on `[1, 10]`. -/
+private theorem stepW_ratio_continuousOn :
+    ContinuousOn (fun n : ℝ => stepW (1 / 100) 20 (2 * n) / stepW (1 / 100) 20 n)
+    (Set.Icc 1 10) := by
+  apply ContinuousOn.div (by unfold stepW; fun_prop) (by unfold stepW; fun_prop)
+  intro n hn
+  apply ne_of_gt
+  unfold stepW
+  have h1 : Real.exp (-(n * (1 + 1/100))) < 1 := Real.exp_lt_one_iff.2 (by nlinarith [hn.1])
+  have h2 : Real.exp (-(n * (1/100))) < 1 := Real.exp_lt_one_iff.2 (by nlinarith [hn.1])
+  nlinarith
+
+/-- **The step-profile pair ratio is not injective** (explicit closed form). For
+`η = 1/100`, `M = 20` the `r = 2` ratio `n ↦ stepW(2n)/stepW(n)` satisfies `R(1) > 29/20 > R(3)`
+and `R(10) > 29/20`, so by the intermediate value theorem two distinct `n ∈ (0, ∞)` share a value.
+PURE-MATH; `stepProfile_pairRatio_not_injOn` restates it for `equivWidth`. -/
+theorem stepW_pairRatio_not_injOn :
+    ¬ Set.InjOn (fun n : ℝ => stepW (1 / 100) 20 (2 * n) / stepW (1 / 100) 20 n)
+      (Set.Ioi 0) := by
+  intro hinj
+  have hc := stepW_ratio_continuousOn
+  have h1 : (29/20:ℝ) < (fun n : ℝ => stepW (1 / 100) 20 (2 * n) / stepW (1 / 100) 20 n) 1 :=
+    stepW_f_one
+  have h3 : (fun n : ℝ => stepW (1 / 100) 20 (2 * n) / stepW (1 / 100) 20 n) 3 < 29/20 :=
+    stepW_f_three
+  have h10 : (29/20:ℝ) < (fun n : ℝ => stepW (1 / 100) 20 (2 * n) / stepW (1 / 100) 20 n) 10 :=
+    stepW_f_ten
+  obtain ⟨x, hx, hfx⟩ := intermediate_value_Icc' (by norm_num : (1:ℝ) ≤ 3)
+    (hc.mono (Set.Icc_subset_Icc le_rfl (by norm_num))) ⟨h3.le, h1.le⟩
+  obtain ⟨y, hy, hfy⟩ := intermediate_value_Icc (by norm_num : (3:ℝ) ≤ 10)
+    (hc.mono (Set.Icc_subset_Icc (by norm_num) le_rfl)) ⟨h3.le, h10.le⟩
+  have hxy : x = y := hinj (show (0:ℝ) < x by linarith [hx.1]) (show (0:ℝ) < y by linarith [hy.1])
+    (hfx.trans hfy.symm)
+  have hx3 : x = 3 := le_antisymm hx.2 (hxy ▸ hy.1)
+  rw [hx3] at hfx
+  linarith
+
+/-- **Pair-ratio identifiability is not profile-generic.** For the two-step profile
+`ψ = 1_[0,1] + (1/100) · 1_[0,20]`, the `r = 2` pair ratio `n ↦ W(2n) / W(n)` of equivalent
+widths `W = equivWidth ψ` is not injective on column densities `n ∈ (0, ∞)`: the formal proof
+shows `R(1) > 29/20 > R(3)` and `R(10) > 29/20`, so two distinct column densities attain a
+common ratio value. Numerical evaluation (not part of the proof) gives `R(1) ≈ 1.5077`,
+`R(3) ≈ 1.3905`, `R(10) ≈ 1.5826` and an interior minimum `≈ 1.3822` at `n ≈ 2.42`.
+
+For the flat kernel `1_[0,1]` the same ratio is `cogRatio 2 1` (`W(τ) = 1 - exp (-τ)`,
+`equivWidth_rectangular`), which is injective on `(0, ∞)` (`cogRatio_injOn`). So `cogRatio_injOn`
+and the C13 certificate `saDistinct_certificate_sound` certify uniqueness for the flat kernel
+only: both carry relation REDUCED and publish APPROXIMATION through `cogRatio`'s model tag.
+
+Scope: PURE-MATH (a counterexample for a surrogate kernel, not a physical line shape; the Voigt
+behaviour is numerics only and is not claimed here). Curve of growth: Gornushkin et al. 1999. -/
+theorem stepProfile_pairRatio_not_injOn :
+    ¬ Set.InjOn (fun n : ℝ => equivWidth (stepProfile (1 / 100) 20) (2 * n)
+        / equivWidth (stepProfile (1 / 100) 20) n) (Set.Ioi 0) := by
+  simpa only [equivWidth_stepProfile (by norm_num : (1:ℝ) ≤ 20), stepW] using
+    stepW_pairRatio_not_injOn
+
+end StepProfile
 
 end CflibsFormal

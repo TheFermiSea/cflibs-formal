@@ -53,16 +53,19 @@ Gauss–Markov hypotheses), with `wₖ = olsWeight E k = (Eₖ − Ē)/SS_E`, `�
   deviations to a composition tail is not proved here.
 * `olsSlope_subGaussian_tail` — a sub-Gaussian (exponential) slope tail under **independent**
   sub-Gaussian noise, replacing Chebyshev's polynomial tail.
+* `olsSlope_subGaussian_tail_hetero` — the same tail with a per-line variance proxy `c k`:
+  `μ {|β̂ − β| ≥ δ} ≤ 2·exp(−δ²/(2·∑ k, w k²·c k))`, with `w` the OLS weights.
 
 ## Honest scope
 
-* **The moment identities are EXACT; the tail bounds are REDUCED.** `alphaHat_variance_eq` is a
-  genuine identity (no slack), like `Alt.OLSVariance.olsSlope_variance_eq`. The Chebyshev tail
-  bounds
-  `olsSlope_chebyshev` / `alphaHat_chebyshev` carry irreducible slack (a Chebyshev tail is never
-  attained), so they are `REDUCED` — matching `ErrorBudget.temp_rel_error_le`, NOT the exact
-  identity
-  `olsSlope_variance_eq` nor the attainable worst-case bound `relDensity_le`.
+* **The moment identities are exact relations; the tail bounds are REDUCED.**
+  `alphaHat_variance_eq` is a genuine identity (no slack), like
+  `Alt.OLSVariance.olsSlope_variance_eq`; both publish REDUCED through the model tag of the
+  estimator they are stated over (`alphaHat`, `betaHat`: the idealized linear Boltzmann plot).
+  The Chebyshev tail bounds `olsSlope_chebyshev` / `alphaHat_chebyshev` carry irreducible slack
+  (a Chebyshev tail is never attained), so they are `REDUCED` — matching
+  `ErrorBudget.temp_rel_error_le`, NOT the exact identity `olsSlope_variance_eq` nor the attainable
+  worst-case bound `relDensity_le`.
 * **The classical Gauss–Markov hypothesis — pairwise uncorrelatedness, NOT independence.** Inherited
   verbatim from `Alt.OLSVariance`: the variance and Chebyshev tail results need only
   `cov(εᵢ,εⱼ) = 0` for `i ≠ j` (with homoscedasticity and zero mean), strictly weaker than the
@@ -129,7 +132,11 @@ variable {Ω : Type*}
 `yₖ(ω) = α + β·Eₖ + εₖ(ω)`, `alphaHat E α β ε ω` is the ordinary-least-squares intercept of the
 realized Boltzmann-plot points `(Eₖ, yₖ(ω))`. Unlike the slope, the intercept does depend on `α`
 (and on `Ē` through `olsIntercept = mean y − olsSlope·Ē`); see `alphaHat_estimator_eq`. The
-intercept-borne species concentration is `N = exp(α̂)·U/Fcal` (`ErrorBudget.relDensity_le`). -/
+intercept-borne species concentration is `N = exp(α̂)·U/Fcal` (`ErrorBudget.relDensity_le`).
+
+Model tag REDUCED (`docs/conventions.md` §8): the idealized linear Boltzmann plot (one
+temperature, optically thin, LTE) with additive noise on the ordinate only and exactly known
+energies `Eₖ`. -/
 noncomputable def alphaHat (E : ι → ℝ) (α β : ℝ) (ε : ι → Ω → ℝ) (ω : Ω) : ℝ :=
   olsIntercept E (fun k => α + β * E k + ε k ω)
 
@@ -219,10 +226,10 @@ theorem alphaHat_unbiased [Nonempty ι] (E : ι → ℝ) (α β : ℝ) (ε : ι 
 `Alt.OLSVariance.variance_const_add_weightedNoise` at weights `aₖ = 1/n − wₖ·Ē` gives
 `Var(α̂) = σ²·∑ₖ aₖ²`; the closed form `∑ₖ aₖ² = 1/n + Ē²/SS_E` follows from `∑ₖ wₖ = 0`
 (`OLS.centered_sum_zero`, scaled) and `∑ₖ wₖ² = 1/SS_E` (`OLS.olsSlope_noise_gain`) after expanding
-`aₖ² = 1/n² − (2Ē/n)·wₖ + Ē²·wₖ²`. **EXACT**, not a slackened bound (a genuine identity, like
-`olsSlope_variance_eq`). Collapses to the centered-convention value `σ²/n` when `Ē = 0` (the
-standard
-Boltzmann-plot normalization of `ErrorBudget.olsIntercept_stable_centered`). -/
+`aₖ² = 1/n² − (2Ē/n)·wₖ + Ē²·wₖ²`. An exact identity, not a slackened bound (like
+`olsSlope_variance_eq`): EXACT relation, published REDUCED via `alphaHat`. Collapses to the
+centered-convention value `σ²/n` when `Ē = 0` (the standard Boltzmann-plot normalization of
+`ErrorBudget.olsIntercept_stable_centered`). -/
 theorem alphaHat_variance_eq [Nonempty ι] (E : ι → ℝ) (α β σ : ℝ) (ε : ι → Ω → ℝ)
     (hvar : 0 < ∑ k, (E k - mean E) ^ 2)
     (hL2 : ∀ k, MemLp (ε k) 2 μ)
@@ -709,5 +716,65 @@ example :
   rw [show -((3 : ℝ) ^ 2 * 2) / (2 * 1) = -9 by norm_num, Real.exp_neg,
     mul_inv_lt_iff₀ hpos, one_mul]
   linarith
+
+/-! ## Heteroscedastic sub-Gaussian slope tail (frontier FT-12) -/
+
+omit [IsProbabilityMeasure μ] in
+/-- **Heteroscedastic sub-Gaussian tail of the OLS Boltzmann slope.** In the linear model
+`y k = α + β·E k + ε k` (`Alt.betaHat`), let the log-ordinate noises `ε k` be independent and
+each sub-Gaussian with its own variance proxy `c k` (`HasSubgaussianMGF (ε k) (c k) μ`). Then
+  `μ {|β̂ − β| ≥ δ} ≤ 2·exp(−δ²/(2·∑ k, w k²·c k))`,  `w k = olsWeight E k = (E k − Ē)/SS_E`.
+Reason: `β̂ = β + ∑ k, w k·ε k` exactly (`Alt.olsSlope_estimator_eq`); the weighted sum is
+sub-Gaussian with proxy `∑ k, w k²·c k` by independence; a Chernoff bound on each tail and a
+union bound give the factor 2. With `c k ≡ c > 0` this is the landed homoscedastic
+`Alt.olsSlope_subGaussian_tail`, since `∑ k, w k² = 1/SS_E`; here each line keeps its own proxy,
+which is what a per-line SNR supplies. If the proxy sum is `0`, Lean's `x/0 = 0` makes the
+right side `2`, a true and trivial bound, so no positivity hypothesis on `c` is needed (the
+audit verifier dropped the sketch's `hc`).
+
+Hypotheses: `hvar` (at least two distinct upper-level energies, `SS_E > 0`: the OLS weights and
+the estimator identity need it); `hδ` (the Chernoff bound is for nonnegative thresholds);
+`hindep` (mutual independence of the noises, needed for the proxy of the sum to be the sum of
+proxies); `hsubG` (the per-line proxies, an assumed input). No `[IsProbabilityMeasure μ]`
+instance is stated: `hindep` already implies it (`iIndepFun.isProbabilityMeasure`), so the
+statement is equivalent to the probability-space version; the instance is omitted as in the
+landed twin.
+
+Scope: REDUCED, matching the homoscedastic twin `olsSlope_subGaussian_tail`. The inequality
+itself is a concentration bound; the reduction is the model behind `Alt.betaHat` (the OLS slope
+of the additive-noise linear Boltzmann-plot model `y k = α + β·E k + ε k`), which carries no model
+row, so the relation tag records it. The physics binding `c k ≈ 1/SNR_k²` (delta method on
+`log I`) is an APPROXIMATION and is not part of this statement. -/
+theorem olsSlope_subGaussian_tail_hetero [Nonempty ι] (E : ι → ℝ) (α β : ℝ) (ε : ι → Ω → ℝ)
+    {c : ι → NNReal} {δ : ℝ} (hvar : 0 < ∑ k, (E k - mean E) ^ 2) (hδ : 0 ≤ δ)
+    (hindep : iIndepFun ε μ) (hsubG : ∀ k, HasSubgaussianMGF (ε k) (c k) μ) :
+    μ.real {ω | δ ≤ |Alt.betaHat E α β ε ω - β|}
+      ≤ 2 * Real.exp (-(δ ^ 2) / (2 * ∑ k, olsWeight E k ^ 2 * (c k : ℝ))) := by
+  have hindep' : iIndepFun (fun k => (fun x : ℝ => olsWeight E k * x) ∘ ε k) μ :=
+    hindep.comp (fun k x => olsWeight E k * x) (fun k => measurable_id.const_mul (olsWeight E k))
+  have hsum : HasSubgaussianMGF (fun ω => ∑ k, olsWeight E k * ε k ω)
+      (∑ k, (⟨(olsWeight E k) ^ 2, sq_nonneg _⟩ * c k : NNReal)) μ :=
+    HasSubgaussianMGF.sum_of_iIndepFun hindep'
+      (fun k _ => (hsubG k).const_mul (olsWeight E k))
+  have hterm : ∀ k, ((⟨(olsWeight E k) ^ 2, sq_nonneg _⟩ * c k : NNReal) : ℝ)
+      = (olsWeight E k) ^ 2 * (c k : ℝ) := fun k => NNReal.coe_mul _ _
+  have hpos := hsum.measure_ge_le hδ
+  have hneg := hsum.neg.measure_ge_le hδ
+  simp only [NNReal.coe_sum, Pi.neg_apply, hterm] at hpos hneg
+  have hset : {ω | δ ≤ |Alt.betaHat E α β ε ω - β|}
+      = {ω | δ ≤ ∑ k, olsWeight E k * ε k ω}
+          ∪ {ω | δ ≤ -(∑ k, olsWeight E k * ε k ω)} := by
+    ext ω
+    simp only [Set.mem_ofPred_eq, Set.mem_union]
+    rw [Alt.olsSlope_estimator_eq E α β ε hvar,
+      show β + (∑ k, olsWeight E k * ε k ω) - β = ∑ k, olsWeight E k * ε k ω from by ring]
+    exact le_abs
+  rw [hset]
+  calc μ.real ({ω | δ ≤ ∑ k, olsWeight E k * ε k ω}
+          ∪ {ω | δ ≤ -(∑ k, olsWeight E k * ε k ω)})
+      ≤ μ.real {ω | δ ≤ ∑ k, olsWeight E k * ε k ω}
+          + μ.real {ω | δ ≤ -(∑ k, olsWeight E k * ε k ω)} := measureReal_union_le _ _
+    _ ≤ _ := add_le_add hpos hneg
+    _ = _ := by ring
 
 end CflibsFormal.Alt

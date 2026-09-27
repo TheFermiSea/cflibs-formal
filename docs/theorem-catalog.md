@@ -9,9 +9,9 @@
 
 A result shows `own → published` when the two differ (with the definitions that weakened it), and a single tag when they agree. A definition with its own row shows `model TAG`.
 
-**Own-tag mix** (756 results): **EXACT** 160 · **REDUCED** 227 · **APPROXIMATION** 4 · **PURE-MATH** 365
+**Own-tag mix** (799 results): **EXACT** 164 · **REDUCED** 232 · **APPROXIMATION** 4 · **PURE-MATH** 399
 
-**Published-tag mix** (756 results; 135 weakened by a model tag): **EXACT** 60 · **REDUCED** 266 · **APPROXIMATION** 65 · **PURE-MATH** 365
+**Published-tag mix** (799 results; 143 weakened by a model tag): **EXACT** 57 · **REDUCED** 277 · **APPROXIMATION** 66 · **PURE-MATH** 399
 
 `EXACT` = an exact theorem about the model it is stated over · `REDUCED` = exact only after a stated reduction (a dimensionless/lumped-factor form) · `APPROXIMATION` = the statement itself is approximate (documented idealization / limiting case) · `PURE-MATH` = infrastructure lemma, no physical claim. Classification cross-checked against `reviews/literature-validity-audit.md`.
 
@@ -44,6 +44,7 @@ A result shows `own → published` when the two differ (with the definitions tha
 - `PURE-MATH` · `clrE_mem` — `clr x` lands in the clr-hyperplane `∑ = 0` — this is `clr_sum_zero` transported to `EuclideanSpace`.
 - `PURE-MATH` · `ilr_isometry` — The ilr isometry (headline).
 - `PURE-MATH` · `ilr_inner` — ilr preserves inner products (companion corollary).
+- `PURE-MATH` · `aitchisonDist_le_logErr` — Log-error certificate for the Aitchison distance.
 
 ## `Alt/CSigma.lean`  (CflibsFormal.Alt)
 *the C-sigma (Cσ) single-line method (alternative estimator)*
@@ -139,6 +140,7 @@ A result shows `own → published` when the two differ (with the definitions tha
 - `EXACT → REDUCED` · `neutralityScale_eq_Fcal` — Exact recovery.  _[Ciucci 1999]_  (via `lineIntensity`)
 - `EXACT → REDUCED` · `neutralityScale_undetected` — Undetected species.  _[Ciucci 1999]_  (via `lineIntensity`)
 - `EXACT → REDUCED` · `closureEstimate_bias` — Closure bias from an undetected species.  _[Tognoni 2010]_  (via `lineIntensity`)
+- `EXACT → REDUCED` · `neutrality_closure_same_ratio` — Closure and neutrality readers return the same ratios, with per-species `U_s`.  _[Tognoni 2010]_  (via `lineIntensityPerU`)
 
 ## `Alt/OLSAtomicDataPerturbation.lean`  (CflibsFormal.Alt)
 *per-line atomic-data error in the OLS density reader*
@@ -159,16 +161,16 @@ A result shows `own → published` when the two differ (with the definitions tha
 *the Gauss–Markov variance law for the OLS Boltzmann-plot slope*
 
 **Definitions**
-- `betaHat` — The OLS-slope estimator as a random variable.
+- `model REDUCED` · `betaHat` — The OLS-slope estimator as a random variable.  _[Gauss–Markov]_
 
 **Results**
 - `PURE-MATH` · `olsSlope_estimator_eq` — Estimator = truth + weighted noise (pure pointwise algebra, no probability).
 - `PURE-MATH` · `expectation_const_add_weightedNoise` — Expectation of a constant plus independent weighted noise `𝔼[c + ∑ₖ wₖ·εₖ] = c`, for zero-mean L² noise.
 - `PURE-MATH` · `variance_const_add_weightedNoise` — Variance of a constant plus UNCORRELATED weighted noise `Var(c + ∑ₖ wₖ·εₖ) = σ²·∑ₖ wₖ²`, for pairwise-uncorrelated, homoscedastic L² noise.
 - `REDUCED` · `olsSlope_unbiased` — Unbiasedness `𝔼[β̂] = β`.  _[Gauss–Markov]_
-- `EXACT` · `olsSlope_variance_noiseGain` — Slope variance as the noise gain `Var(β̂) = σ²·∑ₖ wₖ²`.  _[Gauss–Markov]_
-- `EXACT` · `olsSlope_variance_eq` — THE headline — the Gauss–Markov slope-variance law `Var(β̂) = σ²/SS_E`.  _[Gauss–Markov]_
-- `EXACT` · `olsSlope_variance_antitone` — Monotonicity — more energy spread ⇒ less slope variance.  _[Gauss–Markov]_
+- `EXACT → REDUCED` · `olsSlope_variance_noiseGain` — Slope variance as the noise gain `Var(β̂) = σ²·∑ₖ wₖ²`.  _[Gauss–Markov]_  (via `Alt.betaHat`)
+- `EXACT → REDUCED` · `olsSlope_variance_eq` — THE headline — the Gauss–Markov slope-variance law `Var(β̂) = σ²/SS_E`.  _[Gauss–Markov]_  (via `Alt.betaHat`)
+- `EXACT → REDUCED` · `olsSlope_variance_antitone` — Monotonicity — more energy spread ⇒ less slope variance.  _[Gauss–Markov]_  (via `Alt.betaHat`)
 
 ## `Alt/SelfAbsorbed.lean`  (CflibsFormal.Alt)
 *the self-absorption-corrected composition estimator (alternative)*
@@ -187,7 +189,7 @@ A result shows `own → published` when the two differ (with the definitions tha
 *Chebyshev tail (concentration) bounds for the OLS slope and intercept*
 
 **Definitions**
-- `alphaHat` — The OLS-intercept estimator as a random variable.
+- `model REDUCED` · `alphaHat` — The OLS-intercept estimator as a random variable.  _[Gauss–Markov]_
 - `tempOfSlope` — Slope→temperature reader `T = 1/(k_B·x)`: the (sign-normalized) Boltzmann-plot inverse-temperature map, the deterministic bridge the tail transfer routes thr…
 - `tempHat` — The recovered-temperature estimator as a random variable: the temperature read off the random OLS slope, `T̂ ω = tempOfSlope kB (β̂ ω)`.
 - `densityHat` — The recovered-density estimator as a random variable: the CF-LIBS density read off the random OLS intercept, `N̂ ω = exp(α̂ ω)·U/Fcal` (the intercept identit…
@@ -197,7 +199,7 @@ A result shows `own → published` when the two differ (with the definitions tha
 - `PURE-MATH` · `betaHat_memLp_two` — `L²` membership of the OLS slope estimator `MemLp β̂ 2 μ`, the square-integrability that Chebyshev's inequality (`meas_ge_le_variance_div_sq`) requires.
 - `REDUCED` · `olsSlope_chebyshev` — Slope concentration — Chebyshev's inequality on `β̂`.  _[Gauss–Markov]_
 - `REDUCED` · `alphaHat_unbiased` — Intercept unbiasedness `𝔼[α̂] = α`.  _[Gauss–Markov]_
-- `EXACT` · `alphaHat_variance_eq` — THE classical intercept-variance law `Var(α̂) = σ²·(1/n + Ē²/SS_E)`, with `n = Fintype.card ι`, `Ē = mean E`, `SS_E = ∑ₖ (Eₖ − Ē)²`.  _[Gauss–Markov]_
+- `EXACT → REDUCED` · `alphaHat_variance_eq` — THE classical intercept-variance law `Var(α̂) = σ²·(1/n + Ē²/SS_E)`, with `n = Fintype.card ι`, `Ē = mean E`, `SS_E = ∑ₖ (Eₖ − Ē)²`.  _[Gauss–Markov]_  (via `Alt.alphaHat`)
 - `PURE-MATH` · `alphaHat_memLp_two` — `L²` membership of the OLS intercept estimator `MemLp α̂ 2 μ`, the intercept twin of `betaHat_memLp_two`.
 - `REDUCED` · `alphaHat_chebyshev` — Intercept concentration — Chebyshev's inequality on `α̂`.  _[Gauss–Markov]_
 - `PURE-MATH` · `temp_slope_event_subset` — Temperature miss ⇒ slope miss (deterministic event inclusion).
@@ -206,6 +208,7 @@ A result shows `own → published` when the two differ (with the definitions tha
 - `REDUCED` · `density_tail_species` — Per-species density tail bound (Chebyshev; REDUCED).  _[Tognoni 2010]_
 - `REDUCED` · `composition_tail_union` — Union bound over species for DENSITY deviations (not composition fractions).  _[Tognoni 2010]_
 - `REDUCED` · `olsSlope_subGaussian_tail` — Sub-Gaussian slope tail (REDUCED).
+- `REDUCED` · `olsSlope_subGaussian_tail_hetero` — Heteroscedastic sub-Gaussian tail of the OLS Boltzmann slope.
 
 ## `Analysis.lean`  (CflibsFormal)
 *Shared analysis scaffolding*
@@ -243,6 +246,7 @@ A result shows `own → published` when the two differ (with the definitions tha
 - `REDUCED` · `classicDensity_aliasing_error_energy` — REDUCED energy-channel isolation (gap #2 residual).  _[Tognoni 2010]_
 - `REDUCED` · `classicDensity_temperature_aliasing_error` — REDUCED temperature-error bound.  _[Tognoni 2010]_
 - `REDUCED` · `classicComposition_temperature_error` — REDUCED composition corollary (temperature channel).  _[Tognoni 2010]_
+- `REDUCED` · `classicComposition_atomicData_error_rel` — Relative closure bound for the classic reader under atomic-data error.  _[Tognoni 2010]_
 
 ## `Boltzmann.lean`  (CflibsFormal)
 *Part 1: the Boltzmann distribution*
@@ -251,6 +255,7 @@ A result shows `own → published` when the two differ (with the definitions tha
 - `boltzmannFactor` — Boltzmann factor `exp(-E / (k_B T))` for a level of energy `E`.
 - `partitionFunction` — Partition function `U(T) = ∑ₖ gₖ · exp(-Eₖ / (k_B T))`.
 - `population` — LTE level population `nₖ = N · gₖ · exp(-Eₖ / (k_B T)) / U(T)`.
+- `partitionFunctionCut` — Truncated partition function `U_cut(T) = ∑_{k : E k < cut} g k · exp(−E k/(k_B T))`: the Boltzmann sum `partitionFunction` restricted to the levels strictly…
 
 **Results**
 - `PURE-MATH` · `boltzmannFactor_pos` — —
@@ -258,6 +263,9 @@ A result shows `own → published` when the two differ (with the definitions tha
 - `EXACT` · `population_sum` — Normalization.  _[Boltzmann]_
 - `EXACT` · `boltzmann_plot` — Boltzmann-plot identity.  _[Boltzmann]_
 - `EXACT` · `temperature_from_two_levels` — Temperature from two levels.  _[Boltzmann]_
+- `PURE-MATH` · `partitionFunction_eq_cut_add_tail` — Kept/dropped split of the partition function.
+- `PURE-MATH` · `partitionFunctionCut_pos` — The truncated partition function is positive once one level is kept (`hkeep`) and the weights are positive.
+- `PURE-MATH` · `cutRatio_strictMonoOn_temp` — The truncation ratio is strictly increasing in temperature (FT-05 (ii)).
 
 ## `Certificates.lean`  (CflibsFormal)
 *runtime certificates (the typed bridge)*
@@ -318,6 +326,7 @@ A result shows `own → published` when the two differ (with the definitions tha
 - `PURE-MATH` · `composition_le_one` — Each number fraction is at most one (right end of the unit interval).
 - `EXACT` · `composition_mem_stdSimplex` — Closure as simplex membership.  _[Ciucci 1999]_
 - `EXACT` · `composition_smul_invariant` — Scale invariance.  _[Ciucci 1999]_
+- `PURE-MATH` · `ratio_mode_normalization_invariant` — Ratio mode ignores every common-mode normalization.
 
 ## `CompositionIdentifiability.lean`  (CflibsFormal)
 *multi-line / many-element composition identifiability*
@@ -505,6 +514,8 @@ A result shows `own → published` when the two differ (with the definitions tha
 **Definitions**
 - `equivWidth` — Equivalent width (curve of growth).
 - `lorentzian` — The (normalized) Lorentzian profile `L(x) = (1/π)·1/(1+x²)` — the natural / pressure- broadening line shape, a unit-area probability density (`∫L = 1`, `lore…
+- `stepProfile` — Two-step line profile `ψ = 1_[0,1] + η · 1_[0,M]`: height `1 + η` on `[0, 1]` and `η` on `(1, M]` when `M ≥ 1`.
+- `stepW` — Closed form of `equivWidth (stepProfile η M)` as an explicit function of `τ` (`equivWidth_stepProfile`): `(1 - exp(-τ(1 + η))) + (M - 1)(1 - exp(-τη))`.
 
 **Results**
 - `PURE-MATH` · `equivWidth_integrand_integrable` — The equivalent-width integrand `1 - exp(-(τφ))` is integrable: it is sandwiched `0 ≤ 1 - exp(-(τφ)) ≤ τφ` (from `1 - exp(-y) ≤ y`) by the integrable dominati…
@@ -527,6 +538,9 @@ A result shows `own → published` when the two differ (with the definitions tha
 - `PURE-MATH` · `integral_one_sub_exp_neg_inv_sq` — M2 (analytic crux) — the limit integral `∫_ℝ (1 − e^{−1/u²}) du = 2√π` (PURE-MATH).
 - `PURE-MATH` · `tendsto_integral_g_beta` — M3 (dominated convergence) — the rescaled integral converges (PURE-MATH).
 - `EXACT` · `equivWidth_lorentzian_sqrt_sharp` — M4 — the sharp Ladenburg–Reiche wing constant `C = 2` (EXACT, within the model).  _[Ladenburg–Reiche 1913]_
+- `PURE-MATH` · `equivWidth_stepProfile` — Closed-form equivalent width of the two-step profile.
+- `PURE-MATH` · `stepW_pairRatio_not_injOn` — The step-profile pair ratio is not injective (explicit closed form).
+- `PURE-MATH` · `stepProfile_pairRatio_not_injOn` — Pair-ratio identifiability is not profile-generic.  _[Gornushkin 1999]_
 
 ## `ErrorBudget.lean`  (CflibsFormal)
 *the error-propagation chain and DERIVED reliability thresholds*
@@ -555,6 +569,13 @@ A result shows `own → published` when the two differ (with the definitions tha
 - `REDUCED` · `olsIntercept_stable_hetero` — Intercept sensitivity, HETEROSCEDASTIC (per-line budget, centered convention).  _[Tognoni 2010]_
 - `REDUCED` · `combinedSlope_offset_lipschitz` — Offset→slope sensitivity of the combined Saha–Boltzmann slope (`REDUCED`; Aguilera & Aragón 2007).  _[Aguilera & Aragón 2007]_
 - `REDUCED` · `combinedSlopeTempUpdate_lipschitz` — `T`-leg Lipschitz constant of the Model-B outer loop (`REDUCED`; Aguilera & Aragón 2007).  _[Aguilera & Aragón 2007]_
+
+## `EscapeFactor.lean`  (CflibsFormal)
+*Profile escape factor versus the flat-slab self-absorption factor*
+
+**Results**
+- `PURE-MATH` · `inv_sub_inv_exp_sub_one_mem` — The log slab self-absorption factor has slope in `(−1/2, 0)`.
+- `PURE-MATH` · `escape_ge_slab` — The profile escape factor bounds the flat-slab factor from above.
 
 ## `EvaluatorSoundness.lean`  (CflibsFormal)
 *evaluator soundness (which hard-gate clauses feed which theorem)*
@@ -601,6 +622,20 @@ A result shows `own → published` when the two differ (with the definitions tha
 - `PURE-MATH` · `nonvacuity_line_at_mean` — Non-vacuity — a line at the current mean adds nothing.
 - `PURE-MATH` · `nonvacuity_crlb_attained` — Non-vacuity — `Var(β̂) = (fisherInfoSlope E σ)⁻¹` holds with numbers on a genuine probability space.
 
+## `FixedEffectsDesign.lean`  (CflibsFormal)
+*the fixed-effects (element-dummy) weighted Boltzmann design*
+
+**Definitions**
+- `gMean` — Weighted group mean.
+- `withinCross` — Weighted within-group cross product.
+- `withinSS` — Weighted within-group sum of squares `SS_W = ∑_k w k * (x k − x̄_{grp k})²`, i.e.
+- `feSlope` — Fixed-effects (within-element) slope `β̂ = withinCross grp w x y / withinSS grp w x`: the weighted least-squares common slope of the model `y k = a (grp k) +…
+
+**Results**
+- `PURE-MATH` · `fe_identifiable_iff` — The common slope of a fixed-effects design is identifiable iff `SS_W > 0`.
+- `PURE-MATH` · `feSlope_add_smul` — The fixed-effects slope is linear in the ordinates.
+- `PURE-MATH` · `feSlope_isMin` — The fixed-effects estimator is the weighted least-squares fit.
+
 ## `ForwardMap.lean`  (CflibsFormal)
 *Part 4: the optically-thin forward map*
 
@@ -643,6 +678,7 @@ A result shows `own → published` when the two differ (with the definitions tha
 - `PURE-MATH` · `heteroSlopeBound_lt_global_witness` — NON-VACUITY / strict-improvement witness (the point of the whole module).
 - `PURE-MATH` · `nvP_heteroSlopeBound_value` — The physical witness's bound is genuinely non-zero: `heteroSlopeBound = 3/2`, so the preceding `example` is not a vacuous `|·| ≤ 0` statement.
 - `EXACT → REDUCED` · `nvP_slope_bias_eq_log` — The physical witness's slope bias is NOT zero — the `example` above is bracketed by two non-zero numbers, `0 < |Δβ| = |log (2/3)| ≤ 3/2`, not a `0 ≤ 3/2` col…  _[Tognoni 2010]_  (via `lineIntensity`)
+- `EXACT → REDUCED` · `affine_gA_observational_equiv` — Energy-affine gA gauge: observational equivalence.  _[Tognoni 2010]_  (via `lineIntensity`)
 
 ## `HydrogenStark.lean`  (CflibsFormal)
 *the hydrogen-line (Balmer) Stark electron-density diagnostic*
@@ -745,11 +781,29 @@ A result shows `own → published` when the two differ (with the definitions tha
 - `PURE-MATH` · `sound_estimators_agree` — Abstract agreement lemma.
 - `REDUCED` · `rawCompositionEstimator_sound` — Soundness of the raw estimator (constant-`emit` case).  _[Ciucci 1999]_
 
+## `IpdSahaInverse.lean`  (CflibsFormal)
+*the IPD-aware Saha inverse in log coordinates (frontier FT-02)*
+
+**Definitions**
+- `ipdLogMap` — Log-coordinate IPD-aware Saha inverse map `F(ℓ) = log a + b·exp(ℓ/2)`, with `ℓ = log n_e`.
+
+**Results**
+- `PURE-MATH` · `ipdLogMap_root_subsingleton` — At most one regular root of the IPD-aware inverse (FT-02 item 6).
+- `PURE-MATH` · `ipdLogMap_contracts` — The IPD inner loop contracts on an invariant half-line (FT-02 items 3-5).
+- `PURE-MATH` · `ipdInverse_twoPoint_sensitivity` — Two-point log-sensitivity bracket for the IPD-aware inverse (FT-02 item 7).
+
 ## `JointConvergence.lean`  (CflibsFormal)
 *the joint `(T, n_e)` outer-loop contraction (Frontier)*
 
+**Definitions**
+- `dampedMap` — Krasnoselskii–Mann damped map `u ↦ (1−λ)u + λ g(u)` (the pipeline uses `λ = 1/2`).
+
 **Results**
 - `REDUCED` · `jointConvergence` — The frozen-offset Model-B joint `(T, n_e)` outer loop contracts (`REDUCED`; Aguilera & Aragón 2007, Model B; Saha–Eggert (Griem)).  _[Aguilera & Aragón 2007]_
+- `PURE-MATH` · `dampedMap_lipschitz` — Derivative-window Lipschitz bound for the damped map.
+- `PURE-MATH` · `dampedMap_contracts` — Derivative-window certificate for a damped fixed-point iteration on an invariant box.
+- `PURE-MATH` · `tDamped_mobius_converges` — The T-damped Möbius iteration converges from every positive start when `0 < g < 1`.
+- `PURE-MATH` · `exists_weights_iff` — When a weighted row-sum gate exists for a 2×2 Lipschitz coupling (FT-01(d)).
 
 ## `JointIdentifiability.lean`  (CflibsFormal)
 *Part 7: joint (temperature, composition) identifiability*
@@ -759,6 +813,22 @@ A result shows `own → published` when the two differ (with the definitions tha
 
 **Results**
 - `EXACT → REDUCED` · `joint_identifiability` — Joint (temperature, composition) identifiability — discharging the `hTratio` caveat.  _[Ciucci 1999]_  (via `PlasmaParams`, `lineIntensity`)
+
+## `KernelLineExtraction.lean`  (CflibsFormal)
+*kernel least-squares line extraction under profile misspecification*
+
+**Results**
+- `PURE-MATH` · `kernelLS_error_linfty` — ℓ∞ error of kernel least-squares line extraction under a misspecified profile kernel.
+
+## `KirchhoffSource.lean`  (CflibsFormal)
+*Kirchhoff-consistent line opacity and the Planck source function*
+
+**Definitions**
+- `lineOpacity` — LTE line opacity with stimulated emission `κ = κ0 · n_l · (1 - exp (-x))`, where `x = hν/(k_B T)` and `κ0` is the abstract absorption coefficient per lower-l…
+- `lineEmissivity` — Line emissivity `ε = ε0 · n_u`, with `ε0 ∝ hν · A_ul · φ` kept abstract.
+
+**Results**
+- `EXACT` · `source_eq_planck` — Kirchhoff: the line source function is the Planck function.  _[Griem 1997]_
 
 ## `LadenburgReiche.lean`  (CflibsFormal)
 *the sharp Ladenburg–Reiche asymptotic equivalent*
@@ -912,6 +982,24 @@ A result shows `own → published` when the two differ (with the definitions tha
 - `EXACT → REDUCED` · `density_ratio_from_intensities_ofPerU` — Shared-`U` ratio theorem as a special case of the per-`U` one.  _[Ciucci 1999]_  (via `lineIntensity`)
 - `PURE-MATH` · `speciesComposition_ratio` — Composition ratio equals density ratio.
 - `EXACT → REDUCED` · `speciesComposition_ratio_from_intensities_perU` — Relative composition from intensities (per-species `U`).  _[Ciucci 1999]_  (via `lineIntensityPerU`)
+
+## `NoiseGainFloor.lean`  (CflibsFormal)
+*noise-gain floors for the Boltzmann slope and intercept difference*
+
+**Definitions**
+- `wMean` — Weighted mean `Ē_w = (∑_k w k * E k) / ∑_k w k` of the upper-level energies `E` with line weights `w` (in the noise reading, `w k = 1/σ_k²`, the inverse vari…
+- `wSS` — Weighted centred sum of squares `wSS = ∑_k w k * (E k − Ē_w)²`, the weighted energy spread of the Boltzmann plot.
+- `wlsWeight` — Weighted-least-squares slope weight `ω_k = w k * (E k − Ē_w) / wSS`.
+- `pooledSS` — Pooled within-species energy spread `SS = SS_a + SS_b`, with `SS_a = ∑_k (Ea k − mean Ea)²` over the lines of species `a` and `SS_b` likewise for species `b`…
+- `commonSlope` — Common (shared) slope of two Boltzmann plots with separate intercepts: each species' energies and ordinates are centred on that species' own means and one sl…
+- `interceptDiff` — Intercept difference `d̂ = (ȳ_a − β̂ Ē_a) − (ȳ_b − β̂ Ē_b)` of the common-slope fit: the fitted intercept of species `a` minus that of species `b`.
+- `idWeightA` — Weight of species-`a` line `k` in `d̂`: `1/n_a − (Ē_a − Ē_b)(Ea k − Ē_a)/SS`, where `n_a = card ιa`.
+- `idWeightB` — Weight of species-`b` line `k` in `d̂`: `−1/n_b − (Ē_a − Ē_b)(Eb k − Ē_b)/SS`, where `n_b = card ιb`.
+
+**Results**
+- `PURE-MATH` · `gMean_const_eq_wMean` — The weighted mean is the one-group `gMean`.
+- `PURE-MATH` · `wls_min_noiseGain` — WLS attains the minimum noise gain among linear unbiased slope estimators.
+- `PURE-MATH` · `interceptDiff_noiseGain` — The common-slope intercept difference is linear with noise gain `1/n_a + 1/n_b + (Ē_a − Ē_b)²/(SS_a + SS_b)`.
 
 ## `NoiseToComposition.lean`  (CflibsFormal)
 *the end-to-end noise → composition chain (gap #5, the composed bound)*
@@ -1131,6 +1219,7 @@ A result shows `own → published` when the two differ (with the definitions tha
 - `REDUCED → APPROXIMATION` · `thickLineIntensity_ratio_strictAntiOn_density` — THE TWO-LINE PAYOFF, at the bound `τ`.  _[Cristoforetti–Tognoni 2013]_  (via `selfAbsorbedIntensity`)
 - `REDUCED → APPROXIMATION` · `thickLineIntensity_ratio_injOn_density` — Injectivity of the measured two-line ratio in the density — flat kernel only.  _[Cristoforetti–Tognoni 2013]_  (via `selfAbsorbedIntensity`)
 - `REDUCED → APPROXIMATION` · `boundOpticalDepth_lumped_alias` — Binding `τ` to `(T, N)` does NOT by itself break the density alias.  _[Gornushkin 1999]_  (via `selfAbsorbedIntensity`)
+- `REDUCED` · `perLine_tauRatio` — Per-line optical-depth ratio.  _[Griem 1997]_
 
 ## `OuterLoopModelB.lean`  (CflibsFormal)
 *the outer temperature iteration, Model B headline (Frontier 04)*
@@ -1204,6 +1293,21 @@ A result shows `own → published` when the two differ (with the definitions tha
 - `EXACT` · `rtFormal_sandwich` — The continuous sandwich (exact).  _[Gornushkin 1999]_
 - `PURE-MATH` · `rtFormalLinear` — Linear (Eddington–Barbier) source — exact evaluation.
 
+## `RatioModeSensitivity.lean`  (CflibsFormal)
+*Ratio-mode sensitivity to the assumed temperature*
+
+**Results**
+- `PURE-MATH` · `ratioEstimate_hasDerivAt` — Exact `β`-derivative of the two-stage ratio-mode log-ratio.
+
+## `RefuseToReport.lean`  (CflibsFormal)
+*the refuse-to-report policy (certified abstention)*
+
+**Definitions**
+- `pasPolicy` — Three-branch refuse-to-report policy: weighted PAS value.
+
+**Results**
+- `PURE-MATH` · `pasPolicy_guarantees` — Guarantees of the three-branch refuse-to-report policy (weighted).
+
 ## `Robustness.lean`  (CflibsFormal)
 *Robustness / error-propagation bounds*
 
@@ -1252,6 +1356,7 @@ A result shows `own → published` when the two differ (with the definitions tha
 - `dampedMultiElementIter` — Damped (Krasnoselskii–Mann / averaged) closure iteration.
 - `outerMap` — Abstract outer-iteration self-map (`PURE-MATH`).
 - `jointOuterMap` — Joint (T, n_e) outer self-map (`PURE-MATH`).
+- `neutralityNewton` — Newton map for multi-element charge neutrality.
 
 **Results**
 - `PURE-MATH` · `sahaEquilibriumNe_pos` — Positivity of the self-consistent density.
@@ -1288,6 +1393,10 @@ A result shows `own → published` when the two differ (with the definitions tha
 - `PURE-MATH` · `jointOuterMap_contraction` — One-step max-metric contraction with the row-sum constant (`PURE-MATH`).
 - `PURE-MATH` · `jointOuterMap_geometric_error` — Geometric error decay of the joint iterates (`PURE-MATH`).
 - `PURE-MATH` · `jointOuterContraction_box` — Joint (T, n_e) outer loop contracts — the 2-D box Banach theorem (`PURE-MATH`).
+- `PURE-MATH` · `neutralityNewton_error_eq` — Exact error identity for the neutrality Newton step.
+- `PURE-MATH` · `neutralityNewton_le_root` — The neutrality Newton step lands at or below the root.
+- `PURE-MATH` · `neutralityNewton_nonneg` — The neutrality Newton step stays on the physical half-line.
+- `PURE-MATH` · `neutralityNewton_enclosure` — One Newton step brackets the charge-neutrality root from both sides (FT-17).
 
 ## `SahaInverse.lean`  (CflibsFormal)
 *Part 6: coupling Saha into the inverse problem*
@@ -1314,6 +1423,7 @@ A result shows `own → published` when the two differ (with the definitions tha
 
 **Definitions**
 - `sahaFactorLipConst` — Explicit `T`-Lipschitz constant for `sahaFactor` on a box `[Tmin, Tmax]` (`REDUCED`, Saha–Eggert (Griem)).
+- `meanExcitation` — Boltzmann-weighted mean excitation energy `⟨E⟩_T = (∑ₖ gₖ·Eₖ·exp(−Eₖ/(k_B T))) / U(T)`: the mean level energy under the LTE level populations of `population`…
 
 **Results**
 - `PURE-MATH` · `saha_ratio_cancel` — Ratio-cancellation core (PURE-MATH).
@@ -1327,6 +1437,11 @@ A result shows `own → published` when the two differ (with the definitions tha
 - `PURE-MATH` · `partitionFunction_mono_temp` — Monotonicity of the partition function in `T` (PURE-MATH).
 - `EXACT → REDUCED` · `sahaFactor_strictMonoOn_temp` — Saha-factor strict monotonicity in temperature (M4; EXACT relation, published REDUCED via `sahaFactor`; Saha–Eggert (Griem)).  _[Saha–Eggert (Griem)]_  (via `sahaFactor`)
 - `EXACT → REDUCED` · `electronDensityFromRatio_strictMonoOn_temp` — Electron-density `n_e = S(T)/R` strict monotonicity in temperature (M5; EXACT relation, published REDUCED via `sahaFactor`; Saha–Eggert (Griem)).  _[Saha–Eggert (Griem)]_  (via `sahaFactor`)
+- `PURE-MATH` · `partitionFunction_eq_mixture` — Bridge to `InhomogeneityBias`: the partition function is a `mixture`.
+- `PURE-MATH` · `meanExcitation_eq_tiltMean` — Bridge to `InhomogeneityBias`: the mean excitation energy is a `tiltMean`.
+- `PURE-MATH` · `meanExcitation_monotoneOn_temp` — The mean excitation energy is nondecreasing in temperature (FT-15).
+- `PURE-MATH` · `log_partitionFunction_lipschitz_max` — Log-Lipschitz bound for the partition function in inverse temperature (FT-15).
+- `EXACT → REDUCED` · `sahaEquilibriumNe_strictMonoOn_temp` — Equilibrium electron density strictly increasing in temperature (Frontier 02, M6).  _[Saha–Eggert (Griem)]_  (via `sahaFactor`)
 
 ## `SelfAbsorption.lean`  (CflibsFormal)
 *self-absorption / optical-thickness-aware forward map*
@@ -1347,6 +1462,7 @@ A result shows `own → published` when the two differ (with the definitions tha
 - `EXACT → APPROXIMATION` · `slabIntensity_eq_thin_mul_SA` — Curve-of-growth identity (DERIVED, not definitional).  _[Gornushkin 1999]_  (via `selfAbsorptionFactor`)
 - `EXACT → APPROXIMATION` · `selfAbsorbedIntensity_eq_slab` — The model intensity is a slab intensity at a single optical depth.  _[Gornushkin 1999]_  (via `selfAbsorbedIntensity`)
 - `PURE-MATH` · `lineIntensity_eq_selfAbsorbedIntensity_div` — Model left-inverse of the flat-profile correction.
+- `REDUCED → APPROXIMATION` · `olsSlope_selfAbsorbed_ge` — If optical depth falls with upper-level energy, self-absorption can only raise the Boltzmann-plot slope.  _[Gornushkin 1999]_  (via `selfAbsorptionFactor`)
 
 ## `SelfAbsorptionInverse.lean`  (CflibsFormal)
 *Self-absorption coupled into the inverse problem — identifiability preserved vs. lost*
@@ -1424,6 +1540,7 @@ A result shows `own → published` when the two differ (with the definitions tha
 - `REDUCED` · `starkDensity_biased_high` — Bias direction of the Stark diagnostic under opacity broadening.  _[Griem 1974]_
 - `REDUCED` · `starkDensity_div_budget_le` — The opacity budget bounds the true density from below.  _[Griem 1974]_
 - `REDUCED` · `starkDensity_brackets_true` — Two-sided bracket for the true electron density.  _[Griem 1974]_
+- `REDUCED` · `stark_bracket_rho` — Stark electron-density bracket with a Stark-parameter grade and an opacity budget.  _[Griem 1974]_
 - `REDUCED` · `stark_lte_gate_one_directional` — The shipped LTE gate is one-directional (NEGATIVE result).  _[Cristoforetti 2010]_
 - `REDUCED` · `starkOpacity_certificate_sound` — Soundness of the repaired certificate.  _[Cristoforetti 2010]_
 - `PURE-MATH` · `starkOpacityLteCert_imp_mcWhirterCert` — The repaired certificate is a tightening, not a weakening.

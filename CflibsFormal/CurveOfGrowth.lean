@@ -294,7 +294,9 @@ the flat (rectangular-profile / line-centre) kernel on both lines, one shared `S
 shared column density `n`. In the audit probes the profile-resolved Voigt pair ratio is
 non-monotone inside line-centre depths `≤ 30` for the Stark-affected profiles probed
 (`γ/σ = 0.1, 0.3, 0.93`; module scope block), so this injectivity does not transfer to such
-lines. It is also not a relative composition: `n` belongs to one species. -/
+lines. A machine-checked counterexample for a two-step profile is
+`stepProfile_pairRatio_not_injOn` (`EquivalentWidth`). It is also not a relative composition:
+`n` belongs to one species. -/
 theorem cogRatio_injOn {w₁ w₂ : ℝ} (hw : w₂ < w₁) (hw₂ : 0 < w₂) :
     Set.InjOn (fun n => cogRatio w₁ w₂ n) (Set.Ioi 0) :=
   (cogRatio_strictAntiOn hw hw₂).injOn

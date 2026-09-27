@@ -29,6 +29,16 @@ data see the *Base* column of [`module-reference.md`](module-reference.md).
 - **Layering rule:** shared physics / inverse machinery lives in `CflibsFormal`; new *alternative*
   estimators go under `CflibsFormal.Alt`. See `CONTEXT.md` for the full architecture and the design
   decisions behind this split.
+- **Frontier landings (2026-09-27).** Eight shared-core modules came from the 2026-09-24 audit's
+  frontier theorems. Six are *Base* (Mathlib only): `IpdSahaInverse` (the IPD-aware Saha
+  inverse), `FixedEffectsDesign` (the element-dummy Saha–Boltzmann design), `KernelLineExtraction`
+  (line extraction under profile misspecification), `RefuseToReport` (the certified-abstention
+  policy), `RatioModeSensitivity` (the ratio-mode log-ratio derivative) and `KirchhoffSource`
+  (Kirchhoff's law for the opacity with stimulated emission). Two build on the core:
+  `NoiseGainFloor` (imports `OLS`, `FixedEffectsDesign`) and `EscapeFactor` (imports
+  `SelfAbsorption`, `EquivalentWidth`, `CurveOfGrowth`). The other landings extend existing
+  modules; `SahaStability` now also imports `InhomogeneityBias` and `SahaEquilibrium`,
+  `SelfAbsorption` imports `OLS`, and `Alt/NeutralityScale` imports `MultiSpecies`.
 
 ## Rendering the full graph
 

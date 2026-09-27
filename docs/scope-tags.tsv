@@ -8,6 +8,9 @@ Boltzmann.lean	partitionFunction_pos	PURE-MATH	—
 Boltzmann.lean	population_sum	EXACT	Boltzmann
 Boltzmann.lean	boltzmann_plot	EXACT	Boltzmann
 Boltzmann.lean	temperature_from_two_levels	EXACT	Boltzmann
+Boltzmann.lean	partitionFunction_eq_cut_add_tail	PURE-MATH	—
+Boltzmann.lean	partitionFunctionCut_pos	PURE-MATH	—
+Boltzmann.lean	cutRatio_strictMonoOn_temp	PURE-MATH	—
 Saha.lean	thermalBracket_pos	PURE-MATH	—
 Saha.lean	sahaFactor_pos	PURE-MATH	—
 Saha.lean	sahaFactor	REDUCED	Saha–Eggert (Griem)
@@ -26,6 +29,11 @@ SahaStability.lean	partitionFunction_upper_growth	PURE-MATH	—
 SahaStability.lean	partitionFunction_mono_temp	PURE-MATH	—
 SahaStability.lean	sahaFactor_strictMonoOn_temp	EXACT	Saha–Eggert (Griem)
 SahaStability.lean	electronDensityFromRatio_strictMonoOn_temp	EXACT	Saha–Eggert (Griem)
+SahaStability.lean	partitionFunction_eq_mixture	PURE-MATH	—
+SahaStability.lean	meanExcitation_eq_tiltMean	PURE-MATH	—
+SahaStability.lean	meanExcitation_monotoneOn_temp	PURE-MATH	—
+SahaStability.lean	log_partitionFunction_lipschitz_max	PURE-MATH	—
+SahaStability.lean	sahaEquilibriumNe_strictMonoOn_temp	EXACT	Saha–Eggert (Griem)
 SahaEquilibrium.lean	sahaEquilibriumNe_pos	PURE-MATH	—
 SahaEquilibrium.lean	sahaEquilibriumNe_selfConsistent	REDUCED	Saha–Eggert (Griem)
 SahaEquilibrium.lean	sahaEquilibriumNe_lt_totalDensity	PURE-MATH	—
@@ -60,6 +68,10 @@ SahaEquilibrium.lean	jointOuterMap_mapsTo	PURE-MATH	—
 SahaEquilibrium.lean	jointOuterMap_contraction	PURE-MATH	—
 SahaEquilibrium.lean	jointOuterMap_geometric_error	PURE-MATH	—
 SahaEquilibrium.lean	jointOuterContraction_box	PURE-MATH	—
+SahaEquilibrium.lean	neutralityNewton_error_eq	PURE-MATH	—
+SahaEquilibrium.lean	neutralityNewton_le_root	PURE-MATH	—
+SahaEquilibrium.lean	neutralityNewton_nonneg	PURE-MATH	—
+SahaEquilibrium.lean	neutralityNewton_enclosure	PURE-MATH	—
 OuterLoopModelB.lean	outerLoop_contracts	REDUCED	Aguilera & Aragón 2007
 PartitionLipschitz.lean	partitionFunction_two_point_bound	REDUCED	Tognoni 2010
 PartitionLipschitz.lean	partitionFunction_lipschitz_temp	REDUCED	Tognoni 2010
@@ -106,6 +118,7 @@ Closure.lean	composition_nonneg	PURE-MATH	—
 Closure.lean	composition_le_one	PURE-MATH	—
 Closure.lean	composition_mem_stdSimplex	EXACT	Ciucci 1999
 Closure.lean	composition_smul_invariant	EXACT	Ciucci 1999
+Closure.lean	ratio_mode_normalization_invariant	PURE-MATH	—
 ForwardMap.lean	lineIntensity	REDUCED	Ciucci 1999
 ForwardMap.lean	lineIntensity_pos	PURE-MATH	—
 ForwardMap.lean	boltzmann_plot_intensity	REDUCED	Ciucci 1999
@@ -146,6 +159,7 @@ AtomicDataPerturbation.lean	classicDensity_temperature_aliasing	EXACT	Tognoni 20
 AtomicDataPerturbation.lean	classicDensity_aliasing_error_energy	REDUCED	Tognoni 2010
 AtomicDataPerturbation.lean	classicDensity_temperature_aliasing_error	REDUCED	Tognoni 2010
 AtomicDataPerturbation.lean	classicComposition_temperature_error	REDUCED	Tognoni 2010
+AtomicDataPerturbation.lean	classicComposition_atomicData_error_rel	REDUCED	Tognoni 2010
 Identifiability.lean	density_identifiability	EXACT	Ciucci 1999
 Identifiability.lean	electron_density_identifiability	EXACT	Saha–Eggert (Griem)
 Inverse.lean	PlasmaParams	REDUCED	Ciucci 1999
@@ -207,6 +221,7 @@ SelfAbsorption.lean	slabIntensity_le_thin	EXACT	Gornushkin 1999
 SelfAbsorption.lean	slabIntensity_eq_thin_mul_SA	EXACT	Gornushkin 1999
 SelfAbsorption.lean	selfAbsorbedIntensity_eq_slab	EXACT	Gornushkin 1999
 SelfAbsorption.lean	lineIntensity_eq_selfAbsorbedIntensity_div	PURE-MATH	—
+SelfAbsorption.lean	olsSlope_selfAbsorbed_ge	REDUCED	Gornushkin 1999
 SelfAbsorptionInverse.lean	lineIntensity_smul_left	PURE-MATH	—
 SelfAbsorptionInverse.lean	thick_density_identifiability	EXACT	Bulajic 2002
 SelfAbsorptionInverse.lean	thick_composition_identifiability	EXACT	Bulajic 2002
@@ -386,6 +401,7 @@ NonLTEKinetics.lean	abs_log_departure_le	PURE-MATH	—
 NonLTEKinetics.lean	nonlte_temp_error	REDUCED	Cristoforetti 2010
 NonLTEKinetics.lean	nonlte_density_error	REDUCED	Cristoforetti 2010
 NonLTEKinetics.lean	nonlte_temp_error_uniform	REDUCED	Cristoforetti 2010
+Alt/OLSVariance.lean	betaHat	REDUCED	Gauss–Markov
 Alt/OLSVariance.lean	olsSlope_estimator_eq	PURE-MATH	—
 Alt/OLSVariance.lean	expectation_const_add_weightedNoise	PURE-MATH	—
 Alt/OLSVariance.lean	variance_const_add_weightedNoise	PURE-MATH	—
@@ -457,6 +473,10 @@ EquivalentWidth.lean	equivWidth_lorentzian_scaled	EXACT	Gornushkin 1999
 EquivalentWidth.lean	integral_one_sub_exp_neg_inv_sq	PURE-MATH	—
 EquivalentWidth.lean	tendsto_integral_g_beta	PURE-MATH	—
 EquivalentWidth.lean	equivWidth_lorentzian_sqrt_sharp	EXACT	Ladenburg–Reiche 1913
+EquivalentWidth.lean	equivWidth_stepProfile	PURE-MATH	—
+EquivalentWidth.lean	stepW_pairRatio_not_injOn	PURE-MATH	—
+EquivalentWidth.lean	stepProfile_pairRatio_not_injOn	PURE-MATH	Gornushkin 1999
+Alt/StochasticBudget.lean	alphaHat	REDUCED	Gauss–Markov
 Alt/StochasticBudget.lean	alphaHat_estimator_eq	PURE-MATH	—
 Alt/StochasticBudget.lean	betaHat_memLp_two	PURE-MATH	—
 Alt/StochasticBudget.lean	olsSlope_chebyshev	REDUCED	Gauss–Markov
@@ -470,6 +490,7 @@ Alt/StochasticBudget.lean	density_event_subset	PURE-MATH	—
 Alt/StochasticBudget.lean	density_tail_species	REDUCED	Tognoni 2010
 Alt/StochasticBudget.lean	composition_tail_union	REDUCED	Tognoni 2010
 Alt/StochasticBudget.lean	olsSlope_subGaussian_tail	REDUCED	—
+Alt/StochasticBudget.lean	olsSlope_subGaussian_tail_hetero	REDUCED	—
 Certificates.lean	energySpread_certificate_sound	REDUCED	Tognoni 2010
 Certificates.lean	jointRank_certificate_sound	REDUCED	Aguilera & Aragón 2007
 Certificates.lean	conditioning_certificate_sound	PURE-MATH	—
@@ -493,6 +514,7 @@ TwoDCOS.lean	asyncMatrix_singleDriver_zero	PURE-MATH	—
 AitchisonIsometry.lean	clrE_mem	PURE-MATH	—
 AitchisonIsometry.lean	ilr_isometry	PURE-MATH	—
 AitchisonIsometry.lean	ilr_inner	PURE-MATH	—
+AitchisonIsometry.lean	aitchisonDist_le_logErr	PURE-MATH	—
 TwoDCOSOrder.lean	B_eq_sum	PURE-MATH	—
 TwoDCOSOrder.lean	B_antisymm	PURE-MATH	—
 TwoDCOSOrder.lean	B_add_left	PURE-MATH	—
@@ -560,6 +582,10 @@ SahaRangeEnclosure.lean	sahaFactor_mem_Icc	EXACT	Saha–Eggert (Griem)
 SahaRangeEnclosure.lean	electronDensityFromRatio_mem_Icc	EXACT	Saha–Eggert (Griem)
 SahaRangeEnclosure.lean	outerLoop_contracts_apriori	REDUCED	Aguilera & Aragón 2007
 JointConvergence.lean	jointConvergence	REDUCED	Aguilera & Aragón 2007
+JointConvergence.lean	dampedMap_lipschitz	PURE-MATH	—
+JointConvergence.lean	dampedMap_contracts	PURE-MATH	—
+JointConvergence.lean	tDamped_mobius_converges	PURE-MATH	—
+JointConvergence.lean	exists_weights_iff	PURE-MATH	—
 LineSelection.lean	energySpread_nonneg	PURE-MATH	—
 LineSelection.lean	energySpreadCert_iff	PURE-MATH	—
 LineSelection.lean	slopeVariance_le_of_spread_ge	PURE-MATH	—
@@ -587,6 +613,7 @@ StarkOpacityGuard.lean	stark_lte_gate_one_directional	REDUCED	Cristoforetti 2010
 StarkOpacityGuard.lean	starkOpacity_certificate_sound	REDUCED	Cristoforetti 2010
 StarkOpacityGuard.lean	starkOpacityLteCert_imp_mcWhirterCert	PURE-MATH	—
 StarkOpacityGuard.lean	stark_lte_gate_sound_of_opticallyThin	REDUCED	Cristoforetti 2010
+StarkOpacityGuard.lean	stark_bracket_rho	REDUCED	Griem 1974
 OpticalDepth.lean	opticalDepth_eq_linear	PURE-MATH	—
 OpticalDepth.lean	opticalDepth	REDUCED	Gornushkin 1999
 OpticalDepth.lean	opticalDepth_eq_csigma	PURE-MATH	—
@@ -605,6 +632,7 @@ OpticalDepth.lean	thickLineIntensity_injOn	REDUCED	Gornushkin 1999
 OpticalDepth.lean	no_density_alias_of_boundOpticalDepth	REDUCED	Gornushkin 1999
 OpticalDepth.lean	csigma_density_droop_bound	APPROXIMATION	Aragón & Aguilera 2014
 OpticalDepth.lean	csigma_density_injOn	APPROXIMATION	Aragón & Aguilera 2014
+KirchhoffSource.lean	source_eq_planck	EXACT	Griem 1997
 DoubletChannel.lean	doubletRatio	APPROXIMATION	Gornushkin 1999
 DoubletChannel.lean	doubletRatio_eq_cogRatio	PURE-MATH	—
 DoubletChannel.lean	doubletRatio_eq_inv_cogRatio	PURE-MATH	—
@@ -703,6 +731,7 @@ OpticalDepthBridge.lean	thickLineIntensity_ratio_eq_source_mul_cogRatio	REDUCED	
 OpticalDepthBridge.lean	thickLineIntensity_ratio_strictAntiOn_density	REDUCED	Cristoforetti–Tognoni 2013
 OpticalDepthBridge.lean	thickLineIntensity_ratio_injOn_density	REDUCED	Cristoforetti–Tognoni 2013
 OpticalDepthBridge.lean	boundOpticalDepth_lumped_alias	REDUCED	Gornushkin 1999
+OpticalDepthBridge.lean	perLine_tauRatio	REDUCED	Griem 1997
 OpacityBroadening.lean	emergentProfile_half_iff	REDUCED	Gornushkin 1999
 OpacityBroadening.lean	coreHalfLevel_lt_half	REDUCED	Gornushkin 1999
 OpacityBroadening.lean	coreHalfLevel_le_half	REDUCED	Gornushkin 1999
@@ -765,8 +794,24 @@ HeteroAtomicData.lean	temp_rel_error_atomicData_hetero	REDUCED	Tognoni 2010
 HeteroAtomicData.lean	heteroSlopeBound_lt_global_witness	PURE-MATH	—
 HeteroAtomicData.lean	nvP_heteroSlopeBound_value	PURE-MATH	—
 HeteroAtomicData.lean	nvP_slope_bias_eq_log	EXACT	Tognoni 2010
+HeteroAtomicData.lean	affine_gA_observational_equiv	EXACT	Tognoni 2010
 Alt/NeutralityScale.lean	neutralityScale_eq_Fcal	EXACT	Ciucci 1999
 Alt/NeutralityScale.lean	neutralityScale_undetected	EXACT	Ciucci 1999
 Alt/NeutralityScale.lean	closureEstimate_bias	EXACT	Tognoni 2010
 Alt/NeutralityScale.lean	lineIntensity_linear	EXACT	Ciucci 1999
 Alt/NeutralityScale.lean	lineIntensity_ratio	EXACT	Ciucci 1999
+Alt/NeutralityScale.lean	neutrality_closure_same_ratio	EXACT	Tognoni 2010
+IpdSahaInverse.lean	ipdLogMap_root_subsingleton	PURE-MATH	—
+IpdSahaInverse.lean	ipdLogMap_contracts	PURE-MATH	—
+IpdSahaInverse.lean	ipdInverse_twoPoint_sensitivity	PURE-MATH	—
+FixedEffectsDesign.lean	fe_identifiable_iff	PURE-MATH	—
+FixedEffectsDesign.lean	feSlope_add_smul	PURE-MATH	—
+FixedEffectsDesign.lean	feSlope_isMin	PURE-MATH	—
+NoiseGainFloor.lean	gMean_const_eq_wMean	PURE-MATH	—
+NoiseGainFloor.lean	wls_min_noiseGain	PURE-MATH	—
+NoiseGainFloor.lean	interceptDiff_noiseGain	PURE-MATH	—
+KernelLineExtraction.lean	kernelLS_error_linfty	PURE-MATH	—
+RefuseToReport.lean	pasPolicy_guarantees	PURE-MATH	—
+EscapeFactor.lean	inv_sub_inv_exp_sub_one_mem	PURE-MATH	—
+EscapeFactor.lean	escape_ge_slab	PURE-MATH	—
+RatioModeSensitivity.lean	ratioEstimate_hasDerivAt	PURE-MATH	—

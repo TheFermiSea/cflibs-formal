@@ -236,8 +236,8 @@ Gates 1–4 are automated in CI (`.github/workflows/lean_action_ci.yml`).
 
 ## Status
 
-82 modules, 756 named results (theorem/lemma) + 219 defs (counts via `scripts/stats.sh`,
-2026-09-25). CI gates: axiom-cleanliness (`tools/`), style/structure lint (`runLinter`),
+90 modules, 799 named results (theorem/lemma) + 241 defs (counts via `scripts/stats.sh`,
+2026-09-27). CI gates: axiom-cleanliness (`tools/`), style/structure lint (`runLinter`),
 docs-sync + scope-tag completeness (`scripts/gen-docs.sh`), import-hygiene (`scripts/stats.sh`),
 the declaration-granular scope gate (`lake exe scope-check`, which also checks that the published
 tags in `docs/scope-published.tsv` are current), and the module-level scope-consistency advisory
@@ -246,7 +246,8 @@ The original **~186-result corpus** was adversarially validated (verdict: sound-
 zero blockers; all findings fixed) and given a whole-corpus **literature-validity audit**
 (`reviews/literature-validity-audit.md`): 69 faithful / 33 reduced / 5 idealized / 78 pure-math,
 **0 divergent, 0 unverified citations, 1 minor docstring over-reach (fixed)**. Subsequent additions
-to the current 756-result corpus (the frontier and architectural-review deepening sweeps) are
+to the corpus since then (756 results by 2026-09-25, 799 by 2026-09-27: the frontier and
+architectural-review deepening sweeps and the frontier landings) are
 individually author-plus-independent-audit reviewed rather than re-covered by that one-time audit.
 The 2026-09-24 deep audit later corrected several citations (wrong authors, a title with no
 bibliographic record, wrong metadata); the current per-citation status, and whether a primary

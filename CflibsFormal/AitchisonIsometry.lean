@@ -29,6 +29,9 @@ typing guard that makes the word "isometry" meaningful):
 * `ilr_isometry` (**headline**): `‖ilr x − ilr y‖ = aitchisonDist x y` — ilr realises the
   Aitchison distance exactly, because `ilrBasis.repr` is linear and norm-preserving.
 * `ilr_inner` — the companion inner-product-preservation corollary.
+* `aitchisonDist_le_logErr` — for positive compositions, `d_A(y, x)` is at most
+  `√(∑ s, (log (y s / x s) − c)²)` for every constant `c`: per-species log-ratio error bounds
+  certify an Aitchison-loss bound (the `U` of `RefuseToReport.pasPolicy`).
 
 ## Literature and scope
 
@@ -145,5 +148,74 @@ example : aitchisonDist (![1, 2, 4] : Fin 3 → ℝ) ![1, 1, 1] ≠ 0 :=
 `y = (1,1,1)` — the ilr images are genuinely distinct. -/
 example : ‖ilr (![1, 2, 4] : Fin 3 → ℝ) - ilr ![1, 1, 1]‖ ≠ 0 := by
   rw [ilr_isometry]; exact aitchisonDist_neutral_ne_zero
+
+/-! ## Log-error certificate for the Aitchison distance (frontier FT-03) -/
+
+omit [Nonempty ι] in
+/-- The Aitchison distance as the Euclidean norm of the clr difference. -/
+private theorem aitchisonDist_eq_sqrt (x y : ι → ℝ) :
+    aitchisonDist y x = Real.sqrt (∑ s, (clr y s - clr x s) ^ 2) := by
+  rw [aitchisonDist, EuclideanSpace.norm_eq]
+  congr 1
+  refine Finset.sum_congr rfl fun s _ => ?_
+  simp [clrE, Real.norm_eq_abs, sq_abs]
+
+omit [Nonempty ι] in
+/-- A clr difference is the log-ratio `log (y s / x s)` minus its mean over the parts. -/
+private theorem clr_sub_eq_centered_log {x y : ι → ℝ} (hx : ∀ k, 0 < x k)
+    (hy : ∀ k, 0 < y k) (s : ι) :
+    clr y s - clr x s
+      = Real.log (y s / x s) - (∑ j, Real.log (y j / x j)) / (Fintype.card ι : ℝ) := by
+  simp only [clr, Real.log_div (hy _).ne' (hx _).ne', Finset.sum_sub_distrib]
+  ring
+
+omit [Nonempty ι] in
+/-- Centering at the mean minimizes the sum of squares: no other center `c` does better. -/
+private theorem sum_sq_centered_le [Nonempty ι] (e : ι → ℝ) (c : ℝ) :
+    ∑ s, (e s - (∑ j, e j) / (Fintype.card ι : ℝ)) ^ 2 ≤ ∑ s, (e s - c) ^ 2 := by
+  have hD : (Fintype.card ι : ℝ) ≠ 0 := Nat.cast_ne_zero.mpr Fintype.card_ne_zero
+  set m := (∑ j, e j) / (Fintype.card ι : ℝ) with hm
+  have h0 : ∑ s, (e s - m) = 0 := by
+    rw [Finset.sum_sub_distrib, Finset.sum_const, Finset.card_univ, nsmul_eq_mul, hm]
+    field_simp
+    ring
+  have hsplit : ∑ s, (e s - c) ^ 2
+      = ∑ s, (e s - m) ^ 2 + 2 * (m - c) * ∑ s, (e s - m)
+        + (Fintype.card ι : ℝ) * (m - c) ^ 2 := by
+    rw [Finset.mul_sum, ← Finset.sum_add_distrib]
+    rw [show (Fintype.card ι : ℝ) * (m - c) ^ 2 = ∑ _s : ι, (m - c) ^ 2 by
+      rw [Finset.sum_const, Finset.card_univ, nsmul_eq_mul]]
+    rw [← Finset.sum_add_distrib]
+    exact Finset.sum_congr rfl fun s _ => by ring
+  rw [hsplit, h0, mul_zero, add_zero]
+  have : 0 ≤ (Fintype.card ι : ℝ) * (m - c) ^ 2 := by positivity
+  linarith
+
+omit [Nonempty ι] in
+/-- **Log-error certificate for the Aitchison distance.** For strictly positive compositions
+`x` (truth) and `y` (estimate) and **any** constant `c`,
+  `d_A(y, x) ≤ √(∑ s, (log (y s / x s) − c)²)`.
+Reason: with `e s = log (y s / x s)`, positivity gives `clr y s − clr x s = e s − ē` (`ē` the
+mean of `e`), so `d_A(y, x) = √(∑ s, (e s − ē)²)`, and centring minimises the sum of squares
+over constant shifts: `∑ (e − c)² = ∑ (e − ē)² + D·(ē − c)²` with `D = card ι`. The bound is
+sharp: `c = ē` gives equality, so it is not vacuous. Use: per-species log-error bounds
+`|log (y s / x s) − c| ≤ ε s` certify the loss upper bound `U = √(∑ ε s²)` consumed by the
+refuse-to-report policy (`RefuseToReport.pasPolicy_guarantees`); `c` absorbs any error common
+to all species (a total-density or calibration factor), to which `d_A` is blind.
+
+Hypotheses: `hx`, `hy` (strict positivity). `clr` uses `Real.log`, and Lean's `log 0 = 0` would
+silently give a zero component a finite clr coordinate; mathematically nonzero entries suffice,
+positivity is the compositional meaning, and zero replacement must happen before this applies.
+`[Nonempty ι]` makes `D ≥ 1`, so the mean `ē` is a genuine average.
+
+Scope: relation PURE-MATH; the definitions used (`clr`, `clrE`, `aitchisonDist`) carry no model
+tag; published PURE-MATH. clr and `d_A` after Aitchison 1986. -/
+theorem aitchisonDist_le_logErr [Nonempty ι] {x y : ι → ℝ} (hx : ∀ k, 0 < x k)
+    (hy : ∀ k, 0 < y k) (c : ℝ) :
+    aitchisonDist y x ≤ Real.sqrt (∑ s, (Real.log (y s / x s) - c) ^ 2) := by
+  rw [aitchisonDist_eq_sqrt]
+  apply Real.sqrt_le_sqrt
+  rw [Finset.sum_congr rfl fun s _ => by rw [clr_sub_eq_centered_log hx hy s]]
+  exact sum_sq_centered_le (fun s => Real.log (y s / x s)) c
 
 end CflibsFormal
