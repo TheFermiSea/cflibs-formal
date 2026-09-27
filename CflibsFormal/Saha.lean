@@ -64,7 +64,11 @@ The full Saha law then reads `(n_{z+1} · n_e)/n_z = S(T)`, equivalently
 `n_e = S(T) / (n_{z+1}/n_z)`.  The leading `2` is the free-electron spin
 degeneracy `g_e = 2` (the two `m_s = ±1/2` states); the exponent sign `−χ/(k_B T)`
 reflects that ionization *costs* energy `χ > 0`; the `(3/2)` power (via
-`Real.rpow`) is the thermal-de-Broglie volume scaling. -/
+`Real.rpow`) is the thermal-de-Broglie volume scaling.
+
+Model tag REDUCED (`docs/conventions.md` §8): this is the ideal, non-interacting Saha factor
+between two adjacent stages. It has no ionization-potential depression (`χ` is the free-atom
+value; decision D18) and uses the literal level sum with no cutoff policy (decision D17). -/
 noncomputable def sahaFactor (kB T me h chi : ℝ) (gZ EZ : ι → ℝ) (gZ1 EZ1 : κ → ℝ) : ℝ :=
   2 * (partitionFunction kB T gZ1 EZ1 / partitionFunction kB T gZ EZ)
     * (thermalBracket kB T me h) ^ (3 / 2 : ℝ)

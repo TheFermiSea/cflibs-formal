@@ -241,6 +241,7 @@ REDUCED in `docs/scope-tags.tsv`, so every result stated over it publishes at mo
   | `DoubletChannel` | `doubletRatio` | APPROXIMATION | the same flat kernel on both members of a multiplet pair, documented as the measured-intensity ratio |
   | `OpticalDepth` | `opticalDepth` | REDUCED | `τ = σ₀·ℓ·n_l`: a homogeneous single-temperature column with a flat line-centre cross-section (its docstring's own scope claim) |
   | `Alt/CSigmaCurveOfGrowth` | `csigmaOpticalDepth` | REDUCED | `τ = σ_ℓ·ℓ·C`: the same homogeneous-column optical depth, with a free cross-section (`OpticalDepth.opticalDepth_eq_csigma`) |
+  | `Saha` | `sahaFactor` | REDUCED | the ideal, non-interacting Saha factor between two adjacent stages: no ionization-potential depression (D18) and the literal level sum with no cutoff policy (D17). `electronDensityFromRatio` and `TemporalEvolution.gateSahaFactor` call it and inherit the tag. `partitionFunction` gets no row: a literal sum over a supplied finite level list is exact for that list, and the cutoff question is which levels the list holds |
 
   **Which definitions get a flat-kernel row.** A definition gets model tag APPROXIMATION when it
   is documented or used as the *frequency-integrated* line intensity with one optical depth for

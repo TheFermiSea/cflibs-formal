@@ -30,12 +30,14 @@ The chain is:
 
 ## Literature and scope
 
-Scope tag: **`sahaFactor_mem_Icc`, `electronDensityFromRatio_mem_Icc` = EXACT; **
-`outerLoop_contracts_apriori` = **REDUCED**. Citation: Saha–Eggert equilibrium, as presented by
-H. R. Griem, *Principles of Plasma Spectroscopy* (Cambridge, 1997), and used throughout the
-CF-LIBS thermometry of Aguilera & Aragón 2007. The two enclosure lemmas are exact-over-`ℝ`
-monotonicity facts about the Saha factor `S(T)` and the density reader `S(T)/R`; they carry no
-approximation.
+Scope tag: **`sahaFactor_mem_Icc`, `electronDensityFromRatio_mem_Icc` = EXACT relation,
+published REDUCED** (they are stated over `sahaFactor`, whose model tag is REDUCED: the ideal
+Saha factor with no ionization-potential depression and the literal level sum;
+`docs/conventions.md` §8); `outerLoop_contracts_apriori` = **REDUCED**. Citation: Saha–Eggert
+equilibrium, as presented by H. R. Griem, *Principles of Plasma Spectroscopy* (Cambridge, 1997),
+and used throughout the CF-LIBS thermometry of Aguilera & Aragón 2007. The two enclosure lemmas
+are exact-over-`ℝ` monotonicity facts about the Saha factor `S(T)` and the density reader
+`S(T)/R`; they add no approximation to that ideal Saha model.
 
 All three results carry the level-ceiling hypothesis `hEχ : ∀ k, EZ k ≤ chi`. It is a
 truncation obligation on the lower-stage level list, not a property of real atoms: the list must
@@ -61,8 +63,9 @@ namespace CflibsFormal
 open Finset Real
 open scoped NNReal BigOperators
 
-/-- **Saha-factor range enclosure (EXACT, Saha–Eggert (Griem)).** On a positive temperature box
-`[Tmin,Tmax]` (with `0 < Tmin`), the Saha factor `S(T)` at any interior/boundary temperature is
+/-- **Saha-factor range enclosure (EXACT relation, published REDUCED via `sahaFactor`;
+Saha–Eggert (Griem)).** On a positive temperature box `[Tmin,Tmax]` (with `0 < Tmin`), the Saha
+factor `S(T)` at any interior/boundary temperature is
 trapped between its two endpoint values. Immediate from the strict monotonicity of `S(·)` on
 `(0,∞)` (`sahaFactor_strictMonoOn_temp`, M4) demoted to `MonotoneOn`: all three of `Tmin`, `T`,
 `Tmax` lie in `Set.Ioi 0` (from `0 < Tmin ≤ T ≤ Tmax`), so `S Tmin ≤ S T ≤ S Tmax`. Requires the
@@ -84,8 +87,9 @@ theorem sahaFactor_mem_Icc {ι κ : Type*} [Fintype ι] [Fintype κ] [Nonempty �
   have hTmaxI : Tmax ∈ Set.Ioi (0 : ℝ) := Set.mem_Ioi.mpr (lt_of_lt_of_le hTmin (hTl.trans hTu))
   exact Set.mem_Icc.mpr ⟨hmono hTminI hTI hTl, hmono hTI hTmaxI hTu⟩
 
-/-- **Density-reader range enclosure (EXACT, Saha–Eggert (Griem)).** The Saha density diagnostic
-`n_e(T) = S(T)/R` inherits the endpoint enclosure of `S`: for a fixed measured stage ratio
+/-- **Density-reader range enclosure (EXACT relation, published REDUCED via `sahaFactor`;
+Saha–Eggert (Griem)).** The Saha density diagnostic `n_e(T) = S(T)/R` inherits the endpoint
+enclosure of `S`: for a fixed measured stage ratio
 `R > 0`, dividing the `sahaFactor_mem_Icc` bracket by `R` (order-preserving on `ℝ` since
 `0 ≤ R`) traps `n_e(T)` between `n_e(Tmin)` and `n_e(Tmax)`. Uses that
 `electronDensityFromRatio … R` is *defeq* to `sahaFactor … / R`. Carries the same level-truncation

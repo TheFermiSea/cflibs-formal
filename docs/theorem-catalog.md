@@ -11,7 +11,7 @@ A result shows `own → published` when the two differ (with the definitions tha
 
 **Own-tag mix** (756 results): **EXACT** 160 · **REDUCED** 227 · **APPROXIMATION** 4 · **PURE-MATH** 365
 
-**Published-tag mix** (756 results; 125 weakened by a model tag): **EXACT** 70 · **REDUCED** 256 · **APPROXIMATION** 65 · **PURE-MATH** 365
+**Published-tag mix** (756 results; 135 weakened by a model tag): **EXACT** 60 · **REDUCED** 266 · **APPROXIMATION** 65 · **PURE-MATH** 365
 
 `EXACT` = an exact theorem about the model it is stated over · `REDUCED` = exact only after a stated reduction (a dimensionless/lumped-factor form) · `APPROXIMATION` = the statement itself is approximate (documented idealization / limiting case) · `PURE-MATH` = infrastructure lemma, no physical claim. Classification cross-checked against `reviews/literature-validity-audit.md`.
 
@@ -71,13 +71,13 @@ A result shows `own → published` when the two differ (with the definitions tha
 - `PURE-MATH` · `csigmaDensity_offset_eq_classicDensity` — The C-sigma and classic density inverses are the SAME function (pointwise).
 - `PURE-MATH` · `csigmaComposition_eq_classicComposition` — The two estimators are the SAME function of the observations.
 - `PURE-MATH` · `csigma_agrees_classic` — Cross-method agreement on a measured spectrum (forward-data instance).
-- `EXACT → REDUCED` · `csigma_saha_master_line` — Cσ cross-stage master line (the Saha-coupled collapse).  _[Aguilera & Aragón 2007]_  (via `lineIntensity`)
-- `EXACT → REDUCED` · `csigma_cross_stage_collapse` — Neutral and ionic lines share one line.  _[Aguilera & Aragón 2007]_  (via `lineIntensity`)
+- `EXACT → REDUCED` · `csigma_saha_master_line` — Cσ cross-stage master line (the Saha-coupled collapse).  _[Aguilera & Aragón 2007]_  (via `lineIntensity`, `sahaFactor`)
+- `EXACT → REDUCED` · `csigma_cross_stage_collapse` — Neutral and ionic lines share one line.  _[Aguilera & Aragón 2007]_  (via `lineIntensity`, `sahaFactor`)
 - `EXACT → REDUCED` · `csigma_master_olsSlope` — Multi-line temperature from the Cσ master line.  _[Aguilera & Aragón 2007]_  (via `lineIntensity`)
-- `EXACT → REDUCED` · `csigma_temperature_cross_stage` — Cross-stage two-line temperature (the Saha–Boltzmann diagnostic).  _[Aguilera & Aragón 2007]_  (via `lineIntensity`)
+- `EXACT → REDUCED` · `csigma_temperature_cross_stage` — Cross-stage two-line temperature (the Saha–Boltzmann diagnostic).  _[Aguilera & Aragón 2007]_  (via `lineIntensity`, `sahaFactor`)
 - `EXACT → REDUCED` · `csigma_universal_line` — The Cσ universal line.  _[Aragón & Aguilera 2014]_  (via `lineIntensity`)
 - `EXACT → REDUCED` · `csigma_universal_indep_species` — Universal-line element independence.  _[Aragón & Aguilera 2014]_  (via `lineIntensity`)
-- `EXACT → REDUCED` · `csigma_saha_universal_line` — The universal line spans both stages.  _[Aguilera & Aragón 2007]_  (via `lineIntensity`)
+- `EXACT → REDUCED` · `csigma_saha_universal_line` — The universal line spans both stages.  _[Aguilera & Aragón 2007]_  (via `lineIntensity`, `sahaFactor`)
 
 ## `Alt/CSigmaCurveOfGrowth.lean`  (CflibsFormal.Alt)
 *The Cσ curve of growth — self-absorption droop below the universal line*
@@ -666,7 +666,7 @@ A result shows `own → published` when the two differ (with the definitions tha
 - `EXACT → REDUCED` · `temperature_degeneracy` — Degeneracy converse — equal energies make the ratio `T`-independent.  _[Ciucci 1999]_  (via `lineIntensity`)
 - `EXACT → REDUCED` · `temperature_not_identifiable_of_degenerate` — Degenerate pair ⇒ temperature NOT identifiable.  _[Ciucci 1999]_  (via `lineIntensity`)
 - `EXACT → REDUCED` · `density_identifiability` — Target 2 — relative-density / composition identifiability.  _[Ciucci 1999]_  (via `lineIntensity`)
-- `EXACT` · `electron_density_identifiability` — Target 3 — electron-density / stage-ratio identifiability via Saha.  _[Saha–Eggert (Griem)]_
+- `EXACT → REDUCED` · `electron_density_identifiability` — Target 3 — electron-density / stage-ratio identifiability via Saha.  _[Saha–Eggert (Griem)]_  (via `sahaFactor`)
 - `EXACT → REDUCED` · `temperature_ratio_near_degenerate` — Quantitative near-degeneracy — linear-in-`ΔE` temperature-conditioning bound.  _[Ciucci 1999]_  (via `lineIntensity`)
 
 ## `InhomogeneityBias.lean`  (CflibsFormal)
@@ -1223,16 +1223,16 @@ A result shows `own → published` when the two differ (with the definitions tha
 
 **Definitions**
 - `thermalBracket` — The de-Broglie bracket `2π·m_e·k_B·T / h²` appearing (to the `3/2` power) in the Saha factor.
-- `sahaFactor` — Saha factor `S(T)`: the full right-hand side of the Saha equation *excluding* the electron density `n_e` and the stage population ratio.
+- `model REDUCED` · `sahaFactor` — Saha factor `S(T)`: the full right-hand side of the Saha equation *excluding* the electron density `n_e` and the stage population ratio.  _[Saha–Eggert (Griem)]_
 - `electronDensityFromRatio` — Saha density diagnostic.
 - `chargeNeutrality` — Charge neutrality for a multi-stage plasma: the electron density equals the sum over ionization stages `s` of `z s · n_s` (charge-weighted ion densities).
 
 **Results**
 - `PURE-MATH` · `thermalBracket_pos` — The thermal-de-Broglie bracket is strictly positive when the physical constants and temperature are positive (`h ≠ 0` suffices, here via `h > 0`).
 - `PURE-MATH` · `sahaFactor_pos` — Positivity of the Saha factor.
-- `EXACT` · `saha_relation` — Saha law ⇔ density inversion.  _[Saha–Eggert (Griem)]_
+- `EXACT → REDUCED` · `saha_relation` — Saha law ⇔ density inversion.  _[Saha–Eggert (Griem)]_  (via `sahaFactor`)
 - `PURE-MATH` · `electronDensity_antitone` — Density diagnostic is injective.
-- `EXACT` · `log_sahaFactor` — Saha-plot log identity.  _[Saha–Eggert (Griem)]_
+- `EXACT → REDUCED` · `log_sahaFactor` — Saha-plot log identity.  _[Saha–Eggert (Griem)]_  (via `sahaFactor`)
 - `PURE-MATH` · `chargeNeutrality_two_stage` — Charge neutrality, two-stage form.
 
 ## `SahaContraction.lean`  (CflibsFormal)
@@ -1298,15 +1298,15 @@ A result shows `own → published` when the two differ (with the definitions tha
 
 **Results**
 - `REDUCED` · `sahaBoltzmann_plot` — Saha–Boltzmann plot (uncollapsed: two parallel lines).  _[Yalcin 1999]_
-- `EXACT` · `sahaBoltzmann_shift_eq_log_saha` — Saha–Boltzmann shift equals the log Saha factor.  _[Yalcin 1999]_
-- `EXACT → REDUCED` · `saha_joint_identifiability` — Joint identifiability of `(T, n_e)` from the Saha–Boltzmann plot.  _[Yalcin 1999]_  (via `lineIntensity`)
+- `EXACT → REDUCED` · `sahaBoltzmann_shift_eq_log_saha` — Saha–Boltzmann shift equals the log Saha factor.  _[Yalcin 1999]_  (via `sahaFactor`)
+- `EXACT → REDUCED` · `saha_joint_identifiability` — Joint identifiability of `(T, n_e)` from the Saha–Boltzmann plot.  _[Yalcin 1999]_  (via `lineIntensity`, `sahaFactor`)
 
 ## `SahaRangeEnclosure.lean`  (CflibsFormal)
 *an a-priori Saha `S(T)`-range enclosure (Frontier 04)*
 
 **Results**
-- `EXACT` · `sahaFactor_mem_Icc` — Saha-factor range enclosure (EXACT, Saha–Eggert (Griem)).  _[Saha–Eggert (Griem)]_
-- `EXACT` · `electronDensityFromRatio_mem_Icc` — Density-reader range enclosure (EXACT, Saha–Eggert (Griem)).  _[Saha–Eggert (Griem)]_
+- `EXACT → REDUCED` · `sahaFactor_mem_Icc` — Saha-factor range enclosure (EXACT relation, published REDUCED via `sahaFactor`; Saha–Eggert (Griem)).  _[Saha–Eggert (Griem)]_  (via `sahaFactor`)
+- `EXACT → REDUCED` · `electronDensityFromRatio_mem_Icc` — Density-reader range enclosure (EXACT relation, published REDUCED via `sahaFactor`; Saha–Eggert (Griem)).  _[Saha–Eggert (Griem)]_  (via `sahaFactor`)
 - `REDUCED` · `outerLoop_contracts_apriori` — The frozen-offset Model-B outer loop contracts — a-priori density invariance (`REDUCED`; Aguilera & Aragón 2007, Model B; Saha–Eggert (Griem)).  _[Aguilera & Aragón 2007]_
 
 ## `SahaStability.lean`  (CflibsFormal)
@@ -1317,16 +1317,16 @@ A result shows `own → published` when the two differ (with the definitions tha
 
 **Results**
 - `PURE-MATH` · `saha_ratio_cancel` — Ratio-cancellation core (PURE-MATH).
-- `EXACT` · `electronDensity_relativeError` — EXACT relative-error transfer for `n_e`.  _[Saha–Eggert (Griem)]_
+- `EXACT → REDUCED` · `electronDensity_relativeError` — Exact relative-error transfer for `n_e` (EXACT relation, published REDUCED via `sahaFactor`).  _[Saha–Eggert (Griem)]_  (via `sahaFactor`)
 - `PURE-MATH` · `saha_inv_lipschitz` — Lipschitz core (PURE-MATH).
-- `EXACT` · `electronDensity_lipschitz` — EXACT sensitivity bound for the `n_e` diagnostic.  _[Saha–Eggert (Griem)]_
+- `EXACT → REDUCED` · `electronDensity_lipschitz` — Exact sensitivity bound for the `n_e` diagnostic (EXACT relation, published REDUCED via `sahaFactor`).  _[Saha–Eggert (Griem)]_  (via `sahaFactor`)
 - `REDUCED` · `sahaFactor_lipschitz_temp` — Saha-factor `T`-Lipschitz (two-sided sensitivity) bound (`REDUCED`, Saha–Eggert (Griem)).  _[Saha–Eggert (Griem)]_
 - `REDUCED` · `electronDensityFromRatio_lipschitz_temp` — Electron-density `T`-sensitivity bound (`REDUCED`, Saha–Eggert (Griem)).  _[Saha–Eggert (Griem)]_
 - `PURE-MATH` · `thermalBracket_strictMono` — Strict monotonicity of the thermal-de-Broglie bracket in `T` (PURE-MATH).
 - `PURE-MATH` · `partitionFunction_upper_growth` — Partition-function upper growth against the ionization exponential (PURE-MATH).
 - `PURE-MATH` · `partitionFunction_mono_temp` — Monotonicity of the partition function in `T` (PURE-MATH).
-- `EXACT` · `sahaFactor_strictMonoOn_temp` — Saha-factor strict monotonicity in temperature (M4, EXACT, Saha–Eggert (Griem)).  _[Saha–Eggert (Griem)]_
-- `EXACT` · `electronDensityFromRatio_strictMonoOn_temp` — Electron-density `n_e = S(T)/R` strict monotonicity in temperature (M5, EXACT, Saha–Eggert (Griem)).  _[Saha–Eggert (Griem)]_
+- `EXACT → REDUCED` · `sahaFactor_strictMonoOn_temp` — Saha-factor strict monotonicity in temperature (M4; EXACT relation, published REDUCED via `sahaFactor`; Saha–Eggert (Griem)).  _[Saha–Eggert (Griem)]_  (via `sahaFactor`)
+- `EXACT → REDUCED` · `electronDensityFromRatio_strictMonoOn_temp` — Electron-density `n_e = S(T)/R` strict monotonicity in temperature (M5; EXACT relation, published REDUCED via `sahaFactor`; Saha–Eggert (Griem)).  _[Saha–Eggert (Griem)]_  (via `sahaFactor`)
 
 ## `SelfAbsorption.lean`  (CflibsFormal)
 *self-absorption / optical-thickness-aware forward map*
@@ -1464,8 +1464,8 @@ A result shows `own → published` when the two differ (with the definitions tha
 - `REDUCED` · `temporal_temperature_insitu` — In-situ gate temperature (Boltzmann slope).  _[Tognoni 2010]_
 - `EXACT → REDUCED` · `temporal_composition_invariant` — Per-gate composition soundness (dilution cancels).  _[Ciucci 1999]_  (via `lineIntensity`)
 - `REDUCED` · `temporal_composition_gate_independent` — Cross-gate composition invariance (thin corollary).  _[Tognoni 2010]_
-- `EXACT → REDUCED` · `gateSahaTotalDensity_eq` — The Saha completion is sound at the gate — `n_e` cancels (load-bearing).  _[Tognoni 2010]_  (via `lineIntensity`)
-- `EXACT → REDUCED` · `temporal_saha_composition_invariant` — Per-gate Saha composition soundness (`n_e` and `ρ` both cancel).  _[Ciucci 1999]_  (via `lineIntensity`)
+- `EXACT → REDUCED` · `gateSahaTotalDensity_eq` — The Saha completion is sound at the gate — `n_e` cancels (load-bearing).  _[Tognoni 2010]_  (via `lineIntensity`, `sahaFactor`)
+- `EXACT → REDUCED` · `temporal_saha_composition_invariant` — Per-gate Saha composition soundness (`n_e` and `ρ` both cancel).  _[Ciucci 1999]_  (via `lineIntensity`, `sahaFactor`)
 - `REDUCED` · `temporal_saha_composition_gate_independent` — Cross-gate Saha composition invariance (HEADLINE — thin corollary).  _[Tognoni 2010]_
 - `REDUCED` · `mem_lteWindow_thermalized` — Applicability: gate in the LTE window ⇒ thermalized.  _[Cristoforetti 2010]_
 - `PURE-MATH` · `mcwhirter_requirement_antitone` — McWhirter requirement falls as the plasma cools.

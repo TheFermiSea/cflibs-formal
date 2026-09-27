@@ -10,6 +10,7 @@ Boltzmann.lean	boltzmann_plot	EXACT	Boltzmann
 Boltzmann.lean	temperature_from_two_levels	EXACT	Boltzmann
 Saha.lean	thermalBracket_pos	PURE-MATH	—
 Saha.lean	sahaFactor_pos	PURE-MATH	—
+Saha.lean	sahaFactor	REDUCED	Saha–Eggert (Griem)
 Saha.lean	saha_relation	EXACT	Saha–Eggert (Griem)
 Saha.lean	electronDensity_antitone	PURE-MATH	—
 Saha.lean	log_sahaFactor	EXACT	Saha–Eggert (Griem)

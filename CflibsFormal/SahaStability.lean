@@ -21,23 +21,27 @@ that quantitative layer, holding the temperature `T` (hence the Saha factor `S`)
 fixed:
 
 * `saha_ratio_cancel` — PURE-MATH core: `(S/R₁)/(S/R₂) = R₂/R₁` for nonzero data.
-* `electronDensity_relativeError` — **EXACT relative-error transfer**:
+* `electronDensity_relativeError` — **exact relative-error transfer** (EXACT relation,
+  published REDUCED via `sahaFactor`):
   `n_e(R₁)/n_e(R₂) = R₂/R₁`.  The log-derivative of the diagnostic is exactly `−1`
   (`ln n_e(R₁) − ln n_e(R₂) = −(ln R₁ − ln R₂)`), so a relative stage-ratio error
   maps one-to-one (with unit gain, inverted sign) onto a relative `n_e` error.
 * `saha_inv_lipschitz` — PURE-MATH core: on `R ≥ R₀ > 0` the map `R ↦ S/R` is
   Lipschitz with explicit constant `S/R₀²`.
-* `electronDensity_lipschitz` — **EXACT sensitivity bound** for the runtime error
-  budget: `|n_e(R₁) − n_e(R₂)| ≤ (S/R₀²)·|R₁ − R₂|` on `R₁, R₂ ≥ R₀ > 0`.  The
+* `electronDensity_lipschitz` — **exact sensitivity bound** (EXACT relation, published
+  REDUCED via `sahaFactor`) for the runtime error budget:
+  `|n_e(R₁) − n_e(R₂)| ≤ (S/R₀²)·|R₁ − R₂|` on `R₁, R₂ ≥ R₀ > 0`.  The
   constant `S/R₀²` is exactly `|d n_e/dR|` at the worst-case (smallest) ratio `R₀`.
 
 ## Literature
 
-Physics-facing identities and monotonicity statements are labelled EXACT against the
+Physics-facing identities and monotonicity statements carry relation tag EXACT against the
 Saha–Eggert ionization equilibrium in the form given by Griem (packaged here as
-`sahaFactor`, proven strictly positive by `Saha.sahaFactor_pos`); the two `T`-Lipschitz
-bounds are labelled REDUCED (see their docstrings).  The relative-error identity and the
-`R`-channel Lipschitz constant are elementary consequences of the closed form `n_e = S/R`
+`sahaFactor`, proven strictly positive by `Saha.sahaFactor_pos`). Because `sahaFactor` is the
+ideal Saha factor (no ionization-potential depression, literal level sum), its model tag is
+REDUCED, so every result stated over it publishes REDUCED (`docs/conventions.md` §8). The two
+`T`-Lipschitz bounds are labelled REDUCED (see their docstrings).  The relative-error identity and
+the `R`-channel Lipschitz constant are elementary consequences of the closed form `n_e = S/R`
 and carry no additional physical modelling.  The two `saha_*` cores are pure real
 analysis and carry no citation.
 
@@ -93,7 +97,8 @@ theorem saha_ratio_cancel {S R₁ R₂ : ℝ} (hS : S ≠ 0) (hR₁ : R₁ ≠ 0
     (S / R₁) / (S / R₂) = R₂ / R₁ := by
   field_simp
 
-/-- **EXACT relative-error transfer for `n_e`.** At fixed temperature (hence fixed
+/-- **Exact relative-error transfer for `n_e`** (EXACT relation, published REDUCED via
+`sahaFactor`). At fixed temperature (hence fixed
 Saha factor `S = sahaFactor … > 0`), the ratio of two inferred electron densities
 is the inverse ratio of the stage ratios that produced them:
 `n_e(R₁)/n_e(R₂) = R₂/R₁`.  Equivalently, in logarithms,
@@ -142,7 +147,8 @@ theorem saha_inv_lipschitz {S R₀ R₁ R₂ : ℝ}
     div_mul_eq_mul_div]
   exact div_le_div_of_nonneg_left hnum hR0sq hR0sqle
 
-/-- **EXACT sensitivity bound for the `n_e` diagnostic.** For stage ratios
+/-- **Exact sensitivity bound for the `n_e` diagnostic** (EXACT relation, published REDUCED via
+`sahaFactor`). For stage ratios
 `R₁, R₂ ≥ R₀ > 0` and fixed temperature, the inferred electron densities obey the
 explicit Lipschitz estimate `|n_e(R₁) − n_e(R₂)| ≤ (S/R₀²)·|R₁ − R₂|`, with
 `S = sahaFactor …`.  The constant `S/R₀²` is exactly `|d n_e/dR|` at the worst-case
@@ -782,7 +788,8 @@ lemma partitionFunction_mono_temp {kB T1 T2 : ℝ} {g E : ι → ℝ}
   exact div_le_div_of_nonneg_left (hE k) (mul_pos hkB hT1)
     (mul_le_mul_of_nonneg_left hT12 hkB.le)
 
-/-- **Saha-factor strict monotonicity in temperature (M4, EXACT, Saha–Eggert (Griem)).**
+/-- **Saha-factor strict monotonicity in temperature (M4; EXACT relation, published REDUCED via
+`sahaFactor`; Saha–Eggert (Griem)).**
 On the whole positive temperature axis, under the level-ceiling hypothesis that every level
 in the lower (neutral) stage's list sits at or below `chi` (`hEχ : ∀ k, EZ k ≤ chi`), the
 Saha factor `S(T)` is *strictly* increasing in `T`.  `hEχ` is a truncation obligation on the
@@ -832,8 +839,9 @@ theorem sahaFactor_strictMonoOn_temp [Nonempty ι] [Nonempty κ]
   rw [hchiEq] at hlogU0
   linarith
 
-/-- **Electron-density `n_e = S(T)/R` strict monotonicity in temperature (M5, EXACT,
-Saha–Eggert (Griem)).** For a fixed positive measured stage ratio `R`, the density reader
+/-- **Electron-density `n_e = S(T)/R` strict monotonicity in temperature (M5; EXACT relation,
+published REDUCED via `sahaFactor`; Saha–Eggert (Griem)).** For a fixed positive measured stage
+ratio `R`, the density reader
 inherits the strict monotonicity of `S`: dividing a strictly increasing function by a
 fixed positive constant preserves strict monotonicity.  It inherits the level-truncation
 obligation `hEχ` of `sahaFactor_strictMonoOn_temp`. -/
