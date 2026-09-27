@@ -401,6 +401,7 @@ NonLTEKinetics.lean	abs_log_departure_le	PURE-MATH	—
 NonLTEKinetics.lean	nonlte_temp_error	REDUCED	Cristoforetti 2010
 NonLTEKinetics.lean	nonlte_density_error	REDUCED	Cristoforetti 2010
 NonLTEKinetics.lean	nonlte_temp_error_uniform	REDUCED	Cristoforetti 2010
+Alt/OLSVariance.lean	betaHat	REDUCED	Gauss–Markov
 Alt/OLSVariance.lean	olsSlope_estimator_eq	PURE-MATH	—
 Alt/OLSVariance.lean	expectation_const_add_weightedNoise	PURE-MATH	—
 Alt/OLSVariance.lean	variance_const_add_weightedNoise	PURE-MATH	—
@@ -473,6 +474,9 @@ EquivalentWidth.lean	integral_one_sub_exp_neg_inv_sq	PURE-MATH	—
 EquivalentWidth.lean	tendsto_integral_g_beta	PURE-MATH	—
 EquivalentWidth.lean	equivWidth_lorentzian_sqrt_sharp	EXACT	Ladenburg–Reiche 1913
 EquivalentWidth.lean	equivWidth_stepProfile	PURE-MATH	—
+EquivalentWidth.lean	stepW_pairRatio_not_injOn	PURE-MATH	—
+EquivalentWidth.lean	stepProfile_pairRatio_not_injOn	PURE-MATH	Gornushkin 1999
+Alt/StochasticBudget.lean	alphaHat	REDUCED	Gauss–Markov
 Alt/StochasticBudget.lean	alphaHat_estimator_eq	PURE-MATH	—
 Alt/StochasticBudget.lean	betaHat_memLp_two	PURE-MATH	—
 Alt/StochasticBudget.lean	olsSlope_chebyshev	REDUCED	Gauss–Markov

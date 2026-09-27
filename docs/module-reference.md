@@ -34,7 +34,7 @@ One row per module under `CflibsFormal/`. *Base* = imports no `CflibsFormal` mod
 | `DifferentialEstimator.lean` | `CflibsFormal` | 11 | 2 | – | ✓ | the reference-differenced (line-by-line) estimator |
 | `Dimensions.lean` | `CflibsFormal` | 16 | 15 | ✓ | – | a dimensional-analysis layer |
 | `DoubletChannel.lean` | `CflibsFormal` | 22 | 1 | – | ✓ | The doublet channel — the second observable that breaks the `N`–`τ` alias |
-| `EquivalentWidth.lean` | `CflibsFormal` | 21 | 3 | ✓ | ✓ | the equivalent-width curve of growth |
+| `EquivalentWidth.lean` | `CflibsFormal` | 23 | 4 | ✓ | ✓ | the equivalent-width curve of growth |
 | `ErrorBudget.lean` | `CflibsFormal` | 19 | 2 | – | – | the error-propagation chain and DERIVED reliability thresholds |
 | `EscapeFactor.lean` | `CflibsFormal` | 2 | 0 | – | ✓ | Profile escape factor versus the flat-slab self-absorption factor |
 | `EvaluatorSoundness.lean` | `CflibsFormal` | 6 | 5 | – | ✓ | evaluator soundness (which hard-gate clauses feed which theorem) |
@@ -98,5 +98,5 @@ One row per module under `CflibsFormal/`. *Base* = imports no `CflibsFormal` mod
 | `TwoDCOSOrder.lean` | `CflibsFormal` | 11 | 1 | – | ✓ | 2DCOS-LIBS formalization — the sequential-order (lead/lag) sign algebra |
 | `VoigtErrorEnclosure.lean` | `CflibsFormal` | 5 | 0 | – | ✓ | a non-circular error enclosure for the Voigt FWHM |
 | `VoigtWidth.lean` | `CflibsFormal` | 7 | 1 | ✓ | ✓ | the Voigt FWHM combination (Olivero–Longbothum) |
-| **90 modules** | | **797** | **240** | | | |
+| **90 modules** | | **799** | **241** | | | |
 

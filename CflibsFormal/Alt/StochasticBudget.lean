@@ -58,13 +58,14 @@ Gauss–Markov hypotheses), with `wₖ = olsWeight E k = (Eₖ − Ē)/SS_E`, `�
 
 ## Honest scope
 
-* **The moment identities are EXACT; the tail bounds are REDUCED.** `alphaHat_variance_eq` is a
-  genuine identity (no slack), like `Alt.OLSVariance.olsSlope_variance_eq`. The Chebyshev tail
-  bounds
-  `olsSlope_chebyshev` / `alphaHat_chebyshev` carry irreducible slack (a Chebyshev tail is never
-  attained), so they are `REDUCED` — matching `ErrorBudget.temp_rel_error_le`, NOT the exact
-  identity
-  `olsSlope_variance_eq` nor the attainable worst-case bound `relDensity_le`.
+* **The moment identities are exact relations; the tail bounds are REDUCED.**
+  `alphaHat_variance_eq` is a genuine identity (no slack), like
+  `Alt.OLSVariance.olsSlope_variance_eq`; both publish REDUCED through the model tag of the
+  estimator they are stated over (`alphaHat`, `betaHat`: the idealized linear Boltzmann plot).
+  The Chebyshev tail bounds `olsSlope_chebyshev` / `alphaHat_chebyshev` carry irreducible slack
+  (a Chebyshev tail is never attained), so they are `REDUCED` — matching
+  `ErrorBudget.temp_rel_error_le`, NOT the exact identity `olsSlope_variance_eq` nor the attainable
+  worst-case bound `relDensity_le`.
 * **The classical Gauss–Markov hypothesis — pairwise uncorrelatedness, NOT independence.** Inherited
   verbatim from `Alt.OLSVariance`: the variance and Chebyshev tail results need only
   `cov(εᵢ,εⱼ) = 0` for `i ≠ j` (with homoscedasticity and zero mean), strictly weaker than the
@@ -131,7 +132,11 @@ variable {Ω : Type*}
 `yₖ(ω) = α + β·Eₖ + εₖ(ω)`, `alphaHat E α β ε ω` is the ordinary-least-squares intercept of the
 realized Boltzmann-plot points `(Eₖ, yₖ(ω))`. Unlike the slope, the intercept does depend on `α`
 (and on `Ē` through `olsIntercept = mean y − olsSlope·Ē`); see `alphaHat_estimator_eq`. The
-intercept-borne species concentration is `N = exp(α̂)·U/Fcal` (`ErrorBudget.relDensity_le`). -/
+intercept-borne species concentration is `N = exp(α̂)·U/Fcal` (`ErrorBudget.relDensity_le`).
+
+Model tag REDUCED (`docs/conventions.md` §8): the idealized linear Boltzmann plot (one
+temperature, optically thin, LTE) with additive noise on the ordinate only and exactly known
+energies `Eₖ`. -/
 noncomputable def alphaHat (E : ι → ℝ) (α β : ℝ) (ε : ι → Ω → ℝ) (ω : Ω) : ℝ :=
   olsIntercept E (fun k => α + β * E k + ε k ω)
 
@@ -221,10 +226,10 @@ theorem alphaHat_unbiased [Nonempty ι] (E : ι → ℝ) (α β : ℝ) (ε : ι 
 `Alt.OLSVariance.variance_const_add_weightedNoise` at weights `aₖ = 1/n − wₖ·Ē` gives
 `Var(α̂) = σ²·∑ₖ aₖ²`; the closed form `∑ₖ aₖ² = 1/n + Ē²/SS_E` follows from `∑ₖ wₖ = 0`
 (`OLS.centered_sum_zero`, scaled) and `∑ₖ wₖ² = 1/SS_E` (`OLS.olsSlope_noise_gain`) after expanding
-`aₖ² = 1/n² − (2Ē/n)·wₖ + Ē²·wₖ²`. **EXACT**, not a slackened bound (a genuine identity, like
-`olsSlope_variance_eq`). Collapses to the centered-convention value `σ²/n` when `Ē = 0` (the
-standard
-Boltzmann-plot normalization of `ErrorBudget.olsIntercept_stable_centered`). -/
+`aₖ² = 1/n² − (2Ē/n)·wₖ + Ē²·wₖ²`. An exact identity, not a slackened bound (like
+`olsSlope_variance_eq`): EXACT relation, published REDUCED via `alphaHat`. Collapses to the
+centered-convention value `σ²/n` when `Ē = 0` (the standard Boltzmann-plot normalization of
+`ErrorBudget.olsIntercept_stable_centered`). -/
 theorem alphaHat_variance_eq [Nonempty ι] (E : ι → ℝ) (α β σ : ℝ) (ε : ι → Ω → ℝ)
     (hvar : 0 < ∑ k, (E k - mean E) ^ 2)
     (hL2 : ∀ k, MemLp (ε k) 2 μ)

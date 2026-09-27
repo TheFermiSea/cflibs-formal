@@ -34,8 +34,11 @@ variable `betaHat ω = olsSlope E (y(·,ω))`. We prove:
 
 ## Honest scope
 
-* **EXACT, not approximate.** `olsSlope_estimator_eq` is a pointwise identity; the unbiasedness and
-  variance results are exact identities under the stated model (no linearization).
+* **Exact relations, published REDUCED.** `olsSlope_estimator_eq` is a pointwise identity; the
+  unbiasedness and variance results are exact identities under the stated model (no
+  linearization). The model itself (`betaHat`: the idealized linear Boltzmann plot with additive
+  ordinate noise) carries model tag REDUCED, so the variance results publish REDUCED
+  (`docs/conventions.md` §8).
 * **The classical Gauss–Markov hypothesis — pairwise uncorrelatedness, NOT independence.** The
   variance theorems assume only `cov(εᵢ, εⱼ) = 0` for `i ≠ j` (with homoscedasticity and zero
   mean) — exactly what the classical Gauss–Markov theorem requires, and strictly weaker than the
@@ -97,7 +100,11 @@ variable {Ω : Type*}
 /-- **The OLS-slope estimator as a random variable.** For the linear model
 `yₖ(ω) = α + β·Eₖ + εₖ(ω)`, `betaHat E α β ε ω` is the ordinary-least-squares slope of the realized
 Boltzmann-plot points `(Eₖ, yₖ(ω))`. The realized intercept `α` drops out (see
-`olsSlope_estimator_eq`), so the estimator's value does not depend on `α`. -/
+`olsSlope_estimator_eq`), so the estimator's value does not depend on `α`.
+
+Model tag REDUCED (`docs/conventions.md` §8): the idealized linear Boltzmann plot (one
+temperature, optically thin, LTE) with additive noise on the ordinate only and exactly known
+energies `Eₖ`. -/
 noncomputable def betaHat (E : ι → ℝ) (α β : ℝ) (ε : ι → Ω → ℝ) (ω : Ω) : ℝ :=
   olsSlope E (fun k => α + β * E k + ε k ω)
 

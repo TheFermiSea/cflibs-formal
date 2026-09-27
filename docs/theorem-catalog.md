@@ -9,9 +9,9 @@
 
 A result shows `own → published` when the two differ (with the definitions that weakened it), and a single tag when they agree. A definition with its own row shows `model TAG`.
 
-**Own-tag mix** (797 results): **EXACT** 164 · **REDUCED** 232 · **APPROXIMATION** 4 · **PURE-MATH** 397
+**Own-tag mix** (799 results): **EXACT** 164 · **REDUCED** 232 · **APPROXIMATION** 4 · **PURE-MATH** 399
 
-**Published-tag mix** (797 results; 139 weakened by a model tag): **EXACT** 61 · **REDUCED** 273 · **APPROXIMATION** 66 · **PURE-MATH** 397
+**Published-tag mix** (799 results; 143 weakened by a model tag): **EXACT** 57 · **REDUCED** 277 · **APPROXIMATION** 66 · **PURE-MATH** 399
 
 `EXACT` = an exact theorem about the model it is stated over · `REDUCED` = exact only after a stated reduction (a dimensionless/lumped-factor form) · `APPROXIMATION` = the statement itself is approximate (documented idealization / limiting case) · `PURE-MATH` = infrastructure lemma, no physical claim. Classification cross-checked against `reviews/literature-validity-audit.md`.
 
@@ -161,16 +161,16 @@ A result shows `own → published` when the two differ (with the definitions tha
 *the Gauss–Markov variance law for the OLS Boltzmann-plot slope*
 
 **Definitions**
-- `betaHat` — The OLS-slope estimator as a random variable.
+- `model REDUCED` · `betaHat` — The OLS-slope estimator as a random variable.  _[Gauss–Markov]_
 
 **Results**
 - `PURE-MATH` · `olsSlope_estimator_eq` — Estimator = truth + weighted noise (pure pointwise algebra, no probability).
 - `PURE-MATH` · `expectation_const_add_weightedNoise` — Expectation of a constant plus independent weighted noise `𝔼[c + ∑ₖ wₖ·εₖ] = c`, for zero-mean L² noise.
 - `PURE-MATH` · `variance_const_add_weightedNoise` — Variance of a constant plus UNCORRELATED weighted noise `Var(c + ∑ₖ wₖ·εₖ) = σ²·∑ₖ wₖ²`, for pairwise-uncorrelated, homoscedastic L² noise.
 - `REDUCED` · `olsSlope_unbiased` — Unbiasedness `𝔼[β̂] = β`.  _[Gauss–Markov]_
-- `EXACT` · `olsSlope_variance_noiseGain` — Slope variance as the noise gain `Var(β̂) = σ²·∑ₖ wₖ²`.  _[Gauss–Markov]_
-- `EXACT` · `olsSlope_variance_eq` — THE headline — the Gauss–Markov slope-variance law `Var(β̂) = σ²/SS_E`.  _[Gauss–Markov]_
-- `EXACT` · `olsSlope_variance_antitone` — Monotonicity — more energy spread ⇒ less slope variance.  _[Gauss–Markov]_
+- `EXACT → REDUCED` · `olsSlope_variance_noiseGain` — Slope variance as the noise gain `Var(β̂) = σ²·∑ₖ wₖ²`.  _[Gauss–Markov]_  (via `Alt.betaHat`)
+- `EXACT → REDUCED` · `olsSlope_variance_eq` — THE headline — the Gauss–Markov slope-variance law `Var(β̂) = σ²/SS_E`.  _[Gauss–Markov]_  (via `Alt.betaHat`)
+- `EXACT → REDUCED` · `olsSlope_variance_antitone` — Monotonicity — more energy spread ⇒ less slope variance.  _[Gauss–Markov]_  (via `Alt.betaHat`)
 
 ## `Alt/SelfAbsorbed.lean`  (CflibsFormal.Alt)
 *the self-absorption-corrected composition estimator (alternative)*
@@ -189,7 +189,7 @@ A result shows `own → published` when the two differ (with the definitions tha
 *Chebyshev tail (concentration) bounds for the OLS slope and intercept*
 
 **Definitions**
-- `alphaHat` — The OLS-intercept estimator as a random variable.
+- `model REDUCED` · `alphaHat` — The OLS-intercept estimator as a random variable.  _[Gauss–Markov]_
 - `tempOfSlope` — Slope→temperature reader `T = 1/(k_B·x)`: the (sign-normalized) Boltzmann-plot inverse-temperature map, the deterministic bridge the tail transfer routes thr…
 - `tempHat` — The recovered-temperature estimator as a random variable: the temperature read off the random OLS slope, `T̂ ω = tempOfSlope kB (β̂ ω)`.
 - `densityHat` — The recovered-density estimator as a random variable: the CF-LIBS density read off the random OLS intercept, `N̂ ω = exp(α̂ ω)·U/Fcal` (the intercept identit…
@@ -199,7 +199,7 @@ A result shows `own → published` when the two differ (with the definitions tha
 - `PURE-MATH` · `betaHat_memLp_two` — `L²` membership of the OLS slope estimator `MemLp β̂ 2 μ`, the square-integrability that Chebyshev's inequality (`meas_ge_le_variance_div_sq`) requires.
 - `REDUCED` · `olsSlope_chebyshev` — Slope concentration — Chebyshev's inequality on `β̂`.  _[Gauss–Markov]_
 - `REDUCED` · `alphaHat_unbiased` — Intercept unbiasedness `𝔼[α̂] = α`.  _[Gauss–Markov]_
-- `EXACT` · `alphaHat_variance_eq` — THE classical intercept-variance law `Var(α̂) = σ²·(1/n + Ē²/SS_E)`, with `n = Fintype.card ι`, `Ē = mean E`, `SS_E = ∑ₖ (Eₖ − Ē)²`.  _[Gauss–Markov]_
+- `EXACT → REDUCED` · `alphaHat_variance_eq` — THE classical intercept-variance law `Var(α̂) = σ²·(1/n + Ē²/SS_E)`, with `n = Fintype.card ι`, `Ē = mean E`, `SS_E = ∑ₖ (Eₖ − Ē)²`.  _[Gauss–Markov]_  (via `Alt.alphaHat`)
 - `PURE-MATH` · `alphaHat_memLp_two` — `L²` membership of the OLS intercept estimator `MemLp α̂ 2 μ`, the intercept twin of `betaHat_memLp_two`.
 - `REDUCED` · `alphaHat_chebyshev` — Intercept concentration — Chebyshev's inequality on `α̂`.  _[Gauss–Markov]_
 - `PURE-MATH` · `temp_slope_event_subset` — Temperature miss ⇒ slope miss (deterministic event inclusion).
@@ -515,6 +515,7 @@ A result shows `own → published` when the two differ (with the definitions tha
 - `equivWidth` — Equivalent width (curve of growth).
 - `lorentzian` — The (normalized) Lorentzian profile `L(x) = (1/π)·1/(1+x²)` — the natural / pressure- broadening line shape, a unit-area probability density (`∫L = 1`, `lore…
 - `stepProfile` — Two-step line profile `ψ = 1_[0,1] + η · 1_[0,M]`: height `1 + η` on `[0, 1]` and `η` on `(1, M]` when `M ≥ 1`.
+- `stepW` — Closed form of `equivWidth (stepProfile η M)` as an explicit function of `τ` (`equivWidth_stepProfile`): `(1 - exp(-τ(1 + η))) + (M - 1)(1 - exp(-τη))`.
 
 **Results**
 - `PURE-MATH` · `equivWidth_integrand_integrable` — The equivalent-width integrand `1 - exp(-(τφ))` is integrable: it is sandwiched `0 ≤ 1 - exp(-(τφ)) ≤ τφ` (from `1 - exp(-y) ≤ y`) by the integrable dominati…
@@ -538,6 +539,8 @@ A result shows `own → published` when the two differ (with the definitions tha
 - `PURE-MATH` · `tendsto_integral_g_beta` — M3 (dominated convergence) — the rescaled integral converges (PURE-MATH).
 - `EXACT` · `equivWidth_lorentzian_sqrt_sharp` — M4 — the sharp Ladenburg–Reiche wing constant `C = 2` (EXACT, within the model).  _[Ladenburg–Reiche 1913]_
 - `PURE-MATH` · `equivWidth_stepProfile` — Closed-form equivalent width of the two-step profile.
+- `PURE-MATH` · `stepW_pairRatio_not_injOn` — The step-profile pair ratio is not injective (explicit closed form).
+- `PURE-MATH` · `stepProfile_pairRatio_not_injOn` — Pair-ratio identifiability is not profile-generic.  _[Gornushkin 1999]_
 
 ## `ErrorBudget.lean`  (CflibsFormal)
 *the error-propagation chain and DERIVED reliability thresholds*

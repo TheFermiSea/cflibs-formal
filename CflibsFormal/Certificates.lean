@@ -533,7 +533,8 @@ def saDistinctCert (w₁ w₂ : ℝ) : Prop := 0 < w₂ ∧ w₂ < w₁
 flat-kernel curve-of-growth ratio is injective on `(0, ∞)`, so the shared column density is
 determined by the ratio without knowing the common source scale. Relation REDUCED (one shared
 source term and one shared lower-level column); publishes APPROXIMATION because `cogRatio` is the
-flat-kernel model (see the section note). -/
+flat-kernel model (see the section note). Not profile-generic: for a two-step profile the pair
+ratio is not injective (`stepProfile_pairRatio_not_injOn`). -/
 theorem saDistinct_certificate_sound {w₁ w₂ : ℝ} (hcert : saDistinctCert w₁ w₂) :
     Set.InjOn (fun n => cogRatio w₁ w₂ n) (Set.Ioi 0) :=
   cogRatio_injOn hcert.2 hcert.1
