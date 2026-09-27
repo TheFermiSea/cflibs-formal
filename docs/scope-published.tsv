@@ -386,6 +386,7 @@ JointConvergence.lean	jointConvergence	theorem	REDUCED	REDUCED	—
 JointConvergence.lean	tDamped_mobius_converges	theorem	PURE-MATH	PURE-MATH	—
 JointIdentifiability.lean	joint_identifiability	theorem	EXACT	REDUCED	PlasmaParams,lineIntensity
 KernelLineExtraction.lean	kernelLS_error_linfty	theorem	PURE-MATH	PURE-MATH	—
+KirchhoffSource.lean	source_eq_planck	theorem	EXACT	EXACT	—
 LadenburgReiche.lean	equivWidth_lorentzianG_isEquivalent	theorem	EXACT	EXACT	—
 LadenburgReiche.lean	equivWidth_lorentzianG_scaled	theorem	EXACT	EXACT	—
 LadenburgReiche.lean	equivWidth_lorentzianG_sqrt_sharp	theorem	EXACT	EXACT	—
@@ -596,7 +597,6 @@ OpticalDepth.lean	opticalDepth_eq_linear	theorem	PURE-MATH	PURE-MATH	—
 OpticalDepth.lean	opticalDepth_knownTauCert	theorem	REDUCED	REDUCED	—
 OpticalDepth.lean	opticalDepth_pos	theorem	REDUCED	REDUCED	—
 OpticalDepth.lean	opticalDepth_strictMono_density	theorem	REDUCED	REDUCED	—
-OpticalDepth.lean	source_eq_planck	theorem	EXACT	EXACT	—
 OpticalDepth.lean	thickLineIntensity_eq_slab	theorem	REDUCED	APPROXIMATION	selfAbsorbedIntensity
 OpticalDepth.lean	thickLineIntensity_injOn	theorem	REDUCED	APPROXIMATION	selfAbsorbedIntensity
 OpticalDepth.lean	thickLineIntensity_strictMonoOn	theorem	REDUCED	APPROXIMATION	selfAbsorbedIntensity

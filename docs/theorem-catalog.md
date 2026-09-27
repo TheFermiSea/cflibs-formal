@@ -817,6 +817,16 @@ A result shows `own → published` when the two differ (with the definitions tha
 **Results**
 - `PURE-MATH` · `kernelLS_error_linfty` — ℓ∞ error of kernel least-squares line extraction under a misspecified profile kernel.
 
+## `KirchhoffSource.lean`  (CflibsFormal)
+*Kirchhoff-consistent line opacity and the Planck source function*
+
+**Definitions**
+- `lineOpacity` — LTE line opacity with stimulated emission `κ = κ0 · n_l · (1 - exp (-x))`, where `x = hν/(k_B T)` and `κ0` is the abstract absorption coefficient per lower-l…
+- `lineEmissivity` — Line emissivity `ε = ε0 · n_u`, with `ε0 ∝ hν · A_ul · φ` kept abstract.
+
+**Results**
+- `EXACT` · `source_eq_planck` — Kirchhoff: the line source function is the Planck function.  _[Griem 1997]_
+
 ## `LadenburgReiche.lean`  (CflibsFormal)
 *the sharp Ladenburg–Reiche asymptotic equivalent*
 
@@ -1173,8 +1183,6 @@ A result shows `own → published` when the two differ (with the definitions tha
 - `effectiveCrossSection` — Boltzmann-weighted line cross-section `σ_ℓ(T) = σ₀ · g_l · exp(−E_l/(k_B T)) / U(T)`: the line-center cross-section reduced by the LTE *fraction* of the spec…
 - `lteSourceStrength` — LTE line source strength `S = I_thin / τ`, written out in closed form: `S = Fcal · A_u · g_u · exp(−E_u/(k_B T)) / (σ₀ · ℓ · g_l · exp(−E_l/(k_B T)))`.
 - `thickLineIntensity` — State-coupled thick line intensity.
-- `lineOpacity` — LTE line opacity with stimulated emission `κ = κ0 · n_l · (1 - exp (-x))`, where `x = hν/(k_B T)` and `κ0` is the abstract absorption coefficient per lower-l…
-- `lineEmissivity` — Line emissivity `ε = ε0 · n_u`, with `ε0 ∝ hν · A_ul · φ` kept abstract.
 
 **Results**
 - `PURE-MATH` · `opticalDepth_eq_linear` — `τ` is exactly linear in the total density: `τ = (σ_ℓ(T) · ℓ) · N`.
@@ -1194,7 +1202,6 @@ A result shows `own → published` when the two differ (with the definitions tha
 - `REDUCED → APPROXIMATION` · `no_density_alias_of_boundOpticalDepth` — The single-line density alias cannot be reproduced.  _[Gornushkin 1999]_  (via `selfAbsorbedIntensity`)
 - `APPROXIMATION` · `csigma_density_droop_bound` — The Cσ density droop at a STATE-BOUND optical depth.  _[Aragón & Aguilera 2014]_
 - `APPROXIMATION` · `csigma_density_injOn` — Injectivity of the Cσ ordinate in the density, at a state-bound `τ`.  _[Aragón & Aguilera 2014]_
-- `EXACT` · `source_eq_planck` — Kirchhoff: the line source function is the Planck function.  _[Griem 1997]_
 
 ## `OpticalDepthBridge.lean`  (CflibsFormal)
 *Wiring the state-bound optical depth into the free-`τ` corpus*

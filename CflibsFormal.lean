@@ -42,6 +42,7 @@ import CflibsFormal.IpdSahaInverse
 import CflibsFormal.JointConvergence
 import CflibsFormal.JointIdentifiability
 import CflibsFormal.KernelLineExtraction
+import CflibsFormal.KirchhoffSource
 import CflibsFormal.LadenburgReiche
 import CflibsFormal.LeastSquaresFit
 import CflibsFormal.LineBroadening

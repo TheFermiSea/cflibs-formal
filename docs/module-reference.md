@@ -52,6 +52,7 @@ One row per module under `CflibsFormal/`. *Base* = imports no `CflibsFormal` mod
 | `JointConvergence.lean` | `CflibsFormal` | 5 | 1 | – | ✓ | the joint `(T, n_e)` outer-loop contraction (Frontier) |
 | `JointIdentifiability.lean` | `CflibsFormal` | 1 | 1 | – | – | Part 7: joint (temperature, composition) identifiability |
 | `KernelLineExtraction.lean` | `CflibsFormal` | 1 | 0 | ✓ | ✓ | kernel least-squares line extraction under profile misspecification |
+| `KirchhoffSource.lean` | `CflibsFormal` | 1 | 2 | ✓ | ✓ | Kirchhoff-consistent line opacity and the Planck source function |
 | `LadenburgReiche.lean` | `CflibsFormal` | 6 | 1 | – | ✓ | the sharp Ladenburg–Reiche asymptotic equivalent |
 | `LeastSquaresFit.lean` | `CflibsFormal` | 9 | 3 | – | – | the ordinary-least-squares projection / feasibility inverse |
 | `LineBroadening.lean` | `CflibsFormal` | 5 | 4 | ✓ | ✓ | line broadening (Doppler width + the Voigt Gaussian budget) |
@@ -67,7 +68,7 @@ One row per module under `CflibsFormal/`. *Base* = imports no `CflibsFormal` mod
 | `OLSConditioning.lean` | `CflibsFormal` | 1 | 0 | – | ✓ | quantitative conditioning of the Boltzmann-plot normal matrix |
 | `OLSIdentifiability.lean` | `CflibsFormal` | 11 | 1 | – | ✓ | n-line Boltzmann-plot identifiability (design-map injectivity) |
 | `OpacityBroadening.lean` | `CflibsFormal` | 27 | 5 | – | ✓ | opacity broadening: a DERIVED budget for the Stark opacity guard |
-| `OpticalDepth.lean` | `CflibsFormal` | 18 | 6 | – | ✓ | Optical depth bound to the plasma state — closing the free-`τ` gap |
+| `OpticalDepth.lean` | `CflibsFormal` | 17 | 4 | – | ✓ | Optical depth bound to the plasma state — closing the free-`τ` gap |
 | `OpticalDepthBridge.lean` | `CflibsFormal` | 10 | 0 | – | ✓ | Wiring the state-bound optical depth into the free-`τ` corpus |
 | `OracleAnchors.lean` | `CflibsFormal` | 0 | 0 | – | ✓ | oracle fixture anchors (machine-checked spec ↔ fixtures link) |
 | `OuterLoopModelB.lean` | `CflibsFormal` | 1 | 0 | – | – | the outer temperature iteration, Model B headline (Frontier 04) |
@@ -97,5 +98,5 @@ One row per module under `CflibsFormal/`. *Base* = imports no `CflibsFormal` mod
 | `TwoDCOSOrder.lean` | `CflibsFormal` | 11 | 1 | – | ✓ | 2DCOS-LIBS formalization — the sequential-order (lead/lag) sign algebra |
 | `VoigtErrorEnclosure.lean` | `CflibsFormal` | 5 | 0 | – | ✓ | a non-circular error enclosure for the Voigt FWHM |
 | `VoigtWidth.lean` | `CflibsFormal` | 7 | 1 | ✓ | ✓ | the Voigt FWHM combination (Olivero–Longbothum) |
-| **89 modules** | | **797** | **240** | | | |
+| **90 modules** | | **797** | **240** | | | |
 

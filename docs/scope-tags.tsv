@@ -628,7 +628,7 @@ OpticalDepth.lean	thickLineIntensity_injOn	REDUCED	Gornushkin 1999
 OpticalDepth.lean	no_density_alias_of_boundOpticalDepth	REDUCED	Gornushkin 1999
 OpticalDepth.lean	csigma_density_droop_bound	APPROXIMATION	Aragón & Aguilera 2014
 OpticalDepth.lean	csigma_density_injOn	APPROXIMATION	Aragón & Aguilera 2014
-OpticalDepth.lean	source_eq_planck	EXACT	Griem 1997
+KirchhoffSource.lean	source_eq_planck	EXACT	Griem 1997
 DoubletChannel.lean	doubletRatio	APPROXIMATION	Gornushkin 1999
 DoubletChannel.lean	doubletRatio_eq_cogRatio	PURE-MATH	—
 DoubletChannel.lean	doubletRatio_eq_inv_cogRatio	PURE-MATH	—
