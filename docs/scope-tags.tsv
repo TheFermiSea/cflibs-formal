@@ -8,6 +8,9 @@ Boltzmann.lean	partitionFunction_pos	PURE-MATH	—
 Boltzmann.lean	population_sum	EXACT	Boltzmann
 Boltzmann.lean	boltzmann_plot	EXACT	Boltzmann
 Boltzmann.lean	temperature_from_two_levels	EXACT	Boltzmann
+Boltzmann.lean	partitionFunction_eq_cut_add_tail	PURE-MATH	—
+Boltzmann.lean	partitionFunctionCut_pos	PURE-MATH	—
+Boltzmann.lean	cutRatio_strictMonoOn_temp	PURE-MATH	—
 Saha.lean	thermalBracket_pos	PURE-MATH	—
 Saha.lean	sahaFactor_pos	PURE-MATH	—
 Saha.lean	sahaFactor	REDUCED	Saha–Eggert (Griem)
@@ -26,6 +29,11 @@ SahaStability.lean	partitionFunction_upper_growth	PURE-MATH	—
 SahaStability.lean	partitionFunction_mono_temp	PURE-MATH	—
 SahaStability.lean	sahaFactor_strictMonoOn_temp	EXACT	Saha–Eggert (Griem)
 SahaStability.lean	electronDensityFromRatio_strictMonoOn_temp	EXACT	Saha–Eggert (Griem)
+SahaStability.lean	partitionFunction_eq_mixture	PURE-MATH	—
+SahaStability.lean	meanExcitation_eq_tiltMean	PURE-MATH	—
+SahaStability.lean	meanExcitation_monotoneOn_temp	PURE-MATH	—
+SahaStability.lean	log_partitionFunction_lipschitz_max	PURE-MATH	—
+SahaStability.lean	sahaEquilibriumNe_strictMonoOn_temp	EXACT	Saha–Eggert (Griem)
 SahaEquilibrium.lean	sahaEquilibriumNe_pos	PURE-MATH	—
 SahaEquilibrium.lean	sahaEquilibriumNe_selfConsistent	REDUCED	Saha–Eggert (Griem)
 SahaEquilibrium.lean	sahaEquilibriumNe_lt_totalDensity	PURE-MATH	—
@@ -60,6 +68,10 @@ SahaEquilibrium.lean	jointOuterMap_mapsTo	PURE-MATH	—
 SahaEquilibrium.lean	jointOuterMap_contraction	PURE-MATH	—
 SahaEquilibrium.lean	jointOuterMap_geometric_error	PURE-MATH	—
 SahaEquilibrium.lean	jointOuterContraction_box	PURE-MATH	—
+SahaEquilibrium.lean	neutralityNewton_error_eq	PURE-MATH	—
+SahaEquilibrium.lean	neutralityNewton_le_root	PURE-MATH	—
+SahaEquilibrium.lean	neutralityNewton_nonneg	PURE-MATH	—
+SahaEquilibrium.lean	neutralityNewton_enclosure	PURE-MATH	—
 OuterLoopModelB.lean	outerLoop_contracts	REDUCED	Aguilera & Aragón 2007
 PartitionLipschitz.lean	partitionFunction_two_point_bound	REDUCED	Tognoni 2010
 PartitionLipschitz.lean	partitionFunction_lipschitz_temp	REDUCED	Tognoni 2010
@@ -560,6 +572,10 @@ SahaRangeEnclosure.lean	sahaFactor_mem_Icc	EXACT	Saha–Eggert (Griem)
 SahaRangeEnclosure.lean	electronDensityFromRatio_mem_Icc	EXACT	Saha–Eggert (Griem)
 SahaRangeEnclosure.lean	outerLoop_contracts_apriori	REDUCED	Aguilera & Aragón 2007
 JointConvergence.lean	jointConvergence	REDUCED	Aguilera & Aragón 2007
+JointConvergence.lean	dampedMap_lipschitz	PURE-MATH	—
+JointConvergence.lean	dampedMap_contracts	PURE-MATH	—
+JointConvergence.lean	tDamped_mobius_converges	PURE-MATH	—
+JointConvergence.lean	exists_weights_iff	PURE-MATH	—
 LineSelection.lean	energySpread_nonneg	PURE-MATH	—
 LineSelection.lean	energySpreadCert_iff	PURE-MATH	—
 LineSelection.lean	slopeVariance_le_of_spread_ge	PURE-MATH	—
@@ -770,3 +786,6 @@ Alt/NeutralityScale.lean	neutralityScale_undetected	EXACT	Ciucci 1999
 Alt/NeutralityScale.lean	closureEstimate_bias	EXACT	Tognoni 2010
 Alt/NeutralityScale.lean	lineIntensity_linear	EXACT	Ciucci 1999
 Alt/NeutralityScale.lean	lineIntensity_ratio	EXACT	Ciucci 1999
+IpdSahaInverse.lean	ipdLogMap_root_subsingleton	PURE-MATH	—
+IpdSahaInverse.lean	ipdLogMap_contracts	PURE-MATH	—
+IpdSahaInverse.lean	ipdInverse_twoPoint_sensitivity	PURE-MATH	—

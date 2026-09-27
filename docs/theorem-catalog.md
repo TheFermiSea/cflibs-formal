@@ -9,9 +9,9 @@
 
 A result shows `own → published` when the two differ (with the definitions that weakened it), and a single tag when they agree. A definition with its own row shows `model TAG`.
 
-**Own-tag mix** (756 results): **EXACT** 160 · **REDUCED** 227 · **APPROXIMATION** 4 · **PURE-MATH** 365
+**Own-tag mix** (775 results): **EXACT** 161 · **REDUCED** 227 · **APPROXIMATION** 4 · **PURE-MATH** 383
 
-**Published-tag mix** (756 results; 135 weakened by a model tag): **EXACT** 60 · **REDUCED** 266 · **APPROXIMATION** 65 · **PURE-MATH** 365
+**Published-tag mix** (775 results; 136 weakened by a model tag): **EXACT** 60 · **REDUCED** 267 · **APPROXIMATION** 65 · **PURE-MATH** 383
 
 `EXACT` = an exact theorem about the model it is stated over · `REDUCED` = exact only after a stated reduction (a dimensionless/lumped-factor form) · `APPROXIMATION` = the statement itself is approximate (documented idealization / limiting case) · `PURE-MATH` = infrastructure lemma, no physical claim. Classification cross-checked against `reviews/literature-validity-audit.md`.
 
@@ -251,6 +251,7 @@ A result shows `own → published` when the two differ (with the definitions tha
 - `boltzmannFactor` — Boltzmann factor `exp(-E / (k_B T))` for a level of energy `E`.
 - `partitionFunction` — Partition function `U(T) = ∑ₖ gₖ · exp(-Eₖ / (k_B T))`.
 - `population` — LTE level population `nₖ = N · gₖ · exp(-Eₖ / (k_B T)) / U(T)`.
+- `partitionFunctionCut` — Truncated partition function `U_cut(T) = ∑_{k : E k < cut} g k · exp(−E k/(k_B T))`: the Boltzmann sum `partitionFunction` restricted to the levels strictly…
 
 **Results**
 - `PURE-MATH` · `boltzmannFactor_pos` — —
@@ -258,6 +259,9 @@ A result shows `own → published` when the two differ (with the definitions tha
 - `EXACT` · `population_sum` — Normalization.  _[Boltzmann]_
 - `EXACT` · `boltzmann_plot` — Boltzmann-plot identity.  _[Boltzmann]_
 - `EXACT` · `temperature_from_two_levels` — Temperature from two levels.  _[Boltzmann]_
+- `PURE-MATH` · `partitionFunction_eq_cut_add_tail` — Kept/dropped split of the partition function.
+- `PURE-MATH` · `partitionFunctionCut_pos` — The truncated partition function is positive once one level is kept (`hkeep`) and the weights are positive.
+- `PURE-MATH` · `cutRatio_strictMonoOn_temp` — The truncation ratio is strictly increasing in temperature (FT-05 (ii)).
 
 ## `Certificates.lean`  (CflibsFormal)
 *runtime certificates (the typed bridge)*
@@ -745,11 +749,29 @@ A result shows `own → published` when the two differ (with the definitions tha
 - `PURE-MATH` · `sound_estimators_agree` — Abstract agreement lemma.
 - `REDUCED` · `rawCompositionEstimator_sound` — Soundness of the raw estimator (constant-`emit` case).  _[Ciucci 1999]_
 
+## `IpdSahaInverse.lean`  (CflibsFormal)
+*the IPD-aware Saha inverse in log coordinates (frontier FT-02)*
+
+**Definitions**
+- `ipdLogMap` — Log-coordinate IPD-aware Saha inverse map `F(ℓ) = log a + b·exp(ℓ/2)`, with `ℓ = log n_e`.
+
+**Results**
+- `PURE-MATH` · `ipdLogMap_root_subsingleton` — At most one regular root of the IPD-aware inverse (FT-02 item 6).
+- `PURE-MATH` · `ipdLogMap_contracts` — The IPD inner loop contracts on an invariant half-line (FT-02 items 3-5).
+- `PURE-MATH` · `ipdInverse_twoPoint_sensitivity` — Two-point log-sensitivity bracket for the IPD-aware inverse (FT-02 item 7).
+
 ## `JointConvergence.lean`  (CflibsFormal)
 *the joint `(T, n_e)` outer-loop contraction (Frontier)*
 
+**Definitions**
+- `dampedMap` — Krasnoselskii–Mann damped map `u ↦ (1−λ)u + λ g(u)` (the pipeline uses `λ = 1/2`).
+
 **Results**
 - `REDUCED` · `jointConvergence` — The frozen-offset Model-B joint `(T, n_e)` outer loop contracts (`REDUCED`; Aguilera & Aragón 2007, Model B; Saha–Eggert (Griem)).  _[Aguilera & Aragón 2007]_
+- `PURE-MATH` · `dampedMap_lipschitz` — Derivative-window Lipschitz bound for the damped map.
+- `PURE-MATH` · `dampedMap_contracts` — Derivative-window certificate for a damped fixed-point iteration on an invariant box.
+- `PURE-MATH` · `tDamped_mobius_converges` — The T-damped Möbius iteration converges from every positive start when `0 < g < 1`.
+- `PURE-MATH` · `exists_weights_iff` — When a weighted row-sum gate exists for a 2×2 Lipschitz coupling (FT-01(d)).
 
 ## `JointIdentifiability.lean`  (CflibsFormal)
 *Part 7: joint (temperature, composition) identifiability*
@@ -1252,6 +1274,7 @@ A result shows `own → published` when the two differ (with the definitions tha
 - `dampedMultiElementIter` — Damped (Krasnoselskii–Mann / averaged) closure iteration.
 - `outerMap` — Abstract outer-iteration self-map (`PURE-MATH`).
 - `jointOuterMap` — Joint (T, n_e) outer self-map (`PURE-MATH`).
+- `neutralityNewton` — Newton map for multi-element charge neutrality.
 
 **Results**
 - `PURE-MATH` · `sahaEquilibriumNe_pos` — Positivity of the self-consistent density.
@@ -1288,6 +1311,10 @@ A result shows `own → published` when the two differ (with the definitions tha
 - `PURE-MATH` · `jointOuterMap_contraction` — One-step max-metric contraction with the row-sum constant (`PURE-MATH`).
 - `PURE-MATH` · `jointOuterMap_geometric_error` — Geometric error decay of the joint iterates (`PURE-MATH`).
 - `PURE-MATH` · `jointOuterContraction_box` — Joint (T, n_e) outer loop contracts — the 2-D box Banach theorem (`PURE-MATH`).
+- `PURE-MATH` · `neutralityNewton_error_eq` — Exact error identity for the neutrality Newton step.
+- `PURE-MATH` · `neutralityNewton_le_root` — The neutrality Newton step lands at or below the root.
+- `PURE-MATH` · `neutralityNewton_nonneg` — The neutrality Newton step stays on the physical half-line.
+- `PURE-MATH` · `neutralityNewton_enclosure` — One Newton step brackets the charge-neutrality root from both sides (FT-17).
 
 ## `SahaInverse.lean`  (CflibsFormal)
 *Part 6: coupling Saha into the inverse problem*
@@ -1314,6 +1341,7 @@ A result shows `own → published` when the two differ (with the definitions tha
 
 **Definitions**
 - `sahaFactorLipConst` — Explicit `T`-Lipschitz constant for `sahaFactor` on a box `[Tmin, Tmax]` (`REDUCED`, Saha–Eggert (Griem)).
+- `meanExcitation` — Boltzmann-weighted mean excitation energy `⟨E⟩_T = (∑ₖ gₖ·Eₖ·exp(−Eₖ/(k_B T))) / U(T)`: the mean level energy under the LTE level populations of `population`…
 
 **Results**
 - `PURE-MATH` · `saha_ratio_cancel` — Ratio-cancellation core (PURE-MATH).
@@ -1327,6 +1355,11 @@ A result shows `own → published` when the two differ (with the definitions tha
 - `PURE-MATH` · `partitionFunction_mono_temp` — Monotonicity of the partition function in `T` (PURE-MATH).
 - `EXACT → REDUCED` · `sahaFactor_strictMonoOn_temp` — Saha-factor strict monotonicity in temperature (M4; EXACT relation, published REDUCED via `sahaFactor`; Saha–Eggert (Griem)).  _[Saha–Eggert (Griem)]_  (via `sahaFactor`)
 - `EXACT → REDUCED` · `electronDensityFromRatio_strictMonoOn_temp` — Electron-density `n_e = S(T)/R` strict monotonicity in temperature (M5; EXACT relation, published REDUCED via `sahaFactor`; Saha–Eggert (Griem)).  _[Saha–Eggert (Griem)]_  (via `sahaFactor`)
+- `PURE-MATH` · `partitionFunction_eq_mixture` — Bridge to `InhomogeneityBias`: the partition function is a `mixture`.
+- `PURE-MATH` · `meanExcitation_eq_tiltMean` — Bridge to `InhomogeneityBias`: the mean excitation energy is a `tiltMean`.
+- `PURE-MATH` · `meanExcitation_monotoneOn_temp` — The mean excitation energy is nondecreasing in temperature (FT-15).
+- `PURE-MATH` · `log_partitionFunction_lipschitz_max` — Log-Lipschitz bound for the partition function in inverse temperature (FT-15).
+- `EXACT → REDUCED` · `sahaEquilibriumNe_strictMonoOn_temp` — Equilibrium electron density strictly increasing in temperature (Frontier 02, M6).  _[Saha–Eggert (Griem)]_  (via `sahaFactor`)
 
 ## `SelfAbsorption.lean`  (CflibsFormal)
 *self-absorption / optical-thickness-aware forward map*

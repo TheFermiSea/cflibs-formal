@@ -36,6 +36,7 @@ import CflibsFormal.Identifiability
 import CflibsFormal.InhomogeneityBias
 import CflibsFormal.IntervalEnclosure
 import CflibsFormal.Inverse
+import CflibsFormal.IpdSahaInverse
 import CflibsFormal.JointConvergence
 import CflibsFormal.JointIdentifiability
 import CflibsFormal.LadenburgReiche

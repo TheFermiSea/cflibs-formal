@@ -1690,4 +1690,163 @@ example : ∃ pstar ∈ Set.Icc (0:ℝ) 1 ×ˢ Set.Icc (0:ℝ) 1,
 
 end JointOuterIteration
 
+section NeutralityNewton
+
+/-! ### One Newton step brackets the charge-neutrality root (frontier FT-17)
+
+Newton's method on the multi-element charge-neutrality residual `x − G x`,
+`G = multiElementIonized S Ntot`, at fixed temperature. The exact error identity
+`neutralityNewton_error_eq` shows the Newton iterate never overshoots the root from above, and
+the antitonicity of `G` turns one step into a two-sided enclosure `N x ≤ r ≤ G (N x)`
+(`neutralityNewton_enclosure`). This is the forward charge-neutrality closure at fixed `T`, not
+the inverse `(T, n_e)` loop. No convexity lemma is needed: the error identity replaces it. -/
+
+variable {ι : Type*} [Fintype ι]
+
+/-- **Newton map for multi-element charge neutrality.**
+At fixed temperature, species `s` has Saha factor `S s = n_e · N_II / N_I > 0` and elemental
+density `Ntot s ≥ 0` (one common density unit for `S`, `Ntot` and the electron density `x`). In the
+two-stage model it contributes the ionized density `Ntot s * S s / (x + S s)`, and charge
+neutrality is the fixed point `x = G x` of `G := multiElementIonized S Ntot`. This map is
+Newton's method on the residual `f x = x - G x`, whose derivative is
+`f' x = 1 + ∑ s, Ntot s * S s / (x + S s) ^ 2`: `neutralityNewton S Ntot x = x - f x / f' x`.
+It is meant for `x ≥ 0`, where every denominator is positive and `f' x ≥ 1` (given `Ntot ≥ 0`);
+off that half-line the formula is not a Newton step. -/
+noncomputable def neutralityNewton (S Ntot : ι → ℝ) (x : ℝ) : ℝ :=
+  x - (x - multiElementIonized S Ntot x) / (1 + ∑ s, Ntot s * S s / (x + S s) ^ 2)
+
+/-- **Exact error identity for the neutrality Newton step.** For `x, r ≥ 0` with `r = G r`
+(`G = multiElementIonized S Ntot`), `S > 0` and `Ntot ≥ 0`,
+`N x − r = −(x − r)² · ∑ₛ Ntot s·S s/((x + S s)²·(r + S s)) / f' x` with
+`f' x = 1 + ∑ₛ Ntot s·S s/(x + S s)²`. The error is quadratic in `x − r` and never positive.
+`PURE-MATH`: an algebraic identity for the map `G`. -/
+theorem neutralityNewton_error_eq (S Ntot : ι → ℝ) (hS : ∀ s, 0 < S s) (hN : ∀ s, 0 ≤ Ntot s)
+    {x r : ℝ} (hx : 0 ≤ x) (hr : 0 ≤ r) (hfix : r = multiElementIonized S Ntot r) :
+    neutralityNewton S Ntot x - r
+      = -((x - r) ^ 2 * ∑ s, Ntot s * S s / ((x + S s) ^ 2 * (r + S s)))
+          / (1 + ∑ s, Ntot s * S s / (x + S s) ^ 2) := by
+  have hD : 0 < 1 + ∑ s, Ntot s * S s / (x + S s) ^ 2 := by
+    have : 0 ≤ ∑ s, Ntot s * S s / (x + S s) ^ 2 :=
+      Finset.sum_nonneg (fun s _ => div_nonneg (mul_nonneg (hN s) (hS s).le) (sq_nonneg _))
+    linarith
+  have htp := multiElementIonized_two_point S Ntot hS x r hx hr
+  have hf : x - multiElementIonized S Ntot x
+      = (x - r) * (1 + ∑ s, Ntot s * S s / ((x + S s) * (r + S s))) := by
+    have : multiElementIonized S Ntot x = r + (r - x) *
+        ∑ s, Ntot s * S s / ((x + S s) * (r + S s)) := by
+      linarith [htp, hfix]
+    rw [this]; ring
+  have hterm : (∑ s, Ntot s * S s / (x + S s) ^ 2)
+      - (∑ s, Ntot s * S s / ((x + S s) * (r + S s)))
+      = (r - x) * ∑ s, Ntot s * S s / ((x + S s) ^ 2 * (r + S s)) := by
+    rw [← Finset.sum_sub_distrib, Finset.mul_sum]
+    refine Finset.sum_congr rfl (fun s _ => ?_)
+    have h1 : 0 < x + S s := by linarith [hS s]
+    have h2 : 0 < r + S s := by linarith [hS s]
+    field_simp
+    ring
+  unfold neutralityNewton
+  rw [hf, eq_div_iff hD.ne']
+  have hD' := hD.ne'
+  field_simp
+  nlinarith [hterm]
+
+/-- **The neutrality Newton step lands at or below the root.** Under the hypotheses of
+`neutralityNewton_error_eq`, `N x ≤ r` from every guess `x ≥ 0`. `PURE-MATH`. -/
+theorem neutralityNewton_le_root (S Ntot : ι → ℝ) (hS : ∀ s, 0 < S s) (hN : ∀ s, 0 ≤ Ntot s)
+    {x r : ℝ} (hx : 0 ≤ x) (hr : 0 ≤ r) (hfix : r = multiElementIonized S Ntot r) :
+    neutralityNewton S Ntot x ≤ r := by
+  have hid := neutralityNewton_error_eq S Ntot hS hN hx hr hfix
+  have hD : 0 < 1 + ∑ s, Ntot s * S s / (x + S s) ^ 2 := by
+    have : 0 ≤ ∑ s, Ntot s * S s / (x + S s) ^ 2 :=
+      Finset.sum_nonneg (fun s _ => div_nonneg (mul_nonneg (hN s) (hS s).le) (sq_nonneg _))
+    linarith
+  have hnum : 0 ≤ (x - r) ^ 2 * ∑ s, Ntot s * S s / ((x + S s) ^ 2 * (r + S s)) := by
+    refine mul_nonneg (sq_nonneg _) (Finset.sum_nonneg (fun s _ => ?_))
+    have h1 : 0 < x + S s := by linarith [hS s]
+    have h2 : 0 < r + S s := by linarith [hS s]
+    exact div_nonneg (mul_nonneg (hN s) (hS s).le) (by positivity)
+  have : neutralityNewton S Ntot x - r ≤ 0 := by
+    rw [hid]; exact div_nonpos_of_nonpos_of_nonneg (by linarith) hD.le
+  linarith
+
+/-- `G x ≥ 0` on `x ≥ 0` when `S > 0` and `Ntot ≥ 0`. -/
+private theorem multiElementIonized_nonneg_of (S Ntot : ι → ℝ) (hS : ∀ s, 0 < S s)
+    (hN : ∀ s, 0 ≤ Ntot s) {x : ℝ} (hx : 0 ≤ x) : 0 ≤ multiElementIonized S Ntot x := by
+  unfold multiElementIonized
+  exact Finset.sum_nonneg
+    (fun s _ => div_nonneg (mul_nonneg (hN s) (hS s).le) (by linarith [hS s]))
+
+/-- **The neutrality Newton step stays on the physical half-line.** For `S > 0`, `Ntot ≥ 0`
+and `x ≥ 0`, `N x = (x·D + G x)/(1 + D) ≥ 0` with `D = ∑ₛ Ntot s·S s/(x + S s)²`.
+`PURE-MATH`. -/
+theorem neutralityNewton_nonneg (S Ntot : ι → ℝ) (hS : ∀ s, 0 < S s) (hN : ∀ s, 0 ≤ Ntot s)
+    {x : ℝ} (hx : 0 ≤ x) : 0 ≤ neutralityNewton S Ntot x := by
+  have hD : 0 < 1 + ∑ s, Ntot s * S s / (x + S s) ^ 2 := by
+    have : 0 ≤ ∑ s, Ntot s * S s / (x + S s) ^ 2 :=
+      Finset.sum_nonneg (fun s _ => div_nonneg (mul_nonneg (hN s) (hS s).le) (sq_nonneg _))
+    linarith
+  have hform : neutralityNewton S Ntot x =
+      (x * (∑ s, Ntot s * S s / (x + S s) ^ 2) + multiElementIonized S Ntot x) /
+        (1 + ∑ s, Ntot s * S s / (x + S s) ^ 2) := by
+    unfold neutralityNewton
+    field_simp
+    ring
+  rw [hform]
+  apply div_nonneg
+  · refine add_nonneg ?_ ?_
+    · exact mul_nonneg hx (Finset.sum_nonneg
+        (fun s _ => div_nonneg (mul_nonneg (hN s) (hS s).le) (sq_nonneg _)))
+    · exact multiElementIonized_nonneg_of S Ntot hS hN hx
+  · exact hD.le
+
+/-- `G` is antitone on `[0, ∞)` when `S > 0` and `Ntot ≥ 0` (absent species allowed). -/
+private theorem multiElementIonized_antitone_of (S Ntot : ι → ℝ) (hS : ∀ s, 0 < S s)
+    (hN : ∀ s, 0 ≤ Ntot s) {a b : ℝ} (ha : 0 ≤ a) (hb : 0 ≤ b) (hab : a ≤ b) :
+    multiElementIonized S Ntot b ≤ multiElementIonized S Ntot a := by
+  have htp := multiElementIonized_two_point S Ntot hS a b ha hb
+  have hsum : 0 ≤ ∑ s, Ntot s * S s / ((a + S s) * (b + S s)) :=
+    Finset.sum_nonneg (fun s _ =>
+      div_nonneg (mul_nonneg (hN s) (hS s).le)
+        (mul_pos (by linarith [hS s]) (by linarith [hS s])).le)
+  have : multiElementIonized S Ntot a - multiElementIonized S Ntot b ≥ 0 := by
+    rw [htp]
+    exact mul_nonneg (sub_nonneg_of_le hab) hsum
+  linarith
+
+/-- **One Newton step brackets the charge-neutrality root from both sides (FT-17).**
+Let `G := multiElementIonized S Ntot` and let `r ≥ 0` be a charge-neutrality root, `r = G r`.
+From ANY electron-density guess `x ≥ 0`, the Newton iterate `N x := neutralityNewton S Ntot x`
+satisfies `N x ≤ r ≤ G (N x)`. Both ends of the bracket `[N x, G (N x)]` are computable from `x`
+alone, so one step certifies an interval containing the root without knowing `r`.
+
+Proof idea: the exact error identity `neutralityNewton_error_eq` gives `N x ≤ r` with no
+convexity argument; `neutralityNewton_nonneg` gives `N x ≥ 0`; and `G` is antitone on `[0, ∞)`
+when `Ntot ≥ 0`, so `G (N x) ≥ G r = r`.
+
+Hypotheses. `hS` (`S s > 0`, the sign of a Saha factor) keeps every denominator `x + S s`,
+`r + S s` positive. `hN` (`Ntot s ≥ 0`; absent species allowed) makes `G` antitone and `f' ≥ 1`.
+`hx` restricts the guess to the physical half-line. `hr` selects the physical root: for one
+species with `S = Ntot = 1`, `r = G r` also has the root `r = -(1 + √5) / 2`, and there
+`N 0 = 1 / 2 > r`, so the bracket fails. `hfix` is charge neutrality at `r`. No `Nonempty ι` is
+needed: with no species, or all `Ntot s = 0`, `G ≡ 0`, `r = 0` and `N x = 0`. Existence of a
+root is a separate result (`multiElement_exists_pos_fixedPoint`, for `Ntot > 0`).
+
+Scope: relation `PURE-MATH` (a numerical-analysis fact about the Newton map of the closure map
+`multiElementIonized`), published `PURE-MATH`. The closure map's physical reading (fixed `T`,
+LTE, two stages per element; Z-stage cascades not covered) is the reduced model of this module's
+scope section; this theorem claims nothing about the plasma beyond that map. -/
+theorem neutralityNewton_enclosure {S Ntot : ι → ℝ} {x r : ℝ} (hS : ∀ s, 0 < S s)
+    (hN : ∀ s, 0 ≤ Ntot s) (hx : 0 ≤ x) (hr : 0 ≤ r)
+    (hfix : r = multiElementIonized S Ntot r) :
+    neutralityNewton S Ntot x ≤ r ∧
+      r ≤ multiElementIonized S Ntot (neutralityNewton S Ntot x) := by
+  have hle := neutralityNewton_le_root S Ntot hS hN hx hr hfix
+  have hNx_nonneg := neutralityNewton_nonneg S Ntot hS hN hx
+  have hanti := multiElementIonized_antitone_of S Ntot hS hN hNx_nonneg hr hle
+  rw [← hfix] at hanti
+  exact ⟨hle, hanti⟩
+
+end NeutralityNewton
+
 end CflibsFormal
