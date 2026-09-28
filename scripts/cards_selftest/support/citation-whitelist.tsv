@@ -1,0 +1,6 @@
+# synthetic citation whitelist for scripts/check_cards.py's --selftest only (not consumed by
+# scripts/check-citations.sh; mirrors docs/citation-whitelist.tsv's column shape)
+# citation	status	year	evidence
+Good Citation 2020	VERIFIED	2020	opened, selftest fixture
+Audit Vetted Source	AUDIT-VETTED	2010	seen in a prior audit, not reopened; selftest fixture
+Suspect Source	SUSPECT	1999	searched for and not found; selftest fixture

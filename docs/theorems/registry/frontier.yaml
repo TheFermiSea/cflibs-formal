@@ -1,0 +1,474 @@
+# Frontier registry (FT-01..FT-20, F02-M6, plus the non-FT pilot F07). Schema: docs/theorems/SCHEMA.md.
+#
+# Shape: a flat mapping {id: {...}} -- top-level keys ARE the ids scripts/check_cards.py reads
+# via load_yaml_ids() (a card's frontier.ids must be a key here or the REGISTRY-FRONTIER check
+# fails). F07 is included as an id-shaped entry only to record that it maps to no FT-NN item
+# (status: not-landed); no card should ever cite frontier.ids: [F07].
+#
+# Source: docs/research/audit-2026-09-24/{REPORT.md,frontier.json}; pass1/E-theorem-sources.md.md
+# section 3 (master table, PR- and rg-verified in this checkout); IA-proposal.md sections 1.7 and
+# 3.3 (legacy crosswalk). `landed` names are fully qualified Lean declarations, each verified
+# present in this checkout's CflibsFormal/ with `rg` before this file was written.
+#
+# frontier_json_index is the 0-based position in frontier.json's `frontier` and `verdicts` arrays
+# (verified: both arrays are FT-01..FT-20 in order; FT-11 is index 10, verdict 'revise'). F02-M6
+# and F07 predate the 2026-09-24 audit and have no frontier.json entry (verified by grep: zero
+# hits for both id spellings across frontier.json/REPORT.md/refactor.json/audits.json).
+#
+# legacy_crosswalk is populated only where pass-1/pass-2 research or a REPORT.md heading states it
+# explicitly (D23: no fabricated crosswalk) -- most FT-NN items have none.
+FT-01:
+  title: Stop/convergence certificate for the (T, n_e) loop the pipeline actually runs
+  audit_anchor:
+    report_heading: docs/research/audit-2026-09-24/REPORT.md:232
+    frontier_json_index: 0
+  verdict: revise
+  verdict_note: Parts (b)-(e) survive; part (a)'s claim of exactness for the pipeline is refuted -- the
+    pipeline damps T, not u=1/kT, so the u-damped lemmas are PURE-MATH for an idealization, and a separate
+    T-damped statement (tDamped_mobius_converges) was added to match iterative.py.
+  status: landed
+  landing:
+    pr:
+    - 8
+  landed:
+  - name: CflibsFormal.dampedMap
+    kind: def
+  - name: CflibsFormal.dampedMap_lipschitz
+    kind: theorem
+  - name: CflibsFormal.dampedMap_contracts
+    kind: theorem
+  - name: CflibsFormal.tDamped_mobius_converges
+    kind: theorem
+  - name: CflibsFormal.exists_weights_iff
+    kind: theorem
+  legacy_crosswalk:
+    fnn: F04
+    path: docs/frontiers/04-outer-t-iteration.md
+    note: same outer T-iteration topic (pass-2 synthesis, IA-proposal.md section 1.7/3.3); not a formal
+      supersession, no shared declaration name
+FT-02:
+  title: IPD gauge and the implicit IPD-aware Saha inverse
+  audit_anchor:
+    report_heading: docs/research/audit-2026-09-24/REPORT.md:309
+    frontier_json_index: 1
+  verdict: revise
+  verdict_note: The gauge, mismatch and fixed-point lemmas are true; ipdOff_composition_invariant used
+    the wrong mechanism (replaced by sahaRatio_ipd_gauge, not itself landed as a separate scope-tags row
+    -- see the ipdLogMap family instead).
+  status: landed
+  landing:
+    pr:
+    - 8
+  landed:
+  - name: CflibsFormal.ipdLogMap
+    kind: def
+  - name: CflibsFormal.ipdLogMap_root_subsingleton
+    kind: theorem
+  - name: CflibsFormal.ipdLogMap_contracts
+    kind: theorem
+  - name: CflibsFormal.ipdInverse_twoPoint_sensitivity
+    kind: theorem
+FT-03:
+  title: 'Refuse-to-report policy theorem: certified abstention on the Aitchison PAS loss'
+  audit_anchor:
+    report_heading: docs/research/audit-2026-09-24/REPORT.md:370
+    frontier_json_index: 2
+  verdict: revise
+  verdict_note: Each lemma is true, but the informal 'policy theorem' merged two policies with contradictory
+    guarantees on the ambiguous set; landed as an explicit three-branch policy (answer / refuse / choice
+    on the ambiguous set).
+  status: landed
+  landing:
+    pr:
+    - 8
+  landed:
+  - name: CflibsFormal.pasPolicy_guarantees
+    kind: theorem
+  - name: CflibsFormal.aitchisonDist_le_logErr
+    kind: theorem
+FT-04:
+  title: 'Fixed-effects (element-dummy) weighted Saha-Boltzmann design: identifiability, minimizer, offset-affinity'
+  audit_anchor:
+    report_heading: docs/research/audit-2026-09-24/REPORT.md:424
+    frontier_json_index: 3
+  verdict: keep
+  verdict_note: Refutation attempts failed; fe_identifiable_iff, feSlope_add_smul and feSlope_isMin all
+    re-checked as stated.
+  status: landed
+  landing:
+    pr:
+    - 8
+  landed:
+  - name: CflibsFormal.fe_identifiable_iff
+    kind: theorem
+  - name: CflibsFormal.feSlope_add_smul
+    kind: theorem
+  - name: CflibsFormal.feSlope_isMin
+    kind: theorem
+FT-05:
+  title: 'Partition-function truncation and cutoff policy: tail bound, strictly T-dependent policy ratio'
+  audit_anchor:
+    report_heading: docs/research/audit-2026-09-24/REPORT.md:480
+    frontier_json_index: 4
+  verdict: revise
+  verdict_note: Parts (i)-(iii) are true and non-vacuous; part (iii) (no extra ordering hypothesis needed)
+    was replaced by a weaker, correctly-hedged statement.
+  status: landed
+  landing:
+    pr:
+    - 8
+  landed:
+  - name: CflibsFormal.partitionFunctionCut
+    kind: def
+  - name: CflibsFormal.partitionFunction_eq_cut_add_tail
+    kind: theorem
+  - name: CflibsFormal.partitionFunctionCut_pos
+    kind: theorem
+  - name: CflibsFormal.cutRatio_strictMonoOn_temp
+    kind: theorem
+FT-06:
+  title: 'Missing runtime certificates: C8 as a two-diagnostic Stark-Saha bracket certificate with a sound
+    refusal'
+  audit_anchor:
+    report_heading: docs/research/audit-2026-09-24/REPORT.md:529
+    frontier_json_index: 5
+  verdict: revise
+  verdict_note: The core lemmas are true, but the C8 proposal overstated its novelty and premises; landed
+    only the Stark-side premise (stark_bracket_rho), not a wired C8 certificate.
+  status: landed
+  landing:
+    pr:
+    - 8
+  landed:
+  - name: CflibsFormal.stark_bracket_rho
+    kind: theorem
+FT-07:
+  title: Aitchison error transfer and abundance-scaled closure bounds
+  audit_anchor:
+    report_heading: docs/research/audit-2026-09-24/REPORT.md:580
+    frontier_json_index: 6
+  verdict: keep
+  verdict_note: clr_mul, aitchisonDist_perturb/smul/aliasing and composition_rel_error_mul all hold; landed
+    with an added hypothesis delta < 1/2.
+  status: landed
+  landing:
+    pr:
+    - 8
+  landed:
+  - name: CflibsFormal.classicComposition_atomicData_error_rel
+    kind: theorem
+FT-08:
+  title: 'Closure-free ratio mode vs NeutralityScale: normalization invariance and the exact stage-fraction
+    sensitivity'
+  audit_anchor:
+    report_heading: docs/research/audit-2026-09-24/REPORT.md:620
+    frontier_json_index: 7
+  verdict: keep
+  verdict_note: The key formula re-derives and checks; ratio_mode_normalization_invariant tagged PURE-MATH
+    as proposed.
+  status: landed
+  landing:
+    pr:
+    - 8
+  landed:
+  - name: CflibsFormal.ratio_mode_normalization_invariant
+    kind: theorem
+  - name: CflibsFormal.Alt.neutrality_closure_same_ratio
+    kind: theorem
+  - name: CflibsFormal.ratioEstimate_hasDerivAt
+    kind: theorem
+  parked_queue_targets:
+  - target: FT08-log-sahaFactor-hasDerivAt-beta
+    reason: drafted, pending Mode-B audit; blocked by a statement clash -- it defines a local meanExcitation
+      duplicating the landed CflibsFormal.meanExcitation (FT-15) and must be re-pointed before re-audit
+FT-09:
+  title: 'Energy-affine atomic-data gauge: an E-linear gA error is exactly a temperature shift'
+  audit_anchor:
+    report_heading: docs/research/audit-2026-09-24/REPORT.md:662
+    frontier_json_index: 8
+  verdict: revise
+  verdict_note: The headline is almost already in the repo -- a 5-line corollary of the existing olsSlope_aliasing_A;
+    landed as affine_gA_observational_equiv, presented as that corollary.
+  status: landed
+  landing:
+    pr:
+    - 8
+  landed:
+  - name: CflibsFormal.affine_gA_observational_equiv
+    kind: theorem
+FT-10:
+  title: 'Information floor for the Boltzmann slope and the log-ratio: heteroscedastic Aitken BLUE'
+  audit_anchor:
+    report_heading: docs/research/audit-2026-09-24/REPORT.md:692
+    frontier_json_index: 9
+  verdict: keep
+  verdict_note: Refutation attempts failed; wls_min_noiseGain, interceptDiff_noiseGain and the OLS non-monotonicity
+    counterexample all re-check.
+  status: landed
+  landing:
+    pr:
+    - 8
+  landed:
+  - name: CflibsFormal.gMean_const_eq_wMean
+    kind: theorem
+  - name: CflibsFormal.wls_min_noiseGain
+    kind: theorem
+  - name: CflibsFormal.interceptDiff_noiseGain
+    kind: theorem
+  - name: CflibsFormal.Alt.betaHat
+    kind: def
+  note: 'Alt.betaHat is a housekeeping REDUCED model-row retag (PR #8 ''added before merge''), not itself
+    an FT-10 sub-claim; it has no FT-id owner in the E source map and is carried here per IA-proposal.md
+    section 2.4''s card grouping.'
+FT-12:
+  title: Statistical slope certificate C4-sigma from measured per-line SNR, and the exact Gaussian law
+    of beta-hat
+  audit_anchor:
+    report_heading: docs/research/audit-2026-09-24/REPORT.md:783
+    frontier_json_index: 11
+  verdict: revise
+  verdict_note: The heteroscedastic tail bound is mechanical and correct (grade A); hc hypothesis is removable.
+    Landed the tail bound and the model-row def; the exact Gaussian sampling law was reworded to the heteroscedastic
+    form.
+  status: landed
+  landing:
+    pr:
+    - 8
+  landed:
+  - name: CflibsFormal.Alt.alphaHat
+    kind: def
+  - name: CflibsFormal.Alt.olsSlope_subGaussian_tail_hetero
+    kind: theorem
+FT-13:
+  title: Profile-integrated escape factor bounds the slab SA from above; robust C12 replacement
+  audit_anchor:
+    report_heading: docs/research/audit-2026-09-24/REPORT.md:821
+    frontier_json_index: 12
+  verdict: revise
+  verdict_note: escape_ge_slab is true (proved via convexOn_exp + integral_mono); the Gaussian numbers
+    (0.447 vs 0.317 at tau0=3) are confirmed by execution. 'Always over-corrects' needed a qualifier.
+  status: landed
+  landing:
+    pr:
+    - 8
+  landed:
+  - name: CflibsFormal.inv_sub_inv_exp_sub_one_mem
+    kind: theorem
+  - name: CflibsFormal.escape_ge_slab
+    kind: theorem
+  parked_queue_targets:
+  - target: FT13-log-selfAbsorptionFactor-lipschitz
+    reason: ran out of budget twice across 5 runs; requeued 2026-09-27 at a higher token budget
+FT-14:
+  title: 'Physically scaled self-absorption: Kirchhoff-consistent opacity, per-line tau ratio, transfer
+    before instrument'
+  audit_anchor:
+    report_heading: docs/research/audit-2026-09-24/REPORT.md:859
+    frontier_json_index: 13
+  verdict: revise
+  verdict_note: source_eq_planck is true (proved in 15 lines via field_simp, grade A). The per-line tau-ratio
+    bridge was restated with guards and the stimulated-emission factor.
+  status: landed
+  landing:
+    pr:
+    - 8
+  landed:
+  - name: CflibsFormal.source_eq_planck
+    kind: theorem
+  - name: CflibsFormal.perLine_tauRatio
+    kind: theorem
+  parked_queue_targets:
+  - target: FT14-conv-absorptance-le
+    reason: drafted, pending Mode-B audit; this is FT-14 part (v), the pointwise Jensen step, separated
+      from the landed source_eq_planck/perLine_tauRatio; the integrated Fubini step is not yet staged
+      at all
+  note: CflibsFormal.equivWidth_strictMonoOn (EquivalentWidth.lean:135) is grouped with FT-14 in the Phase-1
+    card plan (IA-proposal.md section 2.4, card ft14v) as a self-absorption/equivalent-width building
+    block, even though its own docs/scope-tags.tsv row (462) and PR credit (#9) sit under FT-19's landing
+    batch below -- flagged for the owner as a cross-registry naming tension, not resolved here.
+FT-15:
+  title: Log-derivative Lipschitz constants for U and S via the mean excitation energy
+  audit_anchor:
+    report_heading: docs/research/audit-2026-09-24/REPORT.md:906
+    frontier_json_index: 14
+  verdict: keep
+  verdict_note: 'Checked by derivation: d ln U/d beta = -<E>, d<E>/dT = Var/(kT^2) >= 0, and the Saha-factor
+    bound follows from thermalBracket''s linearity in T.'
+  status: landed
+  landing:
+    pr:
+    - 8
+  landed:
+  - name: CflibsFormal.meanExcitation
+    kind: def
+  - name: CflibsFormal.partitionFunction_eq_mixture
+    kind: lemma
+  - name: CflibsFormal.meanExcitation_eq_tiltMean
+    kind: lemma
+  - name: CflibsFormal.meanExcitation_monotoneOn_temp
+    kind: theorem
+  - name: CflibsFormal.log_partitionFunction_lipschitz_max
+    kind: theorem
+FT-16:
+  title: 'Line extraction under profile misspecification: exact bias identity and a Varah l-infinity noise
+    gain'
+  audit_anchor:
+    report_heading: docs/research/audit-2026-09-24/REPORT.md:937
+    frontier_json_index: 15
+  verdict: keep
+  verdict_note: extractor_bias_identity is true and trivial (6-line proof); the Varah l-infinity bound
+    re-checks and is axiom-clean.
+  status: landed
+  landing:
+    pr:
+    - 8
+  landed:
+  - name: CflibsFormal.kernelLS_error_linfty
+    kind: theorem
+FT-17:
+  title: 'Newton''s method on the multi-element charge-neutrality equation: error identity, bracket, convergence'
+  audit_anchor:
+    report_heading: docs/research/audit-2026-09-24/REPORT.md:966
+    frontier_json_index: 16
+  verdict: keep
+  verdict_note: The error identity re-checks; N x <= r for every x >= 0 and the quadratic error bound
+    were both proved axiom-clean on top of it.
+  status: landed
+  landing:
+    pr:
+    - 8
+  landed:
+  - name: CflibsFormal.neutralityNewton
+    kind: def
+  - name: CflibsFormal.neutralityNewton_error_eq
+    kind: theorem
+  - name: CflibsFormal.neutralityNewton_le_root
+    kind: theorem
+  - name: CflibsFormal.neutralityNewton_nonneg
+    kind: theorem
+  - name: CflibsFormal.neutralityNewton_enclosure
+    kind: theorem
+  legacy_crosswalk:
+    fnn: F03
+    path: docs/frontiers/03-multi-element-iteration.md
+    note: REPORT.md's own heading names this as reopening the legacy F03 dossier's milestone M8 (docs/research/audit-2026-09-24/REPORT.md:966)
+  parked_queue_targets:
+  - target: FT17-neutralityNewton-tendsto
+    reason: 'the remaining step: global convergence from every x0 >= 0 (the landed neutralityNewton_enclosure
+      only gives the two-sided bracket after one step, not the limit)'
+FT-18:
+  title: Sign of the self-absorption temperature bias
+  audit_anchor:
+    report_heading: docs/research/audit-2026-09-24/REPORT.md:993
+    frontier_json_index: 17
+  verdict: revise
+  verdict_note: The core is correct (f = ln SA o tau nondecreasing in E when tau is antitone in E, so
+    the slope rises); the antitonicity hypothesis was weakened from non-strict to strict to allow multiplets
+    sharing an upper level.
+  status: landed
+  landing:
+    pr:
+    - 8
+  landed:
+  - name: CflibsFormal.olsSlope_selfAbsorbed_ge
+    kind: theorem
+FT-19:
+  title: Ion apparent temperature >= neutral apparent temperature in a line-of-sight mixture
+  audit_anchor:
+    report_heading: docs/research/audit-2026-09-24/REPORT.md:1019
+    frontier_json_index: 18
+  verdict: revise
+  verdict_note: The reweighting factor was mis-specified in the proposal (confirmed); landed with the
+    corrected ionReweight definition, under which the partition functions cancel as the informal statement
+    claims.
+  status: landed
+  landing:
+    pr:
+    - 9
+  landed:
+  - name: CflibsFormal.ionReweight
+    kind: def
+  - name: CflibsFormal.ionReweight_strictMonoOn
+    kind: theorem
+  - name: CflibsFormal.tiltMean_reweight_le
+    kind: theorem
+  - name: CflibsFormal.ion_zoneWeight_eq
+    kind: theorem
+  - name: CflibsFormal.mixed_ion_apparentBeta_le_neutral
+    kind: theorem
+  - name: CflibsFormal.equivWidth_strictMonoOn
+    kind: theorem
+  note: equivWidth_strictMonoOn is grouped with FT-14 in the Phase-1 card plan instead (see FT-14's note);
+    it is listed here because this is its docs/scope-tags.tsv row (462) and PR credit (#9).
+FT-20:
+  title: 'Pair curve-of-growth identifiability boundary: flat-kernel injectivity is not profile-generic'
+  audit_anchor:
+    report_heading: docs/research/audit-2026-09-24/REPORT.md:1047
+    frontier_json_index: 19
+  verdict: revise
+  verdict_note: The two-step counterexample is confirmed numerically (R(1)=1.5077, R(3)=1.3905, R(10)=1.5826,
+    interior minimum 1.382 at n~2.42); kept as a machine-checked non-injectivity witness.
+  status: landed
+  landing:
+    pr:
+    - 8
+  landed:
+  - name: CflibsFormal.stepProfile
+    kind: def
+  - name: CflibsFormal.equivWidth_stepProfile
+    kind: theorem
+  - name: CflibsFormal.stepW_pairRatio_not_injOn
+    kind: theorem
+  - name: CflibsFormal.stepProfile_pairRatio_not_injOn
+    kind: theorem
+FT-11:
+  title: SahaCascade (spec 03 section 1) plus an IPD-aware S10
+  audit_anchor:
+    report_heading: docs/research/audit-2026-09-24/REPORT.md:734
+    frontier_json_index: 10
+  verdict: revise
+  verdict_note: 'S1-S9 as specified; new S10 (IPD-lowered edges) is sufficient, not necessary, for strict
+    antitonicity. Refuted sub-claim: the verifier found the proposed S10 ''iff'' false, with a numeric
+    counterexample; S8''s sketch was also false without the hpos hypothesis (a Lean witness exists for
+    the corrected form).'
+  status: not-landed
+  landing: null
+  landed: []
+  note: 'Excluded from PRs #8/#9 by design (task brief): no scope-tags.tsv rows were added for FT-11 in
+    the 9dbbc60..83a6da0 diff. None of S1-S10 (sahaStageProduct, stageFraction, speciesCharge, totalIonizedCharge,
+    mean_strictAnti_of_ratio, speciesCharge_strictAntiOn, cascade_exists_unique, cascade_residual_enclosure,
+    speciesCharge_ipd_strictAntiOn) is landed in CflibsFormal/.'
+F02-M6:
+  title: Equilibrium electron density strictly increasing in temperature (legacy F02, milestone M6)
+  audit_anchor:
+    report_heading: null
+    frontier_json_index: null
+  verdict: null
+  verdict_note: 'not part of the 2026-09-24 audit slate: no frontier.json entry and no REPORT.md section
+    exist for it (verified: zero grep hits for ''F02-M6''/''F02M6'' in frontier.json, REPORT.md, refactor.json,
+    audits.json in this checkout). Landed directly from the legacy Frontier-02 dossier''s milestone M6.'
+  status: landed
+  landing:
+    pr:
+    - 8
+  landed:
+  - name: CflibsFormal.sahaEquilibriumNe_strictMonoOn_temp
+    kind: theorem
+  legacy_crosswalk:
+    fnn: F02
+    path: docs/frontiers/02-saha-monotonicity.md
+    note: F02-M6 is milestone M6 of the legacy Frontier-02 dossier (IA-proposal.md section 1.7/3.3); its
+      own staged dossier carries the informal statement and proof route in place of a frontier.json entry
+F07:
+  title: equivWidth_lorentzian_sqrt_sharp (Ladenburg-Reiche sharp Voigt/Lorentzian equivalent-width bound)
+  audit_anchor:
+    report_heading: null
+    frontier_json_index: null
+  verdict: null
+  verdict_note: 'not an FT-NN item and not a landed frontier result: a Phase-0 pilot target predating
+    the FT numbering, tied to the legacy docs/frontiers/07-ladenburg-reiche.md dossier. It failed at approximately
+    311k output tokens (audits.json / refactor.json RF-26); four PILOT-* variant attempts are also parked,
+    all superseded or unresolved. Included here only to answer ''F07 -> which FT'': none.'
+  status: not-landed
+  landing: null
+  landed: []

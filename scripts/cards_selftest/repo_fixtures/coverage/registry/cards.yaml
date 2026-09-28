@@ -1,0 +1,9 @@
+# synthetic docs/theorems/registry/cards.yaml for scripts/check_cards.py's --selftest only
+# (matches the real registry/cards.yaml shape: a `cards:` list of {id, headline, members}).
+# Plans a card for CflibsFormal.goodThm but this directory deliberately has no card for it, to
+# exercise the --require-coverage COVERAGE check.
+schema: cards/v1
+cards:
+  - id: some-planned-card
+    headline: CflibsFormal.goodThm
+    members: []

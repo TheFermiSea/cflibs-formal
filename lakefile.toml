@@ -53,6 +53,18 @@ srcDir = "tools"
 root = "ScopeCheck"
 supportInterpreter = true
 
+# Declaration catalog: `lake exe export-catalog > docs/catalog.jsonl` writes one JSON line per
+# documented CflibsFormal theorem/def (name, kind, module, file, line, docstring, type printed with
+# fixed pp options, binders, used CflibsFormal constants, axioms), sorted by name. The generated
+# docs and theorem cards read it; CI regenerates it and diffs against the committed file. Imports
+# with environment extensions loaded (runLinter pattern, not AxiomAudit's helper) so statements
+# print with Mathlib notation; run after `lake build`.
+[[lean_exe]]
+name = "export-catalog"
+srcDir = "tools"
+root = "ExportCatalog"
+supportInterpreter = true
+
 # Numerical regression-oracle generator: a computable Float MIRROR of the verified forward
 # map + classic inversion (NOT part of the verified spec; see oracle/README.md). Emits
 # fixtures instantiating the proven theorems. `lake exe oracle-fixtures > oracle/fixtures.json`.

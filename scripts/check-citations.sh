@@ -15,6 +15,8 @@
 #     source is on record as having been opened for them.
 #   * Which four-digit years appear in `## Literature` prose but belong to no whitelist row —
 #     candidate sources named in a docstring that the whitelist has never acknowledged.
+#   * How many whitelist rows carry a doi/url value (column 5, added 2026-09-28) — a coverage
+#     count only; the doi column is bibliographic metadata, never evidence of content.
 #
 # WHAT THIS SCRIPT CANNOT PROVE — and never will
 #   * That any cited paper EXISTS. It is offline and reads only this repo.
@@ -218,6 +220,7 @@ if not WL.exists():
 wl_status: dict[str, str] = {}
 wl_year: dict[str, str] = {}
 wl_note: dict[str, str] = {}
+wl_doi: dict[str, str] = {}
 for line in WL.read_text(encoding="utf-8").splitlines():
     if not line.strip() or line.lstrip().startswith("#"):
         continue
@@ -228,6 +231,9 @@ for line in WL.read_text(encoding="utf-8").splitlines():
     wl_status[cit] = parts[1].strip()
     wl_year[cit] = parts[2].strip() if len(parts) > 2 else ""
     wl_note[cit] = parts[3].strip() if len(parts) > 3 else ""
+    # Column 5, added 2026-09-28: DOI or stable URL, empty if unknown. Bibliographic metadata
+    # only (see the whitelist's own header) — advisory coverage only, never a gate.
+    wl_doi[cit] = parts[4].strip() if len(parts) > 4 else ""
 
 by_status = Counter(wl_status.values())
 print(f"-- whitelist (docs/citation-whitelist.tsv) --")
@@ -235,6 +241,9 @@ print(f"   rows: {len(wl_status)}   " +
       "  ".join(f"{s}:{n}" for s, n in sorted(by_status.items())))
 print("   Reminder: a whitelist row records what was DONE, not that a paper exists. Only")
 print("   VERIFIED/CORRECTED rows carry first-hand evidence.")
+doi_count = sum(1 for d in wl_doi.values() if d)
+print(f"   METRIC doi column coverage: {doi_count} of {len(wl_status)} rows carry a DOI/URL "
+      "(metadata only; not evidence of content)")
 # Tracked metric (not a gate): how much of the whitelist, and of the citations actually used in
 # docs/scope-tags.tsv column 4, rests on a primary source that is on record as OPENED.
 first_hand = sum(n for s, n in by_status.items() if s in EVIDENCED)

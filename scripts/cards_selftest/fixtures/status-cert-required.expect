@@ -1,0 +1,1 @@
+SCHEMA: status.certificate is required when 'certificates[]' is non-empty
