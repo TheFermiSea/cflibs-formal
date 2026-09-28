@@ -148,8 +148,10 @@ FT-07:
     report_heading: docs/research/audit-2026-09-24/REPORT.md:580
     frontier_json_index: 6
   verdict: keep
-  verdict_note: clr_mul, aitchisonDist_perturb/smul/aliasing and composition_rel_error_mul all hold; landed
-    with an added hypothesis delta < 1/2.
+  verdict_note: clr_mul, aitchisonDist_perturb/smul/aliasing and composition_rel_error_mul all hold. Landed
+    (classic-reader binding of (iii) only) in the sharp form delta < 1 with constant
+    2 delta/(1 - delta); the statement audit replaced the verifier's delta < 1/2,
+    2 delta/(1 - 2 delta) form.
   status: landed
   landing:
     pr:

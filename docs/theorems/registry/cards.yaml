@@ -67,7 +67,7 @@ ft04.fixed-effects-design-identifiability:
   frontier_ids:
   - FT-04
 ft05.partition-function-cutoff-ratio:
-  title: 'Partition-function cutoff: tail bound and the T-dependent policy ratio'
+  title: 'Partition-function cutoff: truncated partition function and T-dependent cutoff ratio'
   kind: family
   headline: CflibsFormal.cutRatio_strictMonoOn_temp
   members:
@@ -91,7 +91,7 @@ ft06.stark-bracket-premise:
   frontier_ids:
   - FT-06
 ft07.aitchison-atomic-data-error-transfer:
-  title: Aitchison error transfer under classic-reader atomic-data error
+  title: Abundance-scaled closure bound under classic-reader atomic-data error
   kind: result
   headline: CflibsFormal.classicComposition_atomicData_error_rel
   members: []
@@ -122,7 +122,7 @@ ft08.neutrality-scale-same-ratio:
   note: own EXACT relation tag; publishes REDUCED via lineIntensityPerU (D15 two-axis rule) -- owner spot-check
     required (D24).
 ft09.affine-atomic-data-gauge:
-  title: Energy-affine atomic-data gauge is an exact temperature shift
+  title: 'Energy-affine atomic-data gauge: an exact temperature shift plus density rescale'
   kind: result
   headline: CflibsFormal.affine_gA_observational_equiv
   members: []

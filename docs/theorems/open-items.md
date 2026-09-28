@@ -18,6 +18,46 @@
 - **pipeline**: Whether CF-LIBS-improved's `_ne_for_T` three-step loop actually lies in an `hmaps`-invariant half-line with realized slope `q < 1` on any real spectrum is unverified — the loop carries no runtime check of either condition. See "Role in the composition-extraction pipeline" below for a proposed check and its falsification arm.
 - **model-row**: `ipdLogMap` (the `def` itself) carries no `docs/scope-tags.tsv` row and inherits no relation tag: the lowering coefficient `b` stays abstract by owner decision D18, so no tag applies until the physics-binding step (FT-02 item 8) is written and reviewed. (D18)
 
+## [`ft03.refuse-to-report-policy`](ft03.refuse-to-report-policy.md)
+
+- **pipeline**: Non-vacuous pipeline use requires certified upper bounds U_i; the audit names FT-07 and FT-15 as prerequisite error-bound sources. (FT-03)
+- **lean**: Per-item statement for an arbitrary ansA, including the answer-on-A regret bound ∑_{i ∈ A} w i (U i − lam), is a separate target that is not landed. (FT-03)
+- **lean**: FT-03 part (e), refusal-reason soundness on the sb_offset route (sahaConsistency_trivial_of_sbOffset, sahaTemperature_eq_fit), is not landed. (FT-03)
+
+## [`ft04.fixed-effects-design-identifiability`](ft04.fixed-effects-design-identifiability.md)
+
+- **pipeline**: Define and wire a grouped design-rank certificate (working name C1g; a new id from C15 per D16) testing 0 < withinSS grp w x on the solver's kept lines, alongside or instead of the pooled C1/C3 checks (owner decision); a grouped joint certificate (C2g) additionally needs the unlanded joint result.
+ (FT-04)
+- **lean**: Prove uniqueness of the fixed-effects minimizer under 0 < withinSS; feSlope_isMin only proves a minimizer.
+ (FT-04)
+- **lean**: Joint identifiability iff the within Gram determinant is positive (FT-04 part (iv)) is not landed; a grouped joint certificate needs it.
+ (FT-04)
+
+## [`ft05.partition-function-cutoff-ratio`](ft05.partition-function-cutoff-ratio.md)
+
+- **lean**: FT-05 (iii) `cutRatio_injOn` and `cutRatio_not_absorbable_two` are not stated in CflibsFormal/ (`cutRatio_injOn` exists only as a sorry sketch in docs/research/audit-2026-09-24/evidence/frontier-verifier/Verify.lean) (FT-05)
+- **lean**: FT-05 (i) tail bound partitionFunction_sub_cut_bounds is proved only in audit evidence (docs/research/audit-2026-09-24/evidence/frontier-proposer/Proofs.lean), not landed (FT-05)
+- **lean**: FT-05 (iv) population_cut_consistent and (v) sharpCutoff_discontinuous are not stated (FT-05)
+- **model-row**: partitionFunctionCut has no row in docs/scope-tags.tsv, and D17's weighted level sum (Hummer–Mihalas occupation probabilities, with the fixed cutoff as the 0/1-weight instance) is not formalized (D17)
+
+## [`ft06.stark-bracket-premise`](ft06.stark-bracket-premise.md)
+
+- **pipeline**: The C8 two-diagnostic certificate and its refusal are not landed; this theorem is only the Stark-side premise. (FT-06)
+- **pipeline**: cflibs/inversion/physics/reliability.py#stark_saha_lte_gate is the current runtime C8 slot (relative-tolerance agreement, not bracket intersection); cflibs/evolution/certificate_gate.py#hard_certificate_gate is the separate evaluator-side HARD set. Neither wires this theorem's bracket in. (FT-06)
+- **docstring**: StarkOpacityGuard's REFUSAL note says the tau-to-width link is not formalized anywhere in this repo; OpacityBroadening.kOpacOf now formalizes it for a slab-Lorentzian model, so the note is stale
+
+## [`ft07.aitchison-atomic-data-error-transfer`](ft07.aitchison-atomic-data-error-transfer.md)
+
+- **lean**: FT-07 parts (i) clr perturbation and scale invariance, (ii) aliasing loss d_A = ||clr rho||, (iv) mass-fraction transfer, the generic relative-closure lemma of (iii) (|N-hat - N| <= eta*N form; only the private ratio-form helper comp_rel_ratio exists), and the additive-amplification witness are not landed; this card covers only the classic-reader binding of (iii). (FT-07)
+- **owner-decision**: The title in registry/cards.yaml for this card still reads 'Aitchison error transfer under classic-reader atomic-data error'; the lead should update it to match this card's retitled 'Abundance-scaled closure bound under classic-reader atomic-data error' (card authors may not edit registry/cards.yaml). (FT-07)
+
+## [`ft09.affine-atomic-data-gauge`](ft09.affine-atomic-data-gauge.md)
+
+- **owner-decision**: Owner spot-check required by D24 for the card's relation tag. (FT-09)
+- **lean**: Grouped two-stage gauge and composition-leakage bound remain deferred; this card documents only the single-stage observational equivalence. (FT-09)
+- **pipeline**: Wiring to calibration-layer consumers beyond the named BoltzmannPlotFitter anchor is not done. (FT-09)
+- **owner-decision**: The title in registry/cards.yaml for this card still reads 'Energy-affine atomic-data gauge is an exact temperature shift'; the lead should update it to match this card's retitled 'Energy-affine atomic-data gauge: an exact temperature shift plus density rescale' (card authors may not edit registry/cards.yaml). (FT-09)
+
 ## [`ft14i.kirchhoff-source-planck`](ft14i.kirchhoff-source-planck.md)
 
 - **citation**: D19 requires constants checked against standard references before FT-14 is stated; no record shows Griem 1997 (or another source) was opened for B0 = 2hν³/c², and the D19 wavelength-form bridge lemma is not formalized. The landed statement sidesteps the first gap by keeping κ0, ε0, B0 abstract.

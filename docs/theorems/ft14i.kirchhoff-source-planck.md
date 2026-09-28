@@ -15,7 +15,7 @@ lean:
   reviewed:
     commit: "d070a4bebd02ab3a00bc3e0ad37250b9e3be3df8"
     statement_hash: "95f4804c43b8f95473202574fdb90fe6331657a28c03ab26e3412f98e87440cd"
-    by: "draft sonnet; adversarial review opus (independent, D24); fixes sonnet; lead spot-check"
+    by: "draft sonnet; adversarial review opus (independent, D24); fixes sonnet"
     method: "binder-by-binder LaTeX vs catalog statement; physics reading; honest scope; CF-LIBS-improved anchors; citation roles; check_cards.py"
   not_to_confuse_with:
     - CflibsFormal.lteSourceStrength
