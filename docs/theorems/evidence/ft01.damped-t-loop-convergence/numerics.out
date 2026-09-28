@@ -1,0 +1,8 @@
+local rate q = 1 - lam + lam*g = 0.982
+q**20 = 0.6954  (20 iterations shrink a linearized error to this fraction)
+a-posteriori distance bound = 100.0 / (lam*(1-g)) = 5555.6 K
+unweighted a+b = 100.5 (fails); weighted gate at r=0.0035 is 0.850 (holds)
+T0=2000.0: after 2000 iters |T - Tstar| = 3.192e-16
+T0=8000.0: after 2000 iters |T - Tstar| = 3.192e-16
+T0=16000.0: after 2000 iters |T - Tstar| = 3.192e-16
+T0=40000.0: after 2000 iters |T - Tstar| = 3.192e-16

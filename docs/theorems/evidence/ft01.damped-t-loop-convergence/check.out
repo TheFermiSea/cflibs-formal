@@ -1,0 +1,46 @@
+CflibsFormal.dampedMap : ℝ → (ℝ → ℝ) → ℝ → ℝ
+def CflibsFormal.dampedMap : ℝ → (ℝ → ℝ) → ℝ → ℝ :=
+fun lam g u => (1 - lam) * u + lam * g u
+@CflibsFormal.dampedMap_lipschitz : ∀ {g g' : ℝ → ℝ} {a b m M lam : ℝ},
+  0 < lam →
+    a ≤ b →
+      (∀ T ∈ Set.Icc a b, HasDerivAt g (g' T) T) →
+        (∀ T ∈ Set.Icc a b, m ≤ g' T ∧ g' T ≤ M) →
+          1 - 2 / lam < m →
+            M < 1 →
+              ∃ q,
+                0 ≤ q ∧
+                  q < 1 ∧
+                    ∀ x ∈ Set.Icc a b,
+                      ∀ y ∈ Set.Icc a b, |CflibsFormal.dampedMap lam g y - CflibsFormal.dampedMap lam g x| ≤ q * |y - x|
+@CflibsFormal.dampedMap_contracts : ∀ {g g' : ℝ → ℝ} {a b m M lam : ℝ},
+  0 < lam →
+    a ≤ b →
+      (∀ T ∈ Set.Icc a b, HasDerivAt g (g' T) T) →
+        (∀ T ∈ Set.Icc a b, m ≤ g' T ∧ g' T ≤ M) →
+          1 - 2 / lam < m →
+            M < 1 →
+              Set.MapsTo (CflibsFormal.dampedMap lam g) (Set.Icc a b) (Set.Icc a b) →
+                ∃ Tstar ∈ Set.Icc a b,
+                  CflibsFormal.dampedMap lam g Tstar = Tstar ∧
+                    ∀ T0 ∈ Set.Icc a b,
+                      Filter.Tendsto (fun n => (CflibsFormal.dampedMap lam g)^[n] T0) Filter.atTop (nhds Tstar)
+@CflibsFormal.tDamped_mobius_converges : ∀ {g c lam : ℝ},
+  0 < g →
+    g < 1 →
+      0 < c →
+        0 < lam →
+          lam ≤ 1 →
+            ∀ (T0 : ℝ),
+              0 < T0 →
+                Filter.Tendsto (fun n => (CflibsFormal.dampedMap lam fun T => T / (g + c * T))^[n] T0) Filter.atTop
+                  (nhds ((1 - g) / c))
+@CflibsFormal.exists_weights_iff : ∀ {a b c d : ℝ},
+  0 ≤ b →
+    0 ≤ c →
+      ((∃ wT wn, 0 < wT ∧ 0 < wn ∧ Max.max (a + b * wn / wT) (c * wT / wn + d) < 1) ↔
+        a < 1 ∧ d < 1 ∧ b * c < (1 - a) * (1 - d))
+'CflibsFormal.dampedMap_lipschitz' depends on axioms: [propext, Classical.choice, Quot.sound]
+'CflibsFormal.dampedMap_contracts' depends on axioms: [propext, Classical.choice, Quot.sound]
+'CflibsFormal.tDamped_mobius_converges' depends on axioms: [propext, Classical.choice, Quot.sound]
+'CflibsFormal.exists_weights_iff' depends on axioms: [propext, Classical.choice, Quot.sound]

@@ -1,0 +1,25 @@
+ipdLogMap : ℝ → ℝ → ℝ → ℝ
+@ipdLogMap_root_subsingleton : ∀ {a b : ℝ}, {ℓ | ipdLogMap a b ℓ = ℓ ∧ b * Real.exp (ℓ / 2) < 2}.Subsingleton
+@ipdLogMap_contracts : ∀ {a b ℓ1 q : ℝ},
+  0 ≤ b →
+    b * Real.exp (ℓ1 / 2) / 2 ≤ q →
+      q < 1 →
+        Set.MapsTo (ipdLogMap a b) (Set.Iic ℓ1) (Set.Iic ℓ1) →
+          ∃ ℓs ∈ Set.Iic ℓ1,
+            ipdLogMap a b ℓs = ℓs ∧
+              (∀ ℓ ∈ Set.Iic ℓ1, ipdLogMap a b ℓ = ℓ → ℓ = ℓs) ∧
+                ∀ ℓ0 ∈ Set.Iic ℓ1, Filter.Tendsto (fun n => (ipdLogMap a b)^[n] ℓ0) Filter.atTop (nhds ℓs)
+@ipdInverse_twoPoint_sensitivity : ∀ {a1 a2 b l1 l2 q : ℝ},
+  0 < a1 →
+    0 ≤ b →
+      q < 1 →
+        ipdLogMap a1 b l1 = l1 →
+          ipdLogMap a2 b l2 = l2 →
+            a1 ≤ a2 →
+              b * Real.exp (max l1 l2 / 2) / 2 ≤ q →
+                Real.log a2 - Real.log a1 ≤ l2 - l1 ∧ l2 - l1 ≤ (Real.log a2 - Real.log a1) / (1 - q)
+'CflibsFormal.ipdLogMap_root_subsingleton' depends on axioms: [propext, Classical.choice, Quot.sound]
+'CflibsFormal.ipdLogMap_contracts' depends on axioms: [propext, Classical.choice, Quot.sound]
+'CflibsFormal.ipdInverse_twoPoint_sensitivity' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ipdLogMap_root_subsingleton_nonvacuous_root' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ipdLogMap_root_subsingleton_nonvacuous_unique' depends on axioms: [propext, Classical.choice, Quot.sound]
