@@ -51,12 +51,45 @@
 - **lean**: FT-07 parts (i) clr perturbation and scale invariance, (ii) aliasing loss d_A = ||clr rho||, (iv) mass-fraction transfer, the generic relative-closure lemma of (iii) (|N-hat - N| <= eta*N form; only the private ratio-form helper comp_rel_ratio exists), and the additive-amplification witness are not landed; this card covers only the classic-reader binding of (iii). (FT-07)
 - **owner-decision**: The title in registry/cards.yaml for this card still reads 'Aitchison error transfer under classic-reader atomic-data error'; the lead should update it to match this card's retitled 'Abundance-scaled closure bound under classic-reader atomic-data error' (card authors may not edit registry/cards.yaml). (FT-07)
 
+## [`ft08.neutrality-scale-same-ratio`](ft08.neutrality-scale-same-ratio.md)
+
+- **owner-decision**: Owner spot-check required by D24 for this card's relation tag is pending.
+- **citation**: Abbass 2016 (cited in the NeutralityScale module docstring as prior art for neutrality normalization) is UNVERIFIED in docs/citation-whitelist.tsv. Attach it here with role prior-art only after the primary source is opened and the row is VERIFIED or CORRECTED.
+
+## [`ft08.ratio-mode-normalization-invariance`](ft08.ratio-mode-normalization-invariance.md)
+
+- **lean**: Land the Saha-factor beta-derivative after re-pointing its local meanExcitation to CflibsFormal.meanExcitation (FT-15); it is parked due to a statement clash. (FT08-log-sahaFactor-hasDerivAt-beta)
+- **lean**: State and land the two-point beta-box bound for the ratio-mode log-ratio (FT-08 (c)) using the derivative from ratioEstimate_hasDerivAt.
+- **lean**: State and land d ln U/dβ = −⟨E⟩ (audit decomposition step 4, not staged anywhere). Once FT08-log-sahaFactor-hasDerivAt-beta lands, compose both with ratioEstimate_hasDerivAt to obtain the audited coefficient (E_a−⟨E⟩_{I,A})−(E_b−⟨E⟩_{I,B})−f_Aκ_A+f_Bκ_B.
+
 ## [`ft09.affine-atomic-data-gauge`](ft09.affine-atomic-data-gauge.md)
 
 - **owner-decision**: Owner spot-check required by D24 for the card's relation tag. (FT-09)
 - **lean**: Grouped two-stage gauge and composition-leakage bound remain deferred; this card documents only the single-stage observational equivalence. (FT-09)
 - **pipeline**: Wiring to calibration-layer consumers beyond the named BoltzmannPlotFitter anchor is not done. (FT-09)
 - **owner-decision**: The title in registry/cards.yaml for this card still reads 'Energy-affine atomic-data gauge is an exact temperature shift'; the lead should update it to match this card's retitled 'Energy-affine atomic-data gauge: an exact temperature shift plus density rescale' (card authors may not edit registry/cards.yaml). (FT-09)
+
+## [`ft10.noise-gain-floor-blue`](ft10.noise-gain-floor-blue.md)
+
+- **lean**: Land the probabilistic heteroscedastic BLUE variance statement under uncorrelated noise with variance one over the line weights; this card proves only the deterministic noise-gain floor. (FT-10)
+- **docstring**: Rename existing `crlb_slope` and `olsSlope_attains_crlb` names in a separate change; no new name may contain `crlb`. (FT-10)
+- **pipeline**: Decide whether the weight cap in `_fit_common_boltzmann_plane` should be reported as a precision cost against the $1/S_w$ floor. (FT-10)
+- **lean**: Land the variance statement for the common-slope intercept difference (homoscedastic, over a Sum index). (FT-10)
+- **lean**: Land optimality (BLUE) of the intercept difference; only its noise gain is proved here. (FT-10)
+- **lean**: Formalize the Fin-3 counterexample showing that the unweighted OLS slope variance can increase when a noisy line is added (2 to 2500.25). (FT-10)
+
+## [`ft12.stochastic-slope-tail-budget`](ft12.stochastic-slope-tail-budget.md)
+
+- **lean**: The certificate soundness wrapper slopeTailCert and the temperature corollary via temp_slope_event_subset are follow-up FT-12 steps, not part of this card. (FT-12)
+- **lean**: The heteroscedastic Gaussian law of betaHat and exact coverage are separate FT-12 steps and are not claimed here. (FT-12)
+- **pipeline**: The C4-sigma statistical certificate is still a candidate under C15; no certificate id or gate wiring is landed.
+- **lean**: Float mirror of the tail bound in the oracle. (FT-12)
+
+## [`ft13.escape-factor-slab-bound`](ft13.escape-factor-slab-bound.md)
+
+- **lean**: The 1/2-Lipschitz bound on log selfAbsorptionFactor is not landed; its proof-queue target remains parked. (FT13-log-selfAbsorptionFactor-lipschitz)
+- **lean**: The profile-generic escapeFactor Lipschitz and tau-error propagation lemmas proposed for FT-13 are not part of this card.
+- **pipeline**: C12 remains the wired HARD known-tau identity in the certificate gate; this card does not retire or replace it.
 
 ## [`ft14i.kirchhoff-source-planck`](ft14i.kirchhoff-source-planck.md)
 
@@ -73,6 +106,12 @@
 - **lean**: FT-14 part (v) (transfer before instrument) remains parked as FT14-conv-absorptance-le, Fubini step unstaged — a sibling result, not this card's declaration.
  (FT-14)
 - **owner-decision**: Owner spot-check of this EXACT card (D24) pending; required before merge to main.
+
+## [`ft14iv.perline-tauratio-bridge`](ft14iv.perline-tauratio-bridge.md)
+
+- **model-row**: The model-level identity for sigma0_i in terms of lambda, g_u, A, and phi(0) is not formalized here; radiation constants remain abstract per D19.
+- **pipeline**: Decide whether _tau_ratio should carry the per-line (1 - exp(-x_i)) and lower-level Boltzmann factors; a full comparison needs the D19 sigma0 model identity.
+- **docstring**: OpticalDepthBridge module scope block says stimulated emission is not modelled; reconcile it with perLine_tauRatio, which carries (1 - exp(-x_i)) via its sigma0 argument.
 
 ## [`ft17.neutrality-newton-bracket`](ft17.neutrality-newton-bracket.md)
 
