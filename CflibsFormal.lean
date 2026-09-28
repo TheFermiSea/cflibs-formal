@@ -38,6 +38,7 @@ import CflibsFormal.Identifiability
 import CflibsFormal.InhomogeneityBias
 import CflibsFormal.IntervalEnclosure
 import CflibsFormal.Inverse
+import CflibsFormal.IonApparentTemperature
 import CflibsFormal.IpdSahaInverse
 import CflibsFormal.JointConvergence
 import CflibsFormal.JointIdentifiability

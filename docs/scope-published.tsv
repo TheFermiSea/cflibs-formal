@@ -249,6 +249,7 @@ EquivalentWidth.lean	equivWidth_mono	theorem	EXACT	EXACT	—
 EquivalentWidth.lean	equivWidth_nonneg	theorem	PURE-MATH	PURE-MATH	—
 EquivalentWidth.lean	equivWidth_rectangular	theorem	EXACT	EXACT	—
 EquivalentWidth.lean	equivWidth_stepProfile	theorem	PURE-MATH	PURE-MATH	—
+EquivalentWidth.lean	equivWidth_strictMonoOn	theorem	PURE-MATH	PURE-MATH	—
 EquivalentWidth.lean	equivWidth_weakLine	theorem	EXACT	EXACT	—
 EquivalentWidth.lean	integral_one_sub_exp_neg_inv_sq	theorem	PURE-MATH	PURE-MATH	—
 EquivalentWidth.lean	lorentzian_integrable	theorem	PURE-MATH	PURE-MATH	—
@@ -364,6 +365,7 @@ InhomogeneityBias.lean	pairSlope_pos	theorem	PURE-MATH	PURE-MATH	—
 InhomogeneityBias.lean	pairSlope_strictAnti	theorem	PURE-MATH	PURE-MATH	—
 InhomogeneityBias.lean	tiltMean_homogeneous	theorem	PURE-MATH	PURE-MATH	—
 InhomogeneityBias.lean	tiltMean_le_pairSlope	theorem	PURE-MATH	PURE-MATH	—
+InhomogeneityBias.lean	tiltMean_reweight_le	theorem	PURE-MATH	PURE-MATH	—
 InhomogeneityBias.lean	tiltWeight_exponent_sum	theorem	PURE-MATH	PURE-MATH	—
 InhomogeneityBias.lean	tiltWeight_mixture	theorem	PURE-MATH	PURE-MATH	—
 InhomogeneityBias.lean	tiltWeight_pos	theorem	PURE-MATH	PURE-MATH	—
@@ -380,6 +382,8 @@ Inverse.lean	PlasmaParams	def	REDUCED	REDUCED	—
 Inverse.lean	general_identifiability	theorem	EXACT	REDUCED	PlasmaParams,lineIntensity
 Inverse.lean	rawCompositionEstimator_sound	theorem	REDUCED	REDUCED	—
 Inverse.lean	sound_estimators_agree	theorem	PURE-MATH	PURE-MATH	—
+IonApparentTemperature.lean	ion_zoneWeight_eq	theorem	REDUCED	REDUCED	—
+IonApparentTemperature.lean	mixed_ion_apparentBeta_le_neutral	theorem	REDUCED	REDUCED	—
 IpdSahaInverse.lean	ipdInverse_twoPoint_sensitivity	theorem	PURE-MATH	PURE-MATH	—
 IpdSahaInverse.lean	ipdLogMap_contracts	theorem	PURE-MATH	PURE-MATH	—
 IpdSahaInverse.lean	ipdLogMap_root_subsingleton	theorem	PURE-MATH	PURE-MATH	—
@@ -708,6 +712,8 @@ SahaStability.lean	electronDensityFromRatio_lipschitz_temp	theorem	REDUCED	REDUC
 SahaStability.lean	electronDensityFromRatio_strictMonoOn_temp	theorem	EXACT	REDUCED	sahaFactor
 SahaStability.lean	electronDensity_lipschitz	theorem	EXACT	REDUCED	sahaFactor
 SahaStability.lean	electronDensity_relativeError	theorem	EXACT	REDUCED	sahaFactor
+SahaStability.lean	ionReweight	def	REDUCED	REDUCED	—
+SahaStability.lean	ionReweight_strictMonoOn	theorem	PURE-MATH	PURE-MATH	—
 SahaStability.lean	log_partitionFunction_lipschitz_max	theorem	PURE-MATH	PURE-MATH	—
 SahaStability.lean	meanExcitation_eq_tiltMean	theorem	PURE-MATH	PURE-MATH	—
 SahaStability.lean	meanExcitation_monotoneOn_temp	theorem	PURE-MATH	PURE-MATH	—
