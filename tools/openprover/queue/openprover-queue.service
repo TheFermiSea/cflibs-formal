@@ -1,0 +1,24 @@
+# Continuous proof queue (tools/openprover/queue/supervisor.py). Install on ai-proxy:
+#   sudo cp tools/openprover/queue/openprover-queue.service /etc/systemd/system/
+#   sudo systemctl daemon-reload && sudo systemctl enable --now openprover-queue
+# The unit runs the deployed copy in ~/.local/share/openprover/bin, not the repo checkout, so
+# switching branches in the working repo never changes the running supervisor.
+[Unit]
+Description=OpenProver continuous proof queue (cflibs-formal, infer-0x fleet)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+User=brian
+Group=brian
+Environment=HOME=/home/brian
+Environment=PATH=/home/brian/.elan/bin:/home/brian/.local/bin:/usr/local/bin:/usr/bin:/bin
+Environment=PYTHONUNBUFFERED=1
+ExecStart=/usr/bin/python3 /home/brian/.local/share/openprover/bin/supervisor.py
+Restart=always
+RestartSec=60
+KillMode=control-group
+TimeoutStopSec=30
+
+[Install]
+WantedBy=multi-user.target

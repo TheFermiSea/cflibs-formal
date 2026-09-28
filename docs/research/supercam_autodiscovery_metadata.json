@@ -1,0 +1,20 @@
+{
+ "name": "SuperCam lab LIBS: which line-shape observables track composition",
+ "description": "Derived from the NASA PDS SuperCam LIBS laboratory calibration library (Anderson et al. 2022; 334 geological standards with certified compositions, 1,193 base spectra; wavelength-shift augmentation variants removed). Each row is one base spectrum. Columns: metadata (file, Target_Name, composition_type, geology, location, distance_mm in mm, Remove_from_all flag); certified composition comp_* (major oxides SiO2, TiO2, Al2O3, FeOT, MnO, MgO, CaO, Na2O, K2O, P2O5, loss_on_ignition in wt%; trace elements Sr, Ba, Li, Cr, Ni, Zn, Rb, V, Cu, H2O+_structural, C_total, S in ppm or wt% as in the source; empty = not certified); per-spectrometer integrated intensity uv_sum, vio_sum, vnir_sum, total_sum (DN); and per-line features for 37 strong emission lines named <Element><stage>_<wavelength nm>__<feature>: cont (local continuum, DN), peak_net (peak above continuum, DN), area_net (integrated net intensity over +-0.25 nm, DN nm), fwhm_nm (full width at half maximum, nm), shape (area_net/(peak_net*fwhm_nm): ~1.06 Gaussian, ~1.57 Lorentzian, larger for flat-topped/self-absorbed lines), peak_over_cont (dimensionless). Widths and shape ratios are independent of the instrument intensity calibration; DN quantities are not. Known gaps: lines near spectrometer edges or blends can give fwhm_nm = 0 or negative shape; treat |shape| > 3 or fwhm_nm = 0 as failed fits. Multiple spectra per target exist (repeat shots, distances); the Target_Name column identifies the standard.",
+ "domain": "Analytical atomic spectroscopy / laser-induced breakdown spectroscopy (LIBS) of geological standards",
+ "intent": "Find which calibration-independent observables (line widths, shape ratios, peak-to-continuum ratios, ratios between lines of the same element or of different elements, ion-to-neutral ratios) carry information about elemental composition, and how that compares with the raw net intensities. In particular test whether self-absorption signatures of strong resonance lines (large shape ratio, broad fwhm_nm, saturated peak_over_cont) track the element's certified concentration, whether electron-density proxies (H I 656.28 fwhm_nm) modulate the intensity-composition relation, and whether relations hold across geology and distance. Report relations that are surprising relative to the expectation that only net intensity scales with concentration.",
+ "datasets": [
+  {
+   "name": "supercam_line_features.csv",
+   "description": "See run description; one row per base spectrum, 257 columns, 1,193 rows.",
+   "content_type": "text/csv",
+   "file_size_bytes": 4902820,
+   "is_preloaded": false
+  }
+ ],
+ "n_experiments": 20,
+ "exploration_weight": 3.0,
+ "mcts_selection": "ucb1_recursive",
+ "surprisal_width": 0.3,
+ "evidence_weight": 2.0
+}
