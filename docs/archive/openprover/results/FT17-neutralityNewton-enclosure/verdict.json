@@ -1,0 +1,25 @@
+{
+  "candidate": "<openprover>/runs/FT17-neutralityNewton-enclosure-33/PROOF.lean",
+  "theorem": "Plan.FT17.neutralityNewton_enclosure",
+  "passed": true,
+  "checks": {
+    "forbidden": [],
+    "extra_imports": [],
+    "missing_defs": [],
+    "signature_identical": true,
+    "compile_rc": 0,
+    "errors": [],
+    "sorry_warning": false,
+    "kernel_replay_rc": 0,
+    "axioms": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "elaborated_type_identical": true
+  },
+  "attempt": 33,
+  "hours": 0.65,
+  "openprover_result": "proved",
+  "verified_at": "2026-09-25T10:03:03+00:00"
+}

@@ -1,0 +1,12 @@
+/tmp/g2scratch/battery/FT05-cutRatio-strictMonoOn-temp__nlinarith.lean:54:2: error: linarith failed to find a contradiction
+ι : Type u_1
+inst✝ : Fintype ι
+kB cut : ℝ
+g E : ι → ℝ
+hkB : 0 < kB
+hg : ∀ (k : ι), 0 < g k
+hkeep : ∃ k, E k < cut
+hdrop : ∃ k, cut ≤ E k
+⊢ False
+failed
+rc=1

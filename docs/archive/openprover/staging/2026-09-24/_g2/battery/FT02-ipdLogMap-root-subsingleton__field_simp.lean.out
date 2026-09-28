@@ -1,0 +1,5 @@
+/tmp/g2scratch/battery/FT02-ipdLogMap-root-subsingleton__field_simp.lean:45:73: error: unsolved goals
+a b : ℝ
+hb : 0 < b
+⊢ {ℓ | ipdLogMap a b ℓ = ℓ ∧ b * Real.exp (ℓ / 2) < 2}.Subsingleton
+rc=1

@@ -1,0 +1,16 @@
+/tmp/stmtfix/battery/FT09-affine-gA-observational-equiv__linarith.lean:60:2: error: linarith failed to find a contradiction
+ι : Type u_1
+inst✝¹ : Fintype ι
+inst✝ : Nonempty ι
+kB T N Fcal α b : ℝ
+g E A A' : ι → ℝ
+hkB : 0 < kB
+hT : 0 < T
+hg : ∀ (k : ι), 0 < g k
+hA : ∀ (k : ι), 0 < A k
+hN : 0 < N
+haff : ∀ (k : ι), A' k = A k * Real.exp (-(α + b * E k))
+hb : b * (kB * T) < 1
+⊢ False
+failed
+rc=1

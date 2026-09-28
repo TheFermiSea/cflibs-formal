@@ -1,0 +1,2 @@
+/tmp/stmtfix/battery/FT03-pasPolicy-guarantees__exactq.lean:66:2: error: `exact?` could not close the goal. Try `apply?` to see partial suggestions.
+rc=1

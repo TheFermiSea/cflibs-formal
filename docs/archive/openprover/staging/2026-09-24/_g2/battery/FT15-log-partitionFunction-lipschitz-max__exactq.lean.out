@@ -1,0 +1,2 @@
+/tmp/g2scratch/battery/FT15-log-partitionFunction-lipschitz-max__exactq.lean:53:2: error: `exact?` could not close the goal. Try `apply?` to see partial suggestions.
+rc=1

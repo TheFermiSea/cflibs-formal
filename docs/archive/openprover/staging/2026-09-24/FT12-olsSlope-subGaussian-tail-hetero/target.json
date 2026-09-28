@@ -1,0 +1,6 @@
+{
+  "theorem": "Plan.FT12.olsSlope_subGaussian_tail_hetero",
+  "max_tokens": 200000,
+  "max_attempts": 2,
+  "note": "deep audit 2026-09-24 FT-12 (a) item 1 (heteroscedastic sub-Gaussian slope tail, hc dropped; REVISE grade A); IsProbabilityMeasure omitted (as in the landed twin; hindep implies it); priority 15, group g3. Route passes verify.py. Statement audit 2026-09-24: docstring fixes only (no false generality claim; published tag predicted REDUCED, Aitken 1935); candidate re-verified."
+}

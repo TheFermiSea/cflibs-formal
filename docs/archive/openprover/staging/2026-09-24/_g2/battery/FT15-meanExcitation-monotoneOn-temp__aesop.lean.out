@@ -1,0 +1,11 @@
+/tmp/g2scratch/battery/FT15-meanExcitation-monotoneOn-temp__aesop.lean:47:2: error: Tactic `aesop` failed, made no progress
+Initial goal:
+  ι : Type u_1
+  inst✝¹ : Fintype ι
+  inst✝ : Nonempty ι
+  kB : ℝ
+  g E : ι → ℝ
+  hkB : 0 < kB
+  hg : ∀ (k : ι), 0 < g k
+  ⊢ MonotoneOn (fun T => meanExcitation kB T g E) (Set.Ioi 0)
+rc=1

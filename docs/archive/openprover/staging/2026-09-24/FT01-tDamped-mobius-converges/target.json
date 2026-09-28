@@ -1,0 +1,6 @@
+{
+  "theorem": "Plan.FT01.tDamped_mobius_converges",
+  "max_tokens": 300000,
+  "max_attempts": 1,
+  "note": "FT-01 verifier revision (a): T-damped Moebius statement matching iterative.py (T damping, lam = 1/2); group g4 priority 21. dampedMap byte-identical with FT01-dampedMap-contracts."
+}

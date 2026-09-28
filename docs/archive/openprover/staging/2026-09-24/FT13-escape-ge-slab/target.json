@@ -1,0 +1,6 @@
+{
+  "theorem": "Plan.FT13.escape_ge_slab",
+  "max_tokens": 200000,
+  "max_attempts": 2,
+  "note": "FT-13 (a) item 2 (escape_ge_slab via integral_mono), audit 2026-09-24 grade A, REVISE applied; group g4 priority 12. One measure step on the equivWidth_le_thin template; slab_chord_le pasteable (compiled here)."
+}

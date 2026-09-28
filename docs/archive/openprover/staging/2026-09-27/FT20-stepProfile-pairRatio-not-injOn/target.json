@@ -1,0 +1,6 @@
+{
+  "theorem": "Plan.FT20.stepProfile_pairRatio_not_injOn",
+  "max_tokens": 300000,
+  "max_attempts": 2,
+  "note": "frontier FT-20 (b, part 2b: bridge corollary on equivWidth (stepProfile ...); queue after parts 1 and 2a land, or inline both), drafted 2026-09-27, pending Mode B audit"
+}

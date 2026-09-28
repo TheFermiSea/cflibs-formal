@@ -1,0 +1,6 @@
+{
+  "theorem": "Plan.FT03.pasPolicy_guarantees",
+  "max_tokens": 100000,
+  "max_attempts": 2,
+  "note": "deep audit 2026-09-24 FT-03 item 1 (weighted three-branch refuse-to-report policy, verifier revision; REVISE grade A); priority 4, group g3. Dossier carries a complete route that passes verify.py (staging/_g3-verified). Statement audit 2026-09-24: hw weakened from 0 < w i to 0 ≤ w i (only nonnegativity is used), docstring fixes (ambiguous-set branch, choice-rule claim); candidate regenerated and re-verified."
+}

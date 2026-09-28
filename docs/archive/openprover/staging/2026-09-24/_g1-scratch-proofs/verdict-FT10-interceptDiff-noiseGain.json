@@ -1,0 +1,21 @@
+{
+  "candidate": "<openprover>/staging/2026-09-24/_g1-scratch-proofs/FT10-interceptDiff-noiseGain.lean",
+  "theorem": "Plan.FT10.interceptDiff_noiseGain",
+  "passed": true,
+  "checks": {
+    "forbidden": [],
+    "extra_imports": [],
+    "missing_defs": [],
+    "signature_identical": true,
+    "compile_rc": 0,
+    "errors": [],
+    "sorry_warning": false,
+    "kernel_replay_rc": 0,
+    "axioms": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "elaborated_type_identical": true
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "theorem": "Plan.FT03.aitchisonDist_le_logErr",
+  "max_tokens": 200000,
+  "max_attempts": 2,
+  "note": "deep audit 2026-09-24 FT-03 items 3-5 (Aitchison loss certificate; REVISE grade A); priority 13, group g3. EuclideanSpace-norm unfolding solved in the dossier; route passes verify.py."
+}

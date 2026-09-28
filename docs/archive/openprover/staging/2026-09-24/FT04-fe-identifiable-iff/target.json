@@ -1,0 +1,6 @@
+{
+  "theorem": "Plan.FT04.fe_identifiable_iff",
+  "max_tokens": 150000,
+  "max_attempts": 2,
+  "note": "FT-04 items 4-6 (2026-09-24 audit, verdict KEEP, grade A); g1 priority 1; PURE-MATH. Mode B statement audit 2026-09-24: fix applied, docstring only (hw is needed for the forward direction only; the reverse holds for any real weights). A complete candidate regenerated from the corrected statement passed verify.py again: staging/2026-09-24/_g1-scratch-proofs/FT04-fe-identifiable-iff.lean"
+}

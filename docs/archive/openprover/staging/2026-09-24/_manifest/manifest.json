@@ -1,0 +1,218 @@
+{
+  "generated": "2026-09-24",
+  "lean_main": "fb1681d (= origin/main)",
+  "dispatch_note": "supervisor.py dispatches queue/pending by directory mtime (FIFO), not by any priority field: copy the enqueue dirs into queue/pending/ one at a time in this order (or touch them in sequence). Blocked targets: copy by hand only after the prerequisite has a passing results/<id>/verdict.json; the supervisor has no dependency tracking.",
+  "enqueue": [
+    {
+      "rank": 1,
+      "id": "FT05-cutRatio-strictMonoOn-temp",
+      "dir": "<openprover>/staging/2026-09-24/FT05-cutRatio-strictMonoOn-temp",
+      "theorem": "Plan.FT05.cutRatio_strictMonoOn_temp",
+      "max_tokens": 300000,
+      "max_attempts": 1
+    },
+    {
+      "rank": 2,
+      "id": "FT17-neutralityNewton-enclosure",
+      "dir": "<openprover>/staging/2026-09-24/FT17-neutralityNewton-enclosure",
+      "theorem": "Plan.FT17.neutralityNewton_enclosure",
+      "max_tokens": 150000,
+      "max_attempts": 2
+    },
+    {
+      "rank": 3,
+      "id": "FT02-ipdInverse-twoPoint-sensitivity",
+      "dir": "<openprover>/staging/2026-09-24/FT02-ipdInverse-twoPoint-sensitivity",
+      "theorem": "Plan.FT02.ipdInverse_twoPoint_sensitivity",
+      "max_tokens": 200000,
+      "max_attempts": 2
+    },
+    {
+      "rank": 4,
+      "id": "FT13-escape-ge-slab",
+      "dir": "<openprover>/staging/2026-09-24/FT13-escape-ge-slab",
+      "theorem": "Plan.FT13.escape_ge_slab",
+      "max_tokens": 200000,
+      "max_attempts": 2
+    },
+    {
+      "rank": 5,
+      "id": "FT13-inv-sub-inv-expm1-bounds",
+      "dir": "<openprover>/staging/2026-09-24/FT13-inv-sub-inv-expm1-bounds",
+      "theorem": "Plan.FT13.inv_sub_inv_exp_sub_one_mem",
+      "max_tokens": 250000,
+      "max_attempts": 1
+    },
+    {
+      "rank": 6,
+      "id": "FT01-tDamped-mobius-converges",
+      "dir": "<openprover>/staging/2026-09-24/FT01-tDamped-mobius-converges",
+      "theorem": "Plan.FT01.tDamped_mobius_converges",
+      "max_tokens": 300000,
+      "max_attempts": 1
+    },
+    {
+      "rank": 7,
+      "id": "FT01-dampedMap-contracts",
+      "dir": "<openprover>/staging/2026-09-24/FT01-dampedMap-contracts",
+      "theorem": "Plan.FT01.dampedMap_contracts",
+      "max_tokens": 300000,
+      "max_attempts": 1
+    }
+  ],
+  "blocked": [
+    {
+      "id": "FT17-neutralityNewton-tendsto",
+      "dir": "<openprover>/staging/2026-09-24/FT17-neutralityNewton-tendsto",
+      "waits_for": "FT17-neutralityNewton-enclosure",
+      "theorem": "Plan.FT17.neutralityNewton_tendsto"
+    },
+    {
+      "id": "FT13-log-selfAbsorptionFactor-lipschitz",
+      "dir": "<openprover>/staging/2026-09-24/FT13-log-selfAbsorptionFactor-lipschitz",
+      "waits_for": "FT13-inv-sub-inv-expm1-bounds",
+      "theorem": "Plan.FT13.log_selfAbsorptionFactor_lipschitz"
+    }
+  ],
+  "hand_land": [
+    {
+      "id": "FT04-fe-identifiable-iff",
+      "statement": "<openprover>/staging/2026-09-24/FT04-fe-identifiable-iff/statement.lean",
+      "candidate": "<openprover>/staging/2026-09-24/_g1-scratch-proofs/FT04-fe-identifiable-iff.lean",
+      "theorem": "Plan.FT04.fe_identifiable_iff",
+      "verify": "deployed bin/verify.py re-run 2026-09-24 by final-manifest: passed (kernel replay 0, axioms {propext, Classical.choice, Quot.sound}, elaborated type identical); audited docstrings present verbatim"
+    },
+    {
+      "id": "FT04-feSlope-add-smul",
+      "statement": "<openprover>/staging/2026-09-24/FT04-feSlope-add-smul/statement.lean",
+      "candidate": "<openprover>/staging/2026-09-24/_g1-scratch-proofs/FT04-feSlope-add-smul.lean",
+      "theorem": "Plan.FT04.feSlope_add_smul",
+      "verify": "deployed bin/verify.py re-run 2026-09-24 by final-manifest: passed (kernel replay 0, axioms {propext, Classical.choice, Quot.sound}, elaborated type identical); audited docstrings present verbatim"
+    },
+    {
+      "id": "FT01-exists-weights-iff",
+      "statement": "<openprover>/staging/2026-09-24/FT01-exists-weights-iff/statement.lean",
+      "candidate": "<openprover>/staging/2026-09-24/_g1-scratch-proofs/FT01-exists-weights-iff.lean",
+      "theorem": "Plan.FT01.exists_weights_iff",
+      "verify": "deployed bin/verify.py re-run 2026-09-24 by final-manifest: passed (kernel replay 0, axioms {propext, Classical.choice, Quot.sound}, elaborated type identical); audited docstrings present verbatim"
+    },
+    {
+      "id": "FT18-olsSlope-selfAbsorbed-ge",
+      "statement": "<openprover>/staging/2026-09-24/FT18-olsSlope-selfAbsorbed-ge/statement.lean",
+      "candidate": "<openprover>/staging/2026-09-24/_g1-scratch-proofs/FT18-olsSlope-selfAbsorbed-ge.lean",
+      "theorem": "Plan.FT18.olsSlope_selfAbsorbed_ge",
+      "verify": "deployed bin/verify.py re-run 2026-09-24 by final-manifest: passed (kernel replay 0, axioms {propext, Classical.choice, Quot.sound}, elaborated type identical); audited docstrings present verbatim"
+    },
+    {
+      "id": "FT10-wls-min-noiseGain",
+      "statement": "<openprover>/staging/2026-09-24/FT10-wls-min-noiseGain/statement.lean",
+      "candidate": "<openprover>/staging/2026-09-24/_g1-scratch-proofs/FT10-wls-min-noiseGain.lean",
+      "theorem": "Plan.FT10.wls_min_noiseGain",
+      "verify": "deployed bin/verify.py re-run 2026-09-24 by final-manifest: passed (kernel replay 0, axioms {propext, Classical.choice, Quot.sound}, elaborated type identical); audited docstrings present verbatim"
+    },
+    {
+      "id": "FT04-feSlope-isMin",
+      "statement": "<openprover>/staging/2026-09-24/FT04-feSlope-isMin/statement.lean",
+      "candidate": "<openprover>/staging/2026-09-24/_g1-scratch-proofs/FT04-feSlope-isMin.lean",
+      "theorem": "Plan.FT04.feSlope_isMin",
+      "verify": "deployed bin/verify.py re-run 2026-09-24 by final-manifest: passed (kernel replay 0, axioms {propext, Classical.choice, Quot.sound}, elaborated type identical); audited docstrings present verbatim"
+    },
+    {
+      "id": "FT10-interceptDiff-noiseGain",
+      "statement": "<openprover>/staging/2026-09-24/FT10-interceptDiff-noiseGain/statement.lean",
+      "candidate": "<openprover>/staging/2026-09-24/_g1-scratch-proofs/FT10-interceptDiff-noiseGain.lean",
+      "theorem": "Plan.FT10.interceptDiff_noiseGain",
+      "verify": "deployed bin/verify.py re-run 2026-09-24 by final-manifest: passed (kernel replay 0, axioms {propext, Classical.choice, Quot.sound}, elaborated type identical); audited docstrings present verbatim"
+    },
+    {
+      "id": "F02M6-sahaEquilibriumNe-strictMonoOn-temp",
+      "statement": "<openprover>/staging/2026-09-24/F02M6-sahaEquilibriumNe-strictMonoOn-temp/statement.lean",
+      "candidate": "<openprover>/staging/2026-09-24/_hand-land/F02M6-sahaEquilibriumNe-strictMonoOn-temp.proof.lean",
+      "theorem": "Plan.F02M6.sahaEquilibriumNe_strictMonoOn_temp",
+      "verify": "deployed bin/verify.py re-run 2026-09-24 by final-manifest: passed (kernel replay 0, axioms {propext, Classical.choice, Quot.sound}, elaborated type identical); audited docstrings present verbatim"
+    },
+    {
+      "id": "FT02-ipdLogMap-root-subsingleton",
+      "statement": "<openprover>/staging/2026-09-24/FT02-ipdLogMap-root-subsingleton/statement.lean",
+      "candidate": "<openprover>/staging/2026-09-24/_hand-land/FT02-ipdLogMap-root-subsingleton.proof.lean",
+      "theorem": "Plan.FT02.ipdLogMap_root_subsingleton",
+      "verify": "deployed bin/verify.py re-run 2026-09-24 by final-manifest: passed (kernel replay 0, axioms {propext, Classical.choice, Quot.sound}, elaborated type identical); audited docstrings present verbatim"
+    },
+    {
+      "id": "FT15-log-partitionFunction-lipschitz-max",
+      "statement": "<openprover>/staging/2026-09-24/FT15-log-partitionFunction-lipschitz-max/statement.lean",
+      "candidate": "<openprover>/staging/2026-09-24/_hand-land/FT15-log-partitionFunction-lipschitz-max.proof.lean",
+      "theorem": "Plan.FT15.log_partitionFunction_lipschitz_max",
+      "verify": "deployed bin/verify.py re-run 2026-09-24 by final-manifest: passed (kernel replay 0, axioms {propext, Classical.choice, Quot.sound}, elaborated type identical); audited docstrings present verbatim"
+    },
+    {
+      "id": "FT15-meanExcitation-monotoneOn-temp",
+      "statement": "<openprover>/staging/2026-09-24/FT15-meanExcitation-monotoneOn-temp/statement.lean",
+      "candidate": "<openprover>/staging/2026-09-24/_hand-land/FT15-meanExcitation-monotoneOn-temp.proof.lean",
+      "theorem": "Plan.FT15.meanExcitation_monotoneOn_temp",
+      "verify": "deployed bin/verify.py re-run 2026-09-24 by final-manifest: passed (kernel replay 0, axioms {propext, Classical.choice, Quot.sound}, elaborated type identical); audited docstrings present verbatim"
+    },
+    {
+      "id": "FT02-ipdLogMap-contracts",
+      "statement": "<openprover>/staging/2026-09-24/FT02-ipdLogMap-contracts/statement.lean",
+      "candidate": "<openprover>/staging/2026-09-24/_g2/FT02-ipdLogMap-contracts.proof.lean",
+      "theorem": "Plan.FT02.ipdLogMap_contracts",
+      "verify": "deployed bin/verify.py re-run 2026-09-24 by final-manifest: passed (kernel replay 0, axioms {propext, Classical.choice, Quot.sound}, elaborated type identical); audited docstrings present verbatim"
+    },
+    {
+      "id": "FT03-pasPolicy-guarantees",
+      "statement": "<openprover>/staging/2026-09-24/FT03-pasPolicy-guarantees/statement.lean",
+      "candidate": "<openprover>/staging/2026-09-24/_g3-verified/FT03-pasPolicy-guarantees.lean",
+      "theorem": "Plan.FT03.pasPolicy_guarantees",
+      "verify": "deployed bin/verify.py re-run 2026-09-24 by final-manifest: passed (kernel replay 0, axioms {propext, Classical.choice, Quot.sound}, elaborated type identical); audited docstrings present verbatim"
+    },
+    {
+      "id": "FT07-classicComposition-atomicData-error-rel",
+      "statement": "<openprover>/staging/2026-09-24/FT07-classicComposition-atomicData-error-rel/statement.lean",
+      "candidate": "<openprover>/staging/2026-09-24/_g3-verified/FT07-classicComposition-atomicData-error-rel.lean",
+      "theorem": "Plan.FT07.classicComposition_atomicData_error_rel",
+      "verify": "deployed bin/verify.py re-run 2026-09-24 by final-manifest: passed (kernel replay 0, axioms {propext, Classical.choice, Quot.sound}, elaborated type identical); audited docstrings present verbatim"
+    },
+    {
+      "id": "FT06-stark-bracket-rho",
+      "statement": "<openprover>/staging/2026-09-24/FT06-stark-bracket-rho/statement.lean",
+      "candidate": "<openprover>/staging/2026-09-24/_g3-verified/FT06-stark-bracket-rho.lean",
+      "theorem": "Plan.FT06.stark_bracket_rho",
+      "verify": "deployed bin/verify.py re-run 2026-09-24 by final-manifest: passed (kernel replay 0, axioms {propext, Classical.choice, Quot.sound}, elaborated type identical); audited docstrings present verbatim"
+    },
+    {
+      "id": "FT03-aitchisonDist-le-logErr",
+      "statement": "<openprover>/staging/2026-09-24/FT03-aitchisonDist-le-logErr/statement.lean",
+      "candidate": "<openprover>/staging/2026-09-24/_g3-verified/FT03-aitchisonDist-le-logErr.lean",
+      "theorem": "Plan.FT03.aitchisonDist_le_logErr",
+      "verify": "deployed bin/verify.py re-run 2026-09-24 by final-manifest: passed (kernel replay 0, axioms {propext, Classical.choice, Quot.sound}, elaborated type identical); audited docstrings present verbatim"
+    },
+    {
+      "id": "FT09-affine-gA-observational-equiv",
+      "statement": "<openprover>/staging/2026-09-24/FT09-affine-gA-observational-equiv/statement.lean",
+      "candidate": "<openprover>/staging/2026-09-24/_g3-verified/FT09-affine-gA-observational-equiv.lean",
+      "theorem": "Plan.FT09.affine_gA_observational_equiv",
+      "verify": "deployed bin/verify.py re-run 2026-09-24 by final-manifest: passed (kernel replay 0, axioms {propext, Classical.choice, Quot.sound}, elaborated type identical); audited docstrings present verbatim"
+    },
+    {
+      "id": "FT12-olsSlope-subGaussian-tail-hetero",
+      "statement": "<openprover>/staging/2026-09-24/FT12-olsSlope-subGaussian-tail-hetero/statement.lean",
+      "candidate": "<openprover>/staging/2026-09-24/_g3-verified/FT12-olsSlope-subGaussian-tail-hetero.lean",
+      "theorem": "Plan.FT12.olsSlope_subGaussian_tail_hetero",
+      "verify": "deployed bin/verify.py re-run 2026-09-24 by final-manifest: passed (kernel replay 0, axioms {propext, Classical.choice, Quot.sound}, elaborated type identical); audited docstrings present verbatim"
+    },
+    {
+      "id": "FT16-kernelLS-error-linfty",
+      "statement": "<openprover>/staging/2026-09-24/FT16-kernelLS-error-linfty/statement.lean",
+      "candidate": "<openprover>/staging/2026-09-24/_g3-verified/FT16-kernelLS-error-linfty.lean",
+      "theorem": "Plan.FT16.kernelLS_error_linfty",
+      "verify": "deployed bin/verify.py re-run 2026-09-24 by final-manifest: passed (kernel replay 0, axioms {propext, Classical.choice, Quot.sound}, elaborated type identical); audited docstrings present verbatim"
+    }
+  ],
+  "rejected": [],
+  "checks": {
+    "all_28_statements": "lake env lean exit 0, exactly one `declaration uses sorry` warning at the target theorem, 0 errors",
+    "battery_9_unproved": "simp, simp_all, norm_num, linarith, nlinarith, positivity, aesop, field_simp, exact?, constructor<;>nlinarith, intros;simp_all;nlinarith: 99/99 fail at the target theorem; control (1+1=2 by norm_num) passes",
+    "novelty": "rg over lean-main CflibsFormal/ upstream/ for neutralityNewton, cutRatio|partitionFunctionCut, ipdLogMap|ipdInverse, escape_ge_slab, inv_sub_inv_exp, dampedMap|tDamped, log_selfAbsorptionFactor_lipschitz: 0 files each; positive control sahaFactor_strictMonoOn_temp: 2 files"
+  }
+}

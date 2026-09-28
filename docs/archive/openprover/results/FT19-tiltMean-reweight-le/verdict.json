@@ -1,0 +1,35 @@
+{
+  "candidate": "<openprover>/runs/FT19-tiltMean-reweight-le-3/PROOF.lean",
+  "theorem": "Plan.FT19.tiltMean_reweight_le",
+  "passed": true,
+  "checks": {
+    "forbidden": [],
+    "extra_imports": [],
+    "missing_defs": [],
+    "signature_identical": true,
+    "compile_rc": 0,
+    "errors": [],
+    "sorry_warning": false,
+    "kernel_replay_rc": 0,
+    "axioms": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "elaborated_type_identical": true
+  },
+  "attempt": 3,
+  "hours": 2.42,
+  "openprover_result": "proved",
+  "plan": {
+    "planner": "opus",
+    "advisor": null,
+    "effort": "high",
+    "advisor_every": null,
+    "advisor_max": null,
+    "history_budget": 120000,
+    "pilot": false,
+    "planner_override": null
+  },
+  "verified_at": "2026-09-28T01:36:45+00:00"
+}

@@ -1,0 +1,6 @@
+{
+  "theorem": "Plan.FT02.ipdLogMap_root_subsingleton",
+  "max_tokens": 150000,
+  "max_attempts": 2,
+  "note": "HAND-LAND; queue only as a calibration run. FT-02 item 6 (root subsingleton via strictMonoOn of l - F), 2026-09-24 deep audit, REVISE grade A; priority 19; group g2; statement audit 2026-09-24 (M6 round): FIX applied, decoration hypothesis hb : 0 < b dropped (statement now holds for every real b; docstring and dossier updated, hb.le/unusedArguments instruction removed); verified axiom-clean proof at staging/2026-09-24/_hand-land/FT02-ipdLogMap-root-subsingleton.proof.lean"
+}

@@ -1,0 +1,6 @@
+{
+  "theorem": "Plan.FT13.log_selfAbsorptionFactor_lipschitz",
+  "max_tokens": 500000,
+  "max_attempts": 2,
+  "note": "FT-13 (b) items 4-5 (derivative of log SA, MVT, endpoint tau = 0), audit 2026-09-24 grade A, REVISE applied; group g4 priority 25. Depends advisorily on FT13-inv-sub-inv-expm1-bounds (crux re-proved inline, or queue after it lands). | 2026-09-27 re-queued with max_tokens 300000->500000: earlier attempts wrote an informal proof but exhausted the Lean budget"
+}

@@ -1,0 +1,6 @@
+{
+  "theorem": "DryRun.equivWidth_lorentzian_sqrt_sharp",
+  "max_tokens": 300000,
+  "max_attempts": 2,
+  "note": "Frontier 07 (Phase-0 exit criterion); Mathlib only; re-proof of EquivalentWidth result"
+}

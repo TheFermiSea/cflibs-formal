@@ -1,0 +1,6 @@
+{
+  "theorem": "Plan.FT02.ipdLogMap_contracts",
+  "max_tokens": 300000,
+  "max_attempts": 1,
+  "note": "FT-02 items 3-5 (hasDerivAt, Lipschitz on Iic, contraction), 2026-09-24 deep audit; priority 27; group g2. HAND-PROVED: full proof passes verify.py (staging/2026-09-24/_g2/FT02-ipdLogMap-contracts.proof.lean); recommend hand-landing; queue only as a harness calibration run"
+}

@@ -1,0 +1,21 @@
+/tmp/stmtfix/battery/FT09-affine-gA-observational-equiv__field_simp.lean:59:74: error: unsolved goals
+ι : Type u_1
+inst✝¹ : Fintype ι
+inst✝ : Nonempty ι
+kB T N Fcal α b : ℝ
+g E A A' : ι → ℝ
+hkB : 0 < kB
+hT : 0 < T
+hg : ∀ (k : ι), 0 < g k
+hA : ∀ (k : ι), 0 < A k
+hN : 0 < N
+haff : ∀ (k : ι), A' k = A k * Real.exp (-(α + b * E k))
+hb : b * (kB * T) < 1
+⊢ ∃ T' N',
+    0 < T' ∧
+      0 < N' ∧
+        T / T' = 1 - kB * T * b ∧
+          ∀ (k : ι),
+            Real.log (lineIntensity kB T N Fcal g E A k / (g k * A' k)) =
+              Real.log (lineIntensity kB T' N' Fcal g E A k / (g k * A k))
+rc=1

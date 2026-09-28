@@ -1,0 +1,6 @@
+{
+  "theorem": "Plan.FT07.classicComposition_atomicData_error_rel",
+  "max_tokens": 200000,
+  "max_attempts": 2,
+  "note": "deep audit 2026-09-24 FT-07 item 5 (relative closure bound; the statement audit 2026-09-24 replaced the verifier's hδ < 1/2, 2δ/(1 − 2δ) form with the sharp hδ1 : δ < 1, 2δ/(1 − δ) form, which strictly dominates it); priority 6, group g3. Ratio-closure route (comp_rel_ratio + classicDensity_aliasing) in the dossier; candidate passes verify.py (staging/_g3-verified)."
+}

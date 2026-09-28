@@ -1,0 +1,13 @@
+/tmp/stmtfix/battery/FT06-stark-bracket-rho__linarith.lean:54:2: error: linarith failed to find a contradiction
+w ρw kOpac wTrue nRef neTrue widthMeas : ℝ
+hw : 0 < w
+hρ : 1 ≤ ρw
+hk : 0 < kOpac
+hnRef : 0 < nRef
+hne : 0 ≤ neTrue
+hwT : w / ρw ≤ wTrue ∧ wTrue ≤ w * ρw
+hopac : starkFWHM wTrue nRef neTrue ≤ widthMeas
+hbudget : widthMeas ≤ kOpac * starkFWHM wTrue nRef neTrue
+⊢ False
+failed
+rc=1

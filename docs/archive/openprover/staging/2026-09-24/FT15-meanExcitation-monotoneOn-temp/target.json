@@ -1,0 +1,6 @@
+{
+  "theorem": "Plan.FT15.meanExcitation_monotoneOn_temp",
+  "max_tokens": 250000,
+  "max_attempts": 2,
+  "note": "HAND-LAND, do not queue. FT-15 first batch (d<E>/dT = Var/(kT^2) >= 0, monotonicity), 2026-09-24 deep audit, KEEP grade B; priority 17; group g2; statement audit 2026-09-24 (M6 round): FIX applied, on main in substance via InhomogeneityBias.tiltMean_le_pairSlope/pairSlope_le_tiltMean; statement now imports InhomogeneityBias and carries the shared bridge lemmas partitionFunction_eq_mixture and meanExcitation_eq_tiltMean (signature unchanged); verified axiom-clean proof at staging/2026-09-24/_hand-land/FT15-meanExcitation-monotoneOn-temp.proof.lean"
+}
