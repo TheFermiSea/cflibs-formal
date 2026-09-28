@@ -207,9 +207,12 @@ A card, its evidence, and the archive may **not**:
   (`frontier.verification[].record` points to a *scrubbed* archive file instead — see
   `docs/archive/openprover/README.md`);
 - include an absolute local filesystem path: a per-user home-directory prefix on Linux or macOS,
-  or a Windows drive letter. `scripts/check_cards.py` greps every card and every file under
-  `docs/theorems/` for these patterns and fails closed — write paths repo-relative
-  (`CflibsFormal/Foo.lean`), never rooted at a user's home directory.
+  or a Windows drive letter. `scripts/check_cards.py` greps every card and every file in its
+  `evidence/<id>/` directory for these patterns, for private IPv4 addresses and for the backlog-id
+  forms above, and fails closed — write paths repo-relative (`CflibsFormal/Foo.lean`), never
+  rooted at a user's home directory. Host names are not listed in the (public) checker, since the
+  list would itself disclose them: a maintainer keeps them in a git-ignored `.disclosure-denylist`
+  (one regex per line; or `CARDS_DENYLIST=<file>`), which the checker reads when present.
 
 ## Review rules (D24)
 

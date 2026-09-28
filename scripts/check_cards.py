@@ -20,6 +20,7 @@ given (Phase 1 is incremental; IA-proposal §5, §4.1's "Coverage" row).
 from __future__ import annotations
 
 import argparse
+import os
 import hashlib
 import pathlib
 import re
@@ -64,16 +65,29 @@ ABS_PATH_PATTERNS = [
     (re.compile(r"/root/"), "/root/ path"),
     (re.compile(r"/Users/"), "/Users/ path"),
     (re.compile(r"[A-Za-z]:\\"), "drive-letter path"),
-    (re.compile(r"\b(?:infer-0\d|ai-proxy|leabs-dev|maitai-eos|ceng-gh62pk3|cocoindex-server"
-                r"|brians-macbook-pro-\d+)\b"), "machine name"),
+    (re.compile(r"\b(?:10(?:\.\d{1,3}){3}|192\.168(?:\.\d{1,3}){2}|100\.(?:6[4-9]|[7-9]\d|1[01]\d"
+                r"|12[0-7])(?:\.\d{1,3}){2})\b"), "private IP address"),
     # CF-LIBS-improved (private) backlog id conventions — D23 / SCHEMA.md "Disclosure rules"
     (re.compile(r"\bBL-\d+\b"), "CF-LIBS-improved backlog id"),
-    (re.compile(r"\bR#-\d+\b"), "CF-LIBS-improved backlog id"),
+    (re.compile(r"\bR\d{1,2}-\d+\b"), "CF-LIBS-improved backlog id"),
     (re.compile(r"\bTS-\d+\b"), "CF-LIBS-improved backlog id"),
     (re.compile(r"\bSC-\d+\b"), "CF-LIBS-improved backlog id"),
-    (re.compile(r"\bW3-\d+\b"), "CF-LIBS-improved backlog id"),
+    (re.compile(r"\bW3-[A-Z\d]+\b"), "CF-LIBS-improved backlog id"),
     (re.compile(r"\bG[12]\b"), "CF-LIBS-improved backlog id"),
 ]
+
+# Machine names are deliberately NOT listed here: this checker is public, and a list of the
+# owner's hosts would itself be the disclosure D23 forbids. A maintainer may keep one regex per
+# line in a git-ignored `.disclosure-denylist` at the repo root (or point CARDS_DENYLIST at a
+# file); each line is then checked as "machine name". CI has no such file and skips this check.
+def load_local_denylist(root: pathlib.Path) -> list[tuple[re.Pattern, str]]:
+    """Optional, local-only extra ABS-PATH patterns (see the comment above)."""
+    path = pathlib.Path(os.environ.get("CARDS_DENYLIST") or root / ".disclosure-denylist")
+    if not path.is_file():
+        return []
+    return [(re.compile(line.strip()), "machine name")
+            for line in path.read_text(encoding="utf-8").splitlines()
+            if line.strip() and not line.startswith("#")]
 ANCHOR_RE = re.compile(r"\b((?:[A-Za-z][\w./-]*/)?[A-Za-z][\w'-]*\.lean)#([A-Za-z_][\w'.]*)")
 # A GitHub line-number fragment (`File.lean#L42`, as the generated Facts block itself links) is
 # not a `File.lean#decl` cross-reference — never resolved as a declaration name.
@@ -344,12 +358,60 @@ def check_frontier_ambiguous(text: str, where: str) -> Findings:
     return f
 
 
-def check_no_absolute_paths(text: str, where: str) -> Findings:
+def check_no_absolute_paths(text: str, where: str, extra=()) -> Findings:
     f = Findings()
-    for pat, label in ABS_PATH_PATTERNS:
+    for pat, label in [*ABS_PATH_PATTERNS, *extra]:
         m = pat.search(text)
         if m:
             f.add("ABS-PATH", f"{where}: {label} ({m.group(0)!r})")
+    return f
+
+
+_SCOPE_CACHE: dict = {}
+
+
+def check_scope_prose(fm: dict, body: str, order, catalog: dict, root: pathlib.Path) -> Findings:
+    """Every bolded scope tag in '## 3. Scope and validity' (e.g. **REDUCED**) must be one of the
+    own, published or model tags of the card's declarations in docs/scope-tags.tsv /
+    docs/scope-published.tsv. The Facts block is authoritative; this keeps the prose from going
+    stale when a tag changes. Skipped when no scope row is found (e.g. the self-test fixtures)."""
+    f = Findings()
+    section = extract_h2_section(body, "3. Scope and validity")
+    if section is None:
+        return f
+    key = str(root)
+    if key not in _SCOPE_CACHE:
+        tags_p, pub_p = root / "docs" / "scope-tags.tsv", root / "docs" / "scope-published.tsv"
+        _SCOPE_CACHE[key] = (gc.load_scope_tags(tags_p) if tags_p.exists() else {},
+                             gc.load_scope_published(pub_p))
+    scope_tags, published = _SCOPE_CACHE[key]
+    # The card's own declarations, plus any declaration §3 names in backticks (prose may state the
+    # tag of a related result, e.g. "the **REDUCED** closure of `multiElement_exists_pos_fixedPoint`").
+    names = [name for _label, name in order or []]
+    by_leaf: dict[str, list[str]] = {}
+    for full in catalog:
+        by_leaf.setdefault(full.rsplit(".", 1)[-1], []).append(full)
+    for tok in re.findall(r"`([A-Za-z_][\w.']*)`", section):
+        names += [c for c in (tok, "CflibsFormal." + tok) if c in catalog] or by_leaf.get(tok, [])
+    allowed: set[str] = set()
+    for name in names:
+        rec = catalog.get(name)
+        if not rec:
+            continue
+        row = gc.scope_row(rec, scope_tags)
+        if row:
+            allowed.add(row[0])
+        module_rel, qualified, leaf = gc.scope_lookup_keys(rec)
+        pub = published.get((module_rel, qualified)) or published.get((module_rel, leaf))
+        if pub:
+            allowed.update({pub[1], pub[2]})
+    if not allowed:
+        return f
+    for m in re.finditer(r"\*\*(EXACT|REDUCED|APPROXIMATION|PURE-MATH)\*\*", section):
+        if m.group(1) not in allowed:
+            f.add("SCOPE-PROSE", f"§3 states **{m.group(1)}** but the card's declarations and those "
+                                 f"§3 names carry only {sorted(allowed)} (docs/scope-tags.tsv, "
+                                 f"scope-published.tsv)")
     return f
 
 
@@ -368,11 +430,19 @@ def check_card(path: pathlib.Path, catalog: dict, whitelist: dict, decisions: se
     findings += check_statement_hash(fm, order, catalog)
     findings += check_binder_coverage(fm, body, order, catalog)
     findings += check_sections(fm, body)
+    findings += check_scope_prose(fm, body, order, catalog, root)
     findings += check_citations(fm, whitelist)
     findings += check_registry_ids(fm, decisions, frontier_ids, cert_ids)
     findings += check_evidence(fm, root)
     raw = path.read_text(encoding="utf-8")
-    findings += check_no_absolute_paths(raw, path.name)
+    deny = load_local_denylist(root)
+    findings += check_no_absolute_paths(raw, path.name, deny)
+    # Evidence files are published next to the card, so the same disclosure rules apply to them.
+    ev_dir = path.parent / "evidence" / path.stem
+    for ev in sorted(ev_dir.rglob("*")) if ev_dir.is_dir() else []:
+        if ev.is_file() and ev.stat().st_size < 2_000_000:
+            text = ev.read_text(encoding="utf-8", errors="replace")
+            findings += check_no_absolute_paths(text, str(ev.relative_to(path.parent)), deny)
     findings += check_frontier_ambiguous(raw, path.name)
     return findings
 

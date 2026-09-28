@@ -22,7 +22,7 @@ status:
 open_items: []
 provenance:
   - docs/theorems/registry/frontier.yaml
-  - /home/brian/.local/share/openprover/staging/2026-09-24/leak/dossier.md
+  - /home/user/.local/share/openprover/staging/2026-09-24/leak/dossier.md
 updated: 2026-09-28
 ---
 
