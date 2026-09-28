@@ -39,6 +39,9 @@ data see the *Base* column of [`module-reference.md`](module-reference.md).
   `SelfAbsorption`, `EquivalentWidth`, `CurveOfGrowth`). The other landings extend existing
   modules; `SahaStability` now also imports `InhomogeneityBias` and `SahaEquilibrium`,
   `SelfAbsorption` imports `OLS`, and `Alt/NeutralityScale` imports `MultiSpecies`.
+- **Frontier landings (2026-09-28).** `IonApparentTemperature` (ion versus neutral apparent
+  temperature in a line-of-sight mixture) imports `InhomogeneityBias` and `SahaStability`. The
+  other items of that landing extend `SahaStability`, `InhomogeneityBias` and `EquivalentWidth`.
 
 ## Rendering the full graph
 

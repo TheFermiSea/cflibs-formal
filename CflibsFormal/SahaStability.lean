@@ -85,6 +85,10 @@ level-truncation hypothesis, as monotonicity.  Two distinct statements must be k
   (`meanExcitation_monotoneOn_temp`), and `|log U(T1) − log U(T2)|` is bounded by
   `⟨E⟩_{max T1 T2}·|1/(k_B T1) − 1/(k_B T2)|` (`log_partitionFunction_lipschitz_max`), a
   constant far tighter than the `∑ g·E` constants above.  Both are `PURE-MATH`.
+* **Ion zone reweight (frontier FT-19).**  `ionReweight` (`2·θ^{3/2}·e^{−χ/(k_B T)}/n_e`, the
+  thermal part of `sahaFactor` over `n_e`; model tag REDUCED) is strictly increasing in `T`
+  with no level-truncation hypothesis (`ionReweight_strictMonoOn`, `PURE-MATH`). It feeds the
+  ion-versus-neutral apparent-temperature comparison of `IonApparentTemperature`.
 * **Multi-element design-matrix conditioning.**  The rank / condition-number
   analysis of the joint multi-element inversion is a separate linear-algebra
   problem, not addressed here.
@@ -867,6 +871,51 @@ theorem electronDensityFromRatio_strictMonoOn_temp [Nonempty ι] [Nonempty κ]
   change sahaFactor kB T1 me h chi gZ EZ gZ1 EZ1 / R
       < sahaFactor kB T2 me h chi gZ EZ gZ1 EZ1 / R
   exact div_lt_div_of_pos_right hS hR
+
+/-! ### The ion zone reweight (frontier FT-19)
+
+Under uniform `n_e` and Saha balance in every zone, the ion-stage zone weight is the
+neutral-stage zone weight times `ionReweight` (`IonApparentTemperature.ion_zoneWeight_eq`): the
+partition functions cancel between the Saha factor and the ion zone weight. -/
+
+/-- **The ion zone reweight** `ρ(T) = 2·θ(T)^{3/2}·e^{−χ/(k_B T)}/n_e`, with
+`θ = thermalBracket kB T me h`. It is the thermal part of the ideal Saha factor `sahaFactor`
+divided by `n_e`, with the partition-function ratio removed, and like `sahaFactor` it has no
+ionization-potential depression. It restates that part of the model without calling
+`sahaFactor`, so it carries its own model row (REDUCED, `docs/conventions.md` §8). -/
+noncomputable def ionReweight (kB me h chi ne T : ℝ) : ℝ :=
+  2 * thermalBracket kB T me h ^ (3/2 : ℝ) * Real.exp (-chi / (kB * T)) / ne
+
+/-- **The ion zone reweight is strictly increasing in temperature (PURE-MATH).** For positive
+`k_B, m_e, h, n_e` and `χ ≥ 0`, `T ↦ ionReweight kB me h chi ne T` is strictly increasing on
+`T > 0`: `θ(T)^{3/2}` is strictly increasing (`thermalBracket_strictMono`) and
+`e^{−χ/(k_B T)}` is nondecreasing. Unlike `sahaFactor_strictMonoOn_temp` (M4), no
+level-truncation hypothesis `hEχ` is needed, because the partition functions have cancelled. -/
+theorem ionReweight_strictMonoOn {kB me h chi ne : ℝ} (hkB : 0 < kB) (hme : 0 < me)
+    (hh : 0 < h) (hchi : 0 ≤ chi) (hne : 0 < ne) :
+    StrictMonoOn (ionReweight kB me h chi ne) (Set.Ioi 0) := by
+  intro T1 hT1 T2 hT2 hlt
+  simp only [Set.mem_Ioi] at hT1 hT2
+  dsimp [ionReweight]
+  have hθ1 : 0 < thermalBracket kB T1 me h := thermalBracket_pos hkB hT1 hme hh
+  have hθ2 : 0 < thermalBracket kB T2 me h := thermalBracket_pos hkB hT2 hme hh
+  have hθlt : thermalBracket kB T1 me h < thermalBracket kB T2 me h :=
+    thermalBracket_strictMono hkB hme hh hlt
+  have hX : (thermalBracket kB T1 me h) ^ (3/2 : ℝ) < (thermalBracket kB T2 me h) ^ (3/2 : ℝ) :=
+    Real.rpow_lt_rpow hθ1.le hθlt (by norm_num)
+  have hY : Real.exp (-chi / (kB * T1)) ≤ Real.exp (-chi / (kB * T2)) := by
+    rw [Real.exp_le_exp]
+    rw [neg_div, neg_div, neg_le_neg_iff]
+    exact div_le_div_of_nonneg_left hchi (mul_pos hkB hT1)
+      (mul_le_mul_of_nonneg_left hlt.le hkB.le)
+  have h2X : 2 * (thermalBracket kB T1 me h) ^ (3/2 : ℝ) <
+             2 * (thermalBracket kB T2 me h) ^ (3/2 : ℝ) := by
+    linarith [hX]
+  have hYpos : 0 < Real.exp (-chi / (kB * T2)) := Real.exp_pos _
+  have hprod : 2 * (thermalBracket kB T1 me h) ^ (3/2 : ℝ) * Real.exp (-chi / (kB * T1)) <
+               2 * (thermalBracket kB T2 me h) ^ (3/2 : ℝ) * Real.exp (-chi / (kB * T2)) :=
+    mul_lt_mul_of_lt_of_le_of_nonneg_of_pos h2X hY (by positivity) hYpos
+  exact div_lt_div_of_pos_right hprod hne
 
 /-! ### Non-vacuity witnesses
 

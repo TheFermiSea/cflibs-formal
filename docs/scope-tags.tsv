@@ -34,6 +34,8 @@ SahaStability.lean	meanExcitation_eq_tiltMean	PURE-MATH	—
 SahaStability.lean	meanExcitation_monotoneOn_temp	PURE-MATH	—
 SahaStability.lean	log_partitionFunction_lipschitz_max	PURE-MATH	—
 SahaStability.lean	sahaEquilibriumNe_strictMonoOn_temp	EXACT	Saha–Eggert (Griem)
+SahaStability.lean	ionReweight	REDUCED	Saha–Eggert (Griem)
+SahaStability.lean	ionReweight_strictMonoOn	PURE-MATH	—
 SahaEquilibrium.lean	sahaEquilibriumNe_pos	PURE-MATH	—
 SahaEquilibrium.lean	sahaEquilibriumNe_selfConsistent	REDUCED	Saha–Eggert (Griem)
 SahaEquilibrium.lean	sahaEquilibriumNe_lt_totalDensity	PURE-MATH	—
@@ -457,6 +459,7 @@ EquivalentWidth.lean	equivWidth_integrand_integrable	PURE-MATH	—
 EquivalentWidth.lean	equivWidth_nonneg	PURE-MATH	—
 EquivalentWidth.lean	equivWidth_le_thin	EXACT	Gornushkin 1999
 EquivalentWidth.lean	equivWidth_mono	EXACT	Gornushkin 1999
+EquivalentWidth.lean	equivWidth_strictMonoOn	PURE-MATH	—
 EquivalentWidth.lean	equivWidth_rectangular	EXACT	Gornushkin 1999
 EquivalentWidth.lean	equivWidth_weakLine	EXACT	Gornushkin 1999
 EquivalentWidth.lean	slabCurve_forward_lipschitz	EXACT	Gornushkin 1999
@@ -674,6 +677,7 @@ InhomogeneityBias.lean	logMixture_secant_lt	PURE-MATH	—
 InhomogeneityBias.lean	intercept_le_log_total	PURE-MATH	—
 InhomogeneityBias.lean	pairSlope_antitone	PURE-MATH	—
 InhomogeneityBias.lean	pairSlope_strictAnti	PURE-MATH	—
+InhomogeneityBias.lean	tiltMean_reweight_le	PURE-MATH	—
 InhomogeneityBias.lean	logMixture_homogeneous	PURE-MATH	—
 InhomogeneityBias.lean	tiltMean_homogeneous	PURE-MATH	—
 InhomogeneityBias.lean	intercept_eq_log_total_homogeneous	PURE-MATH	—
@@ -683,6 +687,8 @@ InhomogeneityBias.lean	mixed_boltzmann_ordinate	REDUCED	Ciucci 1999
 InhomogeneityBias.lean	mixed_intercept_le_log_column	REDUCED	Ciucci 1999
 InhomogeneityBias.lean	mixed_apparentBeta_le_tiltMean	REDUCED	Ciucci 1999
 InhomogeneityBias.lean	mixed_apparentBeta_antitone	REDUCED	Ciucci 1999
+IonApparentTemperature.lean	ion_zoneWeight_eq	REDUCED	Saha–Eggert (Griem)
+IonApparentTemperature.lean	mixed_ion_apparentBeta_le_neutral	REDUCED	Aguilera & Aragón 2007
 DifferentialEstimator.lean	differentialRatio_eq_density_ratio	EXACT	Ciucci 1999
 DifferentialEstimator.lean	differentialRatio_immune_to_atomicData	EXACT	Ciucci 1999
 DifferentialEstimator.lean	classic_biased_differential_exact	EXACT	Ciucci 1999

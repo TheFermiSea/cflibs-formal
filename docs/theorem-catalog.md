@@ -9,9 +9,9 @@
 
 A result shows `own → published` when the two differ (with the definitions that weakened it), and a single tag when they agree. A definition with its own row shows `model TAG`.
 
-**Own-tag mix** (799 results): **EXACT** 164 · **REDUCED** 232 · **APPROXIMATION** 4 · **PURE-MATH** 399
+**Own-tag mix** (804 results): **EXACT** 164 · **REDUCED** 234 · **APPROXIMATION** 4 · **PURE-MATH** 402
 
-**Published-tag mix** (799 results; 143 weakened by a model tag): **EXACT** 57 · **REDUCED** 277 · **APPROXIMATION** 66 · **PURE-MATH** 399
+**Published-tag mix** (804 results; 143 weakened by a model tag): **EXACT** 57 · **REDUCED** 279 · **APPROXIMATION** 66 · **PURE-MATH** 402
 
 `EXACT` = an exact theorem about the model it is stated over · `REDUCED` = exact only after a stated reduction (a dimensionless/lumped-factor form) · `APPROXIMATION` = the statement itself is approximate (documented idealization / limiting case) · `PURE-MATH` = infrastructure lemma, no physical claim. Classification cross-checked against `reviews/literature-validity-audit.md`.
 
@@ -522,6 +522,7 @@ A result shows `own → published` when the two differ (with the definitions tha
 - `PURE-MATH` · `equivWidth_nonneg` — A line only removes flux: the equivalent width is nonnegative for `τ ≥ 0`, `φ ≥ 0`.
 - `EXACT` · `equivWidth_le_thin` — The linear-regime upper bound (saturation).  _[Gornushkin 1999]_
 - `EXACT` · `equivWidth_mono` — The curve of growth is increasing.  _[Gornushkin 1999]_
+- `PURE-MATH` · `equivWidth_strictMonoOn` — The curve of growth is strictly increasing (PURE-MATH).
 - `EXACT` · `equivWidth_rectangular` — The flat-profile curve of growth recovers the slab deficit.  _[Gornushkin 1999]_
 - `EXACT` · `equivWidth_weakLine` — The weak-line (linear) limit of the curve of growth.  _[Gornushkin 1999]_
 - `EXACT` · `slabCurve_forward_lipschitz` — Saturation kills forward sensitivity (EXACT).  _[Gornushkin 1999]_
@@ -738,6 +739,7 @@ A result shows `own → published` when the two differ (with the definitions tha
 - `PURE-MATH` · `intercept_le_log_total` — The classical Boltzmann intercept is a guaranteed lower bound on the true log column density.
 - `PURE-MATH` · `pairSlope_antitone` — Convexity read on line pairs.
 - `PURE-MATH` · `pairSlope_strictAnti` — Strict version of `pairSlope_antitone`: for a genuinely inhomogeneous mixture the Boltzmann plot is *strictly* convex, so the two window temperatures never a…
+- `PURE-MATH` · `tiltMean_reweight_le` — Antivariant reweighting lowers the tilted mean (PURE-MATH, weighted Chebyshev).
 - `PURE-MATH` · `logMixture_homogeneous` — If every mixed state shares one inverse temperature `β`, the observed Boltzmann plot is exactly affine — the classical single-zone `ForwardMap.boltzmann_plot…
 - `PURE-MATH` · `tiltMean_homogeneous` — If every mixed state shares one inverse temperature `β`, the tilted mean collapses to `β` at every anchor energy.
 - `PURE-MATH` · `intercept_eq_log_total_homogeneous` — The intercept bound is sharp.
@@ -780,6 +782,13 @@ A result shows `own → published` when the two differ (with the definitions tha
 - `EXACT → REDUCED` · `general_identifiability` — General identifiability — the central theorem.  _[Ciucci 1999]_  (via `PlasmaParams`, `lineIntensity`)
 - `PURE-MATH` · `sound_estimators_agree` — Abstract agreement lemma.
 - `REDUCED` · `rawCompositionEstimator_sound` — Soundness of the raw estimator (constant-`emit` case).  _[Ciucci 1999]_
+
+## `IonApparentTemperature.lean`  (CflibsFormal)
+*Ion and neutral apparent temperatures in a line-of-sight mixture*
+
+**Results**
+- `REDUCED` · `ion_zoneWeight_eq` — Ion zone weight = neutral zone weight × ion reweight (REDUCED).  _[Saha–Eggert (Griem)]_
+- `REDUCED` · `mixed_ion_apparentBeta_le_neutral` — Ion apparent temperature ≥ neutral apparent temperature (REDUCED).  _[Aguilera & Aragón 2007]_
 
 ## `IpdSahaInverse.lean`  (CflibsFormal)
 *the IPD-aware Saha inverse in log coordinates (frontier FT-02)*
@@ -1423,6 +1432,7 @@ A result shows `own → published` when the two differ (with the definitions tha
 
 **Definitions**
 - `sahaFactorLipConst` — Explicit `T`-Lipschitz constant for `sahaFactor` on a box `[Tmin, Tmax]` (`REDUCED`, Saha–Eggert (Griem)).
+- `model REDUCED` · `ionReweight` — The ion zone reweight `ρ(T) = 2·θ(T)^{3/2}·e^{−χ/(k_B T)}/n_e`, with `θ = thermalBracket kB T me h`.  _[Saha–Eggert (Griem)]_
 - `meanExcitation` — Boltzmann-weighted mean excitation energy `⟨E⟩_T = (∑ₖ gₖ·Eₖ·exp(−Eₖ/(k_B T))) / U(T)`: the mean level energy under the LTE level populations of `population`…
 
 **Results**
@@ -1437,6 +1447,7 @@ A result shows `own → published` when the two differ (with the definitions tha
 - `PURE-MATH` · `partitionFunction_mono_temp` — Monotonicity of the partition function in `T` (PURE-MATH).
 - `EXACT → REDUCED` · `sahaFactor_strictMonoOn_temp` — Saha-factor strict monotonicity in temperature (M4; EXACT relation, published REDUCED via `sahaFactor`; Saha–Eggert (Griem)).  _[Saha–Eggert (Griem)]_  (via `sahaFactor`)
 - `EXACT → REDUCED` · `electronDensityFromRatio_strictMonoOn_temp` — Electron-density `n_e = S(T)/R` strict monotonicity in temperature (M5; EXACT relation, published REDUCED via `sahaFactor`; Saha–Eggert (Griem)).  _[Saha–Eggert (Griem)]_  (via `sahaFactor`)
+- `PURE-MATH` · `ionReweight_strictMonoOn` — The ion zone reweight is strictly increasing in temperature (PURE-MATH).
 - `PURE-MATH` · `partitionFunction_eq_mixture` — Bridge to `InhomogeneityBias`: the partition function is a `mixture`.
 - `PURE-MATH` · `meanExcitation_eq_tiltMean` — Bridge to `InhomogeneityBias`: the mean excitation energy is a `tiltMean`.
 - `PURE-MATH` · `meanExcitation_monotoneOn_temp` — The mean excitation energy is nondecreasing in temperature (FT-15).

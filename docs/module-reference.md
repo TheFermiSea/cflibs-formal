@@ -34,7 +34,7 @@ One row per module under `CflibsFormal/`. *Base* = imports no `CflibsFormal` mod
 | `DifferentialEstimator.lean` | `CflibsFormal` | 11 | 2 | – | ✓ | the reference-differenced (line-by-line) estimator |
 | `Dimensions.lean` | `CflibsFormal` | 16 | 15 | ✓ | – | a dimensional-analysis layer |
 | `DoubletChannel.lean` | `CflibsFormal` | 22 | 1 | – | ✓ | The doublet channel — the second observable that breaks the `N`–`τ` alias |
-| `EquivalentWidth.lean` | `CflibsFormal` | 23 | 4 | ✓ | ✓ | the equivalent-width curve of growth |
+| `EquivalentWidth.lean` | `CflibsFormal` | 24 | 4 | ✓ | ✓ | the equivalent-width curve of growth |
 | `ErrorBudget.lean` | `CflibsFormal` | 19 | 2 | – | – | the error-propagation chain and DERIVED reliability thresholds |
 | `EscapeFactor.lean` | `CflibsFormal` | 2 | 0 | – | ✓ | Profile escape factor versus the flat-slab self-absorption factor |
 | `EvaluatorSoundness.lean` | `CflibsFormal` | 6 | 5 | – | ✓ | evaluator soundness (which hard-gate clauses feed which theorem) |
@@ -45,9 +45,10 @@ One row per module under `CflibsFormal/`. *Base* = imports no `CflibsFormal` mod
 | `HeteroAtomicData.lean` | `CflibsFormal` | 11 | 2 | – | ✓ | PER-LINE heterogeneous atomic-data error in the Boltzmann-plot SLOPE |
 | `HydrogenStark.lean` | `CflibsFormal` | 4 | 2 | ✓ | ✓ | the hydrogen-line (Balmer) Stark electron-density diagnostic |
 | `Identifiability.lean` | `CflibsFormal` | 7 | 0 | – | – | Part 5: identifiability of the inverse problem |
-| `InhomogeneityBias.lean` | `CflibsFormal` | 27 | 9 | – | ✓ | Inhomogeneity bias: the sign of the Boltzmann-plot error is a theorem |
+| `InhomogeneityBias.lean` | `CflibsFormal` | 28 | 9 | – | ✓ | Inhomogeneity bias: the sign of the Boltzmann-plot error is a theorem |
 | `IntervalEnclosure.lean` | `CflibsFormal` | 7 | 2 | – | ✓ | a Lipschitz bound on the OLS design normal matrix |
 | `Inverse.lean` | `CflibsFormal` | 3 | 6 | – | – | Part 6: the algorithm-agnostic inverse-problem framework |
+| `IonApparentTemperature.lean` | `CflibsFormal` | 2 | 0 | – | ✓ | Ion and neutral apparent temperatures in a line-of-sight mixture |
 | `IpdSahaInverse.lean` | `CflibsFormal` | 3 | 1 | ✓ | ✓ | the IPD-aware Saha inverse in log coordinates (frontier FT-02) |
 | `JointConvergence.lean` | `CflibsFormal` | 5 | 1 | – | ✓ | the joint `(T, n_e)` outer-loop contraction (Frontier) |
 | `JointIdentifiability.lean` | `CflibsFormal` | 1 | 1 | – | – | Part 7: joint (temperature, composition) identifiability |
@@ -85,7 +86,7 @@ One row per module under `CflibsFormal/`. *Base* = imports no `CflibsFormal` mod
 | `SahaEquilibrium.lean` | `CflibsFormal` | 38 | 7 | – | ✓ | Coupled Saha–closure–charge self-consistency (reduced core) |
 | `SahaInverse.lean` | `CflibsFormal` | 3 | 2 | – | ✓ | Part 6: coupling Saha into the inverse problem |
 | `SahaRangeEnclosure.lean` | `CflibsFormal` | 3 | 0 | – | ✓ | an a-priori Saha `S(T)`-range enclosure (Frontier 04) |
-| `SahaStability.lean` | `CflibsFormal` | 16 | 2 | – | ✓ | Part 2b: stability of the `n_e` diagnostic |
+| `SahaStability.lean` | `CflibsFormal` | 17 | 3 | – | ✓ | Part 2b: stability of the `n_e` diagnostic |
 | `SelfAbsorption.lean` | `CflibsFormal` | 11 | 3 | – | ✓ | self-absorption / optical-thickness-aware forward map |
 | `SelfAbsorptionInverse.lean` | `CflibsFormal` | 5 | 1 | – | ✓ | Self-absorption coupled into the inverse problem — identifiability preserved vs. lost |
 | `SelfReversal.lean` | `CflibsFormal` | 4 | 1 | ✓ | ✓ | self-reversal (the two-zone line dip) |
@@ -98,5 +99,5 @@ One row per module under `CflibsFormal/`. *Base* = imports no `CflibsFormal` mod
 | `TwoDCOSOrder.lean` | `CflibsFormal` | 11 | 1 | – | ✓ | 2DCOS-LIBS formalization — the sequential-order (lead/lag) sign algebra |
 | `VoigtErrorEnclosure.lean` | `CflibsFormal` | 5 | 0 | – | ✓ | a non-circular error enclosure for the Voigt FWHM |
 | `VoigtWidth.lean` | `CflibsFormal` | 7 | 1 | ✓ | ✓ | the Voigt FWHM combination (Olivero–Longbothum) |
-| **90 modules** | | **799** | **241** | | | |
+| **91 modules** | | **804** | **242** | | | |
 
