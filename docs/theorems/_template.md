@@ -72,12 +72,16 @@ supersedes: []                        # PLACEHOLDER: optional; old ids this card
 
 ### 1.3 Hypotheses
 
+<!-- Proposition binders only (e.g. `hkB : 0 < kB`). Variables, types and instances are not
+     hypotheses: they go in 1.1 (or as V1, V2, ... in the 1.5 table). -->
+
 - **H1** (`PLACEHOLDER` binder) — PLACEHOLDER.
 - **H2** (`PLACEHOLDER` binder) — PLACEHOLDER.
 
 ### 1.4 Conclusion
 
-PLACEHOLDER: the LaTeX statement.
+PLACEHOLDER: the statement as mathematics in the 1.1 notation, not transliterated Lean (no
+`\forall ... \to ...`, no `\texttt{}` function applications).
 
 $$
 \text{PLACEHOLDER}

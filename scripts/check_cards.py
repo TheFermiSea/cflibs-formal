@@ -358,10 +358,16 @@ def check_frontier_ambiguous(text: str, where: str) -> Findings:
     return f
 
 
+_MATH_SPAN = re.compile(r"\$\$.*?\$\$|\$[^$\n]*\$", re.S)
+
+
 def check_no_absolute_paths(text: str, where: str, extra=()) -> Findings:
     f = Findings()
+    # A drive letter is looked for outside math only: `$w:\iota\to\mathbb{R}$` is a typing
+    # judgement, not `C:\...`, and no filesystem path is ever written inside $...$.
+    no_math = _MATH_SPAN.sub(" ", text)
     for pat, label in [*ABS_PATH_PATTERNS, *extra]:
-        m = pat.search(text)
+        m = pat.search(no_math if label == "drive-letter path" else text)
         if m:
             f.add("ABS-PATH", f"{where}: {label} ({m.group(0)!r})")
     return f
