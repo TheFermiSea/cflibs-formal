@@ -2,6 +2,11 @@
 
 > **AUTO-GENERATED** by `scripts/gen_cards.py`: every card's `open_items`, rolled up. cflibs-formal has no `.beads/`; this plus optional issue links is the tracker (IA-proposal §1.3 item 4).
 
+## [`f02m6.saha-ne-monotone-temp`](f02m6.saha-ne-monotone-temp.md)
+
+- **owner-decision**: Owner spot-check of the EXACT relation tag is still required before the card can be treated as done.
+- **lean**: Independent statement review and gen_cards.py --stamp are still required; the current statement_hash is UNREVIEWED.
+
 ## [`ft01.damped-t-loop-convergence`](ft01.damped-t-loop-convergence.md)
 
 - **lean**: the physics binding (the pipeline's reduced Saha-Boltzmann update is affine in 1/T on a median piece, IPD off, unit weights) is not stated or landed; it needs its own REDUCED statement and a Mode B statement audit before any C11 certificate could cite this family (FT-01)
@@ -113,12 +118,40 @@
 - **pipeline**: Decide whether _tau_ratio should carry the per-line (1 - exp(-x_i)) and lower-level Boltzmann factors; a full comparison needs the D19 sigma0 model identity.
 - **docstring**: OpticalDepthBridge module scope block says stimulated emission is not modelled; reconcile it with perLine_tauRatio, which carries (1 - exp(-x_i)) via its sigma0 argument.
 
+## [`ft14v.equivwidth-strict-mono`](ft14v.equivwidth-strict-mono.md)
+
+- **owner-decision**: Resolve cross-registry naming: the card plan groups this theorem under FT-14, but its docs/scope-tags.tsv row and PR credit are recorded under registry/frontier.yaml's FT-19 `landed` list, not FT-14's. (FT-14)
+- **lean**: Re-review the LaTeX statement binder by binder and stamp the statement hash after independent review.
+- **pipeline**: Record a CF-LIBS-improved path#symbol anchor when a pipeline consumer is identified; none is named in this draft.
+- **citation**: The theorem docstring cites no source; the EquivalentWidth module's `## Literature` cites Mihalas 1978 (whitelist UNVERIFIED) for the equivalent-width definition and Gornushkin 1999 (AUDIT-VETTED) for the LIBS curve of growth. Decide whether to attach them as context only (no locator: neither row is VERIFIED/CORRECTED).
+
+## [`ft15.mean-excitation-lipschitz`](ft15.mean-excitation-lipschitz.md)
+
+- **lean**: Complete adversarial review and stamp lean.reviewed.statement_hash; the current value is UNREVIEWED.
+- **lean**: FT-15's ln S (Saha-factor) Lipschitz leg and the [Tmin, Tmax] box form of the ln U bound are not landed; only the max(T1,T2) form, the monotonicity of the mean excitation energy and the two bridges are. (FT-15)
+
+## [`ft16.kernel-extraction-varah-bound`](ft16.kernel-extraction-varah-bound.md)
+
+- **citation**: The audit's candidate 1975 linear-algebra source is not attached; route it through citation-integrity before citing it.
+- **lean**: The ordinate corollary should be derived from `CflibsFormal.abs_log_ratio_le` rather than restated; it is outside this headline statement.
+- **lean**: Closed-form bias identity extractor_bias_identity (audit FT-16) is not landed. (FT-16)
+- **lean**: Margin-certificate soundness (kernelMarginCert; nonsingularity of KᵀK via mathlib det_ne_zero_of_sum_row_lt_diag) is not landed. (FT-16)
+- **lean**: Compose the bound with the ordinate corollary (`CflibsFormal.abs_log_ratio_le`) and `noise_to_composition` to reach a log-ordinate budget.
+- **pipeline**: Wire the resulting bound into the composition-extraction error budget once the forward-model piece is available.
+
 ## [`ft17.neutrality-newton-bracket`](ft17.neutrality-newton-bracket.md)
 
 - **lean**: Global convergence of the Newton iteration from an arbitrary x0 >= 0 (not just the one-step bracket) is parked, not landed. (FT17-neutralityNewton-tendsto)
 - **lean**: The audit's queue decomposition also asked for strict positivity (N x > 0 for x >= 0), the companion monotone-step fact (0 <= x <= r implies x <= N x), a linear convergence rate, and a certificate wrapper that eliminates r from the check; none of these is claimed by any landed declaration in this family. (FT-17)
 - **model-row**: Applying the bracket to the pressure-balance fallback would need a fixed-pressure (isobaric) closure, a Z-stage ladder and n_e-dependent effective ionization potentials, not only a Z-stage generalization of multiElementIonized.
 - **model-row**: multiElementIonized (def) encodes the REDUCED two-stage fixed-T closure but carries no MODEL row in docs/scope-tags.tsv (D15). (D15)
+
+## [`ft18.self-absorption-slope-bias-sign`](ft18.self-absorption-slope-bias-sign.md)
+
+- **lean**: The apparent-temperature corollary is not part of this statement; it needs the thin slope to equal -1/(kB T), the slope inequality proved here, 0 < kB, 0 < T, and a negative self-absorbed slope. (FT-18)
+- **lean**: The reverse-ordering witness (tau increasing with E can lower the slope) is a separate target and is not proved here. (FT-18)
+- **model-row**: No claim is made that real CF-LIBS line sets satisfy H2; the tau-versus-E ordering is an empirical per-line-set check before applying the theorem. (FT-18)
+- **pipeline**: No CF-LIBS-improved code references this theorem; the default Boltzmann fit is weighted and sigma-clipped, so applying FT-18 there needs a weighted fixed-line-set analogue or an unweighted diagnostic fit. (FT-18)
 
 ## [`ft19.ion-apparent-temperature`](ft19.ion-apparent-temperature.md)
 
