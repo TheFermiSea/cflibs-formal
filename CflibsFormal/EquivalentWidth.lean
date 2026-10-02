@@ -36,6 +36,9 @@ We prove the **weak-line / saturation** structure of the curve of growth, profil
 * `equivWidth_stepProfile` — for the **two-step profile** `stepProfile η M` (height `1 + η` on
   `[0, 1]`, `η` on `(1, M]`) the equivalent width has the closed form
   `(1 - exp(-τ(1 + η))) + (M - 1)(1 - exp(-τη))`; a second concrete, non-rectangular instance.
+* `conv_absorptance_le` — **instrument kernel, pointwise Jensen step:** for a probability kernel
+  `R`, the absorptance convolved with the instrument is at most the absorptance of the
+  instrument-folded opacity, at each pixel `x` (PURE-MATH).
 
 ## Honest scope
 
@@ -55,6 +58,10 @@ We prove the **weak-line / saturation** structure of the curve of growth, profil
 * **Physics is in the profile, not the Lean statement.** `τ` lumps the oscillator strength / lower-
   level column density (`τ = w·n` of `CurveOfGrowth.cogIntensity`); `∫φ` is the profile area. No
   physical constant enters any statement.
+* **Instrument kernel: the pointwise step only.** `conv_absorptance_le` compares, at one pixel `x`,
+  the absorptance convolved with a probability kernel `R` against the absorptance of the folded
+  opacity. The integrated bound `equivWidth φ τ ≤ equivWidth (R ⋆ φ) τ` (Fubini, `∫ R = 1`) is a
+  separate result, not proved here (frontier FT-14).
 
 ## Literature
 
@@ -1269,5 +1276,125 @@ theorem stepProfile_pairRatio_not_injOn :
     stepW_pairRatio_not_injOn
 
 end StepProfile
+
+section InstrumentJensen
+
+/-! ### Instrument convolution after radiative transfer (frontier FT-14, pointwise step)
+
+A spectrometer records the emergent spectrum convolved with its instrument function `R`. Folding
+`R` into the opacity profile instead (convolve first, then apply the slab absorptance) is a common
+shortcut. Because `t ↦ 1 - exp(-(τ t))` is concave, Jensen's inequality orders the two at every
+pixel. -/
+
+/-- Tangent-line bound for the concave map `t ↦ 1 - exp(-(τ t))` at `m`, for every real `τ`
+(from `1 + u ≤ exp u`). -/
+private theorem absorptance_tangent_bound (τ m t : ℝ) :
+    1 - Real.exp (-(τ * t)) ≤ (1 - Real.exp (-(τ * m))) + τ * Real.exp (-(τ * m)) * (t - m) := by
+  set c := Real.exp (-(τ * m)) with hc
+  have hc_pos : 0 < c := by simpa using Real.exp_pos (-(τ * m))
+  have hexp : Real.exp (-(τ * t)) = c * Real.exp (-(τ * (t - m))) := by
+    rw [show -(τ * t) = -(τ * m) + (-(τ * (t - m))) by ring, Real.exp_add, ← hc]
+  have hadd : 1 - τ * (t - m) ≤ Real.exp (-(τ * (t - m))) := by
+    linarith [Real.add_one_le_exp (-(τ * (t - m)))]
+  have hmul : c * (1 - τ * (t - m)) ≤ c * Real.exp (-(τ * (t - m))) :=
+    mul_le_mul_of_nonneg_left hadd (le_of_lt hc_pos)
+  calc
+    1 - Real.exp (-(τ * t)) = 1 - c * Real.exp (-(τ * (t - m))) := by rw [hexp]
+    _ ≤ 1 - c * (1 - τ * (t - m)) := by linarith
+    _ = (1 - c) + c * (τ * (t - m)) := by ring
+    _ = (1 - Real.exp (-(τ * m))) + τ * Real.exp (-(τ * m)) * (t - m) := by
+      rw [hc]
+      ring
+
+/-- `∫ R = 1 ≠ 0` forces `R` integrable (the junk value of a non-integrable integral is `0`), and
+the reflection-translation `y ↦ x - y` preserves integrability. -/
+private theorem kernel_shift_integrable {R : ℝ → ℝ} (hR1 : ∫ y, R y = 1) (x : ℝ) :
+    Integrable (fun y => R (x - y)) :=
+  (Integrable.of_integral_ne_zero (by rw [hR1]; norm_num : ∫ y, R y ≠ 0)).comp_sub_left x
+
+/-- Lebesgue measure is invariant under `y ↦ x - y`, so `R (x - ·)` has unit integral at every
+`x`. -/
+private theorem kernel_shift_integral_one {R : ℝ → ℝ} (hR1 : ∫ y, R y = 1) (x : ℝ) :
+    ∫ y, R (x - y) = 1 :=
+  (integral_sub_left_eq_self R (volume : Measure ℝ) x).trans hR1
+
+/-- The tangent-line majorant of the absorptance integrand is integrable. -/
+private theorem convJensen_rhs_integrable {R φ : ℝ → ℝ} {τ x : ℝ} (c m : ℝ)
+    (hR1 : ∫ y, R y = 1) (hRφ : Integrable (fun y => R (x - y) * φ y)) :
+    Integrable (fun y => (1 - c) * R (x - y) + τ * c * (R (x - y) * φ y - m * R (x - y))) := by
+  have hR : Integrable (fun y => R (x - y)) := kernel_shift_integrable hR1 x
+  have h1 : Integrable (fun y => (1 - c) * R (x - y)) := Integrable.const_mul hR (1 - c)
+  have h2 : Integrable (fun y => m * R (x - y)) := Integrable.const_mul hR m
+  have h3 : Integrable (fun y => R (x - y) * φ y - m * R (x - y)) := Integrable.sub hRφ h2
+  have h4 : Integrable (fun y => τ * c * (R (x - y) * φ y - m * R (x - y))) :=
+    Integrable.const_mul h3 (τ * c)
+  exact Integrable.add h1 h4
+
+/-- At the tangent point `m = ∫ R (x - z) φ z` the majorant integrates to `1 - c`. -/
+private theorem convJensen_rhs_integral {R φ : ℝ → ℝ} {τ x : ℝ} (c : ℝ) (hR1 : ∫ y, R y = 1)
+    (hRφ : Integrable (fun y => R (x - y) * φ y)) :
+    ∫ y, ((1 - c) * R (x - y) + τ * c * (R (x - y) * φ y - (∫ z, R (x - z) * φ z) * R (x - y)))
+      = 1 - c := by
+  have hR : Integrable (fun y => R (x - y)) := kernel_shift_integrable hR1 x
+  have hR1x : ∫ y, R (x - y) = 1 := kernel_shift_integral_one hR1 x
+  have h1c : Integrable (fun y => (1 - c) * R (x - y)) := Integrable.const_mul hR (1 - c)
+  have hM : Integrable (fun y => (∫ z, R (x - z) * φ z) * R (x - y)) :=
+    Integrable.const_mul hR (∫ z, R (x - z) * φ z)
+  have hdiff : Integrable (fun y => R (x - y) * φ y - (∫ z, R (x - z) * φ z) * R (x - y)) :=
+    Integrable.sub hRφ hM
+  have hτc : Integrable
+      (fun y => τ * c * (R (x - y) * φ y - (∫ z, R (x - z) * φ z) * R (x - y))) :=
+    Integrable.const_mul hdiff (τ * c)
+  rw [integral_add h1c hτc]
+  rw [integral_const_mul, integral_const_mul]
+  rw [integral_sub hRφ hM]
+  rw [integral_const_mul]
+  rw [hR1x]
+  rw [show ∫ y, R (x - y) * φ y = ∫ z, R (x - z) * φ z from rfl]
+  ring
+
+/-- **Pointwise Jensen for the slab absorptance (frontier FT-14, pointwise step).** Let `R ≥ 0`
+with `∫ R = 1` be an instrument kernel, `φ ≥ 0` a line profile and `τ ≥ 0`. At a point `x` where
+`y ↦ R (x - y) · φ y` is integrable,
+`∫ R (x - y) · (1 - exp (-(τ φ y))) dy ≤ 1 - exp (-(τ · ∫ R (x - y) · φ y dy))`.
+The left side is the absorptance convolved with the instrument (transfer first, then the
+instrument, as in nature); the right side folds the instrument into the opacity profile.
+Reason: `t ↦ 1 - exp (-(τ t))` is concave for every real `τ` and `R (x - ·)` is a probability
+density (Jensen).
+
+Physics reading (an interpretation, not itself formalized): if a common source function `S`
+multiplies both sides, the folded model overstates the emergent intensity `S · (…)` at this
+pixel `x`, i.e. understates self-absorption there. This is the pointwise step toward the separate,
+not-yet-proved integrated bound `equivWidth φ τ ≤ equivWidth (R ⋆ φ) τ` (Fubini, `∫ R = 1`).
+
+`hRφ` is needed: without it the right side is `1 - exp 0 = 0` (Lean's junk integral) while the
+left side can be positive (e.g. `R` the indicator of `[0, 1]`, `φ y = y⁻¹` on `(0, 1]` and `0`
+elsewhere, `τ = x = 1`: the left integrand stays in `[0, 1]` with positive integral, and the
+inequality fails). `hφ` and `hτ` together keep `τ · φ y ≥ 0`, so the left integrand lies in
+`[0, R (x - y)]`; they are not needed for concavity, which holds for every real `τ`.
+
+Scope: PURE-MATH (Jensen's inequality; no `CflibsFormal` definition enters the statement). The
+physics reading is REDUCED: homogeneous slab, common source function, linear shift-invariant
+instrument. Literature: Griem 1974 (instrument convolution), Gornushkin 1999 (slab emission
+`S · (1 - exp (-τ))`). -/
+theorem conv_absorptance_le {R φ : ℝ → ℝ} {τ x : ℝ} (hR : ∀ y, 0 ≤ R y) (hR1 : ∫ y, R y = 1)
+    (hφ : 0 ≤ φ) (hτ : 0 ≤ τ) (hRφ : Integrable (fun y => R (x - y) * φ y)) :
+    ∫ y, R (x - y) * (1 - Real.exp (-(τ * φ y)))
+      ≤ 1 - Real.exp (-(τ * ∫ y, R (x - y) * φ y)) := by
+  set m := ∫ y, R (x - y) * φ y with hm
+  set c := Real.exp (-(τ * m)) with hc
+  calc ∫ y, R (x - y) * (1 - Real.exp (-(τ * φ y)))
+      ≤ ∫ y, ((1 - c) * R (x - y) + τ * c * (R (x - y) * φ y - m * R (x - y))) := by
+        refine integral_mono_of_nonneg ?_ (convJensen_rhs_integrable c m hR1 hRφ) ?_
+        · exact Filter.Eventually.of_forall (fun y => mul_nonneg (hR _) (by
+            have h0 : 0 ≤ τ * φ y := mul_nonneg hτ (hφ y)
+            have h1 : Real.exp (-(τ * φ y)) ≤ 1 := Real.exp_le_one_iff.mpr (by linarith)
+            linarith))
+        · exact Filter.Eventually.of_forall (fun y => by
+            have h := mul_le_mul_of_nonneg_left (absorptance_tangent_bound τ m (φ y)) (hR (x - y))
+            nlinarith [h])
+    _ = 1 - c := convJensen_rhs_integral c hR1 hRφ
+
+end InstrumentJensen
 
 end CflibsFormal

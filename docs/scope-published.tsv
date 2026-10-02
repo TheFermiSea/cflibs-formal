@@ -238,6 +238,7 @@ DoubletChannel.lean	one_lt_doubletRatio	theorem	REDUCED	APPROXIMATION	doubletRat
 DoubletChannel.lean	single_line_tau_alias	theorem	REDUCED	REDUCED	—
 DoubletChannel.lean	slab_second_eq_mul_ratio	theorem	PURE-MATH	PURE-MATH	—
 DoubletChannel.lean	weighted_mean_strict_between	theorem	PURE-MATH	PURE-MATH	—
+EquivalentWidth.lean	conv_absorptance_le	theorem	PURE-MATH	PURE-MATH	—
 EquivalentWidth.lean	equivWidth_integrand_integrable	theorem	PURE-MATH	PURE-MATH	—
 EquivalentWidth.lean	equivWidth_le_thin	theorem	EXACT	EXACT	—
 EquivalentWidth.lean	equivWidth_lorentzian_scaled	theorem	EXACT	EXACT	—
@@ -415,6 +416,18 @@ LineBroadening.lean	dopplerFWHM_pos	theorem	PURE-MATH	PURE-MATH	—
 LineBroadening.lean	dopplerFWHM_strictMono_T	theorem	PURE-MATH	PURE-MATH	—
 LineBroadening.lean	doppler_recovers	theorem	EXACT	EXACT	—
 LineBroadening.lean	gaussQuadrature_comm	theorem	PURE-MATH	PURE-MATH	—
+LineExtraction.lean	shotSigma_mono	theorem	PURE-MATH	PURE-MATH	—
+LineExtraction.lean	shotSigma_pos	theorem	PURE-MATH	PURE-MATH	—
+LineExtraction.lean	trapArea_add	theorem	PURE-MATH	PURE-MATH	—
+LineExtraction.lean	trapArea_blend_eq	theorem	PURE-MATH	PURE-MATH	—
+LineExtraction.lean	trapArea_blend_le	theorem	PURE-MATH	PURE-MATH	—
+LineExtraction.lean	trapArea_const	theorem	PURE-MATH	PURE-MATH	—
+LineExtraction.lean	trapArea_line_pedestal	theorem	PURE-MATH	PURE-MATH	—
+LineExtraction.lean	trapArea_nonneg	theorem	PURE-MATH	PURE-MATH	—
+LineExtraction.lean	trapArea_shift_le	theorem	PURE-MATH	PURE-MATH	—
+LineExtraction.lean	trapArea_smul	theorem	PURE-MATH	PURE-MATH	—
+LineExtraction.lean	trapArea_sub_le	theorem	PURE-MATH	PURE-MATH	—
+LineExtraction.lean	trapArea_sub_pedestal	theorem	PURE-MATH	PURE-MATH	—
 LineSelection.lean	energySpreadCert_iff	theorem	PURE-MATH	PURE-MATH	—
 LineSelection.lean	energySpread_nonneg	theorem	PURE-MATH	PURE-MATH	—
 LineSelection.lean	exists_dOptimal_lineSet	theorem	PURE-MATH	PURE-MATH	—
@@ -685,6 +698,7 @@ SahaEquilibrium.lean	neutralityNewton_enclosure	theorem	PURE-MATH	PURE-MATH	—
 SahaEquilibrium.lean	neutralityNewton_error_eq	theorem	PURE-MATH	PURE-MATH	—
 SahaEquilibrium.lean	neutralityNewton_le_root	theorem	PURE-MATH	PURE-MATH	—
 SahaEquilibrium.lean	neutralityNewton_nonneg	theorem	PURE-MATH	PURE-MATH	—
+SahaEquilibrium.lean	neutralityNewton_tendsto	theorem	PURE-MATH	PURE-MATH	—
 SahaEquilibrium.lean	outerContraction_box	theorem	PURE-MATH	PURE-MATH	—
 SahaEquilibrium.lean	outerMap_contraction	theorem	PURE-MATH	PURE-MATH	—
 SahaEquilibrium.lean	outerMap_geometric_error	theorem	PURE-MATH	PURE-MATH	—

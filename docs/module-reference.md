@@ -34,7 +34,7 @@ One row per module under `CflibsFormal/`. *Base* = imports no `CflibsFormal` mod
 | `DifferentialEstimator.lean` | `CflibsFormal` | 11 | 2 | – | ✓ | the reference-differenced (line-by-line) estimator |
 | `Dimensions.lean` | `CflibsFormal` | 16 | 15 | ✓ | – | a dimensional-analysis layer |
 | `DoubletChannel.lean` | `CflibsFormal` | 22 | 1 | – | ✓ | The doublet channel — the second observable that breaks the `N`–`τ` alias |
-| `EquivalentWidth.lean` | `CflibsFormal` | 24 | 4 | ✓ | ✓ | the equivalent-width curve of growth |
+| `EquivalentWidth.lean` | `CflibsFormal` | 25 | 4 | ✓ | ✓ | the equivalent-width curve of growth |
 | `ErrorBudget.lean` | `CflibsFormal` | 19 | 2 | – | – | the error-propagation chain and DERIVED reliability thresholds |
 | `EscapeFactor.lean` | `CflibsFormal` | 2 | 0 | – | ✓ | Profile escape factor versus the flat-slab self-absorption factor |
 | `EvaluatorSoundness.lean` | `CflibsFormal` | 6 | 5 | – | ✓ | evaluator soundness (which hard-gate clauses feed which theorem) |
@@ -57,6 +57,7 @@ One row per module under `CflibsFormal/`. *Base* = imports no `CflibsFormal` mod
 | `LadenburgReiche.lean` | `CflibsFormal` | 6 | 1 | – | ✓ | the sharp Ladenburg–Reiche asymptotic equivalent |
 | `LeastSquaresFit.lean` | `CflibsFormal` | 9 | 3 | – | – | the ordinary-least-squares projection / feasibility inverse |
 | `LineBroadening.lean` | `CflibsFormal` | 5 | 4 | ✓ | ✓ | line broadening (Doppler width + the Voigt Gaussian budget) |
+| `LineExtraction.lean` | `CflibsFormal.LineExtraction` | 12 | 2 | ✓ | ✓ | a metamorphic specification of line extraction |
 | `LineSelection.lean` | `CflibsFormal` | 19 | 4 | – | ✓ | D-optimal line selection for the Boltzmann plot |
 | `MatrixEffects.lean` | `CflibsFormal` | 22 | 7 | – | ✓ | matrix effects (completeness, ablation, ionization suppression) |
 | `MatrixIonizationCoupling.lean` | `CflibsFormal` | 10 | 0 | – | ✓ | Coupling the ionization-suppression channel with the multi-element fixed point |
@@ -83,7 +84,7 @@ One row per module under `CflibsFormal/`. *Base* = imports no `CflibsFormal` mod
 | `Robustness.lean` | `CflibsFormal` | 5 | 2 | – | – | Robustness / error-propagation bounds |
 | `Saha.lean` | `CflibsFormal` | 6 | 4 | – | – | Part 2: the Saha ionization equilibrium |
 | `SahaContraction.lean` | `CflibsFormal` | 2 | 0 | – | ✓ | Damped Saha closure iteration converges to the *unique* equilibrium |
-| `SahaEquilibrium.lean` | `CflibsFormal` | 38 | 7 | – | ✓ | Coupled Saha–closure–charge self-consistency (reduced core) |
+| `SahaEquilibrium.lean` | `CflibsFormal` | 39 | 7 | – | ✓ | Coupled Saha–closure–charge self-consistency (reduced core) |
 | `SahaInverse.lean` | `CflibsFormal` | 3 | 2 | – | ✓ | Part 6: coupling Saha into the inverse problem |
 | `SahaRangeEnclosure.lean` | `CflibsFormal` | 3 | 0 | – | ✓ | an a-priori Saha `S(T)`-range enclosure (Frontier 04) |
 | `SahaStability.lean` | `CflibsFormal` | 17 | 3 | – | ✓ | Part 2b: stability of the `n_e` diagnostic |
@@ -99,5 +100,5 @@ One row per module under `CflibsFormal/`. *Base* = imports no `CflibsFormal` mod
 | `TwoDCOSOrder.lean` | `CflibsFormal` | 11 | 1 | – | ✓ | 2DCOS-LIBS formalization — the sequential-order (lead/lag) sign algebra |
 | `VoigtErrorEnclosure.lean` | `CflibsFormal` | 5 | 0 | – | ✓ | a non-circular error enclosure for the Voigt FWHM |
 | `VoigtWidth.lean` | `CflibsFormal` | 7 | 1 | ✓ | ✓ | the Voigt FWHM combination (Olivero–Longbothum) |
-| **91 modules** | | **804** | **242** | | | |
+| **92 modules** | | **818** | **244** | | | |
 

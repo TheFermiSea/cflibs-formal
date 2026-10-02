@@ -74,6 +74,7 @@ SahaEquilibrium.lean	neutralityNewton_error_eq	PURE-MATH	—
 SahaEquilibrium.lean	neutralityNewton_le_root	PURE-MATH	—
 SahaEquilibrium.lean	neutralityNewton_nonneg	PURE-MATH	—
 SahaEquilibrium.lean	neutralityNewton_enclosure	PURE-MATH	—
+SahaEquilibrium.lean	neutralityNewton_tendsto	PURE-MATH	—
 OuterLoopModelB.lean	outerLoop_contracts	REDUCED	Aguilera & Aragón 2007
 PartitionLipschitz.lean	partitionFunction_two_point_bound	REDUCED	Tognoni 2010
 PartitionLipschitz.lean	partitionFunction_lipschitz_temp	REDUCED	Tognoni 2010
@@ -269,6 +270,18 @@ LineBroadening.lean	dopplerFWHM_strictMono_T	PURE-MATH	—
 LineBroadening.lean	doppler_recovers	EXACT	Griem 1997
 LineBroadening.lean	gaussQuadrature_comm	PURE-MATH	—
 LineBroadening.lean	deconvolveGaussian_quadrature	EXACT	Aragón & Aguilera 2008
+LineExtraction.lean	trapArea_smul	PURE-MATH	—
+LineExtraction.lean	trapArea_add	PURE-MATH	—
+LineExtraction.lean	trapArea_const	PURE-MATH	—
+LineExtraction.lean	trapArea_line_pedestal	PURE-MATH	—
+LineExtraction.lean	trapArea_sub_pedestal	PURE-MATH	—
+LineExtraction.lean	trapArea_sub_le	PURE-MATH	—
+LineExtraction.lean	trapArea_nonneg	PURE-MATH	—
+LineExtraction.lean	trapArea_shift_le	PURE-MATH	—
+LineExtraction.lean	trapArea_blend_le	PURE-MATH	—
+LineExtraction.lean	trapArea_blend_eq	PURE-MATH	—
+LineExtraction.lean	shotSigma_pos	PURE-MATH	—
+LineExtraction.lean	shotSigma_mono	PURE-MATH	—
 VoigtWidth.lean	voigtFWHM	APPROXIMATION	Olivero–Longbothum 1977
 VoigtWidth.lean	voigtFWHM_pos	PURE-MATH	—
 VoigtWidth.lean	voigtFWHM_ge_gauss	EXACT	Olivero–Longbothum 1977
@@ -460,6 +473,7 @@ EquivalentWidth.lean	equivWidth_nonneg	PURE-MATH	—
 EquivalentWidth.lean	equivWidth_le_thin	EXACT	Gornushkin 1999
 EquivalentWidth.lean	equivWidth_mono	EXACT	Gornushkin 1999
 EquivalentWidth.lean	equivWidth_strictMonoOn	PURE-MATH	—
+EquivalentWidth.lean	conv_absorptance_le	PURE-MATH	—
 EquivalentWidth.lean	equivWidth_rectangular	EXACT	Gornushkin 1999
 EquivalentWidth.lean	equivWidth_weakLine	EXACT	Gornushkin 1999
 EquivalentWidth.lean	slabCurve_forward_lipschitz	EXACT	Gornushkin 1999

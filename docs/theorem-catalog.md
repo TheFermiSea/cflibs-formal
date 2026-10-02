@@ -9,9 +9,9 @@
 
 A result shows `own → published` when the two differ (with the definitions that weakened it), and a single tag when they agree. A definition with its own row shows `model TAG`.
 
-**Own-tag mix** (804 results): **EXACT** 164 · **REDUCED** 234 · **APPROXIMATION** 4 · **PURE-MATH** 402
+**Own-tag mix** (818 results): **EXACT** 164 · **REDUCED** 234 · **APPROXIMATION** 4 · **PURE-MATH** 416
 
-**Published-tag mix** (804 results; 143 weakened by a model tag): **EXACT** 57 · **REDUCED** 279 · **APPROXIMATION** 66 · **PURE-MATH** 402
+**Published-tag mix** (818 results; 143 weakened by a model tag): **EXACT** 57 · **REDUCED** 279 · **APPROXIMATION** 66 · **PURE-MATH** 416
 
 `EXACT` = an exact theorem about the model it is stated over · `REDUCED` = exact only after a stated reduction (a dimensionless/lumped-factor form) · `APPROXIMATION` = the statement itself is approximate (documented idealization / limiting case) · `PURE-MATH` = infrastructure lemma, no physical claim. Classification cross-checked against `reviews/literature-validity-audit.md`.
 
@@ -542,6 +542,7 @@ A result shows `own → published` when the two differ (with the definitions tha
 - `PURE-MATH` · `equivWidth_stepProfile` — Closed-form equivalent width of the two-step profile.
 - `PURE-MATH` · `stepW_pairRatio_not_injOn` — The step-profile pair ratio is not injective (explicit closed form).
 - `PURE-MATH` · `stepProfile_pairRatio_not_injOn` — Pair-ratio identifiability is not profile-generic.  _[Gornushkin 1999]_
+- `PURE-MATH` · `conv_absorptance_le` — Pointwise Jensen for the slab absorptance (frontier FT-14, pointwise step).
 
 ## `ErrorBudget.lean`  (CflibsFormal)
 *the error-propagation chain and DERIVED reliability thresholds*
@@ -887,6 +888,27 @@ A result shows `own → published` when the two differ (with the definitions tha
 - `EXACT` · `doppler_recovers` — Doppler thermometry is exact.  _[Griem 1997]_
 - `PURE-MATH` · `gaussQuadrature_comm` — Gaussian quadrature is symmetric in its two contributions.
 - `EXACT` · `deconvolveGaussian_quadrature` — Deconvolution exactly inverts quadrature.  _[Aragón & Aguilera 2008]_
+
+## `LineExtraction.lean`  (CflibsFormal.LineExtraction)
+*a metamorphic specification of line extraction*
+
+**Definitions**
+- `trapArea` — The trapezoid rule over the `n + 1` window nodes `x 0, …, x n` with samples `y 0, …, y n`: `∑ᵢ₍₀..ₙ₋₁₎ (x(i+1) − x i)(y i + y(i+1))/2` (the incumbent extract…
+- `shotSigma` — The incumbent kernel's shot-noise sigma over the `n + 1` window samples: `√(∑ max(yᵢ, 1)) · step` (the seed's `sqrt(sum(maximum(counts, 1))) * wl_step`).
+
+**Results**
+- `PURE-MATH` · `trapArea_smul` — Scaling the sampled line by `k` scales the trapezoid area by `k`.
+- `PURE-MATH` · `trapArea_add` — The trapezoid area of a sum of two sampled profiles is the sum of their areas.
+- `PURE-MATH` · `trapArea_const` — A constant pedestal `c` adds exactly `c · (x n − x 0)`: the area of the constant function telescopes to the window width.
+- `PURE-MATH` · `trapArea_line_pedestal` — A line of amplitude `k` on a constant pedestal `c`: `area(k·line + c) = k·area(line) + c·W` with `W = x n − x 0` the window width.
+- `PURE-MATH` · `trapArea_sub_pedestal` — Subtracting an exact pedestal estimate restores the line area: `area(line + c) − c·W = area(line)`.
+- `PURE-MATH` · `trapArea_sub_le` — Sup-norm perturbation of the trapezoid area.
+- `PURE-MATH` · `trapArea_nonneg` — A non-negative sampled line has non-negative trapezoid area on an increasing window.
+- `PURE-MATH` · `trapArea_shift_le` — Sub-pixel shift tolerance.
+- `PURE-MATH` · `trapArea_blend_le` — Blend contamination bound.
+- `PURE-MATH` · `trapArea_blend_eq` — Separated blends add exactly.
+- `PURE-MATH` · `shotSigma_pos` — The shot-noise sigma is strictly positive for a positive sampling step.
+- `PURE-MATH` · `shotSigma_mono` — The shot-noise sigma is non-decreasing in the counts: more counts, no smaller sigma.
 
 ## `LineSelection.lean`  (CflibsFormal)
 *D-optimal line selection for the Boltzmann plot*
@@ -1406,6 +1428,7 @@ A result shows `own → published` when the two differ (with the definitions tha
 - `PURE-MATH` · `neutralityNewton_le_root` — The neutrality Newton step lands at or below the root.
 - `PURE-MATH` · `neutralityNewton_nonneg` — The neutrality Newton step stays on the physical half-line.
 - `PURE-MATH` · `neutralityNewton_enclosure` — One Newton step brackets the charge-neutrality root from both sides (FT-17).
+- `PURE-MATH` · `neutralityNewton_tendsto` — Newton's method on multi-element charge neutrality converges from every start `x0 ≥ 0` (frontier FT-17).
 
 ## `SahaInverse.lean`  (CflibsFormal)
 *Part 6: coupling Saha into the inverse problem*
