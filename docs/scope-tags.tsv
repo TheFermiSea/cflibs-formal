@@ -270,6 +270,18 @@ LineBroadening.lean	dopplerFWHM_strictMono_T	PURE-MATH	—
 LineBroadening.lean	doppler_recovers	EXACT	Griem 1997
 LineBroadening.lean	gaussQuadrature_comm	PURE-MATH	—
 LineBroadening.lean	deconvolveGaussian_quadrature	EXACT	Aragón & Aguilera 2008
+LineExtraction.lean	trapArea_smul	PURE-MATH	—
+LineExtraction.lean	trapArea_add	PURE-MATH	—
+LineExtraction.lean	trapArea_const	PURE-MATH	—
+LineExtraction.lean	trapArea_line_pedestal	PURE-MATH	—
+LineExtraction.lean	trapArea_sub_pedestal	PURE-MATH	—
+LineExtraction.lean	trapArea_sub_le	PURE-MATH	—
+LineExtraction.lean	trapArea_nonneg	PURE-MATH	—
+LineExtraction.lean	trapArea_shift_le	PURE-MATH	—
+LineExtraction.lean	trapArea_blend_le	PURE-MATH	—
+LineExtraction.lean	trapArea_blend_eq	PURE-MATH	—
+LineExtraction.lean	shotSigma_pos	PURE-MATH	—
+LineExtraction.lean	shotSigma_mono	PURE-MATH	—
 VoigtWidth.lean	voigtFWHM	APPROXIMATION	Olivero–Longbothum 1977
 VoigtWidth.lean	voigtFWHM_pos	PURE-MATH	—
 VoigtWidth.lean	voigtFWHM_ge_gauss	EXACT	Olivero–Longbothum 1977
