@@ -1,0 +1,546 @@
+{
+ "schema": "cflibs-tier2-predicate-fixtures-v1",
+ "units": {
+  "E": "eV",
+  "T": "K",
+  "n_e": "cm^-3",
+  "dE": "eV",
+  "kB": 8.617333262e-05
+ },
+ "scope": "Predicates certify STRUCTURE (a necessary or sufficient condition inside an idealized model), not accuracy. Identifiability/conditioning belong to the answer/abstain decision and the post-solve validity gate on the SELECTED LINE SET, not to the extraction kernel.",
+ "notes": [
+  "kappa is the raw unit-carrying max/min of (SS_E, n) with E in eV; it is not scale-invariant.",
+  "eps is a HARD per-line bound on the log-intensity ordinate error, not a standard deviation.",
+  "Lean's sahaFactor is ideal Saha (REDUCED, no ionization-potential depression); the pipeline applies Debye-Hueckel IPD by default (SCI-2). No predicate here uses the Saha factor; any Saha-consistency predicate pinned later must declare its IPD treatment.",
+  "McWhirter is necessary, not sufficient, for LTE (Cristoforetti et al. 2010)."
+ ],
+ "cases": [
+  {
+   "id": "t_ident_wide",
+   "predicate": "t_identifiable",
+   "lean": "temp_rel_error_le_sqrt_conditionNumber",
+   "inputs": {
+    "E_eV": [
+     2.5,
+     3.2,
+     4.1,
+     4.9,
+     5.6,
+     6.3,
+     7.0,
+     7.8
+    ],
+    "eps": 0.05,
+    "T_hat_K": 10000.0,
+    "tau": 0.2
+   },
+   "expected": {
+    "energy_spread": 23.955,
+    "condition_number": 2.994375,
+    "rel_T_bound": 0.07455829832453763,
+    "identifiable": true
+   },
+   "rtol": 1e-12
+  },
+  {
+   "id": "t_ident_narrow",
+   "predicate": "t_identifiable",
+   "lean": "temp_rel_error_le_sqrt_conditionNumber",
+   "inputs": {
+    "E_eV": [
+     3.14,
+     3.14,
+     3.6,
+     4.02,
+     4.09,
+     3.95
+    ],
+    "eps": 0.05,
+    "T_hat_K": 10000.0,
+    "tau": 0.2
+   },
+   "expected": {
+    "energy_spread": 0.9429333333333326,
+    "condition_number": 6.363122171945706,
+    "rel_T_bound": 0.10868710579025437,
+    "identifiable": true
+   },
+   "rtol": 1e-12
+  },
+  {
+   "id": "t_ident_narrow_noisy",
+   "predicate": "t_identifiable",
+   "lean": "temp_rel_error_le_sqrt_conditionNumber",
+   "inputs": {
+    "E_eV": [
+     3.14,
+     3.14,
+     3.6,
+     4.02,
+     4.09,
+     3.95
+    ],
+    "eps": 0.15,
+    "T_hat_K": 10000.0,
+    "tau": 0.2
+   },
+   "expected": {
+    "energy_spread": 0.9429333333333326,
+    "condition_number": 6.363122171945706,
+    "rel_T_bound": 0.32606131737076305,
+    "identifiable": false
+   },
+   "rtol": 1e-12
+  },
+  {
+   "id": "t_ident_wide_noisy",
+   "predicate": "t_identifiable",
+   "lean": "temp_rel_error_le_sqrt_conditionNumber",
+   "inputs": {
+    "E_eV": [
+     2.5,
+     3.2,
+     4.1,
+     4.9,
+     5.6,
+     6.3,
+     7.0,
+     7.8
+    ],
+    "eps": 0.15,
+    "T_hat_K": 10000.0,
+    "tau": 0.2
+   },
+   "expected": {
+    "energy_spread": 23.955,
+    "condition_number": 2.994375,
+    "rel_T_bound": 0.22367489497361287,
+    "identifiable": false
+   },
+   "rtol": 1e-12
+  },
+  {
+   "id": "t_ident_degenerate",
+   "predicate": "t_identifiable",
+   "lean": "temp_rel_error_le_sqrt_conditionNumber",
+   "inputs": {
+    "E_eV": [
+     4.0,
+     4.0,
+     4.0,
+     4.0
+    ],
+    "eps": 0.05,
+    "T_hat_K": 10000.0,
+    "tau": 0.2
+   },
+   "expected": {
+    "energy_spread": 0.0,
+    "condition_number": null,
+    "rel_T_bound": null,
+    "identifiable": false
+   },
+   "rtol": 1e-12
+  },
+  {
+   "id": "t_fisher_wide",
+   "predicate": "t_identifiable_fisher",
+   "lean": "crlb_slope",
+   "inputs": {
+    "E_eV": [
+     2.5,
+     3.2,
+     4.1,
+     4.9,
+     5.6,
+     6.3,
+     7.0,
+     7.8
+    ],
+    "sigma": 0.05,
+    "T_hat_K": 10000.0,
+    "tau": 0.03
+   },
+   "expected": {
+    "slope_sigma": 0.01021578905741204,
+    "rel_T_sigma": 0.00880328588420124,
+    "identifiable": true
+   },
+   "rtol": 1e-12
+  },
+  {
+   "id": "t_fisher_narrow",
+   "predicate": "t_identifiable_fisher",
+   "lean": "crlb_slope",
+   "inputs": {
+    "E_eV": [
+     3.14,
+     3.14,
+     3.6,
+     4.02,
+     4.09,
+     3.95
+    ],
+    "sigma": 0.05,
+    "T_hat_K": 10000.0,
+    "tau": 0.03
+   },
+   "expected": {
+    "slope_sigma": 0.05149078466072718,
+    "rel_T_sigma": 0.04437132513433637,
+    "identifiable": false
+   },
+   "rtol": 1e-12
+  },
+  {
+   "id": "t_fisher_degenerate",
+   "predicate": "t_identifiable_fisher",
+   "lean": "crlb_slope",
+   "inputs": {
+    "E_eV": [
+     4.0,
+     4.0,
+     4.0,
+     4.0
+    ],
+    "sigma": 0.05,
+    "T_hat_K": 10000.0,
+    "tau": 0.03
+   },
+   "expected": {
+    "slope_sigma": null,
+    "rel_T_sigma": null,
+    "identifiable": false
+   },
+   "rtol": 1e-12
+  },
+  {
+   "id": "kappa_not_monotone_in_spread",
+   "predicate": "kappa_vs_fisher_witness",
+   "lean": "conditionNumber_disagrees_with_dOptimality",
+   "inputs": {
+    "E_mid_eV": [
+     2.4724747683480532,
+     2.908910548820038,
+     3.3453463292920227,
+     3.7817821097640074,
+     4.218217890235993,
+     4.654653670707977,
+     5.091089451179962,
+     5.527525231651946
+    ],
+    "E_wide_eV": [
+     2.5,
+     3.2,
+     4.1,
+     4.9,
+     5.6,
+     6.3,
+     7.0,
+     7.8
+    ],
+    "eps": 0.05,
+    "sigma": 0.05,
+    "T_hat_K": 10000.0
+   },
+   "expected": {
+    "kappa_bound_mid": 0.04308666631,
+    "kappa_bound_wide": 0.07455829832453763,
+    "fisher_mid": 0.015233436963261479,
+    "fisher_wide": 0.00880328588420124,
+    "kappa_prefers_mid": true,
+    "fisher_prefers_wide": true
+   }
+  },
+  {
+   "id": "t_bound_valid_wide",
+   "predicate": "t_rel_error_bound_holds",
+   "lean": "temp_rel_error_le_sqrt_conditionNumber",
+   "inputs": {
+    "E_eV": [
+     2.5,
+     3.2,
+     4.1,
+     4.9,
+     5.6,
+     6.3,
+     7.0,
+     7.8
+    ],
+    "eps": 0.05,
+    "T_true_K": 10000.0
+   },
+   "expected": {
+    "realized_rel_T_error": 0.02112778484386381,
+    "bound_at_T_hat": 0.07298304663921219,
+    "holds": true
+   },
+   "note": "bound is evaluated at the RECOVERED T_hat, as in the Lean statement"
+  },
+  {
+   "id": "t_bound_valid_narrow",
+   "predicate": "t_rel_error_bound_holds",
+   "lean": "temp_rel_error_le_sqrt_conditionNumber",
+   "inputs": {
+    "E_eV": [
+     3.14,
+     3.14,
+     3.6,
+     4.02,
+     4.09,
+     3.95
+    ],
+    "eps": 0.05,
+    "T_true_K": 10000.0
+   },
+   "expected": {
+    "realized_rel_T_error": 0.09058959482458723,
+    "bound_at_T_hat": 0.09884118491405819,
+    "holds": true
+   },
+   "note": "bound is evaluated at the RECOVERED T_hat, as in the Lean statement"
+  },
+  {
+   "id": "mcwhirter_dE0.5_below",
+   "predicate": "mcwhirter_ok",
+   "lean": "mcWhirter_certificate_sound",
+   "inputs": {
+    "T_K": 10000.0,
+    "dE_eV": 0.5,
+    "ne_cm3": 19999999980000.0
+   },
+   "expected": {
+    "bound": 20000000000000.0,
+    "ok": false
+   },
+   "note": "NECESSARY, not sufficient, for LTE"
+  },
+  {
+   "id": "mcwhirter_dE0.5_at",
+   "predicate": "mcwhirter_ok",
+   "lean": "mcWhirter_certificate_sound",
+   "inputs": {
+    "T_K": 10000.0,
+    "dE_eV": 0.5,
+    "ne_cm3": 20000000000000.0
+   },
+   "expected": {
+    "bound": 20000000000000.0,
+    "ok": true
+   },
+   "note": "NECESSARY, not sufficient, for LTE"
+  },
+  {
+   "id": "mcwhirter_dE0.5_above",
+   "predicate": "mcwhirter_ok",
+   "lean": "mcWhirter_certificate_sound",
+   "inputs": {
+    "T_K": 10000.0,
+    "dE_eV": 0.5,
+    "ne_cm3": 20000000020000.0
+   },
+   "expected": {
+    "bound": 20000000000000.0,
+    "ok": true
+   },
+   "note": "NECESSARY, not sufficient, for LTE"
+  },
+  {
+   "id": "mcwhirter_dE1.0_below",
+   "predicate": "mcwhirter_ok",
+   "lean": "mcWhirter_certificate_sound",
+   "inputs": {
+    "T_K": 10000.0,
+    "dE_eV": 1.0,
+    "ne_cm3": 159999999840000.0
+   },
+   "expected": {
+    "bound": 160000000000000.0,
+    "ok": false
+   },
+   "note": "NECESSARY, not sufficient, for LTE"
+  },
+  {
+   "id": "mcwhirter_dE1.0_at",
+   "predicate": "mcwhirter_ok",
+   "lean": "mcWhirter_certificate_sound",
+   "inputs": {
+    "T_K": 10000.0,
+    "dE_eV": 1.0,
+    "ne_cm3": 160000000000000.0
+   },
+   "expected": {
+    "bound": 160000000000000.0,
+    "ok": true
+   },
+   "note": "NECESSARY, not sufficient, for LTE"
+  },
+  {
+   "id": "mcwhirter_dE1.0_above",
+   "predicate": "mcwhirter_ok",
+   "lean": "mcWhirter_certificate_sound",
+   "inputs": {
+    "T_K": 10000.0,
+    "dE_eV": 1.0,
+    "ne_cm3": 160000000160000.0
+   },
+   "expected": {
+    "bound": 160000000000000.0,
+    "ok": true
+   },
+   "note": "NECESSARY, not sufficient, for LTE"
+  },
+  {
+   "id": "mcwhirter_dE2.0_below",
+   "predicate": "mcwhirter_ok",
+   "lean": "mcWhirter_certificate_sound",
+   "inputs": {
+    "T_K": 10000.0,
+    "dE_eV": 2.0,
+    "ne_cm3": 1279999998720000.0
+   },
+   "expected": {
+    "bound": 1280000000000000.0,
+    "ok": false
+   },
+   "note": "NECESSARY, not sufficient, for LTE"
+  },
+  {
+   "id": "mcwhirter_dE2.0_at",
+   "predicate": "mcwhirter_ok",
+   "lean": "mcWhirter_certificate_sound",
+   "inputs": {
+    "T_K": 10000.0,
+    "dE_eV": 2.0,
+    "ne_cm3": 1280000000000000.0
+   },
+   "expected": {
+    "bound": 1280000000000000.0,
+    "ok": true
+   },
+   "note": "NECESSARY, not sufficient, for LTE"
+  },
+  {
+   "id": "mcwhirter_dE2.0_above",
+   "predicate": "mcwhirter_ok",
+   "lean": "mcWhirter_certificate_sound",
+   "inputs": {
+    "T_K": 10000.0,
+    "dE_eV": 2.0,
+    "ne_cm3": 1280000001280000.0
+   },
+   "expected": {
+    "bound": 1280000000000000.0,
+    "ok": true
+   },
+   "note": "NECESSARY, not sufficient, for LTE"
+  },
+  {
+   "id": "stark_opacity_k1",
+   "predicate": "stark_opacity_lte_cert",
+   "lean": "starkOpacity_certificate_sound",
+   "inputs": {
+    "T_K": 10000.0,
+    "dE_eV": 2.0,
+    "w": 0.01,
+    "nRef": 1e+17,
+    "width_meas": 0.2,
+    "k_opac": 1.0
+   },
+   "expected": {
+    "stark_density": 1e+18,
+    "ok": true,
+    "raw_mcwhirter_ok": true
+   },
+   "note": "ok => raw_mcwhirter_ok (starkOpacityLteCert_imp_mcWhirterCert); the converse fails"
+  },
+  {
+   "id": "stark_opacity_k3",
+   "predicate": "stark_opacity_lte_cert",
+   "lean": "starkOpacity_certificate_sound",
+   "inputs": {
+    "T_K": 10000.0,
+    "dE_eV": 2.0,
+    "w": 0.01,
+    "nRef": 1e+17,
+    "width_meas": 0.2,
+    "k_opac": 3.0
+   },
+   "expected": {
+    "stark_density": 1e+18,
+    "ok": true,
+    "raw_mcwhirter_ok": true
+   },
+   "note": "ok => raw_mcwhirter_ok (starkOpacityLteCert_imp_mcWhirterCert); the converse fails"
+  },
+  {
+   "id": "stark_opacity_wide",
+   "predicate": "stark_opacity_lte_cert",
+   "lean": "starkOpacity_certificate_sound",
+   "inputs": {
+    "T_K": 10000.0,
+    "dE_eV": 2.0,
+    "w": 0.01,
+    "nRef": 1e+17,
+    "width_meas": 0.6,
+    "k_opac": 3.0
+   },
+   "expected": {
+    "stark_density": 3e+18,
+    "ok": true,
+    "raw_mcwhirter_ok": true
+   },
+   "note": "ok => raw_mcwhirter_ok (starkOpacityLteCert_imp_mcWhirterCert); the converse fails"
+  },
+  {
+   "id": "stark_opacity_tightens",
+   "predicate": "stark_opacity_lte_cert",
+   "lean": "starkOpacityLteCert_imp_mcWhirterCert",
+   "inputs": {
+    "T_K": 10000.0,
+    "dE_eV": 2.0,
+    "w": 0.01,
+    "nRef": 1e+17,
+    "width_meas": 0.0003,
+    "k_opac": 3.0
+   },
+   "expected": {
+    "stark_density": 1499999999999999.8,
+    "ok": false,
+    "raw_mcwhirter_ok": true
+   }
+  },
+  {
+   "id": "stark_opacity_refuses_w_nonpositive",
+   "predicate": "stark_opacity_lte_cert",
+   "lean": "starkOpacityLteCert",
+   "inputs": {
+    "T_K": 10000.0,
+    "dE_eV": 2.0,
+    "w": 0.0,
+    "nRef": 1e+17,
+    "width_meas": 0.2,
+    "k_opac": 1.0
+   },
+   "expected": {
+    "ok": false
+   }
+  },
+  {
+   "id": "stark_opacity_refuses_kopac_below_1",
+   "predicate": "stark_opacity_lte_cert",
+   "lean": "starkOpacityLteCert",
+   "inputs": {
+    "T_K": 10000.0,
+    "dE_eV": 2.0,
+    "w": 0.01,
+    "nRef": 1e+17,
+    "width_meas": 0.2,
+    "k_opac": 0.5
+   },
+   "expected": {
+    "ok": false
+   }
+  }
+ ]
+}
