@@ -34,7 +34,7 @@ unsound:
     quantity -- a nonlocal integral operator, not a time derivative and not
     a physical flux.
 
-See `/home/brian/code/cflibs-formal/docs/2dcos/ERRATA.md` for the full audit.
+See `docs/2dcos/ERRATA.md` for the full audit.
 Nothing in this module claims, enables, or reconstructs that pipeline.
 
 WHAT THIS MODULE DOES PROVIDE (honest scope)

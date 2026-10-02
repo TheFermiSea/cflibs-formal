@@ -1,0 +1,25 @@
+{
+  "candidate": "<openprover>/runs/FT05-cutRatio-strictMonoOn-temp-33/PROOF.lean",
+  "theorem": "Plan.FT05.cutRatio_strictMonoOn_temp",
+  "passed": true,
+  "checks": {
+    "forbidden": [],
+    "extra_imports": [],
+    "missing_defs": [],
+    "signature_identical": true,
+    "compile_rc": 0,
+    "errors": [],
+    "sorry_warning": false,
+    "kernel_replay_rc": 0,
+    "axioms": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "elaborated_type_identical": true
+  },
+  "attempt": 33,
+  "hours": 0.71,
+  "openprover_result": "proved",
+  "verified_at": "2026-09-25T10:06:35+00:00"
+}

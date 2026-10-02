@@ -54,7 +54,7 @@ theorem jury_two (t d : ℝ) :
     (∀ z : ℂ, z ^ 2 - (t : ℂ) * z + (d : ℂ) = 0 → ‖z‖ < 1) ↔ (|d| < 1 ∧ |t| < 1 + d) := by
   sorry
 
-/-- Pipeline Gauss–Seidel Jacobian (R9-02 corrected evidence), `λ = 1/2`:
+/-- Pipeline Gauss–Seidel Jacobian ([backlog-id] corrected evidence), `λ = 1/2`:
 `1 + det − trace = (1 − g)/4` with `g = A + B·C`, so `g < 1` is exactly the monotone boundary. -/
 theorem gaussSeidel_det_trace (A B C : ℝ) :
     let J : Matrix (Fin 2) (Fin 2) ℝ :=
@@ -186,7 +186,7 @@ theorem pas_interval_regret {N : ℕ} (l L U : Fin N → ℝ) (lam : ℝ) (hL : 
 theorem pas_gate_value_nonneg {N : ℕ} (l L : Fin N → ℝ) (lam : ℝ) (hL : ∀ i, L i ≤ l i) :
     (∑ i, if lam < L i then lam else l i) ≤ ∑ i, l i := by sorry
 
-/-- TS-01 as a theorem: on the sb_offset route the Saha-consistency residual is identically 0. -/
+/-- [backlog-id] as a theorem: on the sb_offset route the Saha-consistency residual is identically 0. -/
 theorem sahaConsistency_trivial_of_sbOffset {ι κ : Type*} [Fintype ι] [Fintype κ]
     {kB T me h chi Rhat : ℝ} {gZ EZ : ι → ℝ} {gZ1 EZ1 : κ → ℝ} (hR : Rhat ≠ 0) :
     Rhat * electronDensityFromRatio kB T me h chi gZ EZ gZ1 EZ1 Rhat

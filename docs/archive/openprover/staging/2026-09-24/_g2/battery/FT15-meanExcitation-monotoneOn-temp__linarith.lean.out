@@ -1,0 +1,11 @@
+/tmp/g2scratch/battery/FT15-meanExcitation-monotoneOn-temp__linarith.lean:47:2: error: linarith failed to find a contradiction
+ι : Type u_1
+inst✝¹ : Fintype ι
+inst✝ : Nonempty ι
+kB : ℝ
+g E : ι → ℝ
+hkB : 0 < kB
+hg : ∀ (k : ι), 0 < g k
+⊢ False
+failed
+rc=1

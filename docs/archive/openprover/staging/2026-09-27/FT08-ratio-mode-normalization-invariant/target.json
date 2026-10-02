@@ -1,0 +1,6 @@
+{
+  "theorem": "Plan.FT08.ratio_mode_normalization_invariant",
+  "max_tokens": 150000,
+  "max_attempts": 2,
+  "note": "frontier FT-08 (a1: ratio_mode_normalization_invariant, PURE-MATH; proved in scratch, proof in _hand-land/), drafted 2026-09-27, pending Mode B audit"
+}

@@ -1,0 +1,6 @@
+{
+  "theorem": "Plan.FT15.log_partitionFunction_lipschitz_max",
+  "max_tokens": 250000,
+  "max_attempts": 2,
+  "note": "HAND-LAND, do not queue. FT-15 ln U Lipschitz, verifier variant with <E> at max(T1,T2), 2026-09-24 deep audit, KEEP grade B; priority 11; group g2; statement audit 2026-09-24 (M6 round): FIX applied, on main in substance via InhomogeneityBias.logMixture_tangent_le + SahaStability.partitionFunction_mono_temp; statement now imports InhomogeneityBias and SahaStability and carries the shared bridge lemmas partitionFunction_eq_mixture and meanExcitation_eq_tiltMean (signature unchanged); verified axiom-clean proof at staging/2026-09-24/_hand-land/FT15-log-partitionFunction-lipschitz-max.proof.lean"
+}

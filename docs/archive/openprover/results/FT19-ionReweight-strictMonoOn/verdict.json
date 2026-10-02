@@ -1,0 +1,35 @@
+{
+  "candidate": "<openprover>/runs/FT19-ionReweight-strictMonoOn-2/PROOF.lean",
+  "theorem": "Plan.FT19.ionReweight_strictMonoOn",
+  "passed": true,
+  "checks": {
+    "forbidden": [],
+    "extra_imports": [],
+    "missing_defs": [],
+    "signature_identical": true,
+    "compile_rc": 0,
+    "errors": [],
+    "sorry_warning": false,
+    "kernel_replay_rc": 0,
+    "axioms": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "elaborated_type_identical": true
+  },
+  "attempt": 2,
+  "hours": 1.04,
+  "openprover_result": "proved",
+  "plan": {
+    "planner": "qwen38-local",
+    "advisor": null,
+    "effort": null,
+    "advisor_every": null,
+    "advisor_max": null,
+    "history_budget": 120000,
+    "pilot": false,
+    "planner_override": "slot"
+  },
+  "verified_at": "2026-09-27T20:05:38+00:00"
+}

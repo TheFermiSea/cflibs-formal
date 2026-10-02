@@ -1,0 +1,10 @@
+/tmp/stmtfix/battery/FT03-pasPolicy-guarantees__nlinarith.lean:66:2: error: linarith failed to find a contradiction
+N : ℕ
+w l L U : Fin N → ℝ
+lam : ℝ
+hw : ∀ (i : Fin N), 0 ≤ w i
+hL : ∀ (i : Fin N), L i ≤ l i
+hU : ∀ (i : Fin N), l i ≤ U i
+⊢ False
+failed
+rc=1

@@ -1,0 +1,6 @@
+{
+  "theorem": "Plan.FT01.exists_weights_iff",
+  "max_tokens": 120000,
+  "max_attempts": 2,
+  "note": "FT-01 part (d) weights iff (2026-09-24 audit, REVISE; verifier dropped ha/hd); g1 priority 9; PURE-MATH. A complete candidate already passed verify.py: staging/2026-09-24/_g1-scratch-proofs/FT01-exists-weights-iff.lean"
+}

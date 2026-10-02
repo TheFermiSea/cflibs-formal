@@ -1,0 +1,6 @@
+{
+  "theorem": "Plan.FT17.neutralityNewton_enclosure",
+  "max_tokens": 150000,
+  "max_attempts": 2,
+  "note": "FT-17 remaining steps (reopens Frontier 03 M8), audit 2026-09-24 grade A, KEEP; group g4 priority 7. Part 1 (N x <= r) is pasteable from evidence Newton2.lean (compiled against this statement); part 2 is ~15 lines."
+}

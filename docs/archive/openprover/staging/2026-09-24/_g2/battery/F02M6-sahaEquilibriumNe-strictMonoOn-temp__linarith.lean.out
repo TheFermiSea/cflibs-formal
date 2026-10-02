@@ -1,0 +1,23 @@
+/tmp/g2scratch/battery/F02M6-sahaEquilibriumNe-strictMonoOn-temp__linarith.lean:55:2: error: linarith failed to find a contradiction
+ι : Type u_1
+inst✝³ : Fintype ι
+κ : Type u_2
+inst✝² : Fintype κ
+inst✝¹ : Nonempty ι
+inst✝ : Nonempty κ
+kB me h chi Ntot : ℝ
+gZ EZ : ι → ℝ
+gZ1 EZ1 : κ → ℝ
+hkB : 0 < kB
+hme : 0 < me
+hh : 0 < h
+hchi : 0 ≤ chi
+hgZ : ∀ (k : ι), 0 < gZ k
+hEZ : ∀ (k : ι), 0 ≤ EZ k
+hgZ1 : ∀ (k : κ), 0 < gZ1 k
+hEZ1 : ∀ (k : κ), 0 ≤ EZ1 k
+hEχ : ∀ (k : ι), EZ k ≤ chi
+hN : 0 < Ntot
+⊢ False
+failed
+rc=1

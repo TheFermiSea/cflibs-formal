@@ -1,0 +1,6 @@
+/tmp/g2scratch/battery/FT02-ipdLogMap-root-subsingleton__aesop.lean:46:2: error: Tactic `aesop` failed, made no progress
+Initial goal:
+  a b : ℝ
+  hb : 0 < b
+  ⊢ {ℓ | ipdLogMap a b ℓ = ℓ ∧ b * Real.exp (ℓ / 2) < 2}.Subsingleton
+rc=1

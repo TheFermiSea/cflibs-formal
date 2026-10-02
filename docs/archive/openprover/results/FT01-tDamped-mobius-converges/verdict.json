@@ -1,0 +1,25 @@
+{
+  "candidate": "<openprover>/runs/FT01-tDamped-mobius-converges-1/repo/lean/main-theorem.lean",
+  "theorem": "Plan.FT01.tDamped_mobius_converges",
+  "passed": true,
+  "checks": {
+    "forbidden": [],
+    "extra_imports": [],
+    "missing_defs": [],
+    "signature_identical": true,
+    "compile_rc": 0,
+    "errors": [],
+    "sorry_warning": false,
+    "kernel_replay_rc": 0,
+    "axioms": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "elaborated_type_identical": true
+  },
+  "attempt": 1,
+  "hours": 2.23,
+  "openprover_result": "not_proved",
+  "verified_at": "2026-09-25T12:29:52+00:00"
+}

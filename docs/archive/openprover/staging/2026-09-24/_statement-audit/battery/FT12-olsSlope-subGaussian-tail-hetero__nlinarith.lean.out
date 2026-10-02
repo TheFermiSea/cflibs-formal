@@ -1,0 +1,20 @@
+/tmp/stmtfix/battery/FT12-olsSlope-subGaussian-tail-hetero__nlinarith.lean:49:2: error: linarith failed to find a contradiction
+ι : Type u_1
+inst✝² : Fintype ι
+Ω : Type u_2
+inst✝¹ : MeasurableSpace Ω
+μ : Measure Ω
+inst✝ : Nonempty ι
+E : ι → ℝ
+α β : ℝ
+ε : ι → Ω → ℝ
+c : ι → NNReal
+δ : ℝ
+hvar : 0 < ∑ k, (E k - mean E) ^ 2
+hδ : 0 ≤ δ
+hindep : iIndepFun ε μ
+hsubG : ∀ (k : ι), HasSubgaussianMGF (ε k) (c k) μ
+a✝ : 2 * Real.exp (-δ ^ 2 / (2 * ∑ k, olsWeight E k ^ 2 * ↑(c k))) < μ.real {ω | δ ≤ |Alt.betaHat E α β ε ω - β|}
+⊢ False
+failed
+rc=1

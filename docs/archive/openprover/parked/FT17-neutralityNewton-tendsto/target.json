@@ -1,0 +1,6 @@
+{
+  "theorem": "Plan.FT17.neutralityNewton_tendsto",
+  "max_tokens": 300000,
+  "max_attempts": 2,
+  "note": "FT-17 remaining step (global convergence from every x0 >= 0); group g4 priority 22. Depends on FT17-neutralityNewton-enclosure only advisorily: its content is re-proved inline (helpers pasted in dossier), or queue this after the enclosure lands on main."
+}

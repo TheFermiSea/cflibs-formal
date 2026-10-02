@@ -1,0 +1,57 @@
+import Mathlib
+import CflibsFormal.Boltzmann
+
+/-!
+# FT-05 (items 2-3): the truncation ratio `U/U_cut` is strictly increasing in temperature
+
+Staged queue target, 2026-09-24 deep audit, frontier FT-05 (verdict REVISE, grade A). A generic
+statement about truncating the Boltzmann sum at an arbitrary cutoff energy; it asserts no level
+cutoff policy (that decision is pending). No module on main defines a truncated partition
+function.
+-/
+
+open Finset CflibsFormal
+
+namespace Plan.FT05
+
+variable {ι : Type*} [Fintype ι]
+
+/-- **Truncated partition function** `U_cut(T) = ∑_{k : E k < cut} g k · exp(−E k/(k_B T))`: the
+Boltzmann sum `partitionFunction` restricted to the levels strictly below the cutoff energy
+`cut`. Convention: a level with `E k < cut` is kept; a level with `cut ≤ E k`, including one
+exactly at the cutoff, is dropped. `cut` is a free real in the units of `E` (energies measured
+from the stage's ground state). The definition asserts no cutoff policy (fixed, IPD-lowered or
+density-dependent); choosing one is a separate, pending decision. -/
+noncomputable def partitionFunctionCut (kB T cut : ℝ) (g E : ι → ℝ) : ℝ :=
+  ∑ k ∈ univ.filter (fun k => E k < cut), g k * boltzmannFactor kB T (E k)
+
+/-- **The truncation ratio is strictly increasing in temperature (FT-05 (ii)).**
+
+If at least one level is kept (`hkeep`) and at least one is dropped (`hdrop`), the ratio
+`U(T)/U_cut(T)` of the full to the truncated partition function is strictly increasing in `T`
+on `(0, ∞)`. Writing `U = U_cut + D` with `D` the sum over dropped levels,
+`U/U_cut = 1 + D/U_cut`, and, for `T1 < T2`, cross-multiplying by `U_cut(T1)·U_cut(T2) > 0`
+reduces the claim to `D(T1)·U_cut(T2) < D(T2)·U_cut(T1)`: a double sum over (dropped `d`, kept
+`k`) pairs in which each term's exponent gap is `(1/(k_B T1) − 1/(k_B T2))·(E_d − E_k) > 0`,
+since `E_d ≥ cut > E_k`. No gap, sign or ordering hypothesis on the energies is needed beyond
+`hkeep`/`hdrop`, because every dropped level lies above every kept one. Consequence (follow-up
+targets, not proved here): the ratio is injective in `T`, so no temperature-independent factor,
+such as a `gA` calibration, can absorb a change of cutoff at two distinct temperatures.
+
+Hypotheses and why each is present:
+* `hkB : 0 < kB`: `1/(k_B T)` is then strictly decreasing in `T` on `(0, ∞)`.
+* `hg : ∀ k, 0 < g k`: makes `U_cut > 0` (with `hkeep`) and supplies strictness.
+* `hkeep`: otherwise `U_cut = 0` and the ratio is Lean's junk value `0`.
+* `hdrop`: otherwise the ratio is identically `1`, not strictly increasing.
+
+Scope (two-axis): own relation PURE-MATH (a property of finite exponential sums; no physical
+claim); definitions used: `partitionFunction` (the Boltzmann sum over the supplied list) and
+`partitionFunctionCut` (a truncation device with no asserted policy); predicted published tag
+PURE-MATH. -/
+theorem cutRatio_strictMonoOn_temp {kB cut : ℝ} {g E : ι → ℝ} (hkB : 0 < kB)
+    (hg : ∀ k, 0 < g k) (hkeep : ∃ k, E k < cut) (hdrop : ∃ k, cut ≤ E k) :
+    StrictMonoOn (fun T => partitionFunction kB T g E / partitionFunctionCut kB T cut g E)
+      (Set.Ioi 0) := by
+  sorry
+
+end Plan.FT05

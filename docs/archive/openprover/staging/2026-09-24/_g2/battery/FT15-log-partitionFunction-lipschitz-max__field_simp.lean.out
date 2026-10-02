@@ -1,0 +1,14 @@
+/tmp/g2scratch/battery/FT15-log-partitionFunction-lipschitz-max__field_simp.lean:52:79: error: unsolved goals
+ι : Type u_1
+inst✝¹ : Fintype ι
+inst✝ : Nonempty ι
+kB T1 T2 : ℝ
+g E : ι → ℝ
+hkB : 0 < kB
+hT1 : 0 < T1
+hT2 : 0 < T2
+hg : ∀ (k : ι), 0 < g k
+hE : ∀ (k : ι), 0 ≤ E k
+⊢ |Real.log (partitionFunction kB T1 g E) - Real.log (partitionFunction kB T2 g E)| ≤
+    meanExcitation kB (max T1 T2) g E * |(T2 - T1) / (kB * T1 * T2)|
+rc=1

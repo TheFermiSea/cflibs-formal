@@ -1,0 +1,6 @@
+{
+  "theorem": "Plan.FT08.log_sahaFactor_hasDerivAt_beta",
+  "max_tokens": 300000,
+  "max_attempts": 2,
+  "note": "frontier FT-08 (b2: log_sahaFactor_hasDerivAt_beta, grade B; includes decomposition step 4 (d log U/d beta), which is not staged anywhere), drafted 2026-09-27, pending Mode B audit"
+}

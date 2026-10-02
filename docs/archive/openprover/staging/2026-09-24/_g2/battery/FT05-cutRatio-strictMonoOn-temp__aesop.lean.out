@@ -1,0 +1,14 @@
+/tmp/g2scratch/battery/FT05-cutRatio-strictMonoOn-temp__aesop.lean:54:2: warning: aesop: failed to prove the goal after exhaustive search.
+/tmp/g2scratch/battery/FT05-cutRatio-strictMonoOn-temp__aesop.lean:53:21: error: unsolved goals
+ι : Type u_1
+inst : Fintype ι
+kB cut : ℝ
+g E : ι → ℝ
+hkB : 0 < kB
+hg : ∀ (k : ι), 0 < g k
+w : ι
+h : E w < cut
+w_1 : ι
+h_1 : cut ≤ E w_1
+⊢ StrictMonoOn (fun T => partitionFunction kB T g E / partitionFunctionCut kB T cut g E) (Set.Ioi 0)
+rc=1

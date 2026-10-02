@@ -1,0 +1,6 @@
+{
+  "theorem": "Plan.FT14.conv_absorptance_le",
+  "max_tokens": 250000,
+  "max_attempts": 2,
+  "note": "frontier FT-14 (part v: pointwise Jensen step only), drafted 2026-09-27, pending Mode B audit"
+}

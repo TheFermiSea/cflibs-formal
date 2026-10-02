@@ -1,0 +1,6 @@
+{
+  "theorem": "Plan.FT19.tiltMean_reweight_le",
+  "max_tokens": 250000,
+  "max_attempts": 2,
+  "note": "frontier FT-19 (b: weighted Chebyshev, tiltMean_reweight_le), drafted 2026-09-27, pending Mode B audit"
+}

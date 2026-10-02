@@ -1,0 +1,9 @@
+/tmp/g2scratch/battery/FT02-ipdLogMap-contracts__nlinarith.lean:56:2: error: linarith failed to find a contradiction
+a b ℓ1 q : ℝ
+hb : 0 ≤ b
+hq : b * Real.exp (ℓ1 / 2) / 2 ≤ q
+hq1 : q < 1
+hmaps : Set.MapsTo (ipdLogMap a b) (Set.Iic ℓ1) (Set.Iic ℓ1)
+⊢ False
+failed
+rc=1

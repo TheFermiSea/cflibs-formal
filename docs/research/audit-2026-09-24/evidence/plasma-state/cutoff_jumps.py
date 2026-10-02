@@ -2,7 +2,7 @@
 # as n_e rises, levels with E in [ip - dchi(n_e), ip) drop out one by one.
 import sqlite3, math
 k=8.617333e-5
-con=sqlite3.connect("file:/home/brian/code/CF-LIBS-improved/ASD_da/libs_production.db?mode=ro",uri=True)
+con=sqlite3.connect("file:<CF-LIBS-improved>/ASD_da/libs_production.db?mode=ro",uri=True)
 def dchi(ne,T): return 0.0660*math.sqrt((ne/1e17)*(1e4/T))
 T=11000; kT=k*T
 for el in ["Ca","Na","K","Al","Mg","Ti","Fe"]:

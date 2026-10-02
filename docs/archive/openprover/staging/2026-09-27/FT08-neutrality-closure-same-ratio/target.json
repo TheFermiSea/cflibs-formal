@@ -1,0 +1,6 @@
+{
+  "theorem": "Plan.FT08.neutrality_closure_same_ratio",
+  "max_tokens": 150000,
+  "max_attempts": 2,
+  "note": "frontier FT-08 (a2: neutrality_closure_same_ratio, per-species U via lineIntensityPerU; proved in scratch, proof in _hand-land/), drafted 2026-09-27, pending Mode B audit"
+}

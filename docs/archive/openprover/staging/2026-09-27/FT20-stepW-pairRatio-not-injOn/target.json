@@ -1,0 +1,6 @@
+{
+  "theorem": "Plan.FT20.stepW_pairRatio_not_injOn",
+  "max_tokens": 300000,
+  "max_attempts": 2,
+  "note": "frontier FT-20 (b, part 2a: closed-form pair ratio not injective; exp enclosures + IVT), drafted 2026-09-27, pending Mode B audit"
+}

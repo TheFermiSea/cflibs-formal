@@ -1,0 +1,6 @@
+{
+  "theorem": "Plan.FT06.stark_bracket_rho",
+  "max_tokens": 100000,
+  "max_attempts": 2,
+  "note": "deep audit 2026-09-24 FT-06 item 2 (stark_bracket_rho, verifier statement plus guards hnRef, hne found load-bearing); priority 10, group g3. Route passes verify.py. Statement audit 2026-09-24: docstring fixes only (isolating hnRef witness, prior-art match restricted to n_e ≥ 0, hk not load-bearing); candidate re-verified."
+}

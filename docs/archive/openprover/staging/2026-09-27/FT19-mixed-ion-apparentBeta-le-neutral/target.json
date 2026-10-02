@@ -1,0 +1,6 @@
+{
+  "theorem": "Plan.FT19.mixed_ion_apparentBeta_le_neutral",
+  "max_tokens": 250000,
+  "max_attempts": 2,
+  "note": "frontier FT-19 (c: assembly, ion vs neutral apparent beta at uniform n_e), drafted 2026-09-27, pending Mode B audit. Advisory dependency on FT19-ionReweight-strictMonoOn and FT19-tiltMean-reweight-le (re-prove inline or queue after they land)."
+}

@@ -1,0 +1,6 @@
+{
+  "theorem": "Plan.FT16.kernelLS_error_linfty",
+  "max_tokens": 250000,
+  "max_attempts": 2,
+  "note": "deep audit 2026-09-24 FT-16 item 3 (kernel LS l-infinity error; KEEP grade A); citation pending citation-integrity; priority 24, group g3. Varah lemma re-derived in the dossier; route passes verify.py."
+}

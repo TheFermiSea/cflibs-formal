@@ -1,0 +1,6 @@
+{
+  "theorem": "Plan.FT14.equivWidth_strictMonoOn",
+  "max_tokens": 250000,
+  "max_attempts": 2,
+  "note": "frontier FT-14 (part ii: strict monotonicity of equivWidth in tau), drafted 2026-09-27, pending Mode B audit"
+}

@@ -1,0 +1,10 @@
+/tmp/g2scratch/battery/FT02-ipdLogMap-contracts__simp.lean:55:83: error: unsolved goals
+a b ℓ1 q : ℝ
+hb : 0 ≤ b
+hq : b * Real.exp (ℓ1 / 2) / 2 ≤ q
+hq1 : q < 1
+hmaps : Set.MapsTo (ipdLogMap a b) (Set.Iic ℓ1) (Set.Iic ℓ1)
+⊢ ∃ ℓs ≤ ℓ1,
+    ipdLogMap a b ℓs = ℓs ∧
+      (∀ ℓ ≤ ℓ1, ipdLogMap a b ℓ = ℓ → ℓ = ℓs) ∧ ∀ ℓ0 ≤ ℓ1, Tendsto (fun n => (ipdLogMap a b)^[n] ℓ0) atTop (𝓝 ℓs)
+rc=1

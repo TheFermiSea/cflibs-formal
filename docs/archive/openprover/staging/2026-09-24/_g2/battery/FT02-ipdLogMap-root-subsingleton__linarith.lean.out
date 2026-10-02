@@ -1,0 +1,6 @@
+/tmp/g2scratch/battery/FT02-ipdLogMap-root-subsingleton__linarith.lean:46:2: error: linarith failed to find a contradiction
+a b : ℝ
+hb : 0 < b
+⊢ False
+failed
+rc=1

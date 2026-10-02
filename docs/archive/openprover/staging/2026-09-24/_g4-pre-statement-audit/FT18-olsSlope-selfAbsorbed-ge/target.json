@@ -1,0 +1,6 @@
+{
+  "theorem": "Plan.FT18.olsSlope_selfAbsorbed_ge",
+  "max_tokens": 300000,
+  "max_attempts": 1,
+  "note": "FT-18 main theorem, verifier-revised strict-E hanti (2026-09-24 audit, REVISE, grade A); g1 priority 16; published tag REDUCED (flat-profile SA). A complete candidate already passed verify.py: staging/2026-09-24/_g1-scratch-proofs/FT18-olsSlope-selfAbsorbed-ge.lean"
+}

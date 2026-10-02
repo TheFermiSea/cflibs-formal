@@ -1,0 +1,6 @@
+{
+  "theorem": "Plan.FT05.cutRatio_strictMonoOn_temp",
+  "max_tokens": 300000,
+  "max_attempts": 1,
+  "note": "FT-05 items 2-3 (tailKeep_cross double-sum sign crux + strictMono), 2026-09-24 deep audit, REVISE grade A; priority 5; group g2; statement audit 2026-09-24 (M6 round): FIX docstring-only applied (false 'positive combination' heuristic replaced by the cross-multiplied double-sum reduction); signature and definition unchanged; queue-ready"
+}

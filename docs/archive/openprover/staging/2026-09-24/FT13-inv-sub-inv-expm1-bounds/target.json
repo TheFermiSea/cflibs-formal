@@ -1,0 +1,6 @@
+{
+  "theorem": "Plan.FT13.inv_sub_inv_exp_sub_one_mem",
+  "max_tokens": 250000,
+  "max_attempts": 1,
+  "note": "FT-13 (b) item 3, the real inequality 1/t - 1/(e^t - 1) in (0, 1/2), split out per the F07 lesson; group g4 priority 20. Crux of FT13-log-selfAbsorptionFactor-lipschitz."
+}
