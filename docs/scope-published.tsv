@@ -238,6 +238,7 @@ DoubletChannel.lean	one_lt_doubletRatio	theorem	REDUCED	APPROXIMATION	doubletRat
 DoubletChannel.lean	single_line_tau_alias	theorem	REDUCED	REDUCED	—
 DoubletChannel.lean	slab_second_eq_mul_ratio	theorem	PURE-MATH	PURE-MATH	—
 DoubletChannel.lean	weighted_mean_strict_between	theorem	PURE-MATH	PURE-MATH	—
+EquivalentWidth.lean	conv_absorptance_le	theorem	PURE-MATH	PURE-MATH	—
 EquivalentWidth.lean	equivWidth_integrand_integrable	theorem	PURE-MATH	PURE-MATH	—
 EquivalentWidth.lean	equivWidth_le_thin	theorem	EXACT	EXACT	—
 EquivalentWidth.lean	equivWidth_lorentzian_scaled	theorem	EXACT	EXACT	—

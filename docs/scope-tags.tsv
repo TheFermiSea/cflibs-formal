@@ -461,6 +461,7 @@ EquivalentWidth.lean	equivWidth_nonneg	PURE-MATH	—
 EquivalentWidth.lean	equivWidth_le_thin	EXACT	Gornushkin 1999
 EquivalentWidth.lean	equivWidth_mono	EXACT	Gornushkin 1999
 EquivalentWidth.lean	equivWidth_strictMonoOn	PURE-MATH	—
+EquivalentWidth.lean	conv_absorptance_le	PURE-MATH	—
 EquivalentWidth.lean	equivWidth_rectangular	EXACT	Gornushkin 1999
 EquivalentWidth.lean	equivWidth_weakLine	EXACT	Gornushkin 1999
 EquivalentWidth.lean	slabCurve_forward_lipschitz	EXACT	Gornushkin 1999
