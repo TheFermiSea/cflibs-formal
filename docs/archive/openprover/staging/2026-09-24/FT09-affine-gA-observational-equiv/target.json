@@ -1,0 +1,6 @@
+{
+  "theorem": "Plan.FT09.affine_gA_observational_equiv",
+  "max_tokens": 150000,
+  "max_attempts": 2,
+  "note": "deep audit 2026-09-24 FT-09 step 2 (observational equivalence, verifier hb; REVISE grade A); unused hFcal dropped; priority 14, group g3. Route passes verify.py. Statement audit 2026-09-24: docstring fixes only (hA is a junk-point guard, Fcal = 0 junk disclosed, identification remark narrowed); candidate re-verified."
+}

@@ -1,0 +1,6 @@
+{
+  "theorem": "Plan.FT10.wls_min_noiseGain",
+  "max_tokens": 150000,
+  "max_attempts": 2,
+  "note": "FT-10 items 1-3 (2026-09-24 audit, KEEP, grade A); g1 priority 18; PURE-MATH BLUE floor (not Cramer-Rao). A complete candidate already passed verify.py: staging/2026-09-24/_g1-scratch-proofs/FT10-wls-min-noiseGain.lean"
+}

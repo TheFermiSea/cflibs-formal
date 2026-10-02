@@ -1,0 +1,132 @@
+===== FT-01 FT-01 revise
+KEYS ['id', 'title', 'informal', 'lean_sketch', 'scope_prediction', 'hypotheses_rationale', 'repo_anchors', 'mathlib_prereqs', 'literature', 'pipeline_consumer', 'tractability', 'decomposition', 'risks', 'rank_reason', 'source_ideas']
+--- REVISION
+(a) Relabel dampedAffine_iterate and dampedAffine_tendsto_iff as the u-damped model, with scope PURE-MATH. Add the T-damped statement that matches the pipeline:
+theorem tDamped_mobius_converges {g c lam : ℝ} (hg0 : 0 < g) (hg1 : g < 1) (hc : 0 < c) (hl0 : 0 < lam) (hl1 : lam ≤ 1) (T0 : ℝ) (hT0 : 0 < T0) : Tendsto (fun n => (dampedMap lam (fun T => T / (g + c*T)))^[n] T0) atTop (𝓝 ((1-g)/c))
+Pair it with HasDerivAt (dampedMap lam (fun T => T/(g+c*T))) (1-lam+lam*g) ((1-g)/c). Bind the pipeline through dampedMap_contracts, using g' = the derivative of the T-map (not the constant g).
+(c) Add an explicit hypothesis: the n_e leg's n_e-derivative is 0 (sb_offset tier, IPD off).
+(d) Keep. Drop ha/hd from the ⇐ direction. Build the Gauss-Seidel instance by composing fNe with fT.
+single_group_gain: (hb : 0 < b) (hW : 0 < W) : b*D^2/(b*D^2+W) < 1.
+Drop hlam1 from dampedMap_contracts.
+Keep scope PURE-MATH for (a)-(e) and REDUCED for the binding. Grade: B for the math, C for step 10.
+===== FT-02 FT-02 revise
+KEYS ['id', 'title', 'informal', 'lean_sketch', 'scope_prediction', 'hypotheses_rationale', 'repo_anchors', 'mathlib_prereqs', 'literature', 'pipeline_consumer', 'tractability', 'decomposition', 'risks', 'rank_reason', 'source_ideas']
+--- REVISION
+Replace ipdOff_composition_invariant with the proved sahaRatio_ipd_gauge, plus this corollary:
+'for two-stage totals N_tot,s = N_I,s(1 + S_s/n_e), the IPD-off totals computed with n̂ equal the IPD-on totals, so composition is exact'.
+Scope REDUCED: I→II edge, element-independent d, U frozen. It fails for stage III (2Δχ) and for Stark or injected n_e.
+
+Restate the sensitivity lemma as:
+theorem ipdInverse_twoPoint_sensitivity {a1 a2 b l1 l2 q : ℝ} (ha1 : 0 < a1) (hb : 0 ≤ b) (hq : q < 1) (h1 : ipdLogMap a1 b l1 = l1) (h2 : ipdLogMap a2 b l2 = l2) (ha : a1 ≤ a2) (hreg : b * Real.exp (max l1 l2 / 2) / 2 ≤ q) : Real.log a2 - Real.log a1 ≤ l2 - l1 ∧ l2 - l1 ≤ (Real.log a2 - Real.log a1) / (1 - q)
+
+Other changes:
+- State q̄³ ≈ 3.7e-5.
+- Reword the M4 change as an addition (implicit inverse; IPD-off acts as a gauge for T and composition on the ratio route) rather than a correction.
+- Qualify (a) with 'when Δχ is unmodelled'.
+- Keep grade A.
+===== FT-03 FT-03 revise
+KEYS ['id', 'title', 'informal', 'lean_sketch', 'scope_prediction', 'hypotheses_rationale', 'repo_anchors', 'mathlib_prereqs', 'literature', 'pipeline_consumer', 'tractability', 'decomposition', 'risks', 'rank_reason', 'source_ideas']
+--- REVISION
+Define a three-branch policy: answer if U_i ≤ λ, refuse if L_i > λ, and an explicit choice c_i on A. Prove:
+- off A, per-item cost ≤ min(λ, l_i), matching the oracle exactly;
+- on A, refusing costs at most λ - L_i more than answering, and answering costs at most U_i - λ more than refusing.
+Corollaries (the existing lemmas):
+- the all-refuse-on-A choice gives pasGated ≤ N·λ and the regret bound Σ_A (λ - L_i);
+- the all-answer-on-A choice gives G ≥ 0.
+State these with group weights w_i > 0 so they match objective-and-splits.md:11.
+Retag sahaConsistency_trivial_of_sbOffset and sahaTemperature_eq_fit as PURE-MATH. Their docstring must say they state a property of the diagnostic ([backlog-id]), not of the plasma, and must name the weighted-vs-unweighted and raw-vs-IPD IP mismatches they do NOT cover.
+===== FT-04 FT-04 keep
+KEYS ['id', 'title', 'informal', 'lean_sketch', 'scope_prediction', 'hypotheses_rationale', 'repo_anchors', 'mathlib_prereqs', 'literature', 'pipeline_consumer', 'tractability', 'decomposition', 'risks', 'rank_reason', 'source_ideas']
+--- REVISION
+No statement change. Minor points:
+- Grade feJoint_identifiable_iff as B.
+- The runtime C1g/C2g must be evaluated on the solver's kept lines (the ≥2-line element filter at iterative.py:1727), not on pooled observations.
+- The empty-group 0/0 = 0 convention should be documented in the gMean docstring.
+- The Var β̂ = σ²/SS_W reading is PURE-MATH, conditional on Var ε_k = σ²/w_k.
+===== FT-05 FT-05 revise
+KEYS ['id', 'title', 'informal', 'lean_sketch', 'scope_prediction', 'hypotheses_rationale', 'repo_anchors', 'mathlib_prereqs', 'literature', 'pipeline_consumer', 'tractability', 'decomposition', 'risks', 'rank_reason', 'source_ideas']
+--- REVISION
+(iii) Replace it with:
+theorem cutRatio_injOn … : Set.InjOn (fun T => U/U_cut) (Set.Ioi 0)
+Corollary: ∀ c, ∀ T1 T2 > 0, T1 ≠ T2 → ¬(U(T1) = c·U_cut(T1) ∧ U(T2) = c·U_cut(T2)). This is 'no T-independent gA factor fits two training temperatures'.
+(iv) State it precisely: (∑ k ∈ keep, N g_k e^{-E_k/kT}/U_cut = N) ∧ (∀ k ∈ keep, population_full k = population_cut k · U_cut/U). Mismatched lists bias every kept level by the species-common, T-dependent factor U_cut/U.
+(v) Keep the Fin-2 witness. Reword the conclusion: 'a sharp cutoff that moves with n_e cannot satisfy hLNe; compatible policies are an n_e-independent cutoff, a frozen inner-loop cutoff, or continuous weights w_k(n_e)'.
+Keep the scope tags as proposed.
+===== FT-06 FT-06 revise
+KEYS ['id', 'title', 'informal', 'lean_sketch', 'scope_prediction', 'hypotheses_rationale', 'repo_anchors', 'mathlib_prereqs', 'literature', 'pipeline_consumer', 'tractability', 'decomposition', 'risks', 'rank_reason', 'source_ideas']
+--- REVISION
+C8 := starkSahaCert with lS := starkDensity/(kOpac·ρ_w). Reuse starkOpacityLteCert as the ρ_w = 1 special case and cite it as prior art.
+State soundness honestly: 'any one certified lower bracket ≥ C√TΔE³ implies McWhirter at the true n_e'. State the refusal separately, as the only two-diagnostic content.
+Write stark_bracket_rho in full:
+(hw : 0 < w) (hρ : 1 ≤ ρw) (hk : 0 < kOpac) (hwT : w / ρw ≤ wTrue ∧ wTrue ≤ w * ρw) (hopac : starkFWHM wTrue nRef neTrue ≤ widthMeas) (hbudget : widthMeas ≤ kOpac * starkFWHM wTrue nRef neTrue) : starkDensity w nRef widthMeas / (kOpac*ρw) ≤ neTrue ∧ neTrue ≤ starkDensity w nRef widthMeas * ρw
+Rewrite the C10 docstring: 'certifies the fixed-(T, S, Ntot) two-stage multi-element charge-balance closure; it models neither iterative.py's outer loop nor round_trip.py's isobaric three-stage loop'.
+The predicate must carry the units (cm⁻³, K, eV).
+Resolve the C8 numbering with the owner before assigning an id.
+===== FT-07 FT-07 keep
+KEYS ['id', 'title', 'informal', 'lean_sketch', 'scope_prediction', 'hypotheses_rationale', 'repo_anchors', 'mathlib_prereqs', 'literature', 'pipeline_consumer', 'tractability', 'decomposition', 'risks', 'rank_reason', 'source_ideas']
+--- REVISION
+Keep. When writing classicComposition_atomicData_error_rel, add (hδ : δ < 1/2) (so that η = δ/(1-δ) < 1).
+In the FT-03 docstring, note that invariance under mole↔mass holds only for components not replaced as zeros.
+Cite Gornushkin & Völker 2022 and Völker & Gornushkin 2024 only after they are whitelisted.
+===== FT-08 FT-08 keep
+KEYS ['id', 'title', 'informal', 'lean_sketch', 'scope_prediction', 'hypotheses_rationale', 'repo_anchors', 'mathlib_prereqs', 'literature', 'pipeline_consumer', 'tractability', 'decomposition', 'risks', 'rank_reason', 'source_ideas']
+--- REVISION
+Keep. Tag ratio_mode_normalization_invariant PURE-MATH.
+Either state neutrality_closure_same_ratio with MultiSpecies.lineIntensityPerU (per-species U_s), or drop the 'holds with per-species partition functions' claim.
+For the sb_offset route, state the total-derivative variant with HasDerivAt lnNe as an explicit input (n_e is T-coupled), as the proposal already notes.
+Do not cite NeutralityScale/Abbass as prior art until it is whitelisted.
+===== FT-09 FT-09 revise
+KEYS ['id', 'title', 'informal', 'lean_sketch', 'scope_prediction', 'hypotheses_rationale', 'repo_anchors', 'mathlib_prereqs', 'literature', 'pipeline_consumer', 'tractability', 'decomposition', 'risks', 'rank_reason', 'source_ideas']
+--- REVISION
+Present affine_gA_gauge as a corollary of olsSlope_aliasing_A (no new slope algebra). Make the headline:
+theorem affine_gA_observational_equiv (hkB : 0 < kB) (hT : 0 < T) (hg) (hA) (hN) (hFcal) (haff : ∀ k, A' k = A k * exp (-(α + b*E k))) (hb : b * (kB*T) < 1) : ∃ T' N', 0 < T' ∧ 0 < N' ∧ 1/(kB*T') = 1/(kB*T) - b ∧ ∀ k, log (I_k(T,N,A)/(g_k A'_k)) = log (I_k(T',N',A)/(g_k A_k))
+Add a grouped/two-stage version: with free per-element intercepts and a free inter-stage offset, the gauge leaves every residual unchanged and shifts ln n̂_e by (3/2)·ln(T'/T) + b·IP.
+State the identifying information explicitly: an independent n_e or known composition, i.e. the FT-15 leakage bound.
+Require b < min_i 1/(kB·T_i) across the training spectra.
+===== FT-10 FT-10 keep
+KEYS ['id', 'title', 'informal', 'lean_sketch', 'scope_prediction', 'hypotheses_rationale', 'repo_anchors', 'mathlib_prereqs', 'literature', 'pipeline_consumer', 'tractability', 'decomposition', 'risks', 'rank_reason', 'source_ideas']
+--- REVISION
+Keep the statements. Reword the rank_reason: FisherLineSelection already scopes 'adding a line never hurts' to homoscedastic noise, so the non-monotonicity example turns that documented limit into a theorem.
+Retag ols_is_blue from EXACT to PURE-MATH, or REDUCED-homoscedastic.
+For the log-ratio physics reading, add the ln(U_a/U_b)(T) term, or restrict the claim to 'the intercept-difference floor'.
+Rename crlb_slope/olsSlope_attains_crlb in a separate change; no new name may contain 'crlb'.
+===== FT-11 FT-11 revise
+KEYS ['id', 'title', 'informal', 'lean_sketch', 'scope_prediction', 'hypotheses_rationale', 'repo_anchors', 'mathlib_prereqs', 'literature', 'pipeline_consumer', 'tractability', 'decomposition', 'risks', 'rank_reason', 'source_ideas']
+--- REVISION
+S8: `theorem cascade_residual_enclosure {κ} [Fintype κ] [Nonempty κ] … (hZ) (hN) (hS) {x nestar : ℝ} (hx : 0 < x) (hpos : 0 < nestar) (hstar : nestar = totalIonizedCharge Z S Ntot nestar) : |x - nestar| ≤ |x - totalIonizedCharge Z S Ntot x|`. Add a mutant that drops hpos and must fail. State the crux once, generically, so that S3 and S10 are both instances: `theorem mean_strictAnti_of_ratio {Z : ℕ} {p q : ℕ → ℝ} (hZ : 1 ≤ Z) (hp : ∀ z ≤ Z, 0 < p z) (hq : ∀ z ≤ Z, 0 < q z) (hr : ∀ z < Z, q (z+1) * p z < p (z+1) * q z) : (∑ z ∈ range (Z+1), (z:ℝ) * q z) / ∑ z ∈ range (Z+1), q z < (∑ z ∈ range (Z+1), (z:ℝ) * p z) / ∑ z ∈ range (Z+1), p z`. Change the S10 docstring from 'iff' to 'if (sufficient, not necessary: an edge with negligible S0_z may violate it)'. Word S9 as 'EXACT for Saha–Eggert with n_e-independent χ'. Replace 'needs S10' with 'S10 suffices'. Keep FT-11 as spec §1 plus the S10 increment rather than a new frontier.
+===== FT-12 FT-12 revise
+KEYS ['id', 'title', 'informal', 'lean_sketch', 'scope_prediction', 'hypotheses_rationale', 'repo_anchors', 'mathlib_prereqs', 'literature', 'pipeline_consumer', 'tractability', 'decomposition', 'risks', 'rank_reason', 'source_ideas']
+--- REVISION
+Keep olsSlope_subGaussian_tail_hetero and drop hc. Replace (b) with the heteroscedastic law: `theorem betaHat_map_eq_gaussianReal [Nonempty ι] (E) (α β) (ε) (σ : ι → NNReal) (hvar : 0 < ∑ k, (E k - mean E)^2) (hlaw : ∀ k, HasLaw (ε k) (gaussianReal 0 (σ k ^ 2)) μ) (hind : iIndepFun ε μ) : μ.map (Alt.betaHat E α β ε) = gaussianReal β (∑ k, ⟨olsWeight E k ^ 2, sq_nonneg _⟩ * σ k ^ 2)`; the homoscedastic case is a corollary via olsSlope_noise_gain. Scope: PURE-MATH. Tag the physics binding c_k = σ_k² ≈ 1/SNR_k² as APPROXIMATION (delta method on log I), and say the interval is exact only for known σ_k. The union bound across several certificates must appear in the gate's α.
+===== FT-13 FT-13 revise
+KEYS ['id', 'title', 'informal', 'lean_sketch', 'scope_prediction', 'hypotheses_rationale', 'repo_anchors', 'mathlib_prereqs', 'literature', 'pipeline_consumer', 'tractability', 'decomposition', 'risks', 'rank_reason', 'source_ideas']
+--- REVISION
+Keep (a) and (b). Replace (c) with a profile-generic error-propagation lemma rather than a certificate: `noncomputable def escapeFactor (ψ : ℝ → ℝ) (τ : ℝ) : ℝ := equivWidth ψ τ / (τ * ∫ x, ψ x)`; `theorem log_escapeFactor_lipschitz (hψ0 : 0 ≤ ψ) (hψ1 : ∀ x, ψ x ≤ 1) (hint : Integrable ψ) (hpos : 0 < ∫ x, ψ x) (hτ : 0 < τ) (hτ' : 0 < τ') : |log (escapeFactor ψ τ) - log (escapeFactor ψ τ')| ≤ |τ - τ'| / 2` (proof: pointwise ψ·SA(τψ) plus (b) plus integral_mono); `theorem tauError_propagation (hI : 0 < Ithin) (hmeas : Imeas = Ithin * escapeFactor ψ τ) (hΔ : |τhat - τ| ≤ Δ) … : |log (Imeas / escapeFactor ψ τhat) - log Ithin| ≤ Δ / 2`. Give it a C14-style REFUSAL note (Δ is assumed, not measured). Retire knownTauCert from the HARD set and retag it PURE-MATH. Tag (c) REDUCED (known profile shape, homogeneous slab).
+===== FT-14 FT-14 revise
+KEYS ['id', 'title', 'informal', 'lean_sketch', 'scope_prediction', 'hypotheses_rationale', 'repo_anchors', 'mathlib_prereqs', 'literature', 'pipeline_consumer', 'tractability', 'decomposition', 'risks', 'rank_reason', 'source_ideas']
+--- REVISION
+Keep (i) as grade A, and (ii) and (v). Restate (iv) with guards and the stimulated factor: let `σ0 i := κ0 i * (1 - Real.exp (-x i))` with per-line x i = hν_i/kT, and prove `theorem perLine_tauRatio [Nonempty ι] (hN : N ≠ 0) (hell : ell ≠ 0) (hg : ∀ k, 0 < g k) (hσ2 : σ02 ≠ 0) : opticalDepth kB T N σ01 ell g E l1 / opticalDepth kB T N σ02 ell g E l2 = σ01 * g l1 * boltzmannFactor kB T (E l1) / (σ02 * g l2 * boltzmannFactor kB T (E l2))`. Also add the model-level identity σ01/σ02 = (λ1²g_u1A1φ1(0)(1−e^{−x1}))/(λ2²g_u2A2φ2(0)(1−e^{−x2}))·(g_l2/g_l1), with the λ/ν convention pinned in the pre-registration. Tag REDUCED. Add the missing (1 − e^{−x}) factor to the [backlog-id] acceptance identity.
+===== FT-15 FT-15 keep
+KEYS ['id', 'title', 'informal', 'lean_sketch', 'scope_prediction', 'hypotheses_rationale', 'repo_anchors', 'mathlib_prereqs', 'literature', 'pipeline_consumer', 'tractability', 'decomposition', 'risks', 'rank_reason', 'source_ideas']
+--- REVISION
+None is required. Optionally: note in the docstring that hEχ is sufficient and that the measured tightness comes from a narrow box. State an ln-U version with ⟨E⟩ at max(T1, T2) instead of Tmax, since it is free.
+===== FT-16 FT-16 keep
+KEYS ['id', 'title', 'informal', 'lean_sketch', 'scope_prediction', 'hypotheses_rationale', 'repo_anchors', 'mathlib_prereqs', 'literature', 'pipeline_consumer', 'tractability', 'decomposition', 'risks', 'rank_reason', 'source_ideas']
+--- REVISION
+None is required for the math. Derive kernel_to_ordinate from Analysis.abs_log_ratio_le (a := I l, a' := Ihat l, δ := d). In the docstring for kernelLS_error_linfty, mark the numerator as an assumed input (misspecification and noise bounds) and make the δ-margin predicate the only runtime check (C16′ ⇒ C16 via det_ne_zero_of_sum_row_lt_diag).
+===== FT-17 FT-17 keep
+KEYS ['id', 'title', 'informal', 'lean_sketch', 'scope_prediction', 'hypotheses_rationale', 'repo_anchors', 'mathlib_prereqs', 'literature', 'pipeline_consumer', 'tractability', 'decomposition', 'risks', 'rank_reason', 'source_ideas']
+--- REVISION
+None is required. Weaken hN to 0 ≤ Ntot where only the identity is used; my proofs need only 0 ≤ Ntot. In ROADMAP, replace the refusal with: 'the convexity lemma exists (convexOn_zpow), and the exact error identity makes it unnecessary'.
+===== FT-18 FT-18 revise
+KEYS ['id', 'title', 'informal', 'lean_sketch', 'scope_prediction', 'hypotheses_rationale', 'repo_anchors', 'mathlib_prereqs', 'literature', 'pipeline_consumer', 'tractability', 'decomposition', 'risks', 'rank_reason', 'source_ideas']
+--- REVISION
+`theorem olsSlope_selfAbsorbed_ge [Nonempty ι] {E y τ : ι → ℝ} (hτ : ∀ k, 0 < τ k) (hanti : ∀ i j, E i < E j → τ j ≤ τ i) : olsSlope E y ≤ olsSlope E (fun k => y k + Real.log (selfAbsorptionFactor (τ k)))`. Also `theorem apparentTemp_overestimate {kB T s : ℝ} (hkB : 0 < kB) (hT : 0 < T) (hthin : olsSlope E y = -(1 / (kB * T))) (hle : olsSlope E y ≤ s) (hneg : s < 0) : T ≤ -(1 / (kB * s))`, plus the two-line reverse witness. Tag REDUCED. Reframe the claim as 'the sign is fixed by the τ-vs-E_upper ordering', and drop 'settles'. Generalize to the profile escape factor of FT-13, whose ln escψ is also antitone in τ.
+===== FT-19 FT-19 revise
+KEYS ['id', 'title', 'informal', 'lean_sketch', 'scope_prediction', 'hypotheses_rationale', 'repo_anchors', 'mathlib_prereqs', 'literature', 'pipeline_consumer', 'tractability', 'decomposition', 'risks', 'rank_reason', 'source_ideas']
+--- REVISION
+Define `noncomputable def ionReweight (kB me h chi ne T : ℝ) : ℝ := 2 * thermalBracket kB T me h ^ (3/2 : ℝ) * Real.exp (-chi / (kB * T)) / ne`. Land ion_zoneWeight_eq (proved), then `ionReweight_strictMonoOn (hkB hme hh : 0 < _) (hchi : 0 ≤ chi) (hne : 0 < ne) : StrictMonoOn (ionReweight kB me h chi ne) (Set.Ioi 0)` with no hEχ, then tiltMean_antitone_anchor (proved corollary), tiltMean_reweight_le (weighted Chebyshev), and the assembly `mixed_ion_apparentBeta_le_neutral … (hanchor : E j ≤ E' i')`. Tag REDUCED (uniform n_e, two-line pairs, optically thin). Describe the Aguilera–Aragón 2007 result as 'consistent with', not 'proves'.
+===== FT-20 FT-20 revise
+KEYS ['id', 'title', 'informal', 'lean_sketch', 'scope_prediction', 'hypotheses_rationale', 'repo_anchors', 'mathlib_prereqs', 'literature', 'pipeline_consumer', 'tractability', 'decomposition', 'risks', 'rank_reason', 'source_ideas']
+--- REVISION
+Keep equivWidth_stepProfile and stepProfile_pairRatio_not_injOn (grade B; 12 exp enclosures plus the IVT or 'continuous injective ⇒ strictly monotone'). Restate (c) as: 'r = 2 Voigt ratio (σ = Gaussian std, γ = Lorentz HWHM): the interior minimum lies inside smaller-line τ0 ∈ [0.1,15] for γ/σ ≳ 0.03-0.1 (0.1, 0.93 checked), with a second-branch ratio band under 1%; at γ/σ = 0.01 the minimum is at τ0 ≈ 35-37, outside the gate range.' Retag only cogRatio_injOn and saDistinct_certificate_sound (EXACT → REDUCED, flat-kernel slab) and add a docstring pointer to the step-profile counterexample.

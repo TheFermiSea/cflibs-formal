@@ -1,0 +1,6 @@
+{
+  "theorem": "Plan.FT19.ionReweight_strictMonoOn",
+  "max_tokens": 150000,
+  "max_attempts": 2,
+  "note": "frontier FT-19 (a: ionReweight strictly increasing in T, verdict revision), drafted 2026-09-27, pending Mode B audit"
+}

@@ -1,0 +1,24 @@
+{
+  "candidate": "<openprover>/runs/F02-sahaFactor-strictMonoOn-temp-1/repo/lemmas/m4-final.lean",
+  "theorem": "DryRun.sahaFactor_strictMonoOn_temp",
+  "passed": true,
+  "checks": {
+    "forbidden": [],
+    "extra_imports": [],
+    "missing_defs": [],
+    "signature_identical": true,
+    "compile_rc": 0,
+    "errors": [],
+    "sorry_warning": false,
+    "axioms": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "elaborated_type_identical": true
+  },
+  "attempt": 1,
+  "hours": 1.94,
+  "openprover_result": "not_proved",
+  "verified_at": "2026-09-24T02:50:59+00:00"
+}

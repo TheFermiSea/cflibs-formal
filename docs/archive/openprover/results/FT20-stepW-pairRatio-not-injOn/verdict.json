@@ -1,0 +1,35 @@
+{
+  "candidate": "<openprover>/runs/FT20-stepW-pairRatio-not-injOn-1/repo/lean/full.lean",
+  "theorem": "Plan.FT20.stepW_pairRatio_not_injOn",
+  "passed": true,
+  "checks": {
+    "forbidden": [],
+    "extra_imports": [],
+    "missing_defs": [],
+    "signature_identical": true,
+    "compile_rc": 0,
+    "errors": [],
+    "sorry_warning": false,
+    "kernel_replay_rc": 0,
+    "axioms": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "elaborated_type_identical": true
+  },
+  "attempt": 1,
+  "hours": 3.89,
+  "openprover_result": "not_proved",
+  "plan": {
+    "planner": "opus",
+    "advisor": null,
+    "effort": "high",
+    "advisor_every": null,
+    "advisor_max": null,
+    "history_budget": 120000,
+    "pilot": false,
+    "planner_override": null
+  },
+  "verified_at": "2026-09-27T19:28:05+00:00"
+}

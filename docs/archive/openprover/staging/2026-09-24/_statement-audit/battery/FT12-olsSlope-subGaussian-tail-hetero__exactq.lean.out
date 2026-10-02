@@ -1,0 +1,2 @@
+/tmp/stmtfix/battery/FT12-olsSlope-subGaussian-tail-hetero__exactq.lean:49:2: error: `exact?` could not close the goal. Try `apply?` to see partial suggestions.
+rc=1

@@ -1,0 +1,2 @@
+'AuditFT07.classicComposition_atomicData_error_rel_sharp' depends on axioms: [propext, Classical.choice, Quot.sound]
+rc=0

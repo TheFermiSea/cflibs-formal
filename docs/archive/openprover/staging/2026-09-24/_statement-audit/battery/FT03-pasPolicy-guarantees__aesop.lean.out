@@ -1,0 +1,30 @@
+/tmp/stmtfix/battery/FT03-pasPolicy-guarantees__aesop.lean:66:2: warning: aesop: failed to prove the goal after exhaustive search.
+/tmp/stmtfix/battery/FT03-pasPolicy-guarantees__aesop.lean:65:62: error: unsolved goals
+case left
+N : ℕ
+w l L U : Fin N → ℝ
+lam : ℝ
+hw : ∀ (i : Fin N), 0 ≤ w i
+hL : ∀ (i : Fin N), L i ≤ l i
+hU : ∀ (i : Fin N), l i ≤ U i
+⊢ (pasPolicy w l L U lam fun x => False) ≤ (∑ i, w i) * lam
+
+case right.left
+N : ℕ
+w l L U : Fin N → ℝ
+lam : ℝ
+hw : ∀ (i : Fin N), 0 ≤ w i
+hL : ∀ (i : Fin N), L i ≤ l i
+hU : ∀ (i : Fin N), l i ≤ U i
+⊢ (pasPolicy w l L U lam fun x => False) ≤
+    (∑ x, if L x ≤ lam ∧ lam < U x then w x * (lam - L x) else 0) + ∑ i, w i * min (l i) lam
+
+case right.right
+N : ℕ
+w l L U : Fin N → ℝ
+lam : ℝ
+hw : ∀ (i : Fin N), 0 ≤ w i
+hL : ∀ (i : Fin N), L i ≤ l i
+hU : ∀ (i : Fin N), l i ≤ U i
+⊢ (pasPolicy w l L U lam fun x => True) ≤ ∑ i, w i * l i
+rc=1

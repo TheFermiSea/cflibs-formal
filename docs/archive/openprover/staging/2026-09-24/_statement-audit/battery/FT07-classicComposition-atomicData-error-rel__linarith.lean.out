@@ -1,0 +1,29 @@
+/tmp/stmtfix/battery/FT07-classicComposition-atomicData-error-rel__linarith.lean:66:2: error: linarith failed to find a contradiction
+ι : Type u_1
+inst✝³ : Fintype ι
+κ : Type u_2
+inst✝² : Fintype κ
+inst✝¹ : Nonempty ι
+inst✝ : Nonempty κ
+kB T Fcal δ : ℝ
+N : κ → ℝ
+g E A g' E' A' : κ → ι → ℝ
+u : κ → ι
+hg : ∀ (s : κ) (k : ι), 0 < g s k
+hg' : ∀ (s : κ) (k : ι), 0 < g' s k
+hFcal : 0 < Fcal
+hA : ∀ (s : κ), 0 < A s (u s)
+hA' : ∀ (s : κ), 0 < A' s (u s)
+hN : ∀ (s : κ), 0 < N s
+hδ0 : 0 ≤ δ
+hδ1 : δ < 1
+hpert :
+  ∀ (s : κ),
+    |responseFactor kB T (g' s) (E' s) (A' s) (u s) - responseFactor kB T (g s) (E s) (A s) (u s)| ≤
+      δ * responseFactor kB T (g s) (E s) (A s) (u s)
+s : κ
+a✝ :
+  2 * δ / (1 - δ) * composition N s < |composition (recoveredDensity kB T Fcal g E A g' E' A' u N) s - composition N s|
+⊢ False
+failed
+rc=1

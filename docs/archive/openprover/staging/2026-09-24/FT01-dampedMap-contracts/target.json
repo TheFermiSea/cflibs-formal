@@ -1,0 +1,6 @@
+{
+  "theorem": "Plan.FT01.dampedMap_contracts",
+  "max_tokens": 300000,
+  "max_attempts": 1,
+  "note": "FT-01 part (b) queue item 7 (derivative window on an invariant box; verifier dropped lam <= 1); group g4 priority 26. dampedMap byte-identical with FT01-tDamped-mobius-converges."
+}

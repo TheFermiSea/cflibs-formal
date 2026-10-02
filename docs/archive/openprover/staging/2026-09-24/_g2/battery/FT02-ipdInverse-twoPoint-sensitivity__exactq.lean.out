@@ -1,0 +1,2 @@
+/tmp/g2scratch/battery/FT02-ipdInverse-twoPoint-sensitivity__exactq.lean:54:2: error: `exact?` could not close the goal. Try `apply?` to see partial suggestions.
+rc=1

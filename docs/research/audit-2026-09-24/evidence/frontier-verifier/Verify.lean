@@ -98,7 +98,7 @@ theorem twoPoint_sensitivity_false_negb :
 example : ¬ ((-2 : ℝ) / (-2 + 1) < 1) := by norm_num
 
 /-! ### FT-03: the two policies have incompatible guarantees. -/
--- answer-iff-U≤λ can be worse than always answering (violates SC-04's G ≥ 0)
+-- answer-iff-U≤λ can be worse than always answering (violates [backlog-id]'s G ≥ 0)
 example : ∃ l L U lam : ℝ, L ≤ l ∧ l ≤ U ∧ l < (if U ≤ lam then l else lam) :=
   ⟨1 / 2, 0, 2, 1, by norm_num, by norm_num, by norm_num⟩
 -- refuse-iff-L>λ can be worse than always refusing (violates `pas_certified_le_lambda`)

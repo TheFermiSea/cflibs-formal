@@ -1,0 +1,6 @@
+{
+  "theorem": "Plan.FT18.olsSlope_selfAbsorbed_ge",
+  "max_tokens": 300000,
+  "max_attempts": 1,
+  "note": "FT-18 main theorem, verifier-revised strict-E hanti (2026-09-24 audit, REVISE, grade A); g1 priority 16; published tag REDUCED (flat-profile SA) only once the RF-03 retag lands, APPROXIMATION until then (main TSV SA intensity rows are APPROXIMATION). Mode B statement audit 2026-09-24: fix applied, docstring only (conditional apparent-T wording, uncited literature-dispute sentence removed, tag conditional on RF-03). A complete candidate regenerated from the corrected statement passed verify.py again: staging/2026-09-24/_g1-scratch-proofs/FT18-olsSlope-selfAbsorbed-ge.lean"
+}

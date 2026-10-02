@@ -1,5 +1,5 @@
 === mutate-check — spec-mutation audit (discipline Gate 5) ===
-repo:    /home/brian/.local/share/openprover/lean-main
+repo:    <openprover>/lean-main
 workdir: docs/research/audit-2026-09-24/evidence/gates/mutate-check.yRqva7   (all mutations are applied to COPIES; CflibsFormal/ is never touched)
 method:  lake env lean <copy>   (no lake build — shared .lake stays untouched)
 

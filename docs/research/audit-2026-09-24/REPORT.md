@@ -19,7 +19,7 @@
    - FT-03: a three-branch refuse-to-report policy on the Aitchison PAS loss.
    - FT-02: the IPD gauge identity and the implicit IPD-aware inverse.
    - FT-05: a cutoff-policy bias that no gA correction can absorb.
-7. **Single most important alignment action.** Re-issue `docs/integration/m4-population-context.md` (RF-10) before W2-S3 and W3-A build to it under A11. It needs a per-stage (χ_eff, level list) pair contract, units, semantic tiers, no flat-slab tautologies, no Model-B loop rows and no Alt.CSigma↔csigma.py pairing. Runner-up: keep C1–C3 and C12 out of every answer or HARD path until C1g/C2g and the τ-error lemma land. That gate is dormant today (bead kixx), so it is less urgent than the adopted M4 doc.
+7. **Single most important alignment action.** Re-issue `docs/integration/m4-population-context.md` (RF-10) before W2-S3 and [backlog-id] build to it under A11. It needs a per-stage (χ_eff, level list) pair contract, units, semantic tiers, no flat-slab tautologies, no Model-B loop rows and no Alt.CSigma↔csigma.py pairing. Runner-up: keep C1–C3 and C12 out of every answer or HARD path until C1g/C2g and the τ-error lemma land. That gate is dormant today (bead kixx), so it is less urgent than the adopted M4 doc.
 
 ---
 
@@ -105,7 +105,7 @@ P0 items come first. Effort: S < 1 day, M a few days, L a week or more. Every ve
 | RF-04 | P0 | Replace vacuous C12 | Certificates.lean:338-360; SelfAbsorption.lean:249-255; OpticalDepth.lean:202-214; scope-tags.tsv:469; companion certificate_gate.py:76-84, certificates_wiring.py:226-236, certificates.py:412 | knownTauCert τ := 0 ≤ τ. Its soundness is mul_div_cancel on the model. The companion feeds it the estimated max τ as a HARD gate. It is tagged EXACT. The pin SelfAbsorption.lean:237 is stale in both repos (the theorem is at :249). | Retag PURE-MATH and drop "closes the gap". Prove ln SA is ½-Lipschitz, then add the FT-13 τ-error propagation lemma with a C14-style REFUSAL, not as a HARD certificate. Replace line pins with names. Keep the name knownTauCert (OracleAnchors:73, Generate.lean:248). Companion: remove C12 from HARD. | M | KEEP |
 | RF-01 | P0 | Retract the continuum "thermometer" for neutral lines | Continuum.lean:20-40, 76-84, 125-131; scope-tags.tsv:300 | For a neutral line, B carries 1/S(T), so the physical ratio goes as e^((χ−E_k+hν)/kT)/(T·U_{z+1}) and strictly decreases in T. The condition a ≥ 0 is an artifact. The header says "iff", but only "if" is proved. For an ionic line of the continuum-producing stage the reduced form holds at fixed n_e. | Retag PURE-MATH, or REDUCED scoped to "continuum-producing stage, fixed n_e, U frozen". Rewrite prose per stage and change "iff" to "if". Follow-up: lineToContRatio_neutral_saha is StrictAntiOn under E_k ≤ χ+hν, against the current contEmissivity. Add the ξ/G bracket only after opening the source. No IPD until RF-19. Run gen-docs. | S | REVISE |
 | RF-03 | P0 | Flat-profile SA: scope blocks and tag policy | SelfAbsorption, SelfAbsorptionInverse, CurveOfGrowth, DoubletChannel, OpticalDepthBridge, Alt/SelfAbsorbed, Certificates C13; scope-tags.tsv:198-203, 217-218, 470 | SA called "exactly the radiative-transfer slab solution" on integrated intensity; 0 flat-profile caveats in 3 modules; 1.4–3.5× over-correction (reproduced); one model tagged EXACT, APPROXIMATION and REDUCED; cogRatio_injOn and C13 EXACT; a shared source S assumed across transitions; C13 names opacity coefficients "widths". Non-injectivity inside the gate occurs only for γ/σ ≳ 0.1, with a band under 1%. | REDUCED scope blocks. Policy: physics rows that consume SA are REDUCED; left-inverse algebra is PURE-MATH; record in conventions.md. Mark cogRatio_injOn, doubletRatio_injOn and C13 "flat kernel only". State the common-S assumption and delete "relative composition". Rename C13 binders, not the def, here and in the companion. Narrow selfAbsorption_breaks_composition_identifiability. The follow-up theorems moved to FT-13, FT-18 and FT-20. | M | REVISE |
-| RF-05 | P0 | Retract "C10 replaces the 0.5 damping" | Certificates.lean:300-305; frontiers/12 §1.1, §2, §6 (stale iterative.py:2022); companion certificates.py:36-39, 384-385 | C10 is the fixed-T forward closure at known Ntot. The pipeline damps the outer (T, n_e) loop at iterative.py:908/937 (JAX) and 2454/2531. The companion marks C10 "skip: Ntot not materialized". C10 also does not model round_trip.py's isobaric three-stage loop. | Reword to its actual scope and fix the pins. Do not re-prove. Import SahaContraction and re-export `dampedMultiElementIter_converges_to_equilibrium` as dampedIter_certificate_sound_closed, with uniqueness and rate. Add a REDUCED scope row. Drop the SahaContraction headline edit, which is already scoped. Remove C10 from BL-35 evidence. | S | REVISE |
+| RF-05 | P0 | Retract "C10 replaces the 0.5 damping" | Certificates.lean:300-305; frontiers/12 §1.1, §2, §6 (stale iterative.py:2022); companion certificates.py:36-39, 384-385 | C10 is the fixed-T forward closure at known Ntot. The pipeline damps the outer (T, n_e) loop at iterative.py:908/937 (JAX) and 2454/2531. The companion marks C10 "skip: Ntot not materialized". C10 also does not model round_trip.py's isobaric three-stage loop. | Reword to its actual scope and fix the pins. Do not re-prove. Import SahaContraction and re-export `dampedMultiElementIter_converges_to_equilibrium` as dampedIter_certificate_sound_closed, with uniqueness and rate. Add a REDUCED scope row. Drop the SahaContraction headline edit, which is already scoped. Remove C10 from [backlog-id] evidence. | S | REVISE |
 | RF-06 | P0 | Shared-U and known-Fcal EXACT artifacts | MatrixEffects.lean:289-352; MatrixIonizationCoupling.lean:59-63, 285-300; Inverse.lean:53-143; Joint/CompositionIdentifiability; scope-tags.tsv:148, 151, 163, 408; GAPS.md:135-181; m4 doc Tier 1b | The homologous-pair invariance is EXACT while its per-U sibling is REDUCED; the shared U is disclosed, so the defect is tag inconsistency. The identifiability trio assumes hFeq, which is removable (calibration-free version axiom-clean in scratch). "Matrix effect zero" holds on free binders Ns, Nt. Inverse.Sound quantifies over unknown g, E, A. GAPS #7/#11 overclaim. | Retag REDUCED ("shared level table/U"). Land the calibration-free headline. Restate envelope clause (c). Reword Inverse.lean:56. Fix GAPS. M4: move envelope_ionization_matrix_shift out of Tier 1b and annotate the Tier-2 homologousPair rows as shared-U. Structural fix in RF-28, with atomic data as a known input. | S | REVISE |
 | RF-08 | P0 | Make the oracle discriminating | oracle/Generate.lean:265-273, 295-297, 313-314, 355, 409-410; check_fixtures.py; oracle/README.md:59, 65; OracleAnchors | All constants are 1, the fixed point of unit and placement bugs. 16 of 111 keys are never read: corrupted recovered_* fields still pass (re-run). calibration_free is only a round trip. jNum maps NaN to 0 and saturates at 1.8e10. The strictness of C6, C7, C9, C12 and C13 cannot be distinguished (PLAUSIBLE). A companion kT-placement mutant passes 68 tests (auditor-executed). | Use non-unit, incommensurate constants. Add a mutants.py self-test in CI. Check every emitted field. Rebuild calibration_free as fixed I with Fcal' = 1000. Make jNum honest. Add boundary witnesses. Mark the README "hand-mirrored". Land together with RF-25. | M | KEEP |
 | RF-10 | P0 | Correct the M4 acceptance doc | m4-population-context.md (conditions 1-2, Tiers 1/1b/2, generator); SahaStability.lean:54-55, 762; PartialLTE.lean:61; Dimensions.lean:186-187; StarkBroadening.lean:100-101; companion M-spec-estimator-routing-policy.md:52 | The companion adopted this doc via A11. The IPD condition is incomplete: Δχ depends on the n_e being solved for and moves the cutoff, so the T-grid, Lipschitz and enclosure rows and C9/C10 do not transfer. hEχ fails for 202/324 species. The McWhirter constant carries units (T in eV makes the gate 108× laxer). A constants-mentioned filter put loop and estimator results in Tier 1, duplicates rows, and gives electronDensity_antitone the wrong fixture axis. SA tautologies are acceptance criteria. Alt.CSigma is credited as the csigma.py twin, and DifferentialEstimator as the opc.py twin. | Replace condition 2 with a per-stage pair contract: χ_eff, and a level list ⊆ {E ≤ χ_eff}. Put units into the mcWhirterBound docstring; the CGS wording fix goes in PartialLTE and Dimensions. Regenerate with a manual semantic-tier column. Drop outerLoop_contracts and jointConvergence. Move the SA/OpticalDepth rows to an annex. Move envelope out of Tier 1b. Fix routing row R1. Publish an old→new row changelog. Rewrite hEχ prose as a cutoff obligation. | M | REVISE |
@@ -121,12 +121,12 @@ P0 items come first. Effort: S < 1 day, M a few days, L a week or more. Every ve
 | RF-17 | P1 | Certify the loop the pipeline runs | new SBOuterLoop.lean; Certificates (C11 slot); companion iterative.py:1561-1634, 2444-2551 | No spec theorem covers the 0.5-damped Gauss–Seidel with an IP-shifted SB graph and sb_offset. The gain closed form matched to 5 decimals (re-run). g = 1.158 drifts. The 100 K stop at g = 0.964 leaves about 5.6 kK linearized distance. | FT-01, as revised. | L | KEEP |
 | RF-18 | P1 | Log-derivative Lipschitz constants | PartitionLipschitz.lean; SahaStability.lean:500-559; NoiseToComposition.lean:106; AtomicDataPerturbation.lean:474; DifferentialEstimator | The exp ≤ 1 constants overshoot. Re-run: the tight S bound is 2.76–4.34× the true value (max-E variant 5.8–9.8×); the Fe U channel is 83.1 against 0.0402. | FT-15. Add new `_tight` theorems and leave the old statements untouched, with no le_trans re-derivation. | L | REVISE |
 | RF-19 | P1 | IPD and level-cutoff layer | new IonizationDepression.lean; Boltzmann.lean; AtomicDataPerturbation δ_U; spec 03 §1 S9/S10; companion partition.py, saha_boltzmann.py, pipeline.py:375 | IPD is modeled nowhere. Forward-on/inverse-off gives an n_e bias of exactly e^(−Δχ/kT); the 0.9358 figure is a consistency check. A sharp n_e-dependent cutoff makes U discontinuous (re-run: Ca I 178 crossings, 21.0%; Ti I 0; Fe I 3; single jumps ≤ 1.42%). | FT-02, FT-05 and FT-11 S10. Handle the jumps through δ_U (Lipschitz plus a bounded jump) rather than calling the hypotheses unsatisfiable. | L | KEEP |
-| RF-20 | P1 | C8 on error bars, TS-01 refusal, numbering | StarkBroadening.lean:169-207; StarkOpacityGuard.lean:180-190; Certificates (C8 slot); spec 03:281-282; G2 TS-09 | C8's source theorem needs exact equality. C8 and C11 are absent. Numbering conflicts: spec 03 says "do not back-fill" while G2 says "fill C8/C11 first". The Saha consistency check is trivially satisfied on the sb_offset route. | FT-06 (revised) plus FT-03(e). The owner decides numbering in the spec D-table and in LEAN_CERTIFICATE_DEFS. `_resolve_ne` keeps both sources. | M | KEEP |
+| RF-20 | P1 | C8 on error bars, [backlog-id] refusal, numbering | StarkBroadening.lean:169-207; StarkOpacityGuard.lean:180-190; Certificates (C8 slot); spec 03:281-282; [backlog-id] | C8's source theorem needs exact equality. C8 and C11 are absent. Numbering conflicts: spec 03 says "do not back-fill" while G2 says "fill C8/C11 first". The Saha consistency check is trivially satisfied on the sb_offset route. | FT-06 (revised) plus FT-03(e). The owner decides numbering in the spec D-table and in LEAN_CERTIFICATE_DEFS. `_resolve_ne` keeps both sources. | M | KEEP |
 | RF-21 | P1 | Weighted (Aitken) BLUE | Alt/GaussMarkov.lean; Alt/OLSVariance.lean; FisherLineSelection.lean; new WeightedLeastSquares.lean | No WLS object exists. The pipeline's plane fit is inverse-variance weighted. OLS variance goes from 2 to 2500.25 when a σ = 100 line is added. | FT-10. | M | KEEP |
 | RF-22 | P1 | C4 soundness against what the gate measures | Certificates.lean:151-165; Alt/StochasticBudget.lean:574-578; ErrorBudget; HeteroAtomicData; companion certificate_gate.py:81-83, 385-387; error_budget.py:127-172; strict.py:212-245 | ε = 1/min SNR is a 1σ scale. The exact-atomic-data premise is implicit, while the pipeline treats gA as variance. The span→SS_E conversion nR²/12 is not conservative for n > 6; the minimum is R²/2. | FT-12 C4σ; a noise-plus-atomic composite; ssE_ge_half_span_sq; a C4∧C5 composite. The companion gates on SS_E. | M | KEEP |
 | RF-23 | P1 | Composition theorems in the scored geometry | Closure.lean; CompositionRobustness.lean; Aitchison*.lean; MatrixEffects.lean:25, 131; companion scoreboard.py, closure.py:898-960, strict.py:253-285 | Only absolute number-fraction bounds exist, while scoring is in wt% and Aitchison. The default oxide closure is off-simplex (sum 0.667, PLAUSIBLE). clr maps zeros silently via log 0 = 0. "Mass fraction" is used for number shares. | FT-07 plus FT-03 (a)–(d). A positivity warning on aitchisonDist. An oxide caveat. Mole wording. | M | KEEP |
 | RF-25 | P1 | Oracle provenance and pipeline-executing tests | oracle/fixtures.json; companion tests/oracle/*, tests/data/*, test_forward_saha_conformance.py:34, 170-174; test_oracle_regression.py:89 | Three hand-copied vendored subsets with different hashes, one of them stale. The Saha check is inline and contains a tautology. The partition test uses ip_ev = 1e9. A11's IPD regression test does not exist. Coverage is 16/81 modules (PLAUSIBLE). | Stamp only the sha256 of Generate.lean; stamping the git commit would break the CI diff. Keep one vendored copy with a hash sync-check. Add a pure saha_factor pinned at non-unit constants, an IPD golden as xfail(strict=True), and a cutoff fixture. Drop the tautology. Consume the energy-ordinate scenario. Widen the must-pass set. | M | REVISE |
-| RF-24 | P1, after RF-16/17/18 | Energy-affine gA gauge | HeteroAtomicData.lean:211, 251; OLS.lean | The W3-C gauges do not fix the E-linear gA direction, which is degenerate with 1/kT. Item (4) duplicates RF-14(d). | FT-09 (revised); drop (4). | M | REVISE |
+| RF-24 | P1, after RF-16/17/18 | Energy-affine gA gauge | HeteroAtomicData.lean:211, 251; OLS.lean | The [backlog-id] gauges do not fix the E-linear gA direction, which is degenerate with 1/kT. Item (4) duplicates RF-14(d). | FT-09 (revised); drop (4). | M | REVISE |
 | RF-15c | P2 | Prove the Gaussian quadrature rule | LineBroadening.lean:26-27, 93-98 | Called "exact … asserted", yet provable from gaussianReal_conv_gaussianReal. | Land gaussFWHM_conv and gaussianPDFReal_halfMax (axiom-clean in scratch). Change "asserted" to "proved". | S | REVISE (split) |
 | RF-26 | P2 | Frontier dossiers and dev-spec fixes | ROADMAP.md:147, 187; 03:191; 11:476-490; 12; dossier headers; spec 02 §4, 03 §2-3 and §6, 06 Phases 0/3/6 | Refusals rest on false mathlib-absence claims: convexOn_zpow and iIndepFun.hasGaussianLaw exist. Stamps say v4.31.0, pin is v4.33.1. Frontier-12 wiring claims are stale. ROADMAP says not to use ContractingWith, but the code does. Phase 6 needs the K8 gain that Phase 3 refuses. Scenario 7(b) needs erf, which is absent. The Phase-0 table is stale. | Retract the refusals (FT-17, FT-12(b)). Restamp. Put the U-04 ledger into frontier 12. Add K8 Varah (FT-16) after citation-integrity. Use Lorentzian lines for 7(b) via Float.atan. Add voigtMeasure. Phase 0: F02 verified, F07 failed. | M | KEEP |
 | RF-27 | P2 | ScopeCheck v2 and EXACT semantics | tools/ScopeCheck.lean; gen_docs.py; stats.sh:21; check-scope-consistency.sh; mutate-check.sh; conventions.md §7; CI | Tags attach to theorems while reductions live in defs: 45 EXACT over the REDUCED lineIntensity, 13 via boltzmann_plot_intensity, 18 over approximation models (counts PLAUSIBLE). "Sum to one" carries four tags. ScopeCheck has no REDUCED rank. stats.sh counts a docstring. Vacuity checking is absent. mutate, prereg and citation checks run outside CI. | The owner decides "EXACT relative to the model" versus "EXACT = faithful". Then: def rows; statement-level monotonicity with an allowlist; ALIAS/WITNESS tags; kernel-environment hygiene; CI gates. | L | KEEP |
@@ -146,7 +146,7 @@ P0 items come first. Effort: S < 1 day, M a few days, L a week or more. Every ve
 
 **F1 (scoring truth: Aitchison primary loss on the cation panel, declared basis).**
 - *Spec provides:* `Aitchison.clr`, `clr_sum_zero`, `AitchisonIsometry.aitchisonDist`, `ilr_isometry`, `Closure.composition_smul_invariant`, `MatrixEffects.recoveredComposition_ratio_matrix_invariant`, `Alt.NeutralityScale.closureEstimate_bias`. None of these is used by the scorer.
-- *Pipeline must adopt:* strict positivity before clr (Lean uses log 0 = 0), with zero replacement declared. The oracle stays on the mole basis (A5). The oxide closure must return a simplex plus a reporting transform (BL-36; SPC-06 found sum 0.667, PLAUSIBLE). Do not cite the absolute composition bounds for trace elements.
+- *Pipeline must adopt:* strict positivity before clr (Lean uses log 0 = 0), with zero replacement declared. The oracle stays on the mole basis (A5). The oxide closure must return a simplex plus a reporting transform ([backlog-id]; SPC-06 found sum 0.667, PLAUSIBLE). Do not cite the absolute composition bounds for trace elements.
 - *Spec must add:* FT-07 (clr_mul, perturbation and scale invariance, aliasing = ‖clr ρ‖, relative closure bound, mass-fraction transfer) and RF-23.
 
 **F7 (DED gate: noise attribution, CRLB, fixed-point gain).**
@@ -156,10 +156,10 @@ P0 items come first. Effort: S < 1 day, M a few days, L a week or more. Every ve
 
 **F8 (answer contract: `answered = produced ∧ converged ∧ abstention_policy`).**
 - *Spec provides:* soundness re-exports for C1–C7, C9, C10 and C12–C14; `EvaluatorSoundness.hardGateBundle_*` (vacuous at realistic parameters); ConformalCoverage (counting only).
-- *Pipeline must adopt:* none of the following may drive `answered`: C1–C3 (wrong design, SPC-01/INV-04), C12 (vacuous), C4 fed ε = 1/min SNR (a 1σ scale), C7 (circular), C10 (wrong loop). Every `reasons` entry should name a theorem: the C8 refusal, or TS-01 non-informativeness.
+- *Pipeline must adopt:* none of the following may drive `answered`: C1–C3 (wrong design, SPC-01/INV-04), C12 (vacuous), C4 fed ε = 1/min SNR (a 1σ scale), C7 (circular), C10 (wrong loop). Every `reasons` entry should name a theorem: the C8 refusal, or [backlog-id] non-informativeness.
 - *Spec must add:* FT-03's three-branch policy with group weights matching PAS; the FT-06 refusal; FT-04's C1g/C2g; FT-12's C4σ.
 
-**W2-A (line-based science; owns the trust stack; BL-25/32/33/34/35/36).**
+**W2-A (line-based science; owns the trust stack; [backlog-id]/32/33/34/35/36).**
 - *Spec provides:*
   - `OLS.*`, `OLSIdentifiability`, `ErrorBudget`, and `OLS.jointDesign_det_pos_iff` (single-intercept only).
   - `SahaInverse.sahaBoltzmann_shift_eq_log_saha` (live and faithful).
@@ -179,7 +179,7 @@ P0 items come first. Effort: S < 1 day, M a few days, L a week or more. Every ve
 - *Pipeline must adopt:* a gA grade becomes a δ_k bias bound, not variance (HeteroAtomicData:94-97). C12 leaves the HARD set. C4's ε is either labelled 1σ or replaced by C4σ. Level lists are delivered truncated at or below the χ_eff used in the exponent, since the raw DB violates hEχ for 202 of 324 species.
 - *Spec must add:* the RF-22 noise-plus-atomic composite; FT-09; FT-15 (to feed δ_U); FT-07's relative aliasing bound.
 
-**W2-S3 / W3-A (M4 PopulationContext; forward physics; BL-40…44).**
+**W2-S3 / [backlog-id] (M4 PopulationContext; forward physics; [backlog-id]…44).**
 - *Spec provides:* the 41 Tier-1 rows (e.g. `Saha.saha_relation`, `SahaStability.sahaFactor_strictMonoOn_temp`, `SahaRangeEnclosure.electronDensityFromRatio_mem_Icc`, `PartitionLipschitz.partitionFunction_lipschitz_temp`), plus StarkShift, OpticalDepth, RadiativeTransferDepth and EquivalentWidth.
 - *Pipeline must adopt:*
   - A per-stage (χ_eff, level list ⊆ {E ≤ χ_eff}) pair, identical in forward and inverse.
@@ -187,7 +187,7 @@ P0 items come first. Effort: S < 1 day, M a few days, L a week or more. Every ve
   - A 2Δχ edge for stage III (FT-11 S10).
   - For contraction theorems to apply, the cutoff policy must be one of: n_e-independent, frozen inside the inner loop, or continuous occupation weights. A sharp n_e-dependent cutoff is incompatible.
   - McWhirter inputs in cm⁻³, K and eV.
-  - BL-44: a Kirchhoff-consistent opacity and transfer before the instrument.
+  - [backlog-id]: a Kirchhoff-consistent opacity and transfer before the instrument.
 - *Spec must add:* FT-02, FT-05, FT-11, FT-14, FT-15; the RF-10 doc fix.
 
 **M5 (one PopulationContext plus one emission/profile kernel; A11 "Tier 1b after M5").**
@@ -204,23 +204,23 @@ P0 items come first. Effort: S < 1 day, M a few days, L a week or more. Every ve
 - *Pipeline must adopt:* W1-S6's pure `step(block, state)` is the object FT-01 certifies. The iteration trace should record g, the residual and the exit reason.
 - *Spec must add:* FT-01, FT-04, FT-08(a); a per-element-F OPC theorem before any DifferentialEstimator↔opc.py pairing.
 
-**W3-B (self-absorption; owns csigma.py).**
+**[backlog-id] (self-absorption; owns csigma.py).**
 - *Spec provides:* `CurveOfGrowth.cogRatio_injOn`, `DoubletChannel.doubletRatio_injOn`, `SelfAbsorptionInverse.*`, `OpticalDepthBridge.boundOpticalDepth_lumped_alias`, and C13. All of these assume the flat kernel.
 - *Pipeline must adopt:*
   - csigma.py has no Lean twin.
   - C13's inputs are opacity coefficients.
-  - The per-line τ ratio keeps both e^(−ΔE_l/kT) (R3-05) and the (1 − e^(−hν/kT)) factor (FT-14 revised).
-  - For Stark-broadened lines (γ/σ ≳ 0.1) the pair ratio has a second branch within a band under 1%, so the W3-B gate needs a conditioning check or a third observable.
+  - The per-line τ ratio keeps both e^(−ΔE_l/kT) ([backlog-id]) and the (1 − e^(−hν/kT)) factor (FT-14 revised).
+  - For Stark-broadened lines (γ/σ ≳ 0.1) the pair ratio has a second branch within a band under 1%, so the [backlog-id] gate needs a conditioning check or a third observable.
 - *Spec must add:* FT-13, FT-20, FT-18, FT-14(iv).
 
-**W3-C (calibration layer).**
+**[backlog-id] (calibration layer).**
 - *Spec provides:* `HeteroAtomicData.olsSlope_aliasing_A` (EXACT), `Classic.classic_calibration_free`, the AtomicDataPerturbation aliasing results, InhomogeneityBias.
 - *Pipeline must adopt:* add the E-linear gA direction to the gauge, or report its posterior correlation with T. Identifying that direction needs an independent n_e or known composition. Require b < min_i 1/(kB·T_i). A T-independent gA factor cannot absorb a cutoff-policy change (FT-05(iii)).
 - *Spec must add:* FT-09 (revised), FT-05, FT-15.
 
-**W3-E (DED ratio drift; the owner's Al/Ti and V/Ti metric).**
+**[backlog-id] (DED ratio drift; the owner's Al/Ti and V/Ti metric).**
 - *Spec provides:* the MatrixEffects homologous-pair results (shared U, Boltzmann only); DifferentialEstimator; `TemporalEvolution.temporal_temperature_insitu`; `Alt.NeutralityScale`. NeutralityScale addresses the absolute Fcal, is orthogonal to ratio mode, and its Abbass citation is off the whitelist.
-- *Pipeline must adopt:* do not cite NeutralityScale or the shared-U invariance for BL-48. The rule of matching pairs on |ΔE_k − ΔIP| nulls first-order T-sensitivity only when both observed stages are minority stages and the ion-stage mean excitation energies match. Otherwise select pairs on the full first-order coefficient.
+- *Pipeline must adopt:* do not cite NeutralityScale or the shared-U invariance for [backlog-id]. The rule of matching pairs on |ΔE_k − ΔIP| nulls first-order T-sensitivity only when both observed stages are minority stages and the ion-stage mean excitation energies match. Otherwise select pairs on the full first-order coefficient.
 - *Spec must add:* FT-08, the FT-10(c) intercept-difference floor, and FT-07.
 
 ---
@@ -296,7 +296,7 @@ theorem single_group_gain {b D W : ℝ} (hb : 0 < b) (hW : 0 < W) : b * D ^ 2 / 
   8. `dampedMap_repelling`.
   9. `single_group_gain`.
   10. Physics binding in three steps: SB slope affine in ln S; ln S affine in u via fixed-slope intercepts; composition. This step needs a Mode B statement audit first.
-- **Consumers.** BL-25 and BL-06 (critical; exit reason and abstention), BL-35/R9-02, BL-49, F7 `ded_fixed_point_gain.py`, the G2 TS-09 C11 slot, and the W1-S6 `step()`.
+- **Consumers.** [backlog-id] and [backlog-id] (critical; exit reason and abstention), [backlog-id]/[backlog-id], [backlog-id], F7 `ded_fixed_point_gain.py`, the [backlog-id] C11 slot, and the W1-S6 `step()`.
 - **Verifier revisions.**
   - The u-damped lemmas are relabelled as a model: the pipeline damps T.
   - The global window is false for T-damping (at g = −1 the iterate goes negative).
@@ -315,7 +315,7 @@ theorem single_group_gain {b D W : ℝ} (hb : 0 < b) (hW : 0 < W) : b * D ^ 2 / 
 - Stark or injected n_e is biased by exactly e^(Δχ/kT).
 - In ℓ = ln n_e, with Δχ = kT·b·√n_e, the IPD-aware inverse is the fixed point of F(ℓ) = ln a + b·e^(ℓ/2). There is at most one root with q = Δχ/(2kT) < 1. F contracts on invariant half-lines, and d ln n_e/d ln R lies in [1, 1/(1−q)] as a two-point bracket.
 - Numbers at 1e17 cm⁻³ and 11 kK: Δχ = 0.0629 eV, q = 0.0332, q³ ≈ 3.7e-5 (jitpipe's three inner steps); the fold sits near 9.08e19 cm⁻³.
-- The 0.9358 reproduction of R1-07 is a consistency check, because its Debye–Hückel anchor was fitted to R1-07.
+- The 0.9358 reproduction of [backlog-id] is a consistency check, because its Debye–Hückel anchor was fitted to [backlog-id].
 
 ```lean
 theorem sahaFactor_ipd_gauge (kB T me h chi d : ℝ) (gZ EZ : ι → ℝ) (gZ1 EZ1 : κ → ℝ) :
@@ -357,7 +357,7 @@ theorem ipdInverse_twoPoint_sensitivity {a1 a2 b l1 l2 q : ℝ} (ha1 : 0 < a1) (
   6. Root subsingleton, via strictMonoOn of ℓ − F.
   7. Two-point sensitivity.
   8. Physics binding with a = S(χ)/R.
-- **Consumers.** BL-42 (bead 3n4a), R1-07, the A11 IPD regression test (RF-25), the m4 doc (RF-10), jitpipe/solve.py:842-866, BL-34.
+- **Consumers.** [backlog-id] (bead 3n4a), [backlog-id], the A11 IPD regression test (RF-25), the m4 doc (RF-10), jitpipe/solve.py:842-866, [backlog-id].
 - **Verifier revisions.**
   - The `composition_smul_invariant` mechanism was wrong and is replaced by `sahaRatio_ipd_gauge`.
   - The sensitivity lemma was false without `0 < a1` and `0 ≤ b`.
@@ -373,7 +373,7 @@ theorem ipdInverse_twoPoint_sensitivity {a1 a2 b l1 l2 q : ℝ} (ha1 : 0 < a1) (
 **Statement.** Take per-spectrum losses ℓ_i with certified bounds L_i ≤ ℓ_i ≤ U_i, group weights w_i > 0 (PAS is a grouped mean, objective-and-splits.md:11), and the ambiguous set A = {L_i ≤ λ < U_i}. The three-branch policy answers if U_i ≤ λ, refuses if L_i > λ, and makes an explicit choice on A.
 - Off A, each item costs at most min(ℓ_i, λ), the oracle cost.
 - Refusing on A gives PAS ≤ (Σw)·λ and regret ≤ Σ_A w_i (λ − L_i).
-- Answering on A gives gate value G = PAS_forced − PAS_gated ≥ 0 (SC-04).
+- Answering on A gives gate value G = PAS_forced − PAS_gated ≥ 0 ([backlog-id]).
 - The two guarantees conflict on A, so the policy must expose the choice.
 - Loss certificate: d_A(Ĉ, C) ≤ ‖e − c·1‖₂ for every c, with e_s = ln(N̂_s/N_s).
 - Refusal-reason soundness: on sb_offset, the Saha-consistency residual is identically 0.
@@ -417,7 +417,7 @@ theorem sahaTemperature_eq_fit (hinj : Set.InjOn (fun T => sahaFactor kB T me h 
   5. `aitchisonDist_le_logErr`.
   6. `sahaTemperature_eq_fit`.
   7. Bundled `answerPolicy` soundness.
-- **Consumers.** BL-02 (critical), F8 `abstention_policy`, G1 SC-03/SC-04/SC-05, G2 TS-01 (critical) and TS-02, BL-01.
+- **Consumers.** [backlog-id] (critical), F8 `abstention_policy`, [backlog-id]/[backlog-id]/[backlog-id], [backlog-id] (critical) and [backlog-id], [backlog-id].
 - **Verifier revisions.** A single policy with both guarantees is contradictory on A; Lean witnesses showed both failure directions. The fix is a three-branch policy with group weights. Part (e) is retagged PURE-MATH, and its docstring must name the mismatches it does not cover: weighted vs unweighted intercepts, raw vs IPD IP.
 - **Literature.** Aitchison 1986 (whitelisted). PAS is the companion's own definition.
 
@@ -473,7 +473,7 @@ def groupedJointRankCert (grp : ι → κ) (w x s : ι → ℝ) : Prop :=
   9. `feJoint_identifiable_iff` (grade B).
   10. The counterexample.
   11. C1g/C2g soundness.
-- **Consumers.** certificates_wiring C1/C2/C3, BL-35/R2-07, BL-36/R2-09, FT-01.
+- **Consumers.** certificates_wiring C1/C2/C3, [backlog-id]/[backlog-id], [backlog-id]/[backlog-id], FT-01.
 - **Verifier.** Refutation attempts failed and novelty is confirmed. The only notes: grade the joint theorem B, and require evaluation on the kept lines.
 - **Literature.** Aguilera & Aragón 2007 and Aitken 1935 (both whitelisted).
 
@@ -522,9 +522,9 @@ theorem sharpCutoff_discontinuous : ∃ (g E : Fin 2 → ℝ) (Δχ : ℝ → �
   6. `population_cut_consistent`.
   7. Fin-2 witness.
   8. Doc rewording of hEχ (in RF-10).
-- **Consumers.** BL-41 (critical), R1-02 (critical), R1-03, R1-10, BL-47, M4 LevelCutoffPolicy.
+- **Consumers.** [backlog-id] (critical), [backlog-id] (critical), [backlog-id], [backlog-id], [backlog-id], M4 LevelCutoffPolicy.
 - **Verifier revisions.** (iii) as `¬∀T` was too weak and is now an injOn statement. (iv) as literally worded was false and is now precise. (v) as "only continuous policies" overclaimed.
-- **Literature.** Griem 1997 (whitelisted). Hummer & Mihalas 1988 is cited only via R1-02 and is unverified. Mihalas 1978 is UNVERIFIED and must not be cited.
+- **Literature.** Griem 1997 (whitelisted). Hummer & Mihalas 1988 is cited only via [backlog-id] and is unverified. Mihalas 1978 is UNVERIFIED and must not be cited.
 
 ### FT-06: Missing runtime certificates: C8 on error bars, a sound refusal, C10 without an unknown fixed point
 *Verdict: REVISE. Grade A.*
@@ -568,7 +568,7 @@ theorem dampedIter_certificate_sound_closed [Nonempty ι] (S Ntot : ι → ℝ) 
   4. C10 re-export.
   5. Docstrings and tags.
   6. Float mirror with ≤-vs-< boundary fixtures.
-- **Consumers.** G2 TS-09 (C8 slot), TS-01 and TS-02, BL-34, F8 reasons. `_resolve_ne` must keep both sources, since today it returns the first one.
+- **Consumers.** [backlog-id] (C8 slot), [backlog-id] and [backlog-id], [backlog-id], F8 reasons. `_resolve_ne` must keep both sources, since today it returns the first one.
 - **Verifier revisions.**
   - "Two-diagnostic soundness" overclaimed; soundness uses one diagnostic.
   - `stark_bracket_rho` is now fully written out.
@@ -613,7 +613,7 @@ theorem massFraction_rel_error (hM : ∀ s, 0 < M s) … -- composition (M ⊙ N
   5. `classicComposition_atomicData_error_rel`.
   6. Mass-fraction transfer.
   7. Additive-amplification witness.
-- **Consumers.** BL-01 (critical), BL-05, A5, BL-36 oxide closure, a relative C6, M8 flags, the W3-C gauge, FT-03's U_i.
+- **Consumers.** [backlog-id] (critical), [backlog-id], A5, [backlog-id] oxide closure, a relative C6, M8 flags, the [backlog-id] gauge, FT-03's U_i.
 - **Verifier notes.** Basis invariance holds only for components that were not zero-replaced (δ_k = 0.65·DL_k replacement).
 - **Literature.** Aitchison 1986 and Tognoni 2010 (whitelisted). Gornushkin & Völker 2022 (Sensors 22:7149) and Völker & Gornushkin 2024 (JAAS) were retrieved by the literature auditor; they are off the whitelist, to be cited only after whitelisting.
 
@@ -655,7 +655,7 @@ theorem ratioEstimate_error_le (hbox : ∀ b ∈ Set.Icc β1 β2, |coef b| ≤ L
   6. Matched-ionized algebra.
   7. MVT bound.
   8. Total-derivative variant.
-- **Consumers.** BL-48/W3-E, R2-08, R6-08, R11-05, bead 0i64.4.
+- **Consumers.** [backlog-id]/[backlog-id], [backlog-id], [backlog-id], [backlog-id], bead 0i64.4.
 - **Verifier notes.** (a) is PURE-MATH. It must use `lineIntensityPerU`, or drop the per-species claim. Do not cite NeutralityScale/Abbass until Abbass is whitelisted.
 - **Literature.** Aguilera & Aragón 2007, Tognoni 2010 and Griem 1997 (whitelisted).
 
@@ -685,7 +685,7 @@ theorem affine_gauge_composition_leak … -- via FT-15 at T' vs T
   2. Observational equivalence.
   3. Grouped/two-stage version.
   4. Leakage bound, after FT-15.
-- **Consumers.** BL-47/W3-C, BL-26, C2 campaign, and the overhaul design risk that the layer absorbs misspecification.
+- **Consumers.** [backlog-id]/[backlog-id], [backlog-id], C2 campaign, and the overhaul design risk that the layer absorbs misspecification.
 - **Verifier revisions.** The slope lemma is not new. `hb` was missing. The multi-stage caveat was misdirected: on sb_offset the offset is gauge-invariant (PLAUSIBLE, derived by hand).
 - **Literature.** Tognoni 2010 and Ciucci 1999 (whitelisted).
 
@@ -727,7 +727,7 @@ theorem interceptDiff_variance_eq … -- σ² · (1/na + 1/nb + (mean Ea − mea
   6. Intercept-difference gain.
   7. Its variance over a Sum index.
   8. d̂ BLUE.
-- **Consumers.** BL-33, BL-32, R2-02, R2-03, BL-07/F7 budget, BL-48, R6 pair selection.
+- **Consumers.** [backlog-id], [backlog-id], [backlog-id], [backlog-id], [backlog-id]/F7 budget, [backlog-id], R6 pair selection.
 - **Verifier notes.** FisherLineSelection already scopes "adding a line never hurts" to homoscedastic noise, so the example turns a documented limit into a theorem. Retag `ols_is_blue`. No new name may contain "crlb".
 - **Literature.** Aitken 1935 and Tognoni 2010 (whitelisted). Cramér 1946 and Rao 1945 appear as prose lineage only.
 
@@ -771,14 +771,14 @@ theorem speciesCharge_ipd_strictAntiOn (hZ : 1 ≤ Z) (hN : 0 < Ntot) (hS : ∀ 
 - **Scope.** S1–S8 PURE-MATH. S9 EXACT for n_e-independent χ. S10 REDUCED: Debye–Hückel-type lowering, frozen level lists, ion-charge dependence of λ_D ignored.
 - **Hypotheses.** `[Nonempty κ]` (for empty κ the map is 0). `hpos` for S8. S9 needs dependent level types ι : ℕ → Type, because padding with g = 0 breaks `partitionFunction_pos`. Fix that design choice in the pre-registration.
 - **Queue decomposition.** S1, S2, S4, S7 (done), `mean_strictAnti_of_ratio` (split into a double-sum identity and a termwise sign), S3, S5 by the IVT, S6, S8, S9 binding, S10 via the generic lemma.
-- **Consumers.** BL-42 (2Δχ stage-III edge), R1-07, R1-09, R1-03, BL-36 stage ≥ 3 guard, BL-44, spec Phase 1 (P0).
+- **Consumers.** [backlog-id] (2Δχ stage-III edge), [backlog-id], [backlog-id], [backlog-id], [backlog-id] stage ≥ 3 guard, [backlog-id], spec Phase 1 (P0).
 - **Verifier revisions.**
   - The S8 sketch was false without `hpos`; a Lean witness exists.
   - The S10 "iff" was false; there is a numeric counterexample.
   - "S9 needs S10" overclaimed.
   - Novelty is limited to S10 and the S9 retag. S1–S9 are already specified.
   - The slate's "elaborates" header was only partly true, since S8 was never type-checked.
-- **Literature.** Griem 1997 (whitelisted). The (z+1) edge scaling is cited only via BL-42.
+- **Literature.** Griem 1997 (whitelisted). The (z+1) edge scaling is cited only via [backlog-id].
 
 ### FT-12: Statistical slope certificate C4σ, and the exact Gaussian law of β̂
 *Verdict: REVISE. Grade A for (a), B for (b).*
@@ -815,7 +815,7 @@ theorem betaHat_map_eq_gaussianReal [Nonempty ι] (E) (α β) (ε) (σ : ι → 
   5. Heteroscedastic β̂ law.
   6. Exact coverage.
   7. Float mirror.
-- **Consumers.** certificate_gate C4 HARD, G2 TS-08, BL-35, BL-36 coverage.
+- **Consumers.** certificate_gate C4 HARD, [backlog-id], [backlog-id], [backlog-id] coverage.
 - **Verifier revisions.** Drop `hc`. Make (b) heteroscedastic. Tag the binding APPROXIMATION. The interval is exact only for known σ_k. "Gauss–Markov suffices" needs joint Gaussianity.
 
 ### FT-13: Profile escape factor ≥ slab SA; ½-Lipschitz log escape; τ-error propagation
@@ -852,7 +852,7 @@ theorem tauError_propagation (hI : 0 < Ithin) (hmeas : Imeas = Ithin * escapeFac
   5. (b) by MVT plus continuity at 0.
   6. (c) pointwise ψ·SA(τψ) plus `integral_mono`.
   7. Propagation.
-- **Consumers.** C12 replacement (RF-04), BL-44, BL-45, W3-B gate, R3-05, R1-04 NR-5.
+- **Consumers.** C12 replacement (RF-04), [backlog-id], [backlog-id], [backlog-id] gate, [backlog-id], [backlog-id] [backlog-id].
 - **Verifier revisions.** `robustTauCert` was as vacuous as C12 and is replaced by an error-propagation lemma with a REFUSAL note. (c) no longer puts the slab SA on the measured side.
 - **Literature.** Gornushkin 1999 and Bulajic 2002 (whitelisted).
 
@@ -895,7 +895,7 @@ theorem equivWidth_le_conv {R φ : ℝ → ℝ} {τ : ℝ} (hR : ∀ x, 0 ≤ R 
   6. Pointwise Jensen via `ConcaveOn.le_map_integral`.
   7. Fubini integration.
   8. Strict version.
-- **Consumers.** BL-44, R1-04, R3-05, BL-45 acceptance identity, M5/Tier 1b replacement, the spec 03 §3 K-series deferral.
+- **Consumers.** [backlog-id], [backlog-id], [backlog-id], [backlog-id] acceptance identity, M5/Tier 1b replacement, the spec 03 §3 K-series deferral.
 - **Verifier revisions.**
   - (i) is regraded to A.
   - (iv) omitted the stimulated factor and was internally inconsistent.
@@ -931,14 +931,14 @@ theorem tempResponseErrorBoundOfGap_tight … -- NEW; existing theorems left unt
 - **Scope.** PURE-MATH. REDUCED when bound to data, which requires the literal-sum U over a truncated list (FT-05).
 - **Hypotheses.** hEχ, read as a cutoff obligation, is sufficient but not necessary. It gives χ − ⟨E⟩_I ≥ 0.
 - **Queue decomposition.** HasDerivAt of U in β; d ln U = −⟨E⟩; d⟨E⟩ = −Var; Var ≥ 0 by Cauchy–Schwarz; monotonicity; ln U Lipschitz; thermal-bracket derivative; ln S Lipschitz; `_tight` substitution. Steps 1–4 are the first batch. A max-E variant (derivative-free, 5.8–9.8× tight) is milestone 0.
-- **Consumers.** EvaluatorSoundness envelope (RF-12), BL-07/F7, the certificate_gate HARD set, FT-08, FT-09, FT-01 physical gains.
+- **Consumers.** EvaluatorSoundness envelope (RF-12), [backlog-id]/F7, the certificate_gate HARD set, FT-08, FT-09, FT-01 physical gains.
 - **Verifier.** Keep. Optionally evaluate ⟨E⟩ at max(T1, T2).
 
 ### FT-16: Extraction under profile misspecification, and the Varah ℓ∞ gain (spec K8)
 *Verdict: KEEP. Grade A.*
 
 **Statement.**
-- Î − I = (KᵀK)⁻¹Kᵀ(K_true − K)I + (KᵀK)⁻¹Kᵀη exactly. The bias vanishes for the oracle extractor, which is built at the true state (R3-01).
+- Î − I = (KᵀK)⁻¹Kᵀ(K_true − K)I + (KᵀK)⁻¹Kᵀη exactly. The bias vanishes for the oracle extractor, which is built at the true state ([backlog-id]).
 - If KᵀK is strictly row-diagonally dominant with margin δ, then ‖Î − I‖∞ ≤ ‖Kᵀ((K_true − K)I + η)‖∞/δ.
 - The numerator is an assumed input. Only the margin δ is runtime-checkable (C16′ ⇒ C16).
 
@@ -960,7 +960,7 @@ def kernelMarginCert (K : Matrix P L ℝ) (δ : ℝ) : Prop :=
 
 - **Scope.** PURE-MATH. REDUCED physics: optically thin, additive lines, K fixed per step.
 - **Queue decomposition.** Bias identity and Varah: done. Then the error bound, margin soundness (via `det_ne_zero_of_sum_row_lt_diag`), the ordinate corollary, and composition with `noise_to_composition` after FT-15.
-- **Consumers.** BL-28, BL-27, BL-29, BL-31, R3-01, the spec Phase 6 entry (RF-26), BL-49.
+- **Consumers.** [backlog-id], [backlog-id], [backlog-id], [backlog-id], [backlog-id], the spec Phase 6 entry (RF-26), [backlog-id].
 - **Literature.** Varah, Linear Algebra Appl. 11 (1975) 3–5, retrieved by web search and not whitelisted; it goes through citation-integrity first. Cremers & Radziemski 2013 and Griem 1974 (whitelisted). The result depends on SpectrometerForward (spec 03 §3) landing.
 
 ### FT-17: Newton's method on multi-element charge neutrality (reopens Frontier 03 M8)
@@ -987,7 +987,7 @@ theorem neutralityNewton_tendsto [Nonempty ι] (hS) (hN) (hx0 : 0 ≤ x0) (hfix)
 
 - **Scope.** PURE-MATH numerics. REDUCED physics: single T, LTE, singly ionized. Z-stage cascades are not covered.
 - **Queue decomposition.** Identity, ≤ root and quadratic bound: done. Then the closed form with N x > 0, r ≤ G(N x), x ≤ r ⇒ x ≤ N x, the linear rate, convergence, and a certificate wrapper that eliminates r.
-- **Consumers.** The forward closure (anderson_solver.py, saha_boltzmann.py), BL-44, the spec S8/C15 template. This is not the inverse loop (PS-12).
+- **Consumers.** The forward closure (anderson_solver.py, saha_boltzmann.py), [backlog-id], the spec S8/C15 template. This is not the inverse loop (PS-12).
 - **Verifier.** Keep. Weaken `hN` to `0 ≤ Ntot` where only the identity is used. Tightness of the quadratic constant matters only near the root.
 
 ### FT-18: Sign of the self-absorption temperature bias
@@ -1008,7 +1008,7 @@ example : ∃ (E y τ : Fin 2 → ℝ), (∀ k, 0 < τ k) ∧ StrictMono τ ∧ 
 
 - **Scope.** REDUCED: flat-profile SA, unweighted OLS, single T. It generalizes to FT-13's escape factor.
 - **Queue decomposition.** Make the private `olsSlope_add` public (Alt/OLSAtomicDataPerturbation.lean:109) rather than re-proving it; monovariance; centred covariance ≥ 0; the main theorem; the witness; the apparent-temperature lemma.
-- **Consumers.** BL-45, R11-03, R3 resonance-line selection, NR-5.
+- **Consumers.** [backlog-id], [backlog-id], R3 resonance-line selection, [backlog-id].
 - **Verifier revisions.**
   - `hanti` in its non-strict form was too strong for multiplets.
   - `apparentTemp_overestimate` was false without `hle`.
@@ -1040,7 +1040,7 @@ theorem mixed_ion_apparentBeta_le_neutral (hanchor : EupNeutral ≤ EloIon) : �
 
 - **Scope.** REDUCED: uniform n_e, two-line pairs, optically thin. The reweighting lemma is PURE-MATH.
 - **Queue decomposition.** Weighted Chebyshev double sum; reweight lemma; anchor monotonicity (done); ionReweight monotonicity; assembly.
-- **Consumers.** The pooled SB-graph slope (R9-02), G2 TS-01, M8 flags, the Cσ route.
+- **Consumers.** The pooled SB-graph slope ([backlog-id]), [backlog-id], M8 flags, the Cσ route.
 - **Verifier revisions.** The ρ = S/n_e reweighting was mis-specified: it should cancel U_II/U_I. hEχ was unnecessary. The paper is "consistent with", not proved.
 - **Literature.** Aguilera & Aragón 2007 SAB (whitelisted). The measurement itself is Aguilera & Aragón 2007, J. Phys.: Conf. Ser. 59:210 (OSTI 20916907), retrieved this session; it needs its own whitelist string.
 
@@ -1066,7 +1066,7 @@ theorem pairRatio_strictAntiOn_of_logSlope … -- sufficient direction; grade C,
 
 - **Scope.** PURE-MATH counterexample. Retag only `cogRatio_injOn` and `saDistinct_certificate_sound` from EXACT to REDUCED. `doubletRatio_injOn` is already REDUCED.
 - **Queue decomposition.** Closed form via `integral_indicator`; three enclosed values (12 exp enclosures); continuity; "continuous and injective ⇒ strictly monotone" contradiction; log-slope criterion later.
-- **Consumers.** BL-45/W3-B gate, R3-05, R3-09 (Al doublet, r ≈ 1.97), C13.
+- **Consumers.** [backlog-id]/[backlog-id] gate, [backlog-id], [backlog-id] (Al doublet, r ≈ 1.97), C13.
 - **Verifier revisions.** The Voigt claim was false at γ/σ = 0.01 inside the gate. The practical ambiguity is real but narrow. The retag list was partly stale.
 
 ---
@@ -1085,7 +1085,7 @@ theorem pairRatio_strictAntiOn_of_logSlope … -- sufficient direction; grade C,
 - EXACT semantics (RF-27): relative to the stated model, or faithful to the physics.
 - C8/C11 numbering (RF-20): back-fill or C15+.
 - Debye–Hückel coefficient model (FT-02, FT-19).
-- Level-cutoff policy for BL-41 (FT-05): n_e-independent, frozen inner loop, or continuous weights.
+- Level-cutoff policy for [backlog-id] (FT-05): n_e-independent, frozen inner loop, or continuous weights.
 - λ/ν and λ²/8π conventions (FT-14), after opening Griem 1997.
 
 **Queue now** (grade A, statements elaborate, several lemmas proved; only after RF-07):
@@ -1140,14 +1140,14 @@ Give dominated-convergence and measure targets (FT-13(a) integration step, FT-14
   - Take C12 out of HARD.
   - Label C4's ε as 1σ, or replace it with C4σ.
   - Keep C1–C3 out of HARD until C1g/C2g are mirrored.
-- **W2-S3 / W3-A.**
+- **W2-S3 / [backlog-id].**
   - Adopt the A11 amendment (per-stage (χ_eff, level list) pair contract).
   - Remove the exact-provider T clamp.
   - Use the 2Δχ stage-III edge.
   - Keep IPD/cutoff forward and inverse on one PopulationContext.
-- **W2-A / BL-36.** The oxide closure returns a simplex plus a reporting transform. Until then skip `require_simplex` in oxide mode.
+- **W2-A / [backlog-id].** The oxide closure returns a simplex plus a reporting transform. Until then skip `require_simplex` in oxide mode.
 - **Routing doc and M4 Tier 2.** csigma.py has no Lean twin. DifferentialEstimator is not opc.py's twin.
-- **W3-B.** Rename the C13 inputs as opacities. The τ ratio keeps the exp(−ΔE_l/kT) and (1 − e^(−hν/kT)) factors.
+- **[backlog-id].** Rename the C13 inputs as opacities. The τ ratio keeps the exp(−ΔE_l/kT) and (1 − e^(−hν/kT)) factors.
 - **F7.** Compute the closed-form g in `ded_fixed_point_gain.py`. Do not cite `crlb_*` as Cramér–Rao.
 
 ---

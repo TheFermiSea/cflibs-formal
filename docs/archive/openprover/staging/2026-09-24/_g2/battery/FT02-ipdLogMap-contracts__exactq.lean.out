@@ -1,0 +1,2 @@
+/tmp/g2scratch/battery/FT02-ipdLogMap-contracts__exactq.lean:56:2: error: `exact?` could not close the goal. Try `apply?` to see partial suggestions.
+rc=1

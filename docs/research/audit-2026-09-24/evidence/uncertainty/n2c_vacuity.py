@@ -4,7 +4,7 @@
 import sqlite3, math
 import numpy as np
 kB = 8.617333262e-5  # eV/K
-con = sqlite3.connect("file:/home/brian/code/CF-LIBS-improved/ASD_da/libs_production.db?mode=ro", uri=True)
+con = sqlite3.connect("file:<CF-LIBS-improved>/ASD_da/libs_production.db?mode=ro", uri=True)
 def levels(el, sp, emax=None):
     q = "select g_level, energy_ev from energy_levels where element=? and sp_num=? and g_level is not null and energy_ev is not null"
     rows = con.execute(q, (el, sp)).fetchall()

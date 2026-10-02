@@ -1,0 +1,12 @@
+/tmp/stmtfix/battery/FT03-pasPolicy-guarantees__field_simp.lean:65:62: error: unsolved goals
+N : ℕ
+w l L U : Fin N → ℝ
+lam : ℝ
+hw : ∀ (i : Fin N), 0 ≤ w i
+hL : ∀ (i : Fin N), L i ≤ l i
+hU : ∀ (i : Fin N), l i ≤ U i
+⊢ (pasPolicy w l L U lam fun x => False) ≤ (∑ i, w i) * lam ∧
+    ((pasPolicy w l L U lam fun x => False) - ∑ x, w x * min (l x) lam ≤
+        ∑ x, w x * if L x ≤ lam ∧ lam < U x then lam - L x else 0) ∧
+      (pasPolicy w l L U lam fun x => True) ≤ ∑ x, w x * l x
+rc=1

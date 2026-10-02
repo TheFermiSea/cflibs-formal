@@ -3,7 +3,7 @@
 # S in cm^-3; c = 2*pi*me*kB/h^2 in cm^-2/eV so that c^1.5 = SAHA/2.
 import sqlite3, math
 SAHA=6.03713e21; c=(SAHA/2)**(2/3)
-con=sqlite3.connect("file:/home/brian/code/CF-LIBS-improved/ASD_da/libs_production.db?mode=ro",uri=True)
+con=sqlite3.connect("file:<CF-LIBS-improved>/ASD_da/libs_production.db?mode=ro",uri=True)
 def levels(el,sp):
     ip=con.execute("select ip_ev from species_physics where element=? and sp_num=?",(el,sp)).fetchone()[0]
     rows=con.execute("select g_level,energy_ev from energy_levels where element=? and sp_num=?",(el,sp)).fetchall()

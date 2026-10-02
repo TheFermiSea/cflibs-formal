@@ -1,0 +1,2 @@
+/tmp/g2scratch/battery/FT05-cutRatio-strictMonoOn-temp__exactq.lean:54:2: error: `exact?` could not close the goal. Try `apply?` to see partial suggestions.
+rc=1

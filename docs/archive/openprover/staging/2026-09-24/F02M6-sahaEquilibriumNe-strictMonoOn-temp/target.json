@@ -1,0 +1,6 @@
+{
+  "theorem": "Plan.F02M6.sahaEquilibriumNe_strictMonoOn_temp",
+  "max_tokens": 100000,
+  "max_attempts": 2,
+  "note": "Frontier dossier 02 M6 (optional, grade B), open on main; priority 3; group g2. HAND-LAND, do not queue: a 4-line composition passes verify.py. Statement audit 2026-09-24 (M6 round): FIX, docstring only (hEchi bullet no longer mentions an IPD-lowered chi); land from staging/2026-09-24/_hand-land/F02M6-sahaEquilibriumNe-strictMonoOn-temp.proof.lean (the _g2 copy carries the pre-audit docstring). Land together with or after RF-10's rewording of M4's hEchi docstring (SahaStability.lean:762, 'physically universal')."
+}

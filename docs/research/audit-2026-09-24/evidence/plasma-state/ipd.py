@@ -1,6 +1,6 @@
 import math
 k=8.617333e-5
-def dchi(ne,T):  # electron-only Debye-Hueckel, anchored to R1-07: 0.0660 eV at 1e17 cm^-3, 1e4 K
+def dchi(ne,T):  # electron-only Debye-Hueckel, anchored to [backlog-id]: 0.0660 eV at 1e17 cm^-3, 1e4 K
     return 0.0660*math.sqrt((ne/1e17)*(1e4/T))
 for ne,T in [(1e17,11000),(1e18,12000),(8.3e18,18183),(1.2e19,19308)]:
     d=dchi(ne,T); kT=k*T; q=d/(2*kT)

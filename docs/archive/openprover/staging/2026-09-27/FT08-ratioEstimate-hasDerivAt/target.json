@@ -1,0 +1,6 @@
+{
+  "theorem": "Plan.FT08.ratioEstimate_hasDerivAt",
+  "max_tokens": 150000,
+  "max_attempts": 2,
+  "note": "frontier FT-08 (b1: ratioEstimate_hasDerivAt, total derivative with HasDerivAt lnNe, both line branches via eps; proved in scratch, proof in _hand-land/), drafted 2026-09-27, pending Mode B audit"
+}

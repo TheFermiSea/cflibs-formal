@@ -1,0 +1,2 @@
+/tmp/g2scratch/battery/FT15-meanExcitation-monotoneOn-temp__exactq.lean:47:2: error: `exact?` could not close the goal. Try `apply?` to see partial suggestions.
+rc=1

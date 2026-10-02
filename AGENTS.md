@@ -84,6 +84,9 @@ tool output.
 | `tools/` | Vendored `axiom-audit`, and the `scope-check` executable (`ScopeCheck.lean`) |
 | `upstream/` | `SahaUpstream.lean` — mathlib-only Saha seed staged for an eventual physlib PR |
 | `reviews/` | Audit archive (literature-validity, foundation) |
+| `docs/decisions.md` | The owner's decision ledger (D1–D24); cite decisions as `D<n>` |
+| `docs/research/`, `docs/integration/` | Dated research memos and audits; the M4 population-layer integration contract with CF-LIBS-improved |
+| `docs/archive/openprover/` | Scrubbed snapshot of the proof-queue records (dossiers, verdicts, parked targets) behind PRs #8/#9; a log, not a source of truth |
 
 ## Conventions
 

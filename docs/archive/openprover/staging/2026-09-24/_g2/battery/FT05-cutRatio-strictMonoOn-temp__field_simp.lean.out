@@ -1,0 +1,11 @@
+/tmp/g2scratch/battery/FT05-cutRatio-strictMonoOn-temp__field_simp.lean:53:21: error: unsolved goals
+ι : Type u_1
+inst✝ : Fintype ι
+kB cut : ℝ
+g E : ι → ℝ
+hkB : 0 < kB
+hg : ∀ (k : ι), 0 < g k
+hkeep : ∃ k, E k < cut
+hdrop : ∃ k, cut ≤ E k
+⊢ StrictMonoOn (fun T => partitionFunction kB T g E / partitionFunctionCut kB T cut g E) (Set.Ioi 0)
+rc=1

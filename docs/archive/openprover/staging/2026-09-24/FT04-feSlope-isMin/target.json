@@ -1,0 +1,6 @@
+{
+  "theorem": "Plan.FT04.feSlope_isMin",
+  "max_tokens": 300000,
+  "max_attempts": 1,
+  "note": "FT-04 item 7 (2026-09-24 audit, KEEP, grade A); g1 priority 23; PURE-MATH. Mode B statement audit 2026-09-24: fix applied, docstring only (uniqueness of the minimizing slope is no longer asserted; the theorem shows feSlope is a minimizer). A complete candidate regenerated from the corrected statement passed verify.py again: staging/2026-09-24/_g1-scratch-proofs/FT04-feSlope-isMin.lean"
+}

@@ -1,0 +1,6 @@
+{
+  "theorem": "Plan.FT02.ipdInverse_twoPoint_sensitivity",
+  "max_tokens": 200000,
+  "max_attempts": 2,
+  "note": "FT-02 item 7, verifier-restated with 0 < a1 and 0 <= b, 2026-09-24 deep audit, REVISE grade A; priority 8; group g2"
+}

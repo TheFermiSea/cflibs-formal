@@ -1,0 +1,28 @@
+/tmp/stmtfix/battery/FT06-stark-bracket-rho__aesop.lean:54:2: warning: aesop: failed to prove the goal after exhaustive search.
+/tmp/stmtfix/battery/FT06-stark-bracket-rho__aesop.lean:53:53: error: unsolved goals
+case left
+w ρw kOpac wTrue nRef neTrue widthMeas : ℝ
+hw : 0 < w
+hρ : 1 ≤ ρw
+hk : 0 < kOpac
+hnRef : 0 < nRef
+hne : 0 ≤ neTrue
+hopac : starkFWHM wTrue nRef neTrue ≤ widthMeas
+hbudget : widthMeas ≤ kOpac * starkFWHM wTrue nRef neTrue
+left : w / ρw ≤ wTrue
+right : wTrue ≤ w * ρw
+⊢ starkDensity w nRef widthMeas / (kOpac * ρw) ≤ neTrue
+
+case right
+w ρw kOpac wTrue nRef neTrue widthMeas : ℝ
+hw : 0 < w
+hρ : 1 ≤ ρw
+hk : 0 < kOpac
+hnRef : 0 < nRef
+hne : 0 ≤ neTrue
+hopac : starkFWHM wTrue nRef neTrue ≤ widthMeas
+hbudget : widthMeas ≤ kOpac * starkFWHM wTrue nRef neTrue
+left : w / ρw ≤ wTrue
+right : wTrue ≤ w * ρw
+⊢ neTrue ≤ starkDensity w nRef widthMeas * ρw
+rc=1
