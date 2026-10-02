@@ -12,6 +12,8 @@ import math
 import sys
 from pathlib import Path
 
+import numpy as np
+
 import predicates as ref
 
 
@@ -59,15 +61,27 @@ def main(argv=None):
             ok = (kb[0] < kb[1]) == e["kappa_prefers_mid"] and (fs[1] < fs[0]) == e["fisher_prefers_wide"]
             ok = ok and e["kappa_prefers_mid"] and e["fisher_prefers_wide"]
         elif kind == "t_rel_error_bound_holds":
-            ok = bool(e["holds"]) and e["realized_rel_T_error"] <= e["bound_at_T_hat"]
+            # recompute the adversarial OLS refit and the candidate's bound from the inputs
+            E = np.array(i["E_eV"])
+            y = E / (ref.KB_EV_PER_K * i["T_true_K"])
+            y_hat = y + i["eps"] * np.sign(E - E.mean())
+            beta_hat = float(np.sum((E - E.mean()) * (y_hat - y_hat.mean())) / ref.energy_spread(E))
+            t_hat = 1.0 / (ref.KB_EV_PER_K * beta_hat)
+            realized = abs(t_hat - i["T_true_K"]) / i["T_true_K"]
+            bound = P.t_rel_error_bound(i["E_eV"], i["eps"], t_hat)
+            ok = realized <= bound and close(bound, e["bound_at_T_hat"], 1e-9)
         elif kind == "mcwhirter_ok":
             ok = bool(P.mcwhirter_ok(i["T_K"], i["dE_eV"], i["ne_cm3"])) == e["ok"]
         elif kind == "stark_opacity_lte_cert":
-            ok = bool(
+            got = bool(
                 P.stark_opacity_lte_cert(i["T_K"], i["dE_eV"], i["w"], i["nRef"], i["width_meas"], i["k_opac"])
-            ) == e["ok"]
-            if "raw_mcwhirter_ok" in e and e["ok"]:
-                ok = ok and e["raw_mcwhirter_ok"]  # the tightening implication
+            )
+            ok = got == e["ok"]
+            if "stark_density" in e:
+                ne = P.stark_density(i["w"], i["nRef"], i["width_meas"])
+                raw = bool(P.mcwhirter_ok(i["T_K"], i["dE_eV"], ne))
+                ok = ok and close(ne, e["stark_density"], 1e-12) and raw == e["raw_mcwhirter_ok"]
+                ok = ok and (not got or raw)  # the tightening implication: cert => raw McWhirter
         else:
             ok = False
         bad += not ok

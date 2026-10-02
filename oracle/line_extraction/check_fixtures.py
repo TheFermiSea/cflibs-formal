@@ -35,6 +35,7 @@ def check(doc, kernel):
         return None if out is None else (float(out[0]), float(out[1]))
 
     results = []
+    pedestal_mode = {}
     for c in doc["cases"]:
         a0, a1 = run(c["base"]), run(c["transformed"])
         rel = c["relation"]
@@ -44,9 +45,13 @@ def check(doc, kernel):
                 ok, why = bool(c.get("may_refuse")), "kernel refused"
             else:
                 ok = math.isfinite(a1[1]) and a1[1] > 0.0 and math.isfinite(a1[0])
+                if not c.get("may_refuse"):
+                    ok = ok and a1[0] > 0.0  # a positive-line fixture needs a positive area
                 why = f"sigma={a1[1]}"
         elif a0 is None or a1 is None:
             ok, why = False, f"kernel refused (base={a0}, transformed={a1})"
+        elif not (a0[0] > 0.0 and a1[0] > 0.0):
+            ok, why = False, f"non-positive area on a positive-line fixture ({a0[0]}, {a1[0]})"
         elif rel.startswith("sigma_t >="):
             ok = a1[1] >= a0[1] * (1.0 - c["rtol"])
             why = f"sigma {a0[1]} -> {a1[1]}"
@@ -62,6 +67,10 @@ def check(doc, kernel):
             tol = c["atol"] + c["rtol"] * abs(a0[0])
             mode = "raw" if abs(diff - want) <= tol else "invariant" if abs(diff) <= tol else None
             ok = mode is not None
+            if ok:  # a kernel must pick ONE pedestal contract, not mix them case by case
+                if pedestal_mode.setdefault("mode", mode) != mode:
+                    ok = False
+                    mode = f"{mode} (earlier cases were {pedestal_mode['mode']})"
             why = f"shift {diff} (raw would be {want}, invariant 0) -> {mode}"
         elif rel.startswith("|area_t"):
             ok = abs(a1[0] - a0[0]) <= c["bound"] + c["atol"]
