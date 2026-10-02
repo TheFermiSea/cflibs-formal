@@ -72,7 +72,7 @@ supersedes: []
 
 ### Headline — `CflibsFormal.equivWidth_strictMonoOn` (theorem)
 
-- Lean: [`CflibsFormal/EquivalentWidth.lean:135`](../../CflibsFormal/EquivalentWidth.lean#L135)
+- Lean: [`CflibsFormal/EquivalentWidth.lean:142`](../../CflibsFormal/EquivalentWidth.lean#L142)
 - Scope: `PURE-MATH`
 - Axioms: `Classical.choice`, `Quot.sound`, `propext`
 - Used by: 0 declaration(s) in `CflibsFormal`
