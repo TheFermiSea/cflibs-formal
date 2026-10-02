@@ -13,7 +13,7 @@ summary: >
 lean:
   decl: CflibsFormal.source_eq_planck
   reviewed:
-    commit: "d070a4bebd02ab3a00bc3e0ad37250b9e3be3df8"
+    commit: "99bde30886636dd7bba16c36c78347085d3a0eae"
     statement_hash: "95f4804c43b8f95473202574fdb90fe6331657a28c03ab26e3412f98e87440cd"
     by: "draft sonnet; adversarial review opus (independent, D24); fixes sonnet"
     method: "binder-by-binder LaTeX vs catalog statement; physics reading; honest scope; CF-LIBS-improved anchors; citation roles; check_cards.py"
@@ -172,7 +172,7 @@ updated: 2026-09-28
               B0 / (Real.exp x - (1 : ℝ))
 ```
 
-Statement hash: `95f4804c43b8f95473202574fdb90fe6331657a28c03ab26e3412f98e87440cd` — **MATCH** vs `lean.reviewed.statement_hash` (reviewed at commit `d070a4bebd02ab3a00bc3e0ad37250b9e3be3df8`).
+Statement hash: `95f4804c43b8f95473202574fdb90fe6331657a28c03ab26e3412f98e87440cd` — **MATCH** vs `lean.reviewed.statement_hash` (reviewed at commit `99bde30886636dd7bba16c36c78347085d3a0eae`).
 
 <!-- END GENERATED facts -->
 

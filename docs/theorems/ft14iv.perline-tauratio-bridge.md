@@ -16,7 +16,7 @@ lean:
     - CflibsFormal.lteSourceStrength_ratio_calibration_free
     - CflibsFormal.thickLineIntensity_ratio_eq_source_mul_cogRatio
   reviewed:
-    commit: "55a02ca657cbcf4ac48ee4e38b465a5f4c4a1c82"
+    commit: "6f54b92318cb050bccfe0abc96a0c8caed0f4f8e"
     statement_hash: "84fb1d2dc382c3966d45b8e81bba48809b711b12a6e3e02d4d5569a97ee43a32"
     by: "draft qwen3.8-27b (local); adversarial review opus (independent, D24); fixes sonnet"
     method: "binder-by-binder LaTeX vs catalog statement; physics reading; honest scope; CF-LIBS-improved anchors; citation roles; check_cards.py"
@@ -108,7 +108,7 @@ supersedes: []
               (κ02 * ((1 : ℝ) - Real.exp (-x2)) * g l2 * CflibsFormal.boltzmannFactor kB T (E l2))
 ```
 
-Statement hash: `84fb1d2dc382c3966d45b8e81bba48809b711b12a6e3e02d4d5569a97ee43a32` — **MATCH** vs `lean.reviewed.statement_hash` (reviewed at commit `55a02ca657cbcf4ac48ee4e38b465a5f4c4a1c82`).
+Statement hash: `84fb1d2dc382c3966d45b8e81bba48809b711b12a6e3e02d4d5569a97ee43a32` — **MATCH** vs `lean.reviewed.statement_hash` (reviewed at commit `6f54b92318cb050bccfe0abc96a0c8caed0f4f8e`).
 
 <!-- END GENERATED facts -->
 
