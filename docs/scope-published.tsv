@@ -685,6 +685,7 @@ SahaEquilibrium.lean	neutralityNewton_enclosure	theorem	PURE-MATH	PURE-MATH	—
 SahaEquilibrium.lean	neutralityNewton_error_eq	theorem	PURE-MATH	PURE-MATH	—
 SahaEquilibrium.lean	neutralityNewton_le_root	theorem	PURE-MATH	PURE-MATH	—
 SahaEquilibrium.lean	neutralityNewton_nonneg	theorem	PURE-MATH	PURE-MATH	—
+SahaEquilibrium.lean	neutralityNewton_tendsto	theorem	PURE-MATH	PURE-MATH	—
 SahaEquilibrium.lean	outerContraction_box	theorem	PURE-MATH	PURE-MATH	—
 SahaEquilibrium.lean	outerMap_contraction	theorem	PURE-MATH	PURE-MATH	—
 SahaEquilibrium.lean	outerMap_geometric_error	theorem	PURE-MATH	PURE-MATH	—

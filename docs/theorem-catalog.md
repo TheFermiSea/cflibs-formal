@@ -9,9 +9,9 @@
 
 A result shows `own → published` when the two differ (with the definitions that weakened it), and a single tag when they agree. A definition with its own row shows `model TAG`.
 
-**Own-tag mix** (804 results): **EXACT** 164 · **REDUCED** 234 · **APPROXIMATION** 4 · **PURE-MATH** 402
+**Own-tag mix** (805 results): **EXACT** 164 · **REDUCED** 234 · **APPROXIMATION** 4 · **PURE-MATH** 403
 
-**Published-tag mix** (804 results; 143 weakened by a model tag): **EXACT** 57 · **REDUCED** 279 · **APPROXIMATION** 66 · **PURE-MATH** 402
+**Published-tag mix** (805 results; 143 weakened by a model tag): **EXACT** 57 · **REDUCED** 279 · **APPROXIMATION** 66 · **PURE-MATH** 403
 
 `EXACT` = an exact theorem about the model it is stated over · `REDUCED` = exact only after a stated reduction (a dimensionless/lumped-factor form) · `APPROXIMATION` = the statement itself is approximate (documented idealization / limiting case) · `PURE-MATH` = infrastructure lemma, no physical claim. Classification cross-checked against `reviews/literature-validity-audit.md`.
 
@@ -1406,6 +1406,7 @@ A result shows `own → published` when the two differ (with the definitions tha
 - `PURE-MATH` · `neutralityNewton_le_root` — The neutrality Newton step lands at or below the root.
 - `PURE-MATH` · `neutralityNewton_nonneg` — The neutrality Newton step stays on the physical half-line.
 - `PURE-MATH` · `neutralityNewton_enclosure` — One Newton step brackets the charge-neutrality root from both sides (FT-17).
+- `PURE-MATH` · `neutralityNewton_tendsto` — Newton's method on multi-element charge neutrality converges from every start `x0 ≥ 0` (frontier FT-17).
 
 ## `SahaInverse.lean`  (CflibsFormal)
 *Part 6: coupling Saha into the inverse problem*

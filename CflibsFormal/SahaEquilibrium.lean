@@ -1847,6 +1847,149 @@ theorem neutralityNewton_enclosure {S Ntot : ι → ℝ} {x r : ℝ} (hS : ∀ s
   rw [← hfix] at hanti
   exact ⟨hle, hanti⟩
 
+/-- From `x ∈ [0, r]` one Newton step does not decrease `x`: `N x − x = (G x − x)/f' x ≥ 0`,
+because `G x ≥ G r = r ≥ x` (`G` antitone on `[0, ∞)`). -/
+private theorem neutralityNewton_ge_self (S Ntot : ι → ℝ) (hS : ∀ s, 0 < S s)
+    (hN : ∀ s, 0 ≤ Ntot s) {x r : ℝ} (hx : 0 ≤ x) (hxr : x ≤ r)
+    (hfix : r = multiElementIonized S Ntot r) : x ≤ neutralityNewton S Ntot x := by
+  have hD : 0 < 1 + ∑ s, Ntot s * S s / (x + S s) ^ 2 := by
+    have : 0 ≤ ∑ s, Ntot s * S s / (x + S s) ^ 2 :=
+      Finset.sum_nonneg (fun s _ => div_nonneg (mul_nonneg (hN s) (hS s).le) (sq_nonneg _))
+    linarith
+  have hG : multiElementIonized S Ntot r ≤ multiElementIonized S Ntot x :=
+    multiElementIonized_antitone_of S Ntot hS hN hx (hx.trans hxr) hxr
+  have hnum : x - multiElementIonized S Ntot x ≤ 0 := by
+    have : x ≤ multiElementIonized S Ntot x := by
+      calc
+        x ≤ r := hxr
+        _ = multiElementIonized S Ntot r := hfix
+        _ ≤ multiElementIonized S Ntot x := hG
+    linarith
+  have hstep : (x - multiElementIonized S Ntot x) / (1 + ∑ s, Ntot s * S s / (x + S s) ^ 2)
+      ≤ 0 := div_nonpos_of_nonpos_of_nonneg hnum hD.le
+  unfold neutralityNewton
+  linarith [hstep]
+
+/-- A fixed point `L ∈ [0, r]` of the Newton map is the root: `N L = L` forces `G L = L`, and
+then `r = G r ≤ G L = L ≤ r` (`G` antitone). -/
+private theorem neutralityNewton_fixed_eq_root (S Ntot : ι → ℝ) (hS : ∀ s, 0 < S s)
+    (hN : ∀ s, 0 ≤ Ntot s) {L r : ℝ} (hL : 0 ≤ L) (hLr : L ≤ r)
+    (hfix : r = multiElementIonized S Ntot r) (hNL : neutralityNewton S Ntot L = L) :
+    L = r := by
+  have hD : 0 < 1 + ∑ s, Ntot s * S s / (L + S s) ^ 2 := by
+    have : 0 ≤ ∑ s, Ntot s * S s / (L + S s) ^ 2 :=
+      Finset.sum_nonneg (fun s _ => div_nonneg (mul_nonneg (hN s) (hS s).le) (sq_nonneg _))
+    linarith
+  unfold neutralityNewton at hNL
+  have hstep : (L - multiElementIonized S Ntot L) / (1 + ∑ s, Ntot s * S s / (L + S s) ^ 2)
+      = 0 := by linarith
+  have hnum : L - multiElementIonized S Ntot L = 0 :=
+    (div_eq_zero_iff.mp hstep).resolve_right (ne_of_gt hD)
+  have hGL : multiElementIonized S Ntot L = L := by linarith [hnum]
+  have hG : multiElementIonized S Ntot r ≤ multiElementIonized S Ntot L :=
+    multiElementIonized_antitone_of S Ntot hS hN hL (hL.trans hLr) hLr
+  have h1 : r ≤ L := by
+    calc
+      r = multiElementIonized S Ntot r := hfix
+      _ ≤ multiElementIonized S Ntot L := hG
+      _ = L := hGL
+  linarith [hLr, h1]
+
+/-- The Newton map is continuous at every `L ≥ 0`, where all its denominators are positive. -/
+private theorem neutralityNewton_continuousAt (S Ntot : ι → ℝ) (hS : ∀ s, 0 < S s)
+    (hN : ∀ s, 0 ≤ Ntot s) {L : ℝ} (hL : 0 ≤ L) :
+    ContinuousAt (neutralityNewton S Ntot) L := by
+  have hG : ContinuousAt (fun x => ∑ s, Ntot s * S s / (x + S s)) L := by
+    refine tendsto_finsetSum Finset.univ (fun s _ => ?_)
+    have hden : (0 : ℝ) < L + S s := by linarith [hS s]
+    exact continuousAt_const.div (continuousAt_id.add continuousAt_const) hden.ne'
+  have hDc : ContinuousAt (fun x => ∑ s, Ntot s * S s / (x + S s) ^ 2) L := by
+    refine tendsto_finsetSum Finset.univ (fun s _ => ?_)
+    have hden : (0 : ℝ) < L + S s := by linarith [hS s]
+    exact continuousAt_const.div ((continuousAt_id.add continuousAt_const).pow 2)
+      (pow_ne_zero 2 hden.ne')
+  have hD : 0 < 1 + ∑ s, Ntot s * S s / (L + S s) ^ 2 := by
+    have : 0 ≤ ∑ s, Ntot s * S s / (L + S s) ^ 2 :=
+      Finset.sum_nonneg (fun s _ => div_nonneg (mul_nonneg (hN s) (hS s).le) (sq_nonneg _))
+    linarith
+  exact continuousAt_id.sub ((continuousAt_id.sub hG).div (continuousAt_const.add hDc) hD.ne')
+
+/-- A monotone orbit trapped in `[0, r]` converges to `r` when `F` maps `[0, ∞)` into `[0, r]`,
+does not decrease points of `[0, r]`, is continuous on `[0, ∞)`, and has `r` as its only fixed
+point in `[0, r]`. -/
+private theorem orbit_tendsto_of_mem (F : ℝ → ℝ) {r y0 : ℝ} (hy0 : 0 ≤ y0) (hy0r : y0 ≤ r)
+    (hmap : ∀ x, 0 ≤ x → 0 ≤ F x ∧ F x ≤ r)
+    (hup : ∀ x, 0 ≤ x → x ≤ r → x ≤ F x)
+    (hcont : ∀ L, 0 ≤ L → ContinuousAt F L)
+    (huniq : ∀ L, 0 ≤ L → L ≤ r → F L = L → L = r) :
+    Filter.Tendsto (fun n => F^[n] y0) Filter.atTop (nhds r) := by
+  have hmem : ∀ k, 0 ≤ F^[k] y0 ∧ F^[k] y0 ≤ r := by
+    intro k
+    induction k with
+    | zero => exact ⟨hy0, hy0r⟩
+    | succ k ih =>
+      rw [Function.iterate_succ_apply']
+      exact hmap _ ih.1
+  have hmono : Monotone (fun k => F^[k] y0) := by
+    refine monotone_nat_of_le_succ (fun k => ?_)
+    change F^[k] y0 ≤ F^[k+1] y0
+    rw [Function.iterate_succ_apply']
+    exact hup _ (hmem k).1 (hmem k).2
+  have htends : Filter.Tendsto (fun k => F^[k] y0) Filter.atTop (nhds (⨆ k, F^[k] y0)) :=
+    tendsto_atTop_ciSup hmono ⟨r, by rintro _ ⟨k, rfl⟩; exact (hmem k).2⟩
+  set L := ⨆ k, F^[k] y0 with hL
+  have hL0 : 0 ≤ L := ge_of_tendsto' htends (fun k => (hmem k).1)
+  have hLr : L ≤ r := le_of_tendsto' htends (fun k => (hmem k).2)
+  have hfix : F L = L := isFixedPt_of_tendsto_iterate htends (hcont L hL0)
+  have := huniq L hL0 hLr hfix
+  rw [← this]; exact htends
+
+/-- **Newton's method on multi-element charge neutrality converges from every start `x0 ≥ 0`
+(frontier FT-17).** Let `G := multiElementIonized S Ntot` and let `r ≥ 0` be a
+charge-neutrality root, `r = G r`. Then the Newton iterates `(neutralityNewton S Ntot)^[n] x0`
+converge to `r` for every electron-density guess `x0 ≥ 0`. No damping and no
+closeness-to-the-root condition are needed. Unlike the direct substitution `x ↦ G x` (antitone,
+so it oscillates) the Newton orbit is one-sided: after the first step it rises monotonically to
+`r`.
+
+Proof idea (not part of the statement): one step from any `x ≥ 0` lands in `[0, r]`
+(`neutralityNewton_le_root`, `neutralityNewton_nonneg`); for `x ∈ [0, r]`,
+`N x − x = (G x − x)/f' x ≥ 0` because `G x ≥ G r = r ≥ x`; the bounded monotone orbit has a
+limit `L ∈ [0, r]`; continuity of `N` on `[0, ∞)` gives `N L = L`, so `G L = L`; then
+`L ≤ r ≤ G L = L` since `G` is antitone. The statement asserts convergence only and claims no
+rate: a quadratic rate follows from the error identity `neutralityNewton_error_eq` but is not
+stated here.
+
+Hypotheses. `hS` (`S s > 0`) keeps every denominator positive on `[0, ∞)`. `hN` (`Ntot s ≥ 0`;
+absent species allowed) makes `G` antitone and `f' ≥ 1`. `hr` selects the physical root (for one
+species with `S = Ntot = 1`, `r = G r` also has the root `−(1 + √5)/2`, which a nonnegative
+orbit cannot approach). `hfix` is charge neutrality at `r`. `hx0` restricts the start to the
+physical half-line. No `Nonempty ι` is needed (with no species `N ≡ 0` and `r = 0`). Existence
+of a root is a separate result (`multiElement_exists_pos_fixedPoint`, for `Ntot > 0`).
+
+Scope: relation `PURE-MATH` (convergence of a numerical method for the given closure map),
+published `PURE-MATH`, as for `neutralityNewton_enclosure`. The closure map's physical reading
+(fixed `T`, LTE, two stages per element; Z-stage cascades not covered) is the reduced model of
+this module's scope section; this is the forward closure only, not the inverse `(T, n_e)` loop. -/
+theorem neutralityNewton_tendsto {S Ntot : ι → ℝ} {r x0 : ℝ} (hS : ∀ s, 0 < S s)
+    (hN : ∀ s, 0 ≤ Ntot s) (hr : 0 ≤ r) (hfix : r = multiElementIonized S Ntot r)
+    (hx0 : 0 ≤ x0) :
+    Filter.Tendsto (fun n => (neutralityNewton S Ntot)^[n] x0) Filter.atTop (nhds r) := by
+  have h : Filter.Tendsto (fun n => (neutralityNewton S Ntot)^[n] (neutralityNewton S Ntot x0))
+      Filter.atTop (nhds r) :=
+    orbit_tendsto_of_mem (neutralityNewton S Ntot)
+      (neutralityNewton_nonneg S Ntot hS hN hx0)
+      (neutralityNewton_le_root S Ntot hS hN hx0 hr hfix)
+      (fun x hx => ⟨neutralityNewton_nonneg S Ntot hS hN hx,
+        neutralityNewton_le_root S Ntot hS hN hx hr hfix⟩)
+      (fun x hx hxr => neutralityNewton_ge_self S Ntot hS hN hx hxr hfix)
+      (fun L hL => neutralityNewton_continuousAt S Ntot hS hN hL)
+      (fun L hL hLr hNL => neutralityNewton_fixed_eq_root S Ntot hS hN hL hLr hfix hNL)
+  have h' : Filter.Tendsto (fun n => (neutralityNewton S Ntot)^[n + 1] x0) Filter.atTop
+      (nhds r) := by
+    simpa only [Function.iterate_succ_apply] using h
+  exact (Filter.tendsto_add_atTop_iff_nat 1).mp h'
+
 end NeutralityNewton
 
 end CflibsFormal
