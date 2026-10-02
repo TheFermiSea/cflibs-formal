@@ -1,0 +1,13 @@
+stepProfile : ℝ → ℝ → ℝ → ℝ
+def CflibsFormal.stepProfile : ℝ → ℝ → ℝ → ℝ :=
+fun η M x => (Set.Icc 0 1).indicator (fun x => 1) x + η * (Set.Icc 0 M).indicator (fun x => 1) x
+@equivWidth_stepProfile : ∀ {η M τ : ℝ},
+  1 ≤ M → equivWidth (stepProfile η M) τ = 1 - Real.exp (-(τ * (1 + η))) + (M - 1) * (1 - Real.exp (-(τ * η)))
+stepW_pairRatio_not_injOn : ¬Set.InjOn (fun n => stepW (1 / 100) 20 (2 * n) / stepW (1 / 100) 20 n) (Set.Ioi 0)
+stepProfile_pairRatio_not_injOn : ¬Set.InjOn
+    (fun n => equivWidth (stepProfile (1 / 100) 20) (2 * n) / equivWidth (stepProfile (1 / 100) 20) n) (Set.Ioi 0)
+@cogRatio_injOn : ∀ {w₁ w₂ : ℝ}, w₂ < w₁ → 0 < w₂ → Set.InjOn (fun n => cogRatio w₁ w₂ n) (Set.Ioi 0)
+@saDistinct_certificate_sound : ∀ {w₁ w₂ : ℝ}, saDistinctCert w₁ w₂ → Set.InjOn (fun n => cogRatio w₁ w₂ n) (Set.Ioi 0)
+'CflibsFormal.stepProfile_pairRatio_not_injOn' depends on axioms: [propext, Classical.choice, Quot.sound]
+'CflibsFormal.equivWidth_stepProfile' depends on axioms: [propext, Classical.choice, Quot.sound]
+'CflibsFormal.stepW_pairRatio_not_injOn' depends on axioms: [propext, Classical.choice, Quot.sound]

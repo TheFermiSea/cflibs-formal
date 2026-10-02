@@ -1,0 +1,262 @@
+# Certificate registry (C1-C15). Schema: docs/theorems/SCHEMA.md.
+#
+# Shape: a flat mapping {id: {...}} -- top-level keys ARE the ids scripts/check_cards.py reads via
+# load_yaml_ids() (a card's certificates[].id must be a key here or the REGISTRY-CERT check fails).
+#
+# lean.soundness_theorem is the certificate's own theorem in Certificates.lean (consumes the Cert
+# Prop directly); lean.reexports_of is the underlying theorem it thinly re-exports, named in that
+# theorem's docstring (module docstring, Certificates.lean:109: "this module adds no new
+# mathematics -- it only re-exports"). Source: CflibsFormal/Certificates.lean (defs, local
+# *_certificate_sound theorems and their docstrings, read directly in this checkout);
+# docs/frontiers/12-runtime-certificates.md section 0 ledger (owner decision D16 for ids, and the
+# C8/C11/C15 status note); pass1/C-pipeline-map.md.md section 2.1 for the Python twin paths/symbols.
+#
+# HARD_CERTIFICATES_DEFAULT (cflibs/evolution/certificate_gate.py) = {C1,C2,C3,C4,C7,C9,C10,C12,C13};
+# REPORTED_CERTIFICATES (never HARD) = {C5,C6,C14}. C8 and C11 are reserved ids with no landed
+# certificate (hard_reported: null); C15 is reserved for new purposes and unassigned. Python twins
+# name repo-relative path + symbol only (D23): no line numbers, no code quotes, no backlog ids.
+C1:
+  purpose: the pooled single-intercept Boltzmann design's normal matrix is nonsingular (T identifiable)
+  lean:
+    def: CflibsFormal.energySpreadCert
+    soundness_theorem: CflibsFormal.energySpread_certificate_sound
+    reexports_of:
+    - CflibsFormal.designNormalMatrix_det_ne_zero_iff
+  status: wired
+  python_twin:
+  - path: cflibs/inversion/physics/certificates.py
+    symbol: energy_spread_certificate
+  - path: cflibs/inversion/physics/identifiability.py
+    symbol: temperature_identifiable
+  - path: cflibs/inversion/physics/boltzmann.py
+    symbol: BoltzmannPlotFitter.fit
+  hard_reported: HARD
+  note: passes for any 2 distinct line energies; certifies the pooled single-intercept design, not the
+    per-element-intercept fit the solver runs (SPC-01, INV-04). C1g (per-element) is a candidate C15+
+    purpose, not implemented.
+C2:
+  purpose: the pooled joint Saha-Boltzmann design (T, n_e together) is identifiable
+  lean:
+    def: CflibsFormal.jointRankCert
+    soundness_theorem: CflibsFormal.jointRank_certificate_sound
+    reexports_of:
+    - CflibsFormal.jointDesign_det_pos_iff
+  status: wired
+  python_twin:
+  - path: cflibs/inversion/physics/certificates.py
+    symbol: joint_rank_certificate
+  - path: cflibs/inversion/solve/closed_form.py
+    symbol: _build_design_matrix
+  - path: cflibs/inversion/solve/joint_optimizer.py
+    symbol: optimize
+  hard_reported: HARD
+  note: same pooled-design limit as C1 (INV-04). C2g (grouped) is a candidate C15+ purpose, not implemented.
+C3:
+  purpose: the (centered, scaled) Boltzmann design is orthonormal, so its only sensitivity is 1/SS_E
+  lean:
+    def: CflibsFormal.conditioningCert
+    soundness_theorem: CflibsFormal.conditioning_certificate_sound
+    reexports_of:
+    - CflibsFormal.boltzmannConditionNumber_ge_one
+    - CflibsFormal.centeredScaledDesign_orthonormal
+  status: wired
+  python_twin:
+  - path: cflibs/inversion/physics/certificates.py
+    symbol: conditioning_certificate
+  - path: cflibs/inversion/physics/reliability.py
+    symbol: temperature_conditioning
+  hard_reported: HARD
+  note: same predicate as C1 (U-07); adds nothing beyond it. 1/SS_E is not scale-free.
+C4:
+  purpose: a per-line ordinate error bound eps propagates to a slope error bound |delta beta| <= tau_beta
+  lean:
+    def: CflibsFormal.slopeBudgetCert
+    soundness_theorem: CflibsFormal.slopeBudget_certificate_sound
+    reexports_of:
+    - CflibsFormal.maxPerLineError_sufficient
+  status: wired
+  python_twin:
+  - path: cflibs/inversion/physics/certificates.py
+    symbol: slope_budget_certificate
+  - path: cflibs/inversion/physics/derived_thresholds.py
+    symbol: max_per_line_error
+  - path: cflibs/evolution/certificate_gate.py
+    symbol: CertificateArtifact.eps
+  hard_reported: HARD
+  note: 'inversion pipeline: skip, no accuracy target wired; evolution gate: HARD with eps = 1/min(SNR),
+    a one-sigma scale, not a guaranteed per-line bound (U-03). The statistical replacement is the C4-sigma
+    candidate purpose under FT-12 (see C15).'
+C5:
+  purpose: a slope-error bound B propagates to a relative temperature-error bound
+  lean:
+    def: CflibsFormal.tempBudgetCert
+    soundness_theorem: CflibsFormal.tempBudget_certificate_sound
+    reexports_of:
+    - CflibsFormal.temp_rel_error_le
+  status: stated
+  python_twin:
+  - path: cflibs/inversion/physics/derived_thresholds.py
+    symbol: slope_target_from_temp_rel
+  - path: cflibs/inversion/physics/error_budget.py
+    symbol: temp_rel_error_bound
+  hard_reported: REPORTED
+  note: no C4-to-C5 composite theorem exists; B itself is not certified.
+C6:
+  purpose: a per-species density-error bound delta propagates to a composition-error bound tau_C
+  lean:
+    def: CflibsFormal.compBudgetCert
+    soundness_theorem: CflibsFormal.compBudget_certificate_sound
+    reexports_of:
+    - CflibsFormal.composition_target_sufficient
+  status: stated
+  python_twin:
+  - path: cflibs/inversion/physics/derived_thresholds.py
+    symbol: density_budget_from_composition
+  - path: cflibs/inversion/physics/reliability.py
+    symbol: composition_error_bound
+  hard_reported: REPORTED
+  note: delta itself is not certified; one absolute delta/tau_C for every species (abundance-blind, LIT-05).
+C7:
+  purpose: the McWhirter LTE admissibility criterion is an iff at the given (T, n_e, dE)
+  lean:
+    def: CflibsFormal.mcWhirterCert
+    soundness_theorem: CflibsFormal.mcWhirter_certificate_sound
+    reexports_of:
+    - CflibsFormal.mcwhirter_iff_thermalizationLimit
+  status: wired
+  python_twin:
+  - path: cflibs/inversion/physics/certificates.py
+    symbol: mcwhirter_certificate
+  - path: cflibs/inversion/physics/reliability.py
+    symbol: mcwhirter_min_ne
+  - path: cflibs/inversion/physics/lte_validator.py
+    symbol: check_mcwhirter
+  hard_reported: HARD
+  note: McWhirter is necessary, not sufficient, for LTE; evaluated at the recovered (T-hat, n_e-hat),
+    which is circular (R3).
+C8:
+  purpose: error-bar Stark-Saha n_e cross-consistency, with a provable refusal on disagreement
+  lean:
+    def: null
+    soundness_theorem: CflibsFormal.stark_saha_lte_consistent
+  status: not-implemented
+  python_twin:
+  - path: cflibs/inversion/physics/reliability.py
+    symbol: stark_saha_lte_gate
+  - path: cflibs/inversion/physics/stark_ne.py
+    symbol: measure_stark_ne
+  hard_reported: null
+  note: the landed theorem needs exact equality of the two n_e estimates, so it cannot back a tolerance
+    predicate (U-11, PS-09). ID reserved (D16) for the error-bar form; FT-06's stark_bracket_rho (CflibsFormal.stark_bracket_rho,
+    StarkOpacityGuard.lean) is the landed Stark-side premise, not the certificate itself.
+C9:
+  purpose: the single-element forward Saha iteration converges geometrically to its closed-form root
+  lean:
+    def: null
+    soundness_theorem: CflibsFormal.sahaIter_tendsto
+  status: wired
+  python_twin:
+  - path: cflibs/plasma/saha_boltzmann.py
+    symbol: SahaBoltzmannSolver.solve_ionization_balance
+  - path: cflibs/plasma/saha_boltzmann.py
+    symbol: SahaBoltzmannSolver.solve_species_states
+  hard_reported: HARD
+  note: 'a forward solver at fixed T with known absolute Ntot; the inversion never forms the (S, Ntot,
+    b) inputs (skip in the inversion pipeline; HARD only in the evolution gate). Companion theorems: CflibsFormal.sahaIter_contraction,
+    CflibsFormal.sahaIter_mapsTo.'
+C10:
+  purpose: the fixed-T forward multi-element charge-neutrality closure at known Ntot converges under a
+    canonical, unconditional damping
+  lean:
+    def: null
+    soundness_theorem: CflibsFormal.dampedMultiElementIter_tendsto
+  status: wired
+  python_twin:
+  - path: cflibs/plasma/anderson_solver.py
+    symbol: picard_solve
+  - path: cflibs/plasma/anderson_solver.py
+    symbol: anderson_solve
+  hard_reported: HARD
+  note: 'does not replace the inverse (T, n_e) loop''s 0.5 damping in cflibs/inversion/solve/iterative.py
+    (U-02, INV-05); anderson_solver.py is not wired into a shipped pipeline. Companion theorem: CflibsFormal.dampedMultiElementIter_contraction;
+    direct-loop variant CflibsFormal.multiElementIonized_iter_tendsto.'
+C11:
+  purpose: a stop certificate for the outer (T, n_e) loop the pipeline actually runs
+  lean:
+    def: null
+    soundness_theorem: CflibsFormal.outerLoop_contracts
+  status: not-implemented
+  python_twin:
+  - path: cflibs/inversion/solve/iterative.py
+    symbol: IterativeCFLIBSSolver
+  hard_reported: null
+  note: the 2026-07 Model B product gate L1*L2 < 1 evaluates to 6e3-5e4 at realistic LIBS parameters and
+    cannot pass (INV-03); Model B also freezes the Saha offset at a reference T (INV-01). ID reserved
+    (D16) for the FT-01 replacement (CflibsFormal.tDamped_mobius_converges family), not implemented as
+    a certificate.
+C12:
+  purpose: the self-absorption model left-inverse identity holds for every tau >= 0
+  lean:
+    def: CflibsFormal.knownTauCert
+    soundness_theorem: CflibsFormal.knownTau_certificate_sound
+    reexports_of:
+    - CflibsFormal.lineIntensity_eq_selfAbsorbedIntensity_div
+  status: wired
+  python_twin:
+  - path: cflibs/inversion/physics/self_absorption.py
+    symbol: SelfAbsorptionCorrector._escape_factor
+  - path: cflibs/inversion/physics/self_absorption.py
+    symbol: SelfAbsorptionCorrector.correct_with_cog
+  hard_reported: HARD
+  note: landed as 0 <= tau alone (no 'tau known' clause); the identity holds even for a wrong tau estimate,
+    so it certifies nothing about the data (LF-11, U-05, SPC-03). Non-informative; the FT-13 escape-factor
+    bound is the refusal-grade replacement, not a certificate.
+C13:
+  purpose: the flat-kernel curve-of-growth pair ratio is injective for distinct opacity coefficients
+  lean:
+    def: CflibsFormal.saDistinctCert
+    soundness_theorem: CflibsFormal.saDistinct_certificate_sound
+    reexports_of:
+    - CflibsFormal.cogRatio_injOn
+  status: wired
+  python_twin:
+  - path: cflibs/inversion/physics/certificates.py
+    symbol: sa_distinct_certificate
+  - path: cflibs/inversion/physics/identifiability.py
+    symbol: self_absorption_identifiable
+  hard_reported: HARD
+  note: flat-kernel (1 - e^(-w n)) injectivity only, on opacity coefficients w (tau = w n), not line widths;
+    assumes a shared source term and lower level the Prop does not encode (U-06, LF-04, LF-08). FT-20's
+    CflibsFormal.stepProfile_pairRatio_not_injOn is a machine-checked counterexample showing this does
+    not extend to a profile-resolved (Voigt) curve of growth. cogRatio_injOn is at CurveOfGrowth.lean:300
+    in this checkout; the companion's LEAN_CERTIFICATE_DEFS table records line 254 (a confirmed drift
+    instance -- evidence for generating the pointer table instead of hand-copying it, per IA-proposal.md
+    section 0.1).
+C14:
+  purpose: an assumed atomic-data relative-error bound delta propagates to a density-error bound
+  lean:
+    def: CflibsFormal.aliasBudgetCert
+    soundness_theorem: CflibsFormal.aliasBudget_certificate_sound
+    reexports_of:
+    - CflibsFormal.classicDensity_aliasing_error
+  status: stated
+  python_twin:
+  - path: cflibs/inversion/physics/quality.py
+    symbol: per_element_reliability_from_uncertainty
+  hard_reported: REPORTED
+  note: 'delta itself is not certified; other soundness routes to the same bound exist: CflibsFormal.Alt.olsDensity_aliasing_A_error,
+    CflibsFormal.Alt.olsComposition_atomicData_error.'
+C15:
+  purpose: 'reserved (owner decision D16): new certificate purposes take an id from C15 onward when wired'
+  lean:
+    def: null
+    soundness_theorem: null
+  status: not-implemented
+  python_twin: []
+  hard_reported: null
+  note: 'no certificate has been assigned this id yet. Candidate purposes, working names only: (a) C1g/C2g
+    -- grouped, per-element-intercept design certificates (FT-04''s fe_identifiable_iff / feSlope_add_smul
+    / feSlope_isMin are the landed building blocks; CflibsFormal.fe_identifiable_iff); (b) the statistical
+    slope certificate ''C4-sigma'' from measured per-line SNR (FT-12''s landed CflibsFormal.Alt.olsSlope_subGaussian_tail_hetero
+    is the building block); (c) the refuse-to-report policy certificate (FT-03''s landed CflibsFormal.pasPolicy_guarantees
+    is the policy theorem). None of the three has a Certificates.lean Prop or a wired id yet.'

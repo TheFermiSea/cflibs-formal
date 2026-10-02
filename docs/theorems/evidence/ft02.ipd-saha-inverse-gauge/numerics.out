@@ -1,0 +1,5 @@
+(1) T=11000 K, n_e=1e+17 cm^-3: Delta_chi=0.0629 eV, q=0.0332, q**3=3.656e-05
+    fold (q=1) near n_e = 9.077e+19 cm^-3 at T=11000 K
+(2a) a1<0 counterexample: log(a2)-log(a1) = -1.68394, l2-l1 = -2.00000 -> lower bound holds: False (must be False)
+(2b) b<0 counterexample: log(a2)-log(a1) = 2.85914, l2-l1 = 2.00000 -> lower bound holds: False (must be False)
+all sharpness assertions passed

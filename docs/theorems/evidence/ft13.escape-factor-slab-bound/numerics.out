@@ -1,0 +1,9 @@
+Claim (1): escape_ge_slab witness psi = exp(-x^2), quadrature vs SA
+  tau0=3: escape factor (quadrature) = 0.4471, SA(tau0) = 0.3167, W = 2.3775 >= SA*thin = 1.6842: True
+  tau0=10: escape factor (quadrature) = 0.1870, SA(tau0) = 0.1000, W = 3.3138 >= SA*thin = 1.7724: True
+
+Claim (2): alternating-series closed form vs quadrature, and its breakdown
+  tau0=3: series=0.4471  quadrature=0.4471  SA=0.3167  OK
+  tau0=10: series=0.1870  quadrature=0.1870  SA=0.1000  OK
+  tau0=20: series=0.1050  quadrature=0.1050  SA=0.0500  OK
+  tau0=30: series=-355.2694  quadrature=0.0741  SA=0.0333  BELOW SA (unphysical -- series breakdown)

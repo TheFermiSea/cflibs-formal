@@ -1,0 +1,297 @@
+# Phase-1 card registry. Schema: docs/theorems/SCHEMA.md.
+#
+# Shape: a flat mapping {id: {...}} -- top-level keys ARE the future card ids, and each entry's
+# `planned` list (headline + members) is read by scripts/gen_cards.py's load_registry_cards() /
+# scripts/check_cards.py's --require-coverage check. One entry per planned docs/theorems/<id>.md
+# card (not yet authored -- a later task writes the cards themselves).
+#
+# Source: IA-proposal.md section 2.4 (Phase-1 card set); pass1/E-theorem-sources.md.md section 3
+# (57-declaration master table, rg-verified in this checkout). IA-proposal.md section 2.4 states
+# the Phase-1 plan as "24 cards"; this assignment, built card by card from that same table's
+# per-frontier card counts, comes to 23 (the source table's own row-by-row card counts sum to 23,
+# not 24 -- flagged for the owner, not resolved here). All 57 declarations are placed exactly once.
+ft01.damped-t-loop-convergence:
+  title: Damped-Picard convergence of the outer (T, n_e) loop
+  kind: family
+  headline: CflibsFormal.tDamped_mobius_converges
+  members:
+  - CflibsFormal.dampedMap
+  - CflibsFormal.dampedMap_lipschitz
+  - CflibsFormal.dampedMap_contracts
+  - CflibsFormal.exists_weights_iff
+  planned:
+  - CflibsFormal.tDamped_mobius_converges
+  - CflibsFormal.dampedMap
+  - CflibsFormal.dampedMap_lipschitz
+  - CflibsFormal.dampedMap_contracts
+  - CflibsFormal.exists_weights_iff
+  frontier_ids:
+  - FT-01
+ft02.ipd-saha-inverse-gauge:
+  title: 'IPD-aware Saha inverse: gauge, unique root, contraction'
+  kind: family
+  headline: CflibsFormal.ipdLogMap_contracts
+  members:
+  - CflibsFormal.ipdLogMap
+  - CflibsFormal.ipdLogMap_root_subsingleton
+  - CflibsFormal.ipdInverse_twoPoint_sensitivity
+  planned:
+  - CflibsFormal.ipdLogMap_contracts
+  - CflibsFormal.ipdLogMap
+  - CflibsFormal.ipdLogMap_root_subsingleton
+  - CflibsFormal.ipdInverse_twoPoint_sensitivity
+  frontier_ids:
+  - FT-02
+ft03.refuse-to-report-policy:
+  title: 'Refuse-to-report policy: certified abstention on the Aitchison PAS loss'
+  kind: family
+  headline: CflibsFormal.pasPolicy_guarantees
+  members:
+  - CflibsFormal.aitchisonDist_le_logErr
+  planned:
+  - CflibsFormal.pasPolicy_guarantees
+  - CflibsFormal.aitchisonDist_le_logErr
+  frontier_ids:
+  - FT-03
+ft04.fixed-effects-design-identifiability:
+  title: Fixed-effects (element-dummy) Saha-Boltzmann design identifiability
+  kind: family
+  headline: CflibsFormal.fe_identifiable_iff
+  members:
+  - CflibsFormal.feSlope_add_smul
+  - CflibsFormal.feSlope_isMin
+  planned:
+  - CflibsFormal.fe_identifiable_iff
+  - CflibsFormal.feSlope_add_smul
+  - CflibsFormal.feSlope_isMin
+  frontier_ids:
+  - FT-04
+ft05.partition-function-cutoff-ratio:
+  title: 'Partition-function cutoff: truncated partition function and T-dependent cutoff ratio'
+  kind: family
+  headline: CflibsFormal.cutRatio_strictMonoOn_temp
+  members:
+  - CflibsFormal.partitionFunctionCut
+  - CflibsFormal.partitionFunction_eq_cut_add_tail
+  - CflibsFormal.partitionFunctionCut_pos
+  planned:
+  - CflibsFormal.cutRatio_strictMonoOn_temp
+  - CflibsFormal.partitionFunctionCut
+  - CflibsFormal.partitionFunction_eq_cut_add_tail
+  - CflibsFormal.partitionFunctionCut_pos
+  frontier_ids:
+  - FT-05
+ft06.stark-bracket-premise:
+  title: Stark-side premise of the error-bar Stark-Saha bracket (C8)
+  kind: result
+  headline: CflibsFormal.stark_bracket_rho
+  members: []
+  planned:
+  - CflibsFormal.stark_bracket_rho
+  frontier_ids:
+  - FT-06
+ft07.aitchison-atomic-data-error-transfer:
+  title: Abundance-scaled closure bound under classic-reader atomic-data error
+  kind: result
+  headline: CflibsFormal.classicComposition_atomicData_error_rel
+  members: []
+  planned:
+  - CflibsFormal.classicComposition_atomicData_error_rel
+  frontier_ids:
+  - FT-07
+ft08.ratio-mode-normalization-invariance:
+  title: 'Closure-free ratio mode: normalization invariance and sensitivity'
+  kind: family
+  headline: CflibsFormal.ratio_mode_normalization_invariant
+  members:
+  - CflibsFormal.ratioEstimate_hasDerivAt
+  planned:
+  - CflibsFormal.ratio_mode_normalization_invariant
+  - CflibsFormal.ratioEstimate_hasDerivAt
+  frontier_ids:
+  - FT-08
+ft08.neutrality-scale-same-ratio:
+  title: NeutralityScale reproduces the same ratios as the closure-normalized reader
+  kind: result
+  headline: CflibsFormal.Alt.neutrality_closure_same_ratio
+  members: []
+  planned:
+  - CflibsFormal.Alt.neutrality_closure_same_ratio
+  frontier_ids:
+  - FT-08
+  note: own EXACT relation tag; publishes REDUCED via lineIntensityPerU (D15 two-axis rule) -- owner spot-check
+    required (D24).
+ft09.affine-atomic-data-gauge:
+  title: 'Energy-affine atomic-data gauge: an exact temperature shift plus density rescale'
+  kind: result
+  headline: CflibsFormal.affine_gA_observational_equiv
+  members: []
+  planned:
+  - CflibsFormal.affine_gA_observational_equiv
+  frontier_ids:
+  - FT-09
+  note: own EXACT relation tag; publishes REDUCED via lineIntensity -- owner spot-check required (D24).
+ft10.noise-gain-floor-blue:
+  title: Information floor for the Boltzmann slope and the log-ratio (heteroscedastic Aitken BLUE)
+  kind: family
+  headline: CflibsFormal.wls_min_noiseGain
+  members:
+  - CflibsFormal.gMean_const_eq_wMean
+  - CflibsFormal.interceptDiff_noiseGain
+  - CflibsFormal.Alt.betaHat
+  planned:
+  - CflibsFormal.wls_min_noiseGain
+  - CflibsFormal.gMean_const_eq_wMean
+  - CflibsFormal.interceptDiff_noiseGain
+  - CflibsFormal.Alt.betaHat
+  frontier_ids:
+  - FT-10
+  note: betaHat is the housekeeping REDUCED model-row retag carried under FT-10 (see registry/frontier.yaml
+    FT-10 note).
+ft12.stochastic-slope-tail-budget:
+  title: Heteroscedastic sub-Gaussian slope tail bound (candidate C4-sigma)
+  kind: family
+  headline: CflibsFormal.Alt.olsSlope_subGaussian_tail_hetero
+  members:
+  - CflibsFormal.Alt.alphaHat
+  planned:
+  - CflibsFormal.Alt.olsSlope_subGaussian_tail_hetero
+  - CflibsFormal.Alt.alphaHat
+  frontier_ids:
+  - FT-12
+  note: candidate certificate purpose; see registry/certificates.yaml C15.
+ft13.escape-factor-slab-bound:
+  title: Profile-integrated escape factor bounds the slab self-absorption from above
+  kind: family
+  headline: CflibsFormal.escape_ge_slab
+  members:
+  - CflibsFormal.inv_sub_inv_exp_sub_one_mem
+  planned:
+  - CflibsFormal.escape_ge_slab
+  - CflibsFormal.inv_sub_inv_exp_sub_one_mem
+  frontier_ids:
+  - FT-13
+ft14i.kirchhoff-source-planck:
+  title: Kirchhoff-consistent source function is Planck's law (prototype)
+  kind: result
+  headline: CflibsFormal.source_eq_planck
+  members: []
+  planned:
+  - CflibsFormal.source_eq_planck
+  frontier_ids:
+  - FT-14
+ft14iv.perline-tauratio-bridge:
+  title: Per-line optical-depth ratio bridge with guards and the stimulated-emission factor
+  kind: result
+  headline: CflibsFormal.perLine_tauRatio
+  members: []
+  planned:
+  - CflibsFormal.perLine_tauRatio
+  frontier_ids:
+  - FT-14
+ft14v.equivwidth-strict-mono:
+  title: Equivalent width is strictly monotone in optical depth
+  kind: result
+  headline: CflibsFormal.equivWidth_strictMonoOn
+  members: []
+  planned:
+  - CflibsFormal.equivWidth_strictMonoOn
+  frontier_ids:
+  - FT-14
+  note: grouped here per IA-proposal.md section 2.4's Phase-1 card plan as an FT-14 self-absorption/equivalent-width
+    building block; its own docs/scope-tags.tsv row (462) and PR credit (#9) sit under FT-19's landing
+    batch (see registry/frontier.yaml FT-14 and FT-19 notes) -- a cross-registry naming tension flagged
+    for the owner, not resolved here.
+ft15.mean-excitation-lipschitz:
+  title: Log-derivative Lipschitz constants for U and S via the mean excitation energy
+  kind: family
+  headline: CflibsFormal.log_partitionFunction_lipschitz_max
+  members:
+  - CflibsFormal.meanExcitation
+  - CflibsFormal.partitionFunction_eq_mixture
+  - CflibsFormal.meanExcitation_eq_tiltMean
+  - CflibsFormal.meanExcitation_monotoneOn_temp
+  planned:
+  - CflibsFormal.log_partitionFunction_lipschitz_max
+  - CflibsFormal.meanExcitation
+  - CflibsFormal.partitionFunction_eq_mixture
+  - CflibsFormal.meanExcitation_eq_tiltMean
+  - CflibsFormal.meanExcitation_monotoneOn_temp
+  frontier_ids:
+  - FT-15
+ft16.kernel-extraction-varah-bound:
+  title: 'Line extraction under profile misspecification: bias identity and Varah l-infinity gain'
+  kind: result
+  headline: CflibsFormal.kernelLS_error_linfty
+  members: []
+  planned:
+  - CflibsFormal.kernelLS_error_linfty
+  frontier_ids:
+  - FT-16
+ft17.neutrality-newton-bracket:
+  title: 'Newton''s method on multi-element charge neutrality: error identity, bracket, enclosure'
+  kind: family
+  headline: CflibsFormal.neutralityNewton_enclosure
+  members:
+  - CflibsFormal.neutralityNewton
+  - CflibsFormal.neutralityNewton_error_eq
+  - CflibsFormal.neutralityNewton_le_root
+  - CflibsFormal.neutralityNewton_nonneg
+  planned:
+  - CflibsFormal.neutralityNewton_enclosure
+  - CflibsFormal.neutralityNewton
+  - CflibsFormal.neutralityNewton_error_eq
+  - CflibsFormal.neutralityNewton_le_root
+  - CflibsFormal.neutralityNewton_nonneg
+  frontier_ids:
+  - FT-17
+ft18.self-absorption-slope-bias-sign:
+  title: Sign of the self-absorption temperature bias under antitone optical depth
+  kind: result
+  headline: CflibsFormal.olsSlope_selfAbsorbed_ge
+  members: []
+  planned:
+  - CflibsFormal.olsSlope_selfAbsorbed_ge
+  frontier_ids:
+  - FT-18
+ft19.ion-apparent-temperature:
+  title: Ion apparent temperature is at least the neutral apparent temperature
+  kind: family
+  headline: CflibsFormal.mixed_ion_apparentBeta_le_neutral
+  members:
+  - CflibsFormal.ionReweight
+  - CflibsFormal.ionReweight_strictMonoOn
+  - CflibsFormal.tiltMean_reweight_le
+  - CflibsFormal.ion_zoneWeight_eq
+  planned:
+  - CflibsFormal.mixed_ion_apparentBeta_le_neutral
+  - CflibsFormal.ionReweight
+  - CflibsFormal.ionReweight_strictMonoOn
+  - CflibsFormal.tiltMean_reweight_le
+  - CflibsFormal.ion_zoneWeight_eq
+  frontier_ids:
+  - FT-19
+ft20.step-profile-pair-ratio-counterexample:
+  title: Flat-kernel pair-ratio injectivity is not profile-generic (step-profile counterexample)
+  kind: counterexample
+  headline: CflibsFormal.stepProfile_pairRatio_not_injOn
+  members:
+  - CflibsFormal.stepProfile
+  - CflibsFormal.equivWidth_stepProfile
+  - CflibsFormal.stepW_pairRatio_not_injOn
+  planned:
+  - CflibsFormal.stepProfile_pairRatio_not_injOn
+  - CflibsFormal.stepProfile
+  - CflibsFormal.equivWidth_stepProfile
+  - CflibsFormal.stepW_pairRatio_not_injOn
+  frontier_ids:
+  - FT-20
+f02m6.saha-ne-monotone-temp:
+  title: Equilibrium electron density is strictly increasing in temperature
+  kind: result
+  headline: CflibsFormal.sahaEquilibriumNe_strictMonoOn_temp
+  members: []
+  planned:
+  - CflibsFormal.sahaEquilibriumNe_strictMonoOn_temp
+  frontier_ids:
+  - F02-M6

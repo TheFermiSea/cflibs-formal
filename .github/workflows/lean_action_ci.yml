@@ -39,6 +39,15 @@ jobs:
       # mixed-module false-negative of the module-level scripts/check-scope-consistency.sh below.
       - name: Scope-consistency gate (declaration-granular)
         run: lake exe scope-check
+      # Catalog-staleness gate: docs/catalog.jsonl (one JSON line per documented CflibsFormal
+      # theorem/def: statement printed with fixed pp options, file:line, binders, used constants,
+      # axioms) is generated from the kernel env and read by the docs and the theorem cards (their
+      # reviewed statement hash is computed from it). Regenerate and diff, same discipline as the
+      # oracle self-check; fix with `lake exe export-catalog > docs/catalog.jsonl`.
+      - name: Catalog-staleness gate
+        run: |
+          lake exe export-catalog > /tmp/catalog.jsonl
+          diff -u docs/catalog.jsonl /tmp/catalog.jsonl
       # Kernel-replay gate: re-check every module this change touched with the toolchain's
       # built-in `leanchecker`. `lake build` and axiom-audit trust the .olean files as stored; the
       # kernel replay does not (rejects stale/corrupted/hand-forged oleans). Per module ~42 s and
@@ -99,6 +108,16 @@ jobs:
       # have stopped an off-whitelist citation merging). Build-free: bash + python3 only.
       - name: Citation-whitelist gate
         run: ./scripts/check-citations.sh
+      # Theorem-card gate (decisions D21, D24): the card checker first proves it can fail on its
+      # own broken fixtures, then checks every card in docs/theorems/ against docs/catalog.jsonl
+      # (declarations resolve, reviewed statement hash current, citations whitelisted, registries,
+      # no local paths). The generated Facts blocks, index and open-items roll-up must be current.
+      - name: Theorem-card gate
+        run: |
+          python3 -m pip install --quiet 'pyyaml==6.0.2'
+          python3 scripts/check_cards.py --selftest
+          python3 scripts/gen_cards.py
+          git diff --exit-code -- docs/theorems/
       # Epistemic-drift ADVISORY (module-level): a fast, build-free companion to the authoritative
       # declaration-granular `scope-check` gate above. It also surfaces EXACT-on-REDUCED and
       # EXACT-on-mixed dependencies as advisory warnings (module granularity cannot prove per-theorem

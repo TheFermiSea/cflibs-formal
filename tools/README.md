@@ -19,3 +19,32 @@ dependency-free, so it builds verbatim under our toolchain.
 
     lake build                 # build the library first (audit reads its oleans)
     lake exe axiom-audit --root CflibsFormal
+
+# export-catalog
+
+`ExportCatalog.lean` (this repo's own tool, not vendored) writes `docs/catalog.jsonl`: one JSON
+line per documented theorem or definition in the `CflibsFormal` namespace (including
+`CflibsFormal.Alt`), sorted by name. A declaration is included when it is non-internal, a kernel
+`theorem` or `def`, and has both a source line and a docstring; that drops compiler-generated
+companions (equation lemmas, `match_n`, structure `recOn`/`casesOn`/`ext`).
+
+Keys, in this order: `name`, `kind` (`theorem`/`def`), `module`, `file` (repo-relative), `line`
+(the declaration name's line), `docstring`, `type` (printed with `pp.fullNames`,
+`pp.numericTypes`, `pp.unicode.fun`, width 100), `binders` (outermost `∀` binder names; `"_"` for
+an anonymous or hygienic one such as an unnamed instance binder), `usedConstants` (the
+`CflibsFormal` constants in the type, sorted, self excluded) and `axioms` (sorted, theorems only;
+`[]` for definitions). The docs generators and the theorem cards read it; a card's reviewed
+statement hash is computed from `name`, `type` and `binders`.
+
+Unlike `axiom-audit` and `scope-check`, it loads environment-extension state (the `runLinter`
+import pattern), so the printed statements use Mathlib notation and `collectAxioms` uses the
+per-module precomputed axiom table. See the module docstring.
+
+## Usage
+
+    lake build
+    lake exe export-catalog > docs/catalog.jsonl    # summary line on stderr
+
+CI regenerates it into `/tmp` and `diff -u`s against the committed file (the catalog-staleness
+gate), so regenerate and commit it whenever a declaration, docstring or line moves. The output
+is byte-identical across runs on the same build; it takes about 10 s, mostly environment loading.

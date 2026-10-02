@@ -2,3 +2,5 @@
 
 # ast-grep Lean parser (build artifact — run .ast-grep/build-parser.sh)
 .ast-grep/parser/*.so
+__pycache__/
+.disclosure-denylist

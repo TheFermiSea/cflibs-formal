@@ -1,0 +1,7 @@
+/tmp/ft07_witness_test.lean:15:37: warning: This simp argument is unused:
+  Fin.sum_univ_two
+
+Hint: Omit it from the simp argument list.
+  [apply] simp [composition, totalDensity]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
