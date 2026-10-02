@@ -9,9 +9,9 @@
 
 A result shows `own → published` when the two differ (with the definitions that weakened it), and a single tag when they agree. A definition with its own row shows `model TAG`.
 
-**Own-tag mix** (816 results): **EXACT** 164 · **REDUCED** 234 · **APPROXIMATION** 4 · **PURE-MATH** 414
+**Own-tag mix** (818 results): **EXACT** 164 · **REDUCED** 234 · **APPROXIMATION** 4 · **PURE-MATH** 416
 
-**Published-tag mix** (816 results; 143 weakened by a model tag): **EXACT** 57 · **REDUCED** 279 · **APPROXIMATION** 66 · **PURE-MATH** 414
+**Published-tag mix** (818 results; 143 weakened by a model tag): **EXACT** 57 · **REDUCED** 279 · **APPROXIMATION** 66 · **PURE-MATH** 416
 
 `EXACT` = an exact theorem about the model it is stated over · `REDUCED` = exact only after a stated reduction (a dimensionless/lumped-factor form) · `APPROXIMATION` = the statement itself is approximate (documented idealization / limiting case) · `PURE-MATH` = infrastructure lemma, no physical claim. Classification cross-checked against `reviews/literature-validity-audit.md`.
 
@@ -542,6 +542,7 @@ A result shows `own → published` when the two differ (with the definitions tha
 - `PURE-MATH` · `equivWidth_stepProfile` — Closed-form equivalent width of the two-step profile.
 - `PURE-MATH` · `stepW_pairRatio_not_injOn` — The step-profile pair ratio is not injective (explicit closed form).
 - `PURE-MATH` · `stepProfile_pairRatio_not_injOn` — Pair-ratio identifiability is not profile-generic.  _[Gornushkin 1999]_
+- `PURE-MATH` · `conv_absorptance_le` — Pointwise Jensen for the slab absorptance (frontier FT-14, pointwise step).
 
 ## `ErrorBudget.lean`  (CflibsFormal)
 *the error-propagation chain and DERIVED reliability thresholds*
@@ -1427,6 +1428,7 @@ A result shows `own → published` when the two differ (with the definitions tha
 - `PURE-MATH` · `neutralityNewton_le_root` — The neutrality Newton step lands at or below the root.
 - `PURE-MATH` · `neutralityNewton_nonneg` — The neutrality Newton step stays on the physical half-line.
 - `PURE-MATH` · `neutralityNewton_enclosure` — One Newton step brackets the charge-neutrality root from both sides (FT-17).
+- `PURE-MATH` · `neutralityNewton_tendsto` — Newton's method on multi-element charge neutrality converges from every start `x0 ≥ 0` (frontier FT-17).
 
 ## `SahaInverse.lean`  (CflibsFormal)
 *Part 6: coupling Saha into the inverse problem*

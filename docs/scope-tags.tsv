@@ -74,6 +74,7 @@ SahaEquilibrium.lean	neutralityNewton_error_eq	PURE-MATH	—
 SahaEquilibrium.lean	neutralityNewton_le_root	PURE-MATH	—
 SahaEquilibrium.lean	neutralityNewton_nonneg	PURE-MATH	—
 SahaEquilibrium.lean	neutralityNewton_enclosure	PURE-MATH	—
+SahaEquilibrium.lean	neutralityNewton_tendsto	PURE-MATH	—
 OuterLoopModelB.lean	outerLoop_contracts	REDUCED	Aguilera & Aragón 2007
 PartitionLipschitz.lean	partitionFunction_two_point_bound	REDUCED	Tognoni 2010
 PartitionLipschitz.lean	partitionFunction_lipschitz_temp	REDUCED	Tognoni 2010
@@ -472,6 +473,7 @@ EquivalentWidth.lean	equivWidth_nonneg	PURE-MATH	—
 EquivalentWidth.lean	equivWidth_le_thin	EXACT	Gornushkin 1999
 EquivalentWidth.lean	equivWidth_mono	EXACT	Gornushkin 1999
 EquivalentWidth.lean	equivWidth_strictMonoOn	PURE-MATH	—
+EquivalentWidth.lean	conv_absorptance_le	PURE-MATH	—
 EquivalentWidth.lean	equivWidth_rectangular	EXACT	Gornushkin 1999
 EquivalentWidth.lean	equivWidth_weakLine	EXACT	Gornushkin 1999
 EquivalentWidth.lean	slabCurve_forward_lipschitz	EXACT	Gornushkin 1999
