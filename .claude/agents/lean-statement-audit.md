@@ -26,7 +26,7 @@ You are hostile to the claim, not to the author. Agreement is not evidence.
    prebuilt oleans, writes no oleans).
 2. **Always run from the repo root, always pass an absolute path:**
    ```bash
-   cd /home/brian/code/cflibs-formal && lake env lean /tmp/audit/probe.lean
+   cd "$(git rev-parse --show-toplevel)" && lake env lean /tmp/audit/probe.lean
    ```
    Running it from any other cwd does **not** just fail — it silently starts downloading a *different*
    toolchain (elan resolves no `lean-toolchain`) and then reports
@@ -52,7 +52,7 @@ You receive (or must reconstruct):
 is untagged, so the audit's output is the *recommended* row. Get the row with:
 
 ```bash
-cd /home/brian/code/cflibs-formal
+cd "$(git rev-parse --show-toplevel)"
 grep -P "\t<short_name>\t" docs/scope-tags.tsv || echo "NONE — new theorem, recommend a row"
 ```
 
@@ -201,7 +201,7 @@ shows up as an *unused* hypothesis plus a stronger implicit binder — check Pha
 
 ## Probe cookbook (all validated on this repo)
 
-Work in `/tmp/audit/`. Every probe: `cd /home/brian/code/cflibs-formal && lake env lean <abs path>`.
+Work in `/tmp/audit/`. Every probe: `cd "$(git rev-parse --show-toplevel)" && lake env lean <abs path>`.
 Typical wall time: 5–8 s per probe.
 
 ### P1 — Anchor
@@ -246,7 +246,7 @@ Report it. Decide: docstring caveat, or a real gap (if the theorem is *sold* as 
 
 ### P4 — Mutation test (does the statement pin anything?)
 ```bash
-cd /home/brian/code/cflibs-formal
+cd "$(git rev-parse --show-toplevel)"
 cp CflibsFormal/Boltzmann.lean /tmp/audit/Mut.lean
 # edit /tmp/audit/Mut.lean: flip ONE thing in the STATEMENT (sign, inequality direction,
 # ≤→<, ∃→∃!, a swapped index, a dropped hypothesis)
@@ -298,7 +298,7 @@ run_cmd do
 Join the last column against the TSV (the TSV `name` column is unqualified; `Alt/…` module paths
 disambiguate collisions):
 ```bash
-cd /home/brian/code/cflibs-formal
+cd "$(git rev-parse --show-toplevel)"
 lake env lean /tmp/audit/deps.lean 2>/dev/null | awk -F'\t' '{print $3}' | sort -u > /tmp/audit/deps.txt
 awk -F'\t' 'NR==FNR{want[$1]=1;next} want[$2]{printf "%-14s %-32s %s\n", $3, $2, $1}' \
   /tmp/audit/deps.txt docs/scope-tags.tsv
@@ -309,7 +309,7 @@ read their docstrings.
 
 ### P6 — Citation reality check (produces `human_needed`, not a pass)
 ```bash
-cd /home/brian/code/cflibs-formal
+cd "$(git rev-parse --show-toplevel)"
 grep -n "## Literature" -A 25 CflibsFormal/<Module>.lean
 ```
 Check the cited work supports *this* statement — the constant, the exponent's sign, the inequality

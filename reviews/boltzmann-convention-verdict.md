@@ -147,4 +147,4 @@ The spec is **acceptable as-is for correctness** — its inverse theorems are di
 | Test bridge | `I_our = I_spec/λ`, **distinct E_k-correlated per-line λ (never λ=1)**, assert slope+intercept+composition. Exact (1e-12) and λ-bug-sensitive. |
 | Spec energy variant | **Recommended**, lightweight (~30 lines, no new axioms). Prompt-ready addendum above. |
 
-Relevant paths: `cflibs/inversion/physics/boltzmann.py` (lines 56, 123, 689, 1400), `cflibs/inversion/physics/boltzmann_jax.py:11`, `/home/brian/code/cflibs-formal/CflibsFormal/ForwardMap.lean`, `/home/brian/code/cflibs-formal/CflibsFormal/Saha.lean`, `/home/brian/code/cflibs-formal/CflibsFormal/SelfAbsorption.lean`, `/home/brian/code/cflibs-formal/oracle/check_fixtures.py`, `/home/brian/code/cflibs-formal/oracle/fixtures.json`.
+Relevant paths: `cflibs/inversion/physics/boltzmann.py` (lines 56, 123, 689, 1400), `cflibs/inversion/physics/boltzmann_jax.py:11`, `CflibsFormal/ForwardMap.lean`, `CflibsFormal/Saha.lean`, `CflibsFormal/SelfAbsorption.lean`, `oracle/check_fixtures.py`, `oracle/fixtures.json`.
