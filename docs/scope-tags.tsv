@@ -270,6 +270,15 @@ LineBroadening.lean	dopplerFWHM_strictMono_T	PURE-MATH	—
 LineBroadening.lean	doppler_recovers	EXACT	Griem 1997
 LineBroadening.lean	gaussQuadrature_comm	PURE-MATH	—
 LineBroadening.lean	deconvolveGaussian_quadrature	EXACT	Aragón & Aguilera 2008
+LineEvidence.lean	signal_eq_of_dead	PURE-MATH	—
+LineEvidence.lean	not_isEvidence_of_dead	PURE-MATH	—
+LineEvidence.lean	informative_subset	PURE-MATH	—
+LineEvidence.lean	not_mem_informative_of_dead	PURE-MATH	—
+LineEvidence.lean	conditionedRecall_ge	PURE-MATH	—
+LineEvidence.lean	conditionedRecall_le_one	PURE-MATH	—
+LineEvidence.lean	argmin_eq_left_of_strictMonoOn	PURE-MATH	—
+LineEvidence.lean	argmin_eq_right_of_strictAntiOn	PURE-MATH	—
+LineEvidence.lean	atScanBoundary_of_strictMonoOn	PURE-MATH	—
 LineExtraction.lean	trapArea_smul	PURE-MATH	—
 LineExtraction.lean	trapArea_add	PURE-MATH	—
 LineExtraction.lean	trapArea_antisymm_noise	PURE-MATH	—

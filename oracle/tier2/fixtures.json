@@ -932,6 +932,257 @@
    "expected": {
     "ok": false
    }
+  },
+  {
+   "id": "evidence_single_informative_line_abstains",
+   "predicate": "comb_recall_conditioned",
+   "lean": "conditionedRecall_ge",
+   "inputs": {
+    "R": [
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.8,
+     0.8,
+     0.8,
+     0.8,
+     1.0
+    ],
+    "I": [
+     50.0,
+     50.0,
+     50.0,
+     50.0,
+     50.0,
+     50.0,
+     1.2,
+     1.2,
+     1.2,
+     1.2,
+     400.0
+    ],
+    "detected": [
+     10
+    ],
+    "floor": 1.0,
+    "min_informative": 2
+   },
+   "expected": {
+    "informative": [
+     10
+    ],
+    "recall": null,
+    "naive_recall": 0.09090909090909091
+   }
+  },
+  {
+   "id": "evidence_single_line_min1",
+   "predicate": "comb_recall_conditioned",
+   "lean": "conditionedRecall_ge",
+   "inputs": {
+    "R": [
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.8,
+     0.8,
+     0.8,
+     0.8,
+     1.0
+    ],
+    "I": [
+     50.0,
+     50.0,
+     50.0,
+     50.0,
+     50.0,
+     50.0,
+     1.2,
+     1.2,
+     1.2,
+     1.2,
+     400.0
+    ],
+    "detected": [
+     10
+    ],
+    "floor": 1.0,
+    "min_informative": 1
+   },
+   "expected": {
+    "informative": [
+     10
+    ],
+    "recall": 1.0,
+    "naive_recall": 0.09090909090909091
+   }
+  },
+  {
+   "id": "evidence_nothing_detected",
+   "predicate": "comb_recall_conditioned",
+   "lean": "conditionedRecall_ge",
+   "inputs": {
+    "R": [
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.8,
+     0.8,
+     0.8,
+     0.8,
+     1.0
+    ],
+    "I": [
+     50.0,
+     50.0,
+     50.0,
+     50.0,
+     50.0,
+     50.0,
+     1.2,
+     1.2,
+     1.2,
+     1.2,
+     400.0
+    ],
+    "detected": [],
+    "floor": 1.0,
+    "min_informative": 1
+   },
+   "expected": {
+    "informative": [
+     10
+    ],
+    "recall": 0.0,
+    "naive_recall": 0.0
+   }
+  },
+  {
+   "id": "evidence_dead_teeth_deflate_naive",
+   "predicate": "comb_recall_conditioned",
+   "lean": "conditionedRecall_ge",
+   "inputs": {
+    "R": [
+     0.0,
+     0.0,
+     0.0,
+     1.0,
+     1.0,
+     1.0,
+     1.0,
+     1.0
+    ],
+    "I": [
+     100.0,
+     100.0,
+     100.0,
+     100.0,
+     100.0,
+     100.0,
+     100.0,
+     100.0
+    ],
+    "detected": [
+     3,
+     4,
+     5
+    ],
+    "floor": 1.0,
+    "min_informative": 2
+   },
+   "expected": {
+    "informative": [
+     3,
+     4,
+     5,
+     6,
+     7
+    ],
+    "recall": 0.6,
+    "naive_recall": 0.375
+   }
+  },
+  {
+   "id": "evidence_dead_band_is_not_evidence",
+   "predicate": "line_is_evidence",
+   "lean": "not_isEvidence_of_dead",
+   "inputs": {
+    "R": 0.0,
+    "I": 1000000000.0,
+    "floor": 0.0
+   },
+   "expected": {
+    "evidence": false
+   }
+  },
+  {
+   "id": "shift_applied_at_lower_edge",
+   "predicate": "shift_applicable",
+   "lean": "atScanBoundary_of_strictMonoOn",
+   "inputs": {
+    "shift": -0.3,
+    "lo": -0.3,
+    "hi": 0.3,
+    "eps": 0.01
+   },
+   "expected": {
+    "at_boundary": true,
+    "applicable": false
+   }
+  },
+  {
+   "id": "shift_near_upper_edge",
+   "predicate": "shift_applicable",
+   "lean": "atScanBoundary_of_strictMonoOn",
+   "inputs": {
+    "shift": 0.29,
+    "lo": -0.3,
+    "hi": 0.3,
+    "eps": 0.02
+   },
+   "expected": {
+    "at_boundary": true,
+    "applicable": false
+   }
+  },
+  {
+   "id": "shift_interior",
+   "predicate": "shift_applicable",
+   "lean": "atScanBoundary_of_strictMonoOn",
+   "inputs": {
+    "shift": 0.0,
+    "lo": -0.3,
+    "hi": 0.3,
+    "eps": 0.01
+   },
+   "expected": {
+    "at_boundary": false,
+    "applicable": true
+   }
+  },
+  {
+   "id": "shift_just_inside_tolerance",
+   "predicate": "shift_applicable",
+   "lean": "atScanBoundary_of_strictMonoOn",
+   "inputs": {
+    "shift": -0.28,
+    "lo": -0.3,
+    "hi": 0.3,
+    "eps": 0.01
+   },
+   "expected": {
+    "at_boundary": false,
+    "applicable": true
+   }
   }
  ]
 }

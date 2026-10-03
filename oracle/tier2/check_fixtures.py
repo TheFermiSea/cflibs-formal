@@ -63,6 +63,18 @@ def main(argv=None):
                                                 i["delta_sys"], i["tau"])) == e["identifiable"]
                 and tot >= i["delta_sys"] * (1.0 - 1e-12)  # the systematic floor
             )
+        elif kind == "comb_recall_conditioned":
+            inf = P.informative_lines(i["R"], i["I"], i["floor"])
+            rec = P.comb_recall_conditioned(i["R"], i["I"], i["detected"], i["floor"],
+                                            i["min_informative"])
+            naive = len(i["detected"]) / len(i["R"])
+            ok = (inf == e["informative"] and close(rec, e["recall"], 1e-12)
+                  and (rec is None or rec >= naive - 1e-12))  # conditioned >= naive when defined
+        elif kind == "line_is_evidence":
+            ok = bool(P.line_is_evidence(i["R"], i["I"], i["floor"])) == e["evidence"]
+        elif kind == "shift_applicable":
+            ok = (bool(P.shift_at_boundary(i["shift"], i["lo"], i["hi"], i["eps"])) == e["at_boundary"]
+                  and bool(P.shift_applicable(i["shift"], i["lo"], i["hi"], i["eps"])) == e["applicable"])
         elif kind == "kappa_vs_fisher_witness":
             kb = [P.t_rel_error_bound(E, i["eps"], i["T_hat_K"]) for E in (i["E_mid_eV"], i["E_wide_eV"])]
             fs = [P.t_rel_sigma(E, i["sigma"], i["T_hat_K"]) for E in (i["E_mid_eV"], i["E_wide_eV"])]

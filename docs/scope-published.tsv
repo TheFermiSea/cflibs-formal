@@ -416,6 +416,15 @@ LineBroadening.lean	dopplerFWHM_pos	theorem	PURE-MATH	PURE-MATH	—
 LineBroadening.lean	dopplerFWHM_strictMono_T	theorem	PURE-MATH	PURE-MATH	—
 LineBroadening.lean	doppler_recovers	theorem	EXACT	EXACT	—
 LineBroadening.lean	gaussQuadrature_comm	theorem	PURE-MATH	PURE-MATH	—
+LineEvidence.lean	argmin_eq_left_of_strictMonoOn	theorem	PURE-MATH	PURE-MATH	—
+LineEvidence.lean	argmin_eq_right_of_strictAntiOn	theorem	PURE-MATH	PURE-MATH	—
+LineEvidence.lean	atScanBoundary_of_strictMonoOn	theorem	PURE-MATH	PURE-MATH	—
+LineEvidence.lean	conditionedRecall_ge	theorem	PURE-MATH	PURE-MATH	—
+LineEvidence.lean	conditionedRecall_le_one	theorem	PURE-MATH	PURE-MATH	—
+LineEvidence.lean	informative_subset	theorem	PURE-MATH	PURE-MATH	—
+LineEvidence.lean	not_isEvidence_of_dead	theorem	PURE-MATH	PURE-MATH	—
+LineEvidence.lean	not_mem_informative_of_dead	theorem	PURE-MATH	PURE-MATH	—
+LineEvidence.lean	signal_eq_of_dead	theorem	PURE-MATH	PURE-MATH	—
 LineExtraction.lean	shotSigma_mono	theorem	PURE-MATH	PURE-MATH	—
 LineExtraction.lean	shotSigma_pos	theorem	PURE-MATH	PURE-MATH	—
 LineExtraction.lean	trapArea_add	theorem	PURE-MATH	PURE-MATH	—

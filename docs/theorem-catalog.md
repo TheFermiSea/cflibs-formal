@@ -9,9 +9,9 @@
 
 A result shows `own → published` when the two differ (with the definitions that weakened it), and a single tag when they agree. A definition with its own row shows `model TAG`.
 
-**Own-tag mix** (819 results): **EXACT** 164 · **REDUCED** 234 · **APPROXIMATION** 4 · **PURE-MATH** 417
+**Own-tag mix** (828 results): **EXACT** 164 · **REDUCED** 234 · **APPROXIMATION** 4 · **PURE-MATH** 426
 
-**Published-tag mix** (819 results; 143 weakened by a model tag): **EXACT** 57 · **REDUCED** 279 · **APPROXIMATION** 66 · **PURE-MATH** 417
+**Published-tag mix** (828 results; 143 weakened by a model tag): **EXACT** 57 · **REDUCED** 279 · **APPROXIMATION** 66 · **PURE-MATH** 426
 
 `EXACT` = an exact theorem about the model it is stated over · `REDUCED` = exact only after a stated reduction (a dimensionless/lumped-factor form) · `APPROXIMATION` = the statement itself is approximate (documented idealization / limiting case) · `PURE-MATH` = infrastructure lemma, no physical claim. Classification cross-checked against `reviews/literature-validity-audit.md`.
 
@@ -888,6 +888,25 @@ A result shows `own → published` when the two differ (with the definitions tha
 - `EXACT` · `doppler_recovers` — Doppler thermometry is exact.  _[Griem 1997]_
 - `PURE-MATH` · `gaussQuadrature_comm` — Gaussian quadrature is symmetric in its two contributions.
 - `EXACT` · `deconvolveGaussian_quadrature` — Deconvolution exactly inverts quadrature.  _[Aragón & Aguilera 2008]_
+
+## `LineEvidence.lean`  (CflibsFormal.LineEvidence)
+*when is a missing line evidence of absence? (two gates)*
+
+**Definitions**
+- `IsEvidence` — A line is *evidence* when its expected recorded signal `R k · I k` (response times expected emitted intensity) clears the noise floor.
+- `informative` — The informative expected lines of a comb `S`: those whose expected recorded signal clears the noise floor.
+- `AtScanBoundary` — A shift `s` is at the *scan boundary* of the interval `[lo, hi]` when it lies within `ε` of either end.
+
+**Results**
+- `PURE-MATH` · `signal_eq_of_dead` — In a dead band (`R k = 0`) the recorded signal is the same for every emitted intensity, in particular for presence and absence of the element.
+- `PURE-MATH` · `not_isEvidence_of_dead` — In a dead band, with a nonnegative noise floor, a missing line is not evidence.
+- `PURE-MATH` · `informative_subset` — The informative lines are among the expected ones.
+- `PURE-MATH` · `not_mem_informative_of_dead` — A dead-band line is never informative (for a nonnegative floor).
+- `PURE-MATH` · `conditionedRecall_ge` — Conditioned recall never falls below the naive recall.
+- `PURE-MATH` · `conditionedRecall_le_one` — If every detected line lies in the informative set (a detected line had signal), the conditioned recall is a genuine recall: at most `1`.
+- `PURE-MATH` · `argmin_eq_left_of_strictMonoOn` — A strictly increasing objective on `[lo, hi]` has its minimizer at the left end.
+- `PURE-MATH` · `argmin_eq_right_of_strictAntiOn` — A strictly decreasing objective on `[lo, hi]` has its minimizer at the right end.
+- `PURE-MATH` · `atScanBoundary_of_strictMonoOn` — The minimizer of a strictly monotone scan objective is at the scan boundary, for every tolerance `ε ≥ 0`.
 
 ## `LineExtraction.lean`  (CflibsFormal.LineExtraction)
 *a metamorphic specification of line extraction*

@@ -126,6 +126,42 @@ for bad, inputs in (("w_nonpositive", (0.0, NREF, 0.2, 1.0)), ("kopac_below_1", 
         {"T_K": T_K, "dE_eV": 2.0, "w": inputs[0], "nRef": inputs[1], "width_meas": inputs[2],
          "k_opac": inputs[3]}, {"ok": False})  # fmt: skip
 
+# --- Detectability conditioned on the instrument response (LineEvidence) ----------------------
+# STYLIZED comb modeled on a brass element whose expected lines fall partly below a detector's
+# usable band: 6 teeth in the dead band (R = 0), 4 weak teeth (R * I just under the floor) and 1
+# strong visible tooth. Not measured data.
+FLOOR = 1.0
+R_ZN = [0.0] * 6 + [0.8] * 4 + [1.0]
+I_ZN = [50.0] * 6 + [1.2] * 4 + [400.0]  # R * I = 0 x6, 0.96 x4 (< floor), 400
+for tag, det, mn in (("single_informative_line_abstains", [10], 2), ("single_line_min1", [10], 1),
+                     ("nothing_detected", [], 1)):
+    rec = P.comb_recall_conditioned(R_ZN, I_ZN, det, FLOOR, mn)
+    add(f"evidence_{tag}", "comb_recall_conditioned", "conditionedRecall_ge",
+        {"R": R_ZN, "I": I_ZN, "detected": det, "floor": FLOOR, "min_informative": mn},
+        {"informative": P.informative_lines(R_ZN, I_ZN, FLOOR), "recall": rec,
+         "naive_recall": len(det) / len(R_ZN)})  # fmt: skip
+# A comb with enough informative lines: dead teeth deflate the naive recall, never the conditioned
+R_B = [0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+I_B = [100.0] * 8
+det_b = [3, 4, 5]
+add("evidence_dead_teeth_deflate_naive", "comb_recall_conditioned", "conditionedRecall_ge",
+    {"R": R_B, "I": I_B, "detected": det_b, "floor": FLOOR, "min_informative": 2},
+    {"informative": P.informative_lines(R_B, I_B, FLOOR),
+     "recall": P.comb_recall_conditioned(R_B, I_B, det_b, FLOOR, 2),
+     "naive_recall": len(det_b) / len(R_B)})  # fmt: skip
+add("evidence_dead_band_is_not_evidence", "line_is_evidence", "not_isEvidence_of_dead",
+    {"R": 0.0, "I": 1.0e9, "floor": 0.0}, {"evidence": False})
+
+# --- A registration shift at the edge of its scan (LineEvidence.AtScanBoundary) ----------------
+for tag, shift, lo, hi, eps in (("applied_at_lower_edge", -0.3, -0.3, 0.3, 0.01),
+                                ("near_upper_edge", 0.29, -0.3, 0.3, 0.02),
+                                ("interior", 0.0, -0.3, 0.3, 0.01),
+                                ("just_inside_tolerance", -0.28, -0.3, 0.3, 0.01)):
+    add(f"shift_{tag}", "shift_applicable", "atScanBoundary_of_strictMonoOn",
+        {"shift": shift, "lo": lo, "hi": hi, "eps": eps},
+        {"at_boundary": P.shift_at_boundary(shift, lo, hi, eps),
+         "applicable": P.shift_applicable(shift, lo, hi, eps)})  # fmt: skip
+
 doc = {
     "schema": "cflibs-tier2-predicate-fixtures-v1",
     "units": {"E": "eV", "T": "K", "n_e": "cm^-3", "dE": "eV", "kB": P.KB_EV_PER_K},
