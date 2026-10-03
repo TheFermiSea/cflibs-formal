@@ -291,5 +291,6 @@ if [ "$SURVIVED" -gt 0 ]; then
   echo "Audit the statement, not the proof: it is weaker or more vacuous than its docstring claims."
   exit 1
 fi
-echo "All mutants killed: every audited statement changed meaning when perturbed."
+echo "All mutants killed: no mutated statement in the table compiled. (A hypothesis-drop mutant"
+echo "can die on an unknown identifier in the proof rather than on a changed meaning.)"
 exit 0

@@ -15,14 +15,17 @@ import CflibsFormal.Classic
 # CF-LIBS formalization — the multi-line ordinary-least-squares Boltzmann-plot estimator
 
 This module formalizes an **alternative** calibration-free CF-LIBS composition estimator
-that fits ALL lines of a species by **ordinary least squares (OLS)** rather than using only
-two lines for the slope (the classic method).
+that reads each species' density from the **ordinary least squares (OLS)** intercept over ALL
+of its lines, instead of from one line (the classic density reader). Like the classic
+estimator it is given the temperature `T` as an input: the estimator uses only the fitted
+intercept and `U(T)`; the fitted slope is not used, and recovering `T` is a separate leg.
 
 The Boltzmann-plot ordinate of line `k` is
   `y_k = log (I_k / (g_k A_k)) = −E_k / (k_B T) + b`,
 with intercept `b = log (Fcal · N / U(T))` — exactly `ForwardMap.boltzmann_plot_intensity`.
 The intercept carries the species concentration (Ciucci et al. 1999). The classic method
-uses TWO lines for the slope; this alternative fits ALL `n` lines of a species by OLS.
+reads the density from ONE line at the known `T`; this alternative fits ALL `n` lines of a
+species by OLS and reads the intercept.
 
 Given a `Fintype` `ι` of lines and points `(E_k, y_k)`, the core `OLS` module defines
   `Ebar = (∑ E_k) / card`,   `ybar = (∑ y_k) / card`,
@@ -39,8 +42,8 @@ verbatim. On top of it we prove the *physics*:
 * `olsDensity_recovers` — feeding a species' FULL forward-model spectrum through the OLS
   density reader recovers the true density `N`.
 * `leastSquares_sound` — **MAIN soundness:** run on the genuine multi-line forward-model
-  spectrum (full per-species line vector, no `N` input), the OLS estimator returns the
-  TRUE composition `C_s = N_s / ∑ N`.
+  spectrum (full per-species line vector, no `N` input) at the true temperature `T`, the OLS
+  estimator returns the TRUE composition `C_s = N_s / ∑ N`.
 * `leastSquares_agrees_classic` — **same-spectrum agreement on the noise-free forward
   fixpoint:** fed the SAME underlying forward spectrum (OLS reads the full per-species line
   vector, classic reads the single chosen line `u t` of that very same spectrum), the two
@@ -150,8 +153,10 @@ theorem olsDensity_recovers [Nonempty ι] {kB T N Fcal : ℝ} {g E A : ι → �
   field_simp
 
 /-- **MAIN soundness.** Run on the genuine multi-line forward-model spectrum (full
-per-species line vector, no `N` input), the OLS estimator returns the TRUE composition
-`C_s = N_s / ∑ N`. Assembles `olsDensity_recovers` pointwise then `Closure.composition`;
+per-species line vector, no `N` input) with the temperature `T` that generated it supplied as
+an input, the OLS estimator returns the TRUE composition `C_s = N_s / ∑ N`. It is a known-`T`
+intercept reader: no temperature is recovered here. Assembles `olsDensity_recovers` pointwise then
+`Closure.composition`;
 soundness is the assembly. Realizes the multi-line least-squares CF-LIBS intercept method of
 Tognoni et al. (2010). -/
 theorem leastSquares_sound [Nonempty ι] {kB T Fcal : ℝ}
@@ -171,7 +176,7 @@ theorem leastSquares_sound [Nonempty ι] {kB T Fcal : ℝ}
 /-- **Same-spectrum agreement on the noise-free forward fixpoint.** Fed the SAME underlying
 forward spectrum (the classic input `fun t => lineIntensity … (u t)` is literally the
 `u t`-slice of the OLS input `fun t k => lineIntensity … k`), the OLS estimator and the
-classic two-line estimator return the SAME composition. Neither side ingests `N` or
+classic single-line density reader return the SAME composition. Neither side ingests `N` or
 `composition N`, and the two procedures are genuinely different (OLS = regression intercept
 over `n` lines via `olsDensity`; classic = single-line inversion via `classicDensity`).
 

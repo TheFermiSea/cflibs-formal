@@ -57,7 +57,7 @@ A theorem card's `citations[]` front-matter entries are `{key, role, supports, l
   `corroborating`, and only if its whitelist row is `VERIFIED` or `CORRECTED`.
 - A row whitelisted `SUSPECT` may not back any card citation.
 
-The card validator (`scripts/check_cards.py`, when it lands) checks the `key`/`role`/`locator`
+The card validator (`scripts/check_cards.py`, the theorem-card CI gate) checks the `key`/`role`/`locator`
 rules above mechanically; it does not and cannot verify a source's content — that is still the
 citation-integrity skill's job, run once, at the whitelist row.
 

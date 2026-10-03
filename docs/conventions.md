@@ -7,8 +7,10 @@ deviation is a defect, not a local decision.
 
 Why a lock: none of these hazards produces an error. Each one produces a finite, plausible,
 wrong number. The verified core is deliberately dimensionless bare `ℝ` (CONTEXT.md design decision
-#1), so Lean will not catch a unit or convention mismatch — only this document and
-`Dimensions.lean` will. See `CONTEXT.md § Metrology & traceability` for the measurand and
+#1), so Lean will not catch a unit or convention mismatch — only this document will.
+`Dimensions.lean` checks the exponent arithmetic of dimension vectors assigned by hand; those
+vectors are not linked to the `CflibsFormal` definitions, so it would not catch a wrong exponent
+in a definition either. See `CONTEXT.md § Metrology & traceability` for the measurand and
 traceability framing.
 
 Every claim below was read off the Lean sources cited, not inferred.
@@ -103,8 +105,9 @@ not. It tilts the slope, biasing `T`.
 
 **Choice.** The forward map takes the Einstein coefficient for spontaneous emission, per line,
 `A : ι → ℝ`, with `0 < A k`. Oscillator strength `f` is **not formalized anywhere** in
-`CflibsFormal/` — it appears only in prose in `CurveOfGrowth` and `EquivalentWidth` (where the
-optical depth `τ` is said to lump it) and in `Alt/CSigmaCurveOfGrowth`, where the *cross-section*
+`CflibsFormal/` — it appears only in prose (for example in `CurveOfGrowth`, `EquivalentWidth`,
+`DoubletChannel` and `OpticalDepthBridge`, where the optical depth `τ` or the cross-section `σ₀`
+is said to lump it) and in `Alt/CSigmaCurveOfGrowth`, where the *cross-section*
 `σ_ℓ` enters through `csigmaOpticalDepth sigmaL ell C = σ_ℓ·ℓ·C`. There is no `f`-to-`A` conversion
 in this repo, proven or otherwise.
 
@@ -138,15 +141,11 @@ pipeline usually report wt%. Comparing a Lean-verified `C_s` against a wt% numbe
 tens-of-percent disagreement for any multi-element sample with unequal masses (Fe/Al: `M` ratio
 2.07), and it will look like a physics bug rather than a units bug.
 
-**Known docstring defect (theorem is correct, noun is wrong).**
-`MatrixEffects.missingFraction` is titled "**Missing (undetected) mass fraction**" but is defined as
-`1 − detectedDensity n D / totalDensity n` — a *number*-density share, as its own following sentence
-correctly says. The same wording appears twice in `MatrixEffects.lean` (module docstring and
-definition docstring) and is carried into `docs/theorem-catalog.md`, where the single generated line
-reads "mass fraction … the share of the true **number** density". `CONTEXT.md` is clean. The
-definition and every theorem about it (`missingFraction_nonneg`, `inflationFactor_eq`,
-`one_le_inflationFactor`) are right; only the noun is wrong. **Fix the docstring, not the
-definition.**
+**`missingFraction` is a number fraction.** `MatrixEffects.missingFraction` is
+`1 − detectedDensity n D / totalDensity n`, a *number*-density share. Its docstrings said "mass
+fraction" until 2026-10-03; they now say "number fraction". The definition and the theorems about
+it (`missingFraction_nonneg`, `inflationFactor_eq`, `one_le_inflationFactor`) were always about
+number densities.
 
 ---
 
@@ -202,8 +201,10 @@ species-independent and therefore cancels in closure by
 
 **Which one is authoritative.** `docs/scope-tags.tsv` already encodes the judgement and it should be
 read as the lock: `boltzmann_plot_intensity_wavelength` and `temperature_from_two_lines_wavelength`
-are tagged **EXACT**; `boltzmann_plot_intensity` and `temperature_from_two_lines` are tagged
-**REDUCED**. The reduction is precisely the assumption that `λ` is line-independent over the fitted
+are tagged **EXACT** (and publish EXACT: `lineIntensityEnergy` deliberately has no model row,
+because the reduction recorded by the `lineIntensity` row is the dropped `λ`, which the energy
+form keeps; LTE, single zone and optical thinness are the model's own premises);
+`boltzmann_plot_intensity` and `temperature_from_two_lines` are tagged **REDUCED**. The reduction is precisely the assumption that `λ` is line-independent over the fitted
 set, or that the detector genuinely counts photons. **A radiometrically calibrated spectrometer
 measures energy, so use the `λ`-carrying ordinate.**
 
@@ -225,7 +226,7 @@ REDUCED in `docs/scope-tags.tsv`, so every result stated over it publishes at mo
 
 * A row naming a **definition** that encodes a physical model carries a **model tag**: how
   faithfully the definition encodes the physics. The model rows in `docs/scope-tags.tsv`
-  (2026-09-25; the TSV is authoritative, and `scope-check` prints the count):
+  (the TSV is authoritative, and `scope-check` prints the count):
 
   | Module | Definition | Model tag | What the tag records |
   |---|---|---|---|
@@ -244,6 +245,11 @@ REDUCED in `docs/scope-tags.tsv`, so every result stated over it publishes at mo
   | `Saha` | `sahaFactor` | REDUCED | the ideal, non-interacting Saha factor between two adjacent stages: no ionization-potential depression (D18) and the literal level sum with no cutoff policy (D17). `electronDensityFromRatio` and `TemporalEvolution.gateSahaFactor` call it and inherit the tag. `partitionFunction` gets no row: a literal sum over a supplied finite level list is exact for that list, and the cutoff question is which levels the list holds |
   | `SahaStability` | `ionReweight` | REDUCED | the ion zone reweight `2·θ^{3/2}·e^{−χ/(k_BT)}/n_e`: the thermal part of the ideal Saha factor over `n_e`, with no ionization-potential depression (D18). It restates that part of `sahaFactor` without calling it, so it inherits nothing and needs its own row. It is the ion-to-neutral zone-weight ratio only under uniform `n_e` and per-zone LTE (`IonApparentTemperature.ion_zoneWeight_eq`) |
   | `Alt/OLSVariance`, `Alt/StochasticBudget` | `betaHat`, `alphaHat` | REDUCED | the OLS slope and intercept estimators of the idealized linear Boltzmann plot `yₖ = α + β·Eₖ + εₖ` (one temperature, optically thin, LTE) with additive ordinate noise and exactly known energies; `alphaHat` restates the model without calling `betaHat`, so it needs its own row |
+  | `Alt/GaussMarkov` | `linEstimator` | REDUCED | a general linear estimator over the same idealized linear model, restated in its own body (2026-10-03) |
+  | `SahaEquilibrium` | `sahaEquilibriumNe`, `multiElementIonized` | REDUCED | the closed-form electron density of one element in two stages at fixed `T` and known `Ntot`, and the multi-element two-stage closure map; the module header calls this "the REDUCED core" (2026-10-03) |
+  | `StarkShift` | `starkShift` | REDUCED | electron-impact shift linear in `n_e`, the same idealization as `starkFWHM` (2026-10-03) |
+  | `HydrogenStark` | `hydrogenStarkFWHM` | APPROXIMATION | the constant-`w` power law `Δλ = w·(n_e/n_ref)^{2/3}`, which the module documents as the leading-order operational approximation (2026-10-03) |
+  | `Continuum` | `contEmissivity` | APPROXIMATION | the reduced continuum emissivity with the Biberman/Gaunt factor frozen into a constant, documented as approximate (2026-10-03) |
 
   **Which definitions get a flat-kernel row.** A definition gets model tag APPROXIMATION when it
   is documented or used as the *frequency-integrated* line intensity with one optical depth for

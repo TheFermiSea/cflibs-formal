@@ -84,7 +84,7 @@ namespace CflibsFormal
 `n_ion` is the density of the continuum-producing ion stage, and `C` folds the positive constant
 `K·Z²·ξ`. Approximate: freezing the Biberman/Gaunt factor `ξ` into `C` drops its `λ,T`
 dependence, and the common `exp(-u)` prefactor on the free-bound part is not checked against a
-primary source (module Honest scope). -/
+primary source (module Honest scope). Model tag APPROXIMATION (`docs/conventions.md` §8). -/
 noncomputable def contEmissivity (C ne nion T u : ℝ) : ℝ :=
   C * ne * nion * Real.exp (-u) / Real.sqrt T
 

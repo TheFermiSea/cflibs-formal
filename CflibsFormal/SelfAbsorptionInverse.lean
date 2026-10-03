@@ -124,7 +124,9 @@ they have equal closure composition. Per line the known `SA(tau s)` cancels (via
 `thick_density_identifiability`), giving equal `N s` for every species, hence equal
 `trueComposition`. The direct self-absorption analogue of `general_identifiability`'s
 composition conclusion; `T` equality is supplied honestly (one line per species cannot pin
-`T`), and `tau` being matched/known is precisely the PRESERVED hypothesis.
+`T`), and `tau` being matched/known is precisely the PRESERVED hypothesis. Admissibility of the
+second set (`_ha₂`) is stated for symmetry and not used: with the atomic data shared, the first
+set's admissibility suffices.
 
 `trueComposition` is the estimator-independent target, so the statement is non-tautological. -/
 theorem thick_composition_identifiability [Fintype levelIndex] [Nonempty levelIndex]
@@ -201,14 +203,19 @@ plasma parameter sets whose **measured** thick spectra are IDENTICAL yet whose c
 compositions DIFFER. So self-absorption defeats *composition* recovery, not merely the per-line
 density recovery of `selfAbsorption_breaks_identifiability`.
 
-Two species (`Fin 2`), one shared emitting level (`Fin 1`), arbitrary fixed atomic data
-`g E A` and `T`. Species `0` reuses the module's per-line aliasing
-(`selfAbsorption_breaks_identifiability`, invoked verbatim — the aliasing mechanism is NOT
-re-derived): densities `N₀ ≠ N₀'` at optical depths `τ₀`, `τ₀'` give equal
-`selfAbsorbedIntensity`. Species `1` is IDENTICAL in both sets (same density `1`, same optical
+Two species (`Fin 2`), one shared emitting level (`Fin 1`), any temperature `T > 0` and any
+positive atomic data `g`, `A` (any `E`). The conclusion states that both parameter sets are
+**admissible** and carry exactly this `T`, `g`, `E`, `A`: they differ only in the densities and
+the optical depths. (Without those conjuncts the statement would be satisfied by degenerate
+parameter sets, e.g. `A ≡ 0`, with no self-absorption at all.) Species `0` uses the aliasing
+witness of `selfAbsorption_breaks_identifiability`, written out: density `1 − e⁻¹` at `τ = 0`
+and density `1` at `τ = 1` give equal `selfAbsorbedIntensity`. Species `1` is IDENTICAL in both
+sets (same density `1`, same optical
 depth `0`). The full thick observation vectors then coincide — species `0` by the aliasing
 equality, species `1` by reflexivity — while the closure fraction of species `1` differs,
-`1 / (N₀ + 1)` vs `1 / (N₀' + 1)`, because `N₀ ≠ N₀'` (`inv_inj`). Both optical-depth vectors
+`1 / (N₀ + 1)` vs `1 / (N₀' + 1)`, because `N₀ ≠ N₀'` (`inv_inj`). For `Fcal ≠ 0` this cannot
+happen at `τ ≡ 0`: thin observations of admissible sets with shared atomic data determine the
+densities. Both optical-depth vectors
 are certified nonnegative; nonnegativity is all that is checked.
 
 Physical reach — narrower than the statement's free `τ`. The construction puts `τ = 0` at a
@@ -229,34 +236,39 @@ scale-invariant closure (see the scope note on `selfAbsorption_breaks_identifiab
 composition SURVIVES. The gap between the two theorems is exactly *per-species / unknown* vs.
 *common / known* `τ`. Model: the flat-profile `selfAbsorbedIntensity` (module scope block).
 
-Self-witnessing: an explicit two-species construction (no abstract existence witness). -/
-theorem selfAbsorption_breaks_composition_identifiability (kB T Fcal : ℝ) (g E A : Fin 1 → ℝ) :
+The witness is explicit (see the proof). -/
+theorem selfAbsorption_breaks_composition_identifiability (kB T Fcal : ℝ) (g E A : Fin 1 → ℝ)
+    (hT : 0 < T) (hg : ∀ k, 0 < g k) (hA : ∀ k, 0 < A k) :
     ∃ (tau₁ tau₂ : Fin 2 → ℝ) (p₁ p₂ : PlasmaParams (Fin 2) (Fin 1)),
+      p₁.Admissible ∧ p₂.Admissible ∧ p₁.T = T ∧ p₂.T = T ∧ p₁.g = g ∧ p₂.g = g ∧
+      p₁.E = E ∧ p₂.E = E ∧ p₁.A = A ∧ p₂.A = A ∧
       (∀ s, 0 ≤ tau₁ s) ∧ (∀ s, 0 ≤ tau₂ s) ∧
         thickObserve kB Fcal (fun _ => 0) tau₁ p₁
           = thickObserve kB Fcal (fun _ => 0) tau₂ p₂ ∧
         trueComposition p₁ ≠ trueComposition p₂ := by
-  obtain ⟨N₀, N₀', τ₀, τ₀', hτ₀, hτ₀', hNe, hEq⟩ :=
-    selfAbsorption_breaks_identifiability kB T Fcal g E A 0 1 one_pos
-  refine ⟨![τ₀, 0], ![τ₀', 0], ⟨T, ![N₀, 1], g, E, A⟩, ⟨T, ![N₀', 1], g, E, A⟩,
-    ?_, ?_, ?_, ?_⟩
-  · intro s; fin_cases s
-    · simpa using hτ₀
-    · simp
-  · intro s; fin_cases s
-    · simpa using hτ₀'
-    · simp
+  have hlt : Real.exp (-1) < 1 := Real.exp_lt_one_iff.mpr (by norm_num)
+  have hN0 : 0 < 1 - Real.exp (-1) := by linarith
+  refine ⟨![0, 0], ![1, 0], ⟨T, ![1 - Real.exp (-1), 1], g, E, A⟩, ⟨T, ![1, 1], g, E, A⟩,
+    ⟨hT, ?_, hg, hA⟩, ⟨hT, ?_, hg, hA⟩, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, ?_, ?_, ?_, ?_⟩
+  · intro s; fin_cases s <;> simp [hN0]
+  · intro s; fin_cases s <;> simp
+  · intro s; fin_cases s <;> simp
+  · intro s; fin_cases s <;> simp
   · -- Equal thick observations: species `0` by the aliasing equality, species `1` by refl.
     funext s; fin_cases s
-    · simpa [thickObserve] using hEq
+    · simp only [thickObserve, selfAbsorbedIntensity, selfAbsorptionFactor]
+      simp only [Fin.zero_eta, Fin.isValue, Matrix.cons_val_zero, ↓reduceIte, mul_one,
+        one_ne_zero, div_one]
+      rw [show (1 - Real.exp (-1)) = (1 - Real.exp (-1)) * 1 by ring, lineIntensity_smul_left]
+      ring
     · simp [thickObserve]
-  · -- Different compositions: the closure fraction of species `1` differs, since `N₀ ≠ N₀'`.
+  · -- Different compositions: the closure fraction of species `1` differs.
     intro h
-    apply hNe
     have h1 := congrFun h 1
     simp only [trueComposition, composition, totalDensity, Fin.sum_univ_two,
       Matrix.cons_val_zero, Matrix.cons_val_one, one_div] at h1
     have h2 := inv_inj.mp h1
-    linarith
+    have : Real.exp (-1) = 0 := by linarith
+    exact (Real.exp_pos _).ne' this
 
 end CflibsFormal

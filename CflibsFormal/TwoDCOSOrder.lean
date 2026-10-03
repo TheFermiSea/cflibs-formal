@@ -40,12 +40,15 @@ We prove the exact sign algebra of `B`:
 
 * Scope tag: **PURE-MATH**. Citation: "—".
 * This file states and proves *only the sign algebra* of the bilinear form `B`.
-  The **physical lead/lag reading** — that a positive `B m u v` means band `u`'s
-  intensity changes *before* (leads) band `v`'s along the gate-delay axis — is an
-  **empirical interpretation** placed on the sign of `B`, in the tradition of
-  Noda's sequential-order rule. It is **NOT** a theorem of this module and is
-  **not** asserted here; we prove the antisymmetry, bilinearity, and a definite
-  computed sign on explicit data, nothing about physical time-ordering.
+  The **physical lead/lag reading** is an **empirical interpretation**, and the sign
+  of `B` alone does not carry it. In Noda's sequential-order rule the order is read
+  from the sign of the *product* of the synchronous and asynchronous values: same
+  signs mean band `u` changes before band `v`, opposite signs mean after. `B` is the
+  asynchronous factor only; negating one trace flips the sign of `B`
+  (`B_smul_smul`) without changing when that band changes, while the product is
+  unaffected. The rule is **NOT** a theorem of this module and is **not** asserted
+  here; we prove the antisymmetry, bilinearity, and a definite computed sign on
+  explicit data, nothing about physical time-ordering.
 * Builds on `CflibsFormal.TwoDCOS` (`hilbertNoda`, `hilbertNoda_transpose_neg`).
   The unsound quantification claims of the source drafts are refuted in
   `docs/2dcos/ERRATA.md` and are deliberately NOT formalized.
@@ -110,8 +113,8 @@ theorem B_smul_right (c : ℝ) (u v : Fin m → ℝ) :
 
 /-- **Dynamic-weight scaling.** Two bands whose traces carry scalar amplitudes
 `c_j` and `c_k` (`c_j • u`, `c_k • v`) have asynchronous value
-`c_j·c_k · B m u v`: the sign is governed by `B m u v` up to the sign of the
-amplitude product. -/
+`c_j·c_k · B m u v`: the sign of `B` flips with the sign of the amplitude product,
+which is why a lead/lag reading needs the synchronous sign as well (module scope). -/
 theorem B_smul_smul (cj ck : ℝ) (u v : Fin m → ℝ) :
     B m (cj • u) (ck • v) = cj * ck * B m u v := by
   rw [B_smul_left, B_smul_right]; ring

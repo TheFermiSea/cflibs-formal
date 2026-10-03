@@ -72,7 +72,8 @@ relied on. Non-vacuity is witnessed on an explicit **three-line** configuration
   arbitrary `m`-line configurations. Three or more *distinct* energies are genuinely outside this
   argument, and `NonlinearLeastSquares.profiledResidual_not_injective_m3` exhibits an explicit
   three-distinct-energy configuration where the profiled residual takes the same value at two
-  temperatures. That frontier stays open.
+  temperatures (both are maxima of the residual, so this is not a counterexample to minimizer
+  uniqueness). That frontier stays open.
 * The apex hypothesis `hstar` **assumes** a temperature `Tstar` inside the box at which the
   group-aggregated observed ratio `(Q/S_B)/(P/S_A)` equals the Boltzmann ratio
   `exp(−E_b/k_BT)/exp(−E_a/k_BT)`. Nothing here proves such a `Tstar` exists for a given noisy

@@ -25,7 +25,8 @@ This module gives the abstract two-leg box-contraction spine `outerContraction_b
 
 Under the gate `L₁·L₂ < 1` and the carried side conditions, the composite sweep
 `Φ = legT ∘ legNe` on the temperature box `[Tmin,Tmax]` has a **unique** fixed point `T⋆` in the
-box, and the iterates converge to it geometrically from every start in the box.
+box, and the iterates converge to it from every start in the box. (The conclusion is the limit;
+the geometric rate of the underlying contraction is not part of the statement.)
 
 **Why "Model B".** ("Model B" is this repo's own Frontier-04 designation for the loop built on
 the combined Saha–Boltzmann slope of Aguilera & Aragón 2007 — the paper itself does not use the
@@ -84,6 +85,15 @@ Lipschitz constant of `Φ` on the box, no box with `T⋆` in its interior can pa
 case, however tight the constants. No concrete end-to-end witness satisfying all hypotheses
 simultaneously is constructed here; the component non-degeneracy (`ErrorBudget` witnesses) and
 the abstract spine's witnesses cover the non-vacuity of the pieces.
+
+## Literature
+
+The physics-tagged results of this module cite the following keys in
+`docs/scope-tags.tsv`; the full reference and what was checked for each is in
+`docs/citation-whitelist.tsv`.
+
+* Aguilera & Aragón 2007 — status AUDIT-VETTED (vetted by an earlier audit; the primary source was
+  not opened for this module).
 -/
 
 namespace CflibsFormal

@@ -12,8 +12,9 @@ import CflibsFormal.CurveOfGrowth
 # Wiring the state-bound optical depth into the free-`τ` corpus
 
 `OpticalDepth.lean` binds the optical depth to the plasma state,
-`τ = σ₀ · ℓ · n_l(T, N)`, and proves its laws — but nothing in the development imported it,
-so `SelfAbsorption` (`selfAbsorptionFactor (tau : ℝ)`, `slabIntensity (S tau : ℝ)`) and
+`τ = σ₀ · ℓ · n_l(T, N)`, and proves its laws — but before this module nothing in the
+development imported it, so `SelfAbsorption` (`selfAbsorptionFactor (tau : ℝ)`, `slabIntensity (S
+tau : ℝ)`) and
 `CurveOfGrowth` (`cogIntensity (S w n : ℝ)`, `cogRatio (w₁ w₂ n : ℝ)`) still spoke about `τ`
 and its proxy `w` as **free reals**. This module is the wiring: it identifies the bound-`τ`
 forward map with the audited free-`τ` kernels, and then restates the free-parameter

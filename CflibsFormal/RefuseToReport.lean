@@ -57,7 +57,8 @@ Per item the policy
 
 The value is `∑ i, w i * cost i`. The companion pipeline's PAS is a grouped mean (the mean over
 groups of the group mean of `a_i ℓ_i + (1 − a_i) λ_d`), i.e. this form with
-`w i = 1/(G · n_{g(i)}) > 0` (companion `objective-and-splits.md`); that binding is not proved
+`w i = 1/(G · n_{g(i)}) > 0` (companion `docs/overhaul/objective-and-splits.md`); that binding is
+not proved
 here. Pure decision-rule arithmetic: no physics enters. -/
 noncomputable def pasPolicy {N : ℕ} (w l L U : Fin N → ℝ) (lam : ℝ) (ansA : Fin N → Prop)
     [DecidablePred ansA] : ℝ :=

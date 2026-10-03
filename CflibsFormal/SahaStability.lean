@@ -560,9 +560,11 @@ This is the *sign-free* form of the T-channel: no monotonicity of `S` is claimed
 partition ratio `U_{z+1}/U_z` can run either way — see the scope note), only the two-point
 sensitivity the runtime error budget needs.  Proved channelwise — a two-point bound for
 each factor of `sahaFactor` (thermal bracket, partition ratio, exponential) — assembled by
-`mul3_two_point_bound`.  `REDUCED` (not `EXACT`): the constant lumps three channel
-over-estimates (box floor/ceiling for each sup, plus each channel's own reduction as in
-`PartitionLipschitz` / the thermal `√` split); the forward model `sahaFactor` is exact.  On
+`mul3_two_point_bound`.  `REDUCED`: `sahaFactor` is the ideal Saha factor (model tag REDUCED),
+and the bound holds on a temperature box for the supplied finite level lists.  The inequality
+itself is valid but loose: the constant lumps three channel over-estimates (box floor/ceiling
+for each sup, plus each channel's own bound as in `PartitionLipschitz` / the thermal `√`
+split).  On
 tabulated level lists the constant is about 10⁶–10⁸ times the true `sup |dS/dT|` (see
 `sahaFactorLipConst`). -/
 theorem sahaFactor_lipschitz_temp [Nonempty ι] [Nonempty κ]
@@ -654,8 +656,9 @@ the `(δT, δR)` sensitivity budget for `n_e`: a recovered-temperature error and
 stage-ratio error each map to a bounded `n_e` deviation.  Immediate from
 `sahaFactor_lipschitz_temp` and `n_e(T,R) = S(T)/R`; the constant is the worst-case
 `R = R₀` reciprocal of the Saha-factor Lipschitz constant.  `REDUCED` for the same reason
-as the headline (the constant lumps the channel over-estimates, and is about 10⁶–10⁸ times
-the true sensitivity on tabulated level lists; see `sahaFactorLipConst`).  The stage ratio
+as the headline (the ideal Saha factor on a temperature box; the constant is valid but about
+10⁶–10⁸ times the true sensitivity on tabulated level lists; see `sahaFactorLipConst`).  The stage
+ratio
 `R` is held fixed: this bounds the fixed-`R` reader, not a reader that re-derives `R` from
 Boltzmann-plot intercepts at each `T`. -/
 theorem electronDensityFromRatio_lipschitz_temp [Nonempty ι] [Nonempty κ]
@@ -1152,9 +1155,9 @@ Hypotheses and why each is present:
 
 Scope (two-axis): EXACT relation (a composition of proven facts about the stated model),
 published REDUCED via `sahaFactor` (the ideal Saha factor: no ionization-potential depression,
-literal level sum). `sahaEquilibriumNe` adds its own reduction (one element, two stages, fixed
-`Ntot`, no multi-element coupling), which carries no model row. Citation: Saha–Eggert
-(Griem). -/
+literal level sum) and via `sahaEquilibriumNe`, whose own reduction (one element, two stages,
+fixed `Ntot`, no multi-element coupling) is carried by its REDUCED model row. Citation:
+Saha–Eggert (Griem). -/
 theorem sahaEquilibriumNe_strictMonoOn_temp [Nonempty ι] [Nonempty κ]
     {kB me h chi Ntot : ℝ} {gZ EZ : ι → ℝ} {gZ1 EZ1 : κ → ℝ}
     (hkB : 0 < kB) (hme : 0 < me) (hh : 0 < h) (hchi : 0 ≤ chi)

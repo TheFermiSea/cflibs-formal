@@ -109,3 +109,45 @@ def t_rel_total(E, sigma, t_k, delta_sys):
 def t_identifiable_total(E, sigma, t_k, delta_sys, tau):
     """Gate including the systematic term: >= 2 lines, SS_E > 0 and `t_rel_total` within `tau`."""
     return len(E) >= 2 and energy_spread(E) > 0.0 and t_rel_total(E, sigma, t_k, delta_sys) <= tau
+
+
+def line_is_evidence(r, i_expected, floor):
+    """A line is evidence only if its expected RECORDED signal R * I clears the noise floor
+    (LineEvidence.IsEvidence). R is the instrument response at the line's wavelength (an input; 0 in
+    a dead band), I the model's expected emitted intensity, `floor` the noise floor (>= 0)."""
+    return floor < r * i_expected
+
+
+def informative_lines(R, I, floor):
+    """Indices of the informative expected lines (LineEvidence.informative)."""
+    return [k for k in range(len(R)) if line_is_evidence(R[k], I[k], floor)]
+
+
+def comb_recall_conditioned(R, I, detected, floor, min_informative=2):
+    """Recall of an element's expected-line comb over its INFORMATIVE lines only.
+
+    Returns None (ABSTAIN) when fewer than `min_informative` expected lines are informative: a
+    perfect score over one informative line is not evidence. `detected` is a set of indices; a
+    detected line outside the informative set is ignored for the numerator.
+
+    Guarantee (LineEvidence.conditionedRecall_ge, conditionedRecall_le_one): with
+    D' = detected & informative, |D'| / len(R) <= result <= 1. The result is NOT bounded below by
+    the naive recall |detected| / len(R) when a detection falls on a non-informative line: that
+    detection is dropped, so the result can be lower (e.g. only sub-floor lines detected gives
+    naive > 0 and result 0)."""
+    inf = set(informative_lines(R, I, floor))
+    if len(inf) < min_informative:
+        return None
+    return len(inf & set(detected)) / len(inf)
+
+
+def shift_at_boundary(shift, lo, hi, eps):
+    """LineEvidence.AtScanBoundary: the shift lies within eps of either end of its scan interval."""
+    return shift <= lo + eps or hi - eps <= shift
+
+
+def shift_applicable(shift, lo, hi, eps):
+    """Gate: apply a registration shift only if it is NOT at the scan boundary. At the boundary the
+    shift is not identified (a strictly monotone objective puts its minimizer there): refuse the
+    shift or widen the scan."""
+    return not shift_at_boundary(shift, lo, hi, eps)

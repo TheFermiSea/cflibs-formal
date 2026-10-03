@@ -37,6 +37,15 @@ partition function for every species, a modeling reduction; published scope REDU
 assumes a known, equal calibration `hFeq` rather than the calibration-free setting. `hFeq` is
 removable for the stated conclusion (see the theorem's docstring), but that version is not
 formalized here.
+
+## Literature
+
+The physics-tagged results of this module cite the following keys in
+`docs/scope-tags.tsv`; the full reference and what was checked for each is in
+`docs/citation-whitelist.tsv`.
+
+* Ciucci 1999 — status AUDIT-VETTED (vetted by an earlier audit; the primary source was not opened
+  for this module).
 -/
 
 namespace CflibsFormal

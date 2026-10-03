@@ -47,6 +47,7 @@ import CflibsFormal.KirchhoffSource
 import CflibsFormal.LadenburgReiche
 import CflibsFormal.LeastSquaresFit
 import CflibsFormal.LineBroadening
+import CflibsFormal.LineEvidence
 import CflibsFormal.LineExtraction
 import CflibsFormal.LineSelection
 import CflibsFormal.MatrixEffects

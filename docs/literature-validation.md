@@ -1,7 +1,7 @@
 # Full-codebase literature validation — 2026-07-09
 
 > **FROZEN SNAPSHOT (2026-07-09).** This audit covers the then-48-module corpus (412 named
-> results); it is NOT updated to the current 64-module state. Modules added since are covered by
+> results); it is NOT updated as the corpus grows (see `docs/module-reference.md` for the current size). Modules added since are covered by
 > per-result author-plus-independent-audit review (see `CONTEXT.md` Status), not by this one-time
 > audit.
 

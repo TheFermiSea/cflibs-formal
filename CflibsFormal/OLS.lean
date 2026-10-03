@@ -25,6 +25,17 @@ error budget, and the Gauss–Markov variance law all `import CflibsFormal.OLS` 
 verbatim.
 
 All declarations are pure-algebra and need only `[Fintype ι]` / `[Nonempty ι]`.
+
+## Literature
+
+The physics-tagged results of this module cite the following keys in
+`docs/scope-tags.tsv`; the full reference and what was checked for each is in
+`docs/citation-whitelist.tsv`.
+
+* Aguilera & Aragón 2007 — status AUDIT-VETTED (vetted by an earlier audit; the primary source was
+  not opened for this module).
+* Tognoni 2010 — status AUDIT-VETTED (vetted by an earlier audit; the primary source was not opened
+  for this module).
 -/
 
 namespace CflibsFormal
@@ -670,10 +681,12 @@ def jointDesignCenteredProportional (E s : ι → ℝ) : Prop :=
 /-- **THE rank gate for the joint Saha–Boltzmann design.** `det (jointDesignNormalMatrix E s) > 0`
 iff the centered energies and centered ion-indicator are NOT proportional
 (`jointDesignCenteredProportional`) — the three-column upgrade of
-`designNormalMatrix_det_ne_zero_iff` (`OLS.lean:220`). Physical reading: the *joint* fit that
+`designNormalMatrix_det_ne_zero_iff`. Physical reading: the *joint* fit that
 recovers temperature (from `E`) AND electron density (from the Saha ion-stage shift `s`) in one
 regression is identifiable exactly when the ion-stage indicator is not collinear with the
-excitation energies across the fitted lines (Aguilera & Aragón 2007) — i.e. when the design
+excitation energies across the fitted lines (a joint design in the spirit of the Saha–Boltzmann
+plot of Aguilera & Aragón 2007; that their procedure fits the ion offset jointly, rather than
+taking `n_e` from elsewhere, was not checked against the paper) — i.e. when the design
 carries genuinely independent T- and nₑ-information, not merely a rescaled copy of one energy
 axis. Proof: `det = n · (SS_E·SS_s − S_Es²)` (`det_jointDesignNormalMatrix`) with `n > 0` and
 `SS_E·SS_s − S_Es² ≥ 0` always (`sq_mul_sq_sub_sq_sum_nonneg`), so `det > 0 ↔ SS_E·SS_s ≠ S_Es²

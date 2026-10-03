@@ -48,7 +48,8 @@ which says that the raw diagnostic reports the TOP of a bracket, not its centre.
 `stark_bracket_rho` widens that bracket by a Stark-parameter grade `ρ_w`
 (`w/ρ_w ≤ w_true ≤ w·ρ_w`) to `[starkDensity/(kOpac·ρ_w), starkDensity·ρ_w]`.
 `starkOpacityLteCert_imp_mcWhirterCert` shows the repaired predicate implies the old
-one, i.e. it is a strict tightening, never a weakening; and
+one, i.e. it is a tightening, never a weakening (the two coincide at `kOpac = 1`; the
+refusal example shows it rejects more when `kOpac > 1`); and
 `stark_lte_gate_sound_of_opticallyThin` isolates a *sufficient* side condition
 (`kOpac = 1`, an independent optical-thinness witness) under which the existing gate
 *is* sound. Sufficiency is what is proven; necessity is not claimed.
@@ -259,8 +260,9 @@ theorem starkOpacity_certificate_sound {C T dE w nRef widthMeas kOpac neTrue : �
 opacity-aware certificate holds, the original `Certificates.mcWhirterCert` on the raw
 Stark estimate holds too (dividing by `kOpac ≥ 1` only lowers a nonnegative estimate).
 So, for nonnegative measured widths, replacing the shipped gate by `starkOpacityLteCert`
-accepts nothing the shipped gate rejects; it rejects strictly more, the extra rejections
-being witnessed by the refusal example below. -/
+accepts nothing the shipped gate rejects.  Only this implication is proved.  At `kOpac = 1`
+the two certificates accept the same inputs; that it can reject more when `kOpac > 1` is
+witnessed by the refusal example below, not proved in general. -/
 theorem starkOpacityLteCert_imp_mcWhirterCert {C T dE w nRef widthMeas kOpac : ℝ}
     (hwidth : 0 ≤ widthMeas)
     (hcert : starkOpacityLteCert C T dE w nRef widthMeas kOpac) :

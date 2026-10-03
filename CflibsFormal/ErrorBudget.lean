@@ -13,8 +13,10 @@ import CflibsFormal.OLS
 
 A numerical CF-LIBS pipeline guards its inversion with empirical "magic-number" thresholds
 — a minimum number of lines per element, a minimum upper-level energy spread, a minimum SNR.
-This module turns those thresholds into **proven corollaries of a single deterministic
-error-propagation chain**, so they follow *from a target accuracy* rather than being tuned.
+This module turns the energy-spread and SNR thresholds into **proven corollaries of a
+deterministic error-propagation chain**, so they follow *from a target accuracy* rather than
+being tuned. The line-count threshold is *not* derived here (see "Honest scope" below: the
+deterministic worst case cannot support one).
 
 The chain is the multi-line generalization of `Robustness.twoLineBeta_stable` (which bounds the
 TWO-line slope) to the full ordinary-least-squares Boltzmann-plot slope `olsSlope` over
@@ -27,19 +29,25 @@ TWO-line slope) to the full ordinary-least-squares Boltzmann-plot slope `olsSlop
   inverse-temperature (slope) error |Δβ|
         │  temp_rel_error_eq         (EXACT identity)
         ▼
-  relative temperature error |ΔT|/T
+  relative temperature error |ΔT|/T              (temperature channel ends here)
+
+  per-species density error δ                     (a HYPOTHESIS of the composition leg)
         │  CompositionRobustness.composition_abs_sub_le
         ▼
   composition error |ΔCₛ|  ≤  target τ
 ```
 
+The two channels are separate: the temperature error is not fed into the composition bound in
+this module (that composition is `NoiseToComposition.noise_to_composition`).
+
 The links are *upper bounds* except `temp_rel_error_eq` (and `olsSlope_noise_gain`), which are
-exact identities. `olsSlope_stable_l1` is sharp (its worst case is attained); `olsSlope_stable_l2`
+exact identities. `olsSlope_stable_l1` is sharp (its worst case is attained by sign-aligned
+errors; the attainment is not formalized); `olsSlope_stable_l2`
 is a Cauchy–Schwarz bound (tight only when the ordinate errors are proportional to `Eₖ − Ē`).
 
 Inverting the chain yields the thresholds (`requiredEnergySpread_sufficient`,
 `maxPerLineError_sufficient`): the energy spread / SNR that *guarantee* a target slope (hence
-temperature, hence composition) accuracy.
+temperature) accuracy.
 
 ## Honest scope of the line-count threshold
 
@@ -64,6 +72,17 @@ Scope of the chain: the temperature channel (Tasks 1–2) and the density/concen
 exactly known and confines the perturbation to the intercept `b`. We do **not** prove a single
 closed end-to-end `ε ⇒ composition` bound that feeds the recovered temperature error back into
 `U(T̂)`; the two channels are reliability budgets to be combined by the caller, not composed here.
+
+## Literature
+
+The physics-tagged results of this module cite the following keys in
+`docs/scope-tags.tsv`; the full reference and what was checked for each is in
+`docs/citation-whitelist.tsv`.
+
+* Aguilera & Aragón 2007 — status AUDIT-VETTED (vetted by an earlier audit; the primary source was
+  not opened for this module).
+* Tognoni 2010 — status AUDIT-VETTED (vetted by an earlier audit; the primary source was not opened
+  for this module).
 -/
 
 namespace CflibsFormal
@@ -257,7 +276,10 @@ theorem maxPerLineError_sufficient [Nonempty ι] {E y yHat : ι → ℝ} {eps ta
 reader is `N = exp(b)·U/Fcal` (`Alt.olsDensity`); at fixed temperature (`U`, `Fcal` shared) an
 intercept perturbation `|b̂ − b| ≤ η` gives `|N̂ − N| ≤ N·(exp η − 1)`. Exact; the leading term
 is `η`. This is the density/concentration channel that complements the slope/temperature
-channel of Tasks 1–2 — both feed the composition error below. -/
+channel of Tasks 1–2. Only this channel feeds the composition bound below
+(`composition_target_sufficient` takes the density error `δ`); the temperature channel does
+not enter it here. Here `b` must be the intercept the reader exponentiates: the raw intercept
+at `E = 0` for `Alt.olsDensity` with the ordinary `U`. -/
 theorem relDensity_le {b bHat U Fcal eta : ℝ} (hU : 0 ≤ U) (hFcal : 0 < Fcal)
     (heta : |bHat - b| ≤ eta) :
     |Real.exp bHat * U / Fcal - Real.exp b * U / Fcal|
@@ -276,9 +298,18 @@ theorem relDensity_le {b bHat U Fcal eta : ℝ} (hU : 0 ≤ U) (hFcal : 0 < Fcal
   exact mul_le_mul_of_nonneg_right hkey (div_nonneg hU hFcal.le)
 
 /-- **Intercept (concentration) sensitivity, centered convention.** With energies referenced to
-their mean (`mean E = 0`, the standard Boltzmann-plot normalization), the OLS intercept reduces
-to `mean y` and inherits its sensitivity: a per-line ordinate error `≤ ε` gives an intercept
-error `≤ ε`. This bounds the `η` consumed by `relDensity_le`. -/
+their mean (`mean E = 0`), the OLS intercept reduces to `mean y` and inherits its sensitivity: a
+per-line ordinate error `≤ ε` gives an intercept error `≤ ε`.
+
+Scope of `hcent`. Upper-level energies measured from the ground state are nonnegative, so
+`mean E = 0` holds for them only when there is no spread at all; the hypothesis describes
+energies re-referenced to their mean. The centered intercept is then the value of the fit at
+`E = Ē`, not at `E = 0`. It is the `b` of `relDensity_le` only if that reader uses the shifted
+partition function `U·exp(Ē/(k_B T))` (at the true `T`). For the raw reader `Alt.olsDensity`
+(intercept at `E = 0`, ordinary `U`) the intercept error also carries `Ē·Δβ`, so it is bounded
+by `ε·(1 + |Ē|·∑ₖ|Eₖ − Ē|/SS_E)`, not by `ε`; that raw-coordinate bound is not proved here
+(`Alt/OLSAtomicDataPerturbation` records a numerical case where the centered figure is
+exceeded on ground-state energies). -/
 theorem olsIntercept_stable_centered [Nonempty ι] {E y yHat : ι → ℝ} {eps : ℝ}
     (hcent : mean E = 0) (hδ : ∀ k, |yHat k - y k| ≤ eps) :
     |olsIntercept E yHat - olsIntercept E y| ≤ eps := by
@@ -402,15 +433,17 @@ existing `relDensity_le` → `composition_target_sufficient` chain closes the **
 composition** leg. What is **not** yet a single closed `ε ⇒ ΔC` bound:
 
 * **The `U_s(T)` Lipschitz leg.** A recovered-temperature error `|ΔT|` perturbs the partition
-  functions `U_s(T̂)`, hence the intercept-to-density map `N = exp(b)·U/Fcal`. We have no
-  `|U_s(T̂) − U_s(T)| ≤ L·|ΔT|` (partition-function Lipschitz) lemma, so the temperature error is
-  not yet propagated **into** the density channel; `relDensity_le` treats `U` as exactly known.
+  functions `U_s(T̂)`, hence the intercept-to-density map `N = exp(b)·U/Fcal`. This module does
+  not propagate the temperature error **into** the density channel; `relDensity_le` treats `U`
+  as exactly known. The Lipschitz lemma now exists
+  (`PartitionLipschitz.partitionFunction_lipschitz_temp`).
 * **The final `δ ⇒ ΔC` composition.** `composition_target_sufficient` (and
   `CompositionRobustness.composition_abs_sub_le`) take the per-species density error `δ` as a
   HYPOTHESIS. A fully closed end-to-end bound must feed the recovered-`T` error through `U_s(T̂)`
   and the intercept into `δ`, then into `ΔC`. That cross-channel coupling — temperature error
-  re-entering the density channel — is future work; here the two channels remain independent
-  reliability budgets to be combined by the caller. -/
+  re-entering the density channel — is not done in this module; it is assembled in
+  `NoiseToComposition.noise_to_composition` (for the classic single-line density reader at the
+  recovered temperature). Here the two channels remain independent reliability budgets. -/
 
 /-- **Non-vacuity witness for `olsSlope_stable_hetero`.** Two lines at energies `E = (0, 1)`
 (so `SS_E = 1/2 > 0`, satisfying `hvar`), true ordinates `y = (0, 0)`, measured `ŷ = (0, 1)`, with a

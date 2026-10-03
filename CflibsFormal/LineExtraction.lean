@@ -18,8 +18,10 @@ satisfy; the inverse-problem layer starts *after* the integrated intensities exi
 This module states the **metamorphic relations** an extraction kernel must satisfy, for the
 incumbent trapezoid kernel, as machine-checked theorems. A metamorphic relation needs no ground
 truth: it relates the kernel's outputs on two *related inputs*, so it can be run as a cheap,
-truth-free gate on any candidate kernel before it is scored. Each theorem below has a numerical
-fixture twin (`oracle/line_extraction/`) that the companion pins.
+truth-free gate on any candidate kernel before it is scored. Each relation (a)–(f) below has a
+numerical fixture twin (`oracle/line_extraction/`) that the companion pins; the helper lemmas
+`trapArea_const`, `trapArea_sub_le`, `trapArea_nonneg` and the equality form
+`trapArea_sub_pedestal` have none.
 
 ## The model
 

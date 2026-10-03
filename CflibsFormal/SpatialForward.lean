@@ -46,7 +46,8 @@ Geometry forces two facts:
 * `L` is **upper-triangular**: `j < i → L i j = 0` (a chord at index `i` never
   reaches the inner shells `j < i`);
 * the diagonal is **strictly positive**: `L i i > 0` (every chord has a
-  positive path length through its own outermost shell).
+  positive path length through shell `i`, the innermost shell it reaches, which
+  contains its turning point).
 
 These are exactly the conditions under which the triangular system is solved by
 back-substitution ("peeling" shells from the outside in), and — proven here —
@@ -350,13 +351,14 @@ chord-intensity error (`|ΔIᵢ| ≤ emax`), and a per-row coupling ratio `rho �
 dominating the off-diagonal weight (`∑_{j>i} |Lᵢⱼ| ≤ rho·Lᵢᵢ`), the recovered
 radial-profile error at shell `i` obeys
 `|Δεᵢ| ≤ (emax/ell) · ∑_{k<N-i} rho^k`. The inward recursion compounds
-already-peeled outer-shell errors geometrically: the factor grows like
-`rho^{N-i}` toward the core (`i → 0`), the honest noise blow-up that
-radially-resolved CF-LIBS must pre-smooth against — at the critical coupling
-`rho = 1` it is exactly the shell count `N - i` (see the witness below).
+already-peeled outer-shell errors geometrically: for `rho > 1` the factor grows
+like `rho^{N-i}` toward the core (`i → 0`), the noise blow-up that
+radially-resolved CF-LIBS must pre-smooth against; at the critical coupling
+`rho = 1` it is exactly the shell count `N - i` (see the witness below); for
+`rho < 1` it stays below `1/(1 − rho)`.
 
-**REDUCED**: an adversarial worst-case upper bound (attained only for
-perfectly-correlated errors and the extremal-row geometry), in the deterministic
+**REDUCED**: an adversarial worst-case upper bound (no tightness result is
+proved; equality would need aligned errors and an extremal geometry), in the deterministic
 style of `ErrorBudget.lean` — *not* the realized amplification, and deliberately
 *not* an `N`-independent stability claim. Proof: downward strong induction on the
 co-index `N - i.val`, assembling `peeling_single_step`. -/

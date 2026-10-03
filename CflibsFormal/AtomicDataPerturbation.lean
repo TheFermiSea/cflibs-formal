@@ -56,13 +56,14 @@ dominant contribution to the CF-LIBS accuracy budget once the plasma is well-cha
 The `EXACT` aliasing identity is the algebraic substrate of that discussion: it exhibits the
 recovered density as the true density multiplied by a *ratio of response factors*, so any
 mismatch between the tabulated and the true atomic data biases the result multiplicatively.
-The `REDUCED` bounds turn that identity into first-order error budgets.
+The `REDUCED` bounds turn that identity into exact (non-linearized) error envelopes.
 
 ## Honest scope
 
 `classicDensity_aliasing` is `EXACT`: a faithful identity, no approximation, `Fcal` and every
-partition-function/Boltzmann factor cancels as it does physically. The three error results are
-`REDUCED`: they replace the full per-symbol atomic-data error by *lumped* relative bounds — a
+partition-function/Boltzmann factor cancels as it does physically. The error results are
+`REDUCED`: the first three replace the full per-symbol atomic-data error by *lumped* relative
+bounds — a
 single `δ` on the response factor (`classicDensity_aliasing_error`), a `δ_gA`/`δ_U` split with
 `E' = E` (`classicDensity_aliasing_error_channels`), or a *uniform* `δ` and a density cap
 `Nmax` across species (`classicComposition_atomicData_error`). No linearization of the forward
@@ -84,7 +85,7 @@ forward/inverse-`T`-split aliasing identity was exposed. That bridge now EXISTS 
 * `classicDensity_temperature_aliasing` (`EXACT`): inverting at `T̂` a spectrum emitted at `T` with
   the SAME atomic data returns `N̂ = N · ρ(T)/ρ(T̂)`. Same cancellation as `classicDensity_aliasing`
   but with the response factor evaluated at two temperatures.
-* `classicDensity_temperature_aliasing_error` (`REDUCED`): on a box `Tmin ≤ T, T̂ ≤ Tmax`, bounds
+* `classicDensity_temperature_aliasing_error` (`REDUCED`): above a floor `Tmin ≤ T, T̂`, bounds
   `|N̂ − N| ≤ N · tempResponseErrorBound` by splitting the response ratio into an exp channel
   (two-point `|exp − 1|` bound, exponents ≤ 0) and a `U` channel
   (`PartitionLipschitz.partitionFunction_two_point_bound` + a single-term `U`-floor), through the
@@ -96,9 +97,8 @@ forward/inverse-`T`-split aliasing identity was exposed. That bridge now EXISTS 
   bound through the verbatim `composition_abs_sub_le_bound`, so a recovered-temperature error now
   bounds `|Ĉ_s − C_s|`. This is the bridge the end-to-end module consumes.
 
-What remains is only the single composed noise→composition statement (assembling temperature
-recovery error → this T-channel density bound → composition error into ONE end-to-end theorem),
-which is the next module's job; every leg it needs is now a green lemma.
+The single composed noise→composition statement (temperature recovery error → this T-channel
+density bound → composition error) is assembled in `NoiseToComposition.lean`.
 -/
 
 namespace CflibsFormal
@@ -630,8 +630,9 @@ theorem classicComposition_temperature_error [Nonempty ι] [Nonempty κ]
 /-! ### Non-vacuity witnesses (T-split family)
 
 The `nvTa*` data instantiate the temperature-split family on `ι = Fin 1`/`Fin 2` with
-`k_B = Tmin = Fcal = 1`. They exhibit genuine `T`-dependence and genuine positive bounding
-constants (not a vacuous `0 ≤ 0`). -/
+`k_B = Tmin = Fcal = 1`. The two-level instances exhibit genuine `T`-dependence and genuine
+positive bounding constants (not a vacuous `0 ≤ 0`); the one-level instance only shows the
+hypotheses are satisfiable. -/
 
 private def nvTag : Fin 1 → ℝ := fun _ => 1
 private def nvTaE1 : Fin 1 → ℝ := fun _ => 1
@@ -641,8 +642,11 @@ private def nvTaE2 : Fin 2 → ℝ := ![0, 1]
 private def nvTaE2' : Fin 2 → ℝ := ![1, 0]
 private def nvTaA2 : Fin 2 → ℝ := fun _ => 1
 
-/-- The temperature-aliasing identity applies with genuine `T`-dependence (`E = 1 ≠ 0`, `T = 1`,
-`T̂ = 2`): all hypotheses are jointly satisfiable, so the identity is non-vacuous. -/
+/-- The temperature-aliasing identity applies (`E = 1`, `T = 1`, `T̂ = 2`): all hypotheses are
+jointly satisfiable. With a single level the response factor does not depend on `T`
+(`U = g·exp(−E/k_BT)` cancels the Boltzmann factor), so in this instance the right-hand side
+equals `4` and the wrong-`T` reader returns the true density; it is a satisfiability witness, not
+an example of temperature aliasing. -/
 example :
     Classic.classicDensity 1 2 1 nvTag nvTaE1 nvTaA 0
         (lineIntensity 1 1 4 1 nvTag nvTaE1 nvTaA 0)

@@ -228,8 +228,9 @@ theorem alphaHat_unbiased [Nonempty ι] (E : ι → ℝ) (α β : ℝ) (ε : ι 
 (`OLS.centered_sum_zero`, scaled) and `∑ₖ wₖ² = 1/SS_E` (`OLS.olsSlope_noise_gain`) after expanding
 `aₖ² = 1/n² − (2Ē/n)·wₖ + Ē²·wₖ²`. An exact identity, not a slackened bound (like
 `olsSlope_variance_eq`): EXACT relation, published REDUCED via `alphaHat`. Collapses to the
-centered-convention value `σ²/n` when `Ē = 0` (the standard Boltzmann-plot normalization of
-`ErrorBudget.olsIntercept_stable_centered`). -/
+centered-coordinate value `σ²/n` when `Ē = 0` (energies re-referenced to their mean, as in
+`ErrorBudget.olsIntercept_stable_centered`; for ground-state-referenced energies the `Ē²/SS_E`
+term is present). -/
 theorem alphaHat_variance_eq [Nonempty ι] (E : ι → ℝ) (α β σ : ℝ) (ε : ι → Ω → ℝ)
     (hvar : 0 < ∑ k, (E k - mean E) ^ 2)
     (hL2 : ∀ k, MemLp (ε k) 2 μ)
@@ -742,8 +743,8 @@ landed twin.
 
 Scope: REDUCED, matching the homoscedastic twin `olsSlope_subGaussian_tail`. The inequality
 itself is a concentration bound; the reduction is the model behind `Alt.betaHat` (the OLS slope
-of the additive-noise linear Boltzmann-plot model `y k = α + β·E k + ε k`), which carries no model
-row, so the relation tag records it. The physics binding `c k ≈ 1/SNR_k²` (delta method on
+of the additive-noise linear Boltzmann-plot model `y k = α + β·E k + ε k`), which also carries a
+REDUCED model row. The physics binding `c k ≈ 1/SNR_k²` (delta method on
 `log I`) is an APPROXIMATION and is not part of this statement. -/
 theorem olsSlope_subGaussian_tail_hetero [Nonempty ι] (E : ι → ℝ) (α β : ℝ) (ε : ι → Ω → ℝ)
     {c : ι → NNReal} {δ : ℝ} (hvar : 0 < ∑ k, (E k - mean E) ^ 2) (hδ : 0 ≤ δ)

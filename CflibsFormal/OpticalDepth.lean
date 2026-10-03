@@ -102,6 +102,14 @@ shows that with it, LTE populations and the Einstein–Milne relation, the line 
 `ε/κ` is the Planck function `B₀/(exp x − 1)`, not its Wien limit. The two are not wired
 together: `opticalDepth` is unchanged.
 
+**Path length and `Fcal`.** `lineIntensity` does not depend on the path length `ℓ`: its `Fcal`
+lumps the emitting volume (see `ForwardMap`). So with `Fcal` held fixed, `thickLineIntensity`
+is strictly *decreasing* in `ℓ` (`thickLineIntensity_strictAntiOn_pathLength`), and
+`lteSourceStrength` scales as `1/ℓ`. A longer homogeneous column at the same `(T, N)` emits
+more, not less, so the model is physical only when `Fcal` is taken proportional to `ℓ` (one
+fixed geometry). No result here varies `ℓ` at fixed `Fcal` except the theorem that records
+this.
+
 * Gornushkin, Anzano, King, Smith, Omenetto, Winefordner, "Curve of growth methodology applied
   to laser-induced plasma emission spectroscopy", *Spectrochim. Acta Part B* **54** (1999)
   491–503 — the homogeneous-slab emission `I = S·(1 − exp(−τ))` with `τ = σ ℓ n` built from the
@@ -157,7 +165,8 @@ Both the total density `N` and the partition function `U(T)` cancel — `S` depe
 `T`, the atomic data of the two levels, and the known constants `Fcal, σ₀, ℓ`. This is the
 frequency-integrated, WIEN-LIMIT analogue of the LTE source function (stimulated emission is
 not modelled — see the module scope block); it is the `N`-free plateau that the saturated line
-approaches. -/
+approaches. It is independent of `ℓ` only when `Fcal ∝ ℓ` (module scope block, "Path length and
+`Fcal`"); at fixed `Fcal` it scales as `1/ℓ`. -/
 noncomputable def lteSourceStrength (kB T Fcal sigma0 ell : ℝ) (g E A : ι → ℝ)
     (u l : ι) : ℝ :=
   Fcal * A u * g u * boltzmannFactor kB T (E u) /
@@ -414,6 +423,32 @@ theorem thickLineIntensity_injOn [Nonempty ι] {kB T Fcal sigma0 ell : ℝ}
     (hsig : 0 < sigma0) (hell : 0 < ell) (u l : ι) :
     Set.InjOn (fun N => thickLineIntensity kB T N Fcal sigma0 ell g E A u l) (Set.Ioi 0) :=
   (thickLineIntensity_strictMonoOn hg hFcal hA hsig hell u l).injOn
+
+/-- **At fixed `Fcal` the thick line dims as the path length grows.** A caveat, proved so it
+cannot be read past: `thickLineIntensity = lineIntensity · SA(σ₀·ℓ·n_l)` and `lineIntensity`
+does not depend on `ℓ`, so for positive `N`, `Fcal`, `σ₀` and atomic data the map
+`ℓ ↦ thickLineIntensity` is strictly decreasing on `ℓ > 0`. A real homogeneous column emits
+more when it is longer; the model matches that only when `Fcal` (which lumps the emitting
+volume) is scaled with `ℓ`. Results that fix `ℓ` are unaffected.
+
+Relation REDUCED (homogeneous single-temperature slab, flat line-center cross-section);
+publishes APPROXIMATION via `selfAbsorbedIntensity`. -/
+theorem thickLineIntensity_strictAntiOn_pathLength [Nonempty ι] {kB T N Fcal sigma0 : ℝ}
+    {g E A : ι → ℝ} (hg : ∀ k, 0 < g k) (hN : 0 < N) (hFcal : 0 < Fcal) (hA : ∀ k, 0 < A k)
+    (hsig : 0 < sigma0) (u l : ι) :
+    StrictAntiOn (fun ell => thickLineIntensity kB T N Fcal sigma0 ell g E A u l)
+      (Set.Ioi 0) := by
+  intro a ha b hb hab
+  have hI := lineIntensity_pos (kB := kB) (T := T) (E := E) hg hN hFcal hA u
+  have hτa := opticalDepth_pos (kB := kB) (T := T) (E := E) hg hN hsig ha l
+  have hτb := opticalDepth_pos (kB := kB) (T := T) (E := E) hg hN hsig hb l
+  have hlt : opticalDepth kB T N sigma0 a g E l < opticalDepth kB T N sigma0 b g E l := by
+    rw [opticalDepth_eq_linear, opticalDepth_eq_linear]
+    have := effectiveCrossSection_pos (kB := kB) (T := T) (E := E) hg hsig l
+    exact mul_lt_mul_of_pos_right (mul_lt_mul_of_pos_left hab this) hN
+  have hSA := selfAbsorptionFactor_strictAntiOn hτa hτb hlt
+  simp only [thickLineIntensity, selfAbsorbedIntensity]
+  exact mul_lt_mul_of_pos_left hSA hI
 
 /-- **The single-line density alias cannot be reproduced.** Stated in exactly the shape of
 `SelfAbsorptionInverse.selfAbsorption_breaks_identifiability` — which exhibits `N₁ ≠ N₂` with

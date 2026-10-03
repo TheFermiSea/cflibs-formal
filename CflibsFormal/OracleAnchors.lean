@@ -14,9 +14,17 @@ independent transcriptions checked against *each other*: a wrong-but-consistent 
 both would pass every gate, because neither is ever compared to the verified `CflibsFormal` ℝ defs.
 This module closes that gap. Each `example` below instantiates a **verified `CflibsFormal`
 definition/predicate at the exact rational inputs of an `oracle/fixtures.json` entry** and
-discharges it by `norm_num`/`simp`/`decide`. So the fixtures' verdicts and decisive values are
-now pinned to the ℝ spec, not merely to their Float twin: change an anchored `CflibsFormal` def
-and the matching anchor here stops compiling.
+discharges it by `norm_num`/`simp`/`decide`. So the fixtures' verdicts are pinned to the ℝ
+spec, not merely to their Float twin.
+
+How strong the pin is. A verdict anchor fails to compile only if a changed definition gives a
+different truth value *at that input*. Several fixture inputs are `1`, which is a fixed point of
+every exponent, so those anchors do not pin exponents (a McWhirter predicate with `ΔE²` in place
+of `ΔE³` passes the C7 fixture anchor unchanged). The section "Exponent pins" below therefore adds
+anchors at non-unit inputs, stated through the definitions with a tight accept and a reject on
+each side. The C1 and C2 "decisive value" anchors restate the formula the predicate tests (the
+predicate exposes only its truth value), so they pin the fixture numbers to that formula, not to
+the definition.
 
 ## Literature and scope
 The anchored predicates inherit their physics citations from the wrapped theorems (see
@@ -25,8 +33,9 @@ Cristoforetti et al. 2010, Griem 1997) and `CflibsFormal/StarkBroadening.lean` (
 width). **Scope.** This is a `PURE-MATH` regression harness: it adds no new mathematics and every
 statement is `norm_num`/`decide`-closed at literal rationals. Anchored: the certificate scenario
 (C1–C7, C10, C12–C14 predicates on their accept witnesses + the C1/C2/C10/C14 rejection witnesses)
-and the Stark scenario (`starkDensity`, its forward/inverse round trip). Decisive-value anchors are
-given for C1 (energy spread), C2 (joint Gram determinant), and C7 (McWhirter margin). **Not anchored
+and the Stark scenario (`starkDensity`, its forward/inverse round trip, and the McWhirter shape
+`√T·ΔE³ = 16` at `T = 4`, `ΔE = 2` through `mcWhirterBound` and `mcWhirterCert`). Decisive-value
+anchors are given for C1 (energy spread) and C2 (joint Gram determinant). **Not anchored
 (and why):** every fixture whose value is transcendental — the forward intensities, partition
 functions, log-slope temperature recoveries, the Saha factor `S(T)` and `SA(τ)` self-absorption
 factor (all `exp`/`log`), and the `√`-heavy C9 Saha-iteration clauses and the `maxPerLineError`
@@ -63,9 +72,11 @@ example : slopeBudgetCert 1 2 (1 / 2) 2 := by norm_num [slopeBudgetCert]
 example : tempBudgetCert 1 2 (1 / 2) 1 := by norm_num [tempBudgetCert]
 -- C6 comp_budget · `δ=1, τ_C=2, Ŝ=2, n=2` · verdict true (slack 1).
 example : compBudgetCert 1 2 2 2 := by norm_num [compBudgetCert]
--- C7 mcwhirter · `C=1, T=1, ΔE=1, nₑ=2` · verdict true; decisive margin `nₑ − C√T·ΔE³ = 1`.
+-- C7 mcwhirter · `C=1, T=1, ΔE=1, nₑ=2` · verdict true (decisive margin `nₑ − C√T·ΔE³ = 1`:
+-- the predicate holds at `nₑ = 1` and fails just below, so the threshold at these inputs is 1).
 example : mcWhirterCert 1 1 1 2 := by norm_num [mcWhirterCert, Real.sqrt_one]
-example : (2 : ℝ) - 1 * Real.sqrt 1 * (1 : ℝ) ^ 3 = 1 := by norm_num [Real.sqrt_one]
+example : mcWhirterCert 1 1 1 1 ∧ ¬ mcWhirterCert 1 1 1 (1 / 2) := by
+  constructor <;> norm_num [mcWhirterCert, Real.sqrt_one]
 -- C10 damped_iter · `S = Ntot = (1,1)` · verdict true (positivity).
 example : dampedIterCert (ι := Fin 2) ![1, 1] ![1, 1] :=
   ⟨fun s => by fin_cases s <;> norm_num, fun s => by fin_cases s <;> norm_num⟩
@@ -97,5 +108,35 @@ example : starkDensity (1 / 20) 1 (3 / 10) = 3 := by norm_num [starkDensity]
 -- Forward/inverse round trip: `starkFWHM(w, nRef, starkDensity(w, nRef, width)) = width = 3/10`.
 example : starkFWHM (1 / 20) 1 (starkDensity (1 / 20) 1 (3 / 10)) = 3 / 10 := by
   norm_num [starkFWHM, starkDensity]
+
+private lemma sqrt_four : Real.sqrt 4 = 2 := by
+  rw [show (4 : ℝ) = 2 ^ 2 by norm_num]; exact Real.sqrt_sq (by norm_num)
+
+private lemma sqrt_nine : Real.sqrt 9 = 3 := by
+  rw [show (9 : ℝ) = 3 ^ 2 by norm_num]; exact Real.sqrt_sq (by norm_num)
+
+-- McWhirter shape `√T·ΔE³ = 16` at `T = 4`, `ΔE = 2` (fixtures `mcwhirter.shape`), through the
+-- spec definition `mcWhirterBound = 1.6e12·√T·ΔE³`.
+example : mcWhirterBound 4 2 = 1.6e12 * 16 := by
+  unfold mcWhirterBound; rw [sqrt_four]; norm_num
+
+/-! ### Exponent pins (not fixture entries)
+
+Anchors at non-unit inputs, each a tight accept plus a reject, so that a definition with a wrong
+exponent or a dropped factor stops compiling. The two McWhirter inputs are needed together: at
+`(T, ΔE) = (4, 2)` the wrong form `T·ΔE²` also gives `16`, and `(9, 2)` separates it. -/
+
+-- C7: `C·√T·ΔE³ ≤ nₑ` has threshold `16` at `(C, T, ΔE) = (1, 4, 2)` and `24` at `(1, 9, 2)`.
+example : mcWhirterCert 1 4 2 16 ∧ ¬ mcWhirterCert 1 4 2 15 := by
+  constructor <;> (unfold mcWhirterCert; rw [sqrt_four]; norm_num)
+example : mcWhirterCert 1 9 2 24 ∧ ¬ mcWhirterCert 1 9 2 23 := by
+  constructor <;> (unfold mcWhirterCert; rw [sqrt_nine]; norm_num)
+-- C4: `ε²·n ≤ τ_β²·SS_E` at `ε = 2`, `τ_β = 3`, `SS_E = 1`: accepts `n = 2` (8 ≤ 9), rejects `n =
+-- 3`.
+example : slopeBudgetCert 2 3 1 2 ∧ ¬ slopeBudgetCert 2 3 1 3 := by
+  constructor <;> norm_num [slopeBudgetCert]
+-- C5: `k_B·T̂·B ≤ τ_T` at `k_B = 2`, `T̂ = 3`, `B = 1/2`: threshold `3`.
+example : tempBudgetCert 2 3 (1 / 2) 3 ∧ ¬ tempBudgetCert 2 3 (1 / 2) (5 / 2) := by
+  constructor <;> norm_num [tempBudgetCert]
 
 end CflibsFormal

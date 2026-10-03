@@ -217,17 +217,28 @@ if not WL.exists():
     print("check-citations: FAILED — whitelist missing (fail closed).")
     sys.exit(1)
 
+STATUS_VOCAB = {"VERIFIED", "CORRECTED", "AUDIT-VETTED", "UNVERIFIED", "SUSPECT", "CONVENTION"}
 wl_status: dict[str, str] = {}
 wl_year: dict[str, str] = {}
 wl_note: dict[str, str] = {}
 wl_doi: dict[str, str] = {}
-for line in WL.read_text(encoding="utf-8").splitlines():
+wl_errors: list[str] = []
+for lineno, line in enumerate(WL.read_text(encoding="utf-8").splitlines(), 1):
     if not line.strip() or line.lstrip().startswith("#"):
         continue
     parts = line.split("\t")
     if len(parts) < 2:
+        wl_errors.append(f"line {lineno}: fewer than two tab-separated columns")
         continue
     cit = parts[0].strip()
+    # A later row for the same key would silently replace an earlier one (so a SUSPECT row could
+    # be masked), and a status outside the vocabulary would dodge the SUSPECT test below.
+    if cit in wl_status:
+        wl_errors.append(f"line {lineno}: duplicate row for citation '{cit}'")
+        continue
+    if parts[1].strip() not in STATUS_VOCAB:
+        wl_errors.append(f"line {lineno}: status '{parts[1].strip()}' of '{cit}' is not one of "
+                         f"{', '.join(sorted(STATUS_VOCAB))}")
     wl_status[cit] = parts[1].strip()
     wl_year[cit] = parts[2].strip() if len(parts) > 2 else ""
     wl_note[cit] = parts[3].strip() if len(parts) > 3 else ""
@@ -270,7 +281,7 @@ else:
     print("   is its purpose as a gate.")
 print("")
 
-suspect = sorted(c for c in tsv_counts if wl_status.get(c) == "SUSPECT")
+suspect = sorted(c for c in tsv_counts if wl_status.get(c, "").startswith("SUSPECT"))
 print(f"-- scope-tags citations whitelisted as SUSPECT (BLOCKING) --")
 if suspect:
     print(f"   FAIL: {len(suspect)} citation string(s) in column 4 are whitelisted SUSPECT, which")
@@ -322,9 +333,19 @@ else:
     print("   (none)")
 print("")
 
-if off or suspect:
+print("-- whitelist well-formedness (BLOCKING) --")
+if wl_errors:
+    print(f"   FAIL: {len(wl_errors)} malformed, duplicate or off-vocabulary whitelist row(s).")
+    for e in wl_errors:
+        print(f"   WHITELIST-ROW  {e}")
+else:
+    print("   (every row has a status from the vocabulary and a unique citation key)")
+print("")
+
+if off or suspect or wl_errors:
     print(f"check-citations: FAILED — {len(off)} off-whitelist and {len(suspect)} SUSPECT "
-          "citation string(s) in docs/scope-tags.tsv column 4 (see the BLOCKING sections).")
+          f"citation string(s) in docs/scope-tags.tsv column 4, {len(wl_errors)} malformed "
+          "whitelist row(s) (see the BLOCKING sections).")
     print("  Next step: .claude/skills/citation-integrity/SKILL.md, then a whitelist row that")
     print("  records the outcome actually reached.")
     sys.exit(1)

@@ -109,15 +109,17 @@ definition is defined once and reused verbatim, and every module imports only `M
   fact). It is not a thermometer for neutral lines: there `B` carries the Saha factor and the
   physical ratio falls with `T`; it describes a measurable ratio only for a line of the
   continuum-producing ion stage at fixed `n_e`),
-  `Dimensions` (additive dimensional-analysis layer: machine-checks homogeneity of the forward
-  relations; does not touch the dimensionless core),
+  `Dimensions` (additive dimensional-analysis layer: checks the exponent arithmetic of dimension
+  vectors assigned by hand to the forward relations; it is not linked to the definitions and does
+  not touch the dimensionless core),
   `ErrorBudget` (the deterministic error-propagation chain — ε → OLS slope → temperature →
   composition — that turns the pipeline's empirical reliability thresholds, `min_energy_spread`
   and `min_snr`, into proven *sufficient-condition* corollaries; builds on the core `OLS`
   foundation, honest that the line-count law is statistical, not deterministic),
   `MatrixEffects` (matrix effects as explicit parameters: the recovered SUBcomposition — pairwise
-  ratios among the detected species `D` — is matrix-INDEPENDENT (`recoveredComposition_ratio_`
-  `matrix_invariant`, Aitchison coherence) while absolute fractions inflate by `1/(1−m)` ≥ 1
+  ratios among the detected species `D` — is matrix-INDEPENDENT
+  (`recoveredComposition_ratio_matrix_invariant`, Aitchison coherence) while absolute fractions
+  inflate by `1/(1−m)` ≥ 1
   (`composition_le_recoveredComposition`); plus an intensity bridge from the forward map and the
   Saha ionization-suppression channel (`sahaIonDensity_antitone`); honest that this is the
   completeness/ablation channels with `n`/`T` fixed, NOT unconditional matrix-independence),
@@ -153,6 +155,29 @@ definition is defined once and reused verbatim, and every module imports only `M
   is a reduction from the classical uncorrelatedness hypothesis (mathlib's `IndepFun.variance_sum`),
   and optimality is "minimum-variance among linear unbiased estimators" only (not Cramér–Rao).
 
+- **Later layers (index only).** The list above describes the foundational modules in detail.
+  It is not the complete inventory: `docs/module-reference.md` (generated) lists every module
+  with its role, and `docs/theorem-catalog.md` every result with its published scope tag. By
+  theme, the modules not described above are:
+  - *optical depth bound to the plasma state and radiative transfer:* `OpticalDepth`,
+    `OpticalDepthBridge`, `RadiativeTransferDepth`, `KirchhoffSource`, `DoubletChannel`,
+    `EscapeFactor`, `LadenburgReiche`, `OpacityBroadening`, `StarkOpacityGuard`,
+    `VoigtErrorEnclosure`;
+  - *ionization balance and the outer iteration:* `SahaContraction`, `SahaRangeEnclosure`,
+    `IpdSahaInverse`, `JointConvergence`, `OuterLoopModelB`, `MatrixIonizationCoupling`,
+    `NonLTEKinetics`, `InhomogeneityBias`, `IonApparentTemperature`;
+  - *design, conditioning and line selection:* `OLSIdentifiability`, `OLSConditioning`,
+    `ConditionNumber`, `IntervalEnclosure`, `FixedEffectsDesign`, `NoiseGainFloor`,
+    `FisherLineSelection`, `LineSelection`, `RatioModeSensitivity`;
+  - *the nonlinear fit and atomic-data error:* `ProfiledTUniqueness`, `ProfiledUnimodality`,
+    `HeteroAtomicData`, `DifferentialEstimator`, `Alt/OLSAtomicDataPerturbation`,
+    `Alt/StochasticBudget`, `Alt/NeutralityScale`;
+  - *the runtime bridge to the pipeline:* `Certificates`, `EvaluatorSoundness`, `OracleAnchors`,
+    `RefuseToReport`, `ConformalCoverage`, `KernelLineExtraction`, `LineExtraction`,
+    `LineEvidence`;
+  - *pure-math substrate and compositional data:* `Analysis`, `Aitchison`, `AitchisonIsometry`,
+    `TwoDCOS`, `TwoDCOSOrder`.
+
 New alternative methods go under `CflibsFormal.Alt`; shared physics/inverse machinery in
 `CflibsFormal`. Literature-facing modules carry a `## Literature` docstring paragraph citing
 the peer-reviewed primary sources.
@@ -163,11 +188,12 @@ the peer-reviewed primary sources.
    densities, intensities are all `ℝ`; dimensional consistency in the inverse-problem core is
    *human discipline*, not type-enforced, because those theorems are dimensionally trivial and a
    unit-carrying type would obstruct `field_simp`/`ring`/`log`/`exp` for no diagnostic gain. To
-   close the discipline gap *without* paying that cost, `Dimensions.lean` adds an **additive**
-   dimensional-analysis layer (a `Dimension` exponent-vector group over `ℚ`) that machine-checks
-   the **homogeneity** of the forward relations — `E/(k_B T)` dimensionless, the thermal bracket
-   `L⁻²`, the Saha factor `L⁻³` = number density, the Saha law homogeneous — leaving the
-   dimensionless core untouched. (Cued by physlib's `Units`/`Dimension` and Lean4PHYS; see #2.)
+   narrow the discipline gap *without* paying that cost, `Dimensions.lean` adds an **additive**
+   dimensional-analysis layer (a `Dimension` exponent-vector group over `ℚ`) that checks the
+   exponent arithmetic of hand-assigned dimension vectors for the forward relations — `E/(k_B T)`
+   dimensionless, the thermal bracket `L⁻²`, the Saha factor `L⁻³` = number density, the Saha law
+   homogeneous — leaving the dimensionless core untouched. The vectors are not tied to the Lean
+   definitions, so this is a check of the bookkeeping, not of the definitions. (Cued by physlib's `Units`/`Dimension` and Lean4PHYS; see #2.)
 
 2. **mathlib-only; physlib is an upstream target, not a dependency (re-confirmed 2026-06-23).**
    Current `gh`-verified state of `leanprover-community/physlib` (renamed PhysLean + Lean-QuantumInfo):
@@ -226,29 +252,40 @@ Gates, all required before trusting a result:
 2. **Axiom-clean** — `lake exe axiom-audit --root CflibsFormal` (exit 0).
 3. **Style/structure lint** — `lake exe runLinter CflibsFormal` (mathlib/batteries env linters:
    docBlame, simpNF, unusedArguments, …) — catches missing docstrings, unused hypotheses, etc.
-4. **Import hygiene** — `scripts/stats.sh` (every module imports only `Mathlib` / `CflibsFormal`,
-   no surprise external deps; acyclicity is guaranteed by the build). Also prints the base modules
-   and derived declaration counts.
+4. **Source hygiene** — `scripts/stats.sh` (every module imports only `Mathlib` / `CflibsFormal`,
+   read token by token; no orphan module; no `sorry` / `native_decide` / `axiom` / kernel-bypass
+   token outside comments, which also covers `example`s; acyclicity is guaranteed by the build).
+   Also prints the base modules and derived declaration counts.
 5. **Statement audit** — adversarial review that the *statement* faithfully encodes the
    intended physics (non-vacuous, non-trivial, non-tautological, honestly scoped).
 
-Gates 1–4 are automated in CI (`.github/workflows/lean_action_ci.yml`).
+Gates 1–4 are automated in CI (`.github/workflows/lean_action_ci.yml`), together with the scope
+gate, the catalog-staleness gate, the kernel replay of changed modules, the oracle self-check,
+the docs-sync gate, the citation-whitelist gate and the theorem-card gate. `AGENTS.md` lists the
+exact commands. Gate 5 is judgment, not automated.
 
 ## Status
 
-91 modules, 804 named results (theorem/lemma) + 242 defs (counts via `scripts/stats.sh`,
-2026-09-28). CI gates: axiom-cleanliness (`tools/`), style/structure lint (`runLinter`),
+<!-- stats:begin -->
+93 modules · 832 named results (theorem/lemma) · 247 defs
+<!-- stats:end -->
+(kept current by `scripts/gen-docs.sh`). CI gates: axiom-cleanliness (`tools/`), style/structure lint (`runLinter`),
 docs-sync + scope-tag completeness (`scripts/gen-docs.sh`), import-hygiene (`scripts/stats.sh`),
 the declaration-granular scope gate (`lake exe scope-check`, which also checks that the published
-tags in `docs/scope-published.tsv` are current), and the module-level scope-consistency advisory
-(`scripts/check-scope-consistency.sh`).
+tags in `docs/scope-published.tsv` are current), the catalog-staleness gate
+(`lake exe export-catalog`), the kernel replay of changed modules (`scripts/kernel-replay.sh`),
+the oracle self-check, the citation-whitelist gate (`scripts/check-citations.sh`), the
+theorem-card gate (`scripts/check_cards.py`, `scripts/gen_cards.py`), and the module-level
+scope-consistency advisory (`scripts/check-scope-consistency.sh`).
 The original **~186-result corpus** was adversarially validated (verdict: sound-with-minor-fixes,
 zero blockers; all findings fixed) and given a whole-corpus **literature-validity audit**
 (`reviews/literature-validity-audit.md`): 69 faithful / 33 reduced / 5 idealized / 78 pure-math,
 **0 divergent, 0 unverified citations, 1 minor docstring over-reach (fixed)**. Subsequent additions
-to the corpus since then (756 results by 2026-09-25, 799 by 2026-09-27: the frontier and
+to the corpus since then (the large majority of today's results: the frontier and
 architectural-review deepening sweeps and the frontier landings) are
-individually author-plus-independent-audit reviewed rather than re-covered by that one-time audit.
+individually author-plus-independent-audit reviewed rather than re-covered by that one-time audit;
+a second whole-corpus pass (`docs/literature-validation.md`, 2026-07-09) covered the then
+48 modules and 412 results.
 The 2026-09-24 deep audit later corrected several citations (wrong authors, a title with no
 bibliographic record, wrong metadata); the current per-citation status, and whether a primary
 source was opened, is in `docs/citation-whitelist.tsv`.

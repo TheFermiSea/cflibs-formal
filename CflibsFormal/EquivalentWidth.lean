@@ -29,7 +29,7 @@ We prove the **weak-line / saturation** structure of the curve of growth, profil
   area (PURE-MATH).
 * `equivWidth_weakLine` — **the linear regime is exact at small `τ`:** `W(τ)/τ → ∫φ` as `τ → 0⁺`, so
   the curve of growth is asymptotically tangent to the slope-1 line `τ·∫φ` at the origin and (with
-  `equivWidth_le_thin`) bends strictly below it as `τ` grows.
+  `equivWidth_le_thin`) stays at or below it as `τ` grows (a strict inequality is not proved).
 * `equivWidth_rectangular` — for a **flat (rectangular) profile** of unit area the equivalent width
   is exactly the slab deficit `W(τ) = 1 - exp(-τ)`, tying the integrated curve of growth back to the
   `SelfAbsorption.slabIntensity` / escape-factor kernel and witnessing the results are non-vacuous.
@@ -45,16 +45,20 @@ We prove the **weak-line / saturation** structure of the curve of growth, profil
 * **EXACT, within the model.** `W(τ) = ∫(1 - exp(-τφ))` is the standard equivalent-width definition
   (absorption / self-absorption deficit). The bound `W ≤ τ·∫φ`, monotonicity, and the rectangular
   identity are exact under the stated hypotheses (`φ ≥ 0`, `Integrable φ`, `τ ≥ 0`).
-* **Only the LINEAR regime and saturation onset — the slope-½ damping wing is OUT OF SCOPE.** The
-  curve of growth has three regimes: linear (`W ∝ τ`, slope 1), flat/Doppler saturation
-  (`W ∝ √(ln τ)`), and the square-root damping wing (`W ∝ √τ`, slope ½, from the Lorentzian wings).
-  We prove the slope-1 *upper bound* (`equivWidth_le_thin`), the exact slope-1 *tangency* at small
-  `τ` (`equivWidth_weakLine`), and monotonicity — but NOT the saturated asymptotics: the slope-½
-  Lorentz-wing growth needs a profile-specific improper-integral asymptotic (Ladenburg–Reiche /
-  Bessel-function form) beyond the profile-agnostic results here.
-* **Profile-agnostic.** No specific profile (Gaussian/Doppler, Lorentzian, Voigt) is assumed; the
-  results hold for any nonnegative integrable `φ`. The rectangular witness is the one concrete
-  instance, chosen because it closes in elementary form and recovers the audited slab kernel.
+* **Regimes covered.** The curve of growth has three regimes: linear (`W ∝ τ`, slope 1),
+  flat/Doppler saturation (`W ∝ √(ln τ)`), and the square-root damping wing (`W ∝ √τ`, slope ½,
+  from the Lorentzian wings). For a general profile we prove the slope-1 *upper bound*
+  (`equivWidth_le_thin`), the exact slope-1 *tangency* at small `τ` (`equivWidth_weakLine`), and
+  monotonicity. For the unit-area Lorentzian we also prove the slope-½ wing: two-sided `√τ`
+  bounds (`equivWidth_lorentzian_sqrt_lower`, `_upper`, `_two_sided`) and the sharp limit
+  `W/√τ → 2` (`equivWidth_lorentzian_sqrt_sharp`). **Out of scope:** the flat/Doppler
+  `√(ln τ)` regime, and the full Ladenburg–Reiche function (modified Bessel `I₀`, `I₁`) at
+  finite `τ`.
+* **Profile-agnostic first half.** The general results assume no specific profile; they hold for
+  any nonnegative integrable `φ`. Three concrete profiles are then treated: the rectangular one
+  (it closes in elementary form and recovers the audited slab kernel), the Lorentzian (the
+  damping wing), and a two-step profile (`equivWidth_stepProfile`, used for the pair-ratio
+  non-injectivity counterexample `stepProfile_pairRatio_not_injOn`).
 * **Physics is in the profile, not the Lean statement.** `τ` lumps the oscillator strength / lower-
   level column density (`τ = w·n` of `CurveOfGrowth.cogIntensity`); `∫φ` is the profile area. No
   physical constant enters any statement.
@@ -73,8 +77,10 @@ L. A.; Smith, B. W.; Omenetto, N.; Winefordner, J. D. "Curve of growth methodolo
 laser-induced plasma emission spectroscopy," *Spectrochimica Acta Part B* **54** (1999) 491–503
 (the `cogIntensity` kernel of `CurveOfGrowth.lean`); the multi-line / Cσ curve-of-growth
 correction is formalized in the sibling `Alt/CSigmaCurveOfGrowth` (Aragón & Aguilera). The
-slope-½ damping-wing branch deferred here is governed by the classical Ladenburg–Reiche
-curve-of-growth function for a Lorentzian profile.
+slope-½ damping-wing branch is governed by the classical Ladenburg–Reiche curve-of-growth
+function for a Lorentzian profile (cited as "Ladenburg–Reiche 1913" in `docs/scope-tags.tsv`;
+see `docs/citation-whitelist.tsv` for its verification status); only its large-`τ` limit is
+proved here.
 -/
 
 namespace CflibsFormal
@@ -123,7 +129,8 @@ theorem equivWidth_le_thin {φ : ℝ → ℝ} {τ : ℝ} (hτ : 0 ≤ τ) (hφnn
   linarith [Real.one_sub_le_exp_neg (τ * φ x)]
 
 /-- **The curve of growth is increasing.** For `0 ≤ τ₁ ≤ τ₂` the equivalent width grows:
-`W(τ₁) ≤ W(τ₂)`. More lower-level column density (larger `τ`) removes strictly more flux. -/
+`W(τ₁) ≤ W(τ₂)`. More lower-level column density (larger `τ`) removes at least as much flux
+(strictly more for a profile of positive area: `equivWidth_strictMonoOn`). -/
 theorem equivWidth_mono {φ : ℝ → ℝ} {τ₁ τ₂ : ℝ} (hτ₁ : 0 ≤ τ₁) (hτ : τ₁ ≤ τ₂)
     (hφnn : 0 ≤ φ) (hφ : Integrable φ) :
     equivWidth φ τ₁ ≤ equivWidth φ τ₂ := by
@@ -252,12 +259,14 @@ theorem equivWidth_weakLine {φ : ℝ → ℝ} (hφnn : 0 ≤ φ) (hφ : Integra
     simp only [zero_add, smul_eq_mul, zero_mul, neg_zero, Real.exp_zero]
     ring
 
-/-- **Saturation kills forward sensitivity (EXACT).** For `τ₁ ≤ τ₂` the slab curve of growth
+/-- **Saturation kills forward sensitivity, for the flat profile (PURE-MATH).** A real
+inequality about `1 − e^{−τ}`; its saturation reading applies to the rectangular profile only
+(a Lorentzian line keeps growing like `√τ`, `equivWidth_lorentzian_sqrt_lower`). For `τ₁ ≤ τ₂` the
+slab curve of growth
 `g(τ) = 1 - exp(-τ)` — the rectangular equivalent width `W = 1 - e^{-τ}` of
 `equivWidth_rectangular` — obeys `|g(τ₂) - g(τ₁)| ≤ e^{-τ₁} · (τ₂ - τ₁)`: the forward response
 decays like `e^{-τ}`, so deep in saturation the observable stops moving with `τ`. Proof:
-`e^{-τ₁} - e^{-τ₂} = e^{-τ₁}(1 - e^{-(τ₂-τ₁)}) ≤ e^{-τ₁}(τ₂-τ₁)` via `Real.one_sub_le_exp_neg`. The
-thick-regime √τ damping-wing growth stays out of scope (see the module honest-scope note). -/
+`e^{-τ₁} - e^{-τ₂} = e^{-τ₁}(1 - e^{-(τ₂-τ₁)}) ≤ e^{-τ₁}(τ₂-τ₁)` via `Real.one_sub_le_exp_neg`. -/
 theorem slabCurve_forward_lipschitz {τ₁ τ₂ : ℝ} (hτ : τ₁ ≤ τ₂) :
     |(1 - Real.exp (-τ₂)) - (1 - Real.exp (-τ₁))| ≤ Real.exp (-τ₁) * (τ₂ - τ₁) := by
   have hle : Real.exp (-τ₂) ≤ Real.exp (-τ₁) := Real.exp_le_exp.mpr (by linarith)
@@ -274,12 +283,15 @@ theorem slabCurve_forward_lipschitz {τ₁ τ₂ : ℝ} (hτ : τ₁ ≤ τ₂) 
     mul_le_mul_of_nonneg_left (by linarith [Real.one_sub_le_exp_neg (τ₂ - τ₁)]) ha
   linarith [hkey, hcalc]
 
-/-- **Inverse ill-conditioning — the condition number of the equivalent-width inversion (EXACT).**
-On the unsaturated region `W₁, W₂ ≤ Wmax` with `Wmax < 1` (nonnegativity of the widths is not
+/-- **Inverse ill-conditioning of the flat-profile equivalent-width inversion (PURE-MATH).**
+A real inequality about `log(1 − W)`; it describes the inversion of the rectangular-profile
+curve `W = 1 − e^{−τ}` only. On the unsaturated region `W₁, W₂ ≤ Wmax` with `Wmax < 1`
+(nonnegativity of the widths is not
 even needed), the inverse `τ = -log(1 - W)` is Lipschitz with constant `1/(1 - Wmax)`:
 `|log(1-W₁) - log(1-W₂)| ≤ |W₁ - W₂| / (1 - Wmax)`. The condition number `1/(1 - Wmax)` blows up as
-`Wmax → 1`, quantifying why the inversion is unusable in saturation — the explicit bound that
-licenses the runtime saturation gate ("refuse when saturated"). Proof: `log a - log b ≤ (a-b)/b`
+`Wmax → 1`, quantifying why the flat-profile inversion is unusable in saturation — the bound
+behind the runtime saturation gate ("refuse when saturated"), which is a flat-kernel gate. Proof:
+`log a - log b ≤ (a-b)/b`
 (from `Real.log_le_sub_one_of_pos`) two-sidedly, then `1 - W ≥ 1 - Wmax > 0`. -/
 theorem slabCurve_inverse_lipschitz {W₁ W₂ Wmax : ℝ} (hWmax : Wmax < 1)
     (hW₁ : W₁ ≤ Wmax) (hW₂ : W₂ ≤ Wmax) :
@@ -318,12 +330,12 @@ theorem slabCurve_inverse_lipschitz {W₁ W₂ Wmax : ℝ} (hWmax : Wmax < 1)
     linarith [h1, h2]
   exact abs_sub_le_iff.mpr ⟨hf, hr⟩
 
-/-- **Round-trip inverse-Lipschitz bound in τ (EXACT).** For `0 ≤ τ₁, τ₂ ≤ τmax`,
+/-- **Round-trip inverse-Lipschitz bound in τ, flat profile (PURE-MATH).** For `0 ≤ τ₁, τ₂ ≤ τmax`,
 `|τ₁ - τ₂| ≤ |g(τ₁) - g(τ₂)| · e^{τmax}` with `g(τ) = 1 - exp(-τ)`: the inverse-Lipschitz constant
 `e^{τmax}` equals `1/(1 - Wmax)` for `Wmax = g(τmax)`, the same blow-up as
 `slabCurve_inverse_lipschitz` phrased via a τ-bound instead of a `W`-bound. Proof: for `a ≤ b`,
 `e^{-a} - e^{-b} = e^{-b}(e^{b-a} - 1) ≥ e^{-τmax}(b - a)` via `Real.add_one_le_exp`, then multiply
-by `e^{τmax}`. The thick-regime √τ damping wing stays out of scope (module honest-scope note). -/
+by `e^{τmax}`. -/
 theorem slabCurve_roundTrip_lipschitz {τ₁ τ₂ τmax : ℝ}
     (hτ₁ : 0 ≤ τ₁) (hτ₂ : 0 ≤ τ₂) (h₁ : τ₁ ≤ τmax) (h₂ : τ₂ ≤ τmax) :
     |τ₁ - τ₂| ≤ |(1 - Real.exp (-τ₁)) - (1 - Real.exp (-τ₂))| * Real.exp τmax := by
@@ -463,9 +475,9 @@ regime remains informative but must be modelled with the Lorentz-wing profile ra
 saturating slab kernel.
 
 **Scope.** This is a genuine **lower bound**, NOT the Ladenburg–Reiche asymptotic *equality* (the
-slope-½ `W ∼ 2√(τ·⟨width⟩)` curve-of-growth function): the sharp constant and matching upper bound
-need the profile-specific improper-integral asymptotics that stay OUT of scope (module honest-scope
-note). Construction: on `A = [1, √(τ/2π)]` the integrand `1 - e^{-τL} ≥ 1 - e⁻¹` (since `τ·L ≥ 1`
+slope-½ `W ∼ 2√(τ·⟨width⟩)` curve-of-growth function): the matching upper bound is
+`equivWidth_lorentzian_sqrt_upper` and the sharp constant is `equivWidth_lorentzian_sqrt_sharp`.
+Construction: on `A = [1, √(τ/2π)]` the integrand `1 - e^{-τL} ≥ 1 - e⁻¹` (since `τ·L ≥ 1`
 there, `lorentzian_tau_ge_one`); lower-bounding `W` by the constant `1 - e⁻¹` on `A` via
 `integral_mono` against its indicator (mirroring `equivWidth_rectangular`) gives
 `W ≥ (1 - e⁻¹)(√(τ/2π) - 1) ≥ (1 - e⁻¹)·½√(τ/2π) = c·√τ`, using `τ ≥ 8π ⇒ √(τ/2π) ≥ 2`. Only the
@@ -550,9 +562,8 @@ Lorentzian tail mass is `∫_{[-a,a]ᶜ} L = 1 - (2/π)·arctan a = (2/π)·arct
 `≤ τ·(2/π)/a = 2a`. Total `W ≤ 4a = 4√(τ/π) = (4/√π)·√τ`.
 
 **Scope.** A genuine **upper bound**; the constant `4/√π ≈ 2.257` is NOT sharp (the split is
-deliberately crude). With the lower bound this pins the `√τ` *regime* up to constants — but the
-Ladenburg–Reiche sharp-constant asymptotic *equality* stays OUT of scope (module honest-scope
-note). Gornushkin 1999. -/
+deliberately crude). With the lower bound this pins the `√τ` *regime* up to constants; the
+sharp-constant limit is `equivWidth_lorentzian_sqrt_sharp`. Gornushkin 1999. -/
 theorem equivWidth_lorentzian_sqrt_upper {τ : ℝ} (hτ : 0 ≤ τ) :
     equivWidth lorentzian τ ≤ 4 / Real.sqrt Real.pi * Real.sqrt τ := by
   have hπpos := Real.pi_pos
@@ -627,10 +638,9 @@ Lorentzian equivalent width is trapped between two explicit `√τ` lines,
   `(1 - e⁻¹)/(2√(2π)) · √τ ≤ W(τ) ≤ (4/√π) · √τ`.
 
 So the curve of growth grows *exactly* on the order of `√τ` — the slope-½ damping wing — with the
-two explicit constants (`≈ 0.126` and `≈ 2.257`) bracketing it. **The sharp Ladenburg–Reiche
-asymptotic EQUALITY (the exact slope-½ constant `W ∼ 2√(τ·⟨width⟩)`) stays OUT of scope:** it needs
-the profile-specific improper-integral asymptotics, not merely the two-sided envelope proved here.
-Gornushkin 1999. -/
+two explicit constants (`≈ 0.126` and `≈ 2.257`) bracketing it. The sharp Ladenburg–Reiche
+limit (`W/√τ → 2` for this unit-area Lorentzian) is proved separately as
+`equivWidth_lorentzian_sqrt_sharp`. Gornushkin 1999. -/
 theorem equivWidth_lorentzian_sqrt_two_sided {τ : ℝ} (hτ : 8 * Real.pi ≤ τ) :
     (1 - Real.exp (-1)) / (2 * Real.sqrt (2 * Real.pi)) * Real.sqrt τ
         ≤ equivWidth lorentzian τ

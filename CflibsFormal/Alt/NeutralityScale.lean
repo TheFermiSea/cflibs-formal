@@ -66,8 +66,10 @@ element of a `Finset κ`, so the two do not share a proof term; a follow-up coul
 `recoveredComposition_eq_inflation` directly. Both are EXACT identities and neither overclaims: the
 duplication is an architectural note, not a faithfulness gap (statement audit, 2026-09-21).
 
-**Worker provenance.** These three statements were audited (Mode B, three independent reviewers,
-2026-09-21; `docs/spec/03-module-specs.md` §7) before any prover saw them, then proved by the local
+**Worker provenance.** Three statements (`neutralityScale_eq_Fcal`,
+`neutralityScale_undetected`, `closureEstimate_bias`) were audited (Mode B, three independent
+reviewers, 2026-09-21; `docs/spec/03-module-specs.md` §7 on the `docs/formalization-spec`
+branch, not on `main`) before any prover saw them, then proved by the local
 Worker (Qwen3.8-27B, 3/3; Leanstral 1.5, 0/3 within a 60-minute cap each) as the first real-problem
 test of the local-model harness (decision D12). Every proof was independently re-verified by the
 lead before landing here: `lake env lean`, `#print axioms` (the standard three), and a signature

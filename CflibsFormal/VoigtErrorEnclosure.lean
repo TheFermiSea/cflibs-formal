@@ -11,8 +11,11 @@ import CflibsFormal.VoigtWidth
 
 `VoigtWidth.lean` defines the **Olivero–Longbothum (1977)** algebraic Voigt-FWHM combination
 `voigtFWHM wL wG = 0.5346·wL + √(0.2166·wL² + wG²)` and proves the two lower bounds
-`wG ≤ voigtFWHM` and `wL ≤ voigtFWHM`. This module turns those into a rigorous, **non-circular**
-error enclosure between the OL algebraic value and the *true* (convolution) Voigt FWHM.
+`wG ≤ voigtFWHM` and `wL ≤ voigtFWHM`. This module turns those into a **non-circular**,
+conditional enclosure of the gap between the OL algebraic value and the *true* (convolution)
+Voigt FWHM. Read it for what it is: the bound is the width of an interval that contains both
+numbers (the OL value by proof, the true FWHM by hypothesis). It is not a statement about how
+accurate the OL fit is, and it is far weaker than that accuracy (see below).
 
 The design avoids the vacuity trap. We do **not** define `FWHM_true` as the OL formula (that would
 make the error identically `0`). Instead:
@@ -24,7 +27,7 @@ make the error identically `0`). Instead:
      √a·|·| + |·|` (concavity/subadditivity of `√`).
 2. **Real finding (proved).** `voigtFWHM_naive_upper_false` — the *naive* upper rail
    `voigtFWHM ≤ wL + wG` is **false**: at `(wL,wG) = (1,0)` the OL value is
-   `0.5346 + √0.2166 = 1.0000034… > 1`. So the textbook sandwich `[max(fG,fL), fG+fL]` does **not**
+   `0.5346 + √0.2166 = 1.00000305… > 1`. So the textbook sandwich `[max(fG,fL), fG+fL]` does **not**
    contain the OL value; the enclosure width picks up a `η·wL` correction with
    `η = 0.5346 + √0.2166 − 1 ∈ (0, 10⁻⁵)`.
 3. **Uncited hypothesis (not proved here).** The rigorous bracketing of the *true* convolution FWHM,
@@ -37,17 +40,21 @@ make the error identically `0`). Instead:
    `voigtFWHM_true_enclosure_clean` gives the fully rational bound
    `|voigtFWHM wL wG − Ftrue| ≤ min(fG,fL) + 10⁻⁵·wL`, i.e. `δ ≈ min(fG,fL)` to five decimals.
 
-The bound is honest and non-vacuous: `δ = min(fG,fL) + η·wL` is neither `0` (unless a component
+The bound is non-vacuous: `δ = min(fG,fL) + η·wL` is neither `0` (unless a component
 width vanishes) nor the trivial `fG+fL`; it collapses to exactly `0` in the pure-Gaussian case
-(`wL = 0`), matching the exact `voigt_gaussian_limit` of `VoigtWidth`.
+(`wL = 0`), matching the exact `voigt_gaussian_limit` of `VoigtWidth`. It is also loose: at
+`wL = wG` it allows a gap of about 61% of the Voigt width, whereas the OL formula's actual error
+is about 0.02% (numerical comparison with the exact Voigt FWHM; see `VoigtWidth`). The enclosure
+certifies only that the two numbers share the bracket.
 
 ## Literature and scope
 
 Scope: the headline enclosure is **REDUCED** — the OL-in-sandwich position (steps 1–2) is proved
 outright; the *true*-FWHM bracket (step 3) is a clearly-labelled **hypothesis**, so the enclosure
 `|voigtFWHM − Ftrue| ≤ δ` is **conditional** on that bracket. Nothing about the convolution FWHM is
-asserted as proved. The underlying OL formula is itself an APPROXIMATION (empirical fit, ~0.01%);
-this module quantifies the gap between that approximation and the true width *given* the bracket.
+asserted as proved. The underlying OL formula is itself an APPROXIMATION (empirical fit, about
+0.02%); this module bounds the gap between that approximation and the true width by the bracket
+width, *given* the bracket.
 
 Per-theorem tags (the module is deliberately mixed): the two sandwich rails `voigtFWHM_ge_max` /
 `voigtFWHM_le_olUpper` are **EXACT** algebra about the OL formula (built from `VoigtWidth`'s EXACT
@@ -75,7 +82,7 @@ lemma voigtFWHM_ge_max {wL wG : ℝ} (hwL : 0 ≤ wL) (hwG : 0 ≤ wG) :
   max_le (voigtFWHM_ge_gauss hwL hwG) (voigtFWHM_ge_lorentz hwL)
 
 /-- **Sharp upper rail (proved outright).** By subadditivity of `√` on the two squared terms,
-`voigtFWHM w_L w_G ≤ (0.5346 + √0.2166)·w_L + w_G`. The coefficient `0.5346 + √0.2166 = 1.0000034…`
+`voigtFWHM w_L w_G ≤ (0.5346 + √0.2166)·w_L + w_G`. The coefficient `0.5346 + √0.2166 = 1.00000305…`
 is just above `1`, which is exactly why the naive rail `w_L + w_G` fails (see
 `voigtFWHM_naive_upper_false`). -/
 lemma voigtFWHM_le_olUpper {wL wG : ℝ} (hwL : 0 ≤ wL) (hwG : 0 ≤ wG) :
@@ -148,8 +155,8 @@ theorem voigtFWHM_true_enclosure {wL wG Ftrue : ℝ} (hwL : 0 ≤ wL) (hwG : 0 �
 
 /-- **Clean-constant enclosure.** The same bound with a fully rational width: since
 `√0.2166 < 0.46541`, the correction `η = 0.5346 + √0.2166 − 1 < 10⁻⁵`, giving
-`|voigtFWHM w_L w_G − Ftrue| ≤ min(w_G, w_L) + 10⁻⁵·w_L`. Operationally: the algebraic OL FWHM
-tracks the true Voigt FWHM to within `min(fG,fL)` plus at most `0.001% · fL`. -/
+`|voigtFWHM w_L w_G − Ftrue| ≤ min(w_G, w_L) + 10⁻⁵·w_L`. This is the width of the assumed
+bracket, not the accuracy of the fit: at `w_L = w_G` it is about 61% of the Voigt width. -/
 theorem voigtFWHM_true_enclosure_clean {wL wG Ftrue : ℝ} (hwL : 0 ≤ wL) (hwG : 0 ≤ wG)
     (hlo : max wG wL ≤ Ftrue) (hhi : Ftrue ≤ wL + wG) :
     |voigtFWHM wL wG - Ftrue| ≤ min wG wL + 0.00001 * wL := by
@@ -162,7 +169,7 @@ theorem voigtFWHM_true_enclosure_clean {wL wG Ftrue : ℝ} (hwL : 0 ≤ wL) (hwG
 /-- **Non-vacuity witness.** Concrete data `w_L = w_G = 1`, and a true FWHM `Ftrue = 1.5` that is
 genuinely inside the (uncited, hypothesized) bracket `max(1,1) = 1 ≤ 1.5 ≤ 2 = 1 + 1`. The enclosure
 fires and the
-width `min(1,1) + η·1 ≈ 1.0000034` is a real, finite, non-trivial number. -/
+width `min(1,1) + η·1 ≈ 1.00000305` is a real, finite, non-trivial number. -/
 example : |voigtFWHM 1 1 - 1.5| ≤ min (1:ℝ) 1 + (0.5346 + Real.sqrt 0.2166 - 1) * 1 :=
   voigtFWHM_true_enclosure (by norm_num) (by norm_num)
     (by norm_num) (by norm_num)

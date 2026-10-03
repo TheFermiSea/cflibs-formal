@@ -91,7 +91,9 @@ variable {Ω : Type*}
 /-- **A general linear estimator of the ordinates.** For weights `a : ι → ℝ` and the linear model
 `yₖ(ω) = α + β·Eₖ + εₖ(ω)`, `linEstimator a E α β ε ω = ∑ₖ aₖ·yₖ(ω)`. The OLS slope `betaHat`
 is the special case `a = olsWeight E` (via `OLS.olsSlope_eq_centered`); BLUE optimality
-(`ols_is_blue`) ranges over all `a` meeting the unbiasedness constraints. -/
+(`ols_is_blue`) ranges over all `a` meeting the unbiasedness constraints. Model tag REDUCED
+(`docs/conventions.md` §8): the body restates the idealized linear Boltzmann-plot model
+`yₖ = α + β·Eₖ + εₖ` of `betaHat`, so it carries the same tag. -/
 noncomputable def linEstimator (a E : ι → ℝ) (α β : ℝ) (ε : ι → Ω → ℝ) (ω : Ω) : ℝ :=
   ∑ k, a k * (α + β * E k + ε k ω)
 
@@ -150,7 +152,8 @@ theorem linEstimator_unbiased_iff (a E : ι → ℝ) (ε : ι → Ω → ℝ)
 noise with one common variance `σ²` on every line (`hhom`): the Gauss–Markov error model, not
 Aitken's weighted one. Strip the constant
 deterministic part (`variance_const_add`), expand the weighted-noise sum's variance into its
-double-covariance form (`variance_sum`), pull each weight out (`covariance_const_mul`), and read
+double-covariance form (`variance_sum`), pull each weight out (`covariance_const_mul_left` /
+`_right`), and read
 the diagonal `aₖ²σ²` after uncorrelatedness annihilates the off-diagonal. The arbitrary-weight
 generalization of
 `Alt.OLSVariance.olsSlope_variance_noiseGain` (which is the case `a = olsWeight E`), and the

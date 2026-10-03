@@ -20,9 +20,13 @@ ordinate carries the wavelength explicitly: `log(I·λ_k/(g_k A_k))` (Aragón & 
 Thouin et al. 2023). The two differ by the **per-line** photon-energy factor `h c / 4π λ_{ki}`,
 which a *scalar* `Fcal` cannot literally carry. This module makes that factor explicit in a thin
 **energy-intensity sibling** and machine-proves the two conventions yield the **same
-Boltzmann-plot slope** `-1/(k_B T)` (hence the same recovered temperature) — closing a
-literature-review flag that the reduced ordinate "omits λ" (it does not: `λ` is folded into
-`Fcal`). The two *intercepts* differ by the calibration identification `Fcal = h c · Fgeo / 4π`;
+Boltzmann-plot slope** `-1/(k_B T)` (hence the same recovered temperature) — answering a
+literature-review flag that the reduced ordinate "omits λ". The reduced ordinate is correct for
+photon-rate data. Applied to energy-calibrated data it does omit the per-line `λ`, which a scalar
+`Fcal` cannot absorb (see `ForwardMap`), and the slope is then wrong unless `λ` is constant over
+the fitted lines; the wavelength ordinate `log(I·λ/(gA))` restores it
+(`boltzmann_plot_intensity_wavelength`). The two *intercepts* differ by the calibration
+identification `Fcal = h c · Fgeo / 4π`;
 it is the slope (the temperature observable) that the conventions share. The canonical
 `lineIntensity` is **unchanged**; everything here is a sibling that reduces to it (pure
 `log`/`ring`, no new axioms).

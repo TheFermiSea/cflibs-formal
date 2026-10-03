@@ -23,7 +23,16 @@ We prove the cornerstone facts the classical CF-LIBS inversion relies on:
   distinct-energy levels recovers `1 / (k_B T)` exactly.
 
 All quantities are real. This is the forward direction; the inverse problem
-(recovering `T`, `n_e`, composition from intensities) is later work.
+(recovering `T`, `n_e`, composition from intensities) is treated in later modules
+(`Classic`, `Inverse`, `Identifiability`, `SahaInverse`).
+
+## Literature
+
+The physics-tagged results of this module cite the following keys in
+`docs/scope-tags.tsv`; the full reference and what was checked for each is in
+`docs/citation-whitelist.tsv`.
+
+* Boltzmann — status CONVENTION (the name of a law or equation, not a bibliographic reference).
 -/
 
 namespace CflibsFormal
@@ -36,12 +45,16 @@ variable {ι : Type*} [Fintype ι]
 /-- Boltzmann factor `exp(-E / (k_B T))` for a level of energy `E`. Always positive. -/
 noncomputable def boltzmannFactor (kB T E : ℝ) : ℝ := Real.exp (-E / (kB * T))
 
+/-- The Boltzmann factor is strictly positive, for every real `kB`, `T`, `E` (it is an
+exponential; at `kB·T = 0` the exponent is the junk value `0` and the factor is `1`). -/
 lemma boltzmannFactor_pos (kB T E : ℝ) : 0 < boltzmannFactor kB T E := Real.exp_pos _
 
 /-- Partition function `U(T) = ∑ₖ gₖ · exp(-Eₖ / (k_B T))`. -/
 noncomputable def partitionFunction (kB T : ℝ) (g E : ι → ℝ) : ℝ :=
   ∑ k, g k * boltzmannFactor kB T (E k)
 
+/-- The partition function of a nonempty level list with positive weights is strictly
+positive. -/
 lemma partitionFunction_pos [Nonempty ι] {kB T : ℝ} {g E : ι → ℝ}
     (hg : ∀ k, 0 < g k) : 0 < partitionFunction kB T g E := by
   refine Finset.sum_pos (fun k _ => ?_) univ_nonempty

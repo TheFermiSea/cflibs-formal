@@ -151,7 +151,8 @@ theorem sahaBoltzmann_plot [Nonempty ι] [Nonempty κ]
 into the inter-stage shift: under the structural Saha law `Nz1·n_e/Nz = S(T)` (so
 `Nz1/Nz = S/n_e`), the Saha–Boltzmann intercept shift equals
 `log S − log n_e + (log U_z − log U_{z+1})`. Because `log S` is itself the closed
-form of `log_sahaFactor` (affine in `1/(k_B T)`), the shift is an explicit function
+form of `log_sahaFactor` (the term `−χ/(k_B T)` plus `T`-dependent bracket and
+partition-function terms), the shift is an explicit function
 of `n_e` and `T`: this is the precise sense in which the vertical offset between
 the neutral and ion lines on the Saha–Boltzmann plot encodes the electron density.
 Both intercepts and the Saha law are evaluated at one `T` (the homogeneity reduction in

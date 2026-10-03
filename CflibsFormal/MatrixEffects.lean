@@ -22,14 +22,16 @@ statements, separating the channels and being honest about which CF-LIBS provabl
     — `Ĉ_D s / Ĉ_D t = n_s / n_t` for *any* `D` (`recoveredComposition_ratio_matrix_invariant`);
     Aitchison subcompositional coherence;
   - the recovered **absolute** fractions are matrix-DEPENDENT, over-estimated by the exact factor
-    `1/(1−m) ≥ 1` where `m` is the undetected mass fraction
+    `1/(1−m) ≥ 1` where `m` is the undetected number fraction
     (`recoveredComposition_eq_inflation`, `composition_le_recoveredComposition`).
   `recoveredComposition` strictly generalizes `Closure.composition` (the `D = univ` case,
   `recoveredComposition_univ`); no subset parameter exists elsewhere in the repo, so this is not a
   restatement of `Closure`/`Classic`.
-* **Ablation channel (`F`).** A matrix-dependent overall calibration factor cancels in the ratio
-  (the intensity bridge `recovered_ratio_from_intensities`: the recovered subcomposition from REAL
-  forward intensities equals the true density ratio `N_s/N_t`, independent of `D`).
+* **Ablation channel (`F`).** A matrix-dependent overall calibration factor cancels in the ratio:
+  `recovered_ratio_from_intensities_any_calibration` generates the spectrum with one factor
+  `Fcal₁` and inverts it with another `Fcal₂`, and the recovered subcomposition is still the true
+  density ratio `N_s/N_t`, independent of `D`. (`recovered_ratio_from_intensities` is the
+  same-`Fcal` round trip.)
 * **Ionization-suppression channel (`n_e`).** Flooding the plasma with electrons (e.g. an easily
   ionized matrix element) raises `n_e` and suppresses other elements' ionization: the ion density
   `n_ion = N_tot·S/(S+n_e)` is strictly decreasing in `n_e` (`sahaIonDensity_antitone`).
@@ -105,16 +107,19 @@ theorem recoveredComposition_sum_one {n : κ → ℝ} {D : Finset κ}
 
 /-- **Subcompositional invariance (the genuinely matrix-independent quantity).** The recovered RATIO
 of two detected species equals their true density ratio `n_s/n_t`, independent of the detected set
-`D` (Aitchison coherence): the *shared* detected-sum cancels. -/
+`D` (Aitchison coherence): the *shared* detected-sum cancels. This is the closure-algebra
+identity `(a/d)/(b/d) = a/b` (PURE-MATH, like `Closure.ratio_mode_normalization_invariant`);
+`ht` is not needed for it. -/
 theorem recoveredComposition_ratio {n : κ → ℝ} {D : Finset κ}
     (hd : detectedDensity n D ≠ 0) {s t : κ} (ht : n t ≠ 0) :
     recoveredComposition n D s / recoveredComposition n D t = n s / n t := by
   unfold recoveredComposition
   field_simp
 
-/-- **THE headline — matrix-independence of the recovered subcomposition.** The recovered ratio of
-two detected species is the SAME under any two detected sets `D₁, D₂`: the completeness channel does
-not bias pairwise ratios (only absolute fractions). -/
+/-- **Matrix-independence of the recovered subcomposition** (the module's headline). The
+recovered ratio of two detected species is the SAME under any two detected sets `D₁, D₂`: the
+completeness channel does not bias pairwise ratios (only absolute fractions). Mathematically this
+is `recoveredComposition_ratio` used twice, a closure-algebra identity (PURE-MATH). -/
 theorem recoveredComposition_ratio_matrix_invariant {n : κ → ℝ} {D₁ D₂ : Finset κ}
     (hd₁ : detectedDensity n D₁ ≠ 0) (hd₂ : detectedDensity n D₂ ≠ 0)
     {s t : κ} (ht : n t ≠ 0) :
@@ -136,8 +141,9 @@ theorem recoveredComposition_absolute_matrix_dependent {n : κ → ℝ} {D₁ D�
 section
 variable [Fintype κ]
 
-/-- **Missing (undetected) mass fraction** `m = 1 − (∑_{t∈D} n_t)/(∑_t n_t)`: the share of the true
-number density that falls below the detection limit. -/
+/-- **Missing (undetected) number fraction** `m = 1 − (∑_{t∈D} n_t)/(∑_t n_t)`: the share of the
+true number density that falls below the detection limit (a number fraction, not a mass
+fraction: no atomic masses enter). -/
 noncomputable def missingFraction (n : κ → ℝ) (D : Finset κ) : ℝ :=
   1 - detectedDensity n D / totalDensity n
 
@@ -225,9 +231,10 @@ theorem recoveredDensityOfSpectrum_eq [Nonempty ι] {kB T Fcal : ℝ} {g E A : �
   exact deNormalized_lineIntensity (hg s) (hN s) hFcal (hA s) (u s)
 
 /-- **The recovered subcomposition from REAL forward intensities is the true ratio `N_s/N_t`,**
-independent of the detected set `D`. An overall calibration factor `Fcal` (the ablation channel)
-and the completeness channel `D` both cancel in the ratio; `T` is held fixed (so this is the
-ablation channel only, not a temperature-shift claim). -/
+independent of the detected set `D`. Here the reader is given the same `Fcal` that generated the
+spectrum, so this is the round trip plus the `D`-independence; that an *unknown* calibration
+factor cancels is `recovered_ratio_from_intensities_any_calibration` below. `T` is held fixed
+(not a temperature-shift claim). -/
 theorem recovered_ratio_from_intensities [Nonempty ι] {kB T Fcal : ℝ} {g E A : κ → ι → ℝ}
     {N : κ → ℝ} {u : κ → ι} {D : Finset κ}
     (hg : ∀ s k, 0 < g s k) (hN : ∀ s, 0 < N s) (hFcal : 0 < Fcal) (hA : ∀ s k, 0 < A s k)
@@ -237,6 +244,38 @@ theorem recovered_ratio_from_intensities [Nonempty ι] {kB T Fcal : ℝ} {g E A 
       = N s / N t := by
   rw [recoveredDensityOfSpectrum_eq hg hN hFcal hA]
   exact recoveredComposition_ratio hd ht
+
+/-- **An unknown calibration factor cancels in the recovered subcomposition.** Generate each
+species' line with calibration `Fcal₁` and de-normalize it with a different `Fcal₂` (the reader
+does not know the true factor): every recovered density is off by the common factor
+`Fcal₁/Fcal₂`, which cancels in the ratio, so the recovered subcomposition is still `N_s/N_t`,
+for any detected set `D`. This is the ablation-channel statement of the module header; `T` and
+the atomic data are shared between forward map and reader. -/
+theorem recovered_ratio_from_intensities_any_calibration [Nonempty ι] {kB T Fcal₁ Fcal₂ : ℝ}
+    {g E A : κ → ι → ℝ} {N : κ → ℝ} {u : κ → ι} {D : Finset κ}
+    (hg : ∀ s k, 0 < g s k) (hF₁ : 0 < Fcal₁) (hF₂ : 0 < Fcal₂) (hA : ∀ s k, 0 < A s k)
+    (hd : detectedDensity N D ≠ 0) (s t : κ) :
+    recoveredComposition (fun r => deNormalizedDensity kB T Fcal₂ (g r) (E r) (A r) (u r)
+          (lineIntensity kB T (N r) Fcal₁ (g r) (E r) (A r) (u r))) D s
+      / recoveredComposition (fun r => deNormalizedDensity kB T Fcal₂ (g r) (E r) (A r) (u r)
+          (lineIntensity kB T (N r) Fcal₁ (g r) (E r) (A r) (u r))) D t
+      = N s / N t := by
+  have hrec : (fun r => deNormalizedDensity kB T Fcal₂ (g r) (E r) (A r) (u r)
+      (lineIntensity kB T (N r) Fcal₁ (g r) (E r) (A r) (u r)))
+      = fun r => (Fcal₁ / Fcal₂) * N r := by
+    funext r
+    have hU := (partitionFunction_pos (kB := kB) (T := T) (E := E r) (hg r)).ne'
+    have hbf := (boltzmannFactor_pos kB T (E r (u r))).ne'
+    have hgr := (hg r (u r)).ne'
+    have hAr := (hA r (u r)).ne'
+    unfold deNormalizedDensity lineIntensity population
+    field_simp
+  rw [hrec]
+  unfold recoveredComposition detectedDensity at *
+  have hc : Fcal₁ / Fcal₂ ≠ 0 := (div_pos hF₁ hF₂).ne'
+  rw [← Finset.mul_sum]
+  rw [mul_div_mul_left _ _ hc, mul_div_mul_left _ _ hc]
+  exact div_div_div_cancel_right₀ hd (N s) (N t)
 
 /-! ## Ionization-suppression channel — an easily ionized matrix floods `n_e` -/
 

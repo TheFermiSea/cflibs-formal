@@ -9,7 +9,7 @@ import CflibsFormal.Certificates
 import CflibsFormal.Alt.OLSVariance
 
 /-!
-# CF-LIBS formalization — D-optimal line selection for the Boltzmann plot
+# CF-LIBS formalization — slope-variance-optimal (D_s) line selection
 
 **The experimentalist's question this module answers: *which spectral lines should I measure?***
 
@@ -23,16 +23,20 @@ and that ranking is *exact*, not heuristic: under the Gauss–Markov noise model
 `Alt.OLSVariance` (one common noise variance `σ²` on every line) the recovered-slope variance is
 `σ²/SS_E`, a strictly decreasing function of `SS_E` alone. Nothing else about the candidate set —
 how many lines it has, where the lines sit, how their energies are distributed — enters the
-comparison. This is the one-parameter
-specialization of classical **D-optimal design** (maximize `det(XᵀX)`; for the centered
-straight-line design `det = n·SS_E`, see `OLS.det_centeredDesignNormalMatrix`).
+comparison. This is `D_s`- (equivalently `c`-) optimality for the slope `β`: minimize the
+variance of one coefficient. At a **fixed** line count it coincides with classical
+**D-optimal design** (maximize `det(XᵀX)`; for the centered straight-line design
+`det = n·SS_E`, see `OLS.det_centeredDesignNormalMatrix`); across candidate sets of different
+sizes it does not, because maximizing `SS_E` is not maximizing `n·SS_E`. The declaration
+names `exists_dOptimal_*` are historical; what they prove is slope-variance optimality.
 
 ## What is proven
 
 * `energySpread` — the design objective `SS_E = ∑ₖ (Eₖ − Ē)²`, with `energySpread_nonneg` and
-  `energySpreadCert_iff` (**the spec's C1 certificate, `Certificates.C1`, is exactly positivity of
-  this objective** — the selection criterion and the well-posedness certificate are the same
-  number). In the companion pipeline C1 is available only behind the `CFLIBS_CERTIFICATES` flag,
+  `energySpreadCert_iff` (**the spec's C1 certificate, `Certificates.energySpreadCert`, is
+  exactly positivity of this objective** — the selection criterion and the well-posedness
+  certificate are the same number). In the companion pipeline C1 is available only behind the
+  `CFLIBS_CERTIFICATES` flag,
   which is off by default, and its wiring pools lines across species, so it certifies the pooled
   single-intercept design, not the per-element common-slope fit the solver runs; the pooled
   spread can be positive while the within-element spread is zero (2026-09-24 audit, RF-16).
@@ -50,7 +54,7 @@ straight-line design `det = n·SS_E`, see `OLS.det_centeredDesignNormalMatrix`).
   sets of *different sizes* can be compared; `spreadOn_eq` gives the concrete Finset formula.
 * `slopeVariance_le_of_spreadOn_ge`, `exists_dOptimal_subset` — the subset versions of the
   comparison and of the optimality statement: among the (finitely many) subsets of a measured line
-  pool that pass the spread gate, the `SS_E`-maximizer minimizes the temperature-slope variance.
+  pool that pass the spread gate, the `SS_E`-maximizer minimizes the slope variance.
   Note the selected subsets need not have equal cardinality: `Var(β̂) = σ²/SS_E` carries no line
   count, so a *smaller* set with wider energy spread genuinely beats a larger bunched one.
 * `fairCoins`, `radNoise` and their four laws — an **explicit nondegenerate (`σ = 1`) Gauss–Markov
@@ -76,9 +80,16 @@ slope variances `2` and `2/9` (`nonvacuity_rademacher_values`) and the D-optimal
 
 ## Literature and scope
 
-**Scope tag: PURE-MATH** for every declaration. No physical constant, no atomic datum and no
-spectroscopic model appears in any statement here: the module is a statement about the variance of
-an ordinary-least-squares slope as a function of the abscissa configuration. The *physics reading*
+**Scope tag: PURE-MATH** for every declaration. No physical constant and no atomic datum
+appears in any statement here: the module is a statement about the variance of an
+ordinary-least-squares slope as a function of the abscissa configuration. The variance
+statements are over `Alt.betaHat`, whose model tag is REDUCED (the idealized linear Boltzmann
+plot); under the PURE-MATH exemption of `docs/conventions.md` §8 they publish PURE-MATH, so
+read them as facts about that estimator, not as claims about a measured temperature. In
+particular nothing here is about the variance of the recovered temperature `T̂ = −1/(k_B β̂)`:
+a smaller slope variance does not imply a smaller temperature variance (`1/β̂` need not even
+have a finite variance), and the transfer to `T` is at best a first-order reading that is not
+proved. The *physics reading*
 is prose only — for the Boltzmann plot `yₖ = log(Iₖ/(gₖAₖ))` against upper-level energy `Eₖ` the
 slope is `β = −1/(k_B T)`, so `Var(β̂) = σ²/SS_E` transfers to the temperature via
 `ErrorBudget.temp_rel_error_eq`, and "maximize the upper-level energy spread" is the actionable
@@ -91,8 +102,8 @@ the homoscedastic Gauss–Markov slope-variance law, formalized in `Alt.OLSVaria
 `olsSlope_variance_eq` (A. C. Aitken, *Proceedings of the Royal Society of Edinburgh* **55**
 (1935) 42–48, gives its generalized, weighted form, which is not used here). The
 spectroscopic practice of choosing widely separated upper-level energies for the Boltzmann plot
-is folklore going back to the two-line method of R. D. Cowan and G. H. Dieke, "Self-Absorption of
-Spectrum Lines," *Reviews of Modern Physics* **20** (1948) 418–455.
+is long-standing; no primary source is cited for it here (an earlier attribution to Cowan &
+Dieke 1948, a paper on self-absorption, was removed because it had not been checked).
 
 ## Honest limitations
 
@@ -121,7 +132,8 @@ variable {ι : Type*} [Fintype ι]
 
 /-! ## The design objective -/
 
-/-- **The D-optimality objective for a candidate line set**: the upper-level **energy spread**
+/-- **The slope-variance (`D_s`) objective for a candidate line set**: the upper-level **energy
+spread**
 `SS_E = ∑ₖ (Eₖ − Ē)²` of the candidate's energies. This single scalar is what ranks candidate line
 sets (`slopeVariance_le_iff_spread_le`): the slope variance is `σ²/SS_E`, so maximizing the spread
 minimizes the recovered-temperature uncertainty. -/
@@ -148,7 +160,8 @@ variable {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω} [IsProbabilityMeasu
 apparatus (same noise law: zero-mean, homoscedastic with common `σ²`, pairwise uncorrelated, `L²`
 ordinate errors — the classical Gauss–Markov hypotheses). If the candidate `A` has **at least the
 upper-level energy spread** of the candidate `B`, then fitting the Boltzmann plot on `A` gives a
-recovered slope — hence a recovered temperature — of **at most the variance** obtained on `B`.
+recovered slope of **at most the variance** obtained on `B`. (This is about the slope `β̂`; no
+statement is made about the variance of the temperature `−1/(k_B β̂)`.)
 
 *Experimental reading:* given two admissible sets of lines you could measure, choose the one whose
 upper-level energies are more widely spread; you cannot lose by doing so. Both candidates must pass
@@ -204,7 +217,7 @@ theorem slopeVariance_lt_of_spread_lt [Nonempty ι] (A B : ι → ℝ) (α β σ
 variance.** Given *any* finite nonempty family `cand : κ → (ι → ℝ)` of candidate line sets (each
 admissible, i.e. each passing the spread gate), there exists a candidate `c★` that
 (i) **maximizes the upper-level energy spread** over the family and
-(ii) **minimizes the recovered-slope (hence recovered-temperature) variance** over the family.
+(ii) **minimizes the recovered-slope variance** over the family.
 
 *Experimental reading:* to choose the optimal line set, you never need to model the noise, estimate
 `σ`, or run the fit. Compute one number per candidate — `SS_E = ∑ₖ (Eₖ − Ē)²`, from tabulated
@@ -283,8 +296,9 @@ theorem slopeVariance_le_of_spreadOn_ge (E : ι → ℝ) (S T : Finset ι)
   gcongr
 
 omit [Fintype ι] in
-/-- **D-optimal SUBSET selection.** Over any finite nonempty family of candidate subsets of the
-measured line pool (each nonempty and each passing the spread gate), the `spreadOn`-maximizer
+/-- **Slope-variance-optimal (`D_s`) SUBSET selection.** Over any finite nonempty family of
+candidate subsets of the measured line pool (each nonempty and each passing the spread gate), the
+`spreadOn`-maximizer
 minimizes the recovered-slope variance over the whole family. The candidate subsets may have
 different cardinalities. This is the form the question "which of my measured lines should I keep in
 the Boltzmann plot?" actually takes. -/

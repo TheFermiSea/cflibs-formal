@@ -47,7 +47,8 @@ handled separately (`outerContraction_box`, `jointOuterContraction_box`).
 
 Citation: M. Saha, *Ionization in the solar chromosphere*, Phil. Mag. 40 (1920) 472;
 Saha–Eggert equation as presented in H. R. Griem, *Principles of Plasma Spectroscopy*
-(Cambridge Univ. Press, 1997), §5.  The Krasnoselskii–Mann averaged-iteration convergence
+(Cambridge Univ. Press, 1997; no section is given because the book was not opened for this
+module).  The Krasnoselskii–Mann averaged-iteration convergence
 rate is the standard fixed-point-iteration bound (Banach contraction principle).
 -/
 

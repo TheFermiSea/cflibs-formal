@@ -358,7 +358,13 @@ states the limit only; the per-step contraction factor is proved in `sahaIter_co
 
 Scope: a forward-solver certificate for one element with two stages, at fixed `T` (so `S` is a
 fixed number) and known absolute element total `Ntot`. The inverse problem does not know `Ntot`,
-so C9 says nothing about the inverse `(T, nₑ)` loop. -/
+so C9 says nothing about the inverse `(T, nₑ)` loop.
+
+Regime: the four clauses can hold together only when `S < 0.7·Ntot`
+(`sahaIter_hyps_imp_S_lt`), i.e. for weak ionization. For a more strongly ionized element no
+interval `b` passes, and the certificate refuses; that refusal says nothing about whether the
+iteration converges. Clause 2 (`r ≤ b`) is implied by clause 4
+(`sahaEquilibriumNe_le_of_sqrt_le`); it is kept so the predicate matches the pipeline mirror. -/
 
 /-- **C9 certificate.** The four runtime clauses for the single-element two-stage Saha iteration:
 `b < Ntot`, the closed-form root `sahaEquilibriumNe S Ntot ≤ b`, the contraction rate

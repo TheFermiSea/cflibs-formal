@@ -4,12 +4,16 @@
 # - Prints per-module named-result (theorem/lemma, including attributed ones like `@[simp] theorem`)
 #   and definition counts and totals, over the git-tracked sources only — so CONTEXT.md's counts
 #   are derived, not hand-estimated, and stray/untracked scratch files cannot pollute them.
-# - Import hygiene: asserts every CflibsFormal module imports only `Mathlib` or other `CflibsFormal`
-#   modules (no surprise external dependency), and prints the base modules (those importing no
-#   CflibsFormal module). Acyclicity itself is guaranteed by the Lean build (cyclic imports fail to
-#   compile); visualize the full graph with `lake exe graph cflibs-imports.dot`.
+# - Source hygiene (scripts/source_hygiene.py): every import in the root file, in each CflibsFormal
+#   module and in upstream/ names only `Mathlib` / `CflibsFormal` (read token by token, so
+#   same-line, indented and `public import` forms are seen); every module is imported by the root
+#   (no orphan); and no `sorry` / `admit` / `native_decide` / `axiom` / kernel-bypass token occurs
+#   outside comments (this also covers `example`s, which the axiom audit cannot see).
+#   Then prints the base modules (those importing no CflibsFormal module). Acyclicity itself is
+#   guaranteed by the Lean build (cyclic imports fail to compile); visualize the full graph with
+#   `lake exe graph cflibs-imports.dot`.
 #
-# Exits non-zero if the import-hygiene invariant is violated, so it is a usable CI gate.
+# Exits non-zero if a hygiene invariant is violated, so it is a usable CI gate.
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
@@ -41,17 +45,8 @@ done < <(git ls-files 'CflibsFormal/*.lean' | sort)
 printf '  %-46s %3d results  %3d defs\n' "TOTAL" "$total_results" "$total_defs"
 
 echo ""
-echo "== Import hygiene =="
-bad=0
-while IFS= read -r f; do
-  if grep -nE '^import ' "$f" | grep -qvE '^[0-9]+:import (Mathlib|CflibsFormal)\b'; then
-    echo "FAIL: $f imports a non-Mathlib / non-CflibsFormal module:"
-    grep -nE '^import ' "$f" | grep -vE '^[0-9]+:import (Mathlib|CflibsFormal)\b'
-    bad=1
-  fi
-done < <(git ls-files 'CflibsFormal/*.lean')
-if [ "$bad" -ne 0 ]; then exit 1; fi
-echo "OK: every module imports only Mathlib / CflibsFormal (acyclicity guaranteed by the build)."
+echo "== Source hygiene (imports, orphan modules, proof escape hatches) =="
+python3 scripts/source_hygiene.py
 echo "Base modules (import no CflibsFormal module):"
 while IFS= read -r f; do
   grep -qE '^import CflibsFormal' "$f" || echo "  ${f#CflibsFormal/}"

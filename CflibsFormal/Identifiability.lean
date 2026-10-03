@@ -14,9 +14,12 @@ import CflibsFormal.Analysis
 
 This module turns the *forward* CF-LIBS model (`ForwardMap.lineIntensity`, the
 `Boltzmann` populations, the `Saha` ionization diagnostic) into rigorous
-**identifiability** (injectivity) statements: precisely when, and under which
-explicit nondegeneracy hypotheses, the plasma parameters `(T, n_e, N_s)` are
-*uniquely* recoverable from line intensities.
+**identifiability** (injectivity) statements: under which explicit nondegeneracy
+hypotheses the temperature `T` and the densities `N_s` are *uniquely* recoverable from
+line intensities (for `T` the energy condition is shown to be necessary as well as
+sufficient), and that the Saha diagnostic `R ↦ n_e` is injective. The last is a
+statement about the stage ratio `R`, not about intensities: nothing here shows that
+`n_e` is recoverable from line intensities.
 
 We reuse the already-built definitions verbatim — nothing here re-defines the
 forward model:
@@ -45,7 +48,8 @@ The theorems are:
   in a theorem rather than a heuristic.
 * `temperature_ratio_near_degenerate` — **quantitative interpolation.** For small
   `|E_i − E_j|` the two-line ratio is *nearly* `T`-independent: the difference of the
-  ratio at two temperatures is bounded LINEARLY in `|E_i − E_j|`, so as `ΔE → 0` the
+  ratio at two temperatures is bounded by `|E_i − E_j|` times a factor that tends to `1`
+  as `ΔE → 0` (so it is `O(|ΔE|)` there, not linear globally), so as `ΔE → 0` the
   observable temperature signal vanishes and inference is ill-conditioned. This is the
   quantitative form of `temperature_degeneracy`, whose `ΔE = 0` collapse it recovers as
   an exact limit (RHS `→ 0`).
@@ -64,6 +68,17 @@ The theorems are:
 
 All hypotheses are satisfiable (see the witness discussion in each docstring), so
 the theorems are non-vacuous.
+
+## Literature
+
+The physics-tagged results of this module cite the following keys in
+`docs/scope-tags.tsv`; the full reference and what was checked for each is in
+`docs/citation-whitelist.tsv`.
+
+* Ciucci 1999 — status AUDIT-VETTED (vetted by an earlier audit; the primary source was not opened
+  for this module).
+* Saha–Eggert (Griem) — status CONVENTION (the name of a law or equation, not a bibliographic
+  reference).
 -/
 
 namespace CflibsFormal
@@ -257,8 +272,8 @@ separately by `sahaFactor_pos` and the closed form `log_sahaFactor`. (`S = 0` wo
 make the map constantly `0`, destroying injectivity, so positivity is load-bearing.)
 
 Non-vacuous: with `S > 0` (guaranteed by `sahaFactor_pos` under positive physical
-constants/weights) and `R₁ = R₂ = 2`, both sides equal `S/2`; the antitone map
-forces `R₁ = R₂`. -/
+constants/weights), distinct ratios give distinct densities, e.g. `R₁ = 1`, `R₂ = 2`
+give `S ≠ S/2`; the theorem is the contrapositive. -/
 theorem electron_density_identifiability [Nonempty ι] [Nonempty κ]
     {kB T me h chi : ℝ} {gZ EZ : ι → ℝ} {gZ1 EZ1 : κ → ℝ} {R₁ R₂ : ℝ}
     (hkB : 0 < kB) (hT : 0 < T) (hme : 0 < me) (hh : 0 < h)
@@ -319,7 +334,9 @@ intensity ratio differs between the two parameter sets by at most a quantity **l
 
 `|ratio(T₁) − ratio(T₂)| ≤ ((g_j·A_j)/(g_i·A_i)) · C · |E_i − E_j| · |1/(k_B·T₁) − 1/(k_B·T₂)|`,
 
-with the explicit constant `C = max(exp x₁, exp x₂)`, `x_m = (E_i − E_j)/(k_B·T_m)`.
+with the explicit factor `C = max(exp x₁, exp x₂)`, `x_m = (E_i − E_j)/(k_B·T_m)`. `C` is not
+a constant: it depends on `E_i − E_j` and grows exponentially with it, so the bound is linear
+in `|ΔE|` only to first order as `ΔE → 0` (where `C → 1`).
 
 Derivation (all steps EXACT, no approximation of the forward model): by
 `lineIntensity_ratio_closed_form` the difference is `(g_j·A_j)/(g_i·A_i)·(exp x₁ − exp x₂)`;

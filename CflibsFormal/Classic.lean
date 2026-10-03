@@ -42,7 +42,17 @@ Everything reuses the already-proven forward defs and closure facts verbatim;
 soundness is the assembly (`classic_sound`), not a reproof.
 
 Scope: the clean case — shared `Fcal`, one chosen emitting upper level per species
-(`u s`), positive degeneracies / Einstein coefficients, positive total density.
+(`u s`), positive degeneracies / Einstein coefficients, positive total density (the last is
+the physical regime; `classic_sound` carries it as `_hN` but its proof does not use it).
+
+## Literature
+
+The physics-tagged results of this module cite the following keys in
+`docs/scope-tags.tsv`; the full reference and what was checked for each is in
+`docs/citation-whitelist.tsv`.
+
+* Ciucci 1999 — status AUDIT-VETTED (vetted by an earlier audit; the primary source was not opened
+  for this module).
 -/
 
 namespace CflibsFormal.Classic

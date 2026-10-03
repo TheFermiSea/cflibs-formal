@@ -68,10 +68,11 @@ composition into `classicDensity_aliasing_error_channels` is **not** delivered: 
 `δ_U` hypothesis is a
 same-`T` atomic-data `U`-mismatch `|U(T; g') − U(T; g)|`, whereas the temperature channel is a
 same-`g` `U`-shift `|U(T̂; g) − U(T; g)|`. Wiring the two requires a forward/inverse-`T`-split
-aliasing identity (`classicDensity` inverting at `T̂ ≠ T` the emitting `T`) that
-`AtomicDataPerturbation` does not currently expose; `partitionFunction_relative_error_temp` provides
-the `δ_U` such a bridge would consume. The remaining cross-channel `δ → ΔC` coupling is therefore
-left as the honest residual recorded in `docs/SOLVER_FORMALIZATION_GAPS.md` item 5.
+aliasing identity (`classicDensity` inverting at `T̂ ≠ T` the emitting `T`); that identity is
+`AtomicDataPerturbation.classicDensity_temperature_aliasing`, and
+`partitionFunction_relative_error_temp` provides the `δ_U` it consumes. The remaining
+cross-channel `δ → ΔC` coupling is therefore left as the honest residual recorded in
+`docs/SOLVER_FORMALIZATION_GAPS.md` item 5.
 -/
 
 namespace CflibsFormal

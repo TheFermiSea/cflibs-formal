@@ -38,8 +38,9 @@ The substantive content is the **per-gate soundness** of the recovery:
 
 * `gateSahaTotalDensity_eq` — the load-bearing result. Observing one *neutral*
   line and completing to the total element density via the two-stage Saha sum
-  `nI·(1 + S/n_e)` returns exactly `ρ(t)·N0` at the gate, with the electron
-  density `n_e(t)` **cancelling** through the Saha relation `nII·n_e = nI·S`.
+  `nI·(1 + S/n_e)` returns exactly `ρ(t)·N0` at the gate, given the plasma's own
+  electron density `n_e(t)`: it cancels algebraically against the Saha relation
+  `nII·n_e = nI·S`. The estimator consumes `n_e(t)`; an error in it does not cancel.
 * `temporal_composition_invariant` / `temporal_saha_composition_invariant` — the
   recovered composition equals `composition N0`, with the dilution `ρ(t)`
   cancelling in the closure (`composition_smul_invariant`).
@@ -145,7 +146,8 @@ noncomputable def gateNeutralSpectrum (kB Fcal : ℝ) (T : ℝ → ℝ) (nI : σ
 neutral line, `Classic.classicDensity` inverts back the neutral density `nI s t`,
 then the two-stage Saha sum `nI · (1 + S/n_e)` adds the first-ion population to
 give the total element density. This is where the electron density `n_e t`
-enters; `gateSahaTotalDensity_eq` shows it cancels via the Saha relation. -/
+enters as an input; `gateSahaTotalDensity_eq` shows that, when it is the plasma's true
+`n_e t`, it cancels against the Saha relation. -/
 noncomputable def gateSahaTotalDensity (kB me h Fcal : ℝ) (T ne : ℝ → ℝ)
     (chi : σ → ℝ) (nI : σ → ℝ → ℝ) (gI EI AI : σ → ι → ℝ) (uI : σ → ι)
     (gII EII : σ → κ → ℝ) (t : ℝ) (s : σ) : ℝ :=
@@ -229,7 +231,9 @@ omit [Fintype σ] in
 From the single observed neutral line at gate `t`, inverting to `nI s t` and
 completing with the two-stage Saha sum `nI·(1 + S/n_e)` returns exactly the
 diluted true density `ρ t · N0 s`. The electron density `n_e t` **cancels** via
-the gate Saha relation `hSaha : nII·n_e = nI·S` (so `nI·(S/n_e) = nII`); the
+the gate Saha relation `hSaha : nII·n_e = nI·S` (so `nI·(S/n_e) = nII`). The same `ne`
+appears in the estimator and in `hSaha`: the result holds when the estimator is given the
+true `n_e t`, and says nothing about a mis-measured one. The
 dilution then closes through `hDilute`. Both `hSaha` and `hne : n_e t ≠ 0` are
 load-bearing (drop either and the cancellation fails). `hDilute` is the
 stoichiometric-ablation assumption. -/

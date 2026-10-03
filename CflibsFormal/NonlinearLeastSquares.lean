@@ -51,8 +51,9 @@ sections settle special cases only: exact-fit data for any number of lines
 (`profiledT_onManifold_unique`, `joint_onManifold_unique`, `profiledT_offManifold_unique`), two
 lines on a temperature box under an antipode-avoidance hypothesis
 (`profiledT_two_offManifold_box_unique`), and, in `ProfiledTUniqueness.lean`, line sets with two
-upper-level energies on a box. For `m ≥ 3` lines the profiled residual value need not be injective
-in `T` (an explicit three-line counterexample, `profiledResidual_not_injective_m3`).
+upper-level energies on a box. The general `m ≥ 3` case is open.
+(`profiledResidual_not_injective_m3` shows a residual value attained at two temperatures; both
+are maxima, so it does not bear on minimizers.)
 `nlObjective_onManifold_min` pins the
 minimum *value* to `0` only in the noise-free case; for real (noisy) spectra the minimal residual
 is positive and its argmin has no closed form. This is the **compactness leg** of the nonlinear
@@ -79,6 +80,12 @@ is the noise-free consistency check: the true parameters are
 a global optimum of the fit (cf. the linear analogue `Alt.olsBoltzmann_forward_feasible`, Tognoni
 et al. 2010). The forward model and the intensity Boltzmann-plot identity it fits are Ciucci et al.
 (1999) / Tognoni et al. (2010) (see `ForwardMap.lean`).
+
+Attribution caveat: Tognoni et al. (2010) is cited for the calibration-free inversion and its
+forward model. That the review presents the inversion as a joint least-squares fit of raw
+intensities, or describes variable projection, has not been checked against the paper; the
+VARPRO structure below is this module's own observation about the objective, named after
+Golub & Pereyra (1973), which `docs/citation-whitelist.tsv` records as UNVERIFIED.
 -/
 
 namespace CflibsFormal
@@ -343,8 +350,9 @@ theorem profiledDensity_denom_pos [Nonempty ι] {kB T Fcal : ℝ} {g E A : ι �
 profiled density `N̂(T) = profiledDensity … T` minimizes the `N`-section of the joint objective:
 `nlObjective … (T, N̂(T)) ≤ nlObjective … (T, N)` for every `N`. Immediate from
 `nlObjective_Nsection_decomposition` — the excess `(N − N̂)² · ∑ c²` is a nonnegative sum of
-squares. Reduces the joint 2-D fit's `N`-direction to the closed-form VARPRO estimate (Tognoni et
-al. 2010); the `T`-direction remains open (non-convex). -/
+squares. Reduces the joint 2-D fit's `N`-direction to the closed-form VARPRO estimate; the
+`T`-direction is open in general (non-convex), with special cases settled below and in
+`ProfiledTUniqueness`. -/
 theorem profiledDensity_isMinOn_Nsection (kB Fcal T : ℝ) (g E A obs : ι → ℝ)
     (hc : 0 < ∑ k, (lineIntensity kB T 1 Fcal g E A k) ^ 2) (N : ℝ) :
     nlObjective kB Fcal g E A obs (T, profiledDensity kB Fcal g E A obs T)
@@ -375,8 +383,10 @@ theorem nlObjective_Nsection_lt_of_ne (kB Fcal T : ℝ) (g E A obs : ι → ℝ)
 nlObjective … (T, N')` for all `N'` — must equal the profiled density `N̂(T)`. If it did not,
 `nlObjective_Nsection_lt_of_ne` would make `N̂(T)` strictly better, contradicting minimality of `N`.
 So the `N`-coordinate of every joint minimizer is *pinned* to `N̂(T̂)` by its `T`-coordinate: the
-joint 2-D CF-LIBS fit is provably 1-D in `T`. This is the variable-projection reduction the solver
-exploits (Tognoni et al. 2010); `T`-uniqueness stays open (non-convex objective). -/
+joint 2-D CF-LIBS fit is provably 1-D in `T`. This is the variable-projection reduction;
+`T`-uniqueness is open in general (non-convex objective), with special cases settled below
+(`profiledT_onManifold_unique`, `profiledT_two_offManifold_box_unique`) and in
+`ProfiledTUniqueness`. -/
 theorem Nsection_minimizer_unique (kB Fcal T : ℝ) (g E A obs : ι → ℝ)
     (hc : 0 < ∑ k, (lineIntensity kB T 1 Fcal g E A k) ^ 2) {N : ℝ}
     (hmin : ∀ N', nlObjective kB Fcal g E A obs (T, N)
@@ -535,8 +545,8 @@ strengthening of `nlObjective_onManifold_min` (min *value* `0` → unique *argmi
 least-squares analogue of `temperature_identifiability`. Forward: `Φ(T) = 0` forces an exact fit
 (`nlObjective_eq_zero_iff`), so `c_j(T)/c_i(T) = obs_j/obs_i = c_j(T₀)/c_i(T₀)`, and distinct
 energies force `T = T₀`. Reverse: at `T₀` the profiled density is exactly `N₀`
-(`profiledDensity_onManifold`), a perfect fit. The `m ≥ 3` off-manifold case is genuinely multimodal
-and is not addressed. -/
+(`profiledDensity_onManifold`), a perfect fit. The `m ≥ 3` off-manifold case is not addressed
+(uniqueness of the minimizer there is open; nothing here shows it fails). -/
 theorem profiledT_onManifold_unique [Nonempty ι] {kB Fcal T0 N0 T : ℝ} {g E A obs : ι → ℝ}
     (hkB : 0 < kB) (hg : ∀ k, 0 < g k) (hFcal : 0 < Fcal) (hA : ∀ k, 0 < A k)
     (hN0 : 0 < N0) (hT0 : 0 < T0) (hT : 0 < T) (i j : ι) (hE : E i ≠ E j)
@@ -643,8 +653,9 @@ On-manifold uniqueness (M1–M3) does not transfer to noisy data unchanged. This
 exact-fit `T`-uniqueness (M5 — at most one exactly fitting temperature; no on-manifold hypothesis
 is written, but the exact-fit premise itself puts `obs` on the forward manifold, so this is an
 off-manifold result in name only), a near-manifold `L²` stability bound on the profiled residual
-(M4 — the value half of the perturbation picture), and the honest `m ≥ 3` non-uniqueness
-counterexample (M6 — the residual value is not injective in `T`, fencing off the frontier). The
+(M4 — the value half of the perturbation picture), and an `m = 3` example in which the
+residual takes the same value at two temperatures (M6 — a statement about residual values, not
+about minimizers). The
 genuine off-manifold minimizer result is `profiledT_two_offManifold_box_unique` further below. -/
 
 /-- **Exact-fit `T`-uniqueness for `m` lines (EXACT, Ciucci 1999): at most one temperature fits
@@ -916,20 +927,22 @@ example :
 form of the near-manifold picture. For noisy data `obs = forward(T₀,N₀) + η`, any temperature `T`
 that fits the noisy data **at least as well as `T₀`** — in particular any minimizer of the profiled
 objective over a set containing `T₀` — has a small *clean* residual gap: `Φ_clean(T) ≤ 6·∑ηₖ²`. So
-every noisy near-optimizer is trapped in the clean sublevel set `{T : Φ_clean(T) ≤ 6·∑ηₖ²}`. This is
-a genuine neighborhood of `T₀` (it contains `T₀`, where `Φ_clean = 0`), and since `Φ_clean` vanishes
-**only** at `T₀` (`profiledT_onManifold_unique`), the trapping set collapses to `{T₀}` as the noise
-energy `∑ηₖ² → 0`: the solver's answer is provably pinned near the truth, with the closeness
-controlled by the noise. This is the argmin-localization face of `profiledResidual_true_strict_lt`
+every noisy near-optimizer is trapped in the clean sublevel set `{T : Φ_clean(T) ≤ 6·∑ηₖ²}`. That
+set contains `T₀` (where `Φ_clean = 0`), and `Φ_clean` vanishes **only** at `T₀`
+(`profiledT_onManifold_unique`), so at zero noise it is `{T₀}`. How small the set is in `T` for
+positive noise (a distance bound) is not part of this theorem; for two lines on a box it is
+`profiledResidual_metric_bound`. This is the argmin-localization face of
+`profiledResidual_true_strict_lt`
 (its contrapositive), from `profiledResidual_nearManifold_bound` +
 `profiledResidual_stability_in_obs` via `linarith`.
 
 Honest scope — what this deliberately does **not** claim: (1) `T₀` is *not* asserted to be a strict
 local minimizer of the noisy `Φ_obs` — under generic noise the minimizer shifts off `T₀` by
 `O(‖η‖)`, so that statement is false; trapping localizes the *shifted* minimizer, which is correct.
-(2) The *metric* refinement `|T − T₀| ≤ C·√(∑ηₖ²)` and strict-convexity uniqueness of the minimizer
-*within* the neighborhood need the Rayleigh-quotient curvature/Hessian route (heavy, and flagged
-as a trap in the frontier dossier); they remain open. -/
+(2) The *metric* refinement `|T − T₀| ≤ C·√(∑ηₖ²)` is proved only for two lines on a box
+(`profiledResidual_metric_bound`); for `m ≥ 3`, and strict-convexity uniqueness of the minimizer
+*within* the sublevel set, it needs the Rayleigh-quotient curvature/Hessian route (heavy, and
+flagged as a trap in the frontier dossier) and remains open. -/
 theorem profiledResidual_minimizer_trapped {kB Fcal T0 N0 T : ℝ} {g E A obs η : ι → ℝ}
     (hc0 : 0 < ∑ k, (lineIntensity kB T0 1 Fcal g E A k) ^ 2)
     (hcT : 0 < ∑ k, (lineIntensity kB T 1 Fcal g E A k) ^ 2)
@@ -981,12 +994,15 @@ theorem profiledResidual_of_orthogonal (kB Fcal T : ℝ) (g E A obs : ι → ℝ
 
 /-! ### Explicit `m = 3` counterexample: the profiled residual value is NOT injective in `T`
 
-The general-`m` *on-manifold* `T`-uniqueness (`profiledT_onManifold_unique`) does NOT extend to the
-off-manifold case for `m ≥ 3`. We exhibit an explicit three-line configuration and two distinct
-positive temperatures `T₁ = 1 ≠ 2 = T₂` at which the density-profiled least-squares residual takes
-the *same* positive value. This documents that the residual VALUE does not single out one
-temperature once `m ≥ 3` — the classical multimodal exponential-fitting obstruction. It is NOT a
-uniqueness theorem and makes no claim that both temperatures are minimizers. -/
+The proof of the general-`m` *on-manifold* `T`-uniqueness (`profiledT_onManifold_unique`) reads
+the temperature off a zero residual; off-manifold the residual value alone does not do that. We
+exhibit an explicit three-line configuration and two distinct positive temperatures
+`T₁ = 1 ≠ 2 = T₂` at which the density-profiled least-squares residual takes the *same* positive
+value. What this does and does not show: the common value is `‖obs‖²`, the largest value the
+profiled residual can take, so both temperatures are worst fits, not minimizers. The example
+therefore says nothing about uniqueness of the minimizer or about multimodality, and it is not
+special to `m ≥ 3`: a two-line residual, being V-shaped, also takes each value above its minimum
+twice. Whether the off-manifold minimizer is unique for `m ≥ 3` is open. -/
 
 /-- Unit degeneracies for the `m = 3` non-injectivity witness. -/
 private def ceG : Fin 3 → ℝ := fun _ => 1
@@ -1059,16 +1075,17 @@ private lemma ce_orth_two :
   exact ce_lineIntensity_sum_of_boltzmann
     (by rw [Fin.sum_univ_three, b0, b1, b2]; simp only [ceObs]; norm_num)
 
-/-- **Off-manifold `T`-non-uniqueness for `m = 3` (PURE-MATH, HONEST NEGATIVE result).** The
-density-profiled least-squares residual is NOT injective in the temperature once there are `m ≥ 3`
-lines: for the explicit three-line configuration `ceG`, `ceE = (0, −2·log 2, −2·log 3)` (three
+/-- **The profiled residual value is not injective in `T`: an `m = 3` example (PURE-MATH).** For
+the explicit three-line configuration `ceG`, `ceE = (0, −2·log 2, −2·log 3)` (three
 *distinct* energies), `ceA`, and off-manifold observation `ceObs = (3, −3, 1)`, the two distinct
 positive temperatures `T₁ = 1` and `T₂ = 2` yield the SAME positive profiled residual
 `Φ(1) = Φ(2) = 19 > 0`. Both temperatures make `ceObs` orthogonal to the line-intensity ray, so the
-profiled density is `0` and the residual is `‖ceObs‖²` at each. This FALSIFIES any general
-off-manifold analogue of `profiledT_onManifold_unique`: the residual VALUE does not single out one
-temperature. It is a documented obstruction, NOT a uniqueness theorem — it does not assert either
-temperature is a minimizer (this is the classical multimodal exponential-fitting problem). -/
+profiled density is `0` and the residual is `‖ceObs‖²` at each. That is the maximum of the
+profiled residual (it never exceeds `‖obs‖²`), so `T = 1` and `T = 2` are where the fit is worst.
+The example shows only that a residual VALUE does not determine the temperature; it does not
+bear on uniqueness of the minimizer, it is not evidence of multiple local minima, and two-line
+residuals share the same feature. The configuration also uses negative energies and a negative
+observed intensity, so it is a mathematical example, not a physical spectrum. -/
 theorem profiledResidual_not_injective_m3 :
     (0 : ℝ) < 1 ∧ (0 : ℝ) < 2 ∧ (1 : ℝ) ≠ 2
       ∧ ceE 0 ≠ ceE 1 ∧ ceE 0 ≠ ceE 2 ∧ ceE 1 ≠ ceE 2
@@ -1389,8 +1406,8 @@ Mechanism, entirely algebraic (no Hessian/curvature): the profiled residual is
 antipode-free region (`profiledRatioResidual_strict_between`): were there two distinct box
 minimizers, their midpoint temperature would give a strictly smaller residual, contradicting
 minimality. Honest scope: uniqueness of the **minimizer** over the box (REDUCED — two lines, box,
-antipode-avoidance hypothesis); the general `m ≥ 3` off-manifold problem is genuinely multimodal
-(`profiledResidual_not_injective_m3`) and is not addressed. -/
+antipode-avoidance hypothesis); the general `m ≥ 3` off-manifold problem is open and is not
+addressed. -/
 theorem profiledT_two_offManifold_box_unique {kB Fcal Tmin Tmax T1 T2 : ℝ} {g E A obs : Fin 2 → ℝ}
     (hkB : 0 < kB) (hg : ∀ k, 0 < g k) (hFcal : 0 < Fcal) (hA : ∀ k, 0 < A k)
     (hTmin : 0 < Tmin) (hE : E 0 ≠ E 1)
