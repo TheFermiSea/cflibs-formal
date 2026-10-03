@@ -15,7 +15,7 @@ Saha.lean	thermalBracket_pos	PURE-MATH	—
 Saha.lean	sahaFactor_pos	PURE-MATH	—
 Saha.lean	sahaFactor	REDUCED	Saha–Eggert (Griem)
 Saha.lean	saha_relation	EXACT	Saha–Eggert (Griem)
-Saha.lean	electronDensity_antitone	PURE-MATH	—
+Saha.lean	electronDensity_antitone	EXACT	Saha–Eggert (Griem)
 Saha.lean	log_sahaFactor	EXACT	Saha–Eggert (Griem)
 Saha.lean	chargeNeutrality_two_stage	PURE-MATH	—
 SahaStability.lean	saha_ratio_cancel	PURE-MATH	—
@@ -48,11 +48,13 @@ SahaEquilibrium.lean	multiElementIonized_strictAntiOn	PURE-MATH	—
 SahaEquilibrium.lean	multiElement_exists_pos_fixedPoint	REDUCED	Saha–Eggert (Griem)
 SahaEquilibrium.lean	multiElement_pos_fixedPoint_unique	REDUCED	Saha–Eggert (Griem)
 SahaEquilibrium.lean	multiElement_single_eq_sahaEquilibriumNe	REDUCED	Saha–Eggert (Griem)
-SahaEquilibrium.lean	sahaIter_fixedPoint	EXACT	Saha–Eggert (Griem)
+SahaEquilibrium.lean	sahaIter_fixedPoint	REDUCED	Saha–Eggert (Griem)
 SahaEquilibrium.lean	sahaIter_contraction	REDUCED	Saha–Eggert (Griem)
 SahaEquilibrium.lean	sahaIter_mapsTo	REDUCED	Saha–Eggert (Griem)
 SahaEquilibrium.lean	sahaIter_geometric_error	REDUCED	Saha–Eggert (Griem)
 SahaEquilibrium.lean	sahaIter_tendsto	REDUCED	Saha–Eggert (Griem)
+SahaEquilibrium.lean	sahaEquilibriumNe_le_of_sqrt_le	PURE-MATH	—
+SahaEquilibrium.lean	sahaIter_hyps_imp_S_lt	PURE-MATH	—
 SahaEquilibrium.lean	multiElementIonized_two_point	PURE-MATH	—
 SahaEquilibrium.lean	multiElementIonized_lipschitz	PURE-MATH	—
 SahaEquilibrium.lean	outerMap_mapsTo	PURE-MATH	—
@@ -75,6 +77,8 @@ SahaEquilibrium.lean	neutralityNewton_le_root	PURE-MATH	—
 SahaEquilibrium.lean	neutralityNewton_nonneg	PURE-MATH	—
 SahaEquilibrium.lean	neutralityNewton_enclosure	PURE-MATH	—
 SahaEquilibrium.lean	neutralityNewton_tendsto	PURE-MATH	—
+SahaEquilibrium.lean	sahaEquilibriumNe	REDUCED	Saha–Eggert (Griem)
+SahaEquilibrium.lean	multiElementIonized	REDUCED	Saha–Eggert (Griem)
 OuterLoopModelB.lean	outerLoop_contracts	REDUCED	Aguilera & Aragón 2007
 PartitionLipschitz.lean	partitionFunction_two_point_bound	REDUCED	Tognoni 2010
 PartitionLipschitz.lean	partitionFunction_lipschitz_temp	REDUCED	Tognoni 2010
@@ -251,8 +255,8 @@ SpatialForward.lean	peeling_identity	PURE-MATH	—
 SpatialForward.lean	onionPeel_chordIntensity	PURE-MATH	—
 SpatialForward.lean	onionPeel_blockTriangular	PURE-MATH	—
 SpatialForward.lean	peeling_single_step	PURE-MATH	—
-SpatialForward.lean	peeling_amplification	REDUCED	Aguilera & Aragón 2007
-SpatialForward.lean	peeling_amplification_iSup	REDUCED	Aguilera & Aragón 2007
+SpatialForward.lean	peeling_amplification	REDUCED	Parigger 2016
+SpatialForward.lean	peeling_amplification_iSup	REDUCED	Parigger 2016
 SpatialForward.lean	peeling_condition_linfty	PURE-MATH	—
 SelfReversal.lean	emergentIntensity_nonneg	PURE-MATH	—
 SelfReversal.lean	selfReversal_noShell	EXACT	Cowan–Dieke 1948
@@ -323,7 +327,7 @@ StarkBroadening.lean	starkFWHM_injective	PURE-MATH	—
 StarkBroadening.lean	starkFWHM_isLinear	PURE-MATH	—
 StarkBroadening.lean	mcWhirterBound_mono_T	PURE-MATH	—
 StarkBroadening.lean	mcWhirterBound_mono_dE	PURE-MATH	—
-StarkBroadening.lean	stark_saha_lte_consistent	PURE-MATH	—
+StarkBroadening.lean	stark_saha_lte_consistent	REDUCED	Griem 1974
 StarkShift.lean	starkShift_pos_of_dRef_pos	PURE-MATH	—
 StarkShift.lean	starkDensityFromShift_recovers	REDUCED	Griem 1974
 StarkShift.lean	starkShift_isLinear	PURE-MATH	—
@@ -333,10 +337,12 @@ StarkShift.lean	starkShift_injective	PURE-MATH	—
 StarkShift.lean	starkShift_abs_strictMono	PURE-MATH	—
 StarkShift.lean	shiftWidthRatio_indep_ne	REDUCED	Griem 1974
 StarkShift.lean	shift_width_density_agree	REDUCED	Griem 1974
+StarkShift.lean	starkShift	REDUCED	Griem 1974
 HydrogenStark.lean	hydrogenStarkFWHM_pos	PURE-MATH	—
 HydrogenStark.lean	densityFromHydrogenStark_recovers	REDUCED	Gigosos 2003
 HydrogenStark.lean	hydrogenStarkFWHM_strictMonoOn	PURE-MATH	—
 HydrogenStark.lean	hydrogenStarkFWHM_injOn	PURE-MATH	—
+HydrogenStark.lean	hydrogenStarkFWHM	APPROXIMATION	Gigosos 2003
 PartialLTE.lean	thermalizationLimit_pos	PURE-MATH	—
 PartialLTE.lean	mcwhirter_iff_thermalizationLimit	REDUCED	Cristoforetti 2010
 PartialLTE.lean	lteValid_iff_thermalized	REDUCED	McWhirter 1965
@@ -349,6 +355,7 @@ Continuum.lean	contEmissivity_strictMono_ne	PURE-MATH	—
 Continuum.lean	lineToContRatio_pos	PURE-MATH	—
 Continuum.lean	baseline_subtraction_exact	EXACT	Cremers & Radziemski 2013
 Continuum.lean	lineToContRatio_strictMono_T	PURE-MATH	—
+Continuum.lean	contEmissivity	APPROXIMATION	Griem 1997
 Alt/CSigma.lean	csigma_master_line	EXACT	Aguilera & Aragón 2007
 Alt/CSigma.lean	csigma_master_line_indep_species	EXACT	Aguilera & Aragón 2007
 Alt/CSigma.lean	csigma_density_offset	REDUCED	Aguilera & Aragón 2007
@@ -383,8 +390,8 @@ Alt/LeastSquares.lean	leastSquares_agrees_classic	REDUCED	Tognoni 2010
 Alt/OLSAtomicDataPerturbation.lean	olsDensity_aliasing_A	EXACT	Tognoni 2010
 Alt/OLSAtomicDataPerturbation.lean	olsDensity_aliasing_A_error	REDUCED	Tognoni 2010
 Alt/OLSAtomicDataPerturbation.lean	olsComposition_atomicData_error	REDUCED	Tognoni 2010
-Alt/OLSAtomicDataPerturbation.lean	olsSlope_wrong_abscissa	EXACT	Tognoni 2010
-Alt/OLSAtomicDataPerturbation.lean	olsIntercept_wrong_abscissa	EXACT	Tognoni 2010
+Alt/OLSAtomicDataPerturbation.lean	olsSlope_wrong_abscissa	PURE-MATH	—
+Alt/OLSAtomicDataPerturbation.lean	olsIntercept_wrong_abscissa	PURE-MATH	—
 Alt/OLSAtomicDataPerturbation.lean	olsDensity_aliasing_E_error	REDUCED	Tognoni 2010
 Alt/SelfAbsorbed.lean	classicDensity_smul_intensity	PURE-MATH	—
 Alt/SelfAbsorbed.lean	selfAbsorbed_sound	EXACT	Bulajic 2002
@@ -419,7 +426,7 @@ NonLTEKinetics.lean	departureCoeffNe_le_one	PURE-MATH	—
 NonLTEKinetics.lean	one_sub_departureCoeffNe	PURE-MATH	—
 NonLTEKinetics.lean	departureCoeffNe_strictMonoOn_ne	PURE-MATH	—
 NonLTEKinetics.lean	departureCoeffNe_tendsto_one	REDUCED	Cristoforetti 2010
-NonLTEKinetics.lean	mcwhirter_forces_departure	EXACT	McWhirter 1965
+NonLTEKinetics.lean	mcwhirter_forces_departure	REDUCED	McWhirter 1965
 NonLTEKinetics.lean	departure_threshold_iff	REDUCED	Cristoforetti 2010
 NonLTEKinetics.lean	nonlte_ordinate_shift	EXACT	Boltzmann
 NonLTEKinetics.lean	abs_log_departure_le	PURE-MATH	—
@@ -441,20 +448,22 @@ Alt/GaussMarkov.lean	linEstimator_unbiased_iff	PURE-MATH	—
 Alt/GaussMarkov.lean	linEstimator_variance	EXACT	Gauss–Markov
 Alt/GaussMarkov.lean	weight_sq_ge_noiseGain	PURE-MATH	—
 Alt/GaussMarkov.lean	ols_is_blue	REDUCED	Gauss–Markov
+Alt/GaussMarkov.lean	linEstimator	REDUCED	Gauss–Markov
 MatrixEffects.lean	recoveredComposition_sum_one	PURE-MATH	—
-MatrixEffects.lean	recoveredComposition_ratio	EXACT	Aitchison 1986
-MatrixEffects.lean	recoveredComposition_ratio_matrix_invariant	EXACT	Aitchison 1986
+MatrixEffects.lean	recoveredComposition_ratio	PURE-MATH	—
+MatrixEffects.lean	recoveredComposition_ratio_matrix_invariant	PURE-MATH	—
 MatrixEffects.lean	recoveredComposition_absolute_matrix_dependent	EXACT	Tognoni 2010
 MatrixEffects.lean	detectedDensity_univ	PURE-MATH	—
 MatrixEffects.lean	recoveredComposition_univ	PURE-MATH	—
 MatrixEffects.lean	detectedDensity_le_totalDensity	PURE-MATH	—
-MatrixEffects.lean	inflationFactor_eq	EXACT	Tognoni 2010
+MatrixEffects.lean	inflationFactor_eq	PURE-MATH	—
 MatrixEffects.lean	one_le_inflationFactor	EXACT	Tognoni 2010
 MatrixEffects.lean	recoveredComposition_eq_inflation	EXACT	Tognoni 2010
 MatrixEffects.lean	composition_le_recoveredComposition	EXACT	Tognoni 2010
 MatrixEffects.lean	missingFraction_nonneg	PURE-MATH	—
 MatrixEffects.lean	recoveredDensityOfSpectrum_eq	EXACT	Ciucci 1999
 MatrixEffects.lean	recovered_ratio_from_intensities	EXACT	Aitchison 1986
+MatrixEffects.lean	recovered_ratio_from_intensities_any_calibration	EXACT	Ciucci 1999
 MatrixEffects.lean	sahaSplit_sum	PURE-MATH	—
 MatrixEffects.lean	sahaSplit_saha	REDUCED	Aguilera & Aragón 2007
 MatrixEffects.lean	sahaIonDensity_antitone	REDUCED	Aguilera & Aragón 2007
@@ -486,9 +495,9 @@ EquivalentWidth.lean	equivWidth_strictMonoOn	PURE-MATH	—
 EquivalentWidth.lean	conv_absorptance_le	PURE-MATH	—
 EquivalentWidth.lean	equivWidth_rectangular	EXACT	Gornushkin 1999
 EquivalentWidth.lean	equivWidth_weakLine	EXACT	Gornushkin 1999
-EquivalentWidth.lean	slabCurve_forward_lipschitz	EXACT	Gornushkin 1999
-EquivalentWidth.lean	slabCurve_inverse_lipschitz	EXACT	Gornushkin 1999
-EquivalentWidth.lean	slabCurve_roundTrip_lipschitz	EXACT	Gornushkin 1999
+EquivalentWidth.lean	slabCurve_forward_lipschitz	PURE-MATH	—
+EquivalentWidth.lean	slabCurve_inverse_lipschitz	PURE-MATH	—
+EquivalentWidth.lean	slabCurve_roundTrip_lipschitz	PURE-MATH	—
 EquivalentWidth.lean	lorentzian_pos	PURE-MATH	—
 EquivalentWidth.lean	lorentzian_integrable	PURE-MATH	—
 EquivalentWidth.lean	lorentzian_integral	PURE-MATH	—
@@ -516,8 +525,8 @@ Alt/StochasticBudget.lean	temp_tail_transfer	REDUCED	Tognoni 2010
 Alt/StochasticBudget.lean	density_event_subset	PURE-MATH	—
 Alt/StochasticBudget.lean	density_tail_species	REDUCED	Tognoni 2010
 Alt/StochasticBudget.lean	composition_tail_union	REDUCED	Tognoni 2010
-Alt/StochasticBudget.lean	olsSlope_subGaussian_tail	REDUCED	—
-Alt/StochasticBudget.lean	olsSlope_subGaussian_tail_hetero	REDUCED	—
+Alt/StochasticBudget.lean	olsSlope_subGaussian_tail	REDUCED	Tognoni 2010
+Alt/StochasticBudget.lean	olsSlope_subGaussian_tail_hetero	REDUCED	Tognoni 2010
 Certificates.lean	energySpread_certificate_sound	REDUCED	Tognoni 2010
 Certificates.lean	jointRank_certificate_sound	REDUCED	Aguilera & Aragón 2007
 Certificates.lean	conditioning_certificate_sound	PURE-MATH	—
@@ -656,6 +665,7 @@ OpticalDepth.lean	opticalDepth_div_lineIntensity_strictAntiOn_temperature	REDUCE
 OpticalDepth.lean	thickLineIntensity_eq_slab	REDUCED	Gornushkin 1999
 OpticalDepth.lean	thickLineIntensity_strictMonoOn	REDUCED	Gornushkin 1999
 OpticalDepth.lean	thickLineIntensity_injOn	REDUCED	Gornushkin 1999
+OpticalDepth.lean	thickLineIntensity_strictAntiOn_pathLength	REDUCED	Gornushkin 1999
 OpticalDepth.lean	no_density_alias_of_boundOpticalDepth	REDUCED	Gornushkin 1999
 OpticalDepth.lean	csigma_density_droop_bound	APPROXIMATION	Aragón & Aguilera 2014
 OpticalDepth.lean	csigma_density_injOn	APPROXIMATION	Aragón & Aguilera 2014
@@ -719,10 +729,10 @@ DifferentialEstimator.lean	classic_biased_differential_exact	EXACT	Ciucci 1999
 DifferentialEstimator.lean	logDifferentialRatio_affine_in_E	EXACT	Ciucci 1999
 DifferentialEstimator.lean	differentialSlope_eq_neg_dbeta	EXACT	Ciucci 1999
 DifferentialEstimator.lean	differentialSlope_two_lines	EXACT	Ciucci 1999
-DifferentialEstimator.lean	differentialRatio_error_bound	REDUCED	Aguilera & Aragón 2007
-DifferentialEstimator.lean	differentialRatio_selfAbsorption_residual	EXACT	—
-DifferentialEstimator.lean	differentialRatio_selfAbsorption_cancels_iff	EXACT	—
-DifferentialEstimator.lean	differentialRatio_selfAbsorbed_matched	EXACT	—
+DifferentialEstimator.lean	differentialRatio_error_bound	REDUCED	Tognoni 2010
+DifferentialEstimator.lean	differentialRatio_selfAbsorption_residual	EXACT	Gornushkin 1999
+DifferentialEstimator.lean	differentialRatio_selfAbsorption_cancels_iff	EXACT	Gornushkin 1999
+DifferentialEstimator.lean	differentialRatio_selfAbsorbed_matched	EXACT	Gornushkin 1999
 DifferentialEstimator.lean	differentialComposition_exact_of_matched	EXACT	Ciucci 1999
 FisherLineSelection.lean	fisherInfoSlope_nonneg	PURE-MATH	—
 FisherLineSelection.lean	fisherInfoSlope_pos	PURE-MATH	—

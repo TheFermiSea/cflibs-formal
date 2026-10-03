@@ -7,7 +7,7 @@ implementation must reproduce, where **each check instantiates a proven theorem.
 The fixtures exercise the **multi-element** problem that is the whole point of CF-LIBS (several
 chemically distinct elements, each with its own atomic data and partition function `U_s`, tied
 together by the closure), across the classic algorithm **and the alternative estimators** the
-spec proves sound/equivalent. Six scenarios:
+spec proves sound/equivalent. Six scenarios in `fixtures.json`:
 
 1. **ternary alloy** — 3 chemically-distinct elements, 4 lines each, distinct optical depths:
    checked with the classic inversion, the multi-line **OLS** Boltzmann-plot estimator, the
@@ -25,7 +25,9 @@ spec proves sound/equivalent. Six scenarios:
 5. **Stark broadening + McWhirter** — the Griem linear-width electron-density inverse
    `n_e = nRef·width/(2w)` (`StarkBroadening.starkDensity_recovers`), its forward round trip, and
    the `√T·ΔE³` McWhirter LTE-bound shape (`mcWhirterBound`). Kept dimensionless so the physical
-   `REF_NE`/`1.6e12` constants stay out of the lossless formatter; the Python checker applies them.
+   `REF_NE`/`1.6e12` constants stay out of the lossless formatter. The reference checker does not
+   apply them either: this scenario checks the functional shape only, and a pipeline binding has
+   to supply its own constants. (The `1.6e12` prefactor is checked by `tier2/`.)
 6. **runtime certificates** — the **typed bridge** (`CflibsFormal/Certificates.lean`, dossier 12
    M3): the **12 certificate predicates** (C1–C7, C9, C10, C12–C14), each a pure-arithmetic `Prop`
    whose truth activates a **proven soundness theorem** (well-posedness / convergence / error
@@ -43,6 +45,15 @@ spec proves sound/equivalent. Six scenarios:
 | `Generate.lean` | a computable **`Float` mirror** of the verified forward map, classic inversion, OLS / self-absorbed / Saha estimators; emits `fixtures.json`. Built as `lake exe oracle-fixtures`. |
 | `fixtures.json` | a `scenarios` array; each scenario has a `kind`, its data, and `checks` tagged with the theorem each instantiates. |
 | `check_fixtures.py` | reference checker (pure stdlib). Self-checks the fixtures; **swap the `IMPL` block for calls into your pipeline** to regression-test it. |
+| `line_extraction/` | a separate fixture set for a line-extraction kernel: `reference.py` (the trapezoid seed kernel), `gen_fixtures.py`, `fixtures.json`, `check_fixtures.py [--kernel pkg.mod:fn]`. The cases are the metamorphic relations proved in `CflibsFormal/LineExtraction.lean`. Needs `numpy`. |
+| `tier2/` | a separate fixture set for the physical-validity predicates: `predicates.py` (reference implementations), `gen_fixtures.py`, `fixtures.json`, `check_fixtures.py [--module pkg.mod]`. Needs `numpy`. |
+
+The two sub-directories are **not** generated from Lean. Their expected values come from the
+Python reference implementations beside them, so a self-check run (no `--kernel` / `--module`)
+only shows the fixtures are current and the reference still satisfies the relations; the test of
+an implementation is a run with a candidate. What ties them to the spec is the relations
+themselves (`LineExtraction.lean`, `LineEvidence.lean`, `StarkOpacityGuard.lean`,
+`ErrorBudget.lean`), not a Float mirror.
 
 ## Regenerate / run
 
@@ -122,6 +133,14 @@ Why **distinct** per-line λ matters: a `λ=1` fixture is blind to every λ-bug 
 uniformly). A λ-drop bug (pipeline omits the `1/λ` factor) **tilts the slope** because λ
 correlates with `E_k` → wrong `T`. The negative test (drop `1/λ` in `line_intensity_energy`)
 fails 13 checks including the temperature recovery (`T → 0.893` vs `1.0`).
+
+**Scenario 5 — Stark broadening + McWhirter:**
+
+| check | asserts | proven by |
+| --- | --- | --- |
+| `stark_density` | `starkDensity(w, nRef, width) == nRef·width/(2w)` | `StarkBroadening.starkDensity_recovers` |
+| `stark_roundtrip` | `starkFWHM(w, nRef, starkDensity(w, nRef, width)) == width` | `StarkBroadening.starkFWHM` / `starkDensity_recovers` |
+| `mcwhirter` | `mcWhirterShape(T, ΔE) == √T·ΔE³`; the full bound is `1.6e12` times this, and the prefactor is not checked here | `StarkBroadening.mcWhirterBound` (a definition; the check is of its functional form, not of a theorem) |
 
 **Scenario 6 — runtime certificates (the typed bridge):**
 

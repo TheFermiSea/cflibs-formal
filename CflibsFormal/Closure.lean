@@ -31,6 +31,15 @@ We prove the CF-LIBS closure facts:
 This mirrors the structure of `population_sum` in `CflibsFormal.Boltzmann`.
 The index type is named `κ` (species/stages) to distinguish it from the
 energy-level index `ι` used in `Boltzmann.lean`.
+
+## Literature
+
+The physics-tagged results of this module cite the following keys in
+`docs/scope-tags.tsv`; the full reference and what was checked for each is in
+`docs/citation-whitelist.tsv`.
+
+* Ciucci 1999 — status AUDIT-VETTED (vetted by an earlier audit; the primary source was not opened
+  for this module).
 -/
 
 namespace CflibsFormal

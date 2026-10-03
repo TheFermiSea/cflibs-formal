@@ -34,8 +34,10 @@ that is a bare algebraic fact about the constant `√n/√SS_E` already carried 
 `olsSlope_stable_l2`, not a claim about which norm or channel "really" governs the solve; no
 mechanism beyond that identification is asserted. On the spread-starved
 branch `SS_E ≤ n` the inequality `n/SS_E ≤ κ` is an **equality**
-(`boltzmannConditionNumber_eq_of_spread_le`), so there the `√κ` factor is not merely an upper
-bound on the amplification — it *is* the `ℓ²` amplification constant of `olsSlope_stable_l2`.
+(`boltzmannConditionNumber_eq_of_spread_le`), so there `√κ` coincides with the constant of the
+Cauchy–Schwarz bound `olsSlope_stable_l2`. It is still an upper bound, not an attained
+amplification: the attainable worst case is the `ℓ¹` constant `∑ₖ|Eₖ − Ē|/SS_E ≤ √κ`
+(e.g. `E = (0,1,2)` has `κ = 3/2` but `ℓ¹` constant `1`).
 
 Downstream: `olsFit_error_sq_le_conditionNumber` propagates a normal-equation perturbation into
 the fitted pair `(slope, intercept)` with the factor `κ + 1` (slope channel `κ`, intercept channel
@@ -199,7 +201,8 @@ propagate to the fitted slope with amplification at most `√κ`:
 Composes `ErrorBudget.olsSlope_stable_l2` (`|Δβ| ≤ ε·√n/√SS_E`, Cauchy–Schwarz over the
 Gauss–Markov weights) with `card_div_spread_le_conditionNumber` (`n/SS_E ≤ κ`). No branch
 hypothesis is needed; on the spread-starved branch `SS_E ≤ n` the composition is an equality of
-constants, so `√κ` is then exactly the `ℓ²` amplification factor. Physics reading: `olsSlope` is
+constants, so `√κ` is then exactly the constant of `olsSlope_stable_l2` (an upper bound). Physics
+reading: `olsSlope` is
 the (sign-normalized) Boltzmann-plot slope `1/(k_B T)` and `ε` is the log-intensity measurement
 budget, so this is the statement that ill-conditioning of the line-energy design — the
 small-`SS_E` regime the pipeline already refuses on — amplifies the temperature error by `√κ`.
@@ -222,8 +225,9 @@ theorem olsSlope_error_le_sqrt_conditionNumber [Nonempty ι] {E y yHat : ι → 
     _ ≤ eps * Real.sqrt (boltzmannConditionNumber E) :=
         mul_le_mul_of_nonneg_left hkey heps0
 
-/-- **The fitted parameter pair (REDUCED).** In the standard centered Boltzmann-plot
-normalization `mean E = 0` — the convention under which the design normal matrix is
+/-- **The fitted parameter pair (REDUCED).** In centered coordinates `mean E = 0` (energies
+re-referenced to their mean; not satisfied by ground-state-referenced energies, see
+`ErrorBudget.olsIntercept_stable_centered`) — the convention under which the design normal matrix is
 `diagonal ![SS_E, n]` — an ordinate perturbation of size `ε` moves the whole fitted pair
 `(slope, intercept)` by at most `ε²·(κ + 1)` in squared 2-norm:
 

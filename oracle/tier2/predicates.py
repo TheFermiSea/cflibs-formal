@@ -128,8 +128,13 @@ def comb_recall_conditioned(R, I, detected, floor, min_informative=2):
 
     Returns None (ABSTAIN) when fewer than `min_informative` expected lines are informative: a
     perfect score over one informative line is not evidence. `detected` is a set of indices; a
-    detected line outside the informative set is ignored for the numerator. Never below the naive
-    recall `|detected| / len(R)` when it is defined (LineEvidence.conditionedRecall_ge)."""
+    detected line outside the informative set is ignored for the numerator.
+
+    Guarantee (LineEvidence.conditionedRecall_ge, conditionedRecall_le_one): with
+    D' = detected & informative, |D'| / len(R) <= result <= 1. The result is NOT bounded below by
+    the naive recall |detected| / len(R) when a detection falls on a non-informative line: that
+    detection is dropped, so the result can be lower (e.g. only sub-floor lines detected gives
+    naive > 0 and result 0)."""
     inf = set(informative_lines(R, I, floor))
     if len(inf) < min_informative:
         return None

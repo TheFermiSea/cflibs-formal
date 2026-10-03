@@ -20,15 +20,17 @@ density diagnostic depends on:
   (a measured Doppler width recovers `T`).
 * **Gaussian quadrature** — Gaussian profiles convolve to a Gaussian whose **variance adds**, so
   FWHMs combine as `w = √(w₁² + w₂²)`; the inverse, `deconvolveGaussian`, removes a known Gaussian
-  component exactly. This is how the instrument and Doppler contributions are stripped to expose
-  the Stark Lorentzian fed to `StarkBroadening.starkDensity` (cf. the companion pipeline's
-  `deconvolve_stark_fwhm`).
+  component exactly. This is how the instrument and Doppler contributions are combined into (or
+  split out of) the total **Gaussian** width.
 
 Honesty: the Gaussian-quadrature law is **exact** for Gaussian⊗Gaussian convolution (asserted here
 as the operational width rule, the standard consequence of `gaussian ⋆ gaussian = gaussian`).
-Using it to extract the Stark **Lorentzian** from a Voigt is the standard *approximation* — exact
-only in the Gaussian-dominated limit; the full Voigt FWHM combination (Olivero–Longbothum) is not
-a simple quadrature and is out of scope here.
+It does **not** extract the Stark **Lorentzian** from a measured Voigt width. Subtracting the
+Gaussian width in quadrature from a Voigt FWHM returns the Lorentzian width only in the limit
+`w_G → 0`; when the Gaussian dominates it is badly wrong (`√(w_V² − w_G²) ≈ √(1.07·w_L·w_G)`, far
+above `w_L`: for `w_L = 0.01`, `w_G = 1` it returns about `0.10`). The Lorentzian is obtained by
+inverting the Voigt width combination, which is `VoigtWidth.voigtFWHM` (Olivero–Longbothum); the
+companion pipeline's `deconvolve_stark_fwhm` inverts that formula.
 
 ## Literature
 
@@ -99,8 +101,9 @@ noncomputable def gaussQuadrature (w₁ w₂ : ℝ) : ℝ := Real.sqrt (w₁ ^ 2
 
 /-- **Gaussian deconvolution.** Remove a known Gaussian component `wG` from a total Gaussian width
 `wTot`: `√(wTot² − wG²)`. The exact inverse of `gaussQuadrature` (see
-`deconvolveGaussian_quadrature`), used to strip the instrument + Doppler Gaussian from a measured
-line and expose the Stark Lorentzian fed to `StarkBroadening.starkDensity`. -/
+`deconvolveGaussian_quadrature`), i.e. for a total width that is itself Gaussian. Applied to a
+Voigt width it does not return the Lorentzian part (module docstring); use
+`VoigtWidth.voigtFWHM` for that. -/
 noncomputable def deconvolveGaussian (wTot wG : ℝ) : ℝ := Real.sqrt (wTot ^ 2 - wG ^ 2)
 
 /-- Gaussian quadrature is symmetric in its two contributions. -/
@@ -109,7 +112,7 @@ lemma gaussQuadrature_comm (w₁ w₂ : ℝ) : gaussQuadrature w₁ w₂ = gauss
 
 /-- **Deconvolution exactly inverts quadrature.** Removing a Gaussian component `b` from the
 combined Gaussian width `√(a²+b²)` recovers the other component `a` (for nonnegative `a`). This is
-the exactness of the instrument/Doppler stripping that precedes the Stark diagnostic. -/
+exact for Gaussian components only (e.g. separating instrument from Doppler width). -/
 theorem deconvolveGaussian_quadrature {a b : ℝ} (ha : 0 ≤ a) :
     deconvolveGaussian (gaussQuadrature a b) b = a := by
   unfold deconvolveGaussian gaussQuadrature

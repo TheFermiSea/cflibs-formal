@@ -38,22 +38,26 @@ strictly unimodal in `t`, so `g = Φ ∘ t` is strictly unimodal in `T`.
 The apex hypothesis `obs₁·c₀(Tstar) = obs₀·c₁(Tstar)` (i.e. `t(Tstar) = obs₁/obs₀`) is the honest
 role of the two premises the target names: distinct energies `E 0 ≠ E 1` (a positive line-energy
 spread `ΔE > 0`) make `t` strictly monotone, and "`Tstar` lies in the box `[Tmin, Tmax]`" is exactly
-the requirement that the (noise-perturbed) observed ratio `obs₁/obs₀` still corresponds to a
-temperature inside the search region — i.e. a bound on how far the ordinate noise may move the
-minimizer. On-manifold (`obs = forward(T₀, N₀)`, noise-free) the apex is `Tstar = T₀` exactly, so
+the requirement that the observed ratio `obs₁/obs₀` corresponds to a temperature inside the
+search region. For two lines that means the data are fitted exactly at `Tstar` (the residual
+there is `0`): the hypothesis covers perturbed data only when the perturbed spectrum is again an
+exact two-line forward spectrum for some temperature in the box. On-manifold (`obs = forward(T₀,
+N₀)`, noise-free) the apex is `Tstar = T₀` exactly, so
 `g` is strictly unimodal about the true temperature `T₀`.
 
 ## Literature and scope
 
 Scope tag: **REDUCED**. This is the *two-line* case (`ι = Fin 2`), on an explicit temperature box,
-with the apex-in-box hypothesis (equivalently: a positive two-line spectrum and a noise level small
-enough to keep the minimizer inside the region). The obtained result is genuinely stronger than the
-existing two-line box uniqueness — it constructs the strict `V`-shape and *identifies* the unique
-minimizer, rather than assuming minimizers and showing they agree. What is NOT claimed: the general
-`m ≥ 3` case is genuinely multimodal off-manifold (`profiledResidual_not_injective_m3`), and no
-global (unbounded, or `m ≥ 3`) unimodality is asserted. Citation: Ciucci et al. (1999) two-line
-Boltzmann ratio; Cowan & Dieke (1948). The VARPRO reduction is Golub & Pereyra (1973) / Tognoni et
-al. (2010). Non-vacuity is witnessed on explicit `E = ![0, 1]` two-line data below.
+with the apex-in-box hypothesis (a positive two-line spectrum whose ratio is attained inside the
+region). The result is complementary to the existing two-line box uniqueness
+(`profiledT_two_offManifold_box_unique`), not stronger: it has a stronger conclusion (it
+constructs the strict `V`-shape and *identifies* the unique minimizer) under an extra hypothesis
+(the apex), and data with no exact fit in the box are covered only by the box-uniqueness result.
+What is NOT claimed: nothing is asserted for `m ≥ 3` (open; `profiledResidual_not_injective_m3`
+is about residual values, not minimizers), and no global (unbounded) unimodality. Citation:
+Ciucci et al. (1999) two-line Boltzmann ratio. The VARPRO reduction is named after Golub &
+Pereyra (1973), recorded UNVERIFIED in `docs/citation-whitelist.tsv` and given for orientation
+only. Non-vacuity is witnessed on explicit `E = ![0, 1]` two-line data below.
 -/
 
 namespace CflibsFormal

@@ -12,8 +12,15 @@ The verified spec is deliberately **dimensionless** (bare `ℝ`; units are human
 `CONTEXT.md` design decision #1), because the inverse-problem theorems (soundness,
 identifiability, error bounds) are dimensionally trivial and a unit-carrying type would obstruct
 `field_simp`/`ring`/`log`/`exp`. This module **adds** a lightweight, *additive* dimensional layer
-— it does not touch the dimensionless core — that machine-checks the **dimensional homogeneity**
-of the forward physical relations the spec rests on. Cued by physlib's `Units`/`Dimension` and
+— it does not touch the dimensionless core — that checks the **exponent arithmetic** of
+dimension vectors assigned by hand to the quantities of the forward relations. What this does
+and does not establish: the vectors are **not linked** to the `CflibsFormal` definitions (no
+theorem ties `numberDensity` to `Saha.sahaFactor`; "matches" in a docstring below is prose), so
+a wrong exponent in a definition would not be caught here. Only `boltzmann_arg_dimensionless`,
+`thermalBracket_dim`, `sahaFactor_dim`, `sahaLaw_homogeneous` and the SI↔CGS facts depend on the
+concrete exponents. The other "homogeneous" lemmas are group identities that hold for every
+dimension vector (`y·(x/x) = y`, `x/x = 1`, `(x²)^{1/2} = x`); they record a shape, not a check.
+Cued by physlib's `Units`/`Dimension` and
 Lean4PHYS's unit systems, without taking either as a dependency (see
 `docs/upstream-physlib-plan.md`).
 
@@ -27,8 +34,8 @@ power. We then assign dimensions to the spec's quantities and prove:
 * `thermalBracket_dim` — the de-Broglie bracket `2π m_e k_B T / h²` has dimension `L⁻²`;
 * `sahaFactor_dim` — hence `(bracket)^{3/2}` (the only dimensionful part of the Saha factor) has
   dimension `L⁻³` = number density;
-* `sahaLaw_homogeneous` — both sides of the Saha law `n_{z+1} n_e / n_z = S(T)` have dimension of
-  number density.
+* `sahaLaw_homogeneous` — the two sides of the Saha law `n_{z+1} n_e / n_z = S(T)` have the same
+  dimension: `(L⁻³·L⁻³)/L⁻³` equals the `3/2` power of the bracket's dimension.
 -/
 
 namespace CflibsFormal
@@ -133,30 +140,37 @@ theorem sahaFactor_dim :
   unfold div mul inv qpow massDim boltzmannConstant tempDim planckConstant numberDensity
   ext <;> norm_num
 
-/-- **The Saha law is dimensionally homogeneous.** Both sides of `n_{z+1} n_e / n_z = S(T)` carry
-dimension of number density: the left side is `(L⁻³·L⁻³)/L⁻³ = L⁻³`, and the right side
-`S(T) = L⁻³` by `sahaFactor_dim`. So `electronDensityFromRatio = S/R` is dimensionally consistent
-(`R = n_{z+1}/n_z` is dimensionless). -/
+/-- **The Saha law is dimensionally homogeneous.** The two sides of `n_{z+1} n_e / n_z = S(T)`
+carry the same dimension: the left side is `(L⁻³·L⁻³)/L⁻³`, and the right side is the `3/2`
+power of the thermal bracket's dimension (the only dimensionful part of `S(T)`). Both sides
+appear in the statement, so it depends on the bracket's exponents (a `5/2` power would fail).
+So `electronDensityFromRatio = S/R` is dimensionally consistent (`R = n_{z+1}/n_z` is
+dimensionless). -/
 theorem sahaLaw_homogeneous :
-    div (mul numberDensity numberDensity) numberDensity = numberDensity := by
-  unfold div mul inv numberDensity; ext <;> norm_num
+    div (mul numberDensity numberDensity) numberDensity
+      = qpow (div (mul (mul massDim boltzmannConstant) tempDim) (qpow planckConstant 2))
+          (3 / 2) := by
+  unfold div mul inv qpow massDim boltzmannConstant tempDim planckConstant numberDensity
+  ext <;> norm_num
 
 /-- **Line-emission power is dimensionally consistent.** The radiated power of a transition per
 atom is `A_ki · (photon energy)`; with `A_ki` a rate (`time⁻¹`) and the photon energy `hc/λ` an
-energy, this has dimension `energy / time` (= power) — the dimensional backbone of the
-line-emission forward map `I = Fcal · A · n` (and the ordinate `ln(I/(g·A))`). -/
+energy, this has dimension `energy / time` (= power). With `einsteinA` defined as `time⁻¹` this
+is the group identity `T⁻¹·x = x/T`; it says nothing about the forward map `I = Fcal · A · n`
+or the ordinate. -/
 theorem einsteinA_photonEnergy_dim : mul einsteinA energy = div energy timeDim := by
   unfold div mul inv einsteinA energy timeDim; ext <;> norm_num
 
 /-- **The Stark-shift law is dimensionally homogeneous.** In `d = d_ref·(n_e/n_ref)` the density
 ratio `n_e/n_ref` is dimensionless, so a shift `d` carries the dimension of `d_ref` — a length (a
-wavelength displacement). Matches `StarkShift.starkShift`. -/
+wavelength displacement). The shape of `StarkShift.starkShift`; as an identity it is
+`y·(x/x) = y`, true for any dimension vectors. -/
 theorem starkShift_homogeneous : mul lengthDim (div numberDensity numberDensity) = lengthDim := by
   unfold div mul inv lengthDim numberDensity; ext <;> norm_num
 
 /-- **The shift-to-width ratio is dimensionless.** A Stark shift and a Stark width are both lengths,
-so `d/w` is a pure number (length/length) — confirming `StarkShift.shiftWidthRatio` is an
-`n_e`-free atomic constant. -/
+so `d/w` is a pure number (length/length), as `StarkShift.shiftWidthRatio` requires. As an
+identity it is `x/x = 1`, true for any dimension vector. -/
 theorem shiftWidthRatio_dimensionless : div lengthDim lengthDim = one := by
   unfold div mul inv lengthDim one; ext <;> norm_num
 
@@ -165,15 +179,16 @@ dimensional skeleton of a root-sum-square width combination (Voigt FWHM, `√(w_
 each summand is `length²` and the outer `√` returns `length`. The additive layer models only the
 power algebra — it cannot represent the *sum* `w_L² + w_G²` itself, only that summing two
 equal-dimension terms preserves the dimension; this theorem proves the `qpow … (1/2)` of
-`qpow length 2`. -/
+`qpow length 2`. As an identity it is `(x²)^{1/2} = x`, true for any dimension vector. -/
 theorem rootSumSquare_length_dim : qpow (qpow lengthDim 2) (1 / 2) = lengthDim := by
   unfold qpow lengthDim; ext <;> norm_num
 
 /-- **The hydrogen-line Stark width law is dimensionally homogeneous.** In
 `Δλ = w·(n_e/n_ref)^(2/3)` the density ratio raised to the `2/3` power is still dimensionless, so
 `Δλ` carries the dimension of
-`w` — a length (a wavelength width). Matches `HydrogenStark.hydrogenStarkFWHM`; note a *rational*
-power of a dimensionless quantity stays dimensionless. -/
+`w` — a length (a wavelength width). The shape of `HydrogenStark.hydrogenStarkFWHM`; note a
+*rational* power of a dimensionless quantity stays dimensionless. As an identity it is
+`y·(x/x)^{2/3} = y`, true for any dimension vectors. -/
 theorem hydrogenStark_homogeneous :
     mul lengthDim (qpow (div numberDensity numberDensity) (2 / 3)) = lengthDim := by
   unfold div qpow mul inv numberDensity lengthDim; ext <;> norm_num

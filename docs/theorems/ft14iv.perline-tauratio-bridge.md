@@ -90,7 +90,7 @@ supersedes: []
 
 ### Headline — `CflibsFormal.perLine_tauRatio` (theorem)
 
-- Lean: [`CflibsFormal/OpticalDepthBridge.lean:493`](../../CflibsFormal/OpticalDepthBridge.lean#L493)
+- Lean: [`CflibsFormal/OpticalDepthBridge.lean:494`](../../CflibsFormal/OpticalDepthBridge.lean#L494)
 - Scope: `REDUCED`
 - Citation: `Griem 1997` 🟡 AUDIT-VETTED
 - Axioms: `Classical.choice`, `Quot.sound`, `propext`

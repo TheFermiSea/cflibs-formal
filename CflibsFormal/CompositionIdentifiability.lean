@@ -35,14 +35,23 @@ input to the already-proven `temperature_identifiability` — no extra `hTratio`
 * `compositionIdentifiable` — the strengthened uniqueness theorem: equal `observeMulti`
   observations (with matched calibration/atomic data) force **equal temperature** (now
   extracted from the anchor pair inside the observations) **and equal full composition**.
-* `compositionIdentifiable_T` — the value-level corollary delivering `p₁.T = p₂.T` from
-  *any* valid anchor; this is the reusable, content-bearing anchor-independence
-  statement (the temperature is recovered from any distinct-energy anchor pair).
+* `compositionIdentifiable_T` — the temperature projection of `compositionIdentifiable`
+  (its first conjunct, same hypotheses): `p₁.T = p₂.T` from whichever valid anchor is
+  supplied. It does not compare two anchors.
 
 Nothing forward or any identifiability *core* is reproven: the temperature step routes
 through `temperature_identifiability` (Real.exp injectivity) and the per-species density
 step through `density_identifiability`, exactly as in `general_identifiability`, but with
 the temperature ratio now sourced from the observation vector `hObs`.
+
+## Literature
+
+The physics-tagged results of this module cite the following keys in
+`docs/scope-tags.tsv`; the full reference and what was checked for each is in
+`docs/citation-whitelist.tsv`.
+
+* Ciucci 1999 — status AUDIT-VETTED (vetted by an earlier audit; the primary source was not opened
+  for this module).
 -/
 
 namespace CflibsFormal
@@ -187,9 +196,10 @@ set_option linter.unusedFintypeInType false in
 /-- **Anchor-independence of the recovered temperature (value level).**
 
 The temperature is recovered as `p₁.T = p₂.T` from *any* valid anchor `(s₀, i, j)` whose
-energies are distinct (`hE₁`). This is the reusable, content-bearing form of
-anchor-independence: a different valid anchor species / line pair discharges *the same*
-physical conclusion `p₁.T = p₂.T`. The non-triviality is genuine — it routes through
+energies are distinct (`hE₁`). This is the first conjunct of `compositionIdentifiable` under the
+same hypotheses, packaged for reuse: whichever valid anchor is supplied, the conclusion is the
+same `p₁.T = p₂.T`. Nothing here compares the temperatures obtained from two anchors. The
+non-triviality is genuine — it routes through
 `temperature_identifiability` (Real.exp injectivity), not `rfl`. (We deliberately do
 *not* ship a proof-term equality between two `.1` projections: that would be closable by
 `Prop` proof-irrelevance and carry no physics content.)

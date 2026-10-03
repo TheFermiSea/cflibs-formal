@@ -30,7 +30,7 @@ simplex checks), and where each clause lands here:
 | C7 McWhirter at reported `(T̂, nₑ)` | `mcWhirterCert C T̂ ΔE nₑ` | `…_thermalizationLimit` only |
 | C12 `τ ≥ 0` per SA-corrected line (nothing more) | `∀ k, knownTauCert (τ k)` | none here |
 | physical box on the reported `T̂` | `Tmin ≤ T̂ ≤ Tmax` | `noise_to_composition` (`hThat`, …) |
-| `nₑ` floor | `neMin ≤ nₑ` | none (a physical floor; no theorem consumes it) |
+| `nₑ` floor | `neMin ≤ nₑ` | `…_thermalizationLimit`, only for `0 ≤ nₑ` (which C7 also implies) |
 | protocol constants | `0 < kB`, `0 < Tmin` | `noise_to_composition` |
 | atomic-DB positivity | `0 < g`, `0 ≤ E`, `0 < A` | `noise_to_composition` |
 | simplex on the composition | — | automatic for the Lean model (`composition_sum_one`) |
@@ -51,7 +51,11 @@ hypotheses no runtime gate can supply** (and it is vacuous at realistic paramete
   bound also needs the *true* `T ∈ [Tmin, Tmax]`, `0 < Fcal`, `0 < Nₛ ≤ Nmax` — statements about
   unknown quantities, i.e. modeling assumptions, not runtime checks.
 * **Definitional** `hβ`, `hβHat` — the OLS Boltzmann-plot slopes are `1/(kB·T)`, `1/(kB·T̂)`: this
-  is what "the temperature" *means* in the spec, not a check.
+  is what "the temperature" *means* in the spec, not a check. The slope here is
+  **sign-normalized**, as in `ErrorBudget`: it is the slope of the negated ordinate
+  `−ln(I/(gA))`. The physical ordinate `ln(I/(gA))` has slope `−1/(k_B T)`
+  (`docs/conventions.md` §1), for which `hβ` with `T > 0` cannot hold; an evaluator must negate
+  the ordinate before these theorems apply.
 * **`envelopeCert`** — the worst-case exp-channel smallness and the uniform envelope `Φ` at the
   noise-derived gap `dmax`. Runtime-*evaluable* (arithmetic in `ε`, the DB data and the protocol
   box, exactly as C4 is evaluable in `ε`), but the shipped gate does **not** compute it; it is

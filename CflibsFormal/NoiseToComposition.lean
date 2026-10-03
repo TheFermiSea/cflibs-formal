@@ -57,8 +57,15 @@ constituent leg carries its own peer-reviewed grounding (`ErrorBudget`, `Partiti
 
 ## Honest scope
 
-Every result here is `REDUCED` (Tognoni 2010): **a composed chain of REDUCED links is REDUCED, and
+Every physics result here is `REDUCED` (Tognoni 2010; the two helper lemmas about
+`tempResponseErrorBoundOfGap` are PURE-MATH): **a composed chain of REDUCED links is REDUCED, and
 the reductions compound.** Restating them, because they must all be carried simultaneously:
+
+* **Which noise propagates.** The noise is on the *temperature-plot* ordinates only. The density
+  is read from an exact line intensity (`lineIntensity` at the true `T`, through
+  `recoveredDensityAtT`), so the analysis lines carry no measurement noise in the statement.
+  Noise on the analysis-line intensities would add an intensity/intercept channel that is not
+  composed here.
 
 * *Temperature leg* (`ErrorBudget.temp_rel_error_hetero`): the recovered temperature is identified
   with the OLS Boltzmann-plot slope (`olsSlope E y = 1/(kB T)`, `olsSlope E ŷ = 1/(kB T̂)` — the

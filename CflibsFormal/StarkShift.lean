@@ -32,9 +32,10 @@ is the point.
 * `shiftWidthRatio_indep_ne` / `shift_width_density_agree` — the shift-to-width ratio `d/w`.
   **Honest scope:** because `d` and `w` are extracted from the *same* line and obey the *same*
   `n_e/n_ref` scaling, `n_e` **cancels** in `d/w`, so `d/w = d_ref/w_ref` carries *no* information
-  about `n_e`. It is therefore **not** an independent density cross-check (unlike
-  `StarkBroadening.stark_saha_lte_consistent`, where the width and a Saha stage-ratio probe
-  genuinely different physics); it is a line-identification / impact-approximation consistency
+  about `n_e`. It is therefore **not** an independent density cross-check. (In
+  `StarkBroadening.stark_saha_lte_consistent` the width and a Saha stage ratio are different
+  observations, but agreement between them is a hypothesis there, not a conclusion.) It is a
+  line-identification / impact-approximation consistency
   check (the observed centre-shift-to-width ratio must equal the tabulated atomic constant).
 
 ## Literature
@@ -56,7 +57,8 @@ namespace CflibsFormal
 /-- **Stark line-shift forward map (Griem linear).** `d = d_ref·(n_e/n_ref)`, with `d_ref` the
 **signed** shift parameter (red `> 0`, blue `< 0`) tabulated at reference density `n_ref`. There is
 **no** factor of 2 (a shift is a line-center displacement, not a FWHM — contrast
-`StarkBroadening.starkFWHM`'s `2·w`). -/
+`StarkBroadening.starkFWHM`'s `2·w`). Model tag REDUCED (`docs/conventions.md` §8): the
+electron-impact shift linear in `n_e`, the same idealization as `starkFWHM`. -/
 noncomputable def starkShift (dRef nRef ne : ℝ) : ℝ :=
   dRef * (ne / nRef)
 
@@ -154,8 +156,9 @@ theorem shiftWidthRatio_indep_ne {dRef wRef nRef ne : ℝ}
 observed shift-to-width ratio matches the tabulated `d_ref/w_ref` (`hratio`, the consistency
 check of `shiftWidthRatio_indep_ne`), THEN the shift-route density `n_ref·d/d_ref` equals the
 (factor-free) width-route density `n_ref·width/w_ref`. **Honest scope:** this is *weaker* than
-`StarkBroadening.stark_saha_lte_consistent`. There the two observations probe different physics, so
-agreement is real evidence; here `d` and `width` come from the *same* line under the *same* scaling,
+`StarkBroadening.stark_saha_lte_consistent`. There the two inputs are different observations
+(though their agreement is assumed, `hagree`, not established); here `d` and `width` come from the
+*same* line under the *same* scaling,
 so `n_e` already cancels in `hratio` — the agreement is an algebraic consequence of the line-ID
 check, not an independent confirmation of `n_e`. -/
 theorem shift_width_density_agree {dRef wRef nRef d width : ℝ}

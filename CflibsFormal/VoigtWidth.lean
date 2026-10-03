@@ -18,17 +18,21 @@ exactly that piece: the **Olivero–Longbothum (1977)** empirical fit for the FW
 
 * `voigtFWHM` — the OL combination, positive.
 * `voigtFWHM_ge_gauss` / `voigtFWHM_ge_lorentz` — the Voigt FWHM is **at least** each component
-  width (`w_G ≤ w_V` and `w_L ≤ w_V`): a Voigt profile is wider than either of its constituents.
+  width (`w_G ≤ w_V` and `w_L ≤ w_V`). These are statements about the OL formula; for the true
+  Voigt profile the same inequalities are standard but are not proved here.
 * `voigtFWHM_mono_wL` / `voigtFWHM_mono_wG` — monotone increasing in each component width.
 * `voigt_gaussian_limit` — **exact**: at `w_L = 0`, `w_V = w_G` (pure Gaussian).
 * `voigt_lorentzian_limit` — at `w_G = 0`, `w_V = (0.5346 + √0.2166)·w_L`. Note `0.5346 + √0.2166 =
-  1.0000034… ≠ 1` exactly, so this is the **honest algebraic restatement**, *not* `w_V = w_L`: the
+  1.00000305… ≠ 1` exactly, so this is the **honest algebraic restatement**, *not* `w_V = w_L`: the
   OL coefficients are tuned so the pure-Lorentzian limit is `w_L` only to the fit's accuracy.
 
 ## Honest scope
 
-The OL formula is an **empirical fit** (accurate to ~0.01% over all `w_L,w_G`), asserted as the
-standard operational Voigt-width rule — the exact Voigt FWHM has no closed form. Consequently the
+The OL formula is an **empirical fit**, asserted as the standard operational Voigt-width rule.
+Its accuracy is about 0.02%: a numerical comparison with the exact Voigt FWHM over
+`w_L/w_G ∈ [10⁻⁴, 10⁴]` gives a maximum relative error of 0.024% near `w_L/w_G ≈ 0.29` (the
+figure in Olivero & Longbothum's paper was not checked; see `docs/citation-whitelist.tsv`).
+The formula is used because the exact Voigt FWHM has no closed form. Consequently the
 two limits differ in status: the Gaussian limit `w_V = w_G` is **exact**, while the Lorentzian limit
 is `w_V ≈ w_L` only (it equals `(0.5346 + √0.2166)·w_L`, off by `~3·10⁻⁶`). The naive bound
 `w_V ≤ w_L + w_G` is likewise **false** at this level (it fails by the same `~3·10⁻⁶·w_L` in the
@@ -59,7 +63,8 @@ lemma voigtFWHM_pos {wL wG : ℝ} (hwL : 0 ≤ wL) (hwG : 0 < wG) : 0 < voigtFWH
   have h0 : 0 ≤ 0.5346 * wL := by positivity
   linarith
 
-/-- **A Voigt profile is at least as wide as its Gaussian part:** `w_G ≤ w_V`. -/
+/-- **The OL Voigt FWHM is at least the Gaussian width:** `w_G ≤ w_V` (a statement about the
+fit formula `voigtFWHM`, not about the true Voigt profile). -/
 lemma voigtFWHM_ge_gauss {wL wG : ℝ} (hwL : 0 ≤ wL) (hwG : 0 ≤ wG) :
     wG ≤ voigtFWHM wL wG := by
   unfold voigtFWHM
@@ -69,7 +74,8 @@ lemma voigtFWHM_ge_gauss {wL wG : ℝ} (hwL : 0 ≤ wL) (hwG : 0 ≤ wG) :
   have h2 : 0 ≤ 0.5346 * wL := by positivity
   linarith
 
-/-- **A Voigt profile is at least as wide as its Lorentzian part:** `w_L ≤ w_V`. Uses that
+/-- **The OL Voigt FWHM is at least the Lorentzian width:** `w_L ≤ w_V` (a statement about the
+fit formula `voigtFWHM`, not about the true Voigt profile). Uses that
 `0.5346 + √0.2166 ≥ 1` (the OL coefficients satisfy `√0.2166 > 0.4654 = 1 − 0.5346`). -/
 lemma voigtFWHM_ge_lorentz {wL wG : ℝ} (hwL : 0 ≤ wL) :
     wL ≤ voigtFWHM wL wG := by
@@ -103,8 +109,9 @@ theorem voigt_gaussian_limit {wG : ℝ} (hwG : 0 ≤ wG) : voigtFWHM 0 wG = wG :
   ring
 
 /-- **Pure-Lorentzian limit (honest restatement).** With no Gaussian broadening,
-`w_V = (0.5346 + √0.2166)·w_L`. Because `0.5346 + √0.2166 = 1.0000034… ≠ 1`, this is **not** exactly
-`w_L`: the OL fit reproduces the Lorentzian limit only to its `~0.01%` accuracy. -/
+`w_V = (0.5346 + √0.2166)·w_L`. Because `0.5346 + √0.2166 = 1.00000305… ≠ 1`, this is **not**
+exactly
+`w_L`: the OL formula misses the Lorentzian limit by a relative `3·10⁻⁶`. -/
 theorem voigt_lorentzian_limit {wL : ℝ} (hwL : 0 ≤ wL) :
     voigtFWHM wL 0 = (0.5346 + Real.sqrt 0.2166) * wL := by
   unfold voigtFWHM

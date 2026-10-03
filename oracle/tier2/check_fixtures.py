@@ -67,9 +67,13 @@ def main(argv=None):
             inf = P.informative_lines(i["R"], i["I"], i["floor"])
             rec = P.comb_recall_conditioned(i["R"], i["I"], i["detected"], i["floor"],
                                             i["min_informative"])
-            naive = len(i["detected"]) / len(i["R"])
+            # LineEvidence.conditionedRecall_ge / _le_one: the informative detections score at
+            # least as high over the informative lines as over the whole comb, and at most 1.
+            # There is no bound against the naive recall that counts non-informative detections.
+            naive_inf = len(set(inf) & set(i["detected"])) / len(i["R"])
             ok = (inf == e["informative"] and close(rec, e["recall"], 1e-12)
-                  and (rec is None or rec >= naive - 1e-12))  # conditioned >= naive when defined
+                  and close(naive_inf, e["naive_recall_informative"], 1e-12)
+                  and (rec is None or naive_inf - 1e-12 <= rec <= 1.0 + 1e-12))
         elif kind == "line_is_evidence":
             ok = bool(P.line_is_evidence(i["R"], i["I"], i["floor"])) == e["evidence"]
         elif kind == "shift_applicable":

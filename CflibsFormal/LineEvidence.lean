@@ -18,9 +18,13 @@ A spectrometer records the emitted intensity times a response `R λ ≥ 0`. In a
 a missing line there is **not** evidence of absence. This module proves that
 (`signal_eq_of_dead`, `not_isEvidence_of_dead`), defines the set of *informative* expected lines
 (`informative`: those whose expected recorded signal `R k · I k` clears the noise floor), and shows
-that scoring a comb by recall over the informative lines can only raise the naive recall, never
-lower it (`conditionedRecall_ge`; `conditionedRecall_le_one` keeps it a recall): dead teeth
-deflate the naive score without carrying information.
+that the detections that count (those on informative lines) score at least as high over the
+informative lines as over the whole comb (`conditionedRecall_ge`; `conditionedRecall_le_one`
+keeps it a recall): dead teeth deflate the score without carrying information. The conditioned
+recall is `|D ∩ informative| / |informative|`. It is **not** ordered against the naive recall
+`|D| / |S|` that also counts detections on non-informative lines: a detection on a line whose
+expected signal is below the floor is ignored, so the conditioned recall can be lower (the
+`example` after `conditionedRecall_le_one` has naive `1/2` and conditioned `0`).
 
 ## 2. A registration shift at the edge of its scan is not identified
 
@@ -37,9 +41,11 @@ of a shift of that size; the rule is to refuse or widen the scan (`AtScanBoundar
 * **The comb statement is about scoring, not about the element.** Conditioning on informative
   lines changes what a missing line means; with few informative lines the right outcome is to
   abstain (the fixtures carry a minimum-informative-lines input), not to report a perfect recall.
-* **The detection hypothesis is only for the upper bound.** `conditionedRecall_ge` holds for any
-  detected set; `conditionedRecall_le_one` needs `D ⊆ informative` (a detected line had signal),
-  which is what makes the conditioned score a recall.
+* **Only informative detections are counted.** Both recall theorems are about
+  `D ∩ informative`, for any detected set `D`. A detection on a non-informative line (a false
+  positive, an interferent, or a line the model under-predicts) is dropped by the conditioned
+  score, so conditioning can lower a naive score that counted it. Whether such a detection
+  should count is a modeling question this module does not settle.
 * **The shift statement is a decision rule.** Landing on the boundary is necessary, not
   sufficient, for monotonicity of the objective (it can also be an interior-optimum truncation);
   the lemma says only what a strictly monotone objective forces.
@@ -94,27 +100,46 @@ theorem not_mem_informative_of_dead {floor : ℝ} (hfloor : 0 ≤ floor) {R I : 
   intro h
   exact not_isEvidence_of_dead hfloor hR (Finset.mem_filter.mp h).2
 
-/-- **Conditioned recall never falls below the naive recall.** For any detected set `D` and a
-nonempty informative set, `|D|/|S| ≤ |D|/|informative S|`: expected-but-dead lines only deflate
-the naive score. -/
-theorem conditionedRecall_ge {floor : ℝ} {R I : ι → ℝ} {S : Finset ι} (D : Finset ι)
+/-- **Conditioning on the informative lines never lowers the score of the informative
+detections.** For any detected set `D` and a nonempty informative set, with
+`D' = D ∩ informative S` the detections that count,
+`|D'|/|S| ≤ |D'|/|informative S|`: expected-but-uninformative lines only deflate the score.
+The left side is the naive recall when every detection is informative; it is *not* the naive
+recall `|D|/|S|` in general (see the `example` below). -/
+theorem conditionedRecall_ge [DecidableEq ι] {floor : ℝ} {R I : ι → ℝ} {S : Finset ι}
+    (D : Finset ι)
     (hne : (informative floor R I S).Nonempty) :
-    (D.card : ℝ) / S.card ≤ (D.card : ℝ) / (informative floor R I S).card := by
+    ((D ∩ informative floor R I S).card : ℝ) / S.card
+      ≤ ((D ∩ informative floor R I S).card : ℝ) / (informative floor R I S).card := by
   have hpos : (0 : ℝ) < (informative floor R I S).card := by
     exact_mod_cast Finset.card_pos.mpr hne
   have hle : ((informative floor R I S).card : ℝ) ≤ S.card := by
     exact_mod_cast Finset.card_le_card (informative_subset floor R I S)
   exact div_le_div_of_nonneg_left (Nat.cast_nonneg _) hpos hle
 
-/-- If every detected line lies in the informative set (a detected line had signal), the
-conditioned recall is a genuine recall: at most `1`. -/
-theorem conditionedRecall_le_one {floor : ℝ} {R I : ι → ℝ} {S D : Finset ι}
-    (hD : D ⊆ informative floor R I S) (hne : (informative floor R I S).Nonempty) :
-    (D.card : ℝ) / (informative floor R I S).card ≤ 1 := by
+/-- The conditioned recall `|D ∩ informative S| / |informative S|` is a genuine recall: at most
+`1`, for any detected set `D`. -/
+theorem conditionedRecall_le_one [DecidableEq ι] {floor : ℝ} {R I : ι → ℝ} {S : Finset ι}
+    (D : Finset ι)
+    (hne : (informative floor R I S).Nonempty) :
+    ((D ∩ informative floor R I S).card : ℝ) / (informative floor R I S).card ≤ 1 := by
   have hpos : (0 : ℝ) < (informative floor R I S).card := by
     exact_mod_cast Finset.card_pos.mpr hne
   rw [div_le_one hpos]
-  exact_mod_cast Finset.card_le_card hD
+  exact_mod_cast Finset.card_le_card Finset.inter_subset_right
+
+/-- The conditioned recall is not bounded below by the naive recall that counts every detection.
+Two expected lines, line `0` in a dead band and line `1` live; the only detection is on line
+`0`. The naive recall is `1/2`, the conditioned recall is `0`. -/
+example :
+    (((({0} : Finset (Fin 2)) ∩ informative 1 ![0, 1] ![100, 100] Finset.univ).card : ℝ)
+        / (informative 1 ![0, 1] ![100, 100] Finset.univ).card)
+      < (({0} : Finset (Fin 2)).card : ℝ) / (Finset.univ : Finset (Fin 2)).card := by
+  have hinf : informative (1 : ℝ) (![0, 1] : Fin 2 → ℝ) ![100, 100] Finset.univ = {1} := by
+    ext k
+    simp only [informative, Finset.mem_filter, Finset.mem_univ, true_and, Finset.mem_singleton]
+    fin_cases k <;> norm_num
+  rw [hinf]; simp
 
 /-- A shift `s` is at the *scan boundary* of the interval `[lo, hi]` when it lies within `ε` of
 either end. -/

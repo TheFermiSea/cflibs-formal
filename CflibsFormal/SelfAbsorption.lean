@@ -250,7 +250,8 @@ noncomputable def slabIntensity (S tau : ℝ) : ℝ :=
 the optically-thin first-order emission `S · τ`: `I_slab ≤ S · τ` for `S ≥ 0`, `τ ≥ 0`.
 Obtained directly from `1 - exp(-τ) ≤ τ` — it does NOT route through
 `selfAbsorptionFactor`, so it independently confirms the curve-of-growth saturation (per
-frequency, or for a rectangular profile). -/
+frequency, or for a rectangular profile). The hypothesis `0 ≤ τ` marks the physical domain; the
+proof does not use it (`1 − e^{−τ} ≤ τ` for every real `τ`). -/
 theorem slabIntensity_le_thin {S tau : ℝ} (hS : 0 ≤ S) (_htau : 0 ≤ tau) :
     slabIntensity S tau ≤ S * tau := by
   unfold slabIntensity
@@ -296,7 +297,9 @@ theorem selfAbsorbedIntensity_eq_slab {kB T N Fcal : ℝ} {g E A : ι → ℝ} (
 model output `selfAbsorbedIntensity … τ` by `SA(τ)` returns `lineIntensity`:
 `I_thin = I_meas / SA(τ)`, with `I_meas` this model's value at the same `τ` (at `τ = 0`,
 `SA = 1` and the division is the identity). The proof is `mul_div_cancel_right₀` on the
-definition, so the statement is algebra on the model. Because it holds for EVERY `τ ≥ 0`, it
+definition, so the statement is algebra on the model. (`SA(τ) > 0` for every real `τ`, so the
+identity does not really need `τ ≥ 0`; the hypothesis marks the physical domain and is what the
+C12 certificate checks.) Because it holds for EVERY `τ ≥ 0`, it
 does not certify that a given `τ` is the true optical depth: data corrected with an estimated
 `τ̂` return the thin intensity only if they were produced by this model at `τ̂`, and no error
 bound for `τ̂ ≠ τ` is proved here. On a real peaked line the correction also inherits the

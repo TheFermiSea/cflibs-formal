@@ -9,12 +9,16 @@ is well-posed. It is the verified companion to the numerical pipeline `CF-LIBS-i
 and plasma modeling, not by this spec — so the investment is in *provable structure* (soundness,
 identifiability, error bounds, honestly-scoped modeling fidelity), each result grounded in the
 peer-reviewed literature and audited so that the *statement* faithfully encodes the intended
-physics. Everything is dimensionless (bare `ℝ`); a separate additive layer machine-checks
-dimensional homogeneity.
+physics. Everything is dimensionless (bare `ℝ`); a separate additive layer checks the exponent
+arithmetic of dimension vectors assigned by hand to the forward relations (it is not tied to the
+definitions).
 
 ## Status
 
-64 modules · 544 axiom-clean theorems/lemmas · 181 defs (run `scripts/stats.sh` for live counts).
+<!-- stats:begin -->
+93 modules · 828 named results (theorem/lemma) · 247 defs
+<!-- stats:end -->
+(kept current by `scripts/gen-docs.sh`; the docs-sync CI gate fails if it drifts).
 Axiom-clean invariant: every declaration depends only on `{propext, Classical.choice, Quot.sound}`.
 
 ## Layout
@@ -24,9 +28,9 @@ Axiom-clean invariant: every declaration depends only on `{propext, Classical.ch
 | `CflibsFormal/` | The spec: shared core (`namespace CflibsFormal`) + alternative estimators (`CflibsFormal/Alt/`, `namespace CflibsFormal.Alt`) |
 | `CONTEXT.md` | Architecture, domain glossary, design decisions, modeling scope, verification discipline |
 | `AGENTS.md` | Operational brief for coding agents (gates, conventions, non-negotiables) |
-| `docs/` | Module reference, theorem catalog (scope-tagged + cited), dependency graph |
-| `oracle/` | Float-mirror regression oracle bridging the spec to the Python pipeline |
-| `tools/`, `upstream/`, `scripts/`, `reviews/` | Vendored axiom-audit; physlib upstream seed; stats/CI helpers; audit archive |
+| `docs/` | Module reference, theorem catalog (scope-tagged + cited), theorem cards (`docs/theorems/`), convention lock, decision ledger, dependency graph |
+| `oracle/` | Float-mirror regression oracle bridging the spec to the Python pipeline, plus the line-extraction and Tier-2 predicate fixtures |
+| `tools/`, `upstream/`, `scripts/`, `reviews/` | Vendored axiom-audit, `scope-check` and `export-catalog`; physlib upstream seed; stats/CI helpers; audit archive |
 
 ## Build & verify
 
@@ -38,14 +42,17 @@ lake exe cache get        # fetch the mathlib build cache (first time)
 lake build                # build the spec
 ```
 
-The full verification gate suite (all run in CI, `.github/workflows/lean_action_ci.yml`):
+The core gates (the full list, with the scope, catalog, kernel-replay, citation and theorem-card
+gates, is in `AGENTS.md`; all of them run in CI, `.github/workflows/lean_action_ci.yml`):
 
 ```bash
 lake build                                          # green build
 lake exe axiom-audit --root CflibsFormal            # axiom-cleanliness
+lake exe scope-check                                # scope tags + published tags current
 lake exe runLinter CflibsFormal                     # style/structure lint
 ./scripts/stats.sh                                  # import hygiene + counts
 lake exe oracle-fixtures > /tmp/f.json && diff -u oracle/fixtures.json /tmp/f.json && python3 oracle/check_fixtures.py
+./scripts/gen-docs.sh && git diff --exit-code -- docs/ README.md AGENTS.md CONTEXT.md   # docs in sync
 ```
 
 ## License

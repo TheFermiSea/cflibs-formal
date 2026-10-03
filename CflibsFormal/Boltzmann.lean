@@ -23,7 +23,16 @@ We prove the cornerstone facts the classical CF-LIBS inversion relies on:
   distinct-energy levels recovers `1 / (k_B T)` exactly.
 
 All quantities are real. This is the forward direction; the inverse problem
-(recovering `T`, `n_e`, composition from intensities) is later work.
+(recovering `T`, `n_e`, composition from intensities) is treated in later modules
+(`Classic`, `Inverse`, `Identifiability`, `SahaInverse`).
+
+## Literature
+
+The physics-tagged results of this module cite the following keys in
+`docs/scope-tags.tsv`; the full reference and what was checked for each is in
+`docs/citation-whitelist.tsv`.
+
+* Boltzmann — status CONVENTION (the name of a law or equation, not a bibliographic reference).
 -/
 
 namespace CflibsFormal

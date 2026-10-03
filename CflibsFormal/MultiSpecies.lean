@@ -50,6 +50,15 @@ the theorems `deNormalized_lineIntensity_perU`, `density_ratio_from_intensities_
 re-derived as specializations (`deNormalized_lineIntensity_ofPerU` /
 `density_ratio_from_intensities_ofPerU`). This discharges the shared-`U` reduction flagged
 in `docs/SOLVER_FORMALIZATION_GAPS.md` gap #7.
+
+## Literature
+
+The physics-tagged results of this module cite the following keys in
+`docs/scope-tags.tsv`; the full reference and what was checked for each is in
+`docs/citation-whitelist.tsv`.
+
+* Ciucci 1999 — status AUDIT-VETTED (vetted by an earlier audit; the primary source was not opened
+  for this module).
 -/
 
 namespace CflibsFormal
@@ -77,8 +86,11 @@ By construction, applying this to the forward `lineIntensity` returns `N` exactl
 (`deNormalized_lineIntensity`), so the species-density ratio is fixed by the two
 measured intensities at known `T` and atomic data. Here `U_s = partitionFunction kB T g E`
 reuses `Boltzmann.partitionFunction`. **Single-family scope:** all species share one
-`(g, E, A)` atomic-data family and one partition-function value; per-species partition
-functions are deferred (see module docstring).
+`(g, E, A)` atomic-data family and one normalizer. In this API `ι` indexes the species, so that
+normalizer is a sum over the species' designated lines and has no reading as any one species'
+partition function; the round-trip results are unaffected because the same value appears in
+the forward map. The per-species form, with a genuine `U_s`, is `deNormalizedDensityPerU`
+below.
 
 **Same inverse as `Classic.classicDensity`.** This is definitionally the identical
 density-from-intensity inverse used by the classic estimator (`Classic.classicDensity`);

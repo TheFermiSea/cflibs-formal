@@ -50,7 +50,9 @@ namespace CflibsFormal
 /-- **Hydrogen Balmer-line Stark FWHM (forward map).** For the linear Stark effect of hydrogen the
 width tracks the Holtsmark microfield `F₀ ∝ n_e^(2/3)`, so `Δλ = w·(n_e/n_ref)^(2/3)`, with `w` the
 reference Stark width at electron density `n_ref`. The `2/3` power (not `1`) distinguishes this from
-the non-hydrogenic `StarkBroadening.starkFWHM`. -/
+the non-hydrogenic `StarkBroadening.starkFWHM`. Model tag APPROXIMATION (`docs/conventions.md`
+§8): the constant-`w` power law is the leading-order form (module Honest scope); tabulated fits
+have a weakly density- and temperature-dependent reduced width. -/
 noncomputable def hydrogenStarkFWHM (w nRef ne : ℝ) : ℝ :=
   w * (ne / nRef) ^ (2 / 3 : ℝ)
 

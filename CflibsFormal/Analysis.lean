@@ -20,6 +20,9 @@ physics-specific content stays in the originating modules; only generic facts li
   (log-domain error ⇒ relative error).
 * `inv_kT_sub_le` — the inverse-temperature gap bound
   `|1/(k_B T₁) − 1/(k_B T₂)| ≤ |T₁ − T₂|/(k_B·Tmin²)` on a temperature floor.
+* `temp_exp_diff_lower` — a lower Lipschitz bound for `T ↦ exp(D/T)` on a temperature box.
+* `abs_log_ratio_le` — the log-ratio transfer bound `|log(a/a')| ≤ δ/(1 − δ)` for a relative
+  perturbation `δ < 1`.
 * `sym2x2_quadForm` / `sym2x2_coercive` / `sym2x2_upper` / `sym2x2_condition` — the elementary
   symmetric-`2×2` Rayleigh / coercivity / condition-number bounds (completing the square), the
   generic substrate under the Boltzmann-plot normal-matrix conditioning in `OLSConditioning`.
@@ -95,8 +98,8 @@ private lemma exp_diff_lower (x y : ℝ) :
     rw [hd, abs_of_nonpos hle]; linarith [hsub]
 
 /-- On a temperature box `[Tmin,Tmax]` (`0 < Tmin`), the map `T ↦ exp (D / T)` is
-    Lipschitz-below in `T`, with explicit positive constant
-    `exp (-(|D| / Tmin)) * (|D| / Tmax ^ 2)`. -/
+    Lipschitz-below in `T`, with explicit nonnegative constant
+    `exp (-(|D| / Tmin)) * (|D| / Tmax ^ 2)` (positive for `D ≠ 0`, zero at `D = 0`). -/
 lemma temp_exp_diff_lower {D Tmin Tmax T T0 : ℝ}
     (hTmin : 0 < Tmin) (hT : Tmin ≤ T) (hTM : T ≤ Tmax)
     (hT0 : Tmin ≤ T0) (hT0M : T0 ≤ Tmax) :
@@ -200,7 +203,6 @@ theorem inv_kT_sub_le {kB Tmin T1 T2 : ℝ}
   exact mul_le_mul_of_nonneg_left hden (abs_nonneg _)
 
 /-! ### Log-ratio transfer bound (Frontier 05 shared infrastructure) -/
-/-! ## M1 — log-ratio transfer lemma (PURE-MATH; destined for `Analysis.lean`) -/
 
 /-- **Log-ratio transfer bound.** If `a'` is a relative perturbation of `a` bounded by `δ < 1`
 (`|a' - a| ≤ δ * a`), then the log-ratio `log (a / a')` is bounded by `δ / (1 - δ)`. This is the
@@ -256,8 +258,6 @@ the conclusion is not vacuous. -/
 example : |Real.log ((1 : ℝ) / 1.2)| ≤ (0.25 : ℝ) / (1 - 0.25) :=
   abs_log_ratio_le (a := 1) (a' := 1.2) (δ := 0.25)
     (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-
-/-! ## M0 — `olsIntercept_stable_hetero` (PURE-MATH; destined for `ErrorBudget.lean`) -/
 
 /-! ### Symmetric 2×2 quadratic-form / coercivity bounds (relocated from OLSConditioning) -/
 

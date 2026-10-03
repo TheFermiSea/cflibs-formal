@@ -24,12 +24,24 @@ We package the right-hand side (everything except `n_e` and the stage ratio) as
   `R · n_e = S`, where `R = n_{z+1}/n_z`;
 * `electronDensity_antitone` — `R ↦ n_e = S/R` is strictly antitone on positive
   `R`, hence injective: a measured stage ratio pins down a unique `n_e`;
-* `log_sahaFactor` — the closed-form Saha-plot identity: `log S` is affine in
-  `1/(k_B T)` (slope `−χ`) plus a `(3/2)·log T` term plus constants — the
-  ionization analogue of `boltzmann_plot`;
+* `log_sahaFactor` — the closed-form Saha-plot identity: `log S` is the term
+  `−χ/(k_B T)`, plus `(3/2)·log` of the thermal bracket, plus the constant `log 2`,
+  plus the partition-function term `log U_{z+1}(T) − log U_z(T)`, which depends on `T`
+  (so `log S` is not affine in `1/(k_B T)`) — the ionization analogue of
+  `boltzmann_plot`;
 * `chargeNeutrality_two_stage` — a small charge-neutrality consistency lemma.
 
 All quantities are real; the `(3/2)` power uses `Real.rpow`.
+
+## Literature
+
+The law is the Saha–Eggert ionization equation in the form given in H. R. Griem,
+*Principles of Plasma Spectroscopy* (Cambridge Univ. Press, 1997); the original is
+M. N. Saha, Phil. Mag. 40 (1920) 472 (recorded UNVERIFIED in
+`docs/citation-whitelist.tsv`: the primary source was not opened).  The factor `2` is the
+statistical weight of the free electron.  This is the ideal form: no ionization-potential
+depression and a literal sum over the supplied level lists, which is why `sahaFactor`
+carries the model tag REDUCED (`docs/conventions.md` §8).
 -/
 
 namespace CflibsFormal
@@ -120,7 +132,8 @@ theorem saha_relation {kB T me h chi : ℝ} {gZ EZ : ι → ℝ} {gZ1 EZ1 : κ �
 /-- **Density diagnostic is injective.** The map `R ↦ n_e = S(T)/R` is strictly
 antitone on the positive reals: a larger measured stage ratio yields a strictly
 smaller inferred electron density, so a measured ratio determines `n_e` uniquely.
-This relies on `S(T) > 0`. -/
+This relies on `S(T) > 0`.  Relation EXACT, published REDUCED via `sahaFactor` (the ideal
+Saha factor), like `electronDensity_relativeError`. -/
 theorem electronDensity_antitone [Nonempty ι] [Nonempty κ] {kB T me h chi : ℝ}
     {gZ EZ : ι → ℝ} {gZ1 EZ1 : κ → ℝ}
     (hkB : 0 < kB) (hT : 0 < T) (hme : 0 < me) (hh : 0 < h)

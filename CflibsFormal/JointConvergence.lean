@@ -43,7 +43,9 @@ The gate `max L₂ L₁ < 1` implies the product gate `L₁·L₂ < 1` and is st
 current `T`.
 
 *Discharged.* The two anti-diagonal Lipschitz bounds (from the two published sensitivity
-lemmas), the four coefficient signs, and the density interval-invariance `hmapsNe` — proven
+lemmas), three of the four coefficient signs (the fourth, `hL1nn`, is a hypothesis; it follows
+from the positivity hypotheses and could be derived), and the density interval-invariance
+`hmapsNe` — proven
 a-priori from the endpoint containments `hnelo`/`hnehi` via `electronDensityFromRatio_mem_Icc`
 ∘ `Set.Icc_subset_Icc`, as in `outerLoop_contracts_apriori`.
 

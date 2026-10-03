@@ -93,6 +93,16 @@ We prove:
 Two index types appear: `κ` (species/stages, from `Closure.lean`) and `ι` (energy
 levels, from `Boltzmann.lean` / `ForwardMap.lean`). This is the ALTERNATIVE method
 (namespace `CflibsFormal.Alt`); it reuses the core forward map verbatim.
+
+## Literature
+
+The physics-tagged results of this module cite the following keys in
+`docs/scope-tags.tsv`; the full reference and what was checked for each is in
+`docs/citation-whitelist.tsv`.
+
+* Aguilera & Aragón 2007 — status AUDIT-VETTED (vetted by an earlier audit; the primary source was
+  not opened for this module).
+* Aragón & Aguilera 2014 — status CORRECTED (checked against the record and corrected).
 -/
 
 namespace CflibsFormal.Alt

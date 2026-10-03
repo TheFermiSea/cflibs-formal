@@ -70,8 +70,8 @@ Both bounds are **sharp in the homogeneous limit**: `intercept_eq_log_total_homo
 `apparentBeta_eq_homogeneous` and `tiltMean_homogeneous` (which puts the *other* side of the
 temperature bound at `β` too, so that bound is saturated and not merely satisfied) show they
 hold with equality whenever all mixed states share one temperature. Sharpness is *not* an
-iff: the converse is proved only under the strict theorems' hypotheses, and
-is **not** an iff: `logMixture_secant_lt` needs `E₀ < E₁`, so an intercept read at `E = 0`
+iff, and the converse holds only under the strict theorems' hypotheses:
+`logMixture_secant_lt` needs `E₀ < E₁`, so an intercept read at `E = 0`
 from a line pair whose *lower* line sits at `E₁ = 0` is exact even for an inhomogeneous
 plasma — the secant then passes through `y(0)` itself. Strictness is claimed only when the
 lower fitted line lies strictly above the extrapolation point.

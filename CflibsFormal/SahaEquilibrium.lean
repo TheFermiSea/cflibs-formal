@@ -66,9 +66,14 @@ single-element restriction — existence and uniqueness of the coupled fixed poi
 are proven at fixed `T`.  For the *single*-element scalar core we now also prove
 **convergence of the fixed-point iteration** `sahaIter`: it is a geometric
 contraction toward `sahaEquilibriumNe` on an explicit invariant interval, so the
-iterates converge to the root (see the convergence section below).  What remains
-open is the outer temperature iteration and the convergence of the *multi-element*
-coupled iteration.
+iterates converge to the root (see the convergence section below).  That scalar result
+covers only weak ionization: its hypotheses force `S < 0.7·Ntot`
+(`sahaIter_hyps_imp_S_lt`).  The multi-element iterations are proved convergent with no
+such restriction (`dampedMultiElementIter_tendsto`, `multiElementIonized_iter_tendsto`,
+`neutralityNewton_tendsto`).  What remains open is the outer temperature iteration: it
+is covered only by abstract contraction spines (`outerContraction_box`,
+`jointOuterContraction_box`) whose Lipschitz gate is not met on tabulated level lists
+(see `sahaFactorLipConst` in `SahaStability`).
 
 ## Literature
 
@@ -201,7 +206,8 @@ theorem selfConsistentState_unique {S Ntot ne N0 N1 : ℝ} (hS : 0 < S) (hN : 0 
 single-element, two-stage, fixed-`T` Saha–closure–charge system has exactly one
 solution `(n_e, N₀, N₁)`, namely `(sahaEquilibriumNe S Ntot, Ntot − n_e, n_e)`.
 This is the headline corollary: the fixed point of the CF-LIBS loop exists and is
-unique (its iterative *approximation* is a separate, still-open question). -/
+unique.  Convergence of the iterations toward it is a separate question, treated below
+(`sahaIter_tendsto`; for several elements `multiElementIonized_iter_tendsto`). -/
 theorem sahaEquilibrium_unique_state {S Ntot : ℝ} (hS : 0 < S) (hN : 0 < Ntot) :
     ∃! t : ℝ × ℝ × ℝ, SelfConsistentState S Ntot t.1 t.2.1 t.2.2 := by
   refine ⟨(sahaEquilibriumNe S Ntot, Ntot - sahaEquilibriumNe S Ntot,
@@ -309,8 +315,9 @@ charge-neutrality fixed point `x = ∑ s, Ntot s · S s / (x + S s)`.  Proof: wi
 `M = ∑ Ntot`, the map `f(x) = x − G(x)` is continuous on `[0, M]`, `f(0) = −M < 0`
 and `f(M) = M − G(M) ≥ 0` (each term `Ntot s · S s / (M + S s) ≤ Ntot s`), so the
 intermediate value theorem yields a root, positive since `f(0) < 0`.
-REDUCED: fixed `T`, two stages per element, exact LTE; the iterative map's
-convergence is not addressed. -/
+REDUCED: fixed `T`, two stages per element, exact LTE.  This is existence only; convergence
+of the iteration is proved separately (`multiElementIonized_iter_tendsto`,
+`dampedMultiElementIter_tendsto`). -/
 theorem multiElement_exists_pos_fixedPoint {ι : Type*} [Fintype ι] [Nonempty ι]
     (S Ntot : ι → ℝ) (hS : ∀ s, 0 < S s) (hN : ∀ s, 0 < Ntot s) :
     ∃ x, 0 < x ∧ x = multiElementIonized S Ntot x := by
@@ -442,15 +449,24 @@ The last open leg of gap #6.  The single-element self-consistency equation
 whose natural scalar iteration is `sahaIter`.  We prove this iteration is a geometric
 contraction toward the closed-form root `sahaEquilibriumNe S Ntot` on an explicit
 invariant interval, hence converges — licensing the solver's convergence flag for the
-iteration itself, not merely for the (already established) target fixed point. -/
+iteration itself, not merely for the (already established) target fixed point.
+
+**Regime.** The interval hypotheses `b < Ntot` and `√(S·Ntot) ≤ b` can hold together only
+when `S < Ntot`, and with the contraction gate `q < 1` only when `S < 0.7·Ntot`
+(`sahaIter_hyps_imp_S_lt`; the exact threshold is `(12 − 8√2)·Ntot ≈ 0.686·Ntot`, an
+ionization fraction below about 0.55).  For `S ≥ 0.7·Ntot` the convergence theorems of this
+section say nothing; the damped, direct and Newton results further below carry no such
+restriction. -/
 
 /-- **Scalar fixed-point iteration map** of the reduced Saha self-consistency equation
 `n_e² = S · (Ntot − n_e)`.  Writing it as `n_e = √(S · (Ntot − n_e))`, the natural
 iteration is `x ↦ √(S · (Ntot − x))`. -/
 noncomputable def sahaIter (S Ntot x : ℝ) : ℝ := Real.sqrt (S * (Ntot - x))
 
-/-- **`sahaEquilibriumNe` is a fixed point of `sahaIter`** (`EXACT`; Saha–Eggert,
-Griem).  The closed-form root satisfies `sahaIter S Ntot r = r`: by self-consistency
+/-- **`sahaEquilibriumNe` is a fixed point of `sahaIter`** (`REDUCED`; Saha–Eggert,
+Griem: an exact identity about the reduced single-element, two-stage, fixed-`T` core, like
+`sahaEquilibriumNe_selfConsistent`, which it rests on).  The closed-form root satisfies `sahaIter S
+Ntot r = r`: by self-consistency
 `S · (Ntot − r) = r²`, and `√(r²) = r` since `r ≥ 0`. -/
 theorem sahaIter_fixedPoint {S Ntot : ℝ} (hS : 0 < S) (hN : 0 < Ntot) :
     sahaIter S Ntot (sahaEquilibriumNe S Ntot) = sahaEquilibriumNe S Ntot := by
@@ -554,7 +570,10 @@ theorem sahaIter_mapsTo {S Ntot b x : ℝ} (hS : 0 < S)
 Proof: the iterates stay in `[0, b]` (`sahaIter_mapsTo`), so the one-step contraction
 `sahaIter_contraction` applies at each step; induct on `n`.  The bound holds for any
 `q` (no `q < 1` needed) — it is the explicit per-step decay.  Reduction: the interval
-hypotheses `b < Ntot`, `r ≤ b`, `√(S·Ntot) ≤ b`, `x0 ∈ [0, b]`. -/
+hypotheses `b < Ntot`, `r ≤ b`, `√(S·Ntot) ≤ b`, `x0 ∈ [0, b]`.  The second is implied by
+the third (`sahaEquilibriumNe_le_of_sqrt_le`); it is kept as a separate hypothesis because
+`sahaIter_contraction` and the runtime certificate C9 state it.  The first and third
+together force `S < Ntot` (`sahaIter_hyps_imp_S_lt`). -/
 theorem sahaIter_geometric_error {S Ntot b x0 : ℝ} (hS : 0 < S) (hN : 0 < Ntot)
     (hb : b < Ntot) (hrb : sahaEquilibriumNe S Ntot ≤ b)
     (hbN : Real.sqrt (S * Ntot) ≤ b) (hx0 : 0 ≤ x0) (hx0b : x0 ≤ b) (n : ℕ) :
@@ -589,7 +608,8 @@ converge to the closed-form root `r := sahaEquilibriumNe S Ntot` for any start
 `x0 ∈ [0, b]`: `(sahaIter S Ntot)^[n] x0 → r`.  Squeeze the error `|·^[n] x0 − r|`
 between `0` and `qⁿ · |x0 − r| → 0` (`sahaIter_geometric_error` +
 `tendsto_pow_atTop_nhds_zero_of_lt_one`).  Reduction: the same interval hypotheses,
-plus `q < 1`. -/
+plus `q < 1`.  Together these hold only for `S < 0.7·Ntot` (`sahaIter_hyps_imp_S_lt`):
+the theorem is a weak-ionization result and is silent otherwise. -/
 theorem sahaIter_tendsto {S Ntot b x0 : ℝ} (hS : 0 < S) (hN : 0 < Ntot)
     (hb : b < Ntot) (hrb : sahaEquilibriumNe S Ntot ≤ b)
     (hbN : Real.sqrt (S * Ntot) ≤ b)
@@ -612,6 +632,54 @@ theorem sahaIter_tendsto {S Ntot b x0 : ℝ} (hS : 0 < S) (hN : 0 < Ntot)
       (fun n => sahaIter_geometric_error hS hN hb hrb hbN hx0 hx0b n) hgeom
   rw [tendsto_iff_dist_tendsto_zero]
   simpa only [Real.dist_eq] using habs
+
+/-- **The root is below `√(S·Ntot)`.** Since `r² = S·(Ntot − r) ≤ S·Ntot`, the interval
+bound `√(S·Ntot) ≤ b` already gives `sahaEquilibriumNe S Ntot ≤ b`: the hypothesis `hrb` of
+`sahaIter_geometric_error` / `sahaIter_tendsto` (clause 2 of certificate C9) is implied by
+their `hbN`. -/
+theorem sahaEquilibriumNe_le_of_sqrt_le {S Ntot b : ℝ} (hS : 0 < S) (hN : 0 < Ntot)
+    (hbN : Real.sqrt (S * Ntot) ≤ b) : sahaEquilibriumNe S Ntot ≤ b := by
+  have hr := sahaEquilibriumNe_pos hS hN
+  have hsc := sahaEquilibriumNe_selfConsistent hS hN
+  have : sahaEquilibriumNe S Ntot ≤ Real.sqrt (S * Ntot) := by
+    rw [← Real.sqrt_sq hr.le]
+    exact Real.sqrt_le_sqrt (by rw [hsc]; nlinarith)
+  linarith
+
+/-- **The scalar convergence theorem covers weak ionization only.** The interval
+hypotheses `b < Ntot`, `√(S·Ntot) ≤ b` force `S < Ntot` (first conjunct); adding the
+contraction gate `√S/(2·√(Ntot − b)) < 1` of `sahaIter_tendsto` forces `S < (7/10)·Ntot`
+(second conjunct, as an implication from the gate).  The exact threshold is
+`(12 − 8√2)·Ntot ≈ 0.686·Ntot`; `7/10` is a rational upper bound for it.  So for
+`S ≥ (7/10)·Ntot` no interval `b` satisfies the hypotheses of `sahaIter_tendsto` (or the
+certificate C9), and that theorem is silent. -/
+theorem sahaIter_hyps_imp_S_lt {S Ntot b : ℝ} (hS : 0 < S) (hN : 0 < Ntot)
+    (hb : b < Ntot) (hbN : Real.sqrt (S * Ntot) ≤ b) :
+    S < Ntot ∧ (Real.sqrt S / (2 * Real.sqrt (Ntot - b)) < 1 → S < 7 / 10 * Ntot) := by
+  have hSN : S < Ntot := by
+    have h1 : Real.sqrt (S * Ntot) < Real.sqrt (Ntot * Ntot) := by
+      rw [Real.sqrt_mul_self hN.le]; linarith
+    have h2 : S * Ntot < Ntot * Ntot := (Real.sqrt_lt_sqrt_iff (by positivity)).mp h1
+    nlinarith
+  refine ⟨hSN, fun hq => ?_⟩
+  have hNb : 0 < Ntot - b := by linarith
+  have hden : 0 < 2 * Real.sqrt (Ntot - b) := by positivity
+  have h1 : Real.sqrt S < 2 * Real.sqrt (Ntot - b) := by rwa [div_lt_one hden] at hq
+  have h2 : S < 4 * (Ntot - b) := by
+    have := mul_self_lt_mul_self (Real.sqrt_nonneg S) h1
+    rw [Real.mul_self_sqrt hS.le] at this
+    nlinarith [Real.mul_self_sqrt hNb.le]
+  set s := Real.sqrt S with hs
+  set n := Real.sqrt Ntot with hn
+  have hsn : Real.sqrt (S * Ntot) = s * n := Real.sqrt_mul hS.le Ntot
+  have hs2 : s * s = S := Real.mul_self_sqrt hS.le
+  have hn2 : n * n = Ntot := Real.mul_self_sqrt hN.le
+  have hs0 : 0 ≤ s := Real.sqrt_nonneg _
+  have hn0 : 0 < n := Real.sqrt_pos.mpr hN
+  have key : s * s + 4 * (s * n) - 4 * (n * n) < 0 := by
+    rw [hsn] at hbN; nlinarith
+  have hs_lt : s < 83 / 100 * n := by nlinarith
+  nlinarith [mul_self_lt_mul_self hs0 hs_lt]
 
 /-! ### Non-vacuity witness (iteration convergence)
 
@@ -744,7 +812,9 @@ substitution map `G := multiElementIonized S Ntot` by a step `lam ∈ (0,1)`:
 `H x := (1 − lam)·x + lam·G x`.  For the canonical choice `lam = 1/(1 + ∑ Ntot s/S s)` this
 averaged map is a genuine contraction toward the coupled fixed point (see
 `dampedMultiElementIter_contraction`), converting the *antitone* — hence generically oscillating —
-direct map `G` into a convergent scheme without any smallness hypothesis on `S`, `Ntot`. -/
+direct map `G` into a contraction with an explicit rate, without any smallness hypothesis on
+`S`, `Ntot`.  (The direct map also converges, `multiElementIonized_iter_tendsto`, but that
+theorem gives no rate.) -/
 noncomputable def dampedMultiElementIter (S Ntot : ι → ℝ) (lam x : ℝ) : ℝ :=
   (1 - lam) * x + lam * multiElementIonized S Ntot x
 
@@ -861,8 +931,10 @@ averaged iteration `H := dampedMultiElementIter S Ntot lam` converges to the cou
 `r` (`r = G r`, `r ≥ 0`) from **any** nonnegative start `x0 ≥ 0`:
 `(dampedMultiElementIter S Ntot lam)^[n] x0 → r`.  Unlike the scalar leg (`sahaIter_tendsto`), which
 needs a `q < 1` side hypothesis pinning the interval, here the rate `1 − lam < 1` holds
-**automatically** for every admissible `S`, `Ntot` — the damping is exactly what removes the
-`∑ Ntot s/S s < 1` smallness condition that the raw direct map would require.  Squeeze the error
+**automatically** for every admissible `S`, `Ntot`.  The damping buys an explicit geometric
+rate: the raw direct map is a Lipschitz contraction only under the smallness condition
+`∑ Ntot s/S s < 1`, although it converges without it (`multiElementIonized_iter_tendsto`, no
+rate).  Squeeze the error
 `|·^[n] x0 − r|` between `0` and `(1 − lam)ⁿ·|x0 − r| → 0` (`dampedMultiElementIter_geometric_error`
 + `tendsto_pow_atTop_nhds_zero_of_lt_one`).  Reduction: fixed `T`, two stages per element, exact
 LTE; the *damped* (not literal direct) scheme; the outer `T`-loop remains separate. -/
@@ -1319,9 +1391,10 @@ into the density box `[nemin,nemax]`, *provided* the Saha factor `S(T)` is boxed
 `[Slo,Shi]` on `[Tmin,Tmax]`, `R > 0`, `nemin ≤ Slo/R` and `Shi/R ≤ nemax`.  This is the
 concrete `hmapsNe` hypothesis of `outerContraction_box`/`outerLoop_contracts` for the Saha
 density leg — a genuine side condition carried exactly as the inner loop's `sahaIter_mapsTo`
-carries `√(S·Ntot) ≤ b`.  The Saha-factor box bounds `hSlo`/`hShi` are inputs here (they are
-discharged downstream from the partition-function floor/ceiling of `SahaStability`,
-`partitionFunction_ge_floor`/`partitionFunction_le_sum`, in a module that imports it).  Proof:
+carries `√(S·Ntot) ≤ b`.  The Saha-factor box bounds `hSlo`/`hShi` are inputs here; nothing in
+the repository discharges them through this lemma.  `SahaRangeEnclosure.outerLoop_contracts_apriori`
+obtains the same box invariance by another route (monotonicity of `S` in `T`,
+`sahaFactor_strictMonoOn_temp`, under its level-cutoff hypothesis) and does not use it.  Proof:
 division is monotone in a positive denominator, so `Slo/R ≤ S(T)/R ≤ Shi/R`. -/
 theorem neLeg_mapsTo {ι κ : Type*} [Fintype ι] [Fintype κ]
     {kB me h chi Slo Shi R : ℝ} {gZ EZ : ι → ℝ} {gZ1 EZ1 : κ → ℝ}

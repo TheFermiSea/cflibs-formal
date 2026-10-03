@@ -14,8 +14,8 @@ import CflibsFormal.LineSelection
 `σ²/SS_E` (`Alt.OLSVariance.olsSlope_variance_eq`). This module answers the two follow-up
 questions that framing raises.
 
-1. **Is `σ²/SS_E` the best any estimator can do?** For Gaussian noise with one common variance,
-   yes, by the textbook Cramér–Rao theorem, which is **not** proved here. For the Gaussian
+1. **Is `σ²/SS_E` the best any *unbiased* estimator can do?** For Gaussian noise with one common
+   variance, yes, by the textbook Cramér–Rao theorem, which is **not** proved here. For the Gaussian
    linear model `yₖ = α + β Eₖ + εₖ`, `εₖ ~ N(0, σ²)` i.i.d., the Fisher information for the
    slope `β` is `I(β) = SS_E/σ²`, which this module *defines* as `fisherInfoSlope` (see
    *Honest limitations*: the likelihood, the score and the Cramér–Rao inequality itself are NOT

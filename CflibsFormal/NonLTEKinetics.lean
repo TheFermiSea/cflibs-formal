@@ -68,8 +68,8 @@ existing*
   `departure_threshold_iff` are *standalone algebra on the abstract rate ratio* `n_e C₂₁` vs
   `A₂₁`. They reproduce McWhirter's `10/11` content but are **not** proven equivalent to the
   repo's numeric `StarkBroadening.mcWhirterBound = 1.6·10¹²·√T·(ΔE)³`; that bridge would need the
-  non-derivable atomic-physics identity `1.6·10¹²·√T·(ΔE)³ ↔ 10·A₂₁/C₂₁`. The `PartialLTE`
-  import is narrative co-location, not a proof dependency.
+  non-derivable atomic-physics identity `1.6·10¹²·√T·(ΔE)³ ↔ 10·A₂₁/C₂₁`. This module does
+  not import `PartialLTE`; the reference to it is narrative only.
 * **Near-LTE budget.** The error budget is a small-`δ_b` statement: `abs_log_departure_le` needs
   the positive floor `1 − δ_b > 0`; a departure so large it admits `bₖ = 0` has unbounded
   `|log bₖ|` (the corona limit).
@@ -214,7 +214,9 @@ Standalone algebra on the abstract rate ratio `n_e C₂₁` vs `A₂₁`. **Not*
 repo's numeric `StarkBroadening.mcWhirterBound`; the bridge `1.6·10¹²·√T·(ΔE)³ ↔ 10·A₂₁/C₂₁` is a
 non-derivable atomic-physics identity (see the module's honest scope). -/
 
-/-- **McWhirter's factor-of-10 rate ratio forces `b₂ ≥ 10/11`** (`EXACT`; McWhirter 1965). When
+/-- **McWhirter's factor-of-10 rate ratio forces `b₂ ≥ 10/11`** (`REDUCED`; McWhirter 1965: an
+exact inequality about the two-level departure coefficient `departureCoeffNe`, like its
+general-`δ` sibling `departure_threshold_iff`). When
 collisional de-excitation dominates radiative decay by McWhirter's factor of ten,
 `10 A₂₁ ≤ n_e C₂₁`, the departure coefficient satisfies `b₂(n_e) ≥ 10/11 ≈ 0.909`. This is the
 exact departure content of the McWhirter *rate ratio* — stated over the abstract rates, **not**
@@ -275,24 +277,40 @@ theorem abs_log_departure_le {b δb : ℝ} (_hδ0 : 0 ≤ δb) (hδ1 : δb < 1) 
 per-line departure `bₖ` shifts the Boltzmann ordinate by `log bₖ` (`hshift`, from
 `nonlte_ordinate_shift`), so — instantiating the heteroscedastic chain
 `ErrorBudget.temp_rel_error_hetero` with `εₖ := |log bₖ|` — the recovered temperature inherits the
-relative error `|T̂ − T|/T ≤ k_B·T̂·(∑ₖ|Eₖ − Ē|·|log bₖ|)/SS_E`. Under the Boltzmann-plot
-identification of the fitted slope with `1/(k_B T)`. `REDUCED`: worst-case / deterministic. -/
+relative error `|T̂ − T|/T ≤ k_B·T̂·(∑ₖ|Eₖ − Ē|·|log bₖ|)/SS_E`. The ordinate is the physical
+one, `log(n/g)`, on which a departure shifts by `+log bₖ` and whose fitted slope is
+`−1/(k_B T)` (`boltzmann_plot`); `hβ`, `hβHat` are stated in that convention. `ErrorBudget`'s
+engine is written for the sign-flipped ordinate (slope `+1/(k_B T)`), so the proof applies it to
+the negated ordinates. `REDUCED`: worst-case / deterministic. -/
 theorem nonlte_temp_error [Nonempty ι] {E yLTE yNLTE b : ι → ℝ} {kB T THat : ℝ}
     (hkB : 0 < kB) (hT : 0 < T) (hTHat : 0 < THat)
     (hshift : ∀ k, yNLTE k = yLTE k + Real.log (b k))
     (hvar : 0 < ∑ k, (E k - mean E) ^ 2)
-    (hβ : olsSlope E yLTE = 1 / (kB * T)) (hβHat : olsSlope E yNLTE = 1 / (kB * THat)) :
+    (hβ : olsSlope E yLTE = -1 / (kB * T)) (hβHat : olsSlope E yNLTE = -1 / (kB * THat)) :
     |THat - T| / T ≤ kB * THat * ((∑ k, |E k - mean E| * |Real.log (b k)|)
                                     / (∑ k, (E k - mean E) ^ 2)) := by
-  have hδ : ∀ k, |yNLTE k - yLTE k| ≤ |Real.log (b k)| := by
-    intro k; rw [hshift k, add_sub_cancel_left]
-  exact temp_rel_error_hetero hkB hT hTHat hvar hδ hβ hβHat
+  have hneg : ∀ y : ι → ℝ, olsSlope E (fun k => - y k) = - olsSlope E y := by
+    intro y
+    simp only [olsSlope, mean]
+    rw [neg_div', ← Finset.sum_neg_distrib]
+    congr 1
+    refine Finset.sum_congr rfl fun k _ => ?_
+    rw [Finset.sum_neg_distrib]; ring
+  have hδ : ∀ k, |(fun k => - yNLTE k) k - (fun k => - yLTE k) k| ≤ |Real.log (b k)| := by
+    intro k; simp only [hshift k]; rw [show -(yLTE k + Real.log (b k)) - -yLTE k
+      = -Real.log (b k) by ring, abs_neg]
+  refine temp_rel_error_hetero hkB hT hTHat hvar hδ ?_ ?_
+  · rw [hneg, hβ]; ring
+  · rw [hneg, hβHat]; ring
 
 /-- **Non-LTE density error budget, density leg** (`REDUCED`; Cristoforetti 2010). The intercept
 twin of `nonlte_temp_error`: the per-line ordinate shifts `log bₖ` propagate through
 `ErrorBudget.olsIntercept_stable_hetero` and the density reader `ErrorBudget.relDensity_le` to
-`|N̂ − N| ≤ N·(exp((∑ₖ|log bₖ|)/card ι) − 1)`. Carries the centered-convention hypothesis
-`hcent : mean E = 0` (the standard Boltzmann-plot normalization the intercept engine requires). -/
+`|N̂ − N| ≤ N·(exp((∑ₖ|log bₖ|)/card ι) − 1)`. Carries the centered-coordinate hypothesis
+`hcent : mean E = 0` (energies re-referenced to their mean). With it the intercept is the fit's
+value at `Ē`, so `U` here must be the shifted partition function `U·exp(Ē/(k_B T))`; for the raw
+reader at `E = 0` the intercept error is larger (see
+`ErrorBudget.olsIntercept_stable_centered`). -/
 theorem nonlte_density_error [Nonempty ι] {E yLTE yNLTE b : ι → ℝ} {U Fcal : ℝ}
     (hU : 0 ≤ U) (hFcal : 0 < Fcal) (hcent : mean E = 0)
     (hshift : ∀ k, yNLTE k = yLTE k + Real.log (b k)) :
@@ -316,7 +334,7 @@ theorem nonlte_temp_error_uniform [Nonempty ι] {E yLTE yNLTE b : ι → ℝ} {k
     (hshift : ∀ k, yNLTE k = yLTE k + Real.log (b k))
     (hvar : 0 < ∑ k, (E k - mean E) ^ 2)
     (hδ0 : 0 ≤ δb) (hδ1 : δb < 1) (hb : ∀ k, |b k - 1| ≤ δb)
-    (hβ : olsSlope E yLTE = 1 / (kB * T)) (hβHat : olsSlope E yNLTE = 1 / (kB * THat)) :
+    (hβ : olsSlope E yLTE = -1 / (kB * T)) (hβHat : olsSlope E yNLTE = -1 / (kB * THat)) :
     |THat - T| / T ≤ kB * THat * (δb / (1 - δb))
         * (∑ k, |E k - mean E|) / (∑ k, (E k - mean E) ^ 2) := by
   have hmain := nonlte_temp_error hkB hT hTHat hshift hvar hβ hβHat
@@ -368,14 +386,15 @@ example : |Real.log 1| ≤ (1 / 2 : ℝ) / (1 - 1 / 2) :=
   abs_log_departure_le (by norm_num) (by norm_num) (by norm_num)
 
 /-- Non-vacuity witness for `nonlte_temp_error`: the slope-identification and shift hypotheses
-are jointly satisfiable on concrete data (`E = (0, 1)`, `yLTE = (0, 1)`, `b = (1, e)` so
-`yNLTE = (0, 2)`; `k_B = T = 1`, `T̂ = 1/2`). The data saturates the bound (equality case). -/
+are jointly satisfiable on concrete data (`E = (0, 1)`, `yLTE = (0, −1)` with slope
+`−1 = −1/(k_B T)`, an under-populated upper level `b = (1, e⁻¹)` so `yNLTE = (0, −2)`;
+`k_B = T = 1`, `T̂ = 1/2`). The data saturates the bound (equality case). -/
 example :
     |(1/2 : ℝ) - 1| / 1
       ≤ 1 * (1/2) * ((∑ k, |(![0, 1] : Fin 2 → ℝ) k - mean ![0, 1]|
-            * |Real.log ((![1, Real.exp 1] : Fin 2 → ℝ) k)|)
+            * |Real.log ((![1, Real.exp (-1)] : Fin 2 → ℝ) k)|)
           / (∑ k, ((![0, 1] : Fin 2 → ℝ) k - mean ![0, 1]) ^ 2)) :=
-  nonlte_temp_error (yLTE := ![0, 1]) (yNLTE := ![0, 2]) (b := ![1, Real.exp 1])
+  nonlte_temp_error (yLTE := ![0, -1]) (yNLTE := ![0, -2]) (b := ![1, Real.exp (-1)])
     (kB := 1) (T := 1) (THat := 1/2)
     (by norm_num) (by norm_num) (by norm_num)
     (by intro k; fin_cases k <;> norm_num [Real.log_one, Real.log_exp])

@@ -11,9 +11,9 @@ import CflibsFormal.OLS
 
 `ErrorBudget.lean` proves the *deterministic* error-propagation chain and its algebraic kernel
 `olsSlope_noise_gain : ∑ₖ wₖ² = 1/SS_E` (with weights `wₖ = (Eₖ − Ē)/SS_E`,
-`SS_E = ∑ₖ (Eₖ − Ē)²`), but its module docstring explicitly **defers the probabilistic `Var`
-layer** — "it needs `Mathlib`'s probability stack" — and names the target law
-`Var(β̂) = σ²·∑ wₖ² = σ²/SS_E` (Gauss–Markov). **This module discharges that promise.**
+`SS_E = ∑ₖ (Eₖ − Ē)²`), and names the target law `Var(β̂) = σ²·∑ wₖ² = σ²/SS_E`
+(Gauss–Markov) without proving it: the probabilistic `Var` layer needs `Mathlib`'s probability
+stack. **This module supplies that layer.**
 
 We put a probability measure `μ` on the sample space and model the Boltzmann-plot ordinates as a
 *linear model with random noise*:
@@ -134,7 +134,7 @@ theorem olsSlope_estimator_eq [Nonempty ι] (E : ι → ℝ) (α β : ℝ) (ε :
 
 variable [MeasurableSpace Ω] {μ : Measure Ω} [IsProbabilityMeasure μ]
 
-/-- **Expectation of a constant plus independent weighted noise** `𝔼[c + ∑ₖ wₖ·εₖ] = c`, for
+/-- **Expectation of a constant plus weighted noise** `𝔼[c + ∑ₖ wₖ·εₖ] = c`, for
 zero-mean L² noise. The weight-agnostic linearity-of-expectation kernel shared by
 `olsSlope_unbiased` and `Alt.GaussMarkov.linEstimator_expectation`. Needs neither independence
 nor homoscedasticity. -/
@@ -156,7 +156,8 @@ weight-agnostic uncorrelated-sum-variance kernel shared by `olsSlope_variance_no
 `Alt.GaussMarkov.linEstimator_variance`: strip the constant (`variance_const_add`), expand the
 variance of the sum into the full double-covariance sum (`variance_sum`,
 `Var[∑ Xᵢ] = ∑ᵢ∑ⱼ cov(Xᵢ, Xⱼ)`, needing no independence), pull each weight out of the covariance
-(`covariance_const_mul`), kill every off-diagonal term by uncorrelatedness, and read the diagonal
+(`covariance_const_mul_left` / `_right`), kill every off-diagonal term by uncorrelatedness, and
+read the diagonal
 `cov(εₖ, εₖ) = Var(εₖ) = σ²` (`covariance_self`, homoscedasticity). -/
 theorem variance_const_add_weightedNoise (w : ι → ℝ) (c σ : ℝ) (ε : ι → Ω → ℝ)
     (hL2 : ∀ k, MemLp (ε k) 2 μ)
@@ -212,7 +213,7 @@ theorem olsSlope_variance_noiseGain [Nonempty ι] (E : ι → ℝ) (α β σ : �
 
 /-- **THE headline — the Gauss–Markov slope-variance law** `Var(β̂) = σ²/SS_E`. Combines
 `olsSlope_variance_noiseGain` with `OLS.olsSlope_noise_gain` (`∑ₖ wₖ² = 1/SS_E`). This
-fulfills the `Var` layer deferred in `ErrorBudget`'s module docstring and matches its named target.
+is the `Var` layer that `ErrorBudget`'s module docstring points to, and matches its named target.
 Physics: `β = −1/(k_B T)` (Boltzmann plot), so a small `SS_E` (energies bunched) blows up the
 inverse-temperature variance — the principled origin of the energy-spread threshold. -/
 theorem olsSlope_variance_eq [Nonempty ι] (E : ι → ℝ) (α β σ : ℝ) (ε : ι → Ω → ℝ)

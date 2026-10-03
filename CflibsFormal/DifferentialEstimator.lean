@@ -63,7 +63,12 @@ Results:
   `τ_s k = τ_r k`. Matched optical depth is a *hypothesis*, not a consequence.
 * `differentialComposition` / `differentialComposition_exact_of_matched` — **EXACT.** Feeding
   the per-element ratios and the reference's known composition through the closure recovers
-  the sample composition exactly under matched `(T, Fcal, τ)`.
+  the sample composition exactly under matched `(T, Fcal, τ)`. The matched-`τ` hypothesis is
+  strong: `τ` is a free parameter in the statement, but physically it is proportional to the
+  species density (`OpticalDepth.opticalDepth = σ₀·ℓ·n_l`). With one path length per plasma,
+  matching `τ` on every species forces the sample's composition to equal the reference's, so
+  the non-trivial physical content is the optically thin case `τ = 0` (or lines corrected to
+  it). For `τ > 0` the theorem is an algebraic statement about the model.
 
 ## Literature and scope
 
@@ -90,9 +95,11 @@ and atomic-data systematics cancel to first order:
 Those papers report *empirical* precision gains; nothing of that kind is formalized here. What is
 proven is the algebraic cancellation (and its precise failure modes) in the CF-LIBS forward model
 of Ciucci et al. 1999 (`ForwardMap.lineIntensity`), so the `EXACT` rows cite "Ciucci 1999" (the
-forward model) or "—" (pure algebra), and the `REDUCED` first-order bound cites the repo-wide
-string "Aguilera & Aragón 2007" (multi-element Saha–Boltzmann error budgets), as the scope-tag
-table does for `combinedSahaBoltzmannSlope`; no bibliographic detail is re-asserted for it here.
+forward model). The three self-absorption rows cite "Gornushkin 1999" (Gornushkin et al.,
+*Spectrochim. Acta B* **54** (1999) 491–503, the escape-factor model of `SelfAbsorption`); they
+are exact statements about that flat-profile model and publish APPROXIMATION through it. The
+`REDUCED` temperature-mismatch bound is a Lipschitz envelope of the forward model built from
+`PartitionLipschitz`, and cites "Tognoni 2010" as those rows do.
 
 Scope: single-zone LTE, optically thin or curve-of-growth-corrected lines, one species per
 `ι`, the reference and sample sharing the *same* level set and Einstein coefficients (the same
@@ -372,7 +379,7 @@ theorem differentialRatio_error_bound [Nonempty ι]
           ring
 
 /-- **EXACT self-absorption residual — the honest non-cancellation.** If the measured
-intensities are the curve-of-growth-corrected `I · SA(τ)` (`SelfAbsorption.selfAbsorbedIntensity`)
+intensities are the self-absorbed `I · SA(τ)` (`SelfAbsorption.selfAbsorbedIntensity`)
 with per-line optical depths `τ_s k` (sample) and `τ_r k` (reference), then at matched `(T, Fcal)`
   `I_s k / I_r k = N_s/N_r · SA(τ_s k) / SA(τ_r k)`.
 The optical-depth factor does NOT cancel: unlike `A_k`, `g_k`, `U`, it is a property of each
@@ -474,7 +481,10 @@ spectra; the reference densities `Nr` are unknown *individually* but their compo
 (`differentialRatio_selfAbsorbed_matched`), so `Cr s · R s = Ns s / N_tot(r)`, a common rescaling
 that `composition_smul_invariant` removes. Matched `τ` is a hypothesis
 (`differentialRatio_selfAbsorption_cancels_iff` shows it cannot be dropped), and so is a matched
-temperature (`logDifferentialRatio_affine_in_E` shows the slope `−Δβ` that otherwise appears). -/
+temperature (`logDifferentialRatio_affine_in_E` shows the slope `−Δβ` that otherwise appears).
+Physically `τ` scales with the species density, so matched `τ > 0` on every species (one path
+length per plasma) holds only when sample and reference have the same composition; the case
+with content is `τ = 0` (module docstring). -/
 theorem differentialComposition_exact_of_matched [Nonempty ι] [Nonempty κ]
     {kB T Fcal : ℝ} {Ns Nr : κ → ℝ} {g E A τ : κ → ι → ℝ} {u : κ → ι}
     (hg : ∀ s k, 0 < g s k) (hNr : ∀ s, 0 < Nr s) (hFcal : 0 < Fcal)

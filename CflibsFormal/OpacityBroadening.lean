@@ -71,7 +71,12 @@ budget.
 
 ## Literature and scope
 
-REDUCED. The emergent-profile kernel `I = S·(1 − exp(−τ·ψ))` for a homogeneous,
+REDUCED on the relation axis. The results stated through `kOpacOf` publish APPROXIMATION,
+because `kOpacOf` is written with `selfAbsorptionFactor`, whose model tag is APPROXIMATION
+(`docs/conventions.md` §8). That inherited tag is conservative here: this module uses
+`(1 − e^{−τ})/τ` only as a real function inside a bound on the frequency-resolved half-width,
+not as the flat-kernel correction of an integrated intensity. The emergent-profile kernel `I = S·(1
+− exp(−τ·ψ))` for a homogeneous,
 single-temperature slab is the Gornushkin curve-of-growth model already used elsewhere in
 this development: Gornushkin, I. B.; Anzano, J. M.; King, L. A.; Smith, B. W.; Omenetto, N.;
 Winefordner, J. D., "Curve of growth methodology applied to laser-induced plasma emission
@@ -101,8 +106,8 @@ Nothing below depends on that correlation.
 * **`ψ` is the intrinsic shape, assumed shape-invariant with `τ`.** The Stark profile is
   taken Lorentzian with a `τ`-independent HWHM `γ`; instrumental and Doppler (Gaussian)
   convolution is NOT folded in. On a real Voigt profile (`VoigtWidth`) the emergent
-  half-width lies between the pure-Gaussian and pure-Lorentzian answers; only the
-  Lorentzian case is proven.
+  half-width is expected to lie between the pure-Gaussian and pure-Lorentzian answers; that
+  is not proved, and only the Lorentzian case is treated.
 * **The budget is CONSERVATIVE, not the exact broadening.** `kOpacOf τ = √(2/SA(τ) − 1)`
   over-estimates the exact Lorentzian ratio `lorentzWidthRatio τ = √(1/h(τ) − 1)`, because
   `h(τ) ≥ SA(τ)/2` is a one-sided bound (numerically, at `τ = 2` the exact ratio is

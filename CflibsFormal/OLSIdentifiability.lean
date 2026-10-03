@@ -43,8 +43,9 @@ exactly when the excitation energies are not all equal.
 
 ## Literature and scope
 
-Scope tag: **PURE-MATH** (consistent with the OLS layer it sits in: `ols_recovers_line`,
-`designNormalMatrix_det_ne_zero_iff` are PURE-MATH). The injectivity is an exact algebraic
+Scope tag: **PURE-MATH** (like `ols_recovers_line` in the OLS layer it sits in;
+`designNormalMatrix_det_ne_zero_iff`, to which the determinant form here is equivalent, is
+tagged REDUCED for its Boltzmann-plot reading). The injectivity is an exact algebraic
 identity — trivial kernel of the two-column design map, proved by a two-point elimination with no
 approximation — and the `iff`/variance/determinant restatements are exact equivalences; no physics
 enters the theorem statements (the `(T, N)` reading below is interpretation only). The physical

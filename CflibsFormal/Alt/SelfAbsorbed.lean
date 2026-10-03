@@ -57,6 +57,15 @@ peaked line with line-centre depth `τ₀`, dividing by `SA(τ₀)` over-correct
 `τ₀ = 3–10` in the audit probes (see the `SelfAbsorption` scope block); (ii) nothing checks
 that the supplied `tau` is the true optical depth — any `tau ≥ 0` is accepted, and no error
 bound for an estimated `τ̂ ≠ τ` is proved.
+
+## Literature
+
+The physics-tagged results of this module cite the following keys in
+`docs/scope-tags.tsv`; the full reference and what was checked for each is in
+`docs/citation-whitelist.tsv`.
+
+* Bulajic 2002 — status AUDIT-VETTED (vetted by an earlier audit; the primary source was not opened
+  for this module).
 -/
 
 namespace CflibsFormal.Alt

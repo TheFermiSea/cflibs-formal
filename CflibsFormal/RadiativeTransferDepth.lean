@@ -61,7 +61,8 @@ The continuous companion layer:
 `S` is an **abstract input** function of depth (LTE, `S = B_λ(T(t))` in physics); no Planck source,
 no non-LTE scattering coupling `S = (1−ε)J + εB`, and `τ` is a **scalar per zone** — the emergent
 line *profile* over a frequency-resolved Voigt/Stark `τ_λ(t)` needs the Faddeeva function absent
-from mathlib (cf. `SelfReversal`'s and Frontier 07's deferrals) and is out of scope. So every
+from mathlib (cf. `SelfReversal`'s deferral of the profile and
+`docs/frontiers/09-radiative-transfer-depth.md`) and is out of scope. So every
 result bounds the intensity at one wavelength, not a frequency-integrated line intensity, and none
 is a statement about temperature. The
 `rtFormalLinear` linear-in-τ source is the **stellar-atmosphere** Eddington–Barbier idealization,
@@ -210,7 +211,9 @@ theorem rtEmergent_sandwich {zs : List (ℝ × ℝ)} {Smin Smax : ℝ}
 
 /-- **Uniform slab is the extremal case (exact).** An isothermal stack (all zone sources equal `S`)
 with nonnegative optical depths collapses to a single slab of the combined depth:
-`rtEmergent zs = slabIntensity S (Σ τₖ)`. The degenerate zero-width case of the sandwich: **if**
+`rtEmergent zs = slabIntensity S (Σ τₖ)`. (The collapse is a telescoping identity and holds for
+any real depths; nonnegativity is assumed only because the proof goes through the sandwich.) The
+degenerate zero-width case of the sandwich: **if**
 the column is isothermal, how its depth is split into zones does not affect the emergent intensity.
 Only this direction is proved; the converse fails at one wavelength (module header). Generalizes
 `selfReversal_uniformSource` to `N` zones. -/

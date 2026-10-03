@@ -1,5 +1,7 @@
 # CF-LIBS spec — literature-validity audit (all 22 modules)
 
+> **Erratum (2026-10-03).** This archived review names the EPJ Appl. Phys. 2023 article ap230072 as "Khelladi et al., vol. 101". The 2026-09-24 audit corrected the record: the authors are Thouin, Benmouffok, Freton and Gonzalez, *EPJ Appl. Phys.* **98** (2023) 65 (`CflibsFormal/ForwardMapEnergy.lean`, `docs/citation-whitelist.tsv`). The text below is left as written.
+
 A per-theorem audit of `CflibsFormal` against the peer-reviewed CF-LIBS literature, answering:
 **are the definitions faithful encodings of the published physics, and are the docstrings honestly
 scoped?** It extends the deeper four-formula `boltzmann-convention-verdict.md` (forward map, Saha,
