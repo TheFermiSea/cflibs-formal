@@ -1,8 +1,9 @@
 name: Kernel replay (full sweep)
 
-# Independent kernel re-check of EVERY CflibsFormal module with the toolchain's `leanchecker`.
-# Per module this costs ~42 s and ~2.6 GB (Mathlib environment load), so the full 72-module
-# sweep (~25 min at 2 workers on a 7 GB hosted runner) runs weekly + on demand, while the main
+# Independent kernel re-check of EVERY CflibsFormal module and of the upstream seed with the
+# toolchain's `leanchecker`. Per module this costs ~42 s and ~2.6 GB (Mathlib environment load),
+# so the full sweep (roughly 20 s of wall time per module at 2 workers on a 7 GB hosted runner)
+# runs weekly + on demand, while the main
 # CI replays only the modules a push changed (scripts/kernel-replay.sh --changed).
 #
 # What this adds over `lake build` + axiom-audit: those trust the .olean files as stored; the
@@ -25,5 +26,8 @@ jobs:
     steps:
       - uses: actions/checkout@v5
       - uses: leanprover/lean-action@v1
+      # The upstream seed is not a default target, so build it before replaying it.
+      - name: Build the upstream seed
+        run: lake build SahaUpstream
       - name: Kernel replay — all modules
         run: KERNEL_REPLAY_JOBS=2 ./scripts/kernel-replay.sh --all

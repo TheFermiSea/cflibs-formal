@@ -184,8 +184,8 @@ def load_whitelist(path: pathlib.Path) -> dict[str, str]:
         if not line.strip() or line.startswith("#"):
             continue
         parts = line.split("\t")
-        if len(parts) >= 2:
-            out[parts[0]] = parts[1]
+        if len(parts) >= 2 and parts[0] not in out:   # first row wins; check-citations.sh
+            out[parts[0]] = parts[1]                  # fails on a duplicate key
     return out
 
 

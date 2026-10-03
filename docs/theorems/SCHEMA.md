@@ -185,6 +185,13 @@ where `type` is the declaration's type pretty-printed with fixed options
 computed from the same string) and `binders` is the outermost forall-binder name list from
 `forallTelescope` (anonymous binder → `_`).
 
+**What the hash does not cover (known gap, 2026-10-03).** Only names, types and binders are
+hashed. For a *definition* member the type is its signature (for example `ℝ → ℝ → ℝ`), so a
+change to the definition's body leaves the hash unchanged; likewise a theorem's hash does not
+move when a definition it is stated over changes. Until the catalog exports definition bodies
+and the hash includes them (an owner decision, because every card would be re-stamped), a
+change to a carded definition's body must be flagged for card re-review by hand.
+
 **Workflow.** A Lean PR that changes a carded declaration's statement changes its `type` in
 `docs/catalog.jsonl`, which changes the hash `check_cards.py` recomputes from the catalog. That no
 longer equals the card's stored `lean.reviewed.statement_hash`, and CI fails with "LaTeX must be

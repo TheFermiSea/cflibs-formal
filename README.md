@@ -16,7 +16,7 @@ definitions).
 ## Status
 
 <!-- stats:begin -->
-93 modules · 828 named results (theorem/lemma) · 247 defs
+93 modules · 832 named results (theorem/lemma) · 247 defs
 <!-- stats:end -->
 (kept current by `scripts/gen-docs.sh`; the docs-sync CI gate fails if it drifts).
 Axiom-clean invariant: every declaration depends only on `{propext, Classical.choice, Quot.sound}`.
@@ -50,9 +50,9 @@ lake build                                          # green build
 lake exe axiom-audit --root CflibsFormal            # axiom-cleanliness
 lake exe scope-check                                # scope tags + published tags current
 lake exe runLinter CflibsFormal                     # style/structure lint
-./scripts/stats.sh                                  # import hygiene + counts
+./scripts/stats.sh                                  # source hygiene + counts
 lake exe oracle-fixtures > /tmp/f.json && diff -u oracle/fixtures.json /tmp/f.json && python3 oracle/check_fixtures.py
-./scripts/gen-docs.sh && git diff --exit-code -- docs/ README.md AGENTS.md CONTEXT.md   # docs in sync
+./scripts/gen-docs.sh --check                       # generated docs and size lines in sync
 ```
 
 ## License

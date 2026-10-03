@@ -252,9 +252,10 @@ Gates, all required before trusting a result:
 2. **Axiom-clean** — `lake exe axiom-audit --root CflibsFormal` (exit 0).
 3. **Style/structure lint** — `lake exe runLinter CflibsFormal` (mathlib/batteries env linters:
    docBlame, simpNF, unusedArguments, …) — catches missing docstrings, unused hypotheses, etc.
-4. **Import hygiene** — `scripts/stats.sh` (every module imports only `Mathlib` / `CflibsFormal`,
-   no surprise external deps; acyclicity is guaranteed by the build). Also prints the base modules
-   and derived declaration counts.
+4. **Source hygiene** — `scripts/stats.sh` (every module imports only `Mathlib` / `CflibsFormal`,
+   read token by token; no orphan module; no `sorry` / `native_decide` / `axiom` / kernel-bypass
+   token outside comments, which also covers `example`s; acyclicity is guaranteed by the build).
+   Also prints the base modules and derived declaration counts.
 5. **Statement audit** — adversarial review that the *statement* faithfully encodes the
    intended physics (non-vacuous, non-trivial, non-tautological, honestly scoped).
 
@@ -266,7 +267,7 @@ exact commands. Gate 5 is judgment, not automated.
 ## Status
 
 <!-- stats:begin -->
-93 modules · 828 named results (theorem/lemma) · 247 defs
+93 modules · 832 named results (theorem/lemma) · 247 defs
 <!-- stats:end -->
 (kept current by `scripts/gen-docs.sh`). CI gates: axiom-cleanliness (`tools/`), style/structure lint (`runLinter`),
 docs-sync + scope-tag completeness (`scripts/gen-docs.sh`), import-hygiene (`scripts/stats.sh`),

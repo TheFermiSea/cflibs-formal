@@ -6,9 +6,20 @@ Walks the Lean source under CflibsFormal/ and emits two always-in-sync reference
   - docs/theorem-catalog.md    : every named result + def, grouped by module, with a one-line
                                  summary lifted from its docstring.
 
+It also rewrites the size line between `<!-- stats:begin -->` and `<!-- stats:end -->` in
+README.md, AGENTS.md and CONTEXT.md, so the counts quoted there cannot go stale.
+
 Pure stdlib, deterministic (sorted), no Lean invocation. Run via scripts/gen-docs.sh; the
 docs-sync CI gate regenerates and diffs against the committed copies (mirroring the oracle gate),
-so these files cannot drift from the source.
+so these files cannot drift from the source. `--check` writes nothing and exits 1 if any
+generated file would change.
+
+Completeness is checked twice. The source regexes below find the results a reader sees; the
+kernel-derived docs/catalog.jsonl (`lake exe export-catalog`, itself gated against staleness in
+CI) lists every documented theorem that actually entered the environment. Every catalog theorem
+must have a scope-tag row and every result found by regex must be in the catalog, so a theorem
+the regex cannot see (an unusual declaration form) or one with no docstring fails the gate.
+A module with a physics-tagged result must carry a `## Literature` section.
 
 Scope tags (owner decision 2026-09-24, docs/conventions.md section 8): a row of
 docs/scope-tags.tsv naming a theorem carries its RELATION tag; a row naming a definition carries
@@ -19,27 +30,34 @@ fails if that file is missing or out of step with docs/scope-tags.tsv.
 """
 from __future__ import annotations
 
+import argparse
+import json
 import pathlib
 import re
+import subprocess
 import sys
 from collections import Counter
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 SRC = ROOT / "CflibsFormal"
 
-# Mirror scripts/stats.sh's counting EXACTLY: declarations at column 0; results = theorem/lemma
-# with an optional `@[attr]` prefix; defs = `def` with an optional `noncomputable`. `private`,
+# Same counting rule as scripts/stats.sh: declarations at column 0; results = theorem/lemma with
+# an optional `@[attr]` prefix; defs = `def` with an optional `noncomputable`. `private`,
 # `protected`, `abbrev`, and `example` are NOT counted (they start with a different token).
-# Whitespace runs (`\s+`) match the awk `[ \t]+` so any decl stats.sh counts is also recognized
-# here — keeping the scope-tag completeness gate fail-CLOSED (no decl can dodge the tag check).
-RESULT_RE = re.compile(r"^(?:@\[[^\]]*\]\s*)?(theorem|lemma)\s+([A-Za-z_][A-Za-z0-9_'.]*)")
-DEF_RE = re.compile(r"^(?:noncomputable\s+)?def\s+([A-Za-z_][A-Za-z0-9_'.]*)")
+# A name runs to the first whitespace or binder/colon character, so Unicode names (`foo₂`) are
+# read whole. These regexes are a reader's view of the source; the fail-closed completeness
+# check is the cross-check against docs/catalog.jsonl in `main`.
+NAME = r"([^\s:({\[⦃]+)"
+RESULT_RE = re.compile(r"^(?:@\[[^\]]*\]\s*)?(theorem|lemma)\s+" + NAME)
+DEF_RE = re.compile(r"^(?:noncomputable\s+)?def\s+" + NAME)
 NS_RE = re.compile(r"^namespace\s+(\S+)")
 IMPORT_RE = re.compile(r"^import\s+(CflibsFormal\S*)")
 HEADING_RE = re.compile(r"^#\s+(.*\S)\s*$")
 # Declarations a MODEL row may name (definition-like; never counted as results or defs above).
 MODEL_RE = re.compile(r"^(?:(?:noncomputable|protected)\s+)*(def|abbrev|structure|inductive|class)"
-                      r"\s+([A-Za-z_][A-Za-z0-9_'.]*)")
+                      r"\s+" + NAME)
+STATS_BEGIN, STATS_END = "<!-- stats:begin -->", "<!-- stats:end -->"
+STATS_FILES = ("README.md", "AGENTS.md", "CONTEXT.md")
 
 
 def first_summary(doc_lines: list[str]) -> str:
@@ -96,16 +114,16 @@ def parse_module(path: pathlib.Path):
             in_doc = True
             doc_buf = []
             inner = stripped[3:]
-            if inner.endswith("-/"):
-                doc_buf.append(inner[:-2])
+            if "-/" in inner:           # closes on this line (anything after it is not scanned)
+                doc_buf.append(inner[:inner.index("-/")])
                 in_doc = False
                 pending_doc = doc_buf[:]
             else:
                 doc_buf.append(inner)
             continue
         if in_doc:
-            if stripped.endswith("-/"):
-                doc_buf.append(stripped[:-2])
+            if "-/" in stripped:
+                doc_buf.append(stripped[:stripped.index("-/")])
                 in_doc = False
                 pending_doc = doc_buf[:]
             else:
@@ -198,8 +216,53 @@ def load_published() -> dict | None:
     return out
 
 
+def load_catalog_theorems() -> dict | None:
+    """docs/catalog.jsonl theorems: module_rel -> list of fully-qualified names. None if the
+    catalog is missing."""
+    path = ROOT / "docs" / "catalog.jsonl"
+    if not path.exists():
+        return None
+    out: dict = {}
+    for line in path.read_text(encoding="utf-8").splitlines():
+        if not line.strip():
+            continue
+        d = json.loads(line)
+        if d["kind"] == "theorem":
+            out.setdefault(d["file"].removeprefix("CflibsFormal/"), []).append(d["name"])
+    return out
+
+
+def is_suffix(short: str, full: str) -> bool:
+    """`short` (possibly dotted) is a name-component suffix of the fully-qualified `full`."""
+    return full == short or full.endswith("." + short)
+
+
+def stats_line(n_mods: int, n_results: int, n_defs: int) -> str:
+    return f"{n_mods} modules · {n_results} named results (theorem/lemma) · {n_defs} defs"
+
+
+def with_stats(text: str, line: str, name: str) -> str:
+    """`text` with the line(s) between the stats markers replaced by `line`, keeping the
+    markers' indentation."""
+    if text.count(STATS_BEGIN) != 1 or text.count(STATS_END) != 1:
+        raise SystemExit(f"gen-docs: {name} must contain exactly one {STATS_BEGIN} ... "
+                         f"{STATS_END} block")
+    head, rest = text.split(STATS_BEGIN)
+    _old, tail = rest.split(STATS_END)
+    indent = head[head.rfind("\n") + 1:]
+    return f"{head}{STATS_BEGIN}\n{indent}{line}\n{indent}{STATS_END}{tail}"
+
+
 def main() -> int:
-    mods = [parse_module(p) for p in SRC.rglob("*.lean")]
+    ap = argparse.ArgumentParser(description="Regenerate the auto docs (see the module docstring).")
+    ap.add_argument("--check", action="store_true",
+                    help="write nothing; exit 1 if a generated file would change")
+    args = ap.parse_args()
+    outputs: dict[pathlib.Path, str] = {}
+
+    tracked = subprocess.run(["git", "ls-files", "CflibsFormal/*.lean"], cwd=ROOT,
+                             capture_output=True, text=True, check=True).stdout.split("\n")
+    mods = [parse_module(ROOT / f) for f in tracked if f]
     mods.sort(key=lambda m: m["rel"])
 
     scope, row_errors = load_scope_tags()
@@ -255,7 +318,46 @@ def main() -> int:
                   f" | {m['role']} |")
     mr.append(f"| **{len(mods)} modules** | | **{tot_r}** | **{tot_d}** | | | |")
     mr.append("")
-    (ROOT / "docs" / "module-reference.md").write_text("\n".join(mr) + "\n", encoding="utf-8")
+    outputs[ROOT / "docs" / "module-reference.md"] = "\n".join(mr) + "\n"
+    for name in STATS_FILES:
+        path = ROOT / name
+        outputs[path] = with_stats(path.read_text(encoding="utf-8"),
+                                   stats_line(len(mods), tot_r, tot_d), name)
+
+    # ---- kernel cross-check and Literature gate ----
+    extra_errors: list[str] = []
+    catalog = load_catalog_theorems()
+    if catalog is None:
+        extra_errors.append("MISSING docs/catalog.jsonl — run "
+                            "`lake exe export-catalog > docs/catalog.jsonl`")
+    else:
+        by_rel = {m["rel"]: m for m in mods}
+        for rel, fulls in sorted(catalog.items()):
+            m = by_rel.get(rel)
+            rows = [name for (mod, name) in scope if mod == rel]
+            # a Prop-valued field of a structure declared in this module is not a named result
+            structs = {n for n, (kind, _s) in (m["models"] if m else {}).items()
+                       if kind in ("structure", "class")}
+            for full in sorted(fulls):
+                parts = full.split(".")
+                if len(parts) >= 2 and parts[-2] in structs:
+                    continue
+                if not any(is_suffix(r, full) for r in rows):
+                    extra_errors.append(f"UNTAGGED theorem in the kernel catalog (the source scan "
+                                        f"does not see it): {rel} :: {full}")
+        for m in mods:
+            fulls = catalog.get(m["rel"], [])
+            for (_k, name, _s) in m["results"]:
+                if not any(is_suffix(name, full) for full in fulls):
+                    extra_errors.append(
+                        f"NOT IN CATALOG: {m['rel']} :: {name} — it has no docstring, or "
+                        f"docs/catalog.jsonl is stale (`lake exe export-catalog`)")
+    for m in mods:
+        physics = [name for (_k, name, _s) in m["results"]
+                   if scope.get((m["rel"], name), ("", ""))[0] in RANK]
+        if physics and not m["has_lit"]:
+            extra_errors.append(f"NO `## Literature` section in {m['rel']}, which has "
+                                f"{len(physics)} physics-tagged result(s) (AGENTS.md rule 4)")
 
     # ---- theorem-catalog.md ----
     mix = Counter(scope.get((m["rel"], name), ("?", ""))[0]
@@ -294,9 +396,12 @@ def main() -> int:
           "`EXACT` = an exact theorem about the model it is stated over · `REDUCED` = exact only "
           "after a stated reduction (a dimensionless/lumped-factor form) · `APPROXIMATION` = the "
           "statement itself is approximate (documented idealization / limiting case) · "
-          "`PURE-MATH` = infrastructure lemma, no physical claim. Classification cross-checked "
-          "against "
-          "`reviews/literature-validity-audit.md`.", ""]
+          "`PURE-MATH` = infrastructure lemma, no physical claim. The tags are the authors' "
+          "classification, reviewed result by result as each landed. Only the first 186-entry "
+          "corpus was cross-checked in one pass against the literature "
+          "(`reviews/literature-validity-audit.md`), and the then 412 results again on "
+          "2026-07-09 (`docs/literature-validation.md`); later results have no whole-corpus "
+          "literature audit.", ""]
     for m in mods:
         defs, results = m["defs"], m["results"]
         if not defs and not results:
@@ -336,10 +441,19 @@ def main() -> int:
                 else:
                     tc.append(f"- `{tag}` · `{name}` — {summ}{citestr}")
             tc.append("")
-    (ROOT / "docs" / "theorem-catalog.md").write_text("\n".join(tc) + "\n", encoding="utf-8")
+    outputs[ROOT / "docs" / "theorem-catalog.md"] = "\n".join(tc) + "\n"
 
-    if untagged or stale or bad_tag or row_errors or pub_errors:
-        for e in row_errors + pub_errors:
+    drift = [p for p, text in outputs.items()
+             if not p.exists() or p.read_text(encoding="utf-8") != text]
+    if args.check:
+        for p in drift:
+            print(f"gen-docs: OUT OF DATE {p.relative_to(ROOT)} — run scripts/gen-docs.sh")
+    else:
+        for p in drift:
+            p.write_text(outputs[p], encoding="utf-8")
+
+    if untagged or stale or bad_tag or row_errors or pub_errors or extra_errors:
+        for e in row_errors + pub_errors + extra_errors:
             print(f"gen-docs: {e}")
         for k in untagged:
             print(f"gen-docs: UNTAGGED result — add to docs/scope-tags.tsv: {k[0]} :: {k[1]}")
@@ -349,7 +463,10 @@ def main() -> int:
             print(f"gen-docs: BAD scope-tag value (not in {SCOPE_TAGS}): {k[0]} :: {k[1]}")
         print(f"gen-docs: scope-tag completeness FAILED "
               f"({len(untagged)} untagged, {len(stale)} stale, {len(bad_tag)} bad, "
-              f"{len(row_errors)} malformed/duplicate, {len(pub_errors)} published-tag errors)")
+              f"{len(row_errors)} malformed/duplicate, {len(pub_errors)} published-tag errors, "
+              f"{len(extra_errors)} catalog/literature errors)")
+        return 1
+    if args.check and drift:
         return 1
 
     print(f"gen-docs: {len(mods)} modules, {tot_r} results, {tot_d} defs "

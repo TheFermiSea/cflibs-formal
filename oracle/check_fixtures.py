@@ -184,7 +184,10 @@ def cert_alias_budget(delta):                     # C14 (A*: delta ASSUMED, not 
 
 
 def approx(a, b, rtol=RTOL):
-    return abs(a - b) <= rtol * max(1.0, abs(b))
+    # Relative tolerance, plus the 9-decimal print resolution of fixtures.json as the absolute
+    # floor. (An earlier `rtol * max(1, |b|)` was an ABSOLUTE 1e-6 for every value below 1, i.e.
+    # loose by orders of magnitude on small intensities.) NaN compares false and so fails.
+    return abs(a - b) <= rtol * abs(b) + 1e-9
 
 
 def main():

@@ -11,4 +11,4 @@
 # After changing docs/scope-tags.tsv: `lake exe scope-check --write && scripts/gen-docs.sh`.
 set -euo pipefail
 cd "$(dirname "$0")/.."
-exec python3 scripts/gen_docs.py
+exec python3 scripts/gen_docs.py "$@"

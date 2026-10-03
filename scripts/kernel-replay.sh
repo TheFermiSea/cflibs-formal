@@ -14,13 +14,16 @@
 #   * `leanchecker CflibsFormal` with the DEFAULT thread count → OOM-killed (exit 137) after ~7 min
 #     on a 64 GB machine. OBSERVED, not inferred: the same root aggregator module replays fine at
 #     ~1.3 GB when pinned to LEAN_NUM_THREADS=1 (it is just the heaviest module — it imports all
-#     72 others), so the hazard is the multi-threaded environment load, not the module itself.
+#     the others), so the hazard is the multi-threaded environment load, not the module itself.
 # So this script always runs PER MODULE with a bounded worker pool and ONE thread each.
 #
 # USAGE
 #   scripts/kernel-replay.sh --changed <git-base>   modules whose .lean changed since <git-base>
-#   scripts/kernel-replay.sh --all                  every module under CflibsFormal/ (+ root)
+#   scripts/kernel-replay.sh --all                  every tracked module under CflibsFormal/, the
+#                                                   root, and the upstream seed SahaUpstream
 #   scripts/kernel-replay.sh <Module> [<Module>...] explicit module names
+# The upstream seed (upstream/SahaUpstream.lean, a separate lean_lib that is not a default
+# target) is replayed too; it must have been built first (`lake build SahaUpstream`).
 # ENV
 #   KERNEL_REPLAY_JOBS   parallel workers (default 2 — sized for a 7 GB hosted runner; use 8 on
 #                        a 64 GB workstation). Each worker is pinned to LEAN_NUM_THREADS=1.
@@ -31,15 +34,15 @@ cd "$ROOT"
 JOBS="${KERNEL_REPLAY_JOBS:-2}"
 
 path_to_module() {  # CflibsFormal/Alt/CSigma.lean -> CflibsFormal.Alt.CSigma ; CflibsFormal.lean -> CflibsFormal
-  local p="${1%.lean}"; echo "${p//\//.}"
+  local p="${1%.lean}"; p="${p#upstream/}"       # upstream/SahaUpstream.lean -> SahaUpstream
+  echo "${p//\//.}"
 }
 
 mods=()
 case "${1:-}" in
   --all)
-    mods+=("CflibsFormal")
     while IFS= read -r f; do mods+=("$(path_to_module "$f")"); done \
-      < <(find CflibsFormal -name '*.lean' | sort)
+      < <(git ls-files 'CflibsFormal.lean' 'CflibsFormal/*.lean' 'upstream/*.lean' | sort)
     ;;
   --changed)
     base="${2:-}"
@@ -48,8 +51,8 @@ case "${1:-}" in
       || { echo "kernel-replay: base '$base' is not a reachable commit (shallow checkout? set fetch-depth ≥ 2)" >&2; exit 2; }
     while IFS= read -r f; do
       [ -f "$f" ] || continue                       # deleted files have no module to replay
-      case "$f" in CflibsFormal.lean|CflibsFormal/*.lean) mods+=("$(path_to_module "$f")");; esac
-    done < <(git diff --name-only "$base" HEAD -- 'CflibsFormal.lean' 'CflibsFormal/**/*.lean' 'CflibsFormal/*.lean')
+      case "$f" in CflibsFormal.lean|CflibsFormal/*.lean|upstream/*.lean) mods+=("$(path_to_module "$f")");; esac
+    done < <(git diff --name-only "$base" HEAD -- 'CflibsFormal.lean' 'CflibsFormal/**/*.lean' 'CflibsFormal/*.lean' 'upstream/*.lean')
     ;;
   "")
     echo "usage: $0 --changed <git-base> | --all | <Module>..." >&2; exit 2 ;;
@@ -64,7 +67,7 @@ case "${1:-}" in
 esac
 
 if [ "${#mods[@]}" -eq 0 ]; then
-  echo "kernel-replay: no CflibsFormal modules to replay (nothing changed under CflibsFormal/)"; exit 0
+  echo "kernel-replay: no modules to replay (nothing changed under CflibsFormal/ or upstream/)"; exit 0
 fi
 
 echo "kernel-replay: ${#mods[@]} module(s), $JOBS worker(s), LEAN_NUM_THREADS=1"

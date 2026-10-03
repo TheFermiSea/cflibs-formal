@@ -24,7 +24,7 @@ changes here as improving measurement accuracy.
   definitions, so it does not catch a wrong exponent in one).
 - Size (kept current by `scripts/gen-docs.sh`; the docs-sync gate fails if it drifts):
   <!-- stats:begin -->
-  93 modules · 828 named results (theorem/lemma) · 247 defs
+  93 modules · 832 named results (theorem/lemma) · 247 defs
   <!-- stats:end -->
   See `docs/module-reference.md` for the index and `docs/theorem-catalog.md` for every result
   with its scope tags + citation.
@@ -52,22 +52,21 @@ changes here as improving measurement accuracy.
 ## Verification gates — run ALL before trusting or committing any result
 
 ```bash
-lake build                                          # 1. green build (clean re-elaboration)
+lake build --wfail                                  # 1. green build, no warnings
 lake exe axiom-audit --root CflibsFormal            # 2. axiom-clean (exit 0)
 lake exe scope-check                                # 2b. scope gate + docs/scope-published.tsv current
 lake exe export-catalog > /tmp/c.jsonl \
   && diff -u docs/catalog.jsonl /tmp/c.jsonl        # 2c. kernel-exported catalog current
 lake exe runLinter CflibsFormal                     # 3. style/structure lint ("Linting passed")
 scripts/kernel-replay.sh --changed origin/main      # 3b. independent kernel replay (leanchecker) of changed modules
-./scripts/stats.sh                                  # 4. import hygiene + counts (exit 0)
+./scripts/stats.sh                                  # 4. source hygiene (imports, orphans, sorry/axiom tokens) + counts
 lake exe oracle-fixtures > /tmp/f.json \
   && diff -u oracle/fixtures.json /tmp/f.json \
   && python3 oracle/check_fixtures.py               # 5. numerical-oracle regression (no drift)
 python3 oracle/line_extraction/check_fixtures.py \
   && python3 oracle/tier2/check_fixtures.py         # 5b. companion-facing fixture sets (need numpy)
-./scripts/gen-docs.sh \
-  && git diff --exit-code -- docs/module-reference.md docs/theorem-catalog.md \
-       README.md AGENTS.md CONTEXT.md               # 6. auto docs + size lines in sync
+./scripts/gen-docs.sh --check                       # 6. auto docs + size lines in sync, every
+                                                    #    catalog theorem tagged, Literature present
 ./scripts/check-citations.sh                        # 7. every scope-tag citation is whitelisted
 python3 scripts/check_cards.py --selftest \
   && python3 scripts/gen_cards.py \
@@ -114,7 +113,9 @@ tool output.
   → `CflibsFormal.Alt`. Index types: `ι` levels, `κ` species, `σ` species (probability layer),
   `Ω` sample space — all with `[Fintype …]` as needed.
 - **Reuse core defs verbatim;** define each concept once. Import DAG is acyclic (Lean-guaranteed).
-- **Docstrings:** every `def`/`theorem` needs one (`runLinter docBlame`). Lines ≤ 100 chars.
+- **Docstrings:** every `def`/`theorem` needs one (`runLinter docBlame` covers definitions;
+  for theorems the docs gate fails when a result is missing from the kernel-derived catalog,
+  which lists only documented declarations). Lines ≤ 100 chars.
   Literature-facing modules carry a `## Literature` paragraph with real citations.
 - **Git:** the default branch is `main` on a real remote (`origin`); the repo is the backup and it
   is **public** (D23: name companion paths and symbols only; no private code, backlog ids, host

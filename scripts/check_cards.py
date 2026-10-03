@@ -299,9 +299,9 @@ def check_citations(fm: dict, whitelist: dict) -> Findings:
         status = whitelist.get(key)
         if status is None:
             f.add("CITATION-KEY", f"citation key '{key}' is not in docs/citation-whitelist.tsv")
-        elif status == "SUSPECT":
-            f.add("CITATION-SUSPECT", f"citation key '{key}' is whitelisted SUSPECT — must not "
-                                       "support any claim")
+        elif status.startswith("SUSPECT") or status not in WHITELIST_STATUS_VALUES:
+            f.add("CITATION-SUSPECT", f"citation key '{key}' is whitelisted {status} — a SUSPECT "
+                                       "or unrecognised status must not support any claim")
         if c.get("locator") and status not in ("VERIFIED", "CORRECTED"):
             f.add("CITATION-ROLE", f"citation '{key}' has a locator but whitelist status is "
                                     f"{status!r} (locator allowed only for VERIFIED/CORRECTED)")

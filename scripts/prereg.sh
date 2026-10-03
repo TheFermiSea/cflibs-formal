@@ -246,6 +246,7 @@ Pre-register a NEW file for a fresh confirmatory test; never re-freeze."
 
 FAILS=0
 WARNS=0
+NO_OUTPUTS=0   # registrations whose results paths have no committed output (chronology untested)
 
 pass() { echo "PASS  $*"; }
 fail() { echo "FAIL  $*"; FAILS=$((FAILS + 1)); }
@@ -343,7 +344,8 @@ audit_one() {
         fi
     done
     if [ "$checked" -eq 0 ]; then
-        note "INFO  CHRONOLOGY: no committed outputs found under: $RESULTS_PATHS"
+        NO_OUTPUTS=$((NO_OUTPUTS + 1))
+        warn "CHRONOLOGY: no committed outputs under: $RESULTS_PATHS — nothing to compare against the freeze (a wrong or not-yet-existing --results path looks the same)"
     elif [ "$FAILS" -eq "$chrono_fails_before" ]; then
         pass "CHRONOLOGY: every committed output post-dates the freeze"
     fi
@@ -412,7 +414,10 @@ cmd_audit() {
     done
 
     echo ""
-    if [ "$FAILS" -eq 0 ]; then
+    if [ "$FAILS" -eq 0 ] && [ "$NO_OUTPUTS" -gt 0 ]; then
+        echo "RESULT: FREEZE ONLY ($WARNS warning(s)) — the frozen predictions were never edited, but $NO_OUTPUTS registration(s) have no committed outputs under their results paths, so 'predictions pre-date outputs' is NOT verified."
+        exit 0
+    elif [ "$FAILS" -eq 0 ]; then
         echo "RESULT: PASS ($WARNS warning(s)) — freeze verified: predictions pre-date outputs and were never edited."
         exit 0
     else

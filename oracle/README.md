@@ -67,11 +67,19 @@ python3 oracle/check_fixtures.py                   # check (exit 0 = pass, 1 = f
 The definitions in `CflibsFormal/` are **`noncomputable` and ℝ-valued** (ℝ is not computable),
 so they cannot be `#eval`'d. `Generate.lean` re-implements the **same formulas over `Float`**.
 
-- **Verified:** the *formula structure* (each `Float` def matches a proven ℝ def) and the
-  *invariants* (the checks below are proven theorems).
+- **Proved:** the *invariants*: each check below is the numerical instance of a theorem proved
+  for the ℝ definitions.
+- **Maintained by hand, not machine-checked:** that each `Float` def in `Generate.lean` has the
+  same formula as its ℝ counterpart. `Generate.lean` does not import `CflibsFormal`, and the CI
+  oracle gate only compares the generator with its own committed output, so a change to a spec
+  definition does not by itself fail the oracle. The one machine link is
+  `CflibsFormal/OracleAnchors.lean`, which restates the certificate and Stark entries (rational
+  inputs) through the spec definitions; the forward-map, partition-function, temperature, Saha
+  and self-absorption scenarios have transcendental values and are not anchored.
 - **Not verified:** the IEEE-754 numerical evaluation (`Float ≠ ℝ`). Checks are
-  **tolerance-based** (`rtol = 1e-6`) — ample for catching formula/sign/factor/inversion bugs
-  (which differ by ≫ that), not a bit-exact comparison.
+  **tolerance-based** (relative `1e-6`, with the fixtures' 9-decimal print resolution `1e-9` as
+  the absolute floor) — ample for catching formula/sign/factor/inversion bugs (which differ by
+  ≫ that), not a bit-exact comparison.
 
 Inputs are **dimensionless** (matching the spec; `kB = T = 1`, `E` in units of `kB·T`). Feed
 your pipeline these exact inputs. Atomic data is synthetic but **distinct per element**; swap in
@@ -107,7 +115,7 @@ each `checks` entry is a self-consistency invariant of a proven theorem.
 | --- | --- | --- |
 | `energy_spread_tight` | `slopeErrorBound(snr, n, requiredEnergySpread(τ_β,snr,n)) == τ_β` — the derived `min_energy_spread` is exactly tight | `ErrorBudget.requiredEnergySpread_sufficient` (+ `olsSlope_stable_l2`) |
 | `snr_tight` | `slopeErrorBound(maxPerLineError(τ_β,n,ssE), n, ssE) == τ_β` — the derived `min_snr` is exactly tight | `ErrorBudget.maxPerLineError_sufficient` (+ `olsSlope_stable_l2`) |
-| `noise_gain` | `noiseGain == 1/ssE` — the Gauss–Markov slope-variance multiplier (kernel of the statistical line-count law) | `ErrorBudget.olsSlope_noise_gain` |
+| `noise_gain` | `noiseGain == 1/ssE` — the Gauss–Markov slope-variance multiplier (kernel of the statistical line-count law) | `OLS.olsSlope_noise_gain` |
 | `temp_rel` | `slopeTargetFromTempRel(relTtarget,kB,T)·(kB·T) == relTtarget` — exact `σ_T/T` ↔ `σ_β` conversion | `ErrorBudget.temp_rel_error_eq` |
 | `composition_budget` | `(card+1)·densityBudgetFromComposition(τ_C,Ŝ,card) == τ_C·Ŝ` — composition target ↦ per-species density budget | `ErrorBudget.composition_target_sufficient` (+ `composition_abs_sub_le`) |
 

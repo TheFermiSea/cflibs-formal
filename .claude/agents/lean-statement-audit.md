@@ -331,10 +331,11 @@ coefficients — needs the source in hand or the verdict is `human_needed`.
 
 | Tool | Covers | Gap it leaves you |
 |---|---|---|
-| `lake exe scope-check` | EXACT→APPROXIMATION edges, repo-wide, per-declaration | Needs a full prior build; ignores EXACT→REDUCED; `def`s untagged |
+| `lake exe scope-check` | EXACT→APPROXIMATION edges, repo-wide, per-declaration; published tags via model rows on definitions | Needs a full prior build; ignores EXACT→REDUCED; a definition that restates a model without its own row inherits nothing |
 | `scripts/check-scope-consistency.sh` | Module-level import advisory | Gameable — WARNs where the declaration graph would FAIL |
-| `scripts/mutate-check.sh` | Curated mutation regression table (`--list`, `--only Mn`, `--selftest`) over sign/direction/hypothesis-drop mutants | Fixed table; a freshly audited theorem is not in it — P4 is the ad-hoc per-theorem version. If your finding is a good permanent mutant, recommend a table row. (Check the script exists first; it may not be committed yet.) |
-| `scripts/gen-docs.sh` | Fails on any untagged result | Says nothing about whether the tag is *right* |
+| `scripts/mutate-check.sh` | Curated mutation regression table (`--list`, `--only Mn`, `--selftest`) over sign/direction/hypothesis-drop mutants | Fixed table; a freshly audited theorem is not in it — P4 is the ad-hoc per-theorem version. If your finding is a good permanent mutant, recommend a table row. Not run in CI. |
+| `scripts/gen-docs.sh` | Fails on any untagged result: the source scan, cross-checked against the kernel-derived `docs/catalog.jsonl`; also fails on a physics-tagged module with no `## Literature` | Says nothing about whether the tag is *right* |
+| `scripts/stats.sh` (`scripts/source_hygiene.py`) | Imports (token-level), orphan modules, `sorry`/`native_decide`/`axiom`/kernel-bypass tokens, including inside `example`s | A source scan, not a kernel check |
 
 ---
 

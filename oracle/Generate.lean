@@ -15,7 +15,8 @@ verified definitions in `CflibsFormal/` are `noncomputable` and ℝ-valued (so t
 counterpart verbatim in formula.
 
 The fixtures exercise the **multi-element** CF-LIBS problem (the whole point of the method) and
-the alternative estimators the spec proves equivalent/sound. Two scenarios:
+the alternative estimators the spec proves equivalent/sound. Six scenarios (`oracle/README.md`
+lists them all); the first two are:
 
 * a **ternary alloy** — 3 chemically distinct elements, each with its OWN atomic data and
   partition function `U_s`, 4 lines each — checked with the classic inversion, the multi-line
@@ -24,9 +25,11 @@ the alternative estimators the spec proves equivalent/sound. Two scenarios:
 * a **two-stage Saha–Boltzmann** element (neutral + ion) — recover `T` and the electron
   density `n_e` from the two stages.
 
-Each check instantiates a **proven theorem** (see `oracle/README.md` for the map). `Float ≠ ℝ`,
-so the *formula structure* and *invariants* are verified; numerical eval is IEEE-754 and checks
-are tolerance-based (~1e-6). Dimensionless inputs, kept O(1)–O(30) so the 9-decimal formatter
+Each check instantiates a **proven theorem** (see `oracle/README.md` for the map). This file does
+not import `CflibsFormal`: that each `Float` def has the same formula as its ℝ counterpart is
+maintained by hand, and only the entries anchored in `CflibsFormal/OracleAnchors.lean` are tied
+to the spec by a machine check. Numerical eval is IEEE-754 and checks are tolerance-based
+(relative 1e-6). Dimensionless inputs, kept O(1)–O(30) so the 9-decimal formatter
 is lossless.
 
 Regenerate with:  `lake exe oracle-fixtures > oracle/fixtures.json`
@@ -142,7 +145,7 @@ def requiredEnergySpread (tauBeta snr n : Float) : Float := snr * snr * n / (tau
 `snr ≤ tauBeta · √(ssE / n)`. The DERIVED `min_snr`. -/
 def maxPerLineError (tauBeta n ssE : Float) : Float := tauBeta * Float.sqrt (ssE / n)
 
-/-- Mirror of the OLS slope NOISE GAIN (`ErrorBudget.olsSlope_noise_gain`): `∑ wₖ² = 1/ssE`.
+/-- Mirror of the OLS slope NOISE GAIN (`OLS.olsSlope_noise_gain`): `∑ wₖ² = 1/ssE`.
 Under independent ordinate noise of variance `snr²` the Gauss–Markov slope variance is
 `snr²/ssE`; with `ssE = n·vPerLine` (per-line energy variance) the STATISTICAL `min_lines` for a
 target slope std `tauBeta` is `n ≥ snr²/(vPerLine·tauBeta²)`. (Statistical route — see the
@@ -261,10 +264,13 @@ def certAliasBudget (delta : Float) : Bool × Float :=
 /-! ## JSON emission -/
 
 /-- 9-decimal fixed-point rendering via a scaled integer (Lean's `Float.toString` is lossy
-`%.6f`). Assumes `|x|` is O(1)–O(few·10), keeping `|x|·1e9` in the exact-integer range. -/
+`%.6f`). Assumes `|x|` is O(1)–O(few·10), keeping `|x|·1e9` in the exact-integer range. A NaN,
+an infinity, or a magnitude of `1e9` or more is rendered as a token that is not valid JSON, so
+the fixture file fails to parse instead of silently carrying `0` or a saturated value. -/
 def jNum (x : Float) : String :=
   let neg := x < 0.0
   let a := if neg then -x else x
+  if x.isNaN || x.isInf || a ≥ 1.0e9 then "!!NON_FINITE_OR_OUT_OF_RANGE!!" else
   let n : Nat := (a * 1.0e9 + 0.5).floor.toUInt64.toNat
   let intPart := n / 1000000000
   let frac := n % 1000000000
@@ -498,7 +504,7 @@ def errorBudgetScenario : String :=
     ++ ", " ++ jField "bound_at_threshold" (jNum boundAtMaxErr) ++ ", "
     ++ jField "tauBeta" (jNum tauBeta) ++ ", "
     ++ jField "must" (jStr "slopeErrorBound(maxPerLineError(tauBeta,n,ssE), n, ssE) == tauBeta (threshold is tight)") ++ "}"
-  let cNoise := "{" ++ jField "theorem" (jStr "ErrorBudget.olsSlope_noise_gain")
+  let cNoise := "{" ++ jField "theorem" (jStr "OLS.olsSlope_noise_gain")
     ++ ", " ++ jField "noiseGain" (jNum noiseGain) ++ ", " ++ jField "ssE" (jNum ssE) ++ ", "
     ++ jField "must" (jStr "noiseGain == 1/ssE (Gauss-Markov slope-variance multiplier)") ++ "}"
   let cTemp := "{" ++ jField "theorem" (jStr "ErrorBudget.temp_rel_error_eq")

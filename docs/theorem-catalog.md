@@ -13,7 +13,7 @@ A result shows `own → published` when the two differ (with the definitions tha
 
 **Published-tag mix** (832 results; 148 weakened by a model tag): **EXACT** 46 · **REDUCED** 284 · **APPROXIMATION** 68 · **PURE-MATH** 434
 
-`EXACT` = an exact theorem about the model it is stated over · `REDUCED` = exact only after a stated reduction (a dimensionless/lumped-factor form) · `APPROXIMATION` = the statement itself is approximate (documented idealization / limiting case) · `PURE-MATH` = infrastructure lemma, no physical claim. Classification cross-checked against `reviews/literature-validity-audit.md`.
+`EXACT` = an exact theorem about the model it is stated over · `REDUCED` = exact only after a stated reduction (a dimensionless/lumped-factor form) · `APPROXIMATION` = the statement itself is approximate (documented idealization / limiting case) · `PURE-MATH` = infrastructure lemma, no physical claim. The tags are the authors' classification, reviewed result by result as each landed. Only the first 186-entry corpus was cross-checked in one pass against the literature (`reviews/literature-validity-audit.md`), and the then 412 results again on 2026-07-09 (`docs/literature-validation.md`); later results have no whole-corpus literature audit.
 
 ## `Aitchison.lean`  (CflibsFormal)
 *2DCOS-LIBS formalization — Aitchison compositional identities*
@@ -258,8 +258,8 @@ A result shows `own → published` when the two differ (with the definitions tha
 - `partitionFunctionCut` — Truncated partition function `U_cut(T) = ∑_{k : E k < cut} g k · exp(−E k/(k_B T))`: the Boltzmann sum `partitionFunction` restricted to the levels strictly…
 
 **Results**
-- `PURE-MATH` · `boltzmannFactor_pos` — —
-- `PURE-MATH` · `partitionFunction_pos` — —
+- `PURE-MATH` · `boltzmannFactor_pos` — The Boltzmann factor is strictly positive, for every real `kB`, `T`, `E` (it is an exponential; at `kB·T = 0` the exponent is the junk value `0` and the fact…
+- `PURE-MATH` · `partitionFunction_pos` — The partition function of a nonempty level list with positive weights is strictly positive.
 - `EXACT` · `population_sum` — Normalization.  _[Boltzmann]_
 - `EXACT` · `boltzmann_plot` — Boltzmann-plot identity.  _[Boltzmann]_
 - `EXACT` · `temperature_from_two_levels` — Temperature from two levels.  _[Boltzmann]_
@@ -819,7 +819,7 @@ A result shows `own → published` when the two differ (with the definitions tha
 *Part 7: joint (temperature, composition) identifiability*
 
 **Definitions**
-- `observe` — Two-line observation / forward map.
+- `observe₂` — Two-line observation / forward map.
 
 **Results**
 - `EXACT → REDUCED` · `joint_identifiability` — Joint (temperature, composition) identifiability — discharging the `hTratio` caveat.  _[Ciucci 1999]_  (via `PlasmaParams`, `lineIntensity`)

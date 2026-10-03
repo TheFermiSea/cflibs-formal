@@ -5,22 +5,33 @@ on:
   pull_request:
   workflow_dispatch:
 
-# API-docs publishing is intentionally DISABLED (this is a private spec; GitHub Pages on a private
-# repo is public by default, so auto-deploy would expose it). Only read access is granted — the
-# `pages: write` / `id-token: write` tokens are removed so nothing in CI can deploy to Pages. See
-# the disabled docgen step at the end of the job to re-enable after a deliberate visibility choice.
+# API-docs publishing is intentionally DISABLED (owner decision: do not publish a docs site
+# yet; the repository itself is public). Only read access is granted — the `pages: write` /
+# `id-token: write` tokens are removed so nothing in CI can deploy to Pages. See the disabled
+# docgen step at the end of the job to re-enable after a deliberate choice.
 permissions:
   contents: read # Read access to repository contents
+
+# A newer push to the same ref supersedes an older run.
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 120
 
     steps:
       - uses: actions/checkout@v5
         with:
           fetch-depth: 0   # full history: the kernel-replay step diffs against a base commit
       - uses: leanprover/lean-action@v1
+      # Warning-free gate: replay the build log and fail on any warning. A `sorry` inside an
+      # `example` is only a warning (an example never enters the environment, so the axiom audit
+      # below cannot see it); this step and the source scan in scripts/stats.sh close that gap.
+      - name: Warning-free build
+        run: lake build --wfail
       # Axiom-cleanliness gate: fail CI if any declaration in CflibsFormal depends on an axiom
       # outside {propext, Classical.choice, Quot.sound} (catches sorry/admit, native_decide, and
       # home-rolled axioms — including through imports — which grep cannot). Tool vendored in tools/.
@@ -48,7 +59,15 @@ jobs:
         run: |
           lake exe export-catalog > /tmp/catalog.jsonl
           diff -u docs/catalog.jsonl /tmp/catalog.jsonl
-      # Kernel-replay gate: re-check every module this change touched with the toolchain's
+      # Upstream-seed gate: the SahaUpstream lib (the self-contained physlib seed) is not in
+      # defaultTargets, so build + axiom-audit it explicitly to keep the "axiom-audited separately"
+      # claim in lakefile.toml true.
+      - name: Upstream-seed gate
+        run: |
+          lake build SahaUpstream
+          lake exe axiom-audit --root SahaUpstream
+      # Kernel-replay gate: re-check every module this change touched (under CflibsFormal/ or
+      # upstream/, hence after the upstream build above) with the toolchain's
       # built-in `leanchecker`. `lake build` and axiom-audit trust the .olean files as stored; the
       # kernel replay does not (rejects stale/corrupted/hand-forged oleans). Per module ~42 s and
       # ~2.6 GB, so only CHANGED modules run here; the weekly workflow sweeps all of them.
@@ -67,17 +86,11 @@ jobs:
           fi
           echo "kernel-replay base: $BASE"
           KERNEL_REPLAY_JOBS=2 ./scripts/kernel-replay.sh --changed "$BASE"
-      # Upstream-seed gate: the SahaUpstream lib (the self-contained physlib seed) is not in
-      # defaultTargets, so build + axiom-audit it explicitly to keep the "axiom-audited separately"
-      # claim in lakefile.toml true.
-      - name: Upstream-seed gate
-        run: |
-          lake build SahaUpstream
-          lake exe axiom-audit --root SahaUpstream
-      # Import hygiene + stats (pure grep, cheapest — runs before the linter so a trivial import
-      # violation fails fast): every module imports only Mathlib/CflibsFormal (acyclicity is
-      # guaranteed by the build); also prints derived declaration counts.
-      - name: Import-hygiene + stats
+      # Source hygiene + stats (no Lean needed): every import, read token by token, names only
+      # Mathlib/CflibsFormal (acyclicity is guaranteed by the build); every module is imported by
+      # the root; no sorry / admit / native_decide / axiom / kernel-bypass token outside comments
+      # (this covers `example`s). Also prints derived declaration counts.
+      - name: Source-hygiene + stats
         run: ./scripts/stats.sh
       # Style/structure-lint gate: mathlib/batteries environment linters (docBlame, simpNF,
       # unusedArguments, ...) on the CflibsFormal library — catches missing docstrings, unused
@@ -91,18 +104,28 @@ jobs:
           lake exe oracle-fixtures > /tmp/fixtures.json
           diff -u oracle/fixtures.json /tmp/fixtures.json
           python3 oracle/check_fixtures.py
-      # Docs-sync + scope-tag-completeness gate: regenerate the auto docs and (a) fail if any result
-      # is missing a curated scope tag in docs/scope-tags.tsv, or docs/scope-published.tsv is
-      # missing (gen-docs.sh exits non-zero), and (b) fail if the committed module-reference /
-      # theorem-catalog drift from source. The catalog renders each result's own -> published tag
+      # Companion-facing fixture sets (oracle/line_extraction, oracle/tier2): the reference kernel
+      # and the reference predicates must satisfy their own committed fixtures. These are NOT
+      # regenerated and byte-diffed here: the generators use vectorised numpy, whose last bits can
+      # differ between CPUs, so only the tolerance-based checkers run.
+      - name: Line-extraction and Tier-2 fixture self-check
+        run: |
+          python3 -m pip install --quiet 'numpy==2.4.4'
+          python3 oracle/line_extraction/check_fixtures.py
+          python3 oracle/tier2/check_fixtures.py
+      # Docs-sync + scope-tag-completeness gate: recompute the auto docs without writing and fail
+      # if (a) any result is missing a curated scope tag in docs/scope-tags.tsv, a theorem in the
+      # kernel-derived docs/catalog.jsonl has no tag or a source result is not in that catalog, a
+      # physics-tagged module has no `## Literature` section, or docs/scope-published.tsv is
+      # missing; or (b) the committed module-reference / theorem-catalog, or the size line in
+      # README.md / AGENTS.md / CONTEXT.md, differ from what the source gives.
+      # The catalog renders each result's own -> published tag
       # from docs/scope-published.tsv, which the scope-check step above has already verified is
       # current. Same regenerate-and-diff discipline as the oracle self-check; this is the
       # integrity-spine gate — a new theorem cannot land undocumented OR without an
       # EXACT/REDUCED/APPROXIMATION/PURE-MATH tag.
       - name: Docs-sync gate
-        run: |
-          ./scripts/gen-docs.sh
-          git diff --exit-code -- docs/module-reference.md docs/theorem-catalog.md
+        run: ./scripts/gen-docs.sh --check
       # Citation-integrity gate: every citation string in column 4 of docs/scope-tags.tsv must be
       # on docs/citation-whitelist.tsv and none may be SUSPECT-OR-FABRICATED (the check that would
       # have stopped an off-whitelist citation merging). Build-free: bash + python3 only.
@@ -117,7 +140,8 @@ jobs:
           python3 -m pip install --quiet 'pyyaml==6.0.2'
           python3 scripts/check_cards.py --selftest
           python3 scripts/gen_cards.py
-          git diff --exit-code -- docs/theorems/
+          # `git status` also sees a generated file that is new or was deleted and regenerated.
+          test -z "$(git status --porcelain -- docs/theorems/)" || { git status --short -- docs/theorems/; git diff -- docs/theorems/ | head -100; exit 1; }
       # Epistemic-drift ADVISORY (module-level): a fast, build-free companion to the authoritative
       # declaration-granular `scope-check` gate above. It also surfaces EXACT-on-REDUCED and
       # EXACT-on-mixed dependencies as advisory warnings (module granularity cannot prove per-theorem
@@ -125,9 +149,8 @@ jobs:
       # module.
       - name: Scope-consistency advisory (module-level)
         run: ./scripts/check-scope-consistency.sh
-      # API-docs publishing (doc-gen4 HTML -> GitHub Pages) is DISABLED on purpose: this is a
-      # PRIVATE spec, and Pages on a private repo is public by default, so this step would expose
-      # it. The HTML reference can still be built on demand (doc-gen4, see leanprover/doc-gen4). To
-      # publish later, restore the `pages: write` / `id-token: write` permissions above and
-      # re-enable this step — as an access-controlled artifact or a deliberate Pages deploy.
+      # API-docs publishing (doc-gen4 HTML -> GitHub Pages) is DISABLED on purpose (owner decision:
+      # no public docs site yet). The HTML reference can still be built on demand (doc-gen4, see
+      # leanprover/doc-gen4). To publish later, restore the `pages: write` / `id-token: write`
+      # permissions above and re-enable this step.
       # - uses: leanprover-community/docgen-action@v1
