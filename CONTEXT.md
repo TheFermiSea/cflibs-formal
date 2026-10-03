@@ -174,7 +174,8 @@ definition is defined once and reused verbatim, and every module imports only `M
     `Alt/StochasticBudget`, `Alt/NeutralityScale`;
   - *the runtime bridge to the pipeline:* `Certificates`, `EvaluatorSoundness`, `OracleAnchors`,
     `RefuseToReport`, `ConformalCoverage`, `KernelLineExtraction`, `LineExtraction`,
-    `LineEvidence`;
+    `LineEvidence`, `SharedUpperLevel` (lines from one upper level must agree on the Boltzmann
+    ordinate: a truth-free atomic-data consistency gate);
   - *pure-math substrate and compositional data:* `Analysis`, `Aitchison`, `AitchisonIsometry`,
     `TwoDCOS`, `TwoDCOSOrder`.
 
@@ -267,7 +268,7 @@ exact commands. Gate 5 is judgment, not automated.
 ## Status
 
 <!-- stats:begin -->
-93 modules · 832 named results (theorem/lemma) · 247 defs
+94 modules · 838 named results (theorem/lemma) · 248 defs
 <!-- stats:end -->
 (kept current by `scripts/gen-docs.sh`). CI gates: axiom-cleanliness (`tools/`), style/structure lint (`runLinter`),
 docs-sync + scope-tag completeness (`scripts/gen-docs.sh`), import-hygiene (`scripts/stats.sh`),

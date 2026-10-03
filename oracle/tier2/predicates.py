@@ -151,3 +151,29 @@ def shift_applicable(shift, lo, hi, eps):
     shift is not identified (a strictly monotone objective puts its minimizer there): refuse the
     shift or widen the scan."""
     return not shift_at_boundary(shift, lo, hi, eps)
+
+
+def boltzmann_ordinate(intensity, g, a, lam=None):
+    """Boltzmann-plot ordinate of one line: ln(I / (g A)) for photon-rate intensities, or
+    ln(I * lam / (g A)) when a wavelength is given (energy-calibrated intensities)."""
+    num = intensity if lam is None else intensity * lam
+    return math.log(num / (g * a))
+
+
+def shared_level_consistent(y_j, y_k, eps_j, eps_k):
+    """SharedUpperLevel.SharedLevelConsistent: two lines from the SAME upper level must have
+    Boltzmann ordinates that agree within the sum of their error bars (true at any T, n_e and
+    composition, for optically thin lines with correct g*A).
+
+    A False verdict flags the pair; it does not say why (wrong g or A in the atomic-data row,
+    self-absorption, a blend, a misassigned line, or an understated error bar). A g*A error common
+    to both lines, or a wrong shared upper-level energy, is invisible. Group lines by level
+    label, not by tabulated energy."""
+    return abs(y_j - y_k) <= eps_j + eps_k
+
+
+def shared_level_detects(c, eps_j, eps_k):
+    """Sufficient detection threshold (SharedUpperLevel.wrong_weight_detected): a g*A factor `c`
+    on one line of the pair always fails `shared_level_consistent` when |ln c| > 2 (eps_j + eps_k).
+    Not necessary: a smaller factor may or may not be flagged."""
+    return abs(math.log(c)) > 2.0 * (eps_j + eps_k)

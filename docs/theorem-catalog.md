@@ -9,9 +9,9 @@
 
 A result shows `own → published` when the two differ (with the definitions that weakened it), and a single tag when they agree. A definition with its own row shows `model TAG`.
 
-**Own-tag mix** (832 results): **EXACT** 156 · **REDUCED** 238 · **APPROXIMATION** 4 · **PURE-MATH** 434
+**Own-tag mix** (838 results): **EXACT** 159 · **REDUCED** 238 · **APPROXIMATION** 4 · **PURE-MATH** 437
 
-**Published-tag mix** (832 results; 148 weakened by a model tag): **EXACT** 46 · **REDUCED** 284 · **APPROXIMATION** 68 · **PURE-MATH** 434
+**Published-tag mix** (838 results; 150 weakened by a model tag): **EXACT** 47 · **REDUCED** 286 · **APPROXIMATION** 68 · **PURE-MATH** 437
 
 `EXACT` = an exact theorem about the model it is stated over · `REDUCED` = exact only after a stated reduction (a dimensionless/lumped-factor form) · `APPROXIMATION` = the statement itself is approximate (documented idealization / limiting case) · `PURE-MATH` = infrastructure lemma, no physical claim. The tags are the authors' classification, reviewed result by result as each landed. Only the first 186-entry corpus was cross-checked in one pass against the literature (`reviews/literature-validity-audit.md`), and the then 412 results again on 2026-07-09 (`docs/literature-validation.md`); later results have no whole-corpus literature audit.
 
@@ -1546,6 +1546,20 @@ A result shows `own → published` when the two differ (with the definitions tha
 - `EXACT` · `selfReversal_noShell` — No-shell limit (exact).  _[Cowan–Dieke 1948]_
 - `EXACT` · `selfReversal_uniformSource` — Uniform-source limit (exact).  _[Cowan–Dieke 1948]_
 - `EXACT` · `emergentIntensity_strictAnti_shell` — Shell absorption darkens a fixed wavelength.  _[Cowan–Dieke 1948]_
+
+## `SharedUpperLevel.lean`  (CflibsFormal)
+*lines from a shared upper level: an atomic-data consistency gate*
+
+**Definitions**
+- `SharedLevelConsistent` — The shared-upper-level consistency gate on two measured ordinates `yj`, `yk` with error bars `εj`, `εk`: they agree to within the sum of the error bars.
+
+**Results**
+- `EXACT → REDUCED` · `ordinate_eq_of_energy_eq` — Lines from a shared upper level have equal Boltzmann ordinates (photon-rate form).  _[Ciucci 1999]_  (via `lineIntensity`)
+- `EXACT` · `ordinate_wavelength_eq_of_energy_eq` — Lines from a shared upper level have equal Boltzmann ordinates (wavelength form).  _[Aragón & Aguilera 2008]_
+- `EXACT → REDUCED` · `ordinate_gap_of_wrong_weight` — A wrong `g·A` on one line of the pair opens a gap of exactly `−log c`.  _[Ciucci 1999]_  (via `lineIntensity`)
+- `PURE-MATH` · `sharedLevelConsistent_of_within` — The gate passes when both measurements are within their error bars.
+- `PURE-MATH` · `not_both_within_of_inconsistent` — A failed gate means a measurement is outside its error bar.
+- `PURE-MATH` · `wrong_weight_detected` — Detection power.
 
 ## `SpatialForward.lean`  (CflibsFormal)
 *spatially-resolved (discrete Abel / onion-peeling) forward model*

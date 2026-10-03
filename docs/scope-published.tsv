@@ -781,6 +781,12 @@ SelfReversal.lean	emergentIntensity_nonneg	theorem	PURE-MATH	PURE-MATH	—
 SelfReversal.lean	emergentIntensity_strictAnti_shell	theorem	EXACT	EXACT	—
 SelfReversal.lean	selfReversal_noShell	theorem	EXACT	EXACT	—
 SelfReversal.lean	selfReversal_uniformSource	theorem	EXACT	EXACT	—
+SharedUpperLevel.lean	not_both_within_of_inconsistent	theorem	PURE-MATH	PURE-MATH	—
+SharedUpperLevel.lean	ordinate_eq_of_energy_eq	theorem	EXACT	REDUCED	lineIntensity
+SharedUpperLevel.lean	ordinate_gap_of_wrong_weight	theorem	EXACT	REDUCED	lineIntensity
+SharedUpperLevel.lean	ordinate_wavelength_eq_of_energy_eq	theorem	EXACT	EXACT	—
+SharedUpperLevel.lean	sharedLevelConsistent_of_within	theorem	PURE-MATH	PURE-MATH	—
+SharedUpperLevel.lean	wrong_weight_detected	theorem	PURE-MATH	PURE-MATH	—
 SpatialForward.lean	chordGeometry_det_ne_zero	theorem	PURE-MATH	PURE-MATH	—
 SpatialForward.lean	chordGeometry_isUnit	theorem	PURE-MATH	PURE-MATH	—
 SpatialForward.lean	chordIntensity	def	REDUCED	REDUCED	—

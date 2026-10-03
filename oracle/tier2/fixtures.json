@@ -1228,6 +1228,196 @@
    }
   },
   {
+   "id": "shared_level_correct_rows_agree",
+   "predicate": "shared_level_consistent",
+   "lean": "ordinate_gap_of_wrong_weight",
+   "inputs": {
+    "intensity": [
+     10000.0,
+     20000.0,
+     45000.0
+    ],
+    "g": [
+     3.0,
+     3.0,
+     3.0
+    ],
+    "A": [
+     10000000.0,
+     20000000.0,
+     45000000.0
+    ],
+    "eps": 0.05,
+    "pairs": [
+     [
+      0,
+      1
+     ],
+     [
+      0,
+      2
+     ],
+     [
+      1,
+      2
+     ]
+    ]
+   },
+   "expected": {
+    "ordinates": [
+     -8.006367567650246,
+     -8.006367567650246,
+     -8.006367567650246
+    ],
+    "consistent": [
+     true,
+     true,
+     true
+    ],
+    "max_gap": 0.0,
+    "ln3_detectable": true
+   }
+  },
+  {
+   "id": "shared_level_wrong_weight_flagged",
+   "predicate": "shared_level_consistent",
+   "lean": "ordinate_gap_of_wrong_weight",
+   "inputs": {
+    "intensity": [
+     10000.0,
+     20000.0,
+     45000.0
+    ],
+    "g": [
+     3.0,
+     3.0,
+     1.0
+    ],
+    "A": [
+     10000000.0,
+     20000000.0,
+     45000000.0
+    ],
+    "eps": 0.1,
+    "pairs": [
+     [
+      0,
+      1
+     ],
+     [
+      0,
+      2
+     ],
+     [
+      1,
+      2
+     ]
+    ]
+   },
+   "expected": {
+    "ordinates": [
+     -8.006367567650246,
+     -8.006367567650246,
+     -6.907755278982137
+    ],
+    "consistent": [
+     true,
+     false,
+     false
+    ],
+    "max_gap": 1.0986122886681091,
+    "ln3_detectable": true
+   }
+  },
+  {
+   "id": "shared_level_wrong_weight_hidden_by_wide_error_bars",
+   "predicate": "shared_level_consistent",
+   "lean": "ordinate_gap_of_wrong_weight",
+   "inputs": {
+    "intensity": [
+     10000.0,
+     20000.0,
+     45000.0
+    ],
+    "g": [
+     3.0,
+     3.0,
+     1.0
+    ],
+    "A": [
+     10000000.0,
+     20000000.0,
+     45000000.0
+    ],
+    "eps": 0.6,
+    "pairs": [
+     [
+      0,
+      1
+     ],
+     [
+      0,
+      2
+     ],
+     [
+      1,
+      2
+     ]
+    ]
+   },
+   "expected": {
+    "ordinates": [
+     -8.006367567650246,
+     -8.006367567650246,
+     -6.907755278982137
+    ],
+    "consistent": [
+     true,
+     true,
+     true
+    ],
+    "max_gap": 1.0986122886681091,
+    "ln3_detectable": false
+   }
+  },
+  {
+   "id": "shared_level_wavelength_ordinate",
+   "predicate": "shared_level_wavelength",
+   "lean": "ordinate_wavelength_eq_of_energy_eq",
+   "inputs": {
+    "intensity": [
+     21.367521367521366,
+     42.35493434985176,
+     93.53564747453751
+    ],
+    "g": [
+     3.0,
+     3.0,
+     3.0
+    ],
+    "A": [
+     10000000.0,
+     20000000.0,
+     45000000.0
+    ],
+    "lam": [
+     468.0,
+     472.2,
+     481.1
+    ],
+    "eps": 0.001
+   },
+   "expected": {
+    "ordinates": [
+     -8.006367567650246,
+     -8.006367567650246,
+     -8.006367567650246
+    ],
+    "consistent_with_lam": true,
+    "gap_without_lam": 0.02760685278776087
+   }
+  },
+  {
    "id": "shift_applied_at_lower_edge",
    "predicate": "shift_applicable",
    "lean": "atScanBoundary_of_strictMonoOn",
