@@ -115,6 +115,18 @@ add("blend_outside_window", line + g_out)
 case("d_blend_vanishing", "area_t == area_0", "trapArea_blend_eq", "line",
      "blend_outside_window", atol=0.0, rtol=0.0)
 
+# (f) antisymmetric noise: area(y + n) + area(y - n) == 2 * area(y) for a kernel that is linear on
+# its window. Exact and seed-free. A kernel that floors/clips samples breaks it, because the +/-n
+# pair is no longer symmetric once a sample goes negative (the line tails are ~0, so any noise
+# triggers it). Descriptor, like a_add, for data-dependent kernels.
+rng = np.random.default_rng(20261002)
+for amp in (5.0, 40.0):
+    nz = amp * rng.standard_normal(N)
+    add(f"line_plus_noise_{amp}", line + nz)
+    add(f"line_minus_noise_{amp}", line - nz)
+    case(f"f_antisym_{amp}", "area(y+n) + area(y-n) == 2 * area(y)", "trapArea_antisymm_noise",
+         "line", f"line_plus_noise_{amp}", partner=inp(f"line_minus_noise_{amp}"), rtol=1e-12)
+
 # (e) sigma: positive and finite (incl. an all-zero spectrum, max(counts,1) floor) ...
 add("line_ped_20", line + 20.0)
 add("dark", np.zeros(N))

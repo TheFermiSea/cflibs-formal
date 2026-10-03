@@ -38,6 +38,9 @@ the trapezoid rule and are the contract a replacement kernel is tested against.
   at most `W · ε`, and exactly `0` if it vanishes on the window.
 * **(e) sigma** (`shotSigma_pos`, `shotSigma_mono`): sigma is positive and non-decreasing in
   the counts.
+* **(f) antisymmetric noise** (`trapArea_antisymm_noise`): for any noise vector `n`,
+  `area(y + n) + area(y − n) = 2·area(y)`; exact, needs no statistics, and is broken by any
+  kernel that floors or clips samples.
 
 (`W = x n − x 0` is the window width.) Positivity of the area for a non-negative line is
 `trapArea_nonneg`, and the common perturbation lemma behind (c) and (d) is `trapArea_sub_le`.
@@ -53,27 +56,18 @@ the trapezoid rule and are the contract a replacement kernel is tested against.
   pedestal estimate, equality (`trapArea_sub_pedestal`). A *baseline-aware* kernel is a different
   contract (shift `0`); this module proves the raw-integral side only, and the fixtures accept
   either outcome and reject anything in between.
-* **(c) sub-pixel shift** (`trapArea_shift_le`): a translated line changes the area by at most
-  `W · L · |δ|`.
-* **(d) separated blend** (`trapArea_blend_le`, `trapArea_blend_eq`): the other line contributes
-  at most `W · ε`, and exactly `0` if it vanishes on the window.
-* **(e) sigma** (`shotSigma_pos`, `shotSigma_mono`): sigma is positive and non-decreasing in
-  the counts.
-
-(`W = x n − x 0` is the window width.) Positivity of the area for a non-negative line is
-`trapArea_nonneg`, and the common perturbation lemma behind (c) and (d) is `trapArea_sub_le`.
-
-## Honest limitations
-
-* **Pure mathematics.** Every statement is about the finite sum `trapArea`; none says that the
-  trapezoid area is the *physical* line intensity, that the peak window is well chosen, or that
-  the profile is Gaussian/Voigt.
-* **(b) is not an invariance.** A raw-intensity integral is *not* invariant under an additive
-  pedestal `c`; it shifts by exactly `c·W`. That is why the contract is "area of `line + c` minus
-  area of `line` equals `c·W`" and, after subtracting an exact pedestal estimate, equality.
+* **(b) for negative pedestals.** The theorem holds for every real `c`, negative included. After
+  the pipeline's baseline subtraction, negative samples are measurement noise, not impossible
+  counts, so a kernel that floors them at `0` biases weak-line areas upward; clipping is
+  legitimate only on raw, non-negative counts. The fixtures therefore keep `c < 0` as a gated
+  case, and relation (f) tests the same failure directly.
 * **(c) is a Lipschitz bound, loose by design.** The true sub-pixel error of a smooth, sampled
   line is far smaller than `W·L·|δ|`; the bound is the tolerance a fixture may *rely on* without
   assuming any profile shape.
+* **(d) `trapArea_blend_eq` is window-only.** Its hypothesis is that the other line vanishes at
+  the window nodes; a kernel that also reads flanks (a flank or edge baseline) sees the neighbour
+  there and so changes by construction. That is not a defect of the kernel, so the fixtures treat
+  the vanishing-neighbour case as a descriptor, not a gate.
 * **(d) is a contamination bound, not a separation criterion.** The theorem is stated for the
   other line's sampled magnitude `ε` on the window. Turning "separated by `k` FWHM" into an `ε`
   needs the *profile's tail* (Gaussian tails vanish super-exponentially, Lorentzian wings fall
@@ -122,6 +116,16 @@ theorem trapArea_add (x y z : ℕ → ℝ) (n : ℕ) :
     trapArea x (fun i => y i + z i) n = trapArea x y n + trapArea x z n := by
   simp only [trapArea]
   rw [← Finset.sum_add_distrib]
+  exact Finset.sum_congr rfl fun i _ => by ring
+
+/-- **Antisymmetric noise cancels.** For any noise vector `nz`, the areas of `y + nz` and
+`y − nz` sum to twice the area of `y`. Exact and statistics-free: a kernel that floors or clips
+samples (so is not linear on its window) breaks it as soon as the noise drives a sample negative. -/
+theorem trapArea_antisymm_noise (x y nz : ℕ → ℝ) (n : ℕ) :
+    trapArea x (fun i => y i + nz i) n + trapArea x (fun i => y i - nz i) n
+      = 2 * trapArea x y n := by
+  simp only [trapArea]
+  rw [← Finset.sum_add_distrib, Finset.mul_sum]
   exact Finset.sum_congr rfl fun i _ => by ring
 
 /-! ### (b) Additive pedestal -/

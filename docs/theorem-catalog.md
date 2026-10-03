@@ -9,9 +9,9 @@
 
 A result shows `own → published` when the two differ (with the definitions that weakened it), and a single tag when they agree. A definition with its own row shows `model TAG`.
 
-**Own-tag mix** (818 results): **EXACT** 164 · **REDUCED** 234 · **APPROXIMATION** 4 · **PURE-MATH** 416
+**Own-tag mix** (819 results): **EXACT** 164 · **REDUCED** 234 · **APPROXIMATION** 4 · **PURE-MATH** 417
 
-**Published-tag mix** (818 results; 143 weakened by a model tag): **EXACT** 57 · **REDUCED** 279 · **APPROXIMATION** 66 · **PURE-MATH** 416
+**Published-tag mix** (819 results; 143 weakened by a model tag): **EXACT** 57 · **REDUCED** 279 · **APPROXIMATION** 66 · **PURE-MATH** 417
 
 `EXACT` = an exact theorem about the model it is stated over · `REDUCED` = exact only after a stated reduction (a dimensionless/lumped-factor form) · `APPROXIMATION` = the statement itself is approximate (documented idealization / limiting case) · `PURE-MATH` = infrastructure lemma, no physical claim. Classification cross-checked against `reviews/literature-validity-audit.md`.
 
@@ -899,6 +899,7 @@ A result shows `own → published` when the two differ (with the definitions tha
 **Results**
 - `PURE-MATH` · `trapArea_smul` — Scaling the sampled line by `k` scales the trapezoid area by `k`.
 - `PURE-MATH` · `trapArea_add` — The trapezoid area of a sum of two sampled profiles is the sum of their areas.
+- `PURE-MATH` · `trapArea_antisymm_noise` — Antisymmetric noise cancels.
 - `PURE-MATH` · `trapArea_const` — A constant pedestal `c` adds exactly `c · (x n − x 0)`: the area of the constant function telescopes to the window width.
 - `PURE-MATH` · `trapArea_line_pedestal` — A line of amplitude `k` on a constant pedestal `c`: `area(k·line + c) = k·area(line) + c·W` with `W = x n − x 0` the window width.
 - `PURE-MATH` · `trapArea_sub_pedestal` — Subtracting an exact pedestal estimate restores the line area: `area(line + c) − c·W = area(line)`.
