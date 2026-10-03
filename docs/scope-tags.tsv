@@ -855,3 +855,9 @@ RefuseToReport.lean	pasPolicy_guarantees	PURE-MATH	—
 EscapeFactor.lean	inv_sub_inv_exp_sub_one_mem	PURE-MATH	—
 EscapeFactor.lean	escape_ge_slab	PURE-MATH	—
 RatioModeSensitivity.lean	ratioEstimate_hasDerivAt	PURE-MATH	—
+SharedUpperLevel.lean	ordinate_eq_of_energy_eq	EXACT	Ciucci 1999
+SharedUpperLevel.lean	ordinate_wavelength_eq_of_energy_eq	EXACT	Aragón & Aguilera 2008
+SharedUpperLevel.lean	ordinate_gap_of_wrong_weight	EXACT	Ciucci 1999
+SharedUpperLevel.lean	sharedLevelConsistent_of_within	PURE-MATH	—
+SharedUpperLevel.lean	not_both_within_of_inconsistent	PURE-MATH	—
+SharedUpperLevel.lean	wrong_weight_detected	PURE-MATH	—

@@ -92,6 +92,7 @@ One row per module under `CflibsFormal/`. *Base* = imports no `CflibsFormal` mod
 | `SelfAbsorption.lean` | `CflibsFormal` | 11 | 3 | – | ✓ | self-absorption / optical-thickness-aware forward map |
 | `SelfAbsorptionInverse.lean` | `CflibsFormal` | 5 | 1 | – | ✓ | Self-absorption coupled into the inverse problem — identifiability preserved vs. lost |
 | `SelfReversal.lean` | `CflibsFormal` | 4 | 1 | ✓ | ✓ | self-reversal (the two-zone line dip) |
+| `SharedUpperLevel.lean` | `CflibsFormal` | 6 | 1 | – | ✓ | lines from a shared upper level: an atomic-data consistency gate |
 | `SpatialForward.lean` | `CflibsFormal` | 11 | 4 | ✓ | ✓ | spatially-resolved (discrete Abel / onion-peeling) forward model |
 | `StarkBroadening.lean` | `CflibsFormal` | 7 | 4 | – | ✓ | Stark broadening + the McWhirter LTE criterion |
 | `StarkOpacityGuard.lean` | `CflibsFormal` | 9 | 1 | – | ✓ | opacity guard for the Stark electron-density diagnostic |
@@ -101,5 +102,5 @@ One row per module under `CflibsFormal/`. *Base* = imports no `CflibsFormal` mod
 | `TwoDCOSOrder.lean` | `CflibsFormal` | 11 | 1 | – | ✓ | 2DCOS-LIBS formalization — the sequential-order (lead/lag) sign algebra |
 | `VoigtErrorEnclosure.lean` | `CflibsFormal` | 5 | 0 | – | ✓ | a non-circular error enclosure for the Voigt FWHM |
 | `VoigtWidth.lean` | `CflibsFormal` | 7 | 1 | ✓ | ✓ | the Voigt FWHM combination (Olivero–Longbothum) |
-| **93 modules** | | **832** | **247** | | | |
+| **94 modules** | | **838** | **248** | | | |
 

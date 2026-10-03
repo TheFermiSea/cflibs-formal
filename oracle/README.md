@@ -52,8 +52,8 @@ The two sub-directories are **not** generated from Lean. Their expected values c
 Python reference implementations beside them, so a self-check run (no `--kernel` / `--module`)
 only shows the fixtures are current and the reference still satisfies the relations; the test of
 an implementation is a run with a candidate. What ties them to the spec is the relations
-themselves (`LineExtraction.lean`, `LineEvidence.lean`, `StarkOpacityGuard.lean`,
-`ErrorBudget.lean`), not a Float mirror.
+themselves (`LineExtraction.lean`, `LineEvidence.lean`, `SharedUpperLevel.lean`,
+`StarkOpacityGuard.lean`, `ErrorBudget.lean`), not a Float mirror.
 
 ## Regenerate / run
 

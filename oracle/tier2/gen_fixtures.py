@@ -165,6 +165,34 @@ add("evidence_dead_teeth_deflate_naive", "comb_recall_conditioned", "conditioned
 add("evidence_dead_band_is_not_evidence", "line_is_evidence", "not_isEvidence_of_dead",
     {"R": 0.0, "I": 1.0e9, "floor": 0.0}, {"evidence": False})
 
+# --- Lines from a shared upper level (SharedUpperLevel) ------------------------------------------
+# STYLIZED triplet from one upper level (statistical weight 3), photon-rate intensities
+# I = F * A * n_upper with one common n_upper. Not measured data. In the `wrong_weight` cases the
+# reader's atomic-data row for the third line has the weight entered as 1 (c = 1/3 on g*A), which
+# lifts that line's ordinate by ln 3 at every temperature.
+G_UP, A_TRIPLET, N_UP, F_CAL = 3.0, [1.0e7, 2.0e7, 4.5e7], 2.0e-4, 5.0
+I_TRIPLET = [F_CAL * a * N_UP for a in A_TRIPLET]
+for tag, g_read, eps in (("correct_rows_agree", [3.0, 3.0, 3.0], 0.05),
+                         ("wrong_weight_flagged", [3.0, 3.0, 1.0], 0.1),
+                         ("wrong_weight_hidden_by_wide_error_bars", [3.0, 3.0, 1.0], 0.6)):
+    ys = [P.boltzmann_ordinate(I_TRIPLET[k], g_read[k], A_TRIPLET[k]) for k in range(3)]
+    pairs = [(0, 1), (0, 2), (1, 2)]
+    add(f"shared_level_{tag}", "shared_level_consistent", "ordinate_gap_of_wrong_weight",
+        {"intensity": I_TRIPLET, "g": g_read, "A": A_TRIPLET, "eps": eps, "pairs": pairs},
+        {"ordinates": ys,
+         "consistent": [P.shared_level_consistent(ys[j], ys[k], eps, eps) for j, k in pairs],
+         "max_gap": max(abs(ys[j] - ys[k]) for j, k in pairs),
+         "ln3_detectable": P.shared_level_detects(1.0 / 3.0, eps, eps)})  # fmt: skip
+# wavelength-form ordinate: energy-calibrated intensities I = (hc / lam) * A * n, read with lam
+LAM = [468.0, 472.2, 481.1]
+I_EN = [F_CAL * A_TRIPLET[k] * N_UP / LAM[k] for k in range(3)]
+ys_en = [P.boltzmann_ordinate(I_EN[k], G_UP, A_TRIPLET[k], LAM[k]) for k in range(3)]
+ys_nolam = [P.boltzmann_ordinate(I_EN[k], G_UP, A_TRIPLET[k]) for k in range(3)]
+add("shared_level_wavelength_ordinate", "shared_level_wavelength", "ordinate_wavelength_eq_of_energy_eq",
+    {"intensity": I_EN, "g": [G_UP] * 3, "A": A_TRIPLET, "lam": LAM, "eps": 0.001},
+    {"ordinates": ys_en, "consistent_with_lam": True,
+     "gap_without_lam": abs(ys_nolam[0] - ys_nolam[2])})  # fmt: skip
+
 # --- A registration shift at the edge of its scan (LineEvidence.AtScanBoundary) ----------------
 for tag, shift, lo, hi, eps in (("applied_at_lower_edge", -0.3, -0.3, 0.3, 0.01),
                                 ("near_upper_edge", 0.29, -0.3, 0.3, 0.02),

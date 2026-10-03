@@ -79,6 +79,30 @@ def main(argv=None):
         elif kind == "shift_applicable":
             ok = (bool(P.shift_at_boundary(i["shift"], i["lo"], i["hi"], i["eps"])) == e["at_boundary"]
                   and bool(P.shift_applicable(i["shift"], i["lo"], i["hi"], i["eps"])) == e["applicable"])
+        elif kind == "shared_level_consistent":
+            # SharedUpperLevel: recompute every ordinate and every pair verdict through the
+            # candidate. A correct triplet must agree; a wrong weight opens a gap of ln 3.
+            ys = [P.boltzmann_ordinate(i["intensity"][k], i["g"][k], i["A"][k])
+                  for k in range(len(i["g"]))]
+            verdicts = [bool(P.shared_level_consistent(ys[j], ys[k], i["eps"], i["eps"]))
+                        for j, k in i["pairs"]]
+            gap = max(abs(ys[j] - ys[k]) for j, k in i["pairs"])
+            det = bool(P.shared_level_detects(1.0 / 3.0, i["eps"], i["eps"]))
+            ok = (all(close(a, b, 1e-12) for a, b in zip(ys, e["ordinates"]))
+                  and verdicts == e["consistent"] and abs(gap - e["max_gap"]) <= 1e-9
+                  and det == e["ln3_detectable"]
+                  # the sufficient threshold must not over-promise: detectable => some pair fails
+                  and (not det or len(set(i["g"])) == 1 or not all(verdicts)))
+        elif kind == "shared_level_wavelength":
+            n = len(i["g"])
+            ys = [P.boltzmann_ordinate(i["intensity"][k], i["g"][k], i["A"][k], i["lam"][k])
+                  for k in range(n)]
+            ys0 = [P.boltzmann_ordinate(i["intensity"][k], i["g"][k], i["A"][k]) for k in range(n)]
+            cons = all(P.shared_level_consistent(ys[j], ys[k], i["eps"], i["eps"])
+                       for j in range(n) for k in range(j + 1, n))
+            ok = (all(close(a, b, 1e-12) for a, b in zip(ys, e["ordinates"]))
+                  and cons == e["consistent_with_lam"]
+                  and abs(abs(ys0[0] - ys0[-1]) - e["gap_without_lam"]) <= 1e-9)
         elif kind == "kappa_vs_fisher_witness":
             kb = [P.t_rel_error_bound(E, i["eps"], i["T_hat_K"]) for E in (i["E_mid_eV"], i["E_wide_eV"])]
             fs = [P.t_rel_sigma(E, i["sigma"], i["T_hat_K"]) for E in (i["E_mid_eV"], i["E_wide_eV"])]
