@@ -85,6 +85,27 @@ def t_rel_sigma(E, sigma, t_k):
 
 
 def t_identifiable_fisher(E, sigma, t_k, tau):
-    """Preferred answer/abstain gate: >= 2 lines, SS_E > 0 and the first-order 1-sigma relative T
-    error is within `tau`. (Adding a line never hurts: FisherLineSelection.spreadOn_insert_ge.)"""
+    """NECESSARY answer/abstain gate (not sufficient): >= 2 lines, SS_E > 0 and the first-order
+    1-sigma relative T error is within `tau`. (Adding a line never hurts:
+    FisherLineSelection.spreadOn_insert_ge.)
+
+    Use it to REFUSE (degenerate or tiny SS_E). Do not read a pass as an accuracy statement: it
+    sees only the statistical term, and on the shipped incumbent the realized T error is dominated
+    by a systematic one (oracle calibration: 1-sigma coverage 34%). See `t_rel_total`."""
     return len(E) >= 2 and energy_spread(E) > 0.0 and t_rel_sigma(E, sigma, t_k) <= tau
+
+
+def t_rel_total(E, sigma, t_k, delta_sys):
+    """Statistical and systematic relative T error in quadrature:
+    sqrt(t_rel_sigma^2 + delta_sys^2).
+
+    `delta_sys` is a caller-supplied per-(kernel, instrument) systematic relative error; it is NOT
+    derived in Lean and NOT a constant (oracle runs: the signed median T bias ranges from -0.33 to
+    +0.20 across datasets and moves with the extraction kernel). Always >= delta_sys: when
+    delta_sys > tau no amount of line-energy spread can pass `t_identifiable_total`."""
+    return math.hypot(t_rel_sigma(E, sigma, t_k), delta_sys)
+
+
+def t_identifiable_total(E, sigma, t_k, delta_sys, tau):
+    """Gate including the systematic term: >= 2 lines, SS_E > 0 and `t_rel_total` within `tau`."""
+    return len(E) >= 2 and energy_spread(E) > 0.0 and t_rel_total(E, sigma, t_k, delta_sys) <= tau

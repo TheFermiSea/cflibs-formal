@@ -272,6 +272,7 @@ LineBroadening.lean	gaussQuadrature_comm	PURE-MATH	—
 LineBroadening.lean	deconvolveGaussian_quadrature	EXACT	Aragón & Aguilera 2008
 LineExtraction.lean	trapArea_smul	PURE-MATH	—
 LineExtraction.lean	trapArea_add	PURE-MATH	—
+LineExtraction.lean	trapArea_antisymm_noise	PURE-MATH	—
 LineExtraction.lean	trapArea_const	PURE-MATH	—
 LineExtraction.lean	trapArea_line_pedestal	PURE-MATH	—
 LineExtraction.lean	trapArea_sub_pedestal	PURE-MATH	—

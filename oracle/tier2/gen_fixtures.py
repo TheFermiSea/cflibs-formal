@@ -45,6 +45,29 @@ for name in ("wide", "narrow", "degenerate"):
         {"slope_sigma": None if P.slope_sigma(E, SIGMA) == float("inf") else P.slope_sigma(E, SIGMA),
          "rel_T_sigma": None if r == float("inf") else r,
          "identifiable": P.t_identifiable_fisher(E, SIGMA, T_HAT, TAU1)}, rtol=1e-12)  # fmt: skip
+# Statistical + systematic term. delta_sys is a per-(kernel, instrument) INPUT. The values below
+# are ILLUSTRATIVE signed-median T biases measured on synthetic oracles with a flank-baselined,
+# 2.5 x FWHM kernel (steel, brass, FeCo, NIST Al, ChemCam, SuperCam, CSA); they are not constants.
+DELTA_SYS = {"steel": 0.055, "brass": 0.097, "FeCo": 0.019, "NIST_Al": 0.0, "ChemCam": 0.165,
+             "SuperCam": 0.158, "CSA": 0.030}
+TAU_TOT = 0.1
+for ds, dsys in DELTA_SYS.items():
+    for name in ("wide", "narrow"):
+        E = E_SETS[name]
+        tot = P.t_rel_total(E, SIGMA, T_HAT, dsys)
+        add(f"t_total_{ds}_{name}", "t_identifiable_total", "crlb_slope",
+            {"E_eV": E, "sigma": SIGMA, "T_hat_K": T_HAT, "delta_sys": dsys, "tau": TAU_TOT},
+            {"rel_T_total": tot, "identifiable": P.t_identifiable_total(E, SIGMA, T_HAT, dsys, TAU_TOT)},
+            rtol=1e-12, note="delta_sys illustrative")  # fmt: skip
+# delta_sys above tau: even an enormous energy spread cannot pass (the total is >= delta_sys).
+E_huge = [0.0, 10.0, 20.0, 30.0, 40.0, 50.0, 60.0, 70.0]
+add("t_total_systematic_floor", "t_identifiable_total", "crlb_slope",
+    {"E_eV": E_huge, "sigma": SIGMA, "T_hat_K": T_HAT, "delta_sys": 0.165, "tau": TAU_TOT},
+    {"rel_T_total": P.t_rel_total(E_huge, SIGMA, T_HAT, 0.165),
+     "identifiable": P.t_identifiable_total(E_huge, SIGMA, T_HAT, 0.165, TAU_TOT)},
+    rtol=1e-12, note="the Fisher gate alone WOULD pass this set")  # fmt: skip
+assert P.t_identifiable_fisher(E_huge, SIGMA, T_HAT, TAU_TOT)
+
 # WITNESS that the raw-kappa bound is not monotone in spread (ConditionNumber honest limitations):
 # once SS_E > n, kappa = SS_E / n GROWS with spread, so a wider line set gets a WORSE kappa bound
 # while its Fisher sigma is better. Use the Fisher gate to rank/select; kappa only as a ceiling.

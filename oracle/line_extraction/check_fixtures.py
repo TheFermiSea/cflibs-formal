@@ -62,6 +62,12 @@ def check(doc, kernel):
             g = run({**c["base"], "spectrum": c["addend"]["spectrum"]})
             ok = g is not None and math.isclose(a1[0], a0[0] + g[0], rel_tol=c["rtol"])
             why = f"{a1[0]} vs {a0[0]} + {None if g is None else g[0]}"
+        elif rel.startswith("area(y+n)"):
+            partner = run({**c["base"], "spectrum": c["partner"]["spectrum"]})
+            ok = partner is not None and partner[0] > 0.0 and math.isclose(
+                a1[0] + partner[0], 2.0 * a0[0], rel_tol=c["rtol"]
+            )
+            why = f"{a1[0]} + {None if partner is None else partner[0]} vs {2.0 * a0[0]}"
         elif rel.startswith("area_t - area_0 =="):
             want, diff = c["c"] * c["window_width_nm"], a1[0] - a0[0]
             tol = c["atol"] + c["rtol"] * abs(a0[0])

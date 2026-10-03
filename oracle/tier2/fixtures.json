@@ -215,6 +215,397 @@
    "rtol": 1e-12
   },
   {
+   "id": "t_total_steel_wide",
+   "predicate": "t_identifiable_total",
+   "lean": "crlb_slope",
+   "inputs": {
+    "E_eV": [
+     2.5,
+     3.2,
+     4.1,
+     4.9,
+     5.6,
+     6.3,
+     7.0,
+     7.8
+    ],
+    "sigma": 0.05,
+    "T_hat_K": 10000.0,
+    "delta_sys": 0.055,
+    "tau": 0.1
+   },
+   "expected": {
+    "rel_T_total": 0.055700070398150996,
+    "identifiable": true
+   },
+   "rtol": 1e-12,
+   "note": "delta_sys illustrative"
+  },
+  {
+   "id": "t_total_steel_narrow",
+   "predicate": "t_identifiable_total",
+   "lean": "crlb_slope",
+   "inputs": {
+    "E_eV": [
+     3.14,
+     3.14,
+     3.6,
+     4.02,
+     4.09,
+     3.95
+    ],
+    "sigma": 0.05,
+    "T_hat_K": 10000.0,
+    "delta_sys": 0.055,
+    "tau": 0.1
+   },
+   "expected": {
+    "rel_T_total": 0.07066692645203264,
+    "identifiable": true
+   },
+   "rtol": 1e-12,
+   "note": "delta_sys illustrative"
+  },
+  {
+   "id": "t_total_brass_wide",
+   "predicate": "t_identifiable_total",
+   "lean": "crlb_slope",
+   "inputs": {
+    "E_eV": [
+     2.5,
+     3.2,
+     4.1,
+     4.9,
+     5.6,
+     6.3,
+     7.0,
+     7.8
+    ],
+    "sigma": 0.05,
+    "T_hat_K": 10000.0,
+    "delta_sys": 0.097,
+    "tau": 0.1
+   },
+   "expected": {
+    "rel_T_total": 0.09739865421225787,
+    "identifiable": true
+   },
+   "rtol": 1e-12,
+   "note": "delta_sys illustrative"
+  },
+  {
+   "id": "t_total_brass_narrow",
+   "predicate": "t_identifiable_total",
+   "lean": "crlb_slope",
+   "inputs": {
+    "E_eV": [
+     3.14,
+     3.14,
+     3.6,
+     4.02,
+     4.09,
+     3.95
+    ],
+    "sigma": 0.05,
+    "T_hat_K": 10000.0,
+    "delta_sys": 0.097,
+    "tau": 0.1
+   },
+   "expected": {
+    "rel_T_total": 0.10666683877464914,
+    "identifiable": false
+   },
+   "rtol": 1e-12,
+   "note": "delta_sys illustrative"
+  },
+  {
+   "id": "t_total_FeCo_wide",
+   "predicate": "t_identifiable_total",
+   "lean": "crlb_slope",
+   "inputs": {
+    "E_eV": [
+     2.5,
+     3.2,
+     4.1,
+     4.9,
+     5.6,
+     6.3,
+     7.0,
+     7.8
+    ],
+    "sigma": 0.05,
+    "T_hat_K": 10000.0,
+    "delta_sys": 0.019,
+    "tau": 0.1
+   },
+   "expected": {
+    "rel_T_total": 0.020940340072667797,
+    "identifiable": true
+   },
+   "rtol": 1e-12,
+   "note": "delta_sys illustrative"
+  },
+  {
+   "id": "t_total_FeCo_narrow",
+   "predicate": "t_identifiable_total",
+   "lean": "crlb_slope",
+   "inputs": {
+    "E_eV": [
+     3.14,
+     3.14,
+     3.6,
+     4.02,
+     4.09,
+     3.95
+    ],
+    "sigma": 0.05,
+    "T_hat_K": 10000.0,
+    "delta_sys": 0.019,
+    "tau": 0.1
+   },
+   "expected": {
+    "rel_T_total": 0.048268151965628336,
+    "identifiable": true
+   },
+   "rtol": 1e-12,
+   "note": "delta_sys illustrative"
+  },
+  {
+   "id": "t_total_NIST_Al_wide",
+   "predicate": "t_identifiable_total",
+   "lean": "crlb_slope",
+   "inputs": {
+    "E_eV": [
+     2.5,
+     3.2,
+     4.1,
+     4.9,
+     5.6,
+     6.3,
+     7.0,
+     7.8
+    ],
+    "sigma": 0.05,
+    "T_hat_K": 10000.0,
+    "delta_sys": 0.0,
+    "tau": 0.1
+   },
+   "expected": {
+    "rel_T_total": 0.00880328588420124,
+    "identifiable": true
+   },
+   "rtol": 1e-12,
+   "note": "delta_sys illustrative"
+  },
+  {
+   "id": "t_total_NIST_Al_narrow",
+   "predicate": "t_identifiable_total",
+   "lean": "crlb_slope",
+   "inputs": {
+    "E_eV": [
+     3.14,
+     3.14,
+     3.6,
+     4.02,
+     4.09,
+     3.95
+    ],
+    "sigma": 0.05,
+    "T_hat_K": 10000.0,
+    "delta_sys": 0.0,
+    "tau": 0.1
+   },
+   "expected": {
+    "rel_T_total": 0.04437132513433637,
+    "identifiable": true
+   },
+   "rtol": 1e-12,
+   "note": "delta_sys illustrative"
+  },
+  {
+   "id": "t_total_ChemCam_wide",
+   "predicate": "t_identifiable_total",
+   "lean": "crlb_slope",
+   "inputs": {
+    "E_eV": [
+     2.5,
+     3.2,
+     4.1,
+     4.9,
+     5.6,
+     6.3,
+     7.0,
+     7.8
+    ],
+    "sigma": 0.05,
+    "T_hat_K": 10000.0,
+    "delta_sys": 0.165,
+    "tau": 0.1
+   },
+   "expected": {
+    "rel_T_total": 0.16523467506053013,
+    "identifiable": false
+   },
+   "rtol": 1e-12,
+   "note": "delta_sys illustrative"
+  },
+  {
+   "id": "t_total_ChemCam_narrow",
+   "predicate": "t_identifiable_total",
+   "lean": "crlb_slope",
+   "inputs": {
+    "E_eV": [
+     3.14,
+     3.14,
+     3.6,
+     4.02,
+     4.09,
+     3.95
+    ],
+    "sigma": 0.05,
+    "T_hat_K": 10000.0,
+    "delta_sys": 0.165,
+    "tau": 0.1
+   },
+   "expected": {
+    "rel_T_total": 0.17086197498032438,
+    "identifiable": false
+   },
+   "rtol": 1e-12,
+   "note": "delta_sys illustrative"
+  },
+  {
+   "id": "t_total_SuperCam_wide",
+   "predicate": "t_identifiable_total",
+   "lean": "crlb_slope",
+   "inputs": {
+    "E_eV": [
+     2.5,
+     3.2,
+     4.1,
+     4.9,
+     5.6,
+     6.3,
+     7.0,
+     7.8
+    ],
+    "sigma": 0.05,
+    "T_hat_K": 10000.0,
+    "delta_sys": 0.158,
+    "tau": 0.1
+   },
+   "expected": {
+    "rel_T_total": 0.1582450562967418,
+    "identifiable": false
+   },
+   "rtol": 1e-12,
+   "note": "delta_sys illustrative"
+  },
+  {
+   "id": "t_total_SuperCam_narrow",
+   "predicate": "t_identifiable_total",
+   "lean": "crlb_slope",
+   "inputs": {
+    "E_eV": [
+     3.14,
+     3.14,
+     3.6,
+     4.02,
+     4.09,
+     3.95
+    ],
+    "sigma": 0.05,
+    "T_hat_K": 10000.0,
+    "delta_sys": 0.158,
+    "tau": 0.1
+   },
+   "expected": {
+    "rel_T_total": 0.16411220093026901,
+    "identifiable": false
+   },
+   "rtol": 1e-12,
+   "note": "delta_sys illustrative"
+  },
+  {
+   "id": "t_total_CSA_wide",
+   "predicate": "t_identifiable_total",
+   "lean": "crlb_slope",
+   "inputs": {
+    "E_eV": [
+     2.5,
+     3.2,
+     4.1,
+     4.9,
+     5.6,
+     6.3,
+     7.0,
+     7.8
+    ],
+    "sigma": 0.05,
+    "T_hat_K": 10000.0,
+    "delta_sys": 0.03,
+    "tau": 0.1
+   },
+   "expected": {
+    "rel_T_total": 0.031264961896010315,
+    "identifiable": true
+   },
+   "rtol": 1e-12,
+   "note": "delta_sys illustrative"
+  },
+  {
+   "id": "t_total_CSA_narrow",
+   "predicate": "t_identifiable_total",
+   "lean": "crlb_slope",
+   "inputs": {
+    "E_eV": [
+     3.14,
+     3.14,
+     3.6,
+     4.02,
+     4.09,
+     3.95
+    ],
+    "sigma": 0.05,
+    "T_hat_K": 10000.0,
+    "delta_sys": 0.03,
+    "tau": 0.1
+   },
+   "expected": {
+    "rel_T_total": 0.05356131527676473,
+    "identifiable": true
+   },
+   "rtol": 1e-12,
+   "note": "delta_sys illustrative"
+  },
+  {
+   "id": "t_total_systematic_floor",
+   "predicate": "t_identifiable_total",
+   "lean": "crlb_slope",
+   "inputs": {
+    "E_eV": [
+     0.0,
+     10.0,
+     20.0,
+     30.0,
+     40.0,
+     50.0,
+     60.0,
+     70.0
+    ],
+    "sigma": 0.05,
+    "T_hat_K": 10000.0,
+    "delta_sys": 0.165,
+    "tau": 0.1
+   },
+   "expected": {
+    "rel_T_total": 0.16500133943237993,
+    "identifiable": false
+   },
+   "rtol": 1e-12,
+   "note": "the Fisher gate alone WOULD pass this set"
+  },
+  {
    "id": "kappa_not_monotone_in_spread",
    "predicate": "kappa_vs_fisher_witness",
    "lean": "conditionNumber_disagrees_with_dOptimality",

@@ -55,6 +55,14 @@ def main(argv=None):
                 and bool(P.t_identifiable_fisher(i["E_eV"], i["sigma"], i["T_hat_K"], i["tau"]))
                 == e["identifiable"]
             )
+        elif kind == "t_identifiable_total":
+            tot = P.t_rel_total(i["E_eV"], i["sigma"], i["T_hat_K"], i["delta_sys"])
+            ok = (
+                close(tot, e["rel_T_total"], c["rtol"])
+                and bool(P.t_identifiable_total(i["E_eV"], i["sigma"], i["T_hat_K"],
+                                                i["delta_sys"], i["tau"])) == e["identifiable"]
+                and tot >= i["delta_sys"] * (1.0 - 1e-12)  # the systematic floor
+            )
         elif kind == "kappa_vs_fisher_witness":
             kb = [P.t_rel_error_bound(E, i["eps"], i["T_hat_K"]) for E in (i["E_mid_eV"], i["E_wide_eV"])]
             fs = [P.t_rel_sigma(E, i["sigma"], i["T_hat_K"]) for E in (i["E_mid_eV"], i["E_wide_eV"])]

@@ -419,6 +419,7 @@ LineBroadening.lean	gaussQuadrature_comm	theorem	PURE-MATH	PURE-MATH	—
 LineExtraction.lean	shotSigma_mono	theorem	PURE-MATH	PURE-MATH	—
 LineExtraction.lean	shotSigma_pos	theorem	PURE-MATH	PURE-MATH	—
 LineExtraction.lean	trapArea_add	theorem	PURE-MATH	PURE-MATH	—
+LineExtraction.lean	trapArea_antisymm_noise	theorem	PURE-MATH	PURE-MATH	—
 LineExtraction.lean	trapArea_blend_eq	theorem	PURE-MATH	PURE-MATH	—
 LineExtraction.lean	trapArea_blend_le	theorem	PURE-MATH	PURE-MATH	—
 LineExtraction.lean	trapArea_const	theorem	PURE-MATH	PURE-MATH	—
