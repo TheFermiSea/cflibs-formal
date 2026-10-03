@@ -88,7 +88,8 @@ def main(argv=None):
                         for j, k in i["pairs"]]
             gap = max(abs(ys[j] - ys[k]) for j, k in i["pairs"])
             det = bool(P.shared_level_detects(1.0 / 3.0, i["eps"], i["eps"]))
-            ok = (all(close(a, b, 1e-12) for a, b in zip(ys, e["ordinates"]))
+            ok = (len(ys) == len(e["ordinates"])  # zip would silently truncate a short list
+                  and all(close(a, b, 1e-12) for a, b in zip(ys, e["ordinates"]))
                   and verdicts == e["consistent"] and abs(gap - e["max_gap"]) <= 1e-9
                   and det == e["ln3_detectable"]
                   # the sufficient threshold must not over-promise: detectable => some pair fails
@@ -100,7 +101,8 @@ def main(argv=None):
             ys0 = [P.boltzmann_ordinate(i["intensity"][k], i["g"][k], i["A"][k]) for k in range(n)]
             cons = all(P.shared_level_consistent(ys[j], ys[k], i["eps"], i["eps"])
                        for j in range(n) for k in range(j + 1, n))
-            ok = (all(close(a, b, 1e-12) for a, b in zip(ys, e["ordinates"]))
+            ok = (len(ys) == len(e["ordinates"])
+                  and all(close(a, b, 1e-12) for a, b in zip(ys, e["ordinates"]))
                   and cons == e["consistent_with_lam"]
                   and abs(abs(ys0[0] - ys0[-1]) - e["gap_without_lam"]) <= 1e-9)
         elif kind == "kappa_vs_fisher_witness":
