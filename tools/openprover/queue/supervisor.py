@@ -19,8 +19,8 @@ target.json: {"theorem": "Fully.Qualified.name", "max_tokens": 150000, "max_atte
   server's --reasoning-budget, 16384 on the fleet, or a call that thinks to the budget is cut
   before it answers; it was 16384 until 2026-10-03, and 263 of 1,570 recorded worker calls ended
   at the cap with no answer text), "carry_forward" (default true; false for pilot targets: a
-  new attempt is given the Lean items the latest earlier attempt saved that still compile, and
-  that attempt's final whiteboard, appended to a per-attempt copy of the dossier; every attempt
+  new attempt is given the Lean items that still compile of the earlier attempt that saved the
+  most declarations, and that attempt's final whiteboard, appended to a per-attempt copy of the dossier; every attempt
   used to start from nothing, and on 2026-10-04 two runs ended out of budget a few lemmas short
   with four and five compiled lemma files that the next attempt could not see), "effort" (Claude
   planner, default "high"), "advisor" (e.g. "opus"; attached only on
@@ -221,14 +221,24 @@ def compiles(lean_file: Path) -> bool:
 
 
 def carried(tid: str, attempt: int, check=None) -> tuple[str, dict]:
-    """What earlier attempts leave for attempt `attempt`: the Lean items of the latest earlier
-    run that saved any which still compile, and that run's final whiteboard. Returns the text to
-    append to the dossier (empty when there is nothing) and a record for the run's plan. The
-    audited dossier and statement are never edited; verify.py still rules on the final proof."""
+    """What earlier attempts leave for attempt `attempt`: the Lean items that still compile of
+    the earlier run that got furthest (most theorem/lemma declarations saved; the later run on a
+    tie), and that run's final whiteboard. Not simply the latest run: on 2026-10-04 the second
+    attempts at FT13-log and FT08-log saved 4 and 5 declarations where the first had saved 11 and
+    9. Returns the text to append to the dossier (empty when there is nothing) and a record for
+    the run's plan. The audited dossier and statement are never edited; verify.py still rules on
+    the final proof."""
     check = check or compiles
-    for n in range(attempt - 1, 0, -1):
+    ranked = []
+    for n in range(1, attempt):
+        repo = RUNS / f"{tid}-{n}" / "repo"
+        items = sorted(repo.rglob("*.lean"))[:CARRY_MAX_FILES] if repo.exists() else []
+        decls = sum(len(re.findall(r"^(?:theorem|lemma) ", f.read_text(errors="replace"), re.M))
+                    for f in items)
+        if items:
+            ranked.append((decls, n, items))
+    for _, n, items in sorted(ranked, reverse=True):
         run = RUNS / f"{tid}-{n}"
-        items = sorted((run / "repo").rglob("*.lean"))[:CARRY_MAX_FILES] if (run / "repo").exists() else []
         good = [f for f in items if check(f)]
         if not good:
             continue

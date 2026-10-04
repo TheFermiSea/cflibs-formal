@@ -98,17 +98,20 @@ def test_a_first_attempt_is_given_the_audited_dossier_and_nothing_else(superviso
     assert (d / "dossier.md").read_text() == "goal\n"
 
 
-def test_a_later_attempt_gets_the_compiling_items_of_the_latest_run_that_has_any(
+def test_a_later_attempt_gets_the_compiling_items_of_the_run_that_got_furthest(
     supervisor, monkeypatch
 ):
     d = _target(supervisor)
+    two = "theorem good : True := trivial\n\nlemma also : True := trivial\n"
     _earlier_run(supervisor, 1, {"old.lean": "theorem old : True := trivial\n"})
     _earlier_run(
         supervisor,
         2,
-        {"good.lean": "theorem good : True := trivial\n", "bad.lean": "theorem bad : False := x\n"},
+        {"good.lean": two, "bad.lean": "theorem bad : False := x\n"},
+        board="## Status\nL1 done; L2 next.\n",
     )
-    _earlier_run(supervisor, 3, {"broken.lean": "theorem broken : False := x\n"})
+    # the latest run saved less than run 2, and its only item does not compile
+    _earlier_run(supervisor, 3, {"late.lean": "theorem late : True := trivial\n"}, board="late")
     checked = []
 
     def check(f):
@@ -116,16 +119,16 @@ def test_a_later_attempt_gets_the_compiling_items_of_the_latest_run_that_has_any
         return ": True" in f.read_text()
 
     monkeypatch.setattr(supervisor, "compiles", check)
-    text, record = supervisor.carried("T1", 4, check)
+    text, record = supervisor.carried("T1", 4)
     assert record == {"from_attempt": 2, "lean_items": ["lean/good.lean"]}
-    assert "theorem good" in text and "theorem bad" not in text and "theorem old" not in text
+    assert "theorem good" in text and "theorem bad" not in text
+    assert "theorem old" not in text and "theorem late" not in text
     assert "not part of the audited dossier" in text and "L1 done; L2 next." in text
-    assert "old.lean" not in checked  # run 2 had a compiling item: run 1 is not consulted
+    assert checked == ["bad.lean", "good.lean"]  # only the richest run is compiled
     seen = {}
+    proc = type("P", (), {"pid": 1})()
     monkeypatch.setattr(
-        supervisor.subprocess,
-        "Popen",
-        lambda cmd, **kw: seen.update(cmd=cmd) or type("P", (), {"pid": 1})(),
+        supervisor.subprocess, "Popen", lambda cmd, **kw: seen.update(cmd=cmd) or proc
     )
     monkeypatch.setattr(supervisor, "planner_usd_24h", lambda: 0.0)
     job = supervisor.start("T1", {"name": "n1", "host": "h", "port": 1})
@@ -135,6 +138,17 @@ def test_a_later_attempt_gets_the_compiling_items_of_the_latest_run_that_has_any
     assert "theorem good" in given.read_text()
     assert job["plan"]["carried"] == record
     assert (d / "dossier.md").read_text() == "goal\n"  # the audited dossier is never edited
+
+
+def test_ties_go_to_the_later_run_and_a_run_with_nothing_compiling_is_passed_over(supervisor):
+    _target(supervisor)
+    one = "theorem a : True := trivial\n"
+    _earlier_run(supervisor, 1, {"a.lean": one})
+    _earlier_run(supervisor, 2, {"a.lean": one})
+    assert supervisor.carried("T1", 3, lambda f: True)[1]["from_attempt"] == 2
+    _earlier_run(supervisor, 3, {"b.lean": "theorem x : False := y\n\ntheorem z : False := y\n"})
+    record = supervisor.carried("T1", 4, lambda f: ": True" in f.read_text())[1]
+    assert record["from_attempt"] == 2  # run 3 has more declarations, none of them compiling
 
 
 def test_pilot_targets_and_opted_out_targets_carry_nothing(supervisor, monkeypatch):
