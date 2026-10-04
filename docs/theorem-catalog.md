@@ -9,9 +9,9 @@
 
 A result shows `own → published` when the two differ (with the definitions that weakened it), and a single tag when they agree. A definition with its own row shows `model TAG`.
 
-**Own-tag mix** (838 results): **EXACT** 159 · **REDUCED** 238 · **APPROXIMATION** 4 · **PURE-MATH** 437
+**Own-tag mix** (843 results): **EXACT** 159 · **REDUCED** 238 · **APPROXIMATION** 4 · **PURE-MATH** 442
 
-**Published-tag mix** (838 results; 150 weakened by a model tag): **EXACT** 47 · **REDUCED** 286 · **APPROXIMATION** 68 · **PURE-MATH** 437
+**Published-tag mix** (843 results; 150 weakened by a model tag): **EXACT** 47 · **REDUCED** 286 · **APPROXIMATION** 68 · **PURE-MATH** 442
 
 `EXACT` = an exact theorem about the model it is stated over · `REDUCED` = exact only after a stated reduction (a dimensionless/lumped-factor form) · `APPROXIMATION` = the statement itself is approximate (documented idealization / limiting case) · `PURE-MATH` = infrastructure lemma, no physical claim. The tags are the authors' classification, reviewed result by result as each landed. Only the first 186-entry corpus was cross-checked in one pass against the literature (`reviews/literature-validity-audit.md`), and the then 412 results again on 2026-07-09 (`docs/literature-validation.md`); later results have no whole-corpus literature audit.
 
@@ -922,6 +922,11 @@ A result shows `own → published` when the two differ (with the definitions tha
 - `PURE-MATH` · `trapArea_const` — A constant pedestal `c` adds exactly `c · (x n − x 0)`: the area of the constant function telescopes to the window width.
 - `PURE-MATH` · `trapArea_line_pedestal` — A line of amplitude `k` on a constant pedestal `c`: `area(k·line + c) = k·area(line) + c·W` with `W = x n − x 0` the window width.
 - `PURE-MATH` · `trapArea_sub_pedestal` — Subtracting an exact pedestal estimate restores the line area: `area(line + c) − c·W = area(line)`.
+- `PURE-MATH` · `trapArea_baseline_pedestal` — A baseline-aware kernel is pedestal-invariant.
+- `PURE-MATH` · `trapArea_clampedBaseline_pedestal` — Pedestal response of a zero-clamped baseline.
+- `PURE-MATH` · `trapArea_clampedBaseline_pedestal_of_neg_le` — With a non-negative baseline estimate, a clamped-baseline kernel removes every pedestal that keeps the estimate non-negative: for `−B y ≤ c` the area shift i…
+- `PURE-MATH` · `trapArea_clampedBaseline_pedestal_of_lt_neg` — With a non-negative baseline estimate, a pedestal that drives the estimate negative is no longer tracked: for `c < −B y` the area shift is `(c + B y) · W`, w…
+- `PURE-MATH` · `clampedBaseline_neither_contract` — A zero-clamped baseline satisfies neither pedestal contract.
 - `PURE-MATH` · `trapArea_sub_le` — Sup-norm perturbation of the trapezoid area.
 - `PURE-MATH` · `trapArea_nonneg` — A non-negative sampled line has non-negative trapezoid area on an increasing window.
 - `PURE-MATH` · `trapArea_shift_le` — Sub-pixel shift tolerance.

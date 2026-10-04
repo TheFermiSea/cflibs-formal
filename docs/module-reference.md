@@ -58,7 +58,7 @@ One row per module under `CflibsFormal/`. *Base* = imports no `CflibsFormal` mod
 | `LeastSquaresFit.lean` | `CflibsFormal` | 9 | 3 | – | – | the ordinary-least-squares projection / feasibility inverse |
 | `LineBroadening.lean` | `CflibsFormal` | 5 | 4 | ✓ | ✓ | line broadening (Doppler width + the Voigt Gaussian budget) |
 | `LineEvidence.lean` | `CflibsFormal.LineEvidence` | 9 | 3 | ✓ | ✓ | when is a missing line evidence of absence? (two gates) |
-| `LineExtraction.lean` | `CflibsFormal.LineExtraction` | 13 | 2 | ✓ | ✓ | a metamorphic specification of line extraction |
+| `LineExtraction.lean` | `CflibsFormal.LineExtraction` | 18 | 2 | ✓ | ✓ | a metamorphic specification of line extraction |
 | `LineSelection.lean` | `CflibsFormal` | 19 | 4 | – | ✓ | slope-variance-optimal (D_s) line selection |
 | `MatrixEffects.lean` | `CflibsFormal` | 23 | 7 | – | ✓ | matrix effects (completeness, ablation, ionization suppression) |
 | `MatrixIonizationCoupling.lean` | `CflibsFormal` | 10 | 0 | – | ✓ | Coupling the ionization-suppression channel with the multi-element fixed point |
@@ -102,5 +102,5 @@ One row per module under `CflibsFormal/`. *Base* = imports no `CflibsFormal` mod
 | `TwoDCOSOrder.lean` | `CflibsFormal` | 11 | 1 | – | ✓ | 2DCOS-LIBS formalization — the sequential-order (lead/lag) sign algebra |
 | `VoigtErrorEnclosure.lean` | `CflibsFormal` | 5 | 0 | – | ✓ | a non-circular error enclosure for the Voigt FWHM |
 | `VoigtWidth.lean` | `CflibsFormal` | 7 | 1 | ✓ | ✓ | the Voigt FWHM combination (Olivero–Longbothum) |
-| **94 modules** | | **838** | **248** | | | |
+| **94 modules** | | **843** | **248** | | | |
 
