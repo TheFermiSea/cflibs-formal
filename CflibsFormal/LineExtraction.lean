@@ -62,8 +62,9 @@ the trapezoid rule and are the contract a replacement kernel is tested against.
   `c·W` under an additive pedestal `c`, so the contract for such a kernel is "area of `line + c`
   minus area of `line` equals `c·W`" (`trapArea_line_pedestal`), and after subtracting an exact
   pedestal estimate, equality (`trapArea_sub_pedestal`). A *baseline-aware* kernel is a different
-  contract (shift `0`); this module proves the raw-integral side only, and the fixtures accept
-  either outcome and reject anything in between.
+  contract (shift `0`), proved in (b′) for a baseline estimate that moves with the pedestal
+  (`trapArea_baseline_pedestal`). The fixtures accept either outcome and reject anything in
+  between.
 * **(b′) is about one kernel form.** The clamped-baseline theorems concern the kernel "trapezoid
   area of the samples minus `max (B y) 0`", with `B` any estimator that satisfies
   `B (y + c) = B y + c` on the line at hand (stated as a hypothesis; means, medians and
