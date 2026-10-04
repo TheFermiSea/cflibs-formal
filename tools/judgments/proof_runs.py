@@ -126,7 +126,7 @@ def home() -> Path:
 
 def outcomes(log_text: str) -> Dict[Tuple[str, int], Tuple[bool, Optional[str], Optional[str]]]:
     """``(target, attempt) -> (verified, what OpenProver reported, abort reason)`` from the
-    supervisor log (the last line for an attempt wins)."""
+    supervisor log (the supervisor never reuses an attempt number)."""
     out: Dict[Tuple[str, int], Tuple[bool, Optional[str], Optional[str]]] = {}
     for line in log_text.splitlines():
         m = _VERIFIED.match(line)

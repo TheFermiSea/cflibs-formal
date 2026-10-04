@@ -41,6 +41,12 @@ target.json      {"theorem": "Fully.Qualified.name", "max_tokens": 150000, "max_
 Defaults: `planner` `opus` (Opus 5.5 via the Claude CLI, effort `high`; owner 2026-09-25,
 revising D8's Sonnet), `worker` `qwen38-local`. The supervisor picks it up
 within 30 s. Optional planner keys:
+- `answer_reserve`: the worker's per-call token cap, default 24576. It has to exceed the server's
+  `--reasoning-budget` (16384 on the fleet): a call that thinks to the budget under an equal cap
+  is cut before it writes an answer. Until 2026-10-03 the supervisor passed 16384, and the run
+  records show 263 of 1,570 worker model calls ending at the cap with no answer text and 82 of
+  523 workers returning nothing (`tools/judgments/proof_runs.py` prints these counts). Every
+  finished run now logs `N of M workers returned nothing`.
 - `effort`: Claude planner effort, default `high`. OpenProver's own default for `opus` was `max`;
   the patch removes that because the owner ruled it out on cost.
 - `advisor`: e.g. `"opus"`. It is attached with `--settings` only on planner steps 1,

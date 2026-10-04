@@ -29,6 +29,9 @@ TRAITS = jd.TraitSet(
             "loud", "Is `text` loud?", "It shouts.", "It does not.", (("heard", True),), "shout"
         ),
         jd.Trait("long", "Is `text` long?", "Many words.", "Few words.", (("heard", False),)),
+        jd.Trait(
+            "soft", "Is `text` soft?", "A whisper.", "Not one.", (("heard", False),), "whisper"
+        ),
     ),
 )
 
@@ -87,10 +90,10 @@ def test_the_request_is_one_noul_per_trait_against_a_pinned_model():
     assert request.full_url == jd.API_URL and request.get_method() == "POST"
     assert request.get_header("Authorization") == f"Bearer {KEY}"
     assert body["model"] == jd.PINNED_MODEL and not body["model"].endswith("latest")
-    assert body["state"] == {"text": "HEY"} and set(body["questions"]) == {"loud", "long"}
+    assert body["state"] == {"text": "HEY"} and set(body["questions"]) == set(TRAITS.ids)
     for q in body["questions"].values():
         assert q["type"] == "noul" and set(q["criteria"]) == {"true", "false"}
-    assert nouls == {"loud": 0.9, "long": 0.9}
+    assert nouls == {tid: 0.9 for tid in TRAITS.ids}
 
 
 def test_rate_limits_are_retried_and_the_server_delay_is_honoured():
@@ -181,14 +184,16 @@ def test_auc_orientation_and_ties():
 
 def test_marks_and_signature():
     assert [jd.mark(v) for v in (None, 0.5, 0.36, 0.35, 0.65, 1.0)] == list("???nyy")
-    assert jd.signature(TRAITS, {"loud": 0.9}) == "y?"
+    assert jd.signature(TRAITS, {"loud": 0.9, "soft": 0.1}) == "y?n"
 
 
 def _rows(n=24):
-    """``loud`` predicts ``heard`` perfectly; ``long`` is unrelated; one row is unmeasured."""
-    rows = [({"loud": 0.9 if i < n // 2 else 0.1, "long": 0.9 if i % 2 else 0.1},
+    """``loud`` predicts ``heard`` perfectly and ``soft`` its absence; ``long`` is unrelated;
+    one row is unmeasured."""
+    rows = [({"loud": 0.9 if i < n // 2 else 0.1, "long": 0.9 if i % 2 else 0.1,
+              "soft": 0.1 if i < n // 2 else 0.9},
              {"heard": i < n // 2}) for i in range(n)]  # fmt: skip
-    return rows + [({"loud": 0.9, "long": None}, {"heard": None})]
+    return rows + [({"loud": 0.9, "long": None, "soft": None}, {"heard": None})]
 
 
 def test_hypotheses_follow_the_declared_direction():
@@ -197,6 +202,8 @@ def test_hypotheses_follow_the_declared_direction():
     assert by["loud"]["label_true_when_yes"] == [12, 12]
     assert by["loud"]["label_true_when_no"] == [0, 12]
     assert by["long"]["declared"] == "yes lowers it" and by["long"]["auc_declared"] == 0.5
+    # declared "yes lowers it" and it does: the AUC is oriented to the declaration
+    assert by["soft"]["auc_declared"] == 1.0 and by["soft"]["label_true_when_yes"] == [0, 12]
     few = jd.hypotheses(TRAITS, _rows(12))
     assert not any(h["testable"] for h in few)  # six of each class: below MIN_CLASS
 
@@ -204,9 +211,18 @@ def test_hypotheses_follow_the_declared_direction():
 def test_lessons_state_counts_for_decided_hypotheses_only():
     tested = jd.hypotheses(TRAITS, _rows())
     assert jd.lessons(TRAITS, tested, {"heard": "were heard"}, "Texts") == [
-        "Texts that shout were heard in 12 of 12 cases; texts that do not, in 0 of 12."
+        "Texts that shout were heard in 12 of 12 cases; texts that do not, in 0 of 12.",
+        "Texts that whisper were heard in 0 of 12 cases; texts that do not, in 12 of 12.",
     ]  # ``long`` is undecided (interval around 0.5) and has no lesson phrase
     assert jd.lessons(TRAITS, tested, {}, "Texts") == []
+    base = next(h for h in tested if h["trait"] == "loud")
+    for change in (
+        {"auc_interval95": (0.45, 0.9)},  # the interval contains 0.5
+        {"auc_interval95": None},
+        {"testable": False},
+        {"label_true_when_no": [5, 9]},  # too few decided "no" artifacts
+    ):
+        assert jd.lessons(TRAITS, [{**base, **change}], {"heard": "were heard"}, "Texts") == []
 
 
 # --------------------------------------------------------------------------- proof runs
@@ -229,9 +245,11 @@ def _run(root, name, *, empty, board, proof_md=True, lean=True):
     (workers / "result_0.md").write_text("" if empty else "theorem t : True := trivial")
     (workers / "result_1.md").write_text("done")
     capped = {"choices": [{"finish_reason": "length", "message": {"content": ""}}]}
+    cut = {"choices": [{"finish_reason": "length", "message": {"content": "half an answer"}}]}
     fine = {"choices": [{"finish_reason": "stop", "message": {"content": "ok"}}]}
     (workers / "worker_0_call_0.raw.json").write_text(json.dumps(capped if empty else fine))
-    (workers / "worker_1_call_0.raw.json").write_text(json.dumps(fine))
+    (workers / "worker_1_call_0.raw.json").write_text(json.dumps(cut))  # capped, but answered
+    (workers / "worker_1_call_1.raw.json").write_text(json.dumps(fine))
     (run / "WHITEBOARD.md").write_text(board)
     if proof_md:
         (run / "PROOF.md").write_text("informal")
@@ -262,7 +280,7 @@ def test_exact_counts_come_from_the_records(tmp_path):
     assert facts["workers"] == 2 and facts["workers_empty_result"] == 1
     assert facts["worker_output_tokens"] == 33768
     assert facts["worker_output_tokens_in_empty_results"] == 32768
-    assert facts["worker_calls"] == 2 and facts["worker_calls_at_cap_without_answer"] == 1
+    assert facts["worker_calls"] == 3 and facts["worker_calls_at_cap_without_answer"] == 1
     assert facts["informal_written"] and facts["lean_items_saved"]
 
 
