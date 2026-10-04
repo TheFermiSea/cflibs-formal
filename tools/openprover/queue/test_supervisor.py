@@ -78,3 +78,107 @@ def test_workers_that_returned_nothing_are_counted_from_the_records(supervisor, 
     (run / "steps" / "step_002" / "meta.toml").write_text("not toml [")
     assert supervisor.worker_losses(run) == (1, 3)
     assert supervisor.worker_losses(tmp_path / "runs" / "absent") == (0, 0)
+
+
+def _earlier_run(supervisor, n, files, board="## Status\nL1 done; L2 next.\n"):
+    run = supervisor.RUNS / f"T1-{n}"
+    (run / "repo" / "lean").mkdir(parents=True)
+    for name, body in files.items():
+        (run / "repo" / "lean" / name).write_text(body)
+    (run / "WHITEBOARD.md").write_text(board)
+    return run
+
+
+def test_a_first_attempt_is_given_the_audited_dossier_and_nothing_else(supervisor, monkeypatch):
+    d = _target(supervisor)
+    job, _ = _start(supervisor, monkeypatch)
+    assert job["plan"]["carried"] is None
+    assert not Path(f"{job['run_dir']}.dossier.md").exists()
+    assert supervisor.carried("T1", 1) == ("", {})
+    assert (d / "dossier.md").read_text() == "goal\n"
+
+
+def test_a_later_attempt_gets_the_compiling_items_of_the_latest_run_that_has_any(
+    supervisor, monkeypatch
+):
+    d = _target(supervisor)
+    _earlier_run(supervisor, 1, {"old.lean": "theorem old : True := trivial\n"})
+    _earlier_run(
+        supervisor,
+        2,
+        {"good.lean": "theorem good : True := trivial\n", "bad.lean": "theorem bad : False := x\n"},
+    )
+    _earlier_run(supervisor, 3, {"broken.lean": "theorem broken : False := x\n"})
+    checked = []
+
+    def check(f):
+        checked.append(f.name)
+        return ": True" in f.read_text()
+
+    monkeypatch.setattr(supervisor, "compiles", check)
+    text, record = supervisor.carried("T1", 4, check)
+    assert record == {"from_attempt": 2, "lean_items": ["lean/good.lean"]}
+    assert "theorem good" in text and "theorem bad" not in text and "theorem old" not in text
+    assert "not part of the audited dossier" in text and "L1 done; L2 next." in text
+    assert "old.lean" not in checked  # run 2 had a compiling item: run 1 is not consulted
+    seen = {}
+    monkeypatch.setattr(
+        supervisor.subprocess,
+        "Popen",
+        lambda cmd, **kw: seen.update(cmd=cmd) or type("P", (), {"pid": 1})(),
+    )
+    monkeypatch.setattr(supervisor, "planner_usd_24h", lambda: 0.0)
+    job = supervisor.start("T1", {"name": "n1", "host": "h", "port": 1})
+    cmd = seen["cmd"]
+    given = Path(cmd[cmd.index("--theorem") + 1])
+    assert given.name == "T1-4.dossier.md" and given.read_text().startswith("goal\n")
+    assert "theorem good" in given.read_text()
+    assert job["plan"]["carried"] == record
+    assert (d / "dossier.md").read_text() == "goal\n"  # the audited dossier is never edited
+
+
+def test_pilot_targets_and_opted_out_targets_carry_nothing(supervisor, monkeypatch):
+    for extra in ({"pilot": True}, {"carry_forward": False}):
+        _target(supervisor, **extra)
+        _earlier_run(supervisor, 1, {"good.lean": "theorem good : True := trivial\n"})
+        monkeypatch.setattr(supervisor, "compiles", lambda f: True)
+        job, _ = _start(supervisor, monkeypatch)
+        assert job["plan"]["carried"] is None
+        import shutil
+
+        shutil.rmtree(supervisor.Q / "running" / "T1")
+        shutil.rmtree(supervisor.RUNS)
+        supervisor.RUNS.mkdir()
+
+
+def test_an_item_with_a_sorry_or_a_failed_check_is_not_carried(supervisor, tmp_path, monkeypatch):
+    f = tmp_path / "x.lean"
+    f.write_text("theorem t : True := by sorry\n")
+    calls = []
+    monkeypatch.setattr(
+        supervisor.subprocess,
+        "run",
+        lambda *a, **k: calls.append(a) or type("R", (), {"returncode": 0, "stdout": ""})(),
+    )
+    assert supervisor.compiles(f) is False and calls == []  # a sorry is refused before Lean runs
+    f.write_text("theorem t : True := trivial\n")
+    assert supervisor.compiles(f) is True and len(calls) == 1
+    monkeypatch.setattr(
+        supervisor.subprocess,
+        "run",
+        lambda *a, **k: type("R", (), {"returncode": 1, "stdout": "error"})(),
+    )
+    assert supervisor.compiles(f) is False
+
+
+def test_an_unwritten_whiteboard_and_an_oversized_item_are_left_out(supervisor):
+    big = "theorem big : True := trivial\n" + "-- pad\n" * 20000
+    _earlier_run(
+        supervisor,
+        1,
+        {"a_small.lean": "theorem small : True := trivial\n", "b_big.lean": big},
+        board="## Goal\n\n**Prove and Formalize**\nProduce both an informal proof\n",
+    )
+    text, record = supervisor.carried("T1", 2, lambda f: True)
+    assert record["lean_items"] == ["lean/a_small.lean"]
+    assert "final whiteboard" not in text and len(text) < supervisor.CARRY_MAX_CHARS

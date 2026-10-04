@@ -18,7 +18,12 @@ target.json: {"theorem": "Fully.Qualified.name", "max_tokens": 150000, "max_atte
   optional: "answer_reserve" (the worker's per-call token cap, default 24576: it must exceed the
   server's --reasoning-budget, 16384 on the fleet, or a call that thinks to the budget is cut
   before it answers; it was 16384 until 2026-10-03, and 263 of 1,570 recorded worker calls ended
-  at the cap with no answer text), "effort" (Claude planner, default "high"), "advisor" (e.g. "opus"; attached only on
+  at the cap with no answer text), "carry_forward" (default true; false for pilot targets: a
+  new attempt is given the Lean items the latest earlier attempt saved that still compile, and
+  that attempt's final whiteboard, appended to a per-attempt copy of the dossier; every attempt
+  used to start from nothing, and on 2026-10-04 two runs ended out of budget a few lemmas short
+  with four and five compiled lemma files that the next attempt could not see), "effort" (Claude
+  planner, default "high"), "advisor" (e.g. "opus"; attached only on
   planner steps 1, 1+advisor_every, ... up to advisor_max per run), "history_budget" (chars of
   planner history, default 120000 for every planner so arms see the same history), "pilot" (true:
   exempt from the daily-cap fallback below, so a planner comparison keeps its arms).
@@ -59,7 +64,11 @@ VERIFY = Path(__file__).with_name("verify.py")
 POLL_S, WALL_S, NODE_BACKOFF_S = 30, 9 * 3600, 1800
 DEFAULTS = {"max_tokens": 150000, "max_attempts": 2, "planner": "opus", "worker": "qwen38-local",
             "max_planner_usd": 30.0, "effort": "high", "advisor": None, "advisor_every": 5,
-            "advisor_max": 3, "history_budget": 120000, "pilot": False, "answer_reserve": 24576}
+            "advisor_max": 3, "history_budget": 120000, "pilot": False, "answer_reserve": 24576,
+            "carry_forward": True}
+CARRY_MAX_FILES, CARRY_MAX_CHARS = 12, 60000  # what one attempt may hand to the next
+#: The whiteboard OpenProver starts a run with (the dossier itself): the planner never wrote one.
+UNWRITTEN_BOARD = "**Prove and Formalize**\nProduce both"
 CLAUDE_PLANNERS = {"sonnet", "opus"}
 LOCAL_PLANNER = "qwen38-local"
 DAILY_PLANNER_USD = float(os.environ.get("OPENPROVER_DAILY_PLANNER_USD", "60"))
@@ -199,6 +208,51 @@ def worker_losses(run_dir: Path) -> tuple[int, int]:
     return empty, total
 
 
+def compiles(lean_file: Path) -> bool:
+    """True when `lake env lean` accepts the file in the queue's Lean project and it has no `sorry`."""
+    try:
+        if re.search(r"\bsorry\b", lean_file.read_text(errors="replace")):
+            return False
+        p = subprocess.run(["lake", "env", "lean", str(lean_file)], cwd=HOME / "leanproj",
+                           capture_output=True, text=True, timeout=600)
+    except (OSError, subprocess.TimeoutExpired):
+        return False
+    return p.returncode == 0 and "sorry" not in p.stdout
+
+
+def carried(tid: str, attempt: int, check=None) -> tuple[str, dict]:
+    """What earlier attempts leave for attempt `attempt`: the Lean items of the latest earlier
+    run that saved any which still compile, and that run's final whiteboard. Returns the text to
+    append to the dossier (empty when there is nothing) and a record for the run's plan. The
+    audited dossier and statement are never edited; verify.py still rules on the final proof."""
+    check = check or compiles
+    for n in range(attempt - 1, 0, -1):
+        run = RUNS / f"{tid}-{n}"
+        items = sorted((run / "repo").rglob("*.lean"))[:CARRY_MAX_FILES] if (run / "repo").exists() else []
+        good = [f for f in items if check(f)]
+        if not good:
+            continue
+        parts = [f"\n\n---\n\n## From attempt {n} at this target (added by the queue; not part of the "
+                 "audited dossier)\n\nThe Lean files below were saved by that attempt and compile, as "
+                 "they stand and with no `sorry`, against this Lean project (checked again just now). "
+                 "They are not audited. Reuse what helps and re-check anything you change. The theorem "
+                 "to prove and its definitions are those of the statement file, unchanged.\n"]
+        used = []
+        for f in good:
+            body = f.read_text(errors="replace")
+            if sum(len(x) for x in parts) + len(body) > CARRY_MAX_CHARS:
+                break
+            parts.append(f"\n### {f.relative_to(run / 'repo')}\n\n```lean\n{body.rstrip()}\n```\n")
+            used.append(str(f.relative_to(run / "repo")))
+        board = run / "WHITEBOARD.md"
+        text = board.read_text(errors="replace") if board.exists() else ""
+        if text and UNWRITTEN_BOARD not in text[:300] and sum(len(x) for x in parts) + len(text) <= CARRY_MAX_CHARS:
+            parts.append(f"\n### Attempt {n}'s final whiteboard (that planner's own notes; unverified)\n\n"
+                         f"{text.rstrip()}\n")
+        return "".join(parts), {"from_attempt": n, "lean_items": used}
+    return "", {}
+
+
 def start(tid: str, node: dict, slot: str | None = None, override: str | None = None) -> dict:
     d = Q / "running" / tid
     cfg = target_cfg(d)
@@ -207,6 +261,12 @@ def start(tid: str, node: dict, slot: str | None = None, override: str | None = 
     attempt = max(used, default=0) + 1  # never reuse a run dir: OpenProver would resume it
     run_dir = RUNS / f"{tid}-{attempt}"
     planner, advisor, why = choose_planner(tid, cfg, override)
+    dossier, carry = d / "dossier.md", {}
+    if cfg["carry_forward"] and not cfg["pilot"]:  # pilot arms stay independent of each other
+        extra, carry = carried(tid, attempt)
+        if extra:
+            dossier = Path(f"{run_dir}.dossier.md")
+            dossier.write_text((d / "dossier.md").read_text() + extra)
     cmd = [str(HOME / "venv/bin/openprover"), str(run_dir), "--headless", "--autonomous",
            "--planner-model", planner, "--worker-model", cfg["worker"],
            "--provider-url", f"http://{node['host']}:{node['port']}",
@@ -214,7 +274,7 @@ def start(tid: str, node: dict, slot: str | None = None, override: str | None = 
            "--history-budget", str(cfg["history_budget"]),
            "--on-rate-limited", "backoff",
            "--lean-project", str(HOME / "leanproj"),
-           "--lean-theorem", str(d / "statement.lean"), "--theorem", str(d / "dossier.md")]
+           "--lean-theorem", str(d / "statement.lean"), "--theorem", str(dossier)]
     if planner in CLAUDE_PLANNERS:
         cmd += ["--effort", cfg["effort"]]
     env = {k: v for k, v in os.environ.items() if not k.startswith("OPENPROVER_ADVISOR_")}
@@ -228,14 +288,16 @@ def start(tid: str, node: dict, slot: str | None = None, override: str | None = 
             "advisor_every": cfg["advisor_every"] if advisor else None,
             "advisor_max": cfg["advisor_max"] if advisor else None,
             "history_budget": cfg["history_budget"], "pilot": cfg["pilot"],
-            "answer_reserve": cfg["answer_reserve"],
+            "answer_reserve": cfg["answer_reserve"], "carried": carry or None,
             "slot": slot or node["name"], "planner_override": why}
     Path(f"{run_dir}.planner.json").write_text(json.dumps(plan, indent=2))
     out = open(f"{run_dir}.log", "w")
     proc = subprocess.Popen(cmd, cwd=HOME / "leanproj", stdout=out, stderr=subprocess.STDOUT,
                             start_new_session=True, env=env)
     log(f"{tid}: attempt {attempt} started on {slot or node['name']} (pid {proc.pid}; planner {planner}"
-        f"{f' + advisor {advisor}' if advisor else ''}{f', {why} override' if why else ''})")
+        f"{f' + advisor {advisor}' if advisor else ''}{f', {why} override' if why else ''}"
+        + (f"; carrying {len(carry['lean_items'])} Lean items from attempt {carry['from_attempt']}" if carry else "")
+        + ")")
     return {"tid": tid, "node": node["name"], "node_cfg": node, "slot": slot or node["name"],
             "proc": proc, "run_dir": run_dir, "attempt": attempt, "started": time.time(),
             "cfg": cfg, "plan": plan, "unhealthy": 0, "abort": None}
