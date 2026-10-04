@@ -15,7 +15,10 @@ Layout under $OPENPROVER_HOME (default ~/.local/share/openprover):
 
 target.json: {"theorem": "Fully.Qualified.name", "max_tokens": 150000, "max_attempts": 2,
               "max_planner_usd": 30, "planner": "opus", "worker": "qwen38-local", "note": "..."}
-  optional: "effort" (Claude planner, default "high"), "advisor" (e.g. "opus"; attached only on
+  optional: "answer_reserve" (the worker's per-call token cap, default 24576: it must exceed the
+  server's --reasoning-budget, 16384 on the fleet, or a call that thinks to the budget is cut
+  before it answers; it was 16384 until 2026-10-03, and 263 of 1,570 recorded worker calls ended
+  at the cap with no answer text), "effort" (Claude planner, default "high"), "advisor" (e.g. "opus"; attached only on
   planner steps 1, 1+advisor_every, ... up to advisor_max per run), "history_budget" (chars of
   planner history, default 120000 for every planner so arms see the same history), "pilot" (true:
   exempt from the daily-cap fallback below, so a planner comparison keeps its arms).
@@ -56,7 +59,7 @@ VERIFY = Path(__file__).with_name("verify.py")
 POLL_S, WALL_S, NODE_BACKOFF_S = 30, 9 * 3600, 1800
 DEFAULTS = {"max_tokens": 150000, "max_attempts": 2, "planner": "opus", "worker": "qwen38-local",
             "max_planner_usd": 30.0, "effort": "high", "advisor": None, "advisor_every": 5,
-            "advisor_max": 3, "history_budget": 120000, "pilot": False}
+            "advisor_max": 3, "history_budget": 120000, "pilot": False, "answer_reserve": 24576}
 CLAUDE_PLANNERS = {"sonnet", "opus"}
 LOCAL_PLANNER = "qwen38-local"
 DAILY_PLANNER_USD = float(os.environ.get("OPENPROVER_DAILY_PLANNER_USD", "60"))
@@ -181,6 +184,21 @@ def candidates(run_dir: Path) -> list[Path]:
     return c + sorted((run_dir / "repo").rglob("*.lean")) if (run_dir / "repo").exists() else c
 
 
+def worker_losses(run_dir: Path) -> tuple[int, int]:
+    """(workers that returned an empty result, workers) of a run, from its step records."""
+    empty = total = 0
+    for meta in run_dir.glob("steps/step_*/meta.toml"):
+        try:
+            workers = tomllib.loads(meta.read_text()).get("workers", [])
+        except (OSError, tomllib.TOMLDecodeError):
+            continue
+        for w in workers:
+            total += 1
+            result = meta.parent / "workers" / f"result_{w.get('index')}.md"
+            empty += result.exists() and result.stat().st_size == 0
+    return empty, total
+
+
 def start(tid: str, node: dict, slot: str | None = None, override: str | None = None) -> dict:
     d = Q / "running" / tid
     cfg = target_cfg(d)
@@ -192,7 +210,7 @@ def start(tid: str, node: dict, slot: str | None = None, override: str | None = 
     cmd = [str(HOME / "venv/bin/openprover"), str(run_dir), "--headless", "--autonomous",
            "--planner-model", planner, "--worker-model", cfg["worker"],
            "--provider-url", f"http://{node['host']}:{node['port']}",
-           "--answer-reserve", "16384", "--max-tokens", str(cfg["max_tokens"]),
+           "--answer-reserve", str(cfg["answer_reserve"]), "--max-tokens", str(cfg["max_tokens"]),
            "--history-budget", str(cfg["history_budget"]),
            "--on-rate-limited", "backoff",
            "--lean-project", str(HOME / "leanproj"),
@@ -210,6 +228,7 @@ def start(tid: str, node: dict, slot: str | None = None, override: str | None = 
             "advisor_every": cfg["advisor_every"] if advisor else None,
             "advisor_max": cfg["advisor_max"] if advisor else None,
             "history_budget": cfg["history_budget"], "pilot": cfg["pilot"],
+            "answer_reserve": cfg["answer_reserve"],
             "slot": slot or node["name"], "planner_override": why}
     Path(f"{run_dir}.planner.json").write_text(json.dumps(plan, indent=2))
     out = open(f"{run_dir}.log", "w")
@@ -247,6 +266,9 @@ def finish(job: dict) -> None:
     if job["abort"] is None:
         PLANNER_DOWN_STREAK[0] = 0  # a run finished normally: the planner is back
     hours = (time.time() - job["started"]) / 3600
+    lost, workers = worker_losses(run_dir)
+    if workers:  # the exact count the answer_reserve default is judged by
+        log(f"{tid}: run {job['attempt']}: {lost} of {workers} workers returned nothing")
     if ok:
         res = RESULTS / tid
         res.mkdir(parents=True, exist_ok=True)
@@ -257,6 +279,7 @@ def finish(job: dict) -> None:
                                                       "openprover_result": reported,
                                                       "plan": job["plan"],
                                                       "planner_usd": round(planner_usd(run_dir), 2),
+                                                      "workers_empty_result": [lost, workers],
                                                       "verified_at": now()}, indent=2))
         shutil.move(str(d), Q / "done" / tid)
         log(f"{tid}: VERIFIED (attempt {job['attempt']}, {hours:.1f} h, openprover said {reported!r})")

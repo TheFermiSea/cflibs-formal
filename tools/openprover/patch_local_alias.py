@@ -261,3 +261,44 @@ else:
     _h = _h.replace(o, o + '            if no_thinking:  # cflibs patch: llama-server --jinja passes these to the template\n'
                            '                payload["chat_template_kwargs"] = {"enable_thinking": False}\n')
     hf.write_text(_h); print(f"patched (local planner no_thinking): {hf}")
+
+# Worker forced-output turns (2026-10-03). The run records show 263 of 1,570 worker model calls
+# ending at the per-call token cap with no answer text, and 82 of 523 workers returning an empty
+# result: the model was still thinking when the cap came, and the forced-output turns that follow
+# ("your response was cut off", "you are running out of context") think again under the same cap.
+# Ask the chat template not to think on those two turns, and if a forced turn still comes back
+# with no answer text, hand the planner the thinking instead of nothing. Replayed on four recorded
+# workers that had returned nothing, the forced turn with thinking off returned text in all four:
+# a Lean block in two (not compiled here), a draft cut at the cap in one, a stray tool call in
+# one. It turns nothing into something; whether a run then succeeds was not tested.
+_h = hf.read_text()
+if 'if _kwargs.get("no_thinking"):  # cflibs patch' in _h:
+    print(f"already patched (worker forced-output no_thinking): {hf}")
+else:
+    o = ('            "max_tokens": effective_max_tokens,\n            **_sampling(self.model),\n'
+         '            "stream": bool(stream_callback),\n        }\n        if tools:\n')
+    assert _h.count(o) == 1, "forced-output no_thinking: chat() payload not found or not unique"
+    _h = _h.replace(o, o.replace('        if tools:\n',
+                                 '        if _kwargs.get("no_thinking"):  # cflibs patch: forced-output worker turns\n'
+                                 '            payload["chat_template_kwargs"] = {"enable_thinking": False}\n'
+                                 '        if tools:\n'))
+    hf.write_text(_h); print(f"patched (worker forced-output no_thinking): {hf}")
+_p = pr.read_text()
+if "no_thinking=True,  # cflibs patch: forced output" in _p:
+    print(f"already patched (worker forced-output no_thinking): {pr}")
+else:
+    n = 0
+    for label, cap in (("context_limit", "answer_reserve"), ("phase2", "answer_reserve or 16_000")):
+        o = (f'                        tools=None,\n                        max_tokens={cap},\n'
+             f'                        label=f"{{worker_id}}_{label}",\n')
+        assert _p.count(o) == 1, f"forced-output no_thinking: {label} call not found or not unique"
+        _p = _p.replace(o, o.replace('tools=None,\n', 'tools=None,\n                        no_thinking=True,  # cflibs patch: forced output\n'))
+        n += 1
+    # both forced turns end in the same three lines; fall back to the thinking after each
+    o = ('                    self.tui.stream_end(tab=worker_id)\n'
+         '                    total_cost += resp["cost"]\n')
+    assert _p.count(o) == 2, "forced-output fallback: expected two forced-turn sites in the multi-turn worker"
+    _p = _p.replace(o, '                    self.tui.stream_end(tab=worker_id)\n'
+                       '                    resp = _use_thinking_as_result(resp)  # cflibs patch: never return nothing\n'
+                       '                    total_cost += resp["cost"]\n')
+    pr.write_text(_p); print(f"patched (worker forced-output no_thinking, {n} turns): {pr}")
