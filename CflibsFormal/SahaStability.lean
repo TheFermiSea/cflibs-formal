@@ -85,6 +85,10 @@ level-truncation hypothesis, as monotonicity.  Two distinct statements must be k
   (`meanExcitation_monotoneOn_temp`), and `|log U(T1) − log U(T2)|` is bounded by
   `⟨E⟩_{max T1 T2}·|1/(k_B T1) − 1/(k_B T2)|` (`log_partitionFunction_lipschitz_max`), a
   constant far tighter than the `∑ g·E` constants above.  Both are `PURE-MATH`.
+* **The Saha factor in inverse temperature (frontier FT-08).**  Along `T = 1/(k_B β)`,
+  `d log S/dβ = −(χ + 3/(2β) + ⟨E⟩_II − ⟨E⟩_I)` (`log_sahaFactor_hasDerivAt_beta`), from the
+  explicit `β`-form of `log S` (`log_sahaFactor_beta`) and `d log U/dβ = −⟨E⟩` for a finite
+  level list (`hasDerivAt_log_sum_exp`).
 * **Ion zone reweight (frontier FT-19).**  `ionReweight` (`2·θ^{3/2}·e^{−χ/(k_B T)}/n_e`, the
   thermal part of `sahaFactor` over `n_e`; model tag REDUCED) is strictly increasing in `T`
   with no level-truncation hypothesis (`ionReweight_strictMonoOn`, `PURE-MATH`). It feeds the
@@ -990,7 +994,8 @@ sums over the supplied level list, with no cutoff policy asserted. -/
 `⟨E⟩_T = (∑ₖ gₖ·Eₖ·exp(−Eₖ/(k_B T))) / U(T)`: the mean level energy under the LTE level
 populations of `population` (same `boltzmannFactor`, same `partitionFunction`), over the
 supplied finite, possibly truncated, level list. Equivalently `⟨E⟩_T = −d log U/dβ` at
-`β = 1/(k_B T)`; that identity is neither used nor proved here. Division is totalized: the value
+`β = 1/(k_B T)`; that identity is `hasDerivAt_log_sum_exp` (FT-08 section below) and is not
+used by the FT-15 results. Division is totalized: the value
 is `0` if `U = 0`, which positive weights on a nonempty level set exclude. Mathematically
 `meanExcitation kB T g E = tiltMean g E (1/(k_B T))` (`InhomogeneityBias`), with levels in the
 role of zones; see `meanExcitation_eq_tiltMean`. -/
@@ -1122,6 +1127,175 @@ example : 0 < meanExcitation 1 2 (fun _ : Fin 2 => (1:ℝ)) ![0, 1] := by
   simp only [one_mul, Fin.sum_univ_two, Fin.isValue, Matrix.cons_val_zero, neg_zero, zero_div,
     Real.exp_zero, mul_one, Matrix.cons_val_one, Matrix.cons_val_fin_one, zero_add]
   positivity
+
+/-! ### The Saha factor in inverse temperature (frontier FT-08)
+
+Along the path `T = 1/(k_B β)` the log Saha factor is an explicit function of `β`
+(`log_sahaFactor_beta`), and its derivative there is `−(χ + 3/(2β) + ⟨E⟩_II − ⟨E⟩_I)`
+(`log_sahaFactor_hasDerivAt_beta`): the ionization energy, the translational `3/(2β)`, and the
+difference of the two stages' mean excitation energies. The mean energies enter through
+`hasDerivAt_log_sum_exp`, the identity `d log U/dβ = −⟨E⟩` for a finite level list.
+
+The proof of `log_sahaFactor_hasDerivAt_beta` was found by the proof queue for the audited
+statement and re-checked by its verifier. The audited statement carried a local copy of
+`meanExcitation` with the same body as the definition above; here it uses that definition. -/
+
+/-- `exp(−e/(k_B T))` at `T = 1/(k_B b)` is `exp(−e·b)`. -/
+private theorem boltzmannFactor_beta {kB b e : ℝ} (hkB : kB ≠ 0) (hb : b ≠ 0) :
+    boltzmannFactor kB (1 / (kB * b)) e = Real.exp (-e * b) := by
+  unfold boltzmannFactor
+  congr
+  field_simp [hkB, hb]
+
+/-- The partition function at `T = 1/(k_B b)` as a plain sum in `b`. -/
+private theorem partitionFunction_beta {kB b : ℝ} (g E : ι → ℝ) (hkB : kB ≠ 0) (hb : b ≠ 0) :
+    partitionFunction kB (1 / (kB * b)) g E = ∑ k, g k * Real.exp (-E k * b) := by
+  unfold partitionFunction
+  apply Finset.sum_congr rfl
+  intro k _
+  rw [@boltzmannFactor_beta kB b (E k) hkB hb]
+
+/-- The mean excitation energy at `T = 1/(k_B b)` as a ratio of plain sums in `b`. -/
+private theorem meanExcitation_beta {kB b : ℝ} (g E : ι → ℝ) (hkB : kB ≠ 0) (hb : b ≠ 0) :
+    meanExcitation kB (1 / (kB * b)) g E
+      = (∑ k, g k * E k * Real.exp (-E k * b)) / (∑ k, g k * Real.exp (-E k * b)) := by
+  unfold meanExcitation
+  rw [Finset.sum_congr rfl (fun k _ => by rw [@boltzmannFactor_beta kB b (E k) hkB hb])]
+  rw [partitionFunction_beta g E hkB hb]
+
+/-- The thermal bracket at `T = 1/(k_B b)` is `(2π m_e/h²)/b`. -/
+private theorem thermalBracket_beta {kB b me h : ℝ} (hkB : kB ≠ 0) (hb : b ≠ 0) :
+    thermalBracket kB (1 / (kB * b)) me h = (2 * Real.pi * me / h ^ 2) / b := by
+  unfold thermalBracket
+  field_simp [hkB, hb]
+
+/-- **The log Saha factor as an explicit function of inverse temperature.** At
+`T = 1/(k_B b)` with `b > 0`,
+`log S = log 2 + (log ∑ g_II e^{−E_II b} − log ∑ g_I e^{−E_I b})
+  + (3/2)(log(2π m_e/h²) − log b) − χ b`.
+This is `log_sahaFactor` with `β = b` substituted: affine in `b` through `−χ b`, plus the
+`−(3/2) log b` of the translational bracket and the two log partition sums.
+
+Scope (two-axis): own relation EXACT (an identity for the defined Saha factor); definitions
+used: `sahaFactor` (model tag REDUCED: ideal Saha, no ionization-potential depression, level
+sums over the supplied lists); published REDUCED. -/
+theorem log_sahaFactor_beta [Nonempty ι] [Nonempty κ] {kB b me h chi : ℝ}
+    {gZ EZ : ι → ℝ} {gZ1 EZ1 : κ → ℝ}
+    (hkB : 0 < kB) (hb : 0 < b) (hme : 0 < me) (hh : 0 < h)
+    (hgZ : ∀ k, 0 < gZ k) (hgZ1 : ∀ k, 0 < gZ1 k) :
+    Real.log (sahaFactor kB (1 / (kB * b)) me h chi gZ EZ gZ1 EZ1)
+      = Real.log 2 + (Real.log (∑ k, gZ1 k * Real.exp (-EZ1 k * b))
+          - Real.log (∑ k, gZ k * Real.exp (-EZ k * b)))
+        + (3 / 2 : ℝ) * (Real.log (2 * Real.pi * me / h ^ 2) - Real.log b) - chi * b := by
+  have hT : 0 < 1 / (kB * b) := by positivity
+  rw [log_sahaFactor hkB hT hme hh hgZ hgZ1,
+      partitionFunction_beta gZ1 EZ1 hkB.ne' hb.ne',
+      partitionFunction_beta gZ EZ hkB.ne' hb.ne',
+      thermalBracket_beta hkB.ne' hb.ne',
+      Real.log_div (by positivity) hb.ne']
+  rw [show chi / (kB * (1 / (kB * b))) = chi * b by field_simp [hkB.ne', hb.ne']]
+
+/-- Derivative of a finite sum of weighted exponentials `∑ g_k e^{−E_k b}`. -/
+private theorem hasDerivAt_sum_exp (g E : ι → ℝ) (β : ℝ) :
+    HasDerivAt (fun b => ∑ k, g k * Real.exp (-E k * b))
+      (∑ k, -(g k * E k * Real.exp (-E k * β))) β := by
+  have hk : ∀ k, HasDerivAt (fun b => g k * Real.exp (-E k * b))
+      (-(g k * E k * Real.exp (-E k * β))) β := by
+    intro k
+    have h1 : HasDerivAt (fun b => -E k * b) (-E k) β := by
+      simpa using (hasDerivAt_id' β).const_mul (-E k)
+    have h2 : HasDerivAt (fun b => Real.exp (-E k * b)) (Real.exp (-E k * β) * (-E k)) β := by
+      simpa using h1.exp
+    have h3 : HasDerivAt (fun b => g k * Real.exp (-E k * b))
+        (g k * (Real.exp (-E k * β) * (-E k))) β := by
+      simpa using h2.const_mul (g k)
+    convert h3 using 2
+    ring
+  exact HasDerivAt.fun_sum (fun k _ => hk k)
+
+/-- **`d log U/dβ = −⟨E⟩` for a finite level list.** For positive weights,
+`d/dβ log ∑ g_k e^{−E_k β} = −(∑ g_k E_k e^{−E_k β}) / (∑ g_k e^{−E_k β})`, at every real `β`.
+The right side is minus the Boltzmann-weighted mean energy; at `β = 1/(k_B T)` it is
+`−meanExcitation kB T g E` (the plain sums are `partitionFunction` and its energy moment there).
+
+`hg` and `[Nonempty ι]` make the sum positive, so the logarithm is differentiable. No sign
+condition on the energies and none on `β`. Scope: PURE-MATH (a finite sum of exponentials; the
+level list is whatever is supplied). -/
+theorem hasDerivAt_log_sum_exp [Nonempty ι] {g E : ι → ℝ} {β : ℝ} (hg : ∀ k, 0 < g k) :
+    HasDerivAt (fun b => Real.log (∑ k, g k * Real.exp (-E k * b)))
+      (-((∑ k, g k * E k * Real.exp (-E k * β)) / (∑ k, g k * Real.exp (-E k * β)))) β := by
+  have hpos : 0 < ∑ k, g k * Real.exp (-E k * β) :=
+    Finset.sum_pos (fun k _ => mul_pos (hg k) (Real.exp_pos _)) Finset.univ_nonempty
+  have hlog := (hasDerivAt_sum_exp g E β).log hpos.ne'
+  convert hlog using 1
+  rw [Finset.sum_neg_distrib, neg_div]
+
+/-- **Derivative of the log Saha factor in inverse temperature (FT-08).** Along
+`T = 1/(k_B b)`, at `β > 0`,
+`d/db log S = −(χ + 3/(2β) + ⟨E⟩_II − ⟨E⟩_I)`,
+with `⟨E⟩` the mean excitation energies of the upper and lower stage at `T = 1/(k_B β)`.
+
+Reading: on a Saha plot against `β = 1/(k_B T)` the local slope is not `−χ` alone. The
+translational bracket adds `−3/(2β)`, and the two partition functions add the difference of the
+stages' mean excitation energies. The slope equals `−χ` only where those two terms cancel.
+
+Proof: `log S` agrees near `β` with the explicit function of `log_sahaFactor_beta`; that
+function is differentiated term by term (`hasDerivAt_log_sum_exp` for the two partition sums),
+and the sums are identified with `meanExcitation`.
+
+Hypotheses: positive constants and weights, as in `log_sahaFactor`, and `hβ : 0 < β`, which
+keeps `T` positive and `log b` differentiable. `χ` and the level lists are fixed: nothing here
+lets the ionization energy or the level cutoff depend on temperature or density.
+
+Scope (two-axis): own relation EXACT (the exact derivative of the defined Saha factor along
+`T = 1/(k_B β)`); definitions used: `sahaFactor` (model tag REDUCED: ideal Saha, no
+ionization-potential depression, level sums over the supplied lists) and `meanExcitation` (no
+model row); published REDUCED. -/
+theorem log_sahaFactor_hasDerivAt_beta [Nonempty ι] [Nonempty κ] {kB me h chi β : ℝ}
+    {gZ EZ : ι → ℝ} {gZ1 EZ1 : κ → ℝ}
+    (hkB : 0 < kB) (hβ : 0 < β) (hme : 0 < me) (hh : 0 < h)
+    (hgZ : ∀ k, 0 < gZ k) (hgZ1 : ∀ k, 0 < gZ1 k) :
+    HasDerivAt (fun b => Real.log (sahaFactor kB (1 / (kB * b)) me h chi gZ EZ gZ1 EZ1))
+      (-(chi + 3 / (2 * β) + meanExcitation kB (1 / (kB * β)) gZ1 EZ1
+          - meanExcitation kB (1 / (kB * β)) gZ EZ)) β := by
+  have h1 := hasDerivAt_log_sum_exp (E := EZ1) (β := β) hgZ1
+  have h2 := hasDerivAt_log_sum_exp (E := EZ) (β := β) hgZ
+  have h3 := Real.hasDerivAt_log hβ.ne'
+  have h4 := hasDerivAt_id' β
+  have hF : HasDerivAt
+      (fun b => Real.log 2 + (Real.log (∑ k, gZ1 k * Real.exp (-EZ1 k * b))
+        - Real.log (∑ k, gZ k * Real.exp (-EZ k * b)))
+        + (3 / 2 : ℝ) * (Real.log (2 * Real.pi * me / h ^ 2) - Real.log b) - chi * b)
+      ((-((∑ k, gZ1 k * EZ1 k * Real.exp (-EZ1 k * β))
+            / (∑ k, gZ1 k * Real.exp (-EZ1 k * β)))
+          - -((∑ k, gZ k * EZ k * Real.exp (-EZ k * β))
+            / (∑ k, gZ k * Real.exp (-EZ k * β))))
+        + (3 / 2 : ℝ) * (-β⁻¹) - chi * 1) β := by
+    exact (((h1.sub h2).const_add (Real.log 2)).add
+      ((h3.const_sub (Real.log (2 * Real.pi * me / h ^ 2))).const_mul (3 / 2 : ℝ))).sub
+      (h4.const_mul chi)
+  have hev : (fun b => Real.log (sahaFactor kB (1 / (kB * b)) me h chi gZ EZ gZ1 EZ1))
+      =ᶠ[nhds β]
+      (fun b => Real.log 2 + (Real.log (∑ k, gZ1 k * Real.exp (-EZ1 k * b))
+        - Real.log (∑ k, gZ k * Real.exp (-EZ k * b)))
+        + (3 / 2 : ℝ) * (Real.log (2 * Real.pi * me / h ^ 2) - Real.log b) - chi * b) :=
+    Filter.eventually_of_mem (Ioi_mem_nhds hβ)
+      (fun b hb => log_sahaFactor_beta hkB hb hme hh hgZ hgZ1)
+  have h := hF.congr_of_eventuallyEq hev
+  refine h.congr_deriv ?_
+  rw [meanExcitation_beta gZ1 EZ1 hkB.ne' hβ.ne', meanExcitation_beta gZ EZ hkB.ne' hβ.ne']
+  ring
+
+/-- Non-vacuity of `log_sahaFactor_hasDerivAt_beta`: unit constants, ground-state-only level
+lists (`Fin 1`, `E = 0`, `g = 1`), `χ = 1`, at `β = 1`. -/
+example :
+    HasDerivAt
+      (fun b => Real.log (sahaFactor 1 (1 / (1 * b)) 1 1 1 (fun _ : Fin 1 => (1:ℝ)) (fun _ => 0)
+        (fun _ : Fin 1 => (1:ℝ)) (fun _ => 0)))
+      (-(1 + 3 / (2 * 1) + meanExcitation 1 (1 / (1 * 1)) (fun _ : Fin 1 => (1:ℝ)) (fun _ => 0)
+          - meanExcitation 1 (1 / (1 * 1)) (fun _ : Fin 1 => (1:ℝ)) (fun _ => 0))) 1 :=
+  log_sahaFactor_hasDerivAt_beta (ι := Fin 1) (κ := Fin 1) one_pos one_pos one_pos one_pos
+    (fun _ => one_pos) (fun _ => one_pos)
 
 /-! ### Equilibrium electron density strictly increasing in temperature (Frontier 02, M6)
 

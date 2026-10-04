@@ -286,7 +286,9 @@ ErrorBudget.lean	temp_rel_error_eq	theorem	EXACT	EXACT	—
 ErrorBudget.lean	temp_rel_error_hetero	theorem	REDUCED	REDUCED	—
 ErrorBudget.lean	temp_rel_error_le	theorem	REDUCED	REDUCED	—
 EscapeFactor.lean	escape_ge_slab	theorem	PURE-MATH	PURE-MATH	—
+EscapeFactor.lean	hasDerivAt_log_selfAbsorptionFactor	theorem	PURE-MATH	PURE-MATH	—
 EscapeFactor.lean	inv_sub_inv_exp_sub_one_mem	theorem	PURE-MATH	PURE-MATH	—
+EscapeFactor.lean	log_selfAbsorptionFactor_lipschitz	theorem	PURE-MATH	PURE-MATH	—
 EvaluatorSoundness.lean	gateCore_composition_error_le	theorem	REDUCED	REDUCED	—
 EvaluatorSoundness.lean	hardGateBundle_composition_error_le	theorem	REDUCED	REDUCED	—
 EvaluatorSoundness.lean	hardGateBundle_implies_noise_to_composition_hyps	theorem	PURE-MATH	PURE-MATH	—
@@ -750,9 +752,12 @@ SahaStability.lean	electronDensityFromRatio_lipschitz_temp	theorem	REDUCED	REDUC
 SahaStability.lean	electronDensityFromRatio_strictMonoOn_temp	theorem	EXACT	REDUCED	sahaFactor
 SahaStability.lean	electronDensity_lipschitz	theorem	EXACT	REDUCED	sahaFactor
 SahaStability.lean	electronDensity_relativeError	theorem	EXACT	REDUCED	sahaFactor
+SahaStability.lean	hasDerivAt_log_sum_exp	theorem	PURE-MATH	PURE-MATH	—
 SahaStability.lean	ionReweight	def	REDUCED	REDUCED	—
 SahaStability.lean	ionReweight_strictMonoOn	theorem	PURE-MATH	PURE-MATH	—
 SahaStability.lean	log_partitionFunction_lipschitz_max	theorem	PURE-MATH	PURE-MATH	—
+SahaStability.lean	log_sahaFactor_beta	theorem	EXACT	REDUCED	sahaFactor
+SahaStability.lean	log_sahaFactor_hasDerivAt_beta	theorem	EXACT	REDUCED	sahaFactor
 SahaStability.lean	meanExcitation_eq_tiltMean	theorem	PURE-MATH	PURE-MATH	—
 SahaStability.lean	meanExcitation_monotoneOn_temp	theorem	PURE-MATH	PURE-MATH	—
 SahaStability.lean	partitionFunction_eq_mixture	theorem	PURE-MATH	PURE-MATH	—

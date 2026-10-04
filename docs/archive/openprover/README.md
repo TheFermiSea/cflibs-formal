@@ -24,5 +24,12 @@ entries were left out. CF-LIBS-improved backlog and review-round ids were replac
 `[backlog-id]` (a `G1`/`G2` round prefix before such an id was dropped). Nothing else was edited. `MANIFEST.sha256` lists every archived file with its
 SHA-256 as committed.
 
+**Added 2026-10-04.** `results/FT08-log-sahaFactor-hasDerivAt-beta/` and
+`results/FT13-log-selfAbsorptionFactor-lipschitz/`: both targets were verified on that date (attempts 7
+and 11) and landed as `SahaStability.log_sahaFactor_hasDerivAt_beta` and
+`EscapeFactor.log_selfAbsorptionFactor_lipschitz`. Their `parked/` entries are kept as the earlier
+record. In these two verdicts `plan.carried` names the earlier attempt whose compiled Lean items the
+verified attempt started from.
+
 The `.lean` files here are records, not library code: they sit outside every `lean_lib` root and are
 never built.

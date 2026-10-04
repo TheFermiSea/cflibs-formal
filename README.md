@@ -16,7 +16,7 @@ definitions).
 ## Status
 
 <!-- stats:begin -->
-94 modules · 843 named results (theorem/lemma) · 248 defs
+94 modules · 848 named results (theorem/lemma) · 248 defs
 <!-- stats:end -->
 (kept current by `scripts/gen-docs.sh`; the docs-sync CI gate fails if it drifts).
 Axiom-clean invariant: every declaration depends only on `{propext, Classical.choice, Quot.sound}`.

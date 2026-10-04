@@ -475,11 +475,11 @@ it over-corrects (1.4–3.5× for Gaussian and Lorentzian profiles at `τ₀ = 3
 LF-01). `CflibsFormal.opticalDepth_knownTauCert` discharges only the nonnegativity of the model
 optical depth.
 
-The name `knownTauCert` is kept because downstream modules and the oracle reference it. Future
-work (audit FT-13): a ½-Lipschitz bound on `log SA` and a `τ`-error propagation lemma, in which
-an assumed `|τ̂ − τ| ≤ Δ` bounds the log error of the corrected intensity by `Δ/2` for a known
-profile shape. Its content would sit in the assumed `Δ` (a C14-style refusal), not in a
-checkable predicate. -/
+The name `knownTauCert` is kept because downstream modules and the oracle reference it. The
+½-Lipschitz bound on `log SA` (audit FT-13) is `EscapeFactor.log_selfAbsorptionFactor_lipschitz`:
+an assumed `|τ̂ − τ| ≤ Δ` bounds the log error of the flat-slab correction by `Δ/2`. It is not
+wired into this certificate. A version for a known profile shape is future work, and in either
+form the content sits in the assumed `Δ` (a C14-style refusal), not in a checkable predicate. -/
 
 /-- **C12 certificate: `0 ≤ τ`, nothing more.** Despite the name, it does not check that `τ` is
 known or correct; any nonnegative estimate satisfies it (see the section note). -/

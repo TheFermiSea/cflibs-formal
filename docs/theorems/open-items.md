@@ -63,9 +63,8 @@
 
 ## [`ft08.ratio-mode-normalization-invariance`](ft08.ratio-mode-normalization-invariance.md)
 
-- **lean**: Land the Saha-factor beta-derivative after re-pointing its local meanExcitation to CflibsFormal.meanExcitation (FT-15); it is parked due to a statement clash. (FT08-log-sahaFactor-hasDerivAt-beta)
 - **lean**: State and land the two-point beta-box bound for the ratio-mode log-ratio (FT-08 (c)) using the derivative from ratioEstimate_hasDerivAt.
-- **lean**: State and land d ln U/dβ = −⟨E⟩ (audit decomposition step 4, not staged anywhere). Once FT08-log-sahaFactor-hasDerivAt-beta lands, compose both with ratioEstimate_hasDerivAt to obtain the audited coefficient (E_a−⟨E⟩_{I,A})−(E_b−⟨E⟩_{I,B})−f_Aκ_A+f_Bκ_B.
+- **lean**: Compose log_sahaFactor_hasDerivAt_beta and hasDerivAt_log_sum_exp (d ln U/dβ = −⟨E⟩; both landed in SahaStability, outside this card) with ratioEstimate_hasDerivAt to obtain the audited coefficient (E_a−⟨E⟩_{I,A})−(E_b−⟨E⟩_{I,B})−f_Aκ_A+f_Bκ_B.
 
 ## [`ft09.affine-atomic-data-gauge`](ft09.affine-atomic-data-gauge.md)
 
@@ -92,7 +91,6 @@
 
 ## [`ft13.escape-factor-slab-bound`](ft13.escape-factor-slab-bound.md)
 
-- **lean**: The 1/2-Lipschitz bound on log selfAbsorptionFactor is not landed; its proof-queue target remains parked. (FT13-log-selfAbsorptionFactor-lipschitz)
 - **lean**: The profile-generic escapeFactor Lipschitz and tau-error propagation lemmas proposed for FT-13 are not part of this card.
 - **pipeline**: C12 remains the wired HARD known-tau identity in the certificate gate; this card does not retire or replace it.
 
