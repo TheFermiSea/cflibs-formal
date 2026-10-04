@@ -1,7 +1,7 @@
 # Proof-queue archive (2026-09-24 to 2026-09-28)
 
 A dated, read-only snapshot of the proof-queue records behind the frontier results landed in PRs #8
-and #9. Before this snapshot these files existed only outside version control, on the machine that
+and #9, with two results added on 2026-10-04 (PR #21, note below). Before this snapshot these files existed only outside version control, on the machine that
 runs the queue. They are kept because they are the only record of each target's proof route,
 rejected routes, non-vacuity witnesses and verification verdict.
 
@@ -14,7 +14,7 @@ theorem cards in `docs/theorems/` supersede anything here; several notes (for ex
 | `staging/2026-09-24/` | Statement files, planning dossiers and audit notes for the first frontier batch (FT-01 to FT-18 and F02-M6), including the hand-land and manifest folders |
 | `staging/2026-09-27/` | The second batch (FT-08, FT-14, FT-19, FT-20), `FOLLOWUPS.md` and the hand-land proofs |
 | `results/<target>/` | Each queue-verified target: `PROOF.lean`, the audited `statement.lean` and `verdict.json` from `tools/openprover/queue/verify.py` |
-| `parked/<target>/` | The five targets still open after repeated attempts (FT08-log, FT13-log, FT14-conv, FT17-tendsto, F07): statement, dossier and `target.json` |
+| `parked/<target>/` | The five targets that were open after repeated attempts when the snapshot was taken (FT08-log, FT13-log, FT14-conv, FT17-tendsto, F07): statement, dossier and `target.json`. FT08-log and FT13-log have since been verified and landed (note below) |
 
 **Scrubbing (decision D23).** Before committing, absolute paths were replaced with placeholders
 (`<openprover>`, `<cflibs-formal>`, `<CF-LIBS-improved>`, `<scratch>`, `<home>`), machine names and
