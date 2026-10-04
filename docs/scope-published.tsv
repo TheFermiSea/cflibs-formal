@@ -428,12 +428,17 @@ LineEvidence.lean	informative_subset	theorem	PURE-MATH	PURE-MATH	—
 LineEvidence.lean	not_isEvidence_of_dead	theorem	PURE-MATH	PURE-MATH	—
 LineEvidence.lean	not_mem_informative_of_dead	theorem	PURE-MATH	PURE-MATH	—
 LineEvidence.lean	signal_eq_of_dead	theorem	PURE-MATH	PURE-MATH	—
+LineExtraction.lean	clampedBaseline_neither_contract	theorem	PURE-MATH	PURE-MATH	—
 LineExtraction.lean	shotSigma_mono	theorem	PURE-MATH	PURE-MATH	—
 LineExtraction.lean	shotSigma_pos	theorem	PURE-MATH	PURE-MATH	—
 LineExtraction.lean	trapArea_add	theorem	PURE-MATH	PURE-MATH	—
 LineExtraction.lean	trapArea_antisymm_noise	theorem	PURE-MATH	PURE-MATH	—
+LineExtraction.lean	trapArea_baseline_pedestal	theorem	PURE-MATH	PURE-MATH	—
 LineExtraction.lean	trapArea_blend_eq	theorem	PURE-MATH	PURE-MATH	—
 LineExtraction.lean	trapArea_blend_le	theorem	PURE-MATH	PURE-MATH	—
+LineExtraction.lean	trapArea_clampedBaseline_pedestal	theorem	PURE-MATH	PURE-MATH	—
+LineExtraction.lean	trapArea_clampedBaseline_pedestal_of_lt_neg	theorem	PURE-MATH	PURE-MATH	—
+LineExtraction.lean	trapArea_clampedBaseline_pedestal_of_neg_le	theorem	PURE-MATH	PURE-MATH	—
 LineExtraction.lean	trapArea_const	theorem	PURE-MATH	PURE-MATH	—
 LineExtraction.lean	trapArea_line_pedestal	theorem	PURE-MATH	PURE-MATH	—
 LineExtraction.lean	trapArea_nonneg	theorem	PURE-MATH	PURE-MATH	—

@@ -289,6 +289,11 @@ LineExtraction.lean	trapArea_antisymm_noise	PURE-MATH	—
 LineExtraction.lean	trapArea_const	PURE-MATH	—
 LineExtraction.lean	trapArea_line_pedestal	PURE-MATH	—
 LineExtraction.lean	trapArea_sub_pedestal	PURE-MATH	—
+LineExtraction.lean	trapArea_baseline_pedestal	PURE-MATH	—
+LineExtraction.lean	trapArea_clampedBaseline_pedestal	PURE-MATH	—
+LineExtraction.lean	trapArea_clampedBaseline_pedestal_of_neg_le	PURE-MATH	—
+LineExtraction.lean	trapArea_clampedBaseline_pedestal_of_lt_neg	PURE-MATH	—
+LineExtraction.lean	clampedBaseline_neither_contract	PURE-MATH	—
 LineExtraction.lean	trapArea_sub_le	PURE-MATH	—
 LineExtraction.lean	trapArea_nonneg	PURE-MATH	—
 LineExtraction.lean	trapArea_shift_le	PURE-MATH	—
