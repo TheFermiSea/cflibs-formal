@@ -164,7 +164,7 @@ definition is defined once and reused verbatim, and every module imports only `M
     `EscapeFactor`, `LadenburgReiche`, `OpacityBroadening`, `StarkOpacityGuard`,
     `VoigtErrorEnclosure`;
   - *ionization balance and the outer iteration:* `SahaContraction`, `SahaRangeEnclosure`,
-    `IpdSahaInverse`, `JointConvergence`, `OuterLoopModelB`, `MatrixIonizationCoupling`,
+    `IpdSahaInverse`, `IpdGauge`, `JointConvergence`, `OuterLoopModelB`, `MatrixIonizationCoupling`,
     `NonLTEKinetics`, `InhomogeneityBias`, `IonApparentTemperature`;
   - *design, conditioning and line selection:* `OLSIdentifiability`, `OLSConditioning`,
     `ConditionNumber`, `IntervalEnclosure`, `FixedEffectsDesign`, `NoiseGainFloor`,
@@ -268,7 +268,7 @@ exact commands. Gate 5 is judgment, not automated.
 ## Status
 
 <!-- stats:begin -->
-94 modules · 848 named results (theorem/lemma) · 248 defs
+95 modules · 876 named results (theorem/lemma) · 248 defs
 <!-- stats:end -->
 (kept current by `scripts/gen-docs.sh`). CI gates: axiom-cleanliness (`tools/`), style/structure lint (`runLinter`),
 docs-sync + scope-tag completeness (`scripts/gen-docs.sh`), import-hygiene (`scripts/stats.sh`),

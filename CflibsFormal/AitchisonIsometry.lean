@@ -32,6 +32,11 @@ typing guard that makes the word "isometry" meaningful):
 * `aitchisonDist_le_logErr` — for positive compositions, `d_A(y, x)` is at most
   `√(∑ s, (log (y s / x s) − c)²)` for every constant `c`: per-species log-ratio error bounds
   certify an Aitchison-loss bound (the `U` of `RefuseToReport.pasPolicy`).
+* `aitchisonDist_comm`, `aitchisonDist_perturb`, `aitchisonDist_smul`,
+  `aitchisonDist_perturb_smul` — `d_A` is symmetric, unchanged by a common componentwise
+  perturbation, and unchanged by rescaling either argument (frontier FT-07 (i)).
+* `aitchisonDist_aliasing` — an estimate that is the truth times per-species factors `ρ` sits
+  at distance `‖clr ρ‖` from it (frontier FT-07 (ii)).
 
 ## Literature and scope
 
@@ -113,6 +118,89 @@ theorem ilr_inner (x y : ι → ℝ) :
   simp only [ilr]
   rw [LinearIsometryEquiv.inner_map_map, Submodule.coe_inner]
 
+/-! ### Perturbation, scale and aliasing (frontier FT-07) -/
+
+omit [Nonempty ι] in
+/-- The Euclidean clr vector of a componentwise product is the sum of the clr vectors
+(`clr_mul` transported to `EuclideanSpace`). -/
+theorem clrE_mul {x a : ι → ℝ} (hx : ∀ k, 0 < x k) (ha : ∀ k, 0 < a k) :
+    clrE (fun k => a k * x k) = clrE a + clrE x := by
+  unfold clrE
+  rw [clr_mul hx ha]
+  exact map_add _ (clr a) (clr x)
+
+omit [Nonempty ι] in
+/-- **The Aitchison distance is invariant under a common perturbation (FT-07 (i)).** Multiplying
+two positive vectors componentwise by the same positive `a` leaves their distance unchanged.
+
+Reading: if every species' estimate is off by its own factor `a_k`, and the same factors apply
+to two compositions, the distance between them does not see the factors. Multiplying two
+compositions by the same molar masses is such a perturbation; turning the products into mass
+fractions also divides each by its own total, which `aitchisonDist_perturb_smul` covers. It
+says nothing about components replaced by a detection-limit value in one basis: that
+replacement is not a perturbation. Positivity of all three vectors is used (nonzero entries
+would suffice; a zero entry breaks it). Scope: PURE-MATH. Aitchison 1986. -/
+theorem aitchisonDist_perturb {x y a : ι → ℝ} (hx : ∀ k, 0 < x k) (hy : ∀ k, 0 < y k)
+    (ha : ∀ k, 0 < a k) :
+    aitchisonDist (fun k => a k * x k) (fun k => a k * y k) = aitchisonDist x y := by
+  unfold aitchisonDist
+  rw [clrE_mul hx ha, clrE_mul hy ha]
+  congr 1
+  abel
+
+omit [Nonempty ι] in
+/-- **The Aitchison distance is scale invariant (FT-07 (i)).** Rescaling the first vector, if
+it is positive, by `c > 0` does not change its distance to another: closure, or any other
+overall normalization of that argument, is invisible to `d_A`. Nothing is assumed about the
+second vector, which is not rescaled; for both arguments see `aitchisonDist_perturb_smul`.
+Scope: PURE-MATH. Aitchison 1986. -/
+theorem aitchisonDist_smul {x y : ι → ℝ} {c : ℝ} (hc : 0 < c) (hx : ∀ k, 0 < x k) :
+    aitchisonDist (fun k => c * x k) y = aitchisonDist x y := by
+  unfold aitchisonDist clrE
+  rw [clr_const_mul hc hx]
+
+omit [Nonempty ι] in
+/-- **The Aitchison distance is symmetric.** `d_A(x, y) = d_A(y, x)`, with no hypothesis: it is
+the norm of a difference. Scope: PURE-MATH. -/
+theorem aitchisonDist_comm (x y : ι → ℝ) : aitchisonDist x y = aitchisonDist y x := by
+  unfold aitchisonDist
+  exact norm_sub_rev _ _
+
+omit [Nonempty ι] in
+/-- **Perturbation followed by separate normalizations preserves the Aitchison distance
+(FT-07 (i), the change-of-basis form).** For positive `x`, `y`, `a` and any positive constants
+`c₁`, `c₂`, `d_A(c₁·(a ⊙ x), c₂·(a ⊙ y)) = d_A(x, y)`.
+
+Reading: with `a` the molar masses, `c₁ = 1/∑ a x` and `c₂ = 1/∑ a y`, the two arguments are
+the mass fractions of the mole-basis vectors `x` and `y`, so the Aitchison distance between two
+positive compositions is the same on the mole basis and on the mass basis. The masses are an
+input vector here; this repository holds no atomic-mass data. Like `aitchisonDist_perturb`, it
+does not cover components replaced by a detection-limit value. Scope: PURE-MATH. Aitchison
+1986. -/
+theorem aitchisonDist_perturb_smul {x y a : ι → ℝ} {c₁ c₂ : ℝ} (hx : ∀ k, 0 < x k)
+    (hy : ∀ k, 0 < y k) (ha : ∀ k, 0 < a k) (hc₁ : 0 < c₁) (hc₂ : 0 < c₂) :
+    aitchisonDist (fun k => c₁ * (a k * x k)) (fun k => c₂ * (a k * y k))
+      = aitchisonDist x y := by
+  rw [aitchisonDist_smul hc₁ (fun k => mul_pos (ha k) (hx k)),
+    aitchisonDist_comm, aitchisonDist_smul hc₂ (fun k => mul_pos (ha k) (hy k)),
+    aitchisonDist_comm, aitchisonDist_perturb hx hy ha]
+
+omit [Nonempty ι] in
+/-- **Aliasing loss in Aitchison distance (FT-07 (ii)).** If an estimate is the truth perturbed
+componentwise by positive factors `ρ`, its Aitchison distance to the truth is `‖clr ρ‖`: the
+norm of the centred logs of the factors, whatever the composition is.
+
+Reading: per-species multiplicative errors (wrong atomic data, a wrong temperature) cost exactly
+the root-sum-square deviation of their logarithms from their mean. A factor common to all
+species costs nothing. With `ρ = y/x` this is the equality case `c = ē` of the bound
+`aitchisonDist_le_logErr`. Scope: PURE-MATH. Aitchison 1986. -/
+theorem aitchisonDist_aliasing {x ρ : ι → ℝ} (hx : ∀ k, 0 < x k) (hρ : ∀ k, 0 < ρ k) :
+    aitchisonDist (fun k => ρ k * x k) x = ‖clrE ρ‖ := by
+  unfold aitchisonDist
+  rw [clrE_mul hx hρ]
+  congr 1
+  abel
+
 /-! ### Non-vacuity witnesses (concrete data, `D = 3`, `x = (1, 2, 4)` positive) -/
 
 /-- The ilr transform is well-defined on the concrete positive datum `(1, 2, 4)` and the
@@ -138,6 +226,25 @@ private lemma aitchisonDist_neutral_ne_zero :
   have hpos : (0 : ℝ) < Real.log 2 + Real.log 4 :=
     add_pos (Real.log_pos (by norm_num)) (Real.log_pos (by norm_num))
   nlinarith [h0, hpos]
+
+/-- Non-vacuity of `aitchisonDist_perturb_smul` (and through it of `aitchisonDist_perturb`,
+`aitchisonDist_smul` and `aitchisonDist_comm`): `x = (1, 2, 4)`, `y = (1, 1, 1)`, masses
+`a = (5, 1, 2)`, normalizations `3` and `7`. The common value is nonzero
+(`aitchisonDist_neutral_ne_zero`). -/
+example :
+    aitchisonDist (fun k => 3 * ((![5, 1, 2] : Fin 3 → ℝ) k * (![1, 2, 4] : Fin 3 → ℝ) k))
+        (fun k => 7 * ((![5, 1, 2] : Fin 3 → ℝ) k * (![1, 1, 1] : Fin 3 → ℝ) k))
+      = aitchisonDist (![1, 2, 4] : Fin 3 → ℝ) ![1, 1, 1] :=
+  aitchisonDist_perturb_smul (fun k => by fin_cases k <;> norm_num)
+    (fun k => by fin_cases k <;> norm_num) (fun k => by fin_cases k <;> norm_num)
+    (by norm_num) (by norm_num)
+
+/-- Non-vacuity of `aitchisonDist_aliasing`: factors `ρ = (1, 2, 4)` on the truth `(3, 1, 7)`. -/
+example :
+    aitchisonDist (fun k => (![1, 2, 4] : Fin 3 → ℝ) k * (![3, 1, 7] : Fin 3 → ℝ) k) ![3, 1, 7]
+      = ‖clrE (![1, 2, 4] : Fin 3 → ℝ)‖ :=
+  aitchisonDist_aliasing (fun k => by fin_cases k <;> norm_num)
+    (fun k => by fin_cases k <;> norm_num)
 
 /-- **Non-triviality.** The Aitchison distance between `(1, 2, 4)` and the neutral `(1, 1, 1)`
 is nonzero (so the isometry is not between zero-distance points). -/
@@ -198,7 +305,8 @@ omit [Nonempty ι] in
 Reason: with `e s = log (y s / x s)`, positivity gives `clr y s − clr x s = e s − ē` (`ē` the
 mean of `e`), so `d_A(y, x) = √(∑ s, (e s − ē)²)`, and centring minimises the sum of squares
 over constant shifts: `∑ (e − c)² = ∑ (e − ē)² + D·(ē − c)²` with `D = card ι`. The bound is
-sharp: `c = ē` gives equality, so it is not vacuous. Use: per-species log-error bounds
+sharp: `c = ē` gives equality (`aitchisonDist_aliasing`), so it is not vacuous. Use:
+per-species log-error bounds
 `|log (y s / x s) − c| ≤ ε s` certify the loss upper bound `U = √(∑ ε s²)` consumed by the
 refuse-to-report policy (`RefuseToReport.pasPolicy_guarantees`); `c` absorbs any error common
 to all species (a total-density or calibration factor), to which `d_A` is blind.

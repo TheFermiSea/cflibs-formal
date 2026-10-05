@@ -170,9 +170,10 @@ on `(0, ∞)`. Writing `U = U_cut + D` with `D` the sum over dropped levels,
 reduces the claim to `D(T1)·U_cut(T2) < D(T2)·U_cut(T1)`: a double sum over (dropped `d`, kept
 `k`) pairs in which each term's exponent gap is `(1/(k_B T1) − 1/(k_B T2))·(E_d − E_k) > 0`,
 since `E_d ≥ cut > E_k`. No gap, sign or ordering hypothesis on the energies is needed beyond
-`hkeep`/`hdrop`, because every dropped level lies above every kept one. Consequence (follow-up
-results, not proved here): the ratio is injective in `T`, so no temperature-independent factor,
-such as a `gA` calibration, can absorb a change of cutoff at two distinct temperatures.
+`hkeep`/`hdrop`, because every dropped level lies above every kept one. Consequences, proved
+below: the ratio is injective in `T` (`cutRatio_injOn`), so no temperature-independent factor,
+such as a `gA` calibration, can absorb a change of cutoff at two distinct temperatures
+(`cutRatio_not_absorbable_two`).
 
 Hypotheses and why each is present:
 * `hkB : 0 < kB`: `1/(k_B T)` is then strictly decreasing in `T` on `(0, ∞)`.
@@ -223,6 +224,102 @@ theorem cutRatio_strictMonoOn_temp {kB cut : ℝ} {g E : ι → ℝ} (hkB : 0 < 
   rw [partitionFunction_eq_cut_add_tail kB T1 cut, partitionFunction_eq_cut_add_tail kB T2 cut,
     div_lt_div_iff₀ hK1 hK2]
   nlinarith [hcross]
+
+/-- **The truncation ratio is injective in temperature (FT-05 (iii)).** With at least one level
+kept and one dropped, `T ↦ U(T)/U_cut(T)` takes each value at most once on `(0, ∞)`: the
+injectivity of the strictly increasing map of `cutRatio_strictMonoOn_temp`. Same hypotheses,
+same scope (PURE-MATH). -/
+theorem cutRatio_injOn {kB cut : ℝ} {g E : ι → ℝ} (hkB : 0 < kB)
+    (hg : ∀ k, 0 < g k) (hkeep : ∃ k, E k < cut) (hdrop : ∃ k, cut ≤ E k) :
+    Set.InjOn (fun T => partitionFunction kB T g E / partitionFunctionCut kB T cut g E)
+      (Set.Ioi 0) :=
+  (cutRatio_strictMonoOn_temp hkB hg hkeep hdrop).injOn
+
+/-- **No temperature-independent factor absorbs a change of cutoff at two temperatures
+(FT-05 (iii)).** For distinct `T1, T2 > 0` and any constant `c`, the two equations
+`U(T1) = c·U_cut(T1)` and `U(T2) = c·U_cut(T2)` cannot both hold.
+
+Reading: a line-strength or `gA` calibration is one number per line, the same at every
+temperature. If the reader's level list is cut where the truth's is not, the mismatch is the
+factor `U/U_cut`, and no such number reproduces it at two different temperatures. A calibration
+fitted at a single temperature is not excluded by this statement.
+
+Hypotheses as in `cutRatio_strictMonoOn_temp`; `hne : T1 ≠ T2` is what the claim is about.
+Scope: PURE-MATH (finite exponential sums at a fixed `cut`). -/
+theorem cutRatio_not_absorbable_two {kB cut : ℝ} {g E : ι → ℝ} (hkB : 0 < kB)
+    (hg : ∀ k, 0 < g k) (hkeep : ∃ k, E k < cut) (hdrop : ∃ k, cut ≤ E k) (c : ℝ)
+    {T1 T2 : ℝ} (hT1 : 0 < T1) (hT2 : 0 < T2) (hne : T1 ≠ T2) :
+    ¬ (partitionFunction kB T1 g E = c * partitionFunctionCut kB T1 cut g E
+        ∧ partitionFunction kB T2 g E = c * partitionFunctionCut kB T2 cut g E) := by
+  rintro ⟨h1, h2⟩
+  have hK1 : 0 < partitionFunctionCut kB T1 cut g E := partitionFunctionCut_pos hg hkeep
+  have hK2 : 0 < partitionFunctionCut kB T2 cut g E := partitionFunctionCut_pos hg hkeep
+  refine hne (cutRatio_injOn hkB hg hkeep hdrop (Set.mem_Ioi.mpr hT1) (Set.mem_Ioi.mpr hT2) ?_)
+  change partitionFunction kB T1 g E / partitionFunctionCut kB T1 cut g E
+      = partitionFunction kB T2 g E / partitionFunctionCut kB T2 cut g E
+  rw [h1, h2, mul_div_assoc, div_self hK1.ne', mul_div_assoc, div_self hK2.ne']
+
+/-- **Truncation error of the partition function (FT-05 (i)).** Dropping the levels at or above
+`cut` lowers the partition function by an amount between `0` and
+`(∑_{E_k ≥ cut} g_k)·exp(−cut/(k_B T))`: the total dropped weight times the Boltzmann factor at
+the cutoff.
+
+Hypotheses: `hg : ∀ k, 0 ≤ g k` (a negative weight could make the tail negative) and
+`hkT : 0 < k_B T` (it orders the Boltzmann factors of the dropped levels below the one at the
+cutoff). No sign condition on the energies or on `cut`.
+
+Scope: PURE-MATH (a finite sum at a fixed `cut`). The bound is only as tight as the dropped
+weight is small: for a hydrogen-like level list the weights grow like `n²`, the sum over all
+bound levels diverges, and the bound says nothing until a physical cutoff is supplied, which
+this statement does not do. -/
+theorem partitionFunction_sub_cut_bounds {kB T cut : ℝ} {g E : ι → ℝ} (hg : ∀ k, 0 ≤ g k)
+    (hkT : 0 < kB * T) :
+    0 ≤ partitionFunction kB T g E - partitionFunctionCut kB T cut g E ∧
+      partitionFunction kB T g E - partitionFunctionCut kB T cut g E
+        ≤ (∑ k ∈ univ.filter (fun k => cut ≤ E k), g k) * Real.exp (-cut / (kB * T)) := by
+  have hsplit : partitionFunction kB T g E - partitionFunctionCut kB T cut g E
+      = ∑ k ∈ univ.filter (fun k => cut ≤ E k), g k * boltzmannFactor kB T (E k) := by
+    rw [partitionFunction_eq_cut_add_tail kB T cut]
+    ring
+  rw [hsplit]
+  refine ⟨Finset.sum_nonneg fun k _ => mul_nonneg (hg k) (boltzmannFactor_pos _ _ _).le, ?_⟩
+  rw [Finset.sum_mul]
+  refine Finset.sum_le_sum fun k hk => ?_
+  have hk' : cut ≤ E k := (Finset.mem_filter.mp hk).2
+  refine mul_le_mul_of_nonneg_left ?_ (hg k)
+  unfold boltzmannFactor
+  exact Real.exp_le_exp.mpr (div_le_div_of_nonneg_right (by linarith) hkT.le)
+
+/-- Non-vacuity of `cutRatio_not_absorbable_two`: two levels `E = ![0, 1]` with unit weights
+and `cut = 1/2` keep the ground level and drop the other. The factor `c` is the one fitted at
+`T = 1`, `c = U(1)/U_cut(1)`, so the first equation holds, and the theorem then rules out the
+second at `T = 2`. (With an arbitrary `c` the first equation is already false and the theorem
+would not be exercised.) -/
+example :
+    partitionFunction 1 1 (fun _ : Fin 2 => (1:ℝ)) ![0, 1]
+        = partitionFunction 1 1 (fun _ : Fin 2 => (1:ℝ)) ![0, 1]
+            / partitionFunctionCut 1 1 (1 / 2) (fun _ : Fin 2 => (1:ℝ)) ![0, 1]
+          * partitionFunctionCut 1 1 (1 / 2) (fun _ : Fin 2 => (1:ℝ)) ![0, 1] ∧
+    partitionFunction 1 2 (fun _ : Fin 2 => (1:ℝ)) ![0, 1]
+        ≠ partitionFunction 1 1 (fun _ : Fin 2 => (1:ℝ)) ![0, 1]
+            / partitionFunctionCut 1 1 (1 / 2) (fun _ : Fin 2 => (1:ℝ)) ![0, 1]
+          * partitionFunctionCut 1 2 (1 / 2) (fun _ : Fin 2 => (1:ℝ)) ![0, 1] := by
+  have hcut : partitionFunctionCut 1 1 (1 / 2) (fun _ : Fin 2 => (1:ℝ)) ![0, 1] ≠ 0 :=
+    (partitionFunctionCut_pos (fun _ => one_pos) ⟨0, by norm_num⟩).ne'
+  have h1 := (div_mul_cancel₀ (partitionFunction 1 1 (fun _ : Fin 2 => (1:ℝ)) ![0, 1]) hcut).symm
+  exact ⟨h1, fun h2 => cutRatio_not_absorbable_two (ι := Fin 2) one_pos (fun _ => one_pos)
+    ⟨0, by norm_num⟩ ⟨1, by norm_num⟩ _ one_pos two_pos (by norm_num) ⟨h1, h2⟩⟩
+
+/-- Non-vacuity of `partitionFunction_sub_cut_bounds` on the same two levels: the hypotheses
+hold at `k_B T = 1`, and the dropped level carries weight `1` above `cut = 1/2`. -/
+example :
+    0 ≤ partitionFunction 1 1 (fun _ : Fin 2 => (1:ℝ)) ![0, 1]
+        - partitionFunctionCut 1 1 (1 / 2) (fun _ : Fin 2 => (1:ℝ)) ![0, 1] ∧
+    partitionFunction 1 1 (fun _ : Fin 2 => (1:ℝ)) ![0, 1]
+        - partitionFunctionCut 1 1 (1 / 2) (fun _ : Fin 2 => (1:ℝ)) ![0, 1]
+      ≤ (∑ k ∈ Finset.univ.filter (fun k => (1 / 2 : ℝ) ≤ (![0, 1] : Fin 2 → ℝ) k),
+            (fun _ : Fin 2 => (1:ℝ)) k) * Real.exp (-(1 / 2) / (1 * 1)) :=
+  partitionFunction_sub_cut_bounds (fun _ => zero_le_one) (by norm_num)
 
 end LevelCutoff
 

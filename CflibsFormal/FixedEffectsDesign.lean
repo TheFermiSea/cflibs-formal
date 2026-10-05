@@ -29,10 +29,14 @@ formalizes the grouped, weighted design the solver actually runs (frontier FT-04
 * `feSlope_add_smul`: `feSlope` is linear in the ordinates (no hypotheses).
 * `feSlope_isMin`: `feSlope` with its implied group intercepts minimizes the weighted residual
   sum of squares of the one-intercept-per-group model.
+* `feSlope_rss_split`: the residual sum of squares of any competitor is the estimator's plus
+  `SS_W·(β − β̂)²` plus the weighted squared intercept offsets.
+* `feSlope_unique_min`: so the minimizer is unique, on the slope and on the intercept of every
+  group that contains a line.
 
 ## Scope
 
-All three results are `PURE-MATH`: weighted regression algebra over a grouped finite design; no
+All five results are `PURE-MATH`: weighted regression algebra over a grouped finite design; no
 physics definition is used. The physics reading (abscissa `E + IP·(z − 1)`, groups = elements,
 LTE with one temperature, IPD off or frozen) is a reduced model and is not part of any statement
 here.
@@ -259,7 +263,7 @@ Hypotheses.
   to zero on each group, which kills the cross term in the Pythagorean split.
 * `hSS : 0 < withinSS grp w x`: the identifiable case (see `fe_identifiable_iff`), where
   `feSlope` is the genuine ratio `withinCross / withinSS`; this theorem shows it is a minimizer
-  (unique by strict convexity under `hSS`, not claimed here). The inequality itself is
+  (uniqueness is `feSlope_unique_min`). The inequality itself is
   expected to survive `SS_W = 0` under the `0/0 = 0` convention, but that case is not claimed
   here and the solver refuses it (it returns no fit when the denominator is not positive).
 
@@ -296,5 +300,101 @@ theorem feSlope_isMin (grp : ι → κ) (w x y : ι → ℝ) (hw : ∀ k, 0 < w 
   rw [← hC]
   nlinarith [mul_nonneg hSS.le (sq_nonneg (β - bh))]
 
+/-- **Pythagorean split of the fixed-effects residual sum of squares.** With
+`β̂ = feSlope grp w x y` and `â_e = ȳ_e − β̂·x̄_e`, every competitor `(a, β)` satisfies
+`RSS(a, β) = RSS(â, β̂) + SS_W·(β − β̂)² + ∑_k w k·δ_{grp k}²`,
+where `δ_e = ȳ_e − a e − β·x̄_e` is the competitor's intercept offset in group `e`. The two
+extra terms are nonnegative, which gives `feSlope_isMin`; they vanish only at the estimator,
+which gives `feSlope_unique_min`.
+
+Hypotheses as in `feSlope_isMin`: `hw` (positive weights) kills the cross terms between
+within-group deviations and group constants; `hSS` makes `feSlope` the genuine ratio, so that
+`β̂·SS_W = withinCross`. Scope: PURE-MATH (weighted regression algebra, no physics definition).
+
+Literature: Aitken 1935 (Proc. Roy. Soc. Edinburgh 55, 42) for weighted least squares. -/
+theorem feSlope_rss_split (grp : ι → κ) (w x y : ι → ℝ) (hw : ∀ k, 0 < w k)
+    (hSS : 0 < withinSS grp w x) (a : κ → ℝ) (β : ℝ) :
+    ∑ k, w k * (y k - a (grp k) - β * x k) ^ 2
+      = ∑ k, w k * (y k - (gMean grp w y (grp k) - feSlope grp w x y * gMean grp w x (grp k))
+          - feSlope grp w x y * x k) ^ 2
+        + withinSS grp w x * (β - feSlope grp w x y) ^ 2
+        + ∑ k, w k * (gMean grp w y (grp k) - a (grp k) - β * gMean grp w x (grp k)) ^ 2 := by
+  set bh := feSlope grp w x y with hbh
+  have hC : bh * withinSS grp w x = withinCross grp w x y := by
+    rw [hbh, feSlope, div_mul_cancel₀ _ hSS.ne']
+  have hL : ∑ k, w k * (y k - (gMean grp w y (grp k) - bh * gMean grp w x (grp k)) - bh * x k) ^ 2
+      = ∑ k, w k * ((y k - gMean grp w y (grp k)) - bh * (x k - gMean grp w x (grp k))) ^ 2 :=
+    Finset.sum_congr rfl (fun k _ => by ring)
+  set δ : κ → ℝ := fun e => gMean grp w y e - a e - β * gMean grp w x e with hδ
+  have hR : ∑ k, w k * (y k - a (grp k) - β * x k) ^ 2
+      = ∑ k, (w k * ((y k - gMean grp w y (grp k)) - β * (x k - gMean grp w x (grp k))) ^ 2
+        + 2 * (w k * (y k - gMean grp w y (grp k)) * δ (grp k)
+          - β * (w k * (x k - gMean grp w x (grp k)) * δ (grp k)))
+        + w k * δ (grp k) ^ 2) :=
+    Finset.sum_congr rfl (fun k _ => by simp only [hδ]; ring)
+  rw [Finset.sum_add_distrib, Finset.sum_add_distrib, ← Finset.mul_sum, Finset.sum_sub_distrib,
+    ← Finset.mul_sum] at hR
+  rw [hL, hR, sum_dev_mul_groupConst grp w y hw δ, sum_dev_mul_groupConst grp w x hw δ,
+    within_quad, within_quad, ← hC]
+  ring
+
+/-- **The fixed-effects minimizer is unique.** Let `β̂ = feSlope grp w x y` and
+`â_e = ȳ_e − β̂·x̄_e` (weighted group means). If a slope `β` and per-group intercepts `a` do at
+least as well as the estimator, i.e. their weighted residual sum of squares is at most the
+estimator's, then `β = β̂` and `a` agrees with `â` on every group that contains a line.
+
+With `feSlope_isMin` this says the weighted least-squares problem
+`min ∑_k w k (y k − a (grp k) − β x k)²` has exactly one solution up to the intercepts of groups
+with no line, which the objective does not see; that is why the conclusion is stated at
+`grp k`.
+
+Hypotheses. Both are needed. Without `hSS` the slope is not determined: one line with
+`x = y = 0` gives residual `0` for every slope, while `feSlope = 0/0 = 0`. Without `hw` a
+zero-weight line leaves the intercept of its group free. Scope: PURE-MATH.
+
+Literature: Aitken 1935 (Proc. Roy. Soc. Edinburgh 55, 42) for weighted least squares. -/
+theorem feSlope_unique_min (grp : ι → κ) (w x y : ι → ℝ) (hw : ∀ k, 0 < w k)
+    (hSS : 0 < withinSS grp w x) (a : κ → ℝ) (β : ℝ)
+    (hmin : ∑ k, w k * (y k - a (grp k) - β * x k) ^ 2
+        ≤ ∑ k, w k * (y k - (gMean grp w y (grp k) - feSlope grp w x y * gMean grp w x (grp k))
+            - feSlope grp w x y * x k) ^ 2) :
+    β = feSlope grp w x y ∧
+      ∀ k, a (grp k) = gMean grp w y (grp k) - feSlope grp w x y * gMean grp w x (grp k) := by
+  rw [feSlope_rss_split grp w x y hw hSS a β] at hmin
+  have hnn : ∀ k ∈ (univ : Finset ι),
+      0 ≤ w k * (gMean grp w y (grp k) - a (grp k) - β * gMean grp w x (grp k)) ^ 2 :=
+    fun k _ => mul_nonneg (hw k).le (sq_nonneg _)
+  have hsq : 0 ≤ withinSS grp w x * (β - feSlope grp w x y) ^ 2 :=
+    mul_nonneg hSS.le (sq_nonneg _)
+  have h1 : withinSS grp w x * (β - feSlope grp w x y) ^ 2 = 0 := by
+    linarith [Finset.sum_nonneg hnn]
+  have h2 : ∑ k, w k * (gMean grp w y (grp k) - a (grp k) - β * gMean grp w x (grp k)) ^ 2
+      = 0 := by linarith [Finset.sum_nonneg hnn]
+  have hβ : β = feSlope grp w x y :=
+    sub_eq_zero.mp (pow_eq_zero_iff two_ne_zero |>.mp
+      ((mul_eq_zero.mp h1).resolve_left hSS.ne'))
+  refine ⟨hβ, fun k => ?_⟩
+  have hk := (Finset.sum_eq_zero_iff_of_nonneg hnn).mp h2 k (mem_univ k)
+  have hd := pow_eq_zero_iff two_ne_zero |>.mp ((mul_eq_zero.mp hk).resolve_left (hw k).ne')
+  rw [hβ] at hd
+  linarith
+
+/-- Non-vacuity of `feSlope_rss_split` and `feSlope_unique_min`: three lines in two groups
+(`grp = ![0, 0, 1]`), unit weights, abscissae `![0, 1, 5]`. Group `0` has two distinct
+abscissae, so the within-group spread is `1/2 > 0` and both hypotheses hold; the estimator
+itself then satisfies `hmin`, for any ordinates. -/
+example (y : Fin 3 → ℝ) :
+    0 < withinSS (![0, 0, 1] : Fin 3 → Fin 2) (fun _ => 1) ![0, 1, 5] ∧
+    feSlope (![0, 0, 1] : Fin 3 → Fin 2) (fun _ => 1) ![0, 1, 5] y
+      = feSlope (![0, 0, 1] : Fin 3 → Fin 2) (fun _ => 1) ![0, 1, 5] y := by
+  have hSS : withinSS (![0, 0, 1] : Fin 3 → Fin 2) (fun _ => 1) ![0, 1, 5] = 1 / 2 := by
+    simp only [withinSS, withinCross, gMean, Finset.sum_filter, Fin.sum_univ_three]
+    norm_num [show (![0, 0, 1] : Fin 3 → Fin 2) 2 = 1 from rfl,
+      show (![0, 1, 5] : Fin 3 → ℝ) 2 = 5 from rfl]
+  have hpos : 0 < withinSS (![0, 0, 1] : Fin 3 → Fin 2) (fun _ => 1) ![0, 1, 5] := by
+    rw [hSS]; norm_num
+  exact ⟨hpos, (feSlope_unique_min _ _ _ y (fun _ => one_pos) hpos
+    (fun e => gMean _ (fun _ => 1) y e - feSlope _ (fun _ => 1) ![0, 1, 5] y
+      * gMean _ (fun _ => 1) ![0, 1, 5] e) _ le_rfl).1⟩
 
 end CflibsFormal

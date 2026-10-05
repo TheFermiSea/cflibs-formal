@@ -8,8 +8,8 @@ One row per module under `CflibsFormal/`. *Base* = imports no `CflibsFormal` mod
 
 | Module | Namespace | Results | Defs | Base | Lit | Role |
 |---|---|--:|--:|:--:|:--:|---|
-| `Aitchison.lean` | `CflibsFormal` | 4 | 3 | ✓ | ✓ | 2DCOS-LIBS formalization — Aitchison compositional identities |
-| `AitchisonIsometry.lean` | `CflibsFormal` | 4 | 6 | – | ✓ | Aitchison compositional data — a genuine isometric log-ratio (ilr) transform |
+| `Aitchison.lean` | `CflibsFormal` | 6 | 3 | ✓ | ✓ | 2DCOS-LIBS formalization — Aitchison compositional identities |
+| `AitchisonIsometry.lean` | `CflibsFormal` | 10 | 6 | – | ✓ | Aitchison compositional data — a genuine isometric log-ratio (ilr) transform |
 | `Alt/CSigma.lean` | `CflibsFormal.Alt` | 17 | 10 | – | ✓ | the C-sigma (Cσ) single-line method (alternative estimator) |
 | `Alt/CSigmaCurveOfGrowth.lean` | `CflibsFormal.Alt` | 7 | 2 | – | ✓ | The Cσ curve of growth — self-absorption droop below the universal line |
 | `Alt/GaussMarkov.lean` | `CflibsFormal.Alt` | 7 | 1 | – | ✓ | Gauss–Markov optimality (BLUE) for the OLS Boltzmann-plot slope |
@@ -20,8 +20,8 @@ One row per module under `CflibsFormal/`. *Base* = imports no `CflibsFormal` mod
 | `Alt/SelfAbsorbed.lean` | `CflibsFormal.Alt` | 5 | 1 | – | ✓ | the self-absorption-corrected composition estimator (alternative) |
 | `Alt/StochasticBudget.lean` | `CflibsFormal.Alt` | 14 | 4 | – | ✓ | Chebyshev tail (concentration) bounds for the OLS slope and intercept |
 | `Analysis.lean` | `CflibsFormal` | 13 | 0 | ✓ | – | Shared analysis scaffolding |
-| `AtomicDataPerturbation.lean` | `CflibsFormal` | 9 | 4 | – | ✓ | the atomic-data perturbation channel |
-| `Boltzmann.lean` | `CflibsFormal` | 8 | 4 | ✓ | ✓ | Part 1: the Boltzmann distribution |
+| `AtomicDataPerturbation.lean` | `CflibsFormal` | 11 | 4 | – | ✓ | the atomic-data perturbation channel |
+| `Boltzmann.lean` | `CflibsFormal` | 11 | 4 | ✓ | ✓ | Part 1: the Boltzmann distribution |
 | `Certificates.lean` | `CflibsFormal` | 12 | 12 | – | ✓ | runtime certificates (the typed bridge) |
 | `Classic.lean` | `CflibsFormal.Classic` | 5 | 2 | – | ✓ | the classic calibration-free algorithm, assembled and sound |
 | `Closure.lean` | `CflibsFormal` | 7 | 2 | – | ✓ | Closure of species composition |
@@ -36,10 +36,10 @@ One row per module under `CflibsFormal/`. *Base* = imports no `CflibsFormal` mod
 | `DoubletChannel.lean` | `CflibsFormal` | 22 | 1 | – | ✓ | The doublet channel — the second observable that breaks the `N`–`τ` alias |
 | `EquivalentWidth.lean` | `CflibsFormal` | 25 | 4 | ✓ | ✓ | the equivalent-width curve of growth |
 | `ErrorBudget.lean` | `CflibsFormal` | 19 | 2 | – | ✓ | the error-propagation chain and DERIVED reliability thresholds |
-| `EscapeFactor.lean` | `CflibsFormal` | 4 | 0 | – | ✓ | Profile escape factor versus the flat-slab self-absorption factor |
+| `EscapeFactor.lean` | `CflibsFormal` | 5 | 0 | – | ✓ | Profile escape factor versus the flat-slab self-absorption factor |
 | `EvaluatorSoundness.lean` | `CflibsFormal` | 6 | 5 | – | ✓ | evaluator soundness (which hard-gate clauses feed which theorem) |
 | `FisherLineSelection.lean` | `CflibsFormal` | 19 | 1 | – | ✓ | Fisher information, the Cramér–Rao bound, and "adding a line never hurts" |
-| `FixedEffectsDesign.lean` | `CflibsFormal` | 3 | 4 | ✓ | ✓ | the fixed-effects (element-dummy) weighted Boltzmann design |
+| `FixedEffectsDesign.lean` | `CflibsFormal` | 5 | 4 | ✓ | ✓ | the fixed-effects (element-dummy) weighted Boltzmann design |
 | `ForwardMap.lean` | `CflibsFormal` | 3 | 1 | – | ✓ | Part 4: the optically-thin forward map |
 | `ForwardMapEnergy.lean` | `CflibsFormal` | 5 | 1 | – | ✓ | the energy-intensity forward map and convention equivalence |
 | `HeteroAtomicData.lean` | `CflibsFormal` | 11 | 2 | – | ✓ | PER-LINE heterogeneous atomic-data error in the Boltzmann-plot SLOPE |
@@ -48,9 +48,10 @@ One row per module under `CflibsFormal/`. *Base* = imports no `CflibsFormal` mod
 | `InhomogeneityBias.lean` | `CflibsFormal` | 28 | 9 | – | ✓ | Inhomogeneity bias: the sign of the Boltzmann-plot error is a theorem |
 | `IntervalEnclosure.lean` | `CflibsFormal` | 7 | 2 | – | ✓ | a Lipschitz bound on the OLS design normal matrix |
 | `Inverse.lean` | `CflibsFormal` | 3 | 6 | – | ✓ | Part 6: the algorithm-agnostic inverse-problem framework |
-| `IonApparentTemperature.lean` | `CflibsFormal` | 2 | 0 | – | ✓ | Ion and neutral apparent temperatures in a line-of-sight mixture |
+| `IonApparentTemperature.lean` | `CflibsFormal` | 5 | 0 | – | ✓ | Ion and neutral apparent temperatures in a line-of-sight mixture |
+| `IpdGauge.lean` | `CflibsFormal` | 5 | 0 | – | ✓ | the IPD gauge of the ideal Saha factor (frontier FT-02) |
 | `IpdSahaInverse.lean` | `CflibsFormal` | 3 | 1 | ✓ | ✓ | the IPD-aware Saha inverse in log coordinates (frontier FT-02) |
-| `JointConvergence.lean` | `CflibsFormal` | 5 | 1 | – | ✓ | the joint `(T, n_e)` outer-loop contraction (Frontier) |
+| `JointConvergence.lean` | `CflibsFormal` | 9 | 1 | – | ✓ | the joint `(T, n_e)` outer-loop contraction (Frontier) |
 | `JointIdentifiability.lean` | `CflibsFormal` | 1 | 1 | – | ✓ | Part 7: joint (temperature, composition) identifiability |
 | `KernelLineExtraction.lean` | `CflibsFormal` | 1 | 0 | ✓ | ✓ | kernel least-squares line extraction under profile misspecification |
 | `KirchhoffSource.lean` | `CflibsFormal` | 1 | 2 | ✓ | ✓ | Kirchhoff-consistent line opacity and the Planck source function |
@@ -102,5 +103,5 @@ One row per module under `CflibsFormal/`. *Base* = imports no `CflibsFormal` mod
 | `TwoDCOSOrder.lean` | `CflibsFormal` | 11 | 1 | – | ✓ | 2DCOS-LIBS formalization — the sequential-order (lead/lag) sign algebra |
 | `VoigtErrorEnclosure.lean` | `CflibsFormal` | 5 | 0 | – | ✓ | a non-circular error enclosure for the Voigt FWHM |
 | `VoigtWidth.lean` | `CflibsFormal` | 7 | 1 | ✓ | ✓ | the Voigt FWHM combination (Olivero–Longbothum) |
-| **94 modules** | | **848** | **248** | | | |
+| **95 modules** | | **876** | **248** | | | |
 
