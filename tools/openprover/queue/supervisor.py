@@ -1,0 +1,478 @@
+#!/usr/bin/env python3
+"""Continuous proof queue for a fleet of local llama.cpp worker nodes (spec 04 §10.4, decision D14).
+
+Layout under $OPENPROVER_HOME (default ~/.local/share/openprover):
+  venv/                  openprover==1.0.1 + tools/openprover/patch_local_alias.py
+  lean-main/             git worktree of origin/main (the Lean project every run and check uses)
+  leanproj/              symlinks into lean-main (OpenProver writes OpenProver-<id>/ here)
+  fleet.json             [{"name": "node-1", "host": "<address>", "port": 8081}, ...]
+  queue/pending/<id>/    target.json + statement.lean + dossier.md   (drop new targets here)
+  queue/running/<id>/    claimed by a node
+  queue/done/<id>/       a candidate passed verify.py; proof + verdict copied to results/<id>/
+  queue/parked/<id>/     max_attempts exhausted without a verified proof
+  runs/<id>-<n>/         OpenProver run directories
+  status.json, supervisor.log
+
+target.json: {"theorem": "Fully.Qualified.name", "max_tokens": 150000, "max_attempts": 2,
+              "max_planner_usd": 30, "planner": "opus", "worker": "qwen38-local", "note": "..."}
+  optional: "answer_reserve" (the worker's per-call token cap, default 24576: it must exceed the
+  server's --reasoning-budget, 16384 on the fleet, or a call that thinks to the budget is cut
+  before it answers; it was 16384 until 2026-10-03, and 263 of 1,570 recorded worker calls ended
+  at the cap with no answer text), "carry_forward" (default true; false for pilot targets: a
+  new attempt is given the Lean items that still compile of the earlier attempt that saved the
+  most declarations, and that attempt's final whiteboard, appended to a per-attempt copy of the dossier; every attempt
+  used to start from nothing, and on 2026-10-04 two runs ended out of budget a few lemmas short
+  with four and five compiled lemma files that the next attempt could not see), "effort" (Claude
+  planner, default "high"), "advisor" (e.g. "opus"; attached only on
+  planner steps 1, 1+advisor_every, ... up to advisor_max per run), "history_budget" (chars of
+  planner history, default 120000 for every planner so arms see the same history), "pilot" (true:
+  exempt from the daily-cap fallback below, so a planner comparison keeps its arms).
+
+Daily planner cap (owner, 2026-09-25): when the Claude planner spend of the last 24 h (every
+step's meta.toml, advisor included) reaches OPENPROVER_DAILY_PLANNER_USD (default 60, list-price
+equivalent), new non-pilot attempts are planned by the local model (qwen38-local) with no
+advisor. Running attempts keep their per-attempt cap.
+
+`runs` slots per healthy node (fleet.json, default 1), all served by the node's one llama-server;
+`slot_planners[k]` overrides slot k's planner (2026-09-27: [null, "qwen38-local"], so each node runs
+one Claude-planned and one locally planned attempt). A node whose /health fails is restarted once over ssh; if it is still
+down it is skipped for 30 minutes. Running jobs are watched too: a node that fails two consecutive
+health checks mid-run is restarted, and if that fails the run is terminated and requeued without
+charging an attempt; five consecutive failed planner calls (the Claude CLI refusing, e.g. at the
+subscription limit) terminate the run uncharged and pause all dispatch for 30 minutes (2026-09-24: a SLURM prolog killed a node's server and the planner kept
+spawning workers into a dead endpoint, ~$50 nominal). Each attempt is also capped by planner spend
+(`max_planner_usd`, default 30) and a 9 h wall clock. Every candidate (PROOF.lean and every stored Lean item of the
+run) goes through verify.py; OpenProver's own `proved` is never trusted on its own. Nothing is
+committed, pushed or opened as a PR: landing a verified proof is a human step.
+"""
+import json
+import os
+import re
+import tomllib
+import shutil
+import signal
+import subprocess
+import time
+import urllib.request
+from datetime import datetime, timezone
+from pathlib import Path
+
+HOME = Path(os.environ.get("OPENPROVER_HOME", Path.home() / ".local/share/openprover"))
+Q = HOME / "queue"
+RUNS, RESULTS = HOME / "runs", HOME / "results"
+VERIFY = Path(__file__).with_name("verify.py")
+POLL_S, WALL_S, NODE_BACKOFF_S = 30, 9 * 3600, 1800
+DEFAULTS = {"max_tokens": 150000, "max_attempts": 2, "planner": "opus", "worker": "qwen38-local",
+            "max_planner_usd": 30.0, "effort": "high", "advisor": None, "advisor_every": 5,
+            "advisor_max": 3, "history_budget": 120000, "pilot": False, "answer_reserve": 24576,
+            "carry_forward": True}
+CARRY_MAX_FILES, CARRY_MAX_CHARS = 12, 60000  # what one attempt may hand to the next
+#: The whiteboard OpenProver starts a run with (the dossier itself): the planner never wrote one.
+UNWRITTEN_BOARD = "**Prove and Formalize**\nProduce both"
+CLAUDE_PLANNERS = {"sonnet", "opus"}
+LOCAL_PLANNER = "qwen38-local"
+DAILY_PLANNER_USD = float(os.environ.get("OPENPROVER_DAILY_PLANNER_USD", "60"))
+UNHEALTHY_POLLS = 2  # consecutive failed /health checks on a running job's node before acting
+PLANNER_DOWN_STREAK = [0]  # consecutive planner-outage aborts; the pause doubles each time (cap 8x)
+PLANNER_ERR_STEPS = 5  # consecutive planner llm_error steps (e.g. subscription limit) before pausing
+
+
+def now() -> str:
+    return datetime.now(timezone.utc).isoformat(timespec="seconds")
+
+
+def log(msg: str) -> None:
+    with open(HOME / "supervisor.log", "a") as f:
+        f.write(f"{now()} {msg}\n")
+
+
+def healthy(node: dict) -> bool:
+    try:
+        with urllib.request.urlopen(f"http://{node['host']}:{node['port']}/health", timeout=5) as r:
+            return json.load(r).get("status") == "ok"
+    except Exception:
+        return False
+
+
+def restart(node: dict) -> bool:
+    log(f"{node['name']}: unhealthy, restarting llm-server@qwen38")
+    subprocess.run(["ssh", "-o", "BatchMode=yes", "-o", "ConnectTimeout=10", node["name"],
+                    "systemctl restart llm-server@qwen38"], capture_output=True, timeout=120)
+    for _ in range(40):
+        time.sleep(15)
+        if healthy(node):
+            log(f"{node['name']}: back after restart")
+            return True
+    return False
+
+
+def target_cfg(d: Path) -> dict:
+    return {**DEFAULTS, **json.loads((d / "target.json").read_text())}
+
+
+def planner_usd(run_dir: Path) -> float:
+    total = 0.0
+    for f in run_dir.glob("steps/step_*/meta.toml"):
+        try:
+            total += tomllib.loads(f.read_text()).get("planner", {}).get("cost_usd", 0.0)
+        except (OSError, tomllib.TOMLDecodeError):
+            pass
+    return total
+
+
+def planner_usd_24h() -> float:
+    """Planner spend (list-price $, advisor included) of every step finished in the last 24 h."""
+    cutoff = time.time() - 86400
+    total = 0.0
+    for steps in RUNS.glob("*/steps"):
+        if steps.stat().st_mtime < cutoff - WALL_S:  # no step started in the window
+            continue
+        for f in steps.glob("step_*/meta.toml"):
+            try:
+                if f.stat().st_mtime >= cutoff:
+                    total += tomllib.loads(f.read_text()).get("planner", {}).get("cost_usd", 0.0)
+            except (OSError, tomllib.TOMLDecodeError):
+                pass
+    return total
+
+
+def choose_planner(tid: str, cfg: dict, override: str | None = None) -> tuple[str, str | None, str | None]:
+    """(planner, advisor, why) for a new attempt: the slot's override if it has one (pilot targets
+    keep their own), else the target's; a Claude planner over the daily cap becomes the local one."""
+    planner, advisor, why = cfg["planner"], cfg["advisor"], None
+    if override and not cfg["pilot"] and override != planner:
+        planner, advisor, why = override, None, "slot"
+    if planner in CLAUDE_PLANNERS and not cfg["pilot"]:
+        spent = planner_usd_24h()
+        if spent >= DAILY_PLANNER_USD:
+            log(f"{tid}: Claude planner spend ${spent:.2f} in the last 24 h >= "
+                f"${DAILY_PLANNER_USD:.0f} cap, planning with {LOCAL_PLANNER}")
+            return LOCAL_PLANNER, None, "cap"
+    return planner, advisor, why
+
+
+def slots(fleet: list) -> list[tuple[str, dict, str | None]]:
+    """(slot key, node, planner override) for each run slot: `runs` per node (default 1), with
+    `slot_planners[k]` overriding the planner of slot k (e.g. [null, "qwen38-local"])."""
+    out = []
+    for node in fleet:
+        over = node.get("slot_planners", [])
+        for k in range(node.get("runs", 1)):
+            out.append((k, f"{node['name']}#{k}", node, over[k] if k < len(over) else None))
+    # slot 0 of every node before any slot 1: spreads load and fills the Claude-planned slots first
+    return [s[1:] for s in sorted(out, key=lambda s: s[0])]
+
+
+def kill(job: dict) -> None:
+    try:
+        os.killpg(job["proc"].pid, 15)
+    except ProcessLookupError:
+        pass
+
+
+def trailing_llm_errors(run_dir: Path) -> int:
+    """Consecutive most-recent steps whose planner call failed (status = "llm_error")."""
+    n = 0
+    for f in sorted(run_dir.glob("steps/step_*/meta.toml"), reverse=True):
+        try:
+            if tomllib.loads(f.read_text()).get("status") != "llm_error":
+                break
+        except (OSError, tomllib.TOMLDecodeError):
+            break
+        n += 1
+    return n
+
+
+def charged(d: Path) -> int:
+    f = d / "attempts_charged"
+    return int(f.read_text()) if f.exists() else 0
+
+
+def candidates(run_dir: Path) -> list[Path]:
+    c = [run_dir / "PROOF.lean"] if (run_dir / "PROOF.lean").exists() else []
+    return c + sorted((run_dir / "repo").rglob("*.lean")) if (run_dir / "repo").exists() else c
+
+
+def worker_losses(run_dir: Path) -> tuple[int, int]:
+    """(workers that returned an empty result, workers) of a run, from its step records."""
+    empty = total = 0
+    for meta in run_dir.glob("steps/step_*/meta.toml"):
+        try:
+            workers = tomllib.loads(meta.read_text()).get("workers", [])
+        except (OSError, tomllib.TOMLDecodeError):
+            continue
+        for w in workers:
+            total += 1
+            result = meta.parent / "workers" / f"result_{w.get('index')}.md"
+            empty += result.exists() and result.stat().st_size == 0
+    return empty, total
+
+
+def compiles(lean_file: Path) -> bool:
+    """True when `lake env lean` accepts the file in the queue's Lean project and it has no `sorry`."""
+    try:
+        if re.search(r"\bsorry\b", lean_file.read_text(errors="replace")):
+            return False
+        p = subprocess.run(["lake", "env", "lean", str(lean_file)], cwd=HOME / "leanproj",
+                           capture_output=True, text=True, timeout=600)
+    except (OSError, subprocess.TimeoutExpired):
+        return False
+    return p.returncode == 0 and "sorry" not in p.stdout
+
+
+def carried(tid: str, attempt: int, check=None) -> tuple[str, dict]:
+    """What earlier attempts leave for attempt `attempt`: the Lean items that still compile of
+    the earlier run that got furthest (most theorem/lemma declarations saved; the later run on a
+    tie), and that run's final whiteboard. Not simply the latest run: on 2026-10-04 the second
+    attempts at FT13-log and FT08-log saved 4 and 5 declarations where the first had saved 11 and
+    9. Returns the text to append to the dossier (empty when there is nothing) and a record for
+    the run's plan. The audited dossier and statement are never edited; verify.py still rules on
+    the final proof."""
+    check = check or compiles
+    ranked = []
+    for n in range(1, attempt):
+        repo = RUNS / f"{tid}-{n}" / "repo"
+        items = sorted(repo.rglob("*.lean"))[:CARRY_MAX_FILES] if repo.exists() else []
+        decls = sum(len(re.findall(r"^(?:theorem|lemma) ", f.read_text(errors="replace"), re.M))
+                    for f in items)
+        if items:
+            ranked.append((decls, n, items))
+    for _, n, items in sorted(ranked, reverse=True):
+        run = RUNS / f"{tid}-{n}"
+        good = [f for f in items if check(f)]
+        if not good:
+            continue
+        parts = [f"\n\n---\n\n## From attempt {n} at this target (added by the queue; not part of the "
+                 "audited dossier)\n\nThe Lean files below were saved by that attempt and compile, as "
+                 "they stand and with no `sorry`, against this Lean project (checked again just now). "
+                 "They are not audited. Reuse what helps and re-check anything you change. The theorem "
+                 "to prove and its definitions are those of the statement file, unchanged.\n"]
+        used = []
+        for f in good:
+            body = f.read_text(errors="replace")
+            if sum(len(x) for x in parts) + len(body) > CARRY_MAX_CHARS:
+                break
+            parts.append(f"\n### {f.relative_to(run / 'repo')}\n\n```lean\n{body.rstrip()}\n```\n")
+            used.append(str(f.relative_to(run / "repo")))
+        board = run / "WHITEBOARD.md"
+        text = board.read_text(errors="replace") if board.exists() else ""
+        if text and UNWRITTEN_BOARD not in text[:300] and sum(len(x) for x in parts) + len(text) <= CARRY_MAX_CHARS:
+            parts.append(f"\n### Attempt {n}'s final whiteboard (that planner's own notes; unverified)\n\n"
+                         f"{text.rstrip()}\n")
+        return "".join(parts), {"from_attempt": n, "lean_items": used}
+    return "", {}
+
+
+def start(tid: str, node: dict, slot: str | None = None, override: str | None = None) -> dict:
+    d = Q / "running" / tid
+    cfg = target_cfg(d)
+    used = [int(m.group(1)) for p in RUNS.glob(f"{tid}-*")
+            if (m := re.fullmatch(rf"{re.escape(tid)}-(\d+)(?:\.log)?", p.name))]
+    attempt = max(used, default=0) + 1  # never reuse a run dir: OpenProver would resume it
+    run_dir = RUNS / f"{tid}-{attempt}"
+    planner, advisor, why = choose_planner(tid, cfg, override)
+    dossier, carry = d / "dossier.md", {}
+    if cfg["carry_forward"] and not cfg["pilot"]:  # pilot arms stay independent of each other
+        extra, carry = carried(tid, attempt)
+        if extra:
+            dossier = Path(f"{run_dir}.dossier.md")
+            dossier.write_text((d / "dossier.md").read_text() + extra)
+    cmd = [str(HOME / "venv/bin/openprover"), str(run_dir), "--headless", "--autonomous",
+           "--planner-model", planner, "--worker-model", cfg["worker"],
+           "--provider-url", f"http://{node['host']}:{node['port']}",
+           "--answer-reserve", str(cfg["answer_reserve"]), "--max-tokens", str(cfg["max_tokens"]),
+           "--history-budget", str(cfg["history_budget"]),
+           "--on-rate-limited", "backoff",
+           "--lean-project", str(HOME / "leanproj"),
+           "--lean-theorem", str(d / "statement.lean"), "--theorem", str(dossier)]
+    if planner in CLAUDE_PLANNERS:
+        cmd += ["--effort", cfg["effort"]]
+    env = {k: v for k, v in os.environ.items() if not k.startswith("OPENPROVER_ADVISOR_")}
+    if advisor and planner in CLAUDE_PLANNERS:  # read by the patched llm/claude.py
+        env.update(OPENPROVER_ADVISOR_MODEL=advisor, OPENPROVER_ADVISOR_EVERY=str(cfg["advisor_every"]),
+                   OPENPROVER_ADVISOR_MAX=str(cfg["advisor_max"]))
+    else:
+        advisor = None
+    plan = {"planner": planner, "advisor": advisor,
+            "effort": cfg["effort"] if planner in CLAUDE_PLANNERS else None,
+            "advisor_every": cfg["advisor_every"] if advisor else None,
+            "advisor_max": cfg["advisor_max"] if advisor else None,
+            "history_budget": cfg["history_budget"], "pilot": cfg["pilot"],
+            "answer_reserve": cfg["answer_reserve"], "carried": carry or None,
+            "slot": slot or node["name"], "planner_override": why}
+    Path(f"{run_dir}.planner.json").write_text(json.dumps(plan, indent=2))
+    out = open(f"{run_dir}.log", "w")
+    proc = subprocess.Popen(cmd, cwd=HOME / "leanproj", stdout=out, stderr=subprocess.STDOUT,
+                            start_new_session=True, env=env)
+    log(f"{tid}: attempt {attempt} started on {slot or node['name']} (pid {proc.pid}; planner {planner}"
+        f"{f' + advisor {advisor}' if advisor else ''}{f', {why} override' if why else ''}"
+        + (f"; carrying {len(carry['lean_items'])} Lean items from attempt {carry['from_attempt']}" if carry else "")
+        + ")")
+    return {"tid": tid, "node": node["name"], "node_cfg": node, "slot": slot or node["name"],
+            "proc": proc, "run_dir": run_dir, "attempt": attempt, "started": time.time(),
+            "cfg": cfg, "plan": plan, "unhealthy": 0, "abort": None}
+
+
+def finish(job: dict) -> None:
+    tid, run_dir, cfg = job["tid"], job["run_dir"], job["cfg"]
+    d = Q / "running" / tid
+    reported = "?"
+    logf = Path(f"{run_dir}.log")
+    if logf.exists():
+        for line in logf.read_text(errors="replace").splitlines():
+            if line.startswith("[result]"):
+                reported = line.split(maxsplit=1)[1].strip()
+    verdicts = []
+    for cand in candidates(run_dir):
+        p = subprocess.run(["python3", str(VERIFY), str(cand), str(d / "statement.lean"),
+                            cfg["theorem"], str(HOME / "lean-main")], capture_output=True, text=True)
+        try:
+            v = json.loads(p.stdout)
+        except json.JSONDecodeError:
+            v = {"candidate": str(cand), "passed": False, "error": p.stderr[-500:]}
+        verdicts.append(v)
+        if v.get("passed"):
+            break
+    (run_dir / "verdicts.json").write_text(json.dumps(verdicts, indent=2)) if run_dir.exists() else None
+    ok = next((v for v in verdicts if v.get("passed")), None)
+    if job["abort"] is None:
+        PLANNER_DOWN_STREAK[0] = 0  # a run finished normally: the planner is back
+    hours = (time.time() - job["started"]) / 3600
+    lost, workers = worker_losses(run_dir)
+    if workers:  # the exact count the answer_reserve default is judged by
+        log(f"{tid}: run {job['attempt']}: {lost} of {workers} workers returned nothing")
+    if ok:
+        res = RESULTS / tid
+        res.mkdir(parents=True, exist_ok=True)
+        shutil.copy(ok["candidate"], res / "PROOF.lean")
+        shutil.copy(d / "statement.lean", res / "statement.lean")
+        (res / "verdict.json").write_text(json.dumps({**ok, "node": job["node"], "attempt": job["attempt"],
+                                                      "run_dir": str(run_dir), "hours": round(hours, 2),
+                                                      "openprover_result": reported,
+                                                      "plan": job["plan"],
+                                                      "planner_usd": round(planner_usd(run_dir), 2),
+                                                      "workers_empty_result": [lost, workers],
+                                                      "verified_at": now()}, indent=2))
+        shutil.move(str(d), Q / "done" / tid)
+        log(f"{tid}: VERIFIED (attempt {job['attempt']}, {hours:.1f} h, openprover said {reported!r})")
+    else:
+        if reported == "proved" and (run_dir / "PROOF.lean").exists():
+            log(f"{tid}: FINDING - openprover accepted a PROOF.lean that verify.py rejected")
+        elif reported == "proved":  # cli.py prints `proved` whenever PROOF.md exists
+            log(f"{tid}: openprover's 'proved' is informal only (PROOF.md, no PROOF.lean)")
+        n = charged(d)
+        if job["abort"] not in ("infra", "planner_down"):  # outages are not the target's fault
+            n += 1
+            (d / "attempts_charged").write_text(str(n))
+        dest = "pending" if n < cfg["max_attempts"] else "parked"
+        shutil.move(str(d), Q / dest / tid)
+        log(f"{tid}: not verified (run {job['attempt']}, {n}/{cfg['max_attempts']} attempts charged, "
+            f"{hours:.1f} h, openprover said {reported!r}, abort={job['abort']}, "
+            f"planner {job['plan']['planner']}) -> {dest}")
+
+
+def write_status(jobs: dict, down: dict) -> None:
+    st = {"at": now(),
+          "planner_usd_24h": round(planner_usd_24h(), 2), "daily_planner_cap_usd": DAILY_PLANNER_USD,
+          "running": {n: {"target": j["tid"], "attempt": j["attempt"], "planner": j["plan"]["planner"],
+                          "advisor": j["plan"]["advisor"], "planner_override": j["plan"]["planner_override"],
+                          "hours": round((time.time() - j["started"]) / 3600, 2)} for n, j in jobs.items()},
+          "nodes_down_until": {n: datetime.fromtimestamp(t, timezone.utc).isoformat(timespec="seconds")
+                               for n, t in down.items()},
+          **{k: sorted(p.name for p in (Q / k).iterdir()) for k in ("pending", "done", "parked")}}
+    (HOME / "status.json").write_text(json.dumps(st, indent=2))
+
+
+def tick(fleet: list, jobs: dict, down: dict) -> None:
+    """One supervisor poll: reap, watch and dispatch. `jobs` is keyed by slot ("node-1#0")."""
+    node_ok: dict[str, bool] = {}  # one /health request per node per poll
+
+    def ok(node: dict) -> bool:
+        if node["name"] not in node_ok:
+            node_ok[node["name"]] = healthy(node)
+        return node_ok[node["name"]]
+
+    for key, job in list(jobs.items()):
+        if job["proc"].poll() is not None:
+            finish(job)
+            del jobs[key]
+            continue
+        if job["abort"]:
+            continue  # already signalled; wait for the process to exit
+        node, name = job["node_cfg"], job["node"]
+        job["unhealthy"] = 0 if ok(node) else job["unhealthy"] + 1
+        usd = planner_usd(job["run_dir"])
+        if time.time() - job["started"] > WALL_S:
+            job["abort"] = "wall"
+            log(f"{job['tid']}: wall-clock guard ({WALL_S // 3600} h) on {name}, terminating")
+        elif usd > job["cfg"]["max_planner_usd"]:
+            job["abort"] = "planner_budget"
+            log(f"{job['tid']}: planner spend ${usd:.2f} > ${job['cfg']['max_planner_usd']:.2f} "
+                f"on {name}, terminating")
+        elif trailing_llm_errors(job["run_dir"]) >= PLANNER_ERR_STEPS:
+            job["abort"] = "planner_down"
+            PLANNER_DOWN_STREAK[0] += 1
+            pause = NODE_BACKOFF_S * 2 ** min(PLANNER_DOWN_STREAK[0] - 1, 3)
+            down["*"] = max(down.get("*", 0), time.time() + pause)
+            log(f"{job['tid']}: {PLANNER_ERR_STEPS}+ consecutive planner errors (Claude CLI; quota?), "
+                f"terminating (not charged) and pausing dispatch {pause // 60} min "
+                f"(outage #{PLANNER_DOWN_STREAK[0]} in a row)")
+        elif job["unhealthy"] >= UNHEALTHY_POLLS:
+            siblings = [j for j in jobs.values() if j["node"] == name and not j["abort"]]
+            if restart(node):  # one server serves every slot on the node
+                node_ok[name] = True
+                for j in siblings:
+                    j["unhealthy"] = 0
+            else:
+                down[name] = time.time() + NODE_BACKOFF_S
+                for j in siblings:
+                    j["abort"] = "infra"
+                    log(f"{j['tid']}: {name} down mid-run and restart failed, terminating (not charged)")
+                    if j is not job:
+                        kill(j)
+        if job["abort"]:
+            kill(job)
+    if down.get("*", 0) > time.time():
+        return  # global pause (planner outage)
+    for key, node, override in slots(fleet):
+        n = node["name"]
+        if key in jobs or down.get(n, 0) > time.time():
+            continue
+        pending = sorted((Q / "pending").iterdir(), key=lambda p: p.stat().st_mtime)
+        if not pending:
+            break
+        if not ok(node) and not restart(node):
+            down[n] = time.time() + NODE_BACKOFF_S
+            log(f"{n}: still down, skipping for {NODE_BACKOFF_S // 60} min")
+            continue
+        node_ok[n] = True
+        down.pop(n, None)
+        tid = pending[0].name
+        shutil.move(str(pending[0]), Q / "running" / tid)
+        jobs[key] = start(tid, node, key, override)
+
+
+def main() -> None:
+    # `systemctl stop/restart` signals the whole cgroup: without this, the loop can reap a job the
+    # stop just killed and charge it as a failed attempt (seen 2026-09-24 05:53). Exit at once;
+    # the next start requeues every running/ target uncharged.
+    signal.signal(signal.SIGTERM, lambda *_: os._exit(0))
+    for k in ("pending", "running", "done", "parked"):
+        (Q / k).mkdir(parents=True, exist_ok=True)
+    RUNS.mkdir(exist_ok=True)
+    RESULTS.mkdir(exist_ok=True)
+    for d in (Q / "running").iterdir():  # interrupted by a supervisor restart: requeue
+        shutil.move(str(d), Q / "pending" / d.name)
+        log(f"{d.name}: requeued after supervisor restart")
+    fleet = json.loads((HOME / "fleet.json").read_text())
+    jobs: dict[str, dict] = {}
+    down: dict[str, float] = {}
+    log(f"supervisor up; slots {[(k, o) for k, _, o in slots(fleet)]}")
+    while True:
+        tick(fleet, jobs, down)
+        write_status(jobs, down)
+        time.sleep(POLL_S)
+
+
+if __name__ == "__main__":
+    main()

@@ -48,3 +48,17 @@ per-module precomputed axiom table. See the module docstring.
 CI regenerates it into `/tmp` and `diff -u`s against the committed file (the catalog-staleness
 gate), so regenerate and commit it whenever a declaration, docstring or line moves. The output
 is byte-identical across runs on the same build; it takes about 10 s, mostly environment loading.
+
+# Proof-queue tooling (Python, not part of the Lean build)
+
+* `openprover/queue/`: the supervisor that runs audited statements through OpenProver on local
+  worker nodes, and `verify.py`, which re-checks every claimed proof against its audited
+  statement (kernel replay, axiom set, elaborated type). Its `README.md` is the operating guide.
+  Nothing in it commits, pushes or opens a pull request: landing a verified proof is a human
+  step.
+* `openprover/patch_local_alias.py`: the patch applied to an installed `openprover==1.0.1`.
+* `judgments/`: yes/no "trait" questions about a text, read by a small classifier model, cached,
+  and tested against exact outcomes; `proof_runs.py` applies it to finished queue runs and
+  prints the worker-loss counts. A judgment never accepts a proof.
+
+Tests: `python3 -m pytest tools/judgments tools/openprover/queue` (no network, no Lean).

@@ -142,6 +142,14 @@ jobs:
           python3 scripts/gen_cards.py
           # `git status` also sees a generated file that is new or was deleted and regenerated.
           test -z "$(git status --porcelain -- docs/theorems/)" || { git status --short -- docs/theorems/; git diff -- docs/theorems/ | head -100; exit 1; }
+      # Proof-queue tooling (tools/openprover/queue, tools/judgments): the supervisor's planning and
+      # carry-forward logic and the judgments layer, tested with no network, no model and no Lean.
+      # verify.py's own falsification run (queue/falsification/run.py) needs a built Lean project
+      # and is run by hand after any change to it.
+      - name: Proof-queue tooling tests
+        run: |
+          python3 -m pip install --quiet 'pytest==9.0.3'
+          python3 -m pytest tools/judgments tools/openprover/queue -q
       # Epistemic-drift ADVISORY (module-level): a fast, build-free companion to the authoritative
       # declaration-granular `scope-check` gate above. It also surfaces EXACT-on-REDUCED and
       # EXACT-on-mixed dependencies as advisory warnings (module granularity cannot prove per-theorem
