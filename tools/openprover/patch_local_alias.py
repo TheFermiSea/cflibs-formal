@@ -32,6 +32,15 @@ cl = pathlib.Path(importlib.import_module("openprover.llm.claude").__file__)
 hl = pathlib.Path(importlib.import_module("openprover.tui.headless").__file__)
 pr = pathlib.Path(importlib.import_module("openprover.prover").__file__)
 
+# The Qwen worker's served model id is machine-specific (a GGUF path on the node, because its
+# launcher has no --alias), so it is read from the environment: what the node's `GET /v1/models`
+# reports. It is needed only while the qwen alias is not yet patched in, and it is checked here,
+# before anything is written, so a run without it changes nothing.
+QALIAS, QCTX = "qwen38-local", 65536
+QSERVED = os.environ.get("OPENPROVER_QWEN_MODEL_ID", "")
+if not QSERVED and (QALIAS not in cli.read_text() or f"{QCTX},  # Qwen3.8-27B" not in hf.read_text()):
+    sys.exit("set OPENPROVER_QWEN_MODEL_ID to the model id the worker node serves (GET /v1/models)")
+
 patch(cli, [
     ('    model_choices = ["sonnet", "opus", "minimax-m2.5", "leanstral"]',
      f'    model_choices = ["sonnet", "opus", "minimax-m2.5", "leanstral", "{ALIAS}"]'),
@@ -96,14 +105,9 @@ patch(pr, [
      '                    search_only_streak = search_only_streak + 1 if _names == {"lean_search"} else 0\n'),
 ])
 # Second local worker alias for the control arm (D11): Qwen3.8-27B Q6_K (port 8081, launched with
-# no --alias, so the served model id is the GGUF path on the node). That id is machine-specific and
-# is read from OPENPROVER_QWEN_MODEL_ID (what the node's `GET /v1/models` reports); it is needed
-# only the first time this alias is patched in. Context entry kept conservative.
-QALIAS, QCTX = "qwen38-local", 65536
-QSERVED = os.environ.get("OPENPROVER_QWEN_MODEL_ID", "")
+# no --alias, so the served model id is the GGUF path on the node; QSERVED above). Context entry
+# kept conservative.
 _c = cli.read_text()
-if not QSERVED and (QALIAS not in _c or f"{QCTX},  # Qwen3.8-27B" not in hf.read_text()):
-    sys.exit("set OPENPROVER_QWEN_MODEL_ID to the model id the worker node serves (GET /v1/models)")
 if QALIAS in _c:
     print(f"already patched (qwen alias): {cli}")
 else:
