@@ -9,9 +9,9 @@
 
 A result shows `own → published` when the two differ (with the definitions that weakened it), and a single tag when they agree. A definition with its own row shows `model TAG`.
 
-**Own-tag mix** (843 results): **EXACT** 159 · **REDUCED** 238 · **APPROXIMATION** 4 · **PURE-MATH** 442
+**Own-tag mix** (848 results): **EXACT** 161 · **REDUCED** 238 · **APPROXIMATION** 4 · **PURE-MATH** 445
 
-**Published-tag mix** (843 results; 150 weakened by a model tag): **EXACT** 47 · **REDUCED** 286 · **APPROXIMATION** 68 · **PURE-MATH** 442
+**Published-tag mix** (848 results; 152 weakened by a model tag): **EXACT** 47 · **REDUCED** 288 · **APPROXIMATION** 68 · **PURE-MATH** 445
 
 `EXACT` = an exact theorem about the model it is stated over · `REDUCED` = exact only after a stated reduction (a dimensionless/lumped-factor form) · `APPROXIMATION` = the statement itself is approximate (documented idealization / limiting case) · `PURE-MATH` = infrastructure lemma, no physical claim. The tags are the authors' classification, reviewed result by result as each landed. Only the first 186-entry corpus was cross-checked in one pass against the literature (`reviews/literature-validity-audit.md`), and the then 412 results again on 2026-07-09 (`docs/literature-validation.md`); later results have no whole-corpus literature audit.
 
@@ -577,6 +577,8 @@ A result shows `own → published` when the two differ (with the definitions tha
 
 **Results**
 - `PURE-MATH` · `inv_sub_inv_exp_sub_one_mem` — The log slab self-absorption factor has slope in `(−1/2, 0)`.
+- `PURE-MATH` · `hasDerivAt_log_selfAbsorptionFactor` — Derivative of the log slab self-absorption factor.
+- `PURE-MATH` · `log_selfAbsorptionFactor_lipschitz` — The log slab self-absorption factor is `1/2`-Lipschitz on `τ ≥ 0`.
 - `PURE-MATH` · `escape_ge_slab` — The profile escape factor bounds the flat-slab factor from above.
 
 ## `EvaluatorSoundness.lean`  (CflibsFormal)
@@ -1504,6 +1506,9 @@ A result shows `own → published` when the two differ (with the definitions tha
 - `PURE-MATH` · `meanExcitation_eq_tiltMean` — Bridge to `InhomogeneityBias`: the mean excitation energy is a `tiltMean`.
 - `PURE-MATH` · `meanExcitation_monotoneOn_temp` — The mean excitation energy is nondecreasing in temperature (FT-15).
 - `PURE-MATH` · `log_partitionFunction_lipschitz_max` — Log-Lipschitz bound for the partition function in inverse temperature (FT-15).
+- `EXACT → REDUCED` · `log_sahaFactor_beta` — The log Saha factor as an explicit function of inverse temperature.  _[Saha–Eggert (Griem)]_  (via `sahaFactor`)
+- `PURE-MATH` · `hasDerivAt_log_sum_exp` — `d log U/dβ = −⟨E⟩` for a finite level list.
+- `EXACT → REDUCED` · `log_sahaFactor_hasDerivAt_beta` — Derivative of the log Saha factor in inverse temperature (FT-08).  _[Saha–Eggert (Griem)]_  (via `sahaFactor`)
 - `EXACT → REDUCED` · `sahaEquilibriumNe_strictMonoOn_temp` — Equilibrium electron density strictly increasing in temperature (Frontier 02, M6).  _[Saha–Eggert (Griem)]_  (via `sahaEquilibriumNe`, `sahaFactor`)
 
 ## `SelfAbsorption.lean`  (CflibsFormal)

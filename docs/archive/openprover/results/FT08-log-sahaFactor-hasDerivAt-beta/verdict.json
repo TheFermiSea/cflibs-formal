@@ -1,0 +1,49 @@
+{
+  "candidate": "<openprover>/runs/FT08-log-sahaFactor-hasDerivAt-beta-7/PROOF.lean",
+  "theorem": "Plan.FT08.log_sahaFactor_hasDerivAt_beta",
+  "passed": true,
+  "checks": {
+    "forbidden": [],
+    "extra_imports": [],
+    "missing_defs": [],
+    "signature_identical": true,
+    "compile_rc": 0,
+    "errors": [],
+    "sorry_warning": false,
+    "kernel_replay_rc": 0,
+    "axioms": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "elaborated_type_identical": true
+  },
+  "attempt": 7,
+  "hours": 1.56,
+  "openprover_result": "proved",
+  "plan": {
+    "planner": "opus",
+    "advisor": null,
+    "effort": "high",
+    "advisor_every": null,
+    "advisor_max": null,
+    "history_budget": 120000,
+    "pilot": false,
+    "answer_reserve": 24576,
+    "carried": {
+      "from_attempt": 4,
+      "lean_items": [
+        "lean/L1.lean",
+        "lean/L1a.lean",
+        "lean/L2.lean",
+        "lean/L3.lean"
+      ]
+    },
+    "planner_override": null
+  },
+  "workers_empty_result": [
+    0,
+    5
+  ],
+  "verified_at": "2026-10-04T17:43:36+00:00"
+}

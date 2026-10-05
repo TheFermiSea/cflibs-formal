@@ -1,0 +1,50 @@
+{
+  "candidate": "<openprover>/runs/FT13-log-selfAbsorptionFactor-lipschitz-11/PROOF.lean",
+  "theorem": "Plan.FT13.log_selfAbsorptionFactor_lipschitz",
+  "passed": true,
+  "checks": {
+    "forbidden": [],
+    "extra_imports": [],
+    "missing_defs": [],
+    "signature_identical": true,
+    "compile_rc": 0,
+    "errors": [],
+    "sorry_warning": false,
+    "kernel_replay_rc": 0,
+    "axioms": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "elaborated_type_identical": true
+  },
+  "attempt": 11,
+  "hours": 0.92,
+  "openprover_result": "proved",
+  "plan": {
+    "planner": "opus",
+    "advisor": null,
+    "effort": "high",
+    "advisor_every": null,
+    "advisor_max": null,
+    "history_budget": 120000,
+    "pilot": false,
+    "answer_reserve": 24576,
+    "carried": {
+      "from_attempt": 6,
+      "lean_items": [
+        "lean/L2-deriv.lean",
+        "lean/L3-antitone.lean",
+        "lean/L4a-monotone.lean",
+        "lean/L5-endpoint.lean",
+        "lean/crux-helpers.lean"
+      ]
+    },
+    "planner_override": null
+  },
+  "workers_empty_result": [
+    0,
+    3
+  ],
+  "verified_at": "2026-10-04T17:04:34+00:00"
+}

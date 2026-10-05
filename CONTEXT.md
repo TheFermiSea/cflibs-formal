@@ -268,7 +268,7 @@ exact commands. Gate 5 is judgment, not automated.
 ## Status
 
 <!-- stats:begin -->
-94 modules · 843 named results (theorem/lemma) · 248 defs
+94 modules · 848 named results (theorem/lemma) · 248 defs
 <!-- stats:end -->
 (kept current by `scripts/gen-docs.sh`). CI gates: axiom-cleanliness (`tools/`), style/structure lint (`runLinter`),
 docs-sync + scope-tag completeness (`scripts/gen-docs.sh`), import-hygiene (`scripts/stats.sh`),

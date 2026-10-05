@@ -26,10 +26,13 @@ value is `τ₀ ∫ ψ`. This module compares the two.
   (`equivWidth_rectangular`). Proof: the chord inequality of the convex `exp` applied pointwise
   at `t = ψ(x) ∈ [0, 1]`, then `integral_mono`.
 * `inv_sub_inv_exp_sub_one_mem`: `0 < 1/τ − 1/(exp τ − 1) < 1/2` for `τ > 0`. Since
-  `d/dτ log SA(τ) = 1/(exp τ − 1) − 1/τ` (a calculus fact not formalized here), this is the
+  `d/dτ log SA(τ) = 1/(exp τ − 1) − 1/τ` (`hasDerivAt_log_selfAbsorptionFactor`), this is the
   statement that `log SA` has slope in `(−1/2, 0)`. Both bounds are sharp in the limits.
+* `log_selfAbsorptionFactor_lipschitz`: `|log SA(τ) − log SA(τ')| ≤ |τ − τ'|/2` for
+  `τ, τ' ≥ 0`, the endpoint `τ = 0` included. An error `Δ` in the optical depth moves the log
+  of the slab correction by at most `Δ/2`.
 
-Both results are pure mathematics about the defined functions. No statement here says which
+All four results are pure mathematics about the defined functions. No statement here says which
 profile a real line has, or how well either factor corrects a measured intensity.
 
 ## Literature
@@ -72,8 +75,8 @@ private theorem exp_mul_sub_two_add_pos {τ : ℝ} (hτ : 0 < τ) :
 
 /-- **The log slab self-absorption factor has slope in `(−1/2, 0)`.** For `τ > 0`,
 `0 < 1/τ − 1/(exp τ − 1) < 1/2`. The middle expression is minus the derivative of
-`log SA(τ) = log ((1 − exp(−τ))/τ)`. That identity is context, not part of this statement;
-with it, `log SA` is strictly decreasing and `1/2`-Lipschitz on `τ > 0`. Both bounds are strict
+`log SA(τ) = log ((1 − exp(−τ))/τ)` (`hasDerivAt_log_selfAbsorptionFactor`, below); with it,
+`log SA` is `1/2`-Lipschitz (`log_selfAbsorptionFactor_lipschitz`). Both bounds are strict
 and sharp in the limits (`→ 1/2` as `τ → 0⁺`, `→ 0` as `τ → ∞`), so the proof goes through the
 exact inequality `exp τ · (τ − 2) + τ + 2 > 0`, not a numerical estimate.
 
@@ -89,6 +92,176 @@ theorem inv_sub_inv_exp_sub_one_mem {τ : ℝ} (hτ : 0 < τ) :
     have hf := exp_mul_sub_two_add_pos hτ
     rw [div_sub_div _ _ hτ.ne' hE.ne', div_lt_div_iff₀ (mul_pos hτ hE) (by norm_num : (0:ℝ) < 2)]
     nlinarith [hf, Real.exp_pos τ]
+
+/-! ### The log slab factor: derivative and a `1/2`-Lipschitz bound (frontier FT-13)
+
+The proofs below were found by the proof queue for the audited statement
+`log_selfAbsorptionFactor_lipschitz` and re-checked by its verifier; they are restated here on
+the repository's own lemmas (`inv_sub_inv_exp_sub_one_mem`, `selfAbsorptionFactor_strictAntiOn`,
+`selfAbsorptionFactor_le_one`). -/
+
+/-- `1 − exp(−t) > 0` for `t > 0`. -/
+private theorem one_sub_exp_neg_pos {t : ℝ} (ht : 0 < t) : 0 < 1 - Real.exp (-t) := by
+  have := Real.exp_lt_exp.mpr (show -t < 0 by linarith)
+  rw [Real.exp_zero] at this
+  linarith
+
+/-- For `t > 0` the slab factor is its non-totalized branch `(1 − exp(−t))/t`. -/
+private theorem selfAbsorptionFactor_of_pos {t : ℝ} (ht : 0 < t) :
+    selfAbsorptionFactor t = (1 - Real.exp (-t)) / t := by
+  rw [selfAbsorptionFactor, if_neg ht.ne']
+
+/-- Derivative of `log (1 − exp(−s)) − log s` at `t > 0`. -/
+private theorem hasDerivAt_log_one_sub_exp_neg_sub_log {t : ℝ} (ht : 0 < t) :
+    HasDerivAt (fun s => Real.log (1 - Real.exp (-s)) - Real.log s)
+      (1 / (Real.exp t - 1) - 1 / t) t := by
+  have he : HasDerivAt (fun s : ℝ => Real.exp (-s)) (Real.exp (-t) * -1) t :=
+    (Real.hasDerivAt_exp (-t)).comp t ((hasDerivAt_id t).neg)
+  have H := ((he.const_sub 1).log (one_sub_exp_neg_pos ht).ne').sub (Real.hasDerivAt_log ht.ne')
+  have hpos : 0 < Real.exp t - 1 := by linarith [Real.add_one_lt_exp ht.ne']
+  have hx : Real.exp (-t) * Real.exp t = 1 := by
+    rw [← Real.exp_add, neg_add_cancel, Real.exp_zero]
+  have h1 : 1 - Real.exp (-t) = Real.exp (-t) * (Real.exp t - 1) := by
+    rw [mul_sub, hx, mul_one]
+  have hv : -(Real.exp (-t) * -1) / (1 - Real.exp (-t)) - t⁻¹
+      = 1 / (Real.exp t - 1) - 1 / t := by
+    have hdiv : Real.exp (-t) / (1 - Real.exp (-t)) = 1 / (Real.exp t - 1) := by
+      rw [div_eq_div_iff (one_sub_exp_neg_pos ht).ne' hpos.ne']
+      rw [h1]; ring
+    rw [show -(Real.exp (-t) * -1) = Real.exp (-t) by ring, hdiv]; ring
+  exact H.congr_deriv hv
+
+/-- **Derivative of the log slab self-absorption factor.** For `τ > 0`,
+`d/dτ log SA(τ) = 1/(exp τ − 1) − 1/τ`. By `inv_sub_inv_exp_sub_one_mem` this slope lies in
+`(−1/2, 0)`.
+
+`hτ` is needed: `selfAbsorptionFactor` is the totalized `if τ = 0 then 1 else …`, and the
+statement is about the open half-line where it is the smooth branch. Nothing is claimed at
+`τ = 0` (the one-sided slope there is `−1/2`) or for `τ < 0`. Scope: PURE-MATH. -/
+theorem hasDerivAt_log_selfAbsorptionFactor {τ : ℝ} (hτ : 0 < τ) :
+    HasDerivAt (fun s => Real.log (selfAbsorptionFactor s))
+      (1 / (Real.exp τ - 1) - 1 / τ) τ := by
+  refine (hasDerivAt_log_one_sub_exp_neg_sub_log hτ).congr_of_eventuallyEq ?_
+  filter_upwards [Ioi_mem_nhds hτ] with s hs
+  rw [selfAbsorptionFactor_of_pos hs, Real.log_div (one_sub_exp_neg_pos hs).ne' (ne_of_gt hs)]
+
+/-- The endpoint estimate `0 ≤ log ((1 − exp(−b))/b) + b/2` for `b > 0`, i.e.
+`SA(b) ≥ exp(−b/2)`: from `x ≤ sinh x` at `x = b/2`. -/
+private theorem log_slab_add_half_nonneg {b : ℝ} (hb : 0 < b) :
+    0 ≤ Real.log ((1 - Real.exp (-b)) / b) + b / 2 := by
+  have hs : b ≤ Real.exp (b / 2) - Real.exp (-(b / 2)) := by
+    have h := Real.self_le_sinh_iff.mpr (by linarith : (0:ℝ) ≤ b / 2)
+    rw [Real.sinh_eq (b / 2)] at h
+    linarith
+  have hE : 0 < Real.exp (-(b / 2)) := Real.exp_pos (-(b / 2))
+  have hmul : Real.exp (b / 2) * Real.exp (-(b / 2)) = 1 := by
+    rw [← Real.exp_add, show b / 2 + -(b / 2) = 0 by ring, Real.exp_zero]
+  have hE2 : Real.exp (-b) = Real.exp (-(b / 2)) * Real.exp (-(b / 2)) := by
+    rw [show -b = -(b / 2) + -(b / 2) by ring, Real.exp_add]
+  have h1 : Real.exp (-(b / 2)) * b ≤ 1 - Real.exp (-(b / 2)) * Real.exp (-(b / 2)) := by
+    calc
+      _ ≤ Real.exp (-(b / 2)) * (Real.exp (b / 2) - Real.exp (-(b / 2))) :=
+        mul_le_mul_of_nonneg_left hs hE.le
+      _ = Real.exp (-(b / 2)) * Real.exp (b / 2)
+            - Real.exp (-(b / 2)) * Real.exp (-(b / 2)) := by ring
+      _ = 1 - Real.exp (-(b / 2)) * Real.exp (-(b / 2)) := by rw [mul_comm, hmul]
+  have h2 : Real.exp (-(b / 2)) ≤ (1 - Real.exp (-b)) / b := by
+    rw [le_div_iff₀ hb, hE2]
+    exact h1
+  have h3 : -(b / 2) ≤ Real.log ((1 - Real.exp (-b)) / b) := by
+    rw [← Real.log_exp (-(b / 2))]
+    exact Real.log_le_log hE h2
+  linarith
+
+/-- `log SA` is nonincreasing on `[0, ∞)`: for `0 ≤ a ≤ b`, `log SA(b) ≤ log SA(a)`. -/
+private theorem log_selfAbsorptionFactor_anti {a b : ℝ} (ha : 0 ≤ a) (hab : a ≤ b) :
+    Real.log (selfAbsorptionFactor b) ≤ Real.log (selfAbsorptionFactor a) := by
+  have hle : selfAbsorptionFactor b ≤ selfAbsorptionFactor a := by
+    rcases ha.eq_or_lt with h0 | hpos
+    · subst h0
+      have h1 : selfAbsorptionFactor 0 = 1 := by simp [selfAbsorptionFactor]
+      rw [h1]
+      exact selfAbsorptionFactor_le_one hab
+    · exact selfAbsorptionFactor_strictAntiOn.antitoneOn hpos (lt_of_lt_of_le hpos hab) hab
+  exact Real.log_le_log (selfAbsorptionFactor_pos (ha.trans hab)) hle
+
+/-- `τ ↦ log SA(τ) + τ/2` is nondecreasing on `(0, ∞)`: its derivative
+`1/(exp τ − 1) − 1/τ + 1/2` is positive by `inv_sub_inv_exp_sub_one_mem`. -/
+private theorem log_selfAbsorptionFactor_add_half_monotoneOn :
+    MonotoneOn (fun s => Real.log (selfAbsorptionFactor s) + s / 2) (Set.Ioi (0:ℝ)) := by
+  have hd : ∀ x, 0 < x → HasDerivAt (fun s => Real.log (selfAbsorptionFactor s) + s / 2)
+      (1 / (Real.exp x - 1) - 1 / x + 1 / 2) x :=
+    fun x hx => (hasDerivAt_log_selfAbsorptionFactor hx).add ((hasDerivAt_id x).div_const 2)
+  exact monotoneOn_of_hasDerivWithinAt_nonneg
+      (f' := fun x => 1 / (Real.exp x - 1) - 1 / x + 1 / 2) (convex_Ioi 0)
+    (fun x hx => (hd x hx).continuousAt.continuousWithinAt)
+    (fun x hx => by
+      rw [interior_Ioi] at hx ⊢
+      exact (hd x hx).hasDerivWithinAt)
+    (fun x hx => by rw [interior_Ioi] at hx; linarith [(inv_sub_inv_exp_sub_one_mem hx).2])
+
+/-- The one-sided form of the Lipschitz bound: for `0 ≤ a ≤ b`,
+`log SA(a) − log SA(b) ≤ (b − a)/2`. The case `a = 0` uses the endpoint estimate
+`log_slab_add_half_nonneg`, so no limit at `0` is taken. -/
+private theorem log_selfAbsorptionFactor_sub_le {a b : ℝ} (ha : 0 ≤ a) (hab : a ≤ b) :
+    Real.log (selfAbsorptionFactor a) - Real.log (selfAbsorptionFactor b) ≤ (b - a) / 2 := by
+  by_cases ha0 : a = 0
+  · by_cases hb0 : b = 0
+    · subst ha0 hb0
+      simp [selfAbsorptionFactor]
+    · have hb' : 0 < b := lt_of_le_of_ne (ha0 ▸ hab) (Ne.symm hb0)
+      have hSA0 : selfAbsorptionFactor a = 1 := by simp [ha0, selfAbsorptionFactor]
+      rw [hSA0, selfAbsorptionFactor_of_pos hb', Real.log_one]
+      linarith [log_slab_add_half_nonneg hb']
+  · have ha' : 0 < a := lt_of_le_of_ne ha (Ne.symm ha0)
+    have hb' : 0 < b := by linarith
+    have hmono := log_selfAbsorptionFactor_add_half_monotoneOn ha' hb' hab
+    simp only at hmono
+    linarith
+
+/-- **The log slab self-absorption factor is `1/2`-Lipschitz on `τ ≥ 0`.**
+`|log SA(τ) − log SA(τ')| ≤ |τ − τ'|/2` for `τ, τ' ≥ 0`.
+
+Reading: the self-absorption correction divides an intensity by `SA(τ)`, so an error `Δ` in the
+optical depth changes the log of the corrected intensity by at most `Δ/2`, at any depth. The
+constant `1/2` is the supremum of the slope magnitude (approached as `τ → 0⁺`, never attained),
+so it cannot be lowered; for large `τ` the slope is about `1/τ` and the bound is loose.
+
+Proof: `log SA` is nonincreasing, and `log SA(τ) + τ/2` is nondecreasing on `(0, ∞)` because its
+derivative `1/(exp τ − 1) − 1/τ + 1/2` is positive (`hasDerivAt_log_selfAbsorptionFactor`,
+`inv_sub_inv_exp_sub_one_mem`); the endpoint `τ = 0` is handled by `SA(b) ≥ exp(−b/2)`, not by
+a limit.
+
+Hypotheses `hτ`, `hτ'` are needed: for negative arguments the slope magnitude exceeds `1/2`
+(about `0.58` at `τ = −1`). Scope: PURE-MATH, a statement about the defined function. It says
+nothing about how well the flat-slab `SA` corrects a real line (`selfAbsorptionFactor` carries
+the model tag APPROXIMATION), and the error `Δ` in `τ` is an input, not something this bounds. -/
+theorem log_selfAbsorptionFactor_lipschitz {τ τ' : ℝ} (hτ : 0 ≤ τ) (hτ' : 0 ≤ τ') :
+    |Real.log (selfAbsorptionFactor τ) - Real.log (selfAbsorptionFactor τ')|
+      ≤ |τ - τ'| / 2 := by
+  cases le_total τ τ' with
+  | inl hle =>
+    have hant := log_selfAbsorptionFactor_anti hτ hle
+    have hsub : 0 ≤ Real.log (selfAbsorptionFactor τ) - Real.log (selfAbsorptionFactor τ') := by
+      linarith
+    rw [abs_of_nonneg hsub]
+    have hup := log_selfAbsorptionFactor_sub_le hτ hle
+    have hd : 0 ≤ τ' - τ := by linarith
+    rw [abs_sub_comm, abs_of_nonneg hd]
+    linarith
+  | inr hle =>
+    have hant := log_selfAbsorptionFactor_anti hτ' hle
+    have hsub' : Real.log (selfAbsorptionFactor τ) - Real.log (selfAbsorptionFactor τ') ≤ 0 := by
+      linarith
+    have hup := log_selfAbsorptionFactor_sub_le hτ' hle
+    have hd : 0 ≤ τ - τ' := by linarith
+    rw [abs_of_nonpos hsub', abs_of_nonneg hd]
+    linarith
+
+/-- Non-vacuity of `log_selfAbsorptionFactor_lipschitz` at the endpoint: from `τ = 0`
+(`SA = 1`) to `τ' = 2` the log changes by at most `1`. -/
+example : |Real.log (selfAbsorptionFactor 0) - Real.log (selfAbsorptionFactor 2)| ≤ |0 - 2| / 2 :=
+  log_selfAbsorptionFactor_lipschitz le_rfl (by norm_num)
 
 /-- Chord inequality of the convex `exp`: `(1 − exp(−τ)) · t ≤ 1 − exp(−τ t)` for
 `t ∈ [0, 1]`. -/
