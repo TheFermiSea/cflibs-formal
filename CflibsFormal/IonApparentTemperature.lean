@@ -258,8 +258,10 @@ theorem mixed_ion_apparentBeta_le_neutral_shift {ζ ι κ : Type*} [Fintype ζ] 
 /-- **Bound neutral levels discharge the anchor (FT-19d).** If the neutral upper level is bound
 (`EZ j ≤ χ`) and the ion lower-line energy is nonnegative (`0 ≤ EZ1 i'`, ion energies measured
 from the ion ground state), the anchor of `mixed_ion_apparentBeta_le_neutral_shift` holds. Both
-conditions are satisfied by every tabulated bound level, so for such data the comparison needs
-no condition relating the two line pairs. Scope and reductions as there (REDUCED). -/
+conditions hold for levels below the first ionization limit when neutral energies are measured
+from the neutral ground state, so for such data the comparison needs no condition relating the
+two line pairs. A neutral line from an autoionizing level (above the limit, `EZ j > χ`) does
+not satisfy `hbound` and is not covered. Scope and reductions as there (REDUCED). -/
 theorem mixed_ion_apparentBeta_le_neutral_bound {ζ ι κ : Type*} [Fintype ζ] [Fintype ι]
     [Fintype κ] [Nonempty ζ] [Nonempty ι] [Nonempty κ]
     {kB Fcal me h chi ne : ℝ} {T NI NII : ζ → ℝ}

@@ -32,7 +32,7 @@ formalizes the grouped, weighted design the solver actually runs (frontier FT-04
 * `feSlope_rss_split`: the residual sum of squares of any competitor is the estimator's plus
   `SS_W·(β − β̂)²` plus the weighted squared intercept offsets.
 * `feSlope_unique_min`: so the minimizer is unique, on the slope and on the intercept of every
-  group that contains a line.
+  group that contains a line (the intercept of a group with no line is free).
 
 ## Scope
 
@@ -338,7 +338,8 @@ theorem feSlope_rss_split (grp : ι → κ) (w x y : ι → ℝ) (hw : ∀ k, 0 
     within_quad, within_quad, ← hC]
   ring
 
-/-- **The fixed-effects minimizer is unique.** Let `β̂ = feSlope grp w x y` and
+/-- **The fixed-effects minimizer is unique, up to the intercepts of groups with no line.** Let
+`β̂ = feSlope grp w x y` and
 `â_e = ȳ_e − β̂·x̄_e` (weighted group means). If a slope `β` and per-group intercepts `a` do at
 least as well as the estimator, i.e. their weighted residual sum of squares is at most the
 estimator's, then `β = β̂` and `a` agrees with `â` on every group that contains a line.

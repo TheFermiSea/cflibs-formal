@@ -654,7 +654,7 @@ A result shows `own → published` when the two differ (with the definitions tha
 - `PURE-MATH` · `feSlope_add_smul` — The fixed-effects slope is linear in the ordinates.
 - `PURE-MATH` · `feSlope_isMin` — The fixed-effects estimator is the weighted least-squares fit.
 - `PURE-MATH` · `feSlope_rss_split` — Pythagorean split of the fixed-effects residual sum of squares.
-- `PURE-MATH` · `feSlope_unique_min` — The fixed-effects minimizer is unique.
+- `PURE-MATH` · `feSlope_unique_min` — The fixed-effects minimizer is unique, up to the intercepts of groups with no line.
 
 ## `ForwardMap.lean`  (CflibsFormal)
 *Part 4: the optically-thin forward map*

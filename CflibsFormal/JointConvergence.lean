@@ -642,9 +642,10 @@ theorem residual_stop {Φ : ℝ → ℝ} {s : Set ℝ} {q u ustar : ℝ} (hq : q
 `u ↦ g·u + c` with `g ≠ 1`, whose fixed point is `u* = c/(1 − g)`, the `λ`-damped iterate
 satisfies `uₙ − u* = (1 − λ + λg)ⁿ·(u₀ − u*)` for every `n`.
 
-Hypothesis `hg : g ≠ 1` is needed for the fixed point to exist (and keeps `c/(1 − g)` out of
-Lean's `x/0 = 0`). No condition on `λ`, `g` or `c` otherwise: the identity holds whether or not
-the iteration converges. Scope: PURE-MATH.
+Hypothesis `hg : g ≠ 1` makes `c/(1 − g)` the unique fixed point of the update
+`u ↦ g·u + c`. At `g = 1` the update `u ↦ u + c` has no fixed point unless `c = 0` (when
+every point is one), and `c/(1 − g)` is Lean's `c/0 = 0`. No condition on `λ`, `g` or `c`
+otherwise: the identity holds whether or not the iteration converges. Scope: PURE-MATH.
 
 This is the `u`-damped idealization: it applies when damping acts on the coordinate in which
 the update is affine (for the reduced outer map, `u = 1/T`). The companion pipeline damps `T`,

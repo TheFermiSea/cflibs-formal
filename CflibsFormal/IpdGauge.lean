@@ -20,8 +20,8 @@ switched on in one place only.
 
 * `sahaFactor_ipd_gauge`: the gauge identity, for every real `d`.
 * `ne_ipd_mismatch`: data generated with `χ − d` and inverted with `χ` give the electron density
-  `n_e · exp(−d/(k_B T))`. The reported density is low by exactly the factor the depression
-  would have supplied.
+  `n_e · exp(−d/(k_B T))`. For `d > 0`, `k_B T > 0` and `n_e > 0` the reported density is low,
+  by exactly the factor the depression would have supplied.
 * `sahaRatio_ipd_gauge`: on the ratio route the error cancels. If the density estimate `n̂`
   comes from one element's depression-free inverse, then for every species `s`
   `S_s(χ_s)/n̂ = S_s(χ_s − d)/n_e`: the ion-to-neutral ratio the inverse assigns to `s` is the
@@ -79,7 +79,8 @@ theorem sahaFactor_ipd_gauge (kB T me h chi d : ℝ) (gZ EZ : ι → ℝ) (gZ1 E
 satisfies the Saha relation with the lowered energy, `R·n_e = S(χ − d)`, then the density
 diagnostic evaluated with the unlowered `χ` returns `n_e·exp(−d/(k_B T))`.
 
-For `d > 0` at positive temperature the estimate is low. As an illustration, a lowering of
+For `d > 0`, `k_B T > 0` and `n_e > 0` the estimate is strictly below `n_e` (the factor is then
+below `1`); the identity itself assumes none of the three. As an illustration, a lowering of
 `0.063 eV` at `k_B T = 0.948 eV` gives the factor `exp(−0.0665) ≈ 0.936` [derivation,
 unchecked here].
 
