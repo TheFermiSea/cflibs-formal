@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
-"""Continuous proof queue for the infer-0x fleet (spec 04 §10.4, decision D14).
+"""Continuous proof queue for a fleet of local llama.cpp worker nodes (spec 04 §10.4, decision D14).
 
 Layout under $OPENPROVER_HOME (default ~/.local/share/openprover):
   venv/                  openprover==1.0.1 + tools/openprover/patch_local_alias.py
   lean-main/             git worktree of origin/main (the Lean project every run and check uses)
   leanproj/              symlinks into lean-main (OpenProver writes OpenProver-<id>/ here)
-  fleet.json             [{"name": "infer-01", "host": "10.0.0.26", "port": 8081}, ...]
+  fleet.json             [{"name": "node-1", "host": "<address>", "port": 8081}, ...]
   queue/pending/<id>/    target.json + statement.lean + dossier.md   (drop new targets here)
   queue/running/<id>/    claimed by a node
   queue/done/<id>/       a candidate passed verify.py; proof + verdict copied to results/<id>/
@@ -384,7 +384,7 @@ def write_status(jobs: dict, down: dict) -> None:
 
 
 def tick(fleet: list, jobs: dict, down: dict) -> None:
-    """One supervisor poll: reap, watch and dispatch. `jobs` is keyed by slot ("infer-01#0")."""
+    """One supervisor poll: reap, watch and dispatch. `jobs` is keyed by slot ("node-1#0")."""
     node_ok: dict[str, bool] = {}  # one /health request per node per poll
 
     def ok(node: dict) -> bool:

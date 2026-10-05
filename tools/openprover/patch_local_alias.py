@@ -6,12 +6,12 @@ user's global MCP servers.
 
 OpenProver hard-codes its model aliases (cli.py) and the context-length table (llm/hf.py); the
 `leanstral` alias it ships routes to Mistral's hosted API. This patch adds `leanstral-local`,
-an OpenAI-compatible HFClient target served by llama.cpp on the infer-0x fleet
+an OpenAI-compatible HFClient target served by llama.cpp on a local worker node
 (docs/spec/04 §10.4). Idempotent: re-running on a patched install is a no-op.
 
 Usage:  <venv>/bin/python tools/openprover/patch_local_alias.py
 """
-import importlib, pathlib, sys
+import importlib, os, pathlib, sys
 
 ALIAS, SERVED_NAME, CTX = "leanstral-local", "leanstral", 65536
 
@@ -36,7 +36,7 @@ patch(cli, [
     ('    model_choices = ["sonnet", "opus", "minimax-m2.5", "leanstral"]',
      f'    model_choices = ["sonnet", "opus", "minimax-m2.5", "leanstral", "{ALIAS}"]'),
     ('    HF_MODEL_MAP = {\n        "minimax-m2.5": "MiniMaxAI/MiniMax-M2.5",\n    }',
-     f'    HF_MODEL_MAP = {{\n        "minimax-m2.5": "MiniMaxAI/MiniMax-M2.5",\n        "{ALIAS}": "{SERVED_NAME}",  # llama-server --alias {SERVED_NAME} on the infer-0x fleet\n    }}'),
+     f'    HF_MODEL_MAP = {{\n        "minimax-m2.5": "MiniMaxAI/MiniMax-M2.5",\n        "{ALIAS}": "{SERVED_NAME}",  # llama-server --alias {SERVED_NAME} on a local worker node\n    }}'),
     ('    VLLM_MODELS = {"minimax-m2.5"}  # served via vLLM (standard OpenAI API)',
      f'    VLLM_MODELS = {{"minimax-m2.5", "{ALIAS}"}}  # standard OpenAI API with tool calls (vLLM or llama-server --jinja)'),
     ('    non_claude_models = {"minimax-m2.5", "leanstral"}',
@@ -95,17 +95,22 @@ patch(pr, [
      '                    _names = {tc["function"]["name"] for tc in resp["tool_calls"]}  # cflibs patch\n'
      '                    search_only_streak = search_only_streak + 1 if _names == {"lean_search"} else 0\n'),
 ])
-# Second local worker alias for the control arm (D11): Qwen3.8-27B Q6_K on infer-01 (run-qwen38, port
-# 8081, no --alias, so the served model id is the GGUF path). Context entry kept conservative.
-QALIAS, QSERVED, QCTX = "qwen38-local", "/mnt/models/Qwen3.8-27B/Qwen3.8-27B-Q6_K.gguf", 65536
+# Second local worker alias for the control arm (D11): Qwen3.8-27B Q6_K (port 8081, launched with
+# no --alias, so the served model id is the GGUF path on the node). That id is machine-specific and
+# is read from OPENPROVER_QWEN_MODEL_ID (what the node's `GET /v1/models` reports); it is needed
+# only the first time this alias is patched in. Context entry kept conservative.
+QALIAS, QCTX = "qwen38-local", 65536
+QSERVED = os.environ.get("OPENPROVER_QWEN_MODEL_ID", "")
 _c = cli.read_text()
+if not QSERVED and (QALIAS not in _c or f"{QCTX},  # Qwen3.8-27B" not in hf.read_text()):
+    sys.exit("set OPENPROVER_QWEN_MODEL_ID to the model id the worker node serves (GET /v1/models)")
 if QALIAS in _c:
     print(f"already patched (qwen alias): {cli}")
 else:
     reps = [
         (f'"leanstral", "{ALIAS}"]', f'"leanstral", "{ALIAS}", "{QALIAS}"]'),
-        (f'        "{ALIAS}": "{SERVED_NAME}",  # llama-server --alias {SERVED_NAME} on the infer-0x fleet\n',
-         f'        "{ALIAS}": "{SERVED_NAME}",  # llama-server --alias {SERVED_NAME} on the infer-0x fleet\n        "{QALIAS}": "{QSERVED}",  # run-qwen38 on infer-01 (control arm)\n'),
+        (f'        "{ALIAS}": "{SERVED_NAME}",  # llama-server --alias {SERVED_NAME} on a local worker node\n',
+         f'        "{ALIAS}": "{SERVED_NAME}",  # llama-server --alias {SERVED_NAME} on a local worker node\n        "{QALIAS}": "{QSERVED}",  # local Qwen worker (control arm)\n'),
         (f'VLLM_MODELS = {{"minimax-m2.5", "{ALIAS}"}}', f'VLLM_MODELS = {{"minimax-m2.5", "{ALIAS}", "{QALIAS}"}}'),
         (f'non_claude_models = {{"minimax-m2.5", "leanstral", "{ALIAS}"}}', f'non_claude_models = {{"minimax-m2.5", "leanstral", "{ALIAS}", "{QALIAS}"}}'),
         (f'"{ALIAS}": "Leanstral 1.5 (local llama.cpp)"}}', f'"{ALIAS}": "Leanstral 1.5 (local llama.cpp)", "{QALIAS}": "Qwen3.8-27B (local llama.cpp)"}}'),
@@ -115,7 +120,7 @@ else:
         _c = _c.replace(o, n)
     cli.write_text(_c); print(f"patched (qwen alias): {cli}")
 _h = hf.read_text()
-if QSERVED in _h:
+if f"{QCTX},  # Qwen3.8-27B" in _h:
     print(f"already patched (qwen ctx): {hf}")
 else:
     o = f'    "{SERVED_NAME}": {CTX},  # Leanstral 1.5 Q6_K via llama-server -c {CTX} (run-leanstral)\n'
