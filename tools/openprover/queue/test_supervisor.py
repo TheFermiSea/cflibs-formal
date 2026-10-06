@@ -52,10 +52,10 @@ def _start(supervisor, monkeypatch):
 def test_the_per_call_cap_exceeds_the_fleet_reasoning_budget_by_default(supervisor, monkeypatch):
     _target(supervisor)
     job, reserve = _start(supervisor, monkeypatch)
-    assert reserve == "24576" and int(reserve) > 16384
-    assert job["plan"]["answer_reserve"] == 24576
+    assert reserve == "32768" and int(reserve) > 24576
+    assert job["plan"]["answer_reserve"] == 32768
     recorded = json.loads(Path(f"{job['run_dir']}.planner.json").read_text())
-    assert recorded["answer_reserve"] == 24576
+    assert recorded["answer_reserve"] == 32768
 
 
 def test_a_target_can_set_its_own_cap(supervisor, monkeypatch):
@@ -196,3 +196,27 @@ def test_an_unwritten_whiteboard_and_an_oversized_item_are_left_out(supervisor):
     text, record = supervisor.carried("T1", 2, lambda f: True)
     assert record["lean_items"] == ["lean/a_small.lean"]
     assert "final whiteboard" not in text and len(text) < supervisor.CARRY_MAX_CHARS
+
+
+def test_a_node_may_name_its_own_worker_and_unit(supervisor, monkeypatch):
+    """A Strata node runs every target with its own alias (on the command line and in the plan) and
+    is restarted through its own unit; a node without the keys keeps the target's worker and the
+    Qwen server."""
+    _target(supervisor)
+    seen = {}
+
+    class Proc:
+        pid = 1
+
+    monkeypatch.setattr(supervisor.subprocess, "Popen", lambda cmd, **kw: seen.update(cmd=cmd) or Proc())
+    monkeypatch.setattr(supervisor, "planner_usd_24h", lambda: 0.0)
+    strata = {"name": "n2", "host": "h", "port": 8080, "worker": "strata-local", "unit": "strata"}
+    job = supervisor.start("T1", strata)
+    cmd = seen["cmd"]
+    assert cmd[cmd.index("--worker-model") + 1] == "strata-local"
+    assert cmd[cmd.index("--provider-url") + 1] == "http://h:8080"
+    assert job["plan"]["worker"] == "strata-local"
+    qwen = {"name": "n1", "host": "h", "port": 8081}
+    assert supervisor.node_worker(qwen, {**supervisor.DEFAULTS}) == "qwen38-local"
+    assert supervisor.node_unit(strata) == "strata"
+    assert supervisor.node_unit(qwen) == "llm-server@qwen38"

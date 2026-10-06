@@ -5,7 +5,11 @@ Layout under $OPENPROVER_HOME (default ~/.local/share/openprover):
   venv/                  openprover==1.0.1 + tools/openprover/patch_local_alias.py
   lean-main/             git worktree of origin/main (the Lean project every run and check uses)
   leanproj/              symlinks into lean-main (OpenProver writes OpenProver-<id>/ here)
-  fleet.json             [{"name": "node-1", "host": "<address>", "port": 8081}, ...]
+  fleet.json             [{"name": "node-1", "host": "<address>", "port": 8081,
+                           "worker": "strata-local", "unit": "strata"}, ...]
+                         "worker" (optional) overrides every target's worker alias on that node;
+                         "unit" (optional, default llm-server@qwen38) is the systemd unit the
+                         supervisor restarts over ssh when the node's /health fails.
   queue/pending/<id>/    target.json + statement.lean + dossier.md   (drop new targets here)
   queue/running/<id>/    claimed by a node
   queue/done/<id>/       a candidate passed verify.py; proof + verdict copied to results/<id>/
@@ -15,10 +19,10 @@ Layout under $OPENPROVER_HOME (default ~/.local/share/openprover):
 
 target.json: {"theorem": "Fully.Qualified.name", "max_tokens": 150000, "max_attempts": 2,
               "max_planner_usd": 30, "planner": "opus", "worker": "qwen38-local", "note": "..."}
-  optional: "answer_reserve" (the worker's per-call token cap, default 24576: it must exceed the
-  server's --reasoning-budget, 16384 on the fleet, or a call that thinks to the budget is cut
-  before it answers; it was 16384 until 2026-10-03, and 263 of 1,570 recorded worker calls ended
-  at the cap with no answer text), "carry_forward" (default true; false for pilot targets: a
+  optional: "answer_reserve" (the worker's per-call token cap, default 32768: it must exceed the
+  server's thinking budget, 24576 on the Strata nodes since 2026-10-06 (16384 on the Qwen
+  servers), or a call that thinks to the budget is cut before it answers; it was 16384 until
+  2026-10-03, when 263 of 1,570 recorded worker calls ended at the cap with no answer text), "carry_forward" (default true; false for pilot targets: a
   new attempt is given the Lean items that still compile of the earlier attempt that saved the
   most declarations, and that attempt's final whiteboard, appended to a per-attempt copy of the dossier; every attempt
   used to start from nothing, and on 2026-10-04 two runs ended out of budget a few lemmas short
@@ -64,7 +68,7 @@ VERIFY = Path(__file__).with_name("verify.py")
 POLL_S, WALL_S, NODE_BACKOFF_S = 30, 9 * 3600, 1800
 DEFAULTS = {"max_tokens": 150000, "max_attempts": 2, "planner": "opus", "worker": "qwen38-local",
             "max_planner_usd": 30.0, "effort": "high", "advisor": None, "advisor_every": 5,
-            "advisor_max": 3, "history_budget": 120000, "pilot": False, "answer_reserve": 24576,
+            "advisor_max": 3, "history_budget": 120000, "pilot": False, "answer_reserve": 32768,
             "carry_forward": True}
 CARRY_MAX_FILES, CARRY_MAX_CHARS = 12, 60000  # what one attempt may hand to the next
 #: The whiteboard OpenProver starts a run with (the dossier itself): the planner never wrote one.
@@ -94,10 +98,21 @@ def healthy(node: dict) -> bool:
         return False
 
 
+def node_unit(node: dict) -> str:
+    """The systemd unit that serves the node's worker (fleet.json "unit"; the Qwen server by default)."""
+    return node.get("unit") or "llm-server@qwen38"
+
+
+def node_worker(node: dict, cfg: dict) -> str:
+    """The worker alias a run on this node uses: the node's own (fleet.json "worker"), else the target's."""
+    return node.get("worker") or cfg["worker"]
+
+
 def restart(node: dict) -> bool:
-    log(f"{node['name']}: unhealthy, restarting llm-server@qwen38")
+    unit = node_unit(node)
+    log(f"{node['name']}: unhealthy, restarting {unit}")
     subprocess.run(["ssh", "-o", "BatchMode=yes", "-o", "ConnectTimeout=10", node["name"],
-                    "systemctl restart llm-server@qwen38"], capture_output=True, timeout=120)
+                    f"systemctl restart {unit}"], capture_output=True, timeout=120)
     for _ in range(40):
         time.sleep(15)
         if healthy(node):
@@ -278,7 +293,7 @@ def start(tid: str, node: dict, slot: str | None = None, override: str | None = 
             dossier = Path(f"{run_dir}.dossier.md")
             dossier.write_text((d / "dossier.md").read_text() + extra)
     cmd = [str(HOME / "venv/bin/openprover"), str(run_dir), "--headless", "--autonomous",
-           "--planner-model", planner, "--worker-model", cfg["worker"],
+           "--planner-model", planner, "--worker-model", node_worker(node, cfg),
            "--provider-url", f"http://{node['host']}:{node['port']}",
            "--answer-reserve", str(cfg["answer_reserve"]), "--max-tokens", str(cfg["max_tokens"]),
            "--history-budget", str(cfg["history_budget"]),
@@ -299,12 +314,14 @@ def start(tid: str, node: dict, slot: str | None = None, override: str | None = 
             "advisor_max": cfg["advisor_max"] if advisor else None,
             "history_budget": cfg["history_budget"], "pilot": cfg["pilot"],
             "answer_reserve": cfg["answer_reserve"], "carried": carry or None,
+            "worker": node_worker(node, cfg),
             "slot": slot or node["name"], "planner_override": why}
     Path(f"{run_dir}.planner.json").write_text(json.dumps(plan, indent=2))
     out = open(f"{run_dir}.log", "w")
     proc = subprocess.Popen(cmd, cwd=HOME / "leanproj", stdout=out, stderr=subprocess.STDOUT,
                             start_new_session=True, env=env)
-    log(f"{tid}: attempt {attempt} started on {slot or node['name']} (pid {proc.pid}; planner {planner}"
+    log(f"{tid}: attempt {attempt} started on {slot or node['name']} (pid {proc.pid}; "
+        f"worker {node_worker(node, cfg)}; planner {planner}"
         f"{f' + advisor {advisor}' if advisor else ''}{f', {why} override' if why else ''}"
         + (f"; carrying {len(carry['lean_items'])} Lean items from attempt {carry['from_attempt']}" if carry else "")
         + ")")
