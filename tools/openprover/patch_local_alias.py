@@ -311,3 +311,69 @@ else:
                        '                    resp = _use_thinking_as_result(resp)  # cflibs patch: never return nothing\n'
                        '                    total_cost += resp["cost"]\n')
     pr.write_text(_p); print(f"patched (worker forced-output no_thinking, {n} turns): {pr}")
+
+# Third local worker alias: "strata-local", an OpenAI-compatible Strata server (Qwen3.8-Flash-Next;
+# the server ignores the model name, so the served id is "strata"). Context entry 65536: the Q4 pack
+# is served at 65536 and the IQ3_S pack at 131072; the smaller is used for both so one alias fits.
+SALIAS, SSERVED, SCTX = "strata-local", "strata", 65536
+_c = cli.read_text()
+if SALIAS in _c:
+    print(f"already patched (strata alias): {cli}")
+else:
+    import re as _re
+    m = _re.search(rf'^( +)"{QALIAS}": "[^"]*",[^\n]*\n', _c, _re.M)
+    assert m, "strata alias: the qwen alias line in HF_MODEL_MAP was not found"
+    _c = _c[:m.end()] + f'{m.group(1)}"{SALIAS}": "{SSERVED}",  # Strata (OpenAI-compatible), model name ignored\n' + _c[m.end():]
+    reps = [
+        (f'"{ALIAS}", "{QALIAS}"]', f'"{ALIAS}", "{QALIAS}", "{SALIAS}"]'),
+        (f'VLLM_MODELS = {{"minimax-m2.5", "{ALIAS}", "{QALIAS}"}}', f'VLLM_MODELS = {{"minimax-m2.5", "{ALIAS}", "{QALIAS}", "{SALIAS}"}}'),
+        (f'non_claude_models = {{"minimax-m2.5", "leanstral", "{ALIAS}", "{QALIAS}"}}',
+         f'non_claude_models = {{"minimax-m2.5", "leanstral", "{ALIAS}", "{QALIAS}", "{SALIAS}"}}'),
+        (f'"{QALIAS}": "Qwen3.8-27B (local llama.cpp)"}}', f'"{QALIAS}": "Qwen3.8-27B (local llama.cpp)", "{SALIAS}": "Qwen3.8-Flash-Next (Strata)"}}'),
+    ]
+    for o, n in reps:
+        assert _c.count(o) == 1, f"strata alias: pattern not found or not unique: {o[:60]!r}"
+        _c = _c.replace(o, n)
+    cli.write_text(_c); print(f"patched (strata alias): {cli}")
+_h = hf.read_text()
+if f'"{SSERVED}": {SCTX},' in _h:
+    print(f"already patched (strata ctx): {hf}")
+else:
+    o = f'    "{SERVED_NAME}": {CTX},  # Leanstral 1.5 Q6_K via llama-server -c {CTX} (run-leanstral)\n'
+    assert _h.count(o) == 1
+    hf.write_text(_h.replace(o, o + f'    "{SSERVED}": {SCTX},  # Strata: the smaller of the two packs\' contexts\n'))
+    print(f"patched (strata ctx): {hf}")
+
+# Worker API key: HFClient sends no Authorization header. When a key file exists (default
+# ~/.config/openprover/worker_key, mode 0600; OPENPROVER_WORKER_KEY_FILE overrides the path), every
+# request to the worker carries "Authorization: Bearer <key>". Read from a file, never from the
+# environment, so the key is not inherited by every child process. No file: unchanged behaviour.
+_h = hf.read_text()
+if "def _worker_headers(" in _h:
+    print(f"already patched (worker api key): {hf}")
+else:
+    o = '        req = urllib.request.Request(\n'
+    n_sites = _h.count('            headers={"Content-Type": "application/json"},\n')
+    assert n_sites == 4, f"worker api key: expected 4 request header sites, found {n_sites}"
+    _h = _h.replace('            headers={"Content-Type": "application/json"},\n',
+                    '            headers=_worker_headers(),  # cflibs patch: optional Bearer key from a file\n')
+    anchor = "class HFClient:\n"
+    assert _h.count(anchor) == 1
+    _h = _h.replace(anchor, '''def _worker_headers() -> dict:
+    """Content-Type plus, when a key file exists, the worker's Bearer token (cflibs patch)."""
+    headers = {"Content-Type": "application/json"}
+    path = os.environ.get("OPENPROVER_WORKER_KEY_FILE") or os.path.expanduser("~/.config/openprover/worker_key")
+    try:
+        key = open(path).read().strip()
+    except OSError:
+        return headers
+    if key:
+        headers["Authorization"] = f"Bearer {key}"
+    return headers
+
+
+''' + anchor)
+    if "\nimport os\n" not in _h:
+        _h = _h.replace("\nimport json\n", "\nimport json\nimport os\n", 1)
+        assert "\nimport os\n" in _h, "worker api key: could not add 'import os'"
+    hf.write_text(_h); print(f"patched (worker api key): {hf}")
