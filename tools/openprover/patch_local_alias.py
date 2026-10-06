@@ -313,9 +313,9 @@ else:
     pr.write_text(_p); print(f"patched (worker forced-output no_thinking, {n} turns): {pr}")
 
 # Third local worker alias: "strata-local", an OpenAI-compatible Strata server (Qwen3.8-Flash-Next;
-# the server ignores the model name, so the served id is "strata"). Context entry 65536: the Q4 pack
-# is served at 65536 and the IQ3_S pack at 131072; the smaller is used for both so one alias fits.
-SALIAS, SSERVED, SCTX = "strata-local", "strata", 65536
+# the server ignores the model name, so the served id is "strata"). Context entry 131072: the queue's
+# nodes serve the IQ3_S pack at that context (2026-10-06; it was 65536 while the Q4 pack was in use).
+SALIAS, SSERVED, SCTX = "strata-local", "strata", 131072
 _c = cli.read_text()
 if SALIAS in _c:
     print(f"already patched (strata alias): {cli}")
@@ -336,12 +336,17 @@ else:
         _c = _c.replace(o, n)
     cli.write_text(_c); print(f"patched (strata alias): {cli}")
 _h = hf.read_text()
-if f'"{SSERVED}": {SCTX},' in _h:
+_strata_line = f'    "{SSERVED}": {SCTX},  # Strata: the context the queue nodes serve\n'
+import re as _re2
+_m = _re2.search(rf'^    "{SSERVED}": \d+,[^\n]*\n', _h, _re2.M)
+if _m and _m.group(0) == _strata_line:
     print(f"already patched (strata ctx): {hf}")
+elif _m:  # an earlier context value: replace the line
+    hf.write_text(_h[:_m.start()] + _strata_line + _h[_m.end():]); print(f"patched (strata ctx updated to {SCTX}): {hf}")
 else:
     o = f'    "{SERVED_NAME}": {CTX},  # Leanstral 1.5 Q6_K via llama-server -c {CTX} (run-leanstral)\n'
     assert _h.count(o) == 1
-    hf.write_text(_h.replace(o, o + f'    "{SSERVED}": {SCTX},  # Strata: the smaller of the two packs\' contexts\n'))
+    hf.write_text(_h.replace(o, o + _strata_line))
     print(f"patched (strata ctx): {hf}")
 
 # Worker API key: HFClient sends no Authorization header. When a key file exists (default
