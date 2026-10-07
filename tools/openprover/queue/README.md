@@ -89,7 +89,11 @@ per-run random markers.
 
 The pre-2026-09-24 version parsed axioms and types from the candidate's own stdout and never ran
 the kernel; the deep audit (RF-07) forged three proofs of `(2:ℕ)+2=5` that it accepted. They are
-kept in `falsification/`, and `falsification/run.py <lean-project> [cand:stmt:thm ...]` asserts that
+kept in `falsification/`, together with a fourth forgery found by the 2026-10-07 statement audit
+(the audited definition's text in a decoy namespace, the real name defined as `1`, which the textual
+definition check accepted; check (6), the `pp.all` `#print` comparison of every audited definition
+between the two compiled modules, now rejects it), and
+`falsification/run.py <lean-project> [cand:stmt:thm ...]` asserts that
 each fails through the full verifier AND through the kernel/probe layers alone (text layer
 bypassed), and that every genuine proof passed on the command line still passes. Run it after any
 change to `verify.py`. On 2026-09-24 it passed with the three C3 proofs and F02 as genuine

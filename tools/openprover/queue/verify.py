@@ -18,7 +18,12 @@ passes only if ALL hold:
      subset of {propext, Classical.choice, Quot.sound} and a fully elaborated type (`pp.all`)
      identical to the one a second probe reads from the compiled audited statement. Probe output
      is read only between per-run random markers, so nothing the candidate prints can stand in
-     for it (the candidate's own commands do not run when it is imported).
+     for it (the candidate's own commands do not run when it is imported);
+  6. every definition the audited file declares (`def`/`abbrev`/`structure`/`inductive`/`class`,
+     by fully qualified name) prints identically (`pp.all` `#print`) from the two compiled
+     modules. Check 3 is textual and was defeated on 2026-10-07 by a candidate that carried the
+     audited definition's text in a decoy namespace and defined the real name as something else
+     (the FT13 escape-factor target); this check compares the declarations the kernel has.
 
 Falsified 2026-09-24 against three forged proofs of `(2:ℕ)+2=5` from the deep audit (RF-07):
 `addDeclCore (doCheck := false)`, `sorryAx` plus a printed fake axioms line, and printed fake
@@ -69,6 +74,23 @@ def defs(s: str) -> list[str]:
     return [norm(d) for d in re.findall(pat, s, re.S)]
 
 
+def def_names(s: str) -> list[str]:
+    """Fully qualified names of the definitions a (comment-stripped) file declares, following its
+    `namespace`/`end` nesting. `section` names are not part of a declaration's name."""
+    names, stack = [], []
+    for line in s.splitlines():
+        t = line.strip()
+        if m := re.match(r"namespace\s+(\S+)", t):
+            stack.append(m.group(1))
+        elif m := re.match(r"end\s+(\S+)", t):
+            if stack and stack[-1] == m.group(1):
+                stack.pop()
+        elif m := re.match(r"(?:private\s+|protected\s+)?(?:noncomputable\s+)?(?:def|abbrev|structure|inductive|class)\s+([^\s:({\[]+)", t):
+            name = m.group(1)
+            names.append(".".join(stack + [name]) if stack and not name.startswith(tuple(f"{p}." for p in stack)) else name)
+    return names
+
+
 def signature(s: str, short: str) -> str | None:
     m = re.search(rf"(theorem\s+{re.escape(short)}\b.*?):=", s, re.S)
     return norm(m.group(1)) if m else None
@@ -104,17 +126,26 @@ class Toolchain:
         f.write_text(src)
         return self.run([self.lean, "-R", str(root), "-o", str(root / f"{mod}.olean"), str(f)], root)
 
-    def probe(self, mod: str, thm: str, root: Path) -> dict:
-        """Axioms and pp.all type of `thm` read from a trusted file that imports `mod`."""
+    def probe(self, mod: str, thm: str, root: Path, names: list[str] = ()) -> dict:
+        """Axioms and pp.all type of `thm`, and the pp.all `#print` of every definition in `names`,
+        read from a trusted file that imports `mod`."""
         tag = secrets.token_hex(12)
+        prints = "".join(f"#eval IO.println \"{tag}:DEF {n}\"\nset_option pp.all true in\n#print {n}\n"
+                         for n in names)
         src = (f"import {mod}\n#eval IO.println \"{tag}:TYPE\"\nset_option pp.all true in\n"
                f"#check @{thm}\n#eval IO.println \"{tag}:AXIOMS\"\n#print axioms {thm}\n"
+               f"#eval IO.println \"{tag}:DEFS\"\n{prints}"
                f"#eval IO.println \"{tag}:END\"\n")
         rc, out = self.compile(src, f"Probe{tag}", root)
-        m = re.search(rf"{tag}:TYPE\n(.*?){tag}:AXIOMS\n(.*?){tag}:END", out, re.S)
+        m = re.search(rf"{tag}:TYPE\n(.*?){tag}:AXIOMS\n(.*?){tag}:DEFS\n(.*?){tag}:END", out, re.S)
         if rc != 0 or not m:
-            return {"rc": rc, "type": None, "axioms": None, "out": out[-800:]}
-        ty = norm(re.sub(r"^<tmp>/\S+:\d+:\d+: info:\s*", "", m.group(1), flags=re.M))
+            return {"rc": rc, "type": None, "axioms": None, "defs": None, "out": out[-800:]}
+        strip = lambda t: norm(re.sub(r"^<tmp>/\S+:\d+:\d+: info:\s*", "", t, flags=re.M))
+        ty = strip(m.group(1))
+        defs_out = {}
+        for n in names:
+            dm = re.search(rf"{tag}:DEF {re.escape(n)}\n(.*?)(?={tag}:DEF |\Z)", m.group(3), re.S)
+            defs_out[n] = strip(dm.group(1)) if dm else None
         ax_txt = m.group(2)
         am = re.search(rf"'{re.escape(thm)}' depends on axioms: \[(.*?)\]", ax_txt, re.S)
         if am:
@@ -123,7 +154,7 @@ class Toolchain:
             ax = []
         else:
             ax = None
-        return {"rc": rc, "type": ty, "axioms": ax}
+        return {"rc": rc, "type": ty, "axioms": ax, "defs": defs_out}
 
 
 def verify(cand_path: Path, audited_path: Path, thm: str, project: Path) -> dict:
@@ -156,15 +187,22 @@ def verify(cand_path: Path, audited_path: Path, thm: str, project: Path) -> dict
         if rc != 0:
             c["kernel_replay_out"] = out[-600:]
             return v
-        pc = tc.probe(cmod, thm, root)
+        names = def_names(aud)
+        pc = tc.probe(cmod, thm, root, names)
         c["axioms"] = pc["axioms"]
         if pc["axioms"] is None or not set(pc["axioms"]) <= STANDARD_AXIOMS:
             c["probe_out"] = pc.get("out", "")
             return v
         rc, out = tc.compile(aud_raw, smod, root)  # the audited file: one sorry, by design
-        ps = tc.probe(smod, thm, root)
+        ps = tc.probe(smod, thm, root, names)
         c["elaborated_type_identical"] = bool(ps["type"]) and ps["type"] == pc["type"]
-        v["passed"] = c["elaborated_type_identical"]
+        c["definitions_identical"] = (
+            ps["defs"] is not None and pc["defs"] is not None
+            and all(ps["defs"].get(n) and ps["defs"][n] == pc["defs"].get(n) for n in names))
+        if not c["definitions_identical"]:
+            c["definitions_differ"] = [n for n in names
+                                       if not (ps["defs"] or {}).get(n) or (ps["defs"] or {}).get(n) != (pc["defs"] or {}).get(n)]
+        v["passed"] = c["elaborated_type_identical"] and c["definitions_identical"]
         return v
     finally:
         shutil.rmtree(root, ignore_errors=True)
