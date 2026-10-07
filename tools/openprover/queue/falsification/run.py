@@ -13,18 +13,25 @@ vf = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(vf)
 project = Path(sys.argv[1])
 ok = True
-forged = ["forged_nocheck.lean", "forged_sorryax_printed_axioms.lean", "forged_printed_markers.lean"]
-for f in forged:
-    full = vf.verify(here / f, here / "statement.lean", "VQ.target", project)
+forged = [("forged_nocheck.lean", "statement.lean", "VQ.target"),
+          ("forged_sorryax_printed_axioms.lean", "statement.lean", "VQ.target"),
+          ("forged_printed_markers.lean", "statement.lean", "VQ.target"),
+          # 2026-10-07 (audit of the FT13 escape-factor target): the audited definition's text sits in a
+          # decoy namespace and the real name is defined as 1; the textual check 3 was satisfied.
+          ("forged_decoy_definition.lean", "statement_with_definition.lean",
+           "Plan.FT13.log_escapeFactor_antitone_lipschitz")]
+for f, stmt, thm in forged:
+    full = vf.verify(here / f, here / stmt, thm, project)
     saved = vf.FORBIDDEN, vf.bad_options
     vf.FORBIDDEN, vf.bad_options = [], (lambda s: [])  # bypass the text layer
-    deep = vf.verify(here / f, here / "statement.lean", "VQ.target", project)
+    deep = vf.verify(here / f, here / stmt, thm, project)
     vf.FORBIDDEN, vf.bad_options = saved
     dc = deep["checks"]
     caught = ("kernel" if dc.get("kernel_replay_rc") not in (None, 0) else
               "sorry/compile" if dc.get("sorry_warning") or dc.get("errors") else
               "axioms" if dc.get("axioms") is None or not set(dc["axioms"]) <= vf.STANDARD_AXIOMS else
-              "type" if dc.get("elaborated_type_identical") is False else "NOT CAUGHT")
+              "type" if dc.get("elaborated_type_identical") is False else
+              "definitions" if dc.get("definitions_identical") is False else "NOT CAUGHT")
     good = not full["passed"] and not deep["passed"]
     ok &= good
     print(f"{'ok  ' if good else 'FAIL'} forged {f}: full={full['passed']} "
