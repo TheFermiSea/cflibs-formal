@@ -1,0 +1,384 @@
+#!/usr/bin/env python3
+"""Add a `leanstral-local` worker alias to an installed openprover==1.0.1, and make its Claude
+planner client work with Claude Code CLI >= 2.1 (whose `--output-format json` returns a list of
+messages ending in a `type: result` element, not a single result object) without loading the
+user's global MCP servers.
+
+OpenProver hard-codes its model aliases (cli.py) and the context-length table (llm/hf.py); the
+`leanstral` alias it ships routes to Mistral's hosted API. This patch adds `leanstral-local`,
+an OpenAI-compatible HFClient target served by llama.cpp on a local worker node
+(docs/spec/04 §10.4). Idempotent: re-running on a patched install is a no-op.
+
+Usage:  <venv>/bin/python tools/openprover/patch_local_alias.py
+"""
+import importlib, os, pathlib, sys
+
+ALIAS, SERVED_NAME, CTX = "leanstral-local", "leanstral", 65536
+
+def patch(path: pathlib.Path, pairs):
+    s = path.read_text()
+    # The first `old` disappears once patched; its `new` may not survive verbatim, because later
+    # patches (the qwen alias) extend the same lines.
+    if pairs[0][1] in s or pairs[0][0] not in s:
+        print(f"already patched: {path}"); return
+    for old, new in pairs:
+        assert s.count(old) == 1, f"{path}: pattern not found or not unique: {old[:60]!r}"
+        s = s.replace(old, new)
+    path.write_text(s); print(f"patched: {path}")
+
+cli = pathlib.Path(importlib.import_module("openprover.cli").__file__)
+hf = pathlib.Path(importlib.import_module("openprover.llm.hf").__file__)
+cl = pathlib.Path(importlib.import_module("openprover.llm.claude").__file__)
+hl = pathlib.Path(importlib.import_module("openprover.tui.headless").__file__)
+pr = pathlib.Path(importlib.import_module("openprover.prover").__file__)
+
+# The Qwen worker's served model id is machine-specific (a GGUF path on the node, because its
+# launcher has no --alias), so it is read from the environment: what the node's `GET /v1/models`
+# reports. It is needed only while the qwen alias is not yet patched in, and it is checked here,
+# before anything is written, so a run without it changes nothing.
+QALIAS, QCTX = "qwen38-local", 65536
+QSERVED = os.environ.get("OPENPROVER_QWEN_MODEL_ID", "")
+if not QSERVED and (QALIAS not in cli.read_text() or f"{QCTX},  # Qwen3.8-27B" not in hf.read_text()):
+    sys.exit("set OPENPROVER_QWEN_MODEL_ID to the model id the worker node serves (GET /v1/models)")
+
+patch(cli, [
+    ('    model_choices = ["sonnet", "opus", "minimax-m2.5", "leanstral"]',
+     f'    model_choices = ["sonnet", "opus", "minimax-m2.5", "leanstral", "{ALIAS}"]'),
+    ('    HF_MODEL_MAP = {\n        "minimax-m2.5": "MiniMaxAI/MiniMax-M2.5",\n    }',
+     f'    HF_MODEL_MAP = {{\n        "minimax-m2.5": "MiniMaxAI/MiniMax-M2.5",\n        "{ALIAS}": "{SERVED_NAME}",  # llama-server --alias {SERVED_NAME} on a local worker node\n    }}'),
+    ('    VLLM_MODELS = {"minimax-m2.5"}  # served via vLLM (standard OpenAI API)',
+     f'    VLLM_MODELS = {{"minimax-m2.5", "{ALIAS}"}}  # standard OpenAI API with tool calls (vLLM or llama-server --jinja)'),
+    ('    non_claude_models = {"minimax-m2.5", "leanstral"}',
+     f'    non_claude_models = {{"minimax-m2.5", "leanstral", "{ALIAS}"}}'),
+    ('    MODEL_DISPLAY = {"sonnet": "sonnet 4.6", "opus": "opus 4.6", "leanstral": "leanstral"}',
+     f'    MODEL_DISPLAY = {{"sonnet": "sonnet 4.6", "opus": "opus 4.6", "leanstral": "leanstral", "{ALIAS}": "Leanstral 1.5 (local llama.cpp)"}}'),
+])
+patch(hf, [
+    ('MODEL_CONTEXT_LENGTHS = {\n    "MiniMaxAI/MiniMax-M2.5": 196608,\n}',
+     f'MODEL_CONTEXT_LENGTHS = {{\n    "MiniMaxAI/MiniMax-M2.5": 196608,\n    "{SERVED_NAME}": {CTX},  # Leanstral 1.5 Q6_K via llama-server -c {CTX} (run-leanstral)\n}}'),
+])
+patch(cl, [
+    ('        try:\n            raw = json.loads(stdout)\n        except json.JSONDecodeError:',
+     '        try:\n            raw = json.loads(stdout)\n            if isinstance(raw, list):  # Claude Code CLI >= 2.1: list of messages, last is the result\n                raw = next(x for x in reversed(raw) if isinstance(x, dict) and x.get("type") == "result")\n        except json.JSONDecodeError:'),
+    ('        else:\n            cmd.extend(["--tools", ""])\n        if json_schema:',
+     '        else:\n            cmd.extend(["--tools", "", "--strict-mcp-config", "--mcp-config", \'{"mcpServers":{}}\'])  # do not start the user\'s global MCP servers\n        if json_schema:'),
+])
+patch(hl, [
+    ('    def cleanup(self):\n        pass\n',
+     '    def cleanup(self):\n        pass\n\n    def _sync_step_log_line(self, step_idx: int):\n        pass  # prover.py calls this on spawn; 1.0.1 only implements it on the curses TUI\n'),
+])
+# Worker/verifier HTTP calls: 1.0.1 hard-codes urlopen(timeout=600) at four sites. A local MoE at
+# ~12 tok/s with reasoning_effort=high routinely needs more than 10 minutes per call (smoke test 2
+# lost both of its verifier passes to this timeout), so raise all of them to 30 minutes.
+_t = hf.read_text()
+if "timeout=1800" in _t:
+    print(f"already patched (timeouts): {hf}")
+else:
+    assert _t.count("urlopen(req, timeout=600)") == 4, "expected four 600 s urlopen sites in hf.py"
+    hf.write_text(_t.replace("urlopen(req, timeout=600)", "urlopen(req, timeout=1800)  # was 600; local Worker at ~12 tok/s"))
+    print(f"patched (timeouts): {hf}")
+# Worker loop rules (from the 2026-09-21 dry run): (a) a search-loop breaker — after two consecutive
+# turns whose only tool calls were lean_search, the next turn is offered lean_verify only and told
+# so (Frontier 07: 63 searches, zero verifications in 4 h); (b) a hard cap on Worker turns, reusing
+# the existing "context nearly full — wrapping up" path (DRY07 ran eleven turns).
+patch(pr, [
+    ('        call_idx = 0\n        conversation_id = None  # Mistral stateful conversation\n',
+     '        call_idx = 0\n        conversation_id = None  # Mistral stateful conversation\n'
+     '        search_only_streak = 0  # cflibs patch: consecutive turns that only called lean_search\n'
+     '        WORKER_MAX_TURNS = 12  # cflibs patch: hard cap on worker turns\n'),
+    ('                if msg_chars > max_input_chars:\n                    logger.warning(\n                        "[%s] context nearly full (%d chars > %d limit) — forcing output",',
+     '                if msg_chars > max_input_chars or call_idx >= WORKER_MAX_TURNS:\n                    logger.warning(\n                        "[%s] context nearly full or turn cap (%d chars > %d limit) — forcing output",'),
+    ('                resp = self.worker_llm.chat(\n                    messages=messages,\n                    tools=WORKER_TOOLS,\n                    label=f"{worker_id}_turn_{call_idx}",',
+     '                if search_only_streak >= 2:  # cflibs patch: break the search loop\n'
+     '                    logger.info("[%s] %d search-only turns — withholding lean_search", worker_id, search_only_streak)\n'
+     '                    messages.append({"role": "user", "content": (\n'
+     '                        "You have searched twice without verifying anything. Stop searching. "\n'
+     '                        "Write the complete Lean 4 file now, using the lemma names you already found, "\n'
+     '                        "and call lean_verify on it. lean_search is unavailable this turn.")})\n'
+     '                    turn_tools = [t for t in WORKER_TOOLS if t.get("function", {}).get("name") != "lean_search"]\n'
+     '                else:\n'
+     '                    turn_tools = WORKER_TOOLS\n'
+     '                resp = self.worker_llm.chat(\n                    messages=messages,\n                    tools=turn_tools,\n                    label=f"{worker_id}_turn_{call_idx}",'),
+    ('                    assistant_msg["tool_calls"] = resp["tool_calls"]\n                    messages.append(assistant_msg)\n',
+     '                    assistant_msg["tool_calls"] = resp["tool_calls"]\n                    messages.append(assistant_msg)\n'
+     '                    _names = {tc["function"]["name"] for tc in resp["tool_calls"]}  # cflibs patch\n'
+     '                    search_only_streak = search_only_streak + 1 if _names == {"lean_search"} else 0\n'),
+])
+# Second local worker alias for the control arm (D11): Qwen3.8-27B Q6_K (port 8081, launched with
+# no --alias, so the served model id is the GGUF path on the node; QSERVED above). Context entry
+# kept conservative.
+_c = cli.read_text()
+if QALIAS in _c:
+    print(f"already patched (qwen alias): {cli}")
+else:
+    reps = [
+        (f'"leanstral", "{ALIAS}"]', f'"leanstral", "{ALIAS}", "{QALIAS}"]'),
+        (f'        "{ALIAS}": "{SERVED_NAME}",  # llama-server --alias {SERVED_NAME} on a local worker node\n',
+         f'        "{ALIAS}": "{SERVED_NAME}",  # llama-server --alias {SERVED_NAME} on a local worker node\n        "{QALIAS}": "{QSERVED}",  # local Qwen worker (control arm)\n'),
+        (f'VLLM_MODELS = {{"minimax-m2.5", "{ALIAS}"}}', f'VLLM_MODELS = {{"minimax-m2.5", "{ALIAS}", "{QALIAS}"}}'),
+        (f'non_claude_models = {{"minimax-m2.5", "leanstral", "{ALIAS}"}}', f'non_claude_models = {{"minimax-m2.5", "leanstral", "{ALIAS}", "{QALIAS}"}}'),
+        (f'"{ALIAS}": "Leanstral 1.5 (local llama.cpp)"}}', f'"{ALIAS}": "Leanstral 1.5 (local llama.cpp)", "{QALIAS}": "Qwen3.8-27B (local llama.cpp)"}}'),
+    ]
+    for o, n in reps:
+        assert _c.count(o) == 1, f"qwen alias: pattern not found or not unique: {o[:60]!r}"
+        _c = _c.replace(o, n)
+    cli.write_text(_c); print(f"patched (qwen alias): {cli}")
+_h = hf.read_text()
+if f"{QCTX},  # Qwen3.8-27B" in _h:
+    print(f"already patched (qwen ctx): {hf}")
+else:
+    o = f'    "{SERVED_NAME}": {CTX},  # Leanstral 1.5 Q6_K via llama-server -c {CTX} (run-leanstral)\n'
+    assert _h.count(o) == 1
+    hf.write_text(_h.replace(o, o + f'    "{QSERVED}": {QCTX},  # Qwen3.8-27B Q6_K, run-qwen38 -c 131072 (4 unified slots); conservative\n'))
+    print(f"patched (qwen ctx): {hf}")
+
+# Per-model sampling (2026-09-22). HFClient hard-codes temperature 0.6 / top_p 0.95 at all three request
+# sites -- Qwen3-family thinking-mode settings. Mistral's Leanstral card recommends temperature 1.0 and
+# its reference client sends nothing else (vLLM defaults: top_p 1, top_k off, min_p 0); llama-server's
+# own defaults (top_k 40, min_p 0.05) would otherwise apply, so they are sent explicitly. Models not in
+# the table keep OpenProver's original values, so the Qwen control arm is unchanged.
+_h = hf.read_text()
+if "def _sampling(" in _h:
+    print(f"already patched (sampling): {hf}")
+else:
+    anchor = "# Per-read timeout for streaming responses (seconds)."
+    assert _h.count(anchor) == 1
+    _h = _h.replace(anchor, '''MODEL_SAMPLING = {
+    "leanstral": {"temperature": 1.0, "top_p": 1.0, "top_k": 0, "min_p": 0.0},  # Mistral model card
+}
+
+
+def _sampling(model: str) -> dict:
+    return MODEL_SAMPLING.get(model, {"temperature": 0.6, "top_p": 0.95})
+
+
+''' + anchor)
+    n = 0
+    for ind in (" " * 16, " " * 12):
+        old = f'{ind}"temperature": 0.6,\n{ind}"top_p": 0.95,\n'
+        n += _h.count(old)
+        _h = _h.replace(old, f'{ind}**_sampling(self.model),\n')
+    assert n == 3, f"sampling: expected 3 request sites, found {n}"
+    hf.write_text(_h); print(f"patched (sampling): {hf}")
+
+# Budget accounting (2026-09-22). _run_worker_multi_turn returns only the LAST turn's `raw`, so
+# _track_output_tokens (and step meta.toml) saw one turn of a 12-turn worker: --max-tokens budgets
+# silently undercounted Worker output. Sum usage over every turn and return it in `raw["usage"]`.
+_p = pr.read_text()
+if "total_out_tokens" in _p:
+    print(f"already patched (usage sum): {pr}")
+else:
+    o = '        total_cost = 0.0\n        total_duration = 0\n        call_idx = 0\n'
+    assert _p.count(o) == 1
+    _p = _p.replace(o, '        total_cost = 0.0\n        total_duration = 0\n'
+                       '        total_out_tokens = total_in_tokens = 0  # cflibs patch: usage over all turns\n'
+                       '        call_idx = 0\n')
+    a = _p.index("    def _run_worker_multi_turn(")
+    b = _p.index("\n    def ", a + 10)
+    head, body, tail = _p[:a], _p[a:b], _p[b:]
+    n = 0
+    for ind in (" " * 20, " " * 16):
+        o = f'\n{ind}total_duration += resp["duration_ms"]\n'  # leading \n: 16 spaces is a suffix of 20
+        n += body.count(o)
+        body = body.replace(o, o + f'{ind}_u = (resp.get("raw") or {{}}).get("usage") or {{}}  # cflibs patch\n'
+                              f'{ind}total_out_tokens += _u.get("completion_tokens", 0) or 0\n'
+                              f'{ind}total_in_tokens += _u.get("prompt_tokens", 0) or 0\n')
+    assert n == 3, f"usage sum: expected 3 accumulation sites, found {n}"
+    _p = head + body + tail
+    o = '                "duration_ms": total_duration,\n                "raw": resp["raw"],\n'
+    assert _p.count(o) == 1
+    _p = _p.replace(o, '                "duration_ms": total_duration,\n'
+                       '                "raw": {**(resp["raw"] or {}), "usage": {"prompt_tokens": total_in_tokens,\n'
+                       '                        "completion_tokens": total_out_tokens}},  # cflibs patch\n')
+    pr.write_text(_p); print(f"patched (usage sum): {pr}")
+
+# Planner error visibility (2026-09-25). On a non-zero exit the Claude CLI puts its reason (e.g. a
+# usage-limit message) in stdout as JSON, not stderr, so every overnight planner failure logged as
+# "Claude CLI failed (exit 1): " with nothing after it (95 abort/requeue cycles, cause unknown).
+_c = cl.read_text()
+if "cflibs patch: include stdout" in _c:
+    print(f"already patched (planner error text): {cl}")
+else:
+    o = '            raise RuntimeError(f"Claude CLI failed (exit {proc.returncode}): {stderr[:500]}")'
+    assert _c.count(o) == 1, "planner error text: pattern not found or not unique"
+    cl.write_text(_c.replace(o, '            raise RuntimeError(f"Claude CLI failed (exit {proc.returncode}): "  # cflibs patch: include stdout\n'
+                                 '                               f"{stderr[:300]} | stdout: {stdout[-400:]}")'))
+    print(f"patched (planner error text): {cl}")
+
+# Planner effort (2026-09-25). 1.0.1 auto-selects effort "max" whenever `opus` is used and rejects
+# --effort unless BOTH planner and worker are Claude models, so an Opus planner with a local worker
+# always ran at max. The owner ruled max out on cost: default to "high", and accept --effort when
+# at least one of the two models is Claude (it only reaches LLMClient, via CLAUDE_CODE_EFFORT_LEVEL).
+patch(cli, [
+    ('            effective_effort = "max" if any(m == "opus" for m in claude_models_used) else "high"',
+     '            effective_effort = "high"  # cflibs patch: never auto-select max (owner, 2026-09-25)'),
+    ('        if non_claude:\n            parser.error(\n                f"--effort is only supported',
+     '        if len(non_claude) == 2:  # cflibs patch: effort applies to whichever model is Claude\n'
+     '            parser.error(\n                f"--effort is only supported'),
+])
+# Gated advisor (2026-09-25). The Claude CLI attaches an advisor to every call when the user
+# settings name one, and has no per-call cap; unattended, the inherited advisor was 77% of planner
+# spend. The owner's settings no longer name one. When OPENPROVER_ADVISOR_MODEL is set (by the
+# queue supervisor), attach it with --settings only to first-attempt planner steps 1, 1+EVERY,
+# 1+2*EVERY, ... up to MAX per process; parse retries, phase-2 and discussion calls never get it.
+_c = cl.read_text()
+if "def _advisor_for(" in _c:
+    print(f"already patched (gated advisor): {cl}")
+else:
+    anchor = "from ._base import Interrupted, archive\n"
+    assert _c.count(anchor) == 1, "gated advisor: import anchor not found"
+    _c = _c.replace(anchor, anchor + '''
+_ADVISOR_USED = [0]  # cflibs patch: advisor consultations attached by this process
+
+
+def _advisor_for(label: str) -> str | None:
+    """cflibs patch: the advisor model to attach to this call, or None."""
+    model = os.environ.get("OPENPROVER_ADVISOR_MODEL")
+    m = re.fullmatch(r"planner_step_(\\d+)", label or "")
+    if not model or not m:
+        return None
+    every = int(os.environ.get("OPENPROVER_ADVISOR_EVERY", "5"))
+    cap = int(os.environ.get("OPENPROVER_ADVISOR_MAX", "3"))
+    if (int(m.group(1)) - 1) % every or _ADVISOR_USED[0] >= cap:
+        return None
+    _ADVISOR_USED[0] += 1
+    return model
+''')
+    o = '        if json_schema:\n            cmd.extend(["--json-schema", json.dumps(json_schema)])\n'
+    assert _c.count(o) == 1, "gated advisor: cmd anchor not found or not unique"
+    _c = _c.replace(o, o + '        _adv = _advisor_for(label)  # cflibs patch: gated advisor\n'
+                           '        if _adv:\n'
+                           '            cmd.extend(["--settings", json.dumps({"advisorModel": _adv})])\n'
+                           '            logger.info("[%s] advisor %s attached", label, _adv)\n')
+    cl.write_text(_c); print(f"patched (gated advisor): {cl}")
+
+# Local planner, truncated reply (2026-09-25). When a planner reply is cut off, prover.py retries
+# with call(..., no_thinking=True), which HFClient.call does not accept: the first Qwen-planned run
+# (PILOT-Q-F07) died with TypeError on step 1. Accept it and ask the chat template not to think.
+_h = hf.read_text()
+if "no_thinking: bool = False,  # cflibs patch" in _h:
+    print(f"already patched (local planner no_thinking): {hf}")
+else:
+    o = '        max_tokens: int | None = None,\n    ) -> dict:\n        """Make an LLM call via HTTP and archive it.'
+    assert _h.count(o) == 1, "no_thinking: call() signature not found or not unique"
+    _h = _h.replace(o, '        max_tokens: int | None = None,\n'
+                       '        no_thinking: bool = False,  # cflibs patch: prover.py phase-2 retry passes it\n'
+                       '    ) -> dict:\n        """Make an LLM call via HTTP and archive it.')
+    o = ('                "max_tokens": effective_max_tokens,\n                **_sampling(self.model),\n'
+         '                "stream": bool(stream_callback),\n            }\n')
+    assert _h.count(o) == 1, "no_thinking: vLLM payload in call() not found or not unique"
+    _h = _h.replace(o, o + '            if no_thinking:  # cflibs patch: llama-server --jinja passes these to the template\n'
+                           '                payload["chat_template_kwargs"] = {"enable_thinking": False}\n')
+    hf.write_text(_h); print(f"patched (local planner no_thinking): {hf}")
+
+# Worker forced-output turns (2026-10-03). The run records show 263 of 1,570 worker model calls
+# ending at the per-call token cap with no answer text, and 82 of 523 workers returning an empty
+# result: the model was still thinking when the cap came, and the forced-output turns that follow
+# ("your response was cut off", "you are running out of context") think again under the same cap.
+# Ask the chat template not to think on those two turns, and if a forced turn still comes back
+# with no answer text, hand the planner the thinking instead of nothing. Replayed on four recorded
+# workers that had returned nothing, the forced turn with thinking off returned text in all four:
+# a Lean block in two (not compiled here), a draft cut at the cap in one, a stray tool call in
+# one. It turns nothing into something; whether a run then succeeds was not tested.
+_h = hf.read_text()
+if 'if _kwargs.get("no_thinking"):  # cflibs patch' in _h:
+    print(f"already patched (worker forced-output no_thinking): {hf}")
+else:
+    o = ('            "max_tokens": effective_max_tokens,\n            **_sampling(self.model),\n'
+         '            "stream": bool(stream_callback),\n        }\n        if tools:\n')
+    assert _h.count(o) == 1, "forced-output no_thinking: chat() payload not found or not unique"
+    _h = _h.replace(o, o.replace('        if tools:\n',
+                                 '        if _kwargs.get("no_thinking"):  # cflibs patch: forced-output worker turns\n'
+                                 '            payload["chat_template_kwargs"] = {"enable_thinking": False}\n'
+                                 '        if tools:\n'))
+    hf.write_text(_h); print(f"patched (worker forced-output no_thinking): {hf}")
+_p = pr.read_text()
+if "no_thinking=True,  # cflibs patch: forced output" in _p:
+    print(f"already patched (worker forced-output no_thinking): {pr}")
+else:
+    n = 0
+    for label, cap in (("context_limit", "answer_reserve"), ("phase2", "answer_reserve or 16_000")):
+        o = (f'                        tools=None,\n                        max_tokens={cap},\n'
+             f'                        label=f"{{worker_id}}_{label}",\n')
+        assert _p.count(o) == 1, f"forced-output no_thinking: {label} call not found or not unique"
+        _p = _p.replace(o, o.replace('tools=None,\n', 'tools=None,\n                        no_thinking=True,  # cflibs patch: forced output\n'))
+        n += 1
+    # both forced turns end in the same three lines; fall back to the thinking after each
+    o = ('                    self.tui.stream_end(tab=worker_id)\n'
+         '                    total_cost += resp["cost"]\n')
+    assert _p.count(o) == 2, "forced-output fallback: expected two forced-turn sites in the multi-turn worker"
+    _p = _p.replace(o, '                    self.tui.stream_end(tab=worker_id)\n'
+                       '                    resp = _use_thinking_as_result(resp)  # cflibs patch: never return nothing\n'
+                       '                    total_cost += resp["cost"]\n')
+    pr.write_text(_p); print(f"patched (worker forced-output no_thinking, {n} turns): {pr}")
+
+# Third local worker alias: "strata-local", an OpenAI-compatible Strata server (Qwen3.8-Flash-Next;
+# the server ignores the model name, so the served id is "strata"). Context entry 131072: the queue's
+# nodes serve the IQ3_S pack at that context (2026-10-06; it was 65536 while the Q4 pack was in use).
+SALIAS, SSERVED, SCTX = "strata-local", "strata", 131072
+_c = cli.read_text()
+if SALIAS in _c:
+    print(f"already patched (strata alias): {cli}")
+else:
+    import re as _re
+    m = _re.search(rf'^( +)"{QALIAS}": "[^"]*",[^\n]*\n', _c, _re.M)
+    assert m, "strata alias: the qwen alias line in HF_MODEL_MAP was not found"
+    _c = _c[:m.end()] + f'{m.group(1)}"{SALIAS}": "{SSERVED}",  # Strata (OpenAI-compatible), model name ignored\n' + _c[m.end():]
+    reps = [
+        (f'"{ALIAS}", "{QALIAS}"]', f'"{ALIAS}", "{QALIAS}", "{SALIAS}"]'),
+        (f'VLLM_MODELS = {{"minimax-m2.5", "{ALIAS}", "{QALIAS}"}}', f'VLLM_MODELS = {{"minimax-m2.5", "{ALIAS}", "{QALIAS}", "{SALIAS}"}}'),
+        (f'non_claude_models = {{"minimax-m2.5", "leanstral", "{ALIAS}", "{QALIAS}"}}',
+         f'non_claude_models = {{"minimax-m2.5", "leanstral", "{ALIAS}", "{QALIAS}", "{SALIAS}"}}'),
+        (f'"{QALIAS}": "Qwen3.8-27B (local llama.cpp)"}}', f'"{QALIAS}": "Qwen3.8-27B (local llama.cpp)", "{SALIAS}": "Qwen3.8-Flash-Next (Strata)"}}'),
+    ]
+    for o, n in reps:
+        assert _c.count(o) == 1, f"strata alias: pattern not found or not unique: {o[:60]!r}"
+        _c = _c.replace(o, n)
+    cli.write_text(_c); print(f"patched (strata alias): {cli}")
+_h = hf.read_text()
+_strata_line = f'    "{SSERVED}": {SCTX},  # Strata: the context the queue nodes serve\n'
+import re as _re2
+_m = _re2.search(rf'^    "{SSERVED}": \d+,[^\n]*\n', _h, _re2.M)
+if _m and _m.group(0) == _strata_line:
+    print(f"already patched (strata ctx): {hf}")
+elif _m:  # an earlier context value: replace the line
+    hf.write_text(_h[:_m.start()] + _strata_line + _h[_m.end():]); print(f"patched (strata ctx updated to {SCTX}): {hf}")
+else:
+    o = f'    "{SERVED_NAME}": {CTX},  # Leanstral 1.5 Q6_K via llama-server -c {CTX} (run-leanstral)\n'
+    assert _h.count(o) == 1
+    hf.write_text(_h.replace(o, o + _strata_line))
+    print(f"patched (strata ctx): {hf}")
+
+# Worker API key: HFClient sends no Authorization header. When a key file exists (default
+# ~/.config/openprover/worker_key, mode 0600; OPENPROVER_WORKER_KEY_FILE overrides the path), every
+# request to the worker carries "Authorization: Bearer <key>". Read from a file, never from the
+# environment, so the key is not inherited by every child process. No file: unchanged behaviour.
+_h = hf.read_text()
+if "def _worker_headers(" in _h:
+    print(f"already patched (worker api key): {hf}")
+else:
+    o = '        req = urllib.request.Request(\n'
+    n_sites = _h.count('            headers={"Content-Type": "application/json"},\n')
+    assert n_sites == 4, f"worker api key: expected 4 request header sites, found {n_sites}"
+    _h = _h.replace('            headers={"Content-Type": "application/json"},\n',
+                    '            headers=_worker_headers(),  # cflibs patch: optional Bearer key from a file\n')
+    anchor = "class HFClient:\n"
+    assert _h.count(anchor) == 1
+    _h = _h.replace(anchor, '''def _worker_headers() -> dict:
+    """Content-Type plus, when a key file exists, the worker's Bearer token (cflibs patch)."""
+    headers = {"Content-Type": "application/json"}
+    path = os.environ.get("OPENPROVER_WORKER_KEY_FILE") or os.path.expanduser("~/.config/openprover/worker_key")
+    try:
+        key = open(path).read().strip()
+    except OSError:
+        return headers
+    if key:
+        headers["Authorization"] = f"Bearer {key}"
+    return headers
+
+
+''' + anchor)
+    if "\nimport os\n" not in _h:
+        _h = _h.replace("\nimport json\n", "\nimport json\nimport os\n", 1)
+        assert "\nimport os\n" in _h, "worker api key: could not add 'import os'"
+    hf.write_text(_h); print(f"patched (worker api key): {hf}")
