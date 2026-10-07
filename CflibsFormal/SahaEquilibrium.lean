@@ -1771,8 +1771,10 @@ Newton's method on the multi-element charge-neutrality residual `x − G x`,
 `G = multiElementIonized S Ntot`, at fixed temperature. The exact error identity
 `neutralityNewton_error_eq` shows the Newton iterate never overshoots the root from above, and
 the antitonicity of `G` turns one step into a two-sided enclosure `N x ≤ r ≤ G (N x)`
-(`neutralityNewton_enclosure`). This is the forward charge-neutrality closure at fixed `T`, not
-the inverse `(T, n_e)` loop. No convexity lemma is needed: the error identity replaces it. -/
+(`neutralityNewton_enclosure`). When some species is present the step is strictly positive and,
+from a guess below the root, does not decrease (`neutralityNewton_pos_and_step_monotone`). This
+is the forward charge-neutrality closure at fixed `T`, not the inverse `(T, n_e)` loop. No
+convexity lemma is needed: the error identity replaces it. -/
 
 variable {ι : Type*} [Fintype ι]
 
@@ -1942,6 +1944,70 @@ private theorem neutralityNewton_ge_self (S Ntot : ι → ℝ) (hS : ∀ s, 0 < 
       ≤ 0 := div_nonpos_of_nonpos_of_nonneg hnum hD.le
   unfold neutralityNewton
   linarith [hstep]
+
+/-- **The neutrality Newton step is strictly positive, and below the root it moves up.**
+Let `G := multiElementIonized S Ntot` and `N := neutralityNewton S Ntot` (Newton's method on the
+charge-neutrality residual `x - G x`). For every electron-density guess `x ≥ 0`, provided at
+least one species is present (`∃ s, 0 < Ntot s`):
+1. `0 < N x` (strict positivity);
+2. for every charge-neutrality root `r = G r` with `x ≤ r`, `x ≤ N x` (the step does not move
+   away from the root from below).
+
+Reading: together with `neutralityNewton_le_root` (`N x ≤ r`), part 2 says a guess in `[0, r]`
+is mapped into `[x, r]`; part 1 says the iterate never collapses to zero electron density.
+Part 1 is a strict strengthening of `neutralityNewton_nonneg` (`0 ≤ N x`) when some species is
+present; that lemma also covers `Ntot ≡ 0`, where `N x = 0`, which this one does not. Under
+`hpos` part 2 also holds strictly (`x < r → x < N x`, checked in the queue audit, not stated
+here); the non-strict form is stated.
+
+Hypotheses.
+* `hS` (`S s > 0`, the sign of a Saha factor) keeps every denominator `x + S s` positive.
+* `hN` (`Ntot s ≥ 0`; absent species allowed) makes `G ≥ 0`, `G` antitone on `[0, ∞)` and the
+  Newton denominator `1 + ∑ s, Ntot s * S s / (x + S s) ^ 2 ≥ 1`.
+* `hpos` (some species present) is needed for part 1 only: with every `Ntot s = 0`, `G ≡ 0` and
+  `N x = 0`. Part 2 does not use it.
+* `hx` restricts the guess to the physical half-line.
+* In part 2 the root `r` is quantified, so no root needs to be supplied for part 1 (the repo's
+  existence lemma `multiElement_exists_pos_fixedPoint` needs every `Ntot s > 0`). Charge
+  neutrality at `r` gives `G x ≥ G r = r ≥ x`. No `0 ≤ r` hypothesis is taken: it follows from
+  `0 ≤ x ≤ r`; a negative solution of `r = G r` (for `S = Ntot = 1`, `r = -(1 + √5)/2`) makes
+  part 2 vacuous, not false.
+
+Scope: PURE-MATH (a numerical-analysis fact about the Newton map of the closure map
+`multiElementIonized`). The closure map's physical reading (fixed `T`, LTE, two stages per
+element; Z-stage cascades not covered) is the reduced model of this module's scope section; this
+theorem claims nothing about the plasma beyond that map, and no convergence or rate. -/
+theorem neutralityNewton_pos_and_step_monotone {S Ntot : ι → ℝ} {x : ℝ}
+    (hS : ∀ s, 0 < S s) (hN : ∀ s, 0 ≤ Ntot s) (hpos : ∃ s, 0 < Ntot s) (hx : 0 ≤ x) :
+    0 < neutralityNewton S Ntot x ∧
+      ∀ r, r = multiElementIonized S Ntot r → x ≤ r → x ≤ neutralityNewton S Ntot x := by
+  refine ⟨?_, fun r hfix hxr => neutralityNewton_ge_self S Ntot hS hN hx hxr hfix⟩
+  obtain ⟨s₀, hs₀⟩ := hpos
+  have hQ : 0 ≤ ∑ s, Ntot s * S s / (x + S s) ^ 2 :=
+    Finset.sum_nonneg (fun s _ => div_nonneg (mul_nonneg (hN s) (hS s).le) (sq_nonneg _))
+  have hD : 0 < 1 + ∑ s, Ntot s * S s / (x + S s) ^ 2 := by linarith
+  have hG : 0 < multiElementIonized S Ntot x := by
+    unfold multiElementIonized
+    exact lt_of_lt_of_le (div_pos (mul_pos hs₀ (hS s₀)) (by linarith [hS s₀]))
+      (Finset.single_le_sum (fun t _ => div_nonneg (mul_nonneg (hN t) (hS t).le)
+        (by linarith [hS t])) (Finset.mem_univ s₀))
+  have hform : neutralityNewton S Ntot x =
+      (x * (∑ s, Ntot s * S s / (x + S s) ^ 2) + multiElementIonized S Ntot x) /
+        (1 + ∑ s, Ntot s * S s / (x + S s) ^ 2) := by
+    unfold neutralityNewton
+    field_simp
+    ring
+  rw [hform]
+  exact div_pos (add_pos_of_nonneg_of_pos (mul_nonneg hx hQ) hG) hD
+
+/-- Non-vacuity of `neutralityNewton_pos_and_step_monotone`, with an interior guess: one species
+with `S = 1`, `Ntot = 2`, root `r = 1` (`G 1 = 2·1/(1 + 1) = 1`) and guess `x = 1/2 < r`. -/
+example : 0 < neutralityNewton (fun _ : Unit => (1 : ℝ)) (fun _ => 2) (1 / 2) ∧
+    (1 / 2 : ℝ) ≤ neutralityNewton (fun _ : Unit => (1 : ℝ)) (fun _ => 2) (1 / 2) := by
+  have h := neutralityNewton_pos_and_step_monotone (S := fun _ : Unit => (1 : ℝ))
+    (Ntot := fun _ => 2) (x := 1 / 2) (fun _ => one_pos) (fun _ => by norm_num)
+    ⟨(), by norm_num⟩ (by norm_num)
+  exact ⟨h.1, h.2 1 (by norm_num [multiElementIonized]) (by norm_num)⟩
 
 /-- A fixed point `L ∈ [0, r]` of the Newton map is the root: `N L = L` forces `G L = L`, and
 then `r = G r ≤ G L = L ≤ r` (`G` antitone). -/

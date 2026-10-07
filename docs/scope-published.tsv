@@ -78,7 +78,9 @@ Alt/OLSVariance.lean	olsSlope_unbiased	theorem	REDUCED	REDUCED	—
 Alt/OLSVariance.lean	olsSlope_variance_antitone	theorem	EXACT	REDUCED	Alt.betaHat
 Alt/OLSVariance.lean	olsSlope_variance_eq	theorem	EXACT	REDUCED	Alt.betaHat
 Alt/OLSVariance.lean	olsSlope_variance_noiseGain	theorem	EXACT	REDUCED	Alt.betaHat
+Alt/OLSVariance.lean	ols_variance_increases_with_noisy_line	theorem	EXACT	REDUCED	Alt.betaHat
 Alt/OLSVariance.lean	variance_const_add_weightedNoise	theorem	PURE-MATH	PURE-MATH	—
+Alt/OLSVariance.lean	variance_const_add_weightedNoise_hetero	theorem	PURE-MATH	PURE-MATH	—
 Alt/SelfAbsorbed.lean	classicDensity_smul_intensity	theorem	PURE-MATH	PURE-MATH	—
 Alt/SelfAbsorbed.lean	selfAbsorbed_corrects_bias	theorem	EXACT	APPROXIMATION	selfAbsorbedIntensity
 Alt/SelfAbsorbed.lean	selfAbsorbed_eq_classic_corrected	theorem	PURE-MATH	PURE-MATH	—
@@ -121,6 +123,7 @@ AtomicDataPerturbation.lean	classicDensity_aliasing_error_channels	theorem	REDUC
 AtomicDataPerturbation.lean	classicDensity_aliasing_error_energy	theorem	REDUCED	REDUCED	—
 AtomicDataPerturbation.lean	classicDensity_temperature_aliasing	theorem	EXACT	REDUCED	lineIntensity
 AtomicDataPerturbation.lean	classicDensity_temperature_aliasing_error	theorem	REDUCED	REDUCED	—
+AtomicDataPerturbation.lean	composition_additive_error_amplifies_minor	theorem	PURE-MATH	PURE-MATH	—
 AtomicDataPerturbation.lean	composition_rel_error_mul	theorem	PURE-MATH	PURE-MATH	—
 AtomicDataPerturbation.lean	massFraction_rel_error	theorem	PURE-MATH	PURE-MATH	—
 Boltzmann.lean	boltzmannFactor_pos	theorem	PURE-MATH	PURE-MATH	—
@@ -272,6 +275,7 @@ EquivalentWidth.lean	lorentzian_integrable	theorem	PURE-MATH	PURE-MATH	—
 EquivalentWidth.lean	lorentzian_integral	theorem	PURE-MATH	PURE-MATH	—
 EquivalentWidth.lean	lorentzian_pos	theorem	PURE-MATH	PURE-MATH	—
 EquivalentWidth.lean	nvLz_sqrt_lower_at_threshold	theorem	EXACT	EXACT	—
+EquivalentWidth.lean	pairRatio_strictAntiOn_of_logSlope_strictAntiOn	theorem	PURE-MATH	PURE-MATH	—
 EquivalentWidth.lean	slabCurve_forward_lipschitz	theorem	PURE-MATH	PURE-MATH	—
 EquivalentWidth.lean	slabCurve_inverse_lipschitz	theorem	PURE-MATH	PURE-MATH	—
 EquivalentWidth.lean	slabCurve_roundTrip_lipschitz	theorem	PURE-MATH	PURE-MATH	—
@@ -333,6 +337,7 @@ FixedEffectsDesign.lean	feSlope_isMin	theorem	PURE-MATH	PURE-MATH	—
 FixedEffectsDesign.lean	feSlope_rss_split	theorem	PURE-MATH	PURE-MATH	—
 FixedEffectsDesign.lean	feSlope_unique_min	theorem	PURE-MATH	PURE-MATH	—
 FixedEffectsDesign.lean	fe_identifiable_iff	theorem	PURE-MATH	PURE-MATH	—
+FixedEffectsDesign.lean	fe_joint_identifiable_iff	theorem	PURE-MATH	PURE-MATH	—
 ForwardMap.lean	boltzmann_plot_intensity	theorem	REDUCED	REDUCED	—
 ForwardMap.lean	lineIntensity	def	REDUCED	REDUCED	—
 ForwardMap.lean	lineIntensity_pos	theorem	PURE-MATH	PURE-MATH	—
@@ -422,11 +427,15 @@ JointConvergence.lean	dampedAffine_tendsto	theorem	PURE-MATH	PURE-MATH	—
 JointConvergence.lean	dampedAffine_tendsto_iff	theorem	PURE-MATH	PURE-MATH	—
 JointConvergence.lean	dampedMap_contracts	theorem	PURE-MATH	PURE-MATH	—
 JointConvergence.lean	dampedMap_lipschitz	theorem	PURE-MATH	PURE-MATH	—
+JointConvergence.lean	dampedMap_lipschitz_explicit	theorem	PURE-MATH	PURE-MATH	—
 JointConvergence.lean	exists_weights_iff	theorem	PURE-MATH	PURE-MATH	—
 JointConvergence.lean	jointConvergence	theorem	REDUCED	REDUCED	—
+JointConvergence.lean	jury_pair	theorem	PURE-MATH	PURE-MATH	—
+JointConvergence.lean	jury_two	theorem	PURE-MATH	PURE-MATH	—
 JointConvergence.lean	residual_stop	theorem	PURE-MATH	PURE-MATH	—
 JointConvergence.lean	tDamped_mobius_converges	theorem	PURE-MATH	PURE-MATH	—
 JointIdentifiability.lean	joint_identifiability	theorem	EXACT	REDUCED	PlasmaParams,lineIntensity
+KernelLineExtraction.lean	extractor_bias_identity	theorem	PURE-MATH	PURE-MATH	—
 KernelLineExtraction.lean	kernelLS_error_linfty	theorem	PURE-MATH	PURE-MATH	—
 KirchhoffSource.lean	source_eq_planck	theorem	EXACT	EXACT	—
 LadenburgReiche.lean	equivWidth_lorentzianG_isEquivalent	theorem	EXACT	EXACT	—
@@ -711,6 +720,7 @@ RadiativeTransferDepth.lean	rtEmergent_uniform	theorem	EXACT	EXACT	—
 RadiativeTransferDepth.lean	rtFormalLinear	theorem	PURE-MATH	PURE-MATH	—
 RadiativeTransferDepth.lean	rtFormal_const	theorem	EXACT	EXACT	—
 RadiativeTransferDepth.lean	rtFormal_sandwich	theorem	EXACT	EXACT	—
+RatioModeSensitivity.lean	log_ratioEstimate_lipschitz_box	theorem	PURE-MATH	PURE-MATH	—
 RatioModeSensitivity.lean	ratioEstimate_hasDerivAt	theorem	PURE-MATH	PURE-MATH	—
 RefuseToReport.lean	pasPolicy_guarantees	theorem	PURE-MATH	PURE-MATH	—
 Robustness.lean	logRatioIntercept_stable	theorem	PURE-MATH	PURE-MATH	—
@@ -749,6 +759,7 @@ SahaEquilibrium.lean	neutralityNewton_enclosure	theorem	PURE-MATH	PURE-MATH	—
 SahaEquilibrium.lean	neutralityNewton_error_eq	theorem	PURE-MATH	PURE-MATH	—
 SahaEquilibrium.lean	neutralityNewton_le_root	theorem	PURE-MATH	PURE-MATH	—
 SahaEquilibrium.lean	neutralityNewton_nonneg	theorem	PURE-MATH	PURE-MATH	—
+SahaEquilibrium.lean	neutralityNewton_pos_and_step_monotone	theorem	PURE-MATH	PURE-MATH	—
 SahaEquilibrium.lean	neutralityNewton_tendsto	theorem	PURE-MATH	PURE-MATH	—
 SahaEquilibrium.lean	outerContraction_box	theorem	PURE-MATH	PURE-MATH	—
 SahaEquilibrium.lean	outerMap_contraction	theorem	PURE-MATH	PURE-MATH	—
@@ -783,6 +794,7 @@ SahaStability.lean	electronDensity_relativeError	theorem	EXACT	REDUCED	sahaFacto
 SahaStability.lean	hasDerivAt_log_sum_exp	theorem	PURE-MATH	PURE-MATH	—
 SahaStability.lean	ionReweight	def	REDUCED	REDUCED	—
 SahaStability.lean	ionReweight_strictMonoOn	theorem	PURE-MATH	PURE-MATH	—
+SahaStability.lean	log_partitionFunction_lipschitz_box	theorem	PURE-MATH	PURE-MATH	—
 SahaStability.lean	log_partitionFunction_lipschitz_max	theorem	PURE-MATH	PURE-MATH	—
 SahaStability.lean	log_sahaFactor_beta	theorem	EXACT	REDUCED	sahaFactor
 SahaStability.lean	log_sahaFactor_hasDerivAt_beta	theorem	EXACT	REDUCED	sahaFactor
@@ -797,8 +809,10 @@ SahaStability.lean	sahaFactor_strictMonoOn_temp	theorem	EXACT	REDUCED	sahaFactor
 SahaStability.lean	saha_inv_lipschitz	theorem	PURE-MATH	PURE-MATH	—
 SahaStability.lean	saha_ratio_cancel	theorem	PURE-MATH	PURE-MATH	—
 SahaStability.lean	thermalBracket_strictMono	theorem	PURE-MATH	PURE-MATH	—
+SelfAbsorption.lean	apparentT_ge_of_selfAbsorbed_slope	theorem	REDUCED	APPROXIMATION	selfAbsorptionFactor
 SelfAbsorption.lean	lineIntensity_eq_selfAbsorbedIntensity_div	theorem	PURE-MATH	PURE-MATH	—
 SelfAbsorption.lean	olsSlope_selfAbsorbed_ge	theorem	REDUCED	APPROXIMATION	selfAbsorptionFactor
+SelfAbsorption.lean	olsSlope_selfAbsorbed_lt_of_tau_increasing	theorem	REDUCED	APPROXIMATION	selfAbsorptionFactor
 SelfAbsorption.lean	selfAbsorbedIntensity	def	APPROXIMATION	APPROXIMATION	—
 SelfAbsorption.lean	selfAbsorbedIntensity_eq_slab	theorem	EXACT	APPROXIMATION	selfAbsorbedIntensity
 SelfAbsorption.lean	selfAbsorbedIntensity_le_lineIntensity	theorem	EXACT	APPROXIMATION	selfAbsorbedIntensity

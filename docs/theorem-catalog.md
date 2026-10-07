@@ -9,9 +9,9 @@
 
 A result shows `own → published` when the two differ (with the definitions that weakened it), and a single tag when they agree. A definition with its own row shows `model TAG`.
 
-**Own-tag mix** (876 results): **EXACT** 162 · **REDUCED** 245 · **APPROXIMATION** 4 · **PURE-MATH** 465
+**Own-tag mix** (890 results): **EXACT** 163 · **REDUCED** 247 · **APPROXIMATION** 4 · **PURE-MATH** 476
 
-**Published-tag mix** (876 results; 153 weakened by a model tag): **EXACT** 47 · **REDUCED** 296 · **APPROXIMATION** 68 · **PURE-MATH** 465
+**Published-tag mix** (890 results; 156 weakened by a model tag): **EXACT** 47 · **REDUCED** 297 · **APPROXIMATION** 70 · **PURE-MATH** 476
 
 `EXACT` = an exact theorem about the model it is stated over · `REDUCED` = exact only after a stated reduction (a dimensionless/lumped-factor form) · `APPROXIMATION` = the statement itself is approximate (documented idealization / limiting case) · `PURE-MATH` = infrastructure lemma, no physical claim. The tags are the authors' classification, reviewed result by result as each landed. Only the first 186-entry corpus was cross-checked in one pass against the literature (`reviews/literature-validity-audit.md`), and the then 412 results again on 2026-07-09 (`docs/literature-validation.md`); later results have no whole-corpus literature audit.
 
@@ -174,11 +174,13 @@ A result shows `own → published` when the two differ (with the definitions tha
 **Results**
 - `PURE-MATH` · `olsSlope_estimator_eq` — Estimator = truth + weighted noise (pure pointwise algebra, no probability).
 - `PURE-MATH` · `expectation_const_add_weightedNoise` — Expectation of a constant plus weighted noise `𝔼[c + ∑ₖ wₖ·εₖ] = c`, for zero-mean L² noise.
+- `PURE-MATH` · `variance_const_add_weightedNoise_hetero` — Variance of a constant plus uncorrelated weighted noise, per-line variances `Var(c + ∑ₖ wₖ·εₖ) = ∑ₖ wₖ²·σₖ²`, for pairwise-uncorrelated L² noise with `Var(εₖ…
 - `PURE-MATH` · `variance_const_add_weightedNoise` — Variance of a constant plus UNCORRELATED weighted noise `Var(c + ∑ₖ wₖ·εₖ) = σ²·∑ₖ wₖ²`, for pairwise-uncorrelated, homoscedastic L² noise.
 - `REDUCED` · `olsSlope_unbiased` — Unbiasedness `𝔼[β̂] = β`.  _[Gauss–Markov]_
 - `EXACT → REDUCED` · `olsSlope_variance_noiseGain` — Slope variance as the noise gain `Var(β̂) = σ²·∑ₖ wₖ²`.  _[Gauss–Markov]_  (via `Alt.betaHat`)
 - `EXACT → REDUCED` · `olsSlope_variance_eq` — THE headline — the Gauss–Markov slope-variance law `Var(β̂) = σ²/SS_E`.  _[Gauss–Markov]_  (via `Alt.betaHat`)
 - `EXACT → REDUCED` · `olsSlope_variance_antitone` — Monotonicity — more energy spread ⇒ less slope variance.  _[Gauss–Markov]_  (via `Alt.betaHat`)
+- `EXACT → REDUCED` · `ols_variance_increases_with_noisy_line` — Adding a noisy line raises the unweighted OLS slope variance from 2 to 2500.25.  _[Gauss–Markov]_  (via `Alt.betaHat`)
 
 ## `Alt/SelfAbsorbed.lean`  (CflibsFormal.Alt)
 *the self-absorption-corrected composition estimator (alternative)*
@@ -256,6 +258,7 @@ A result shows `own → published` when the two differ (with the definitions tha
 - `REDUCED` · `classicComposition_temperature_error` — REDUCED composition corollary (temperature channel).  _[Tognoni 2010]_
 - `PURE-MATH` · `composition_rel_error_mul` — Relative error through closure (FT-07 (iii), generic form).
 - `PURE-MATH` · `massFraction_rel_error` — The relative closure bound on a weighted basis (FT-07 (iv)).
+- `PURE-MATH` · `composition_additive_error_amplifies_minor` — Additive-error witness: one instance where an error of 1 % of the total density moves a minor element's fraction by 49/51 of itself.
 - `REDUCED` · `classicComposition_atomicData_error_rel` — Relative closure bound for the classic reader under atomic-data error.  _[Tognoni 2010]_
 
 ## `Boltzmann.lean`  (CflibsFormal)
@@ -555,6 +558,7 @@ A result shows `own → published` when the two differ (with the definitions tha
 - `PURE-MATH` · `equivWidth_stepProfile` — Closed-form equivalent width of the two-step profile.
 - `PURE-MATH` · `stepW_pairRatio_not_injOn` — The step-profile pair ratio is not injective (explicit closed form).
 - `PURE-MATH` · `stepProfile_pairRatio_not_injOn` — Pair-ratio identifiability is not profile-generic.  _[Gornushkin 1999]_
+- `PURE-MATH` · `pairRatio_strictAntiOn_of_logSlope_strictAntiOn` — Sufficient criterion for pair-ratio identifiability: a strictly decreasing log-slope.
 - `PURE-MATH` · `conv_absorptance_le` — Pointwise Jensen for the slab absorptance (frontier FT-14, pointwise step).
 
 ## `ErrorBudget.lean`  (CflibsFormal)
@@ -651,6 +655,7 @@ A result shows `own → published` when the two differ (with the definitions tha
 
 **Results**
 - `PURE-MATH` · `fe_identifiable_iff` — The common slope of a fixed-effects design is identifiable iff `SS_W > 0`.
+- `PURE-MATH` · `fe_joint_identifiable_iff` — Joint identifiability of two common slopes in a fixed-effects design (FT-04 (iv)).
 - `PURE-MATH` · `feSlope_add_smul` — The fixed-effects slope is linear in the ordinates.
 - `PURE-MATH` · `feSlope_isMin` — The fixed-effects estimator is the weighted least-squares fit.
 - `PURE-MATH` · `feSlope_rss_split` — Pythagorean split of the fixed-effects residual sum of squares.
@@ -841,9 +846,12 @@ A result shows `own → published` when the two differ (with the definitions tha
 
 **Results**
 - `REDUCED` · `jointConvergence` — The frozen-offset Model-B joint `(T, n_e)` outer loop contracts (`REDUCED`; Aguilera & Aragón 2007, Model B; Saha–Eggert (Griem)).  _[Aguilera & Aragón 2007]_
+- `PURE-MATH` · `dampedMap_lipschitz_explicit` — Derivative-window Lipschitz bound for the damped map, with the constant exported.
 - `PURE-MATH` · `dampedMap_lipschitz` — Derivative-window Lipschitz bound for the damped map.
 - `PURE-MATH` · `dampedMap_contracts` — Derivative-window certificate for a damped fixed-point iteration on an invariant box.
 - `PURE-MATH` · `tDamped_mobius_converges` — The T-damped Möbius iteration converges from every positive start when `0 < g < 1`.
+- `PURE-MATH` · `jury_pair` — Scalar Jury (Schur–Cohn) test for a real monic quadratic.
+- `PURE-MATH` · `jury_two` — 2×2 Jury / Schur–Cohn test.
 - `PURE-MATH` · `exists_weights_iff` — When a weighted row-sum gate exists for a 2×2 Lipschitz coupling (FT-01(d)).
 - `PURE-MATH` · `residual_stop` — A-posteriori residual stop rule (FT-01 (e)).
 - `PURE-MATH` · `dampedAffine_iterate` — Exact error recursion of the damped affine iteration (FT-01 (a)).
@@ -864,6 +872,7 @@ A result shows `own → published` when the two differ (with the definitions tha
 
 **Results**
 - `PURE-MATH` · `kernelLS_error_linfty` — ℓ∞ error of kernel least-squares line extraction under a misspecified profile kernel.
+- `PURE-MATH` · `extractor_bias_identity` — Closed-form error identity of the kernel least-squares extractor (FT-16).
 
 ## `KirchhoffSource.lean`  (CflibsFormal)
 *Kirchhoff-consistent line opacity and the Planck source function*
@@ -1391,6 +1400,7 @@ A result shows `own → published` when the two differ (with the definitions tha
 
 **Results**
 - `PURE-MATH` · `ratioEstimate_hasDerivAt` — Exact `β`-derivative of the two-stage ratio-mode log-ratio.
+- `PURE-MATH` · `log_ratioEstimate_lipschitz_box` — Two-point `β`-box bound for the ratio-mode log-ratio (FT-08 (c)).
 
 ## `RefuseToReport.lean`  (CflibsFormal)
 *the refuse-to-report policy (certified abstention)*
@@ -1492,6 +1502,7 @@ A result shows `own → published` when the two differ (with the definitions tha
 - `PURE-MATH` · `neutralityNewton_le_root` — The neutrality Newton step lands at or below the root.
 - `PURE-MATH` · `neutralityNewton_nonneg` — The neutrality Newton step stays on the physical half-line.
 - `PURE-MATH` · `neutralityNewton_enclosure` — One Newton step brackets the charge-neutrality root from both sides (FT-17).
+- `PURE-MATH` · `neutralityNewton_pos_and_step_monotone` — The neutrality Newton step is strictly positive, and below the root it moves up.
 - `PURE-MATH` · `neutralityNewton_tendsto` — Newton's method on multi-element charge neutrality converges from every start `x0 ≥ 0` (frontier FT-17).
 
 ## `SahaInverse.lean`  (CflibsFormal)
@@ -1539,6 +1550,7 @@ A result shows `own → published` when the two differ (with the definitions tha
 - `PURE-MATH` · `meanExcitation_eq_tiltMean` — Bridge to `InhomogeneityBias`: the mean excitation energy is a `tiltMean`.
 - `PURE-MATH` · `meanExcitation_monotoneOn_temp` — The mean excitation energy is nondecreasing in temperature (FT-15).
 - `PURE-MATH` · `log_partitionFunction_lipschitz_max` — Log-Lipschitz bound for the partition function in inverse temperature (FT-15).
+- `PURE-MATH` · `log_partitionFunction_lipschitz_box` — Box form of the log-Lipschitz bound for the partition function (FT-15).
 - `EXACT → REDUCED` · `log_sahaFactor_beta` — The log Saha factor as an explicit function of inverse temperature.  _[Saha–Eggert (Griem)]_  (via `sahaFactor`)
 - `PURE-MATH` · `hasDerivAt_log_sum_exp` — `d log U/dβ = −⟨E⟩` for a finite level list.
 - `EXACT → REDUCED` · `log_sahaFactor_hasDerivAt_beta` — Derivative of the log Saha factor in inverse temperature (FT-08).  _[Saha–Eggert (Griem)]_  (via `sahaFactor`)
@@ -1564,6 +1576,8 @@ A result shows `own → published` when the two differ (with the definitions tha
 - `EXACT → APPROXIMATION` · `selfAbsorbedIntensity_eq_slab` — The model intensity is a slab intensity at a single optical depth.  _[Gornushkin 1999]_  (via `selfAbsorbedIntensity`)
 - `PURE-MATH` · `lineIntensity_eq_selfAbsorbedIntensity_div` — Model left-inverse of the flat-profile correction.
 - `REDUCED → APPROXIMATION` · `olsSlope_selfAbsorbed_ge` — If optical depth falls with upper-level energy, self-absorption can only raise the Boltzmann-plot slope.  _[Gornushkin 1999]_  (via `selfAbsorptionFactor`)
+- `REDUCED → APPROXIMATION` · `apparentT_ge_of_selfAbsorbed_slope` — If optical depth falls with upper-level energy, the uncorrected self-absorbed Boltzmann plot reads a temperature at least the true one, provided its slope st…  _[Gornushkin 1999]_  (via `selfAbsorptionFactor`)
+- `REDUCED → APPROXIMATION` · `olsSlope_selfAbsorbed_lt_of_tau_increasing` — With optical depth increasing in upper-level energy, self-absorption lowers the Boltzmann-plot slope.  _[Gornushkin 1999]_  (via `selfAbsorptionFactor`)
 
 ## `SelfAbsorptionInverse.lean`  (CflibsFormal)
 *Self-absorption coupled into the inverse problem — identifiability preserved vs. lost*

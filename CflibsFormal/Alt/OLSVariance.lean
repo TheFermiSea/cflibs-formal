@@ -31,6 +31,11 @@ variable `betaHat ω = olsSlope E (y(·,ω))`. We prove:
 * `olsSlope_variance_eq` — **THE headline: `Var(β̂) = σ²/SS_E`** (combine with
   `OLS.olsSlope_noise_gain`).
 * `olsSlope_variance_antitone` — more energy spread ⇒ less slope variance (`SS_E ≤ SS_E'`).
+* `variance_const_add_weightedNoise_hetero` — the per-line-variance kernel
+  `Var(c + ∑ₖ wₖ·εₖ) = ∑ₖ wₖ²·σₖ²` for uncorrelated noise with unequal variances.
+* `ols_variance_increases_with_noisy_line` — under unequal per-line noise, adding a line can
+  RAISE the unweighted OLS slope variance: `E = (0, 1)` with `σ² = (1, 1)` gives `2`, and adding
+  `E₂ = 2` with `σ₂² = 10⁴` gives `10001/4`.
 
 ## Honest scope
 
@@ -58,7 +63,9 @@ variable `betaHat ω = olsSlope E (y(·,ω))`. We prove:
   `ErrorBudget.olsSlope_stable_l2_sq` (which carries `Fintype.card ι` in the numerator and does
   *not* improve with redundant lines), the variance law has *no* `card ι`: `Var(β̂) = σ²/SS_E`
   decreases (non-strictly) as `SS_E` grows (`olsSlope_variance_antitone`). This is the principled
-  statistical content the deterministic chain could not supply.
+  statistical content the deterministic chain could not supply. It needs one common noise
+  variance: with unequal per-line variances an added noisy line can raise the unweighted OLS
+  slope variance (`ols_variance_increases_with_noisy_line`).
 * **Physics is in prose only.** For the Boltzmann plot `yₖ = log(Iₖ/(gₖAₖ))` the slope is
   `β = −1/(k_B T)`, so `Var(β̂) = σ²/SS_E` propagates (via `ErrorBudget.temp_rel_error_eq`) to the
   temperature uncertainty `σ_T/T = k_B T·σ_β`: bunched upper-level energies (small `SS_E`) blow up
@@ -66,8 +73,10 @@ variable `betaHat ω = olsSlope E (y(·,ω))`. We prove:
   physical constant enters any Lean statement.
 * **One common ordinate variance.** The variance results assume the same `σ²` on every line
   (`hhom`). Real Boltzmann-plot ordinates are heteroscedastic (weak lines are noisier, and `gA`
-  uncertainties differ by line); the per-line-variance law for OLS or weighted least squares is
-  not proved here.
+  uncertainties differ by line). The per-line-variance kernel
+  `variance_const_add_weightedNoise_hetero` gives `Var(β̂) = ∑ₖ wₖ²·σₖ²` for OLS, used only in
+  the counterexample `ols_variance_increases_with_noisy_line`; no general per-line-variance
+  theorem for `betaHat` and no weighted-least-squares variance law is proved here.
 
 ## Literature
 
@@ -149,21 +158,25 @@ theorem expectation_const_add_weightedNoise (w : ι → ℝ) (c : ℝ) (ε : ι 
     integral_finsetSum Finset.univ (fun k _ => hint k)]
   simp [integral_const_mul, hmean0]
 
-/-- **Variance of a constant plus UNCORRELATED weighted noise** `Var(c + ∑ₖ wₖ·εₖ) = σ²·∑ₖ wₖ²`,
-for pairwise-uncorrelated, homoscedastic L² noise. This is the *classical Gauss–Markov hypothesis*
-— only pairwise zero-covariance `cov(εᵢ, εⱼ) = 0` for `i ≠ j`, **not** independence. The
-weight-agnostic uncorrelated-sum-variance kernel shared by `olsSlope_variance_noiseGain` and
-`Alt.GaussMarkov.linEstimator_variance`: strip the constant (`variance_const_add`), expand the
-variance of the sum into the full double-covariance sum (`variance_sum`,
-`Var[∑ Xᵢ] = ∑ᵢ∑ⱼ cov(Xᵢ, Xⱼ)`, needing no independence), pull each weight out of the covariance
-(`covariance_const_mul_left` / `_right`), kill every off-diagonal term by uncorrelatedness, and
-read the diagonal
-`cov(εₖ, εₖ) = Var(εₖ) = σ²` (`covariance_self`, homoscedasticity). -/
-theorem variance_const_add_weightedNoise (w : ι → ℝ) (c σ : ℝ) (ε : ι → Ω → ℝ)
-    (hL2 : ∀ k, MemLp (ε k) 2 μ)
+/-- **Variance of a constant plus uncorrelated weighted noise, per-line variances**
+`Var(c + ∑ₖ wₖ·εₖ) = ∑ₖ wₖ²·σₖ²`, for pairwise-uncorrelated L² noise with `Var(εₖ) = σₖ²`.
+The heteroscedastic form of `variance_const_add_weightedNoise` (which is its instance
+`σₖ² = σ²`): the same route (`variance_const_add`, `variance_sum`, weights pulled out of each
+covariance, off-diagonal killed by uncorrelatedness), with the diagonal read as `σₖ²` instead of
+one common `σ²`. With `w = olsWeight E` it gives the unweighted OLS slope variance under unequal
+per-line noise, `Var(β̂) = ∑ₖ olsWeight E k ² · σₖ²` (used by
+`ols_variance_increases_with_noisy_line`).
+
+Hypotheses: `hL2` makes every variance and covariance finite; `huncorr` (uncorrelated, not
+independent) kills the cross terms; `hvar` names the per-line variances. No zero mean is needed
+(variance is centred).
+
+Scope: PURE-MATH (finite-sum variance algebra; no physics definition). -/
+theorem variance_const_add_weightedNoise_hetero (w : ι → ℝ) (c : ℝ) (σ2 : ι → ℝ)
+    (ε : ι → Ω → ℝ) (hL2 : ∀ k, MemLp (ε k) 2 μ)
     (huncorr : ∀ i j, i ≠ j → covariance (ε i) (ε j) μ = 0)
-    (hhom : ∀ k, variance (ε k) μ = σ ^ 2) :
-    variance (fun ω => c + ∑ k, w k * ε k ω) μ = σ ^ 2 * ∑ k, (w k) ^ 2 := by
+    (hvar : ∀ k, variance (ε k) μ = σ2 k) :
+    variance (fun ω => c + ∑ k, w k * ε k ω) μ = ∑ k, w k ^ 2 * σ2 k := by
   have hX : ∀ k, MemLp (fun ω => w k * ε k ω) 2 μ := fun k => (hL2 k).const_mul (w k)
   have hmeas : AEStronglyMeasurable (fun ω => ∑ k, w k * ε k ω) μ :=
     (memLp_finsetSum Finset.univ (fun k _ => hX k)).aestronglyMeasurable
@@ -175,18 +188,34 @@ theorem variance_const_add_weightedNoise (w : ι → ℝ) (c σ : ℝ) (ε : ι 
   have hcov : ∀ i j, covariance (fun ω => w i * ε i ω) (fun ω => w j * ε j ω) μ
       = w i * w j * covariance (ε i) (ε j) μ := fun i j => by
     rw [covariance_const_mul_left, covariance_const_mul_right]; ring
-  -- Off-diagonal vanishes (uncorrelated); diagonal is `wᵢ²·Var(εᵢ) = wᵢ²σ²`.
-  have hdiag : ∀ i, ∑ j, covariance (fun ω => w i * ε i ω) (fun ω => w j * ε j ω) μ
-      = w i ^ 2 * σ ^ 2 := by
-    intro i
-    rw [Finset.sum_eq_single i
-      (fun j _ hji => by rw [hcov i j, huncorr i j (Ne.symm hji), mul_zero])
-      (fun hi => absurd (Finset.mem_univ i) hi),
-      hcov i i, covariance_self (hL2 i).aestronglyMeasurable.aemeasurable, hhom i]
-    ring
-  calc ∑ i, ∑ j, covariance (fun ω => w i * ε i ω) (fun ω => w j * ε j ω) μ
-      = ∑ i, w i ^ 2 * σ ^ 2 := Finset.sum_congr rfl (fun i _ => hdiag i)
-    _ = σ ^ 2 * ∑ k, (w k) ^ 2 := by rw [← Finset.sum_mul]; ring
+  -- Off-diagonal vanishes (uncorrelated); diagonal is `wᵢ²·Var(εᵢ) = wᵢ²σᵢ²`.
+  refine Finset.sum_congr rfl (fun i _ => ?_)
+  rw [Finset.sum_eq_single i
+    (fun j _ hji => by rw [hcov i j, huncorr i j (Ne.symm hji), mul_zero])
+    (fun hi => absurd (Finset.mem_univ i) hi),
+    hcov i i, covariance_self (hL2 i).aestronglyMeasurable.aemeasurable, hvar i]
+  ring
+
+/-- **Variance of a constant plus UNCORRELATED weighted noise** `Var(c + ∑ₖ wₖ·εₖ) = σ²·∑ₖ wₖ²`,
+for pairwise-uncorrelated, homoscedastic L² noise. This is the *classical Gauss–Markov hypothesis*
+— only pairwise zero-covariance `cov(εᵢ, εⱼ) = 0` for `i ≠ j`, **not** independence. The
+weight-agnostic uncorrelated-sum-variance kernel shared by `olsSlope_variance_noiseGain` and
+`Alt.GaussMarkov.linEstimator_variance`: strip the constant (`variance_const_add`), expand the
+variance of the sum into the full double-covariance sum (`variance_sum`,
+`Var[∑ Xᵢ] = ∑ᵢ∑ⱼ cov(Xᵢ, Xⱼ)`, needing no independence), pull each weight out of the covariance
+(`covariance_const_mul_left` / `_right`), kill every off-diagonal term by uncorrelatedness, and
+read the diagonal
+`cov(εₖ, εₖ) = Var(εₖ) = σ²` (`covariance_self`, homoscedasticity). Now derived as the
+`σₖ² = σ²` instance of `variance_const_add_weightedNoise_hetero`. -/
+theorem variance_const_add_weightedNoise (w : ι → ℝ) (c σ : ℝ) (ε : ι → Ω → ℝ)
+    (hL2 : ∀ k, MemLp (ε k) 2 μ)
+    (huncorr : ∀ i j, i ≠ j → covariance (ε i) (ε j) μ = 0)
+    (hhom : ∀ k, variance (ε k) μ = σ ^ 2) :
+    variance (fun ω => c + ∑ k, w k * ε k ω) μ = σ ^ 2 * ∑ k, (w k) ^ 2 := by
+  -- Derived from the per-line-variance kernel at the constant variance `σ²`.
+  rw [variance_const_add_weightedNoise_hetero w c (fun _ => σ ^ 2) ε hL2 huncorr hhom,
+    Finset.mul_sum]
+  exact Finset.sum_congr rfl (fun k _ => by ring)
 
 /-- **Unbiasedness** `𝔼[β̂] = β`. Linearity of expectation over the finite weighted noise sum plus
 zero-mean noise. Needs neither independence nor homoscedasticity. -/
@@ -242,5 +271,72 @@ theorem olsSlope_variance_antitone [Nonempty ι] (E E' : ι → ℝ) (α β σ :
   rw [olsSlope_variance_eq E α β σ ε hvar hL2 huncorr hhom,
       olsSlope_variance_eq E' α β σ ε hvar' hL2 huncorr hhom]
   gcongr
+
+/-- **Adding a noisy line raises the unweighted OLS slope variance from 2 to 2500.25.** Let
+`ε₀, ε₁, ε₂` be pairwise-uncorrelated L² noise terms with variances `1, 1, 10⁴`. The unweighted
+OLS slope `Alt.betaHat` of the Boltzmann plot `yₖ = α + β·Eₖ + εₖ` has variance `2` on the
+two-line design `E = (0, 1)` (noise `ε₀, ε₁`) and variance `10001/4 = 2500.25` on the
+three-line design `E = (0, 1, 2)` obtained by adding the line `E₂ = 2` with noise `ε₂`.
+
+Reading: the per-line variances are `σₖ²`, and under uncorrelated noise
+`Var(β̂) = ∑ₖ olsWeight E k ² · σₖ²` (`variance_const_add_weightedNoise_hetero`); the OLS
+weights are `(−1, 1)` and `(−1/2, 0, 1/2)`.
+So the "adding a line never hurts" reading of the homoscedastic `olsSlope_variance_eq` /
+`FisherLineSelection` results fails under heteroscedastic noise for unweighted OLS. (For weighted
+least squares with inverse-variance weights the analogous monotonicity of the noise gain follows
+from `wls_min_noiseGain` by zero-extending the weights; it is not stated as a theorem in this
+repository.)
+
+Hypotheses: `hL2` makes every variance and covariance finite and is what the variance-of-a-sum
+expansion needs; `huncorr` (uncorrelated, not independent) kills the cross terms; `hvar` fixes
+the heteroscedastic variances `(1, 1, 10⁴)`, and it is the noisy third line that makes the
+variance rise. `α`, `β` are free: the estimator minus `β` does not depend on them. The
+hypotheses are jointly satisfiable (e.g. three rows of a 4×4 Hadamard matrix, the third scaled
+by 100, under the uniform measure on four points).
+
+Scope: relation EXACT (an identity for these designs); it publishes REDUCED through the
+`betaHat` model tag (idealized linear Boltzmann plot, additive ordinate noise, exact energies). -/
+theorem ols_variance_increases_with_noisy_line {Ω : Type*} [MeasurableSpace Ω]
+    {μ : Measure Ω} [IsProbabilityMeasure μ] (α β : ℝ) (ε : Fin 3 → Ω → ℝ)
+    (hL2 : ∀ k, MemLp (ε k) 2 μ)
+    (huncorr : ∀ i j, i ≠ j → covariance (ε i) (ε j) μ = 0)
+    (hvar : ∀ k, variance (ε k) μ = ![1, 1, 10000] k) :
+    variance (Alt.betaHat ![(0 : ℝ), 1] α β (fun k => ε (Fin.castSucc k))) μ = 2 ∧
+      variance (Alt.betaHat ![(0 : ℝ), 1, 2] α β ε) μ = 10001 / 4 := by
+  have hSS2 : 0 < ∑ k, (![(0 : ℝ), 1] k - mean ![(0 : ℝ), 1]) ^ 2 := by
+    simp [mean, Fin.sum_univ_two]; norm_num
+  have hSS3 : 0 < ∑ k, (![(0 : ℝ), 1, 2] k - mean ![(0 : ℝ), 1, 2]) ^ 2 := by
+    simp [mean, Fin.sum_univ_three]; norm_num
+  have hvar' : ∀ k : Fin 2, variance (ε (Fin.castSucc k)) μ = ![1, 1] k := by
+    intro k; fin_cases k <;> simp [hvar]
+  constructor
+  · rw [funext (olsSlope_estimator_eq _ α β _ hSS2),
+      variance_const_add_weightedNoise_hetero _ β ![1, 1] _ (fun k => hL2 _)
+        (fun i j hij => huncorr _ _ (fun h => hij (Fin.castSucc_injective 2 h))) hvar']
+    simp [olsWeight, mean, Fin.sum_univ_two]; norm_num
+  · rw [funext (olsSlope_estimator_eq _ α β _ hSS3),
+      variance_const_add_weightedNoise_hetero _ β ![1, 1, 10000] _ hL2 huncorr hvar]
+    simp [olsWeight, mean, Fin.sum_univ_three]; norm_num
+
+/-- Non-vacuity of `ols_variance_increases_with_noisy_line`: the uniform measure on four points
+with the noise rows `(1, −1, 1, −1)`, `(1, 1, −1, −1)` and `100·(1, −1, −1, 1)` (rows of a 4×4
+Hadamard matrix, the third scaled by 100) satisfies `hL2`, `huncorr` and `hvar`. -/
+example : variance (Alt.betaHat ![(0 : ℝ), 1] 0 0
+      (fun k => (![![1, -1, 1, -1], ![1, 1, -1, -1], ![100, -100, -100, 100]] :
+        Fin 3 → Fin 4 → ℝ) (Fin.castSucc k))) (PMF.uniformOfFintype (Fin 4)).toMeasure = 2 ∧
+    variance (Alt.betaHat ![(0 : ℝ), 1, 2] 0 0
+      (![![1, -1, 1, -1], ![1, 1, -1, -1], ![100, -100, -100, 100]] : Fin 3 → Fin 4 → ℝ))
+      (PMF.uniformOfFintype (Fin 4)).toMeasure = 10001 / 4 := by
+  have hint : ∀ f : Fin 4 → ℝ,
+      ∫ ω, f ω ∂(PMF.uniformOfFintype (Fin 4)).toMeasure = (f 0 + f 1 + f 2 + f 3) / 4 := by
+    intro f; rw [PMF.integral_eq_sum]; simp [Fin.sum_univ_four]; ring
+  have hL2 : ∀ k, MemLp ((![![1, -1, 1, -1], ![1, 1, -1, -1], ![100, -100, -100, 100]] :
+      Fin 3 → Fin 4 → ℝ) k) 2 (PMF.uniformOfFintype (Fin 4)).toMeasure :=
+    fun _ => MemLp.of_discrete
+  refine ols_variance_increases_with_noisy_line 0 0 _ hL2 (fun i j hij => ?_) (fun k => ?_)
+  · rw [covariance_eq_sub (hL2 i) (hL2 j), hint, hint, hint]
+    fin_cases i <;> fin_cases j <;> simp at hij ⊢
+  · rw [variance_eq_sub (hL2 k), hint, hint]
+    fin_cases k <;> simp <;> norm_num
 
 end CflibsFormal.Alt

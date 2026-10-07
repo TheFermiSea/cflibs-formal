@@ -35,7 +35,8 @@ questions that framing raises.
    mean energy (`spreadOn_insert_eq_iff`, `no_gain_iff`), and is strictly positive otherwise
    (`spreadOn_insert_lt_iff`) — the quantitative *no-gain criterion*. With unequal per-line noise
    the answer changes for OLS: `E = (0, 1)` with `σ = 1` gives slope variance `2`, and adding a
-   line at `E = 2` with `σ = 100` raises it to `2500.25` (hand arithmetic; not formalized). The
+   line at `E = 2` with `σ = 100` raises it to `2500.25`
+   (`Alt.ols_variance_increases_with_noisy_line`, in `Alt.OLSVariance`). The
    weighted-least-squares version of the monotonicity is not proved here.
 
 ## What is proven

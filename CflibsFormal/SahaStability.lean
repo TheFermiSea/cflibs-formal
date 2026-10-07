@@ -84,7 +84,9 @@ level-truncation hypothesis, as monotonicity.  Two distinct statements must be k
   `InhomogeneityBias.tiltMean` at `β = 1/(k_B T)`) is nondecreasing in `T`
   (`meanExcitation_monotoneOn_temp`), and `|log U(T1) − log U(T2)|` is bounded by
   `⟨E⟩_{max T1 T2}·|1/(k_B T1) − 1/(k_B T2)|` (`log_partitionFunction_lipschitz_max`), a
-  constant far tighter than the `∑ g·E` constants above.  Both are `PURE-MATH`.
+  constant far tighter than the `∑ g·E` constants above; on a box `T1, T2 ∈ [Tmin, Tmax]`
+  the single constant `⟨E⟩_{Tmax}` works (`log_partitionFunction_lipschitz_box`).  All three
+  are `PURE-MATH`.
 * **The Saha factor in inverse temperature (frontier FT-08).**  Along `T = 1/(k_B β)`,
   `d log S/dβ = −(χ + 3/(2β) + ⟨E⟩_II − ⟨E⟩_I)` (`log_sahaFactor_hasDerivAt_beta`), from the
   explicit `β`-form of `log S` (`log_sahaFactor_beta`) and `d log U/dβ = −⟨E⟩` for a finite
@@ -987,7 +989,8 @@ The Boltzmann-weighted mean level energy `meanExcitation` is `tiltMean` of `Inho
 at the inverse temperature, with levels in the role of zones (`meanExcitation_eq_tiltMean`).
 Through that bridge it is nondecreasing in `T` (`meanExcitation_monotoneOn_temp`), and the
 convexity of `log U` in `β = 1/(k_B T)` bounds `|log U(T1) − log U(T2)|` by
-`⟨E⟩_{max T1 T2}·|β1 − β2|` (`log_partitionFunction_lipschitz_max`). All `PURE-MATH`: finite
+`⟨E⟩_{max T1 T2}·|β1 − β2|` (`log_partitionFunction_lipschitz_max`), and by `⟨E⟩_{Tmax}·|β1 − β2|`
+on a temperature box (`log_partitionFunction_lipschitz_box`). All `PURE-MATH`: finite
 sums over the supplied level list, with no cutoff policy asserted. -/
 
 /-- **Boltzmann-weighted mean excitation energy**
@@ -1127,6 +1130,56 @@ example : 0 < meanExcitation 1 2 (fun _ : Fin 2 => (1:ℝ)) ![0, 1] := by
   simp only [one_mul, Fin.sum_univ_two, Fin.isValue, Matrix.cons_val_zero, neg_zero, zero_div,
     Real.exp_zero, mul_one, Matrix.cons_val_one, Matrix.cons_val_fin_one, zero_add]
   positivity
+
+/-- **Box form of the log-Lipschitz bound for the partition function (FT-15).**
+
+For positive weights, nonnegative level energies, `k_B > 0` and two temperatures in a box
+`0 < Tmin ≤ T1, T2 ≤ Tmax`,
+`|log U(T1) − log U(T2)| ≤ ⟨E⟩_{Tmax} · |1/(k_B T1) − 1/(k_B T2)|`,
+with `⟨E⟩ = meanExcitation` the Boltzmann-weighted mean level energy over the supplied list.
+
+Reading: one constant, the mean excitation energy at the hot edge of the box, works for every
+pair of temperatures in the box. It follows from the pairwise form
+`log_partitionFunction_lipschitz_max` (constant `⟨E⟩_{max T1 T2}`) and the monotonicity of
+`⟨E⟩` in `T` (`meanExcitation_monotoneOn_temp`): `max T1 T2 ≤ Tmax`, so `⟨E⟩_{max T1 T2} ≤
+⟨E⟩_{Tmax}`. `Tmax` is the edge that must be used for a box-uniform constant, because `⟨E⟩` is
+nondecreasing in `T`; the pairwise constant at `max T1 T2` is sharper and remains the primary
+form. This is the shape a consumer with a fixed temperature box (an a-priori enclosure) needs.
+
+Hypotheses and why each is present:
+* `hkB : 0 < kB`: inverse temperature `1/(k_B T)` is positive and ordered opposite to `T`.
+* `hTmin`, `hT1`, `hT2`: `0 < Tmin ≤ T1, T2`. They enter only through `0 < T1` and `0 < T2`;
+  the lower edge is kept so the statement has the box shape of the frontier sketch.
+* `hT1M`, `hT2M`: `T1, T2 ≤ Tmax`, which places the constant's temperature above both.
+* `hg` and `[Nonempty ι]`: `U > 0`, so `log U` is genuine, and the weights are positive.
+* `hE : ∀ k, 0 ≤ E k` (energies measured from the ground state), load-bearing as in the
+  pairwise form: with a single level at `E < 0` the right side is negative and the claim is
+  false.
+
+Scope: PURE-MATH (finite sums over the supplied level list; definitions used are
+`partitionFunction` and `meanExcitation`, no model rows). A physical `U` is a sum over a
+truncated level list, so the bound speaks about the plasma only through that list. -/
+theorem log_partitionFunction_lipschitz_box [Nonempty ι]
+    {kB Tmin Tmax T1 T2 : ℝ} {g E : ι → ℝ}
+    (hkB : 0 < kB) (hTmin : 0 < Tmin) (hT1 : Tmin ≤ T1) (hT1M : T1 ≤ Tmax)
+    (hT2 : Tmin ≤ T2) (hT2M : T2 ≤ Tmax) (hg : ∀ k, 0 < g k) (hE : ∀ k, 0 ≤ E k) :
+    |Real.log (partitionFunction kB T1 g E) - Real.log (partitionFunction kB T2 g E)|
+      ≤ meanExcitation kB Tmax g E * |1 / (kB * T1) - 1 / (kB * T2)| := by
+  have h1 : 0 < T1 := lt_of_lt_of_le hTmin hT1
+  have h2 : 0 < T2 := lt_of_lt_of_le hTmin hT2
+  refine (log_partitionFunction_lipschitz_max hkB h1 h2 hg hE).trans ?_
+  refine mul_le_mul_of_nonneg_right ?_ (abs_nonneg _)
+  exact meanExcitation_monotoneOn_temp hkB hg (Set.mem_Ioi.mpr (lt_max_of_lt_left h1))
+    (Set.mem_Ioi.mpr (lt_of_lt_of_le h1 hT1M)) (max_le hT1M hT2M)
+
+/-- Non-vacuity of `log_partitionFunction_lipschitz_box`: the box `[1, 3]`, `T1 = 1`,
+`T2 = 2`, with the two-level witness above (`E = ![0, 1]`, `g ≡ 1`, `kB = 1`). -/
+example : |Real.log (partitionFunction 1 1 (fun _ : Fin 2 => (1:ℝ)) ![0, 1])
+      - Real.log (partitionFunction 1 2 (fun _ : Fin 2 => (1:ℝ)) ![0, 1])|
+    ≤ meanExcitation 1 3 (fun _ : Fin 2 => (1:ℝ)) ![0, 1] * |1 / (1 * 1) - 1 / (1 * 2)| := by
+  refine log_partitionFunction_lipschitz_box (ι := Fin 2) (Tmin := 1) one_pos one_pos le_rfl
+    (by norm_num) (by norm_num) (by norm_num) (fun _ => one_pos) ?_
+  intro k; fin_cases k <;> norm_num
 
 /-! ### The Saha factor in inverse temperature (frontier FT-08)
 

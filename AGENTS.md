@@ -24,7 +24,7 @@ changes here as improving measurement accuracy.
   definitions, so it does not catch a wrong exponent in one).
 - Size (kept current by `scripts/gen-docs.sh`; the docs-sync gate fails if it drifts):
   <!-- stats:begin -->
-  95 modules · 876 named results (theorem/lemma) · 248 defs
+  95 modules · 890 named results (theorem/lemma) · 248 defs
   <!-- stats:end -->
   See `docs/module-reference.md` for the index and `docs/theorem-catalog.md` for every result
   with its scope tags + citation.

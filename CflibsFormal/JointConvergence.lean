@@ -60,10 +60,12 @@ fails by orders of magnitude (see `OuterLoopModelB`).
 ## Damped-loop and weighted-gate building blocks (frontier FT-01, `PURE-MATH`)
 
 The last section adds `PURE-MATH` results toward the stop certificate for the loop the
-companion pipeline runs (certificate ID C11 under owner decision D16): `dampedMap_lipschitz`
-and `dampedMap_contracts` (a derivative-window certificate for a damped iteration on an
-invariant box), `tDamped_mobius_converges` (the `T`-damped iteration of a Möbius temperature
-map converges for gains in `(0, 1)`), `exists_weights_iff` (a unit-invariant test for the
+companion pipeline runs (certificate ID C11 under owner decision D16):
+`dampedMap_lipschitz_explicit`, `dampedMap_lipschitz` and `dampedMap_contracts` (a
+derivative-window certificate for a damped iteration on an invariant box, with the contraction
+constant in closed form), `tDamped_mobius_converges` (the `T`-damped iteration of a Möbius
+temperature map converges for gains in `(0, 1)`), `jury_pair` and `jury_two` (the 2×2 Jury /
+Schur–Cohn stability test), `exists_weights_iff` (a unit-invariant test for the
 weighted row-sum gate of `jointOuterContraction_box`) and `residual_stop` (the a-posteriori
 stop rule). They carry no physical claim; binding them to the pipeline's temperature map is a
 separate REDUCED step. Three further results, `dampedAffine_iterate`, `dampedAffine_tendsto`
@@ -149,10 +151,15 @@ Owner decision D16 assigns certificate ID C11 to a stop certificate for the `(T,
 companion's `iterative.py` actually runs: a temperature update damped with `λ = 1/2`. The
 results below are its `PURE-MATH` building blocks, not the certificate itself:
 
+* `dampedMap_lipschitz_explicit`: the damped map's Lipschitz bound with the closed-form
+  constant `q = max |1 − λ + λm| |1 − λ + λM| < 1` exported (`dampedMap_lipschitz` is its
+  existential corollary);
 * `dampedMap_contracts`: a derivative-window certificate for a damped fixed-point iteration on
   an invariant box, replacing the product gate `L₁·L₂ < 1` of `outerContraction_box`;
 * `tDamped_mobius_converges`: the `T`-damped iteration of a Möbius temperature map (the reduced
   outer map, affine in `1/T`) converges from every positive start for gains in `(0, 1)`;
+* `jury_pair`, `jury_two`: the 2×2 Jury (Schur–Cohn) test, all eigenvalues of a real 2×2
+  matrix lie in the open unit disc iff `|det J| < 1` and `|trace J| < 1 + det J`;
 * `exists_weights_iff`: a unit-invariant test for when some rescaling of `T` and `n_e` makes
   the row-sum gate of `jointOuterContraction_box` hold;
 * `residual_stop`: the a-posteriori stop rule `|u − u*| ≤ |Φ u − u|/(1 − q)` for a
@@ -177,15 +184,38 @@ substitution). The CF-LIBS pipeline relaxes its outer temperature update with `l
 lines 908 and 2454), so there the damped coordinate `u` is the temperature `T` itself. -/
 def dampedMap (lam : ℝ) (g : ℝ → ℝ) (u : ℝ) : ℝ := (1 - lam) * u + lam * g u
 
-/-- **Derivative-window Lipschitz bound for the damped map.** If `g' T ∈ [m, M]` is the
-derivative of `g` at every point of `[a, b]`, `lam > 0`, `1 - 2/lam < m` and `M < 1`, then
-`dampedMap lam g` is `q`-Lipschitz on `[a, b]` for some `0 ≤ q < 1`, namely
-`q = max |1 - lam + lam * m| |1 - lam + lam * M|` (mean value theorem). `PURE-MATH`. -/
-theorem dampedMap_lipschitz {g g' : ℝ → ℝ} {a b m M lam : ℝ} (hlam0 : 0 < lam) (hab : a ≤ b)
-    (hd : ∀ T ∈ Set.Icc a b, HasDerivAt g (g' T) T)
+/-- **Derivative-window Lipschitz bound for the damped map, with the constant exported.** Under
+the hypotheses of `dampedMap_lipschitz`, the explicit constant
+`q = max |1 - lam + lam * m| |1 - lam + lam * M|` satisfies `0 ≤ q`, `q < 1`, and
+`|dampedMap lam g y - dampedMap lam g x| ≤ q * |y - x|` for all `x, y ∈ [a, b]`.
+
+Reading: `dampedMap lam g u = (1 - lam) * u + lam * g u` is one Krasnoselskii–Mann relaxation
+step (the pipeline's temperature update uses `lam = 1/2`). Its derivative `1 - lam + lam * g' T`
+lies in `[1 - lam + lam * m, 1 - lam + lam * M]` on the window, so by the mean value theorem its
+Lipschitz constant on `[a, b]` is at most the larger endpoint modulus `q`. `dampedMap_lipschitz`
+(now derived from this theorem) says only that some such `q < 1` exists; here `q` is a
+closed-form function of `(lam, m, M)` that a stop certificate can evaluate (e.g. the a-priori
+bound `q^n/(1-q)·|H T₀ - T₀|`, which is not stated here).
+
+Hypotheses (those of `dampedMap_lipschitz`, unchanged): `hlam0 : 0 < lam` makes `lam * g'`
+monotone in `g'`, so the derivative window maps to `[1-lam+lam*m, 1-lam+lam*M]` (it is also
+implied by the other hypotheses, and is kept for parity with `dampedMap_lipschitz`);
+`hab : a ≤ b` makes `[a, b]` nonempty, which gives `m ≤ M` from `hmM` at `a`; `hd` gives `g` a
+derivative `g' T` at every point of `[a, b]` (two-sided); `hmM` is the derivative window;
+`hlo : 1 - 2/lam < m` is `-1 < 1 - lam + lam * m`, and `hhi : M < 1` is
+`1 - lam + lam * M < 1`; together they give `q < 1`. The Lipschitz inequality alone holds
+without `hlo`/`hhi`; they are needed only for `q < 1`.
+
+Scope: PURE-MATH (one-variable real analysis; `dampedMap` carries no physics model tag). The
+binding to the pipeline's `T` update is a REDUCED step not stated here. -/
+theorem dampedMap_lipschitz_explicit {g g' : ℝ → ℝ} {a b m M lam : ℝ} (hlam0 : 0 < lam)
+    (hab : a ≤ b) (hd : ∀ T ∈ Set.Icc a b, HasDerivAt g (g' T) T)
     (hmM : ∀ T ∈ Set.Icc a b, m ≤ g' T ∧ g' T ≤ M) (hlo : 1 - 2 / lam < m) (hhi : M < 1) :
-    ∃ q : ℝ, 0 ≤ q ∧ q < 1 ∧ ∀ x ∈ Set.Icc a b, ∀ y ∈ Set.Icc a b,
-      |dampedMap lam g y - dampedMap lam g x| ≤ q * |y - x| := by
+    0 ≤ max |1 - lam + lam * m| |1 - lam + lam * M| ∧
+      max |1 - lam + lam * m| |1 - lam + lam * M| < 1 ∧
+      ∀ x ∈ Set.Icc a b, ∀ y ∈ Set.Icc a b,
+        |dampedMap lam g y - dampedMap lam g x| ≤
+          max |1 - lam + lam * m| |1 - lam + lam * M| * |y - x| := by
   set mH : ℝ := 1 - lam + lam * m with hmHdef
   set MH : ℝ := 1 - lam + lam * M with hMHdef
   set q : ℝ := max |mH| |MH| with hqdef
@@ -251,7 +281,35 @@ theorem dampedMap_lipschitz {g g' : ℝ → ℝ} {a b m M lam : ℝ} (hlam0 : 0 
     have hmain : ‖H y - H x‖ ≤ q * ‖y - x‖ :=
       Convex.norm_image_sub_le_of_norm_hasDerivWithin_le hwithin hnormbound hconv hx hy
     simpa [H] using hmain
-  exact ⟨q, hq0, hq, by simpa [H] using hLip⟩
+  exact ⟨hq0, hq, by simpa [H] using hLip⟩
+
+/-- Non-vacuity of `dampedMap_lipschitz_explicit`, with the bound attained: `g u = u/2`,
+`g' ≡ 1/2`, `m = M = 1/2`, `lam = 1/2` on `[0, 1]` give `q = 3/4`, and
+`|H 1 - H 0| = 3/4 = q * |1 - 0|`. -/
+example :
+    |dampedMap (1 / 2) (fun u => u / 2) 1 - dampedMap (1 / 2) (fun u => u / 2) 0| ≤
+        max |1 - 1 / 2 + 1 / 2 * (1 / 2 : ℝ)| |1 - 1 / 2 + 1 / 2 * (1 / 2 : ℝ)| * |1 - 0| ∧
+      max |1 - 1 / 2 + 1 / 2 * (1 / 2 : ℝ)| |1 - 1 / 2 + 1 / 2 * (1 / 2 : ℝ)| = 3 / 4 ∧
+      |dampedMap (1 / 2) (fun u => u / 2) 1 - dampedMap (1 / 2) (fun u => u / 2) 0| =
+        3 / 4 * |1 - 0| := by
+  refine ⟨(dampedMap_lipschitz_explicit (g := fun u : ℝ => u / 2) (g' := fun _ => 1 / 2)
+    (a := 0) (b := 1) (m := 1 / 2) (M := 1 / 2) (lam := 1 / 2) (by norm_num) (by norm_num)
+    (fun T _ => by simpa using (hasDerivAt_id T).div_const 2)
+    (fun _ _ => ⟨le_rfl, le_rfl⟩) (by norm_num) (by norm_num)).2.2 0 (by norm_num) 1
+    (by norm_num), by norm_num [abs_of_pos], ?_⟩
+  norm_num [dampedMap, abs_of_pos]
+
+/-- **Derivative-window Lipschitz bound for the damped map.** If `g' T ∈ [m, M]` is the
+derivative of `g` at every point of `[a, b]`, `lam > 0`, `1 - 2/lam < m` and `M < 1`, then
+`dampedMap lam g` is `q`-Lipschitz on `[a, b]` for some `0 ≤ q < 1`, namely
+`q = max |1 - lam + lam * m| |1 - lam + lam * M|` (mean value theorem). `PURE-MATH`. -/
+theorem dampedMap_lipschitz {g g' : ℝ → ℝ} {a b m M lam : ℝ} (hlam0 : 0 < lam) (hab : a ≤ b)
+    (hd : ∀ T ∈ Set.Icc a b, HasDerivAt g (g' T) T)
+    (hmM : ∀ T ∈ Set.Icc a b, m ≤ g' T ∧ g' T ≤ M) (hlo : 1 - 2 / lam < m) (hhi : M < 1) :
+    ∃ q : ℝ, 0 ≤ q ∧ q < 1 ∧ ∀ x ∈ Set.Icc a b, ∀ y ∈ Set.Icc a b,
+      |dampedMap lam g y - dampedMap lam g x| ≤ q * |y - x| :=
+  -- Now derived: the witness is the explicit constant of `dampedMap_lipschitz_explicit`.
+  ⟨_, dampedMap_lipschitz_explicit hlam0 hab hd hmM hlo hhi⟩
 
 /-- **Derivative-window certificate for a damped fixed-point iteration on an invariant box.**
 Let `g` have derivative `g' T ∈ [m, M]` at every point of the box `[a, b]` (`a ≤ b`), and let the
@@ -527,6 +585,111 @@ theorem tDamped_mobius_converges {g c lam : ℝ} (hg0 : 0 < g) (hg1 : g < 1) (hc
     (tDampedMobius_down hg0 hg1 hc hl0)
     (tDampedMobius_cont hg0 hc)
     (tDampedMobius_uniq hg0 hc hl0)
+
+/-- Real and imaginary parts of the root equation `z² − t z + d = 0`. -/
+private theorem re_im_of_root (t d : ℝ) (z : ℂ) (h : z ^ 2 - (t : ℂ) * z + (d : ℂ) = 0) :
+    z.re ^ 2 - z.im ^ 2 - t * z.re + d = 0 ∧ z.im * (2 * z.re - t) = 0 := by
+  have h1 := congrArg Complex.re h; have h2 := congrArg Complex.im h
+  simp [pow_two] at h1 h2
+  constructor <;> nlinarith
+
+/-- **Scalar Jury (Schur–Cohn) test for a real monic quadratic.** Every complex root of
+`z² − t z + d` lies in the open unit disc if and only if `|d| < 1` and `|t| < 1 + d`.
+
+Reading: `|t| < 1 + d` is `p(1) > 0 ∧ p(−1) > 0` for `p(z) = z² − t z + d`, and `|d| < 1`
+bounds the product of the roots. For real roots (`t² ≥ 4d`) the two roots `(t ± √(t² − 4d))/2`
+are tested directly; for a complex-conjugate pair (`t² < 4d`) their common squared modulus is
+`d`.
+
+Hypotheses: none; the equivalence holds for all real `t, d`, real or complex, repeated or
+distinct roots. This is the coefficient form behind `jury_two`.
+
+Scope: PURE-MATH (real and complex algebra of one quadratic; no physics definition). -/
+theorem jury_pair (t d : ℝ) :
+    (∀ z : ℂ, z ^ 2 - (t : ℂ) * z + (d : ℂ) = 0 → ‖z‖ < 1) ↔ (|d| < 1 ∧ |t| < 1 + d) := by
+  constructor
+  · intro H
+    rcases le_or_gt 0 (t ^ 2 - 4 * d) with hD | hD
+    · set s := Real.sqrt (t ^ 2 - 4 * d) with hs
+      have hs2 : s ^ 2 = t ^ 2 - 4 * d := Real.sq_sqrt hD
+      have hs0 : 0 ≤ s := Real.sqrt_nonneg _
+      have root : ∀ r : ℝ, r ^ 2 - t * r + d = 0 → |r| < 1 := by
+        intro r hr
+        have := H (r : ℂ) (by exact_mod_cast hr)
+        rwa [Complex.norm_real, Real.norm_eq_abs] at this
+      have h1 := root ((t + s) / 2) (by nlinarith)
+      have h2 := root ((t - s) / 2) (by nlinarith)
+      rw [abs_lt] at h1 h2
+      refine ⟨?_, ?_⟩ <;> rw [abs_lt] <;> constructor <;> nlinarith
+    · set s := Real.sqrt (-(t ^ 2 - 4 * d)) with hs
+      have hs2 : s ^ 2 = -(t ^ 2 - 4 * d) := Real.sq_sqrt (by linarith)
+      have hz := H ((t / 2 : ℝ) + (s / 2 : ℝ) * Complex.I) (by
+        apply Complex.ext <;> simp [pow_two] <;> nlinarith)
+      have hn : ‖((t / 2 : ℝ) : ℂ) + ((s / 2 : ℝ) : ℂ) * Complex.I‖ ^ 2 = d := by
+        rw [Complex.sq_norm, Complex.normSq_add_mul_I]; nlinarith
+      have hd1 : d < 1 := by
+        have := (pow_lt_one_iff_of_nonneg (norm_nonneg _) two_ne_zero).2 hz
+        linarith
+      have hd0 : 0 ≤ d := by nlinarith
+      refine ⟨by rw [abs_lt]; constructor <;> linarith, ?_⟩
+      exact abs_lt_of_sq_lt_sq (by nlinarith) (by linarith)
+  · rintro ⟨hd, ht⟩ z hz
+    rw [abs_lt] at hd ht
+    obtain ⟨h1, h2⟩ := re_im_of_root t d z hz
+    rw [← pow_lt_one_iff_of_nonneg (norm_nonneg z) two_ne_zero, Complex.sq_norm,
+      Complex.normSq_apply]
+    rcases mul_eq_zero.1 h2 with hy | hx
+    · rw [hy] at h1 ⊢
+      have hlt : |z.re| < 1 := by
+        rw [abs_lt]; constructor
+        · by_contra hc; rw [not_lt] at hc; nlinarith
+        · by_contra hc; rw [not_lt] at hc; nlinarith
+      rw [abs_lt] at hlt; nlinarith
+    · nlinarith
+
+/-- **2×2 Jury / Schur–Cohn test.** For a real 2×2 matrix `J`, every complex eigenvalue of `J`
+(every element of the spectrum of `J` viewed as a complex matrix) has modulus `< 1` if and only
+if `|det J| < 1` and `|trace J| < 1 + det J`.
+
+Reading: the eigenvalues are the roots of the characteristic polynomial
+`z² − (trace J)·z + det J` (`Matrix.charpoly_fin_two`), so this is `jury_pair` at
+`t = trace J`, `d = det J`. Spectral radius `< 1` is the standard criterion for asymptotic
+stability of the linear iteration `x ↦ J x`; that equivalence is not proved here. The intended
+`J` is the Jacobian of the `λ = 1/2` damped `(T, n_e)` Gauss–Seidel outer loop of FT-01 at a
+fixed point. That Jacobian assumes `∂n_e,new/∂n_e,prev = 0`, which holds only on the
+`sb_offset` tier with IPD off. Combined with the Gauss–Seidel identities
+`det J = (1 + A)/4` and `1 + det J − trace J = (1 − g)/4` (audit scratch, not in this
+repository) it yields the gain gate `g < 1` plus the two other Jury inequalities.
+
+Hypotheses: none. The equivalence holds for every real `J`, real or complex-conjugate
+eigenvalues, repeated or not. The left side is not vacuous: over `ℂ` the spectrum of a 2×2
+matrix is nonempty. The strict `‖z‖ < 1` is load-bearing: with `‖z‖ ≤ 1` the equivalence fails
+at `diag(−1, 0)` (eigenvalue `−1`, `|trace J| = 1 = 1 + det J`).
+
+Scope: PURE-MATH (real 2×2 linear algebra; no physics definition is involved). The FT-01
+application to the damped loop's Jacobian is a REDUCED binding that is not stated here. -/
+theorem jury_two (J : Matrix (Fin 2) (Fin 2) ℝ) :
+    (∀ z ∈ spectrum ℂ (J.map (algebraMap ℝ ℂ)), ‖z‖ < 1) ↔
+      (|J.det| < 1 ∧ |J.trace| < 1 + J.det) := by
+  have bridge : ∀ z : ℂ, z ∈ spectrum ℂ (J.map (algebraMap ℝ ℂ)) ↔
+      z ^ 2 - (J.trace : ℂ) * z + (J.det : ℂ) = 0 := by
+    intro z
+    rw [Matrix.mem_spectrum_iff_isRoot_charpoly, Matrix.charpoly_fin_two]
+    simp [Polynomial.IsRoot, Matrix.trace_fin_two, Matrix.det_fin_two]
+  simp_rw [bridge]
+  exact jury_pair _ _
+
+/-- Non-vacuity of `jury_two` on a complex-conjugate pair: the rotation-and-shrink
+`!![0, -1/2; 1/2, 0]` (eigenvalues `±i/2`, `det = 1/4`, `trace = 0`) is stable, while
+`!![2, 0; 0, 0]` (eigenvalue `2`) is not. -/
+example :
+    (∀ z ∈ spectrum ℂ ((!![0, -1 / 2; 1 / 2, 0] : Matrix (Fin 2) (Fin 2) ℝ).map
+        (algebraMap ℝ ℂ)), ‖z‖ < 1) ∧
+      ¬ (∀ z ∈ spectrum ℂ ((!![2, 0; 0, 0] : Matrix (Fin 2) (Fin 2) ℝ).map
+        (algebraMap ℝ ℂ)), ‖z‖ < 1) := by
+  rw [jury_two, jury_two]
+  simp [Matrix.det_fin_two, Matrix.trace_fin_two]
+  norm_num [abs_of_pos]
 
 /-- Constructive direction of `exists_weights_iff`: a single scale ratio `r > 0` making both
 weighted rows sub-unit exists under the unit-invariant condition. -/

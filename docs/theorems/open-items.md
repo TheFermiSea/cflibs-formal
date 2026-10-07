@@ -10,9 +10,9 @@
 ## [`ft01.damped-t-loop-convergence`](ft01.damped-t-loop-convergence.md)
 
 - **lean**: the physics binding (the pipeline's reduced Saha-Boltzmann update is affine in 1/T on a median piece, IPD off, unit weights) is not stated or landed; it needs its own REDUCED statement and a Mode B statement audit before any C11 certificate could cite this family (FT-01)
-- **lean**: the 2x2 Gauss-Seidel stability test is not landed: gaussSeidel_det_trace is proved in audit scratch (Slate.lean); jury_two is only stated there (sorry)
+- **lean**: the 2x2 Gauss-Seidel stability test is only half landed: gaussSeidel_det_trace (det J = (1 + A)/4, 1 + det J - trace J = (1 - g)/4) is proved in audit scratch (Slate.lean) and not landed; the Jury test itself, jury_two (with its scalar form jury_pair), landed in JointConvergence after this card, not a member of it
 - **lean**: dampedMap_repelling (a fixed point with g' > 1 repels for every damping), tDamped_local_rate (the local rate at T-star), single_group_gain and jointOuterContraction_weighted are not staged
-- **lean**: dampedMap_lipschitz asserts only that some q < 1 exists (its docstring names q = max(|1-lam+lam*m|, |1-lam+lam*M|) but the statement does not export it); dampedMap_contracts states no rate at all; a stop certificate needs q, or the residual bound, as an explicit theorem output
+- **lean**: dampedMap_contracts states no rate at all (no a-priori bound q^n/(1-q)|H T0 - T0| is stated). The explicit constant q = max(|1-lam+lam*m|, |1-lam+lam*M|) is now exported by dampedMap_lipschitz_explicit, landed in JointConvergence after this card, not a member of it (dampedMap_lipschitz is now its existential corollary); with residual_stop it gives the a-posteriori stop bound
 - **model-row**: once a physics-binding declaration lands it will need its own REDUCED docs/scope-tags.tsv row citing the Saha-Boltzmann source; none of the five PURE-MATH results here needs one
 - **pipeline**: no C11 predicate or def/soundness theorem exists in Certificates.lean or in the companion's certificate_gate.py; the certificates.yaml C11 entry is status not-implemented
 
@@ -30,9 +30,7 @@
 
 ## [`ft04.fixed-effects-design-identifiability`](ft04.fixed-effects-design-identifiability.md)
 
-- **pipeline**: Define and wire a grouped design-rank certificate (working name C1g; a new id from C15 per D16) testing 0 < withinSS grp w x on the solver's kept lines, alongside or instead of the pooled C1/C3 checks (owner decision); a grouped joint certificate (C2g) additionally needs the unlanded joint result.
- (FT-04)
-- **lean**: Joint identifiability iff the within Gram determinant is positive (FT-04 part (iv)) is not landed; a grouped joint certificate needs it.
+- **pipeline**: Define and wire a grouped design-rank certificate (working name C1g; a new id from C15 per D16) testing 0 < withinSS grp w x on the solver's kept lines, alongside or instead of the pooled C1/C3 checks (owner decision); a grouped joint certificate (C2g) would rest on the joint result fe_joint_identifiable_iff (FT-04 part (iv)), landed in FixedEffectsDesign after this card and not a member of it.
  (FT-04)
 
 ## [`ft05.partition-function-cutoff-ratio`](ft05.partition-function-cutoff-ratio.md)
@@ -48,7 +46,6 @@
 
 ## [`ft07.aitchison-atomic-data-error-transfer`](ft07.aitchison-atomic-data-error-transfer.md)
 
-- **lean**: The FT-07 additive-amplification witness is not landed. Parts (i) clr perturbation and scale invariance (clr_mul, clr_const_mul, aitchisonDist_perturb, aitchisonDist_smul, aitchisonDist_comm, aitchisonDist_perturb_smul), (ii) aliasing loss (aitchisonDist_aliasing), the generic relative-closure lemma of (iii) (composition_rel_error_mul) and (iv) its transfer to a weighted basis (massFraction_rel_error) are landed outside this card, which covers only the classic-reader binding of (iii). (FT-07)
 - **owner-decision**: The title in registry/cards.yaml for this card still reads 'Aitchison error transfer under classic-reader atomic-data error'; the lead should update it to match this card's retitled 'Abundance-scaled closure bound under classic-reader atomic-data error' (card authors may not edit registry/cards.yaml). (FT-07)
 
 ## [`ft08.neutrality-scale-same-ratio`](ft08.neutrality-scale-same-ratio.md)
@@ -58,7 +55,6 @@
 
 ## [`ft08.ratio-mode-normalization-invariance`](ft08.ratio-mode-normalization-invariance.md)
 
-- **lean**: State and land the two-point beta-box bound for the ratio-mode log-ratio (FT-08 (c)) using the derivative from ratioEstimate_hasDerivAt.
 - **lean**: Compose log_sahaFactor_hasDerivAt_beta and hasDerivAt_log_sum_exp (d ln U/dβ = −⟨E⟩; both landed in SahaStability, outside this card) with ratioEstimate_hasDerivAt to obtain the audited coefficient (E_a−⟨E⟩_{I,A})−(E_b−⟨E⟩_{I,B})−f_Aκ_A+f_Bκ_B.
 
 ## [`ft09.affine-atomic-data-gauge`](ft09.affine-atomic-data-gauge.md)
@@ -75,7 +71,6 @@
 - **pipeline**: Decide whether the weight cap in `_fit_common_boltzmann_plane` should be reported as a precision cost against the $1/S_w$ floor. (FT-10)
 - **lean**: Land the variance statement for the common-slope intercept difference (homoscedastic, over a Sum index). (FT-10)
 - **lean**: Land optimality (BLUE) of the intercept difference; only its noise gain is proved here. (FT-10)
-- **lean**: Formalize the Fin-3 counterexample showing that the unweighted OLS slope variance can increase when a noisy line is added (2 to 2500.25). (FT-10)
 
 ## [`ft12.stochastic-slope-tail-budget`](ft12.stochastic-slope-tail-budget.md)
 
@@ -121,28 +116,24 @@
 ## [`ft15.mean-excitation-lipschitz`](ft15.mean-excitation-lipschitz.md)
 
 - **lean**: Complete adversarial review and stamp lean.reviewed.statement_hash; the current value is UNREVIEWED.
-- **lean**: FT-15's ln S (Saha-factor) Lipschitz leg and the [Tmin, Tmax] box form of the ln U bound are not landed; only the max(T1,T2) form, the monotonicity of the mean excitation energy and the two bridges are. (FT-15)
+- **lean**: FT-15's ln S (Saha-factor) Lipschitz leg is not landed. The [Tmin, Tmax] box form of the ln U bound is log_partitionFunction_lipschitz_box, landed in SahaStability after this card, not a member of it. (FT-15)
 
 ## [`ft16.kernel-extraction-varah-bound`](ft16.kernel-extraction-varah-bound.md)
 
 - **citation**: The audit's candidate 1975 linear-algebra source is not attached; route it through citation-integrity before citing it.
 - **lean**: The ordinate corollary should be derived from `CflibsFormal.abs_log_ratio_le` rather than restated; it is outside this headline statement.
-- **lean**: Closed-form bias identity extractor_bias_identity (audit FT-16) is not landed. (FT-16)
 - **lean**: Margin-certificate soundness (kernelMarginCert; nonsingularity of KᵀK via mathlib det_ne_zero_of_sum_row_lt_diag) is not landed. (FT-16)
 - **lean**: Compose the bound with the ordinate corollary (`CflibsFormal.abs_log_ratio_le`) and `noise_to_composition` to reach a log-ordinate budget.
 - **pipeline**: Wire the resulting bound into the composition-extraction error budget once the forward-model piece is available.
 
 ## [`ft17.neutrality-newton-bracket`](ft17.neutrality-newton-bracket.md)
 
-- **lean**: Global convergence of the Newton iteration from an arbitrary x0 >= 0 (not just the one-step bracket) is parked, not landed. (FT17-neutralityNewton-tendsto)
-- **lean**: The audit's queue decomposition also asked for strict positivity (N x > 0 for x >= 0), the companion monotone-step fact (0 <= x <= r implies x <= N x), a linear convergence rate, and a certificate wrapper that eliminates r from the check; none of these is claimed by any landed declaration in this family. (FT-17)
+- **lean**: The audit's queue decomposition also asked for a linear convergence rate and a certificate wrapper that eliminates r from the check; neither is claimed by any landed declaration. Strict positivity (N x > 0 for x >= 0 when some species is present) and the monotone-step fact (0 <= x <= r implies x <= N x) are neutralityNewton_pos_and_step_monotone, landed in SahaEquilibrium after this card, not a member of it. (FT-17)
 - **model-row**: Applying the bracket to the pressure-balance fallback would need a fixed-pressure (isobaric) closure, a Z-stage ladder and n_e-dependent effective ionization potentials, not only a Z-stage generalization of multiElementIonized.
 - **model-row**: multiElementIonized (def) encodes the REDUCED two-stage fixed-T closure but carries no MODEL row in docs/scope-tags.tsv (D15). (D15)
 
 ## [`ft18.self-absorption-slope-bias-sign`](ft18.self-absorption-slope-bias-sign.md)
 
-- **lean**: The apparent-temperature corollary is not part of this statement; it needs the thin slope to equal -1/(kB T), the slope inequality proved here, 0 < kB, 0 < T, and a negative self-absorbed slope. (FT-18)
-- **lean**: The reverse-ordering witness (tau increasing with E can lower the slope) is a separate target and is not proved here. (FT-18)
 - **model-row**: No claim is made that real CF-LIBS line sets satisfy H2; the tau-versus-E ordering is an empirical per-line-set check before applying the theorem. (FT-18)
 - **pipeline**: No CF-LIBS-improved code references this theorem; the default Boltzmann fit is weighted and sigma-clipped, so applying FT-18 there needs a weighted fixed-line-set analogue or an unweighted diagnostic fit. (FT-18)
 
@@ -156,7 +147,6 @@
 
 ## [`ft20.step-profile-pair-ratio-counterexample`](ft20.step-profile-pair-ratio-counterexample.md)
 
-- **lean**: FT-20(a), the sufficient criterion (a strictly decreasing curve-of-growth log-slope implies a strictly antitone pair ratio for every r > 1), is not staged or landed. (FT-20(a))
 - **lean**: FT-20(c), non-injectivity for a Voigt (Gaussian+Lorentzian) profile, is numerics only and needs a pre-registered statement audit of the sigma/gamma conventions before it can be staged as a Lean target. (FT-20(c))
 - **docstring**: The companion's C13 docstring (widths, relative composition) and its pointer to cogRatio_injOn's (stale) line in CurveOfGrowth.lean are stale; see the pipeline[] tension rows.
 - **pipeline**: No root-count guard exists for any non-flat pair or doublet optical-depth solver; the flat-kernel solvers on the current pair/doublet paths are provably single-rooted, so none is needed there today.

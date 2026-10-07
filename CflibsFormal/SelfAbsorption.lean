@@ -48,8 +48,14 @@ We prove:
   depth.
 * `olsSlope_selfAbsorbed_ge` — the **sign of the self-absorption temperature bias**: if `τ`
   does not increase with upper-level energy, adding `log SA(τ k)` to the Boltzmann-plot
-  ordinates can only raise the OLS slope. The sign is fixed by the `τ`-vs-`E_upper` ordering,
+  ordinates can only raise the OLS slope. The sign depends on the `τ`-vs-`E_upper` ordering,
   which is an assumption about the line set.
+* `apparentT_ge_of_selfAbsorbed_slope` — the temperature reading of the same fact: under the
+  same ordering, if the self-absorbed slope stays negative, the apparent temperature
+  `−1/(kB·s)` is at least the true `T`.
+* `olsSlope_selfAbsorbed_lt_of_tau_increasing` — a two-line witness with `τ` increasing in
+  `E_upper` where the self-absorbed slope is strictly below the thin slope for every thin
+  ordinate, so the ordering hypothesis of `olsSlope_selfAbsorbed_ge` cannot be dropped.
 
 ## Scope — flat profile / line-centre escape factor (read before using)
 
@@ -360,15 +366,17 @@ resonance and low-lying lines are the most absorbed), then the ordinary-least-sq
 self-absorbed plot is at least the thin slope:
 `olsSlope E y ≤ olsSlope E (fun k => y k + log (SA (τ k)))`.
 If the thin slope is `−1/(kB T) < 0`, the self-absorbed slope is at least that value. If the
-self-absorbed slope is still negative, the apparent temperature is at least `T` (a separate lemma,
-not part of this statement); the slope can also reach or cross `0`.
+self-absorbed slope is still negative, the apparent temperature is at least `T`
+(`apparentT_ge_of_selfAbsorbed_slope`, not part of this statement); the slope can also reach or
+cross `0`.
 
 Mechanism: `SA` is strictly decreasing on `τ > 0`, so `z k = log (SA (τ k))` is nondecreasing
 along `E`; the centred covariance `∑ (E k − Ē) z k` of two similarly ordered sequences is `≥ 0`,
 and the OLS slope is additive in the ordinates.
 
 What it does not say: the sign is fixed by the ordering of `τ` against `E_upper`. With the
-opposite ordering the slope can decrease (a two-line witness is a separate target). Which
+opposite ordering the slope can decrease (two-line witness:
+`olsSlope_selfAbsorbed_lt_of_tau_increasing`). Which
 ordering real line sets have is not decided here; it is an empirical, per-line-set question.
 
 Hypotheses.
@@ -400,5 +408,134 @@ theorem olsSlope_selfAbsorbed_ge [Nonempty ι] {E y τ : ι → ℝ} (hτ : ∀ 
     exact div_nonneg (centered_cov_nonneg E _ (logSA_mono hτ hanti))
       (Finset.sum_nonneg (fun k _ => sq_nonneg _))
   linarith
+
+/-- **If optical depth falls with upper-level energy, the uncorrected self-absorbed Boltzmann
+plot reads a temperature at least the true one, provided its slope stays negative.**
+Lines `k` have upper-level energies `E k`, optically thin Boltzmann-plot ordinates `y k` and
+optical depths `τ k > 0`; the flat-profile self-absorbed ordinate is
+`y k + log (selfAbsorptionFactor (τ k))`, with OLS slope
+`s := olsSlope E (fun k => y k + Real.log (selfAbsorptionFactor (τ k)))`. If the thin plot has
+slope `-(1 / (kB * T))` (it reads temperature `T`) and `s < 0`, then the apparent temperature
+read off the self-absorbed plot by the same rule, `-(1 / (kB * s))`, is at least `T`.
+
+Reading: with `τ` antitone in `E` (resonance and low-lying lines most absorbed), fitting the
+Boltzmann plot without a self-absorption correction overestimates (never underestimates) the
+temperature. The inequality is NON-STRICT because the slope inequality
+`olsSlope_selfAbsorbed_ge` is: with constant `τ` the ordinate shift is constant and `s` equals
+the thin slope exactly.
+
+Hypotheses.
+* `hτ`, `hanti`: exactly the hypotheses of `olsSlope_selfAbsorbed_ge` (positive optical depth;
+  `E i < E j → τ j ≤ τ i`, an assumption about the line set, not a physical law). They supply
+  `olsSlope E y ≤ s`.
+* `[Nonempty ι]`: carried by `olsSlope_selfAbsorbed_ge`. With no lines every `olsSlope` is `0`,
+  so `hneg` (`s < 0`) cannot hold; `hthin` alone would not exclude that case, since at `T = 0`
+  Lean's `1/0 = 0` makes it true.
+* `hkB : 0 < kB`: needed for the direction. With `kB < 0` (and then `T < 0`) the same slopes
+  give the reverse inequality.
+* `hthin`: the thin slope is the Boltzmann slope `-(1 / (kB * T))`; this defines `T`.
+* `hneg : s < 0`: needed. If `s ≥ 0` the formula `-(1 / (kB * s))` is `≤ 0` (it is `0` at
+  `s = 0` by Lean's `1 / 0 = 0`) and no apparent temperature is defined; the theorem does not
+  exclude that the slope reaches or crosses `0`.
+No `0 < T` hypothesis is taken: it follows, since `-(1 / (kB * T)) ≤ s < 0` forces `kB * T > 0`.
+
+Scope: relation REDUCED (unweighted OLS on a fixed line set at a single temperature, a reduction
+of the pipeline's weighted, sigma-clipped fit); published APPROXIMATION via
+`selfAbsorptionFactor` (flat, line-centre escape factor applied to the integrated intensity).
+It says nothing about which `τ`-versus-`E` ordering real line sets have.
+
+Literature: as for `olsSlope_selfAbsorbed_ge` (Gornushkin et al. 1999; Bulajic et al. 2002). -/
+theorem apparentT_ge_of_selfAbsorbed_slope [Nonempty ι] {E y τ : ι → ℝ} {kB T : ℝ}
+    (hτ : ∀ k, 0 < τ k) (hanti : ∀ i j, E i < E j → τ j ≤ τ i) (hkB : 0 < kB)
+    (hthin : olsSlope E y = -(1 / (kB * T)))
+    (hneg : olsSlope E (fun k => y k + Real.log (selfAbsorptionFactor (τ k))) < 0) :
+    T ≤ -(1 / (kB * olsSlope E (fun k => y k + Real.log (selfAbsorptionFactor (τ k))))) := by
+  have hle := olsSlope_selfAbsorbed_ge (y := y) hτ hanti
+  set s := olsSlope E (fun k => y k + Real.log (selfAbsorptionFactor (τ k))) with hs
+  rw [hthin] at hle
+  have hinv : 0 < 1 / (kB * T) := by linarith
+  have hkT : 0 < kB * T := one_div_pos.mp hinv
+  have hT : 0 < T := pos_of_mul_pos_right hkT hkB.le
+  have hks : 0 < kB * (-s) := mul_pos hkB (by linarith)
+  have h1 : -s ≤ 1 / (kB * T) := by linarith
+  rw [le_div_iff₀ hkT] at h1
+  have : -(1 / (kB * s)) = 1 / (kB * (-s)) := by
+    rw [mul_neg, div_neg]
+  rw [this, le_div_iff₀ hks]
+  nlinarith
+
+/-- Non-vacuity of `apparentT_ge_of_selfAbsorbed_slope`: two lines `E = (0, 1)`, thin
+ordinates `y = (0, −1)` (thin slope `−1`, so `kB = T = 1`) and strictly antitone optical depths
+`τ = (1, 1/2)`. The self-absorbed slope is `−1 + log SA(1/2) − log SA(1) ∈ (−1, 0)`, so `hneg`
+holds and the theorem applies. -/
+example : (1 : ℝ) ≤ -(1 / (1 * olsSlope (![0, 1] : Fin 2 → ℝ)
+      (fun k => (![0, -1] : Fin 2 → ℝ) k +
+        Real.log (selfAbsorptionFactor ((![1, 1 / 2] : Fin 2 → ℝ) k))))) := by
+  have hslope : olsSlope (![0, 1] : Fin 2 → ℝ)
+      (fun k => (![0, -1] : Fin 2 → ℝ) k +
+        Real.log (selfAbsorptionFactor ((![1, 1 / 2] : Fin 2 → ℝ) k)))
+      = -1 + (Real.log (selfAbsorptionFactor (1 / 2)) - Real.log (selfAbsorptionFactor 1)) := by
+    simp [olsSlope, mean, Fin.sum_univ_two]; ring
+  have hA1 : 0 < selfAbsorptionFactor 1 := selfAbsorptionFactor_pos (by norm_num)
+  have hAh : 0 < selfAbsorptionFactor (1 / 2) := selfAbsorptionFactor_pos (by norm_num)
+  have hSA1 : selfAbsorptionFactor 1 = 1 - Real.exp (-1) := by simp [selfAbsorptionFactor]
+  have he : Real.exp (-1) < 1 / 2 := by
+    rw [Real.exp_neg]; have := Real.exp_one_gt_d9
+    rw [inv_lt_comm₀ (Real.exp_pos 1) (by norm_num)]; linarith
+  have hlog1 : -1 < Real.log (selfAbsorptionFactor 1) := by
+    rw [Real.lt_log_iff_exp_lt hA1, hSA1]; linarith
+  have hlogh : Real.log (selfAbsorptionFactor (1 / 2)) ≤ 0 :=
+    Real.log_nonpos hAh.le (selfAbsorptionFactor_le_one (by norm_num))
+  refine apparentT_ge_of_selfAbsorbed_slope (fun k => by fin_cases k <;> norm_num)
+    (fun i j h => by revert h; fin_cases i <;> fin_cases j <;> norm_num)
+    one_pos (by simp [olsSlope, mean, Fin.sum_univ_two]; norm_num) ?_
+  rw [hslope]; linarith
+
+/-- **With optical depth increasing in upper-level energy, self-absorption lowers the
+Boltzmann-plot slope.** Two lines with upper-level energies `E = (1, 3)` and optical depths
+`τ = (1, 2)`: `τ > 0` and both `E` and `τ` are strictly increasing, so `τ` rises with `E`. For
+every choice of thin ordinates `y`, the OLS slope of the self-absorbed plot, whose ordinate is
+`y k + log (SA (τ k))` with `SA = selfAbsorptionFactor`, is strictly less than the thin slope
+`olsSlope E y`.
+
+Reading. `olsSlope_selfAbsorbed_ge` proves `olsSlope E y ≤ olsSlope E (y + log SA τ)` under
+`hanti : ∀ i j, E i < E j → τ j ≤ τ i`. This data satisfies its other hypothesis
+(`hτ : ∀ k, 0 < τ k`) and violates `hanti` (take `i = 0`, `j = 1`), and the conclusion fails
+for every `y`. So `hanti` cannot be dropped: the sign of the self-absorption slope bias depends
+on the ordering of `τ` against `E_upper` (this two-line instance shows one reversal; it does not
+show that the ordering alone fixes the sign in general, and no reverse-ordering inequality is
+stated in this repository). With thin slope `−1/(kB T) < 0` the bias here steepens the slope,
+i.e. lowers the apparent temperature.
+
+Mechanism: for `E = (1, 3)` the OLS slope of any ordinate `f` is `(f 1 − f 0) / 2`, OLS is
+additive in the ordinate, and `log SA 2 < log SA 1` because `SA` is strictly decreasing on
+`(0, ∞)` (`selfAbsorptionFactor_strictAntiOn`).
+
+Hypotheses: none; `y` is arbitrary (for instance thin Boltzmann ordinates `−E k/(kB T) + b`).
+The first conjunct is the hypothesis `hτ` of `olsSlope_selfAbsorbed_ge` at this data; the
+second and third (`E` and `τ` both strictly increasing) encode the violation of its `hanti`.
+
+Scope: relation REDUCED (two lines, unweighted OLS, as in `olsSlope_selfAbsorbed_ge`); published
+APPROXIMATION via `selfAbsorptionFactor` (flat, line-centre escape factor). Literature: as for
+`olsSlope_selfAbsorbed_ge` (Gornushkin 1999; Bulajic 2002), from which the setting is taken. -/
+theorem olsSlope_selfAbsorbed_lt_of_tau_increasing (y : Fin 2 → ℝ) :
+    (∀ k, 0 < (![1, 2] : Fin 2 → ℝ) k) ∧ StrictMono (![1, 3] : Fin 2 → ℝ) ∧
+      StrictMono (![1, 2] : Fin 2 → ℝ) ∧
+      olsSlope (![1, 3] : Fin 2 → ℝ)
+          (fun k => y k + Real.log (selfAbsorptionFactor ((![1, 2] : Fin 2 → ℝ) k)))
+        < olsSlope (![1, 3] : Fin 2 → ℝ) y := by
+  have hSA : selfAbsorptionFactor 2 < selfAbsorptionFactor 1 :=
+    selfAbsorptionFactor_strictAntiOn (by norm_num : (1:ℝ) ∈ Set.Ioi 0)
+      (by norm_num : (2:ℝ) ∈ Set.Ioi 0) (by norm_num)
+  have hlog : Real.log (selfAbsorptionFactor 2) < Real.log (selfAbsorptionFactor 1) :=
+    Real.log_lt_log (selfAbsorptionFactor_pos (by norm_num)) hSA
+  refine ⟨?_, ?_, ?_, ?_⟩
+  · intro k; fin_cases k <;> norm_num
+  · refine Fin.strictMono_iff_lt_succ.mpr ?_; intro i; fin_cases i; norm_num
+  · refine Fin.strictMono_iff_lt_succ.mpr ?_; intro i; fin_cases i; norm_num
+  · simp only [olsSlope, mean, Fin.sum_univ_two, Fintype.card_fin]
+    norm_num
+    rw [div_lt_div_iff_of_pos_right (by norm_num)]
+    linarith
 
 end CflibsFormal

@@ -36,6 +36,10 @@ We prove the **weak-line / saturation** structure of the curve of growth, profil
 * `equivWidth_stepProfile` — for the **two-step profile** `stepProfile η M` (height `1 + η` on
   `[0, 1]`, `η` on `(1, M]`) the equivalent width has the closed form
   `(1 - exp(-τ(1 + η))) + (M - 1)(1 - exp(-τη))`; a second concrete, non-rectangular instance.
+* `pairRatio_strictAntiOn_of_logSlope_strictAntiOn` — **a sufficient criterion for pair-ratio
+  identifiability:** if a positive differentiable curve of growth `W` has strictly decreasing
+  log-slope `τ W'/W` on `(0, ∞)`, then every pair ratio `n ↦ W(r n)/W n` with `r > 1` is
+  strictly antitone there (PURE-MATH; the step profile above must violate the criterion).
 * `conv_absorptance_le` — **instrument kernel, pointwise Jensen step:** for a probability kernel
   `R`, the absorptance convolved with the instrument is at most the absorptance of the
   instrument-folded opacity, at each pixel `x` (PURE-MATH).
@@ -1284,6 +1288,101 @@ theorem stepProfile_pairRatio_not_injOn :
         / equivWidth (stepProfile (1 / 100) 20) n) (Set.Ioi 0) := by
   simpa only [equivWidth_stepProfile (by norm_num : (1:ℝ) ≤ 20), stepW] using
     stepW_pairRatio_not_injOn
+
+/-- **Sufficient criterion for pair-ratio identifiability: a strictly decreasing log-slope.**
+Let `W` be a curve of growth (equivalent width as a function of the optical-depth scale `τ`),
+differentiable on `(0, ∞)` with derivative `W'`, and positive there. Its logarithmic slope is
+`ε τ = τ W'(τ) / W(τ) = d log W / d log τ`. If `ε` is strictly decreasing on `(0, ∞)`, then for
+every ratio `r > 1` of opacity coefficients the pair ratio `n ↦ W (r n) / W n` is strictly
+antitone on `(0, ∞)`, hence injective there: the column density is recovered from the ratio of
+two same-species lines sharing one source term and one column.
+
+Mechanism: `d/dn log (W (r n) / W n) = (ε (r n) − ε n) / n < 0`, because `r n > n`.
+
+Reading. Equivalently, `log W` is strictly concave as a function of `log τ`. The flat kernel
+`W τ = 1 − exp (−τ)` (`equivWidth_rectangular`) has `ε τ = τ / (exp τ − 1)`, strictly
+decreasing, which recovers `cogRatio_strictAntiOn` after the rescaling `m = w₂ n`,
+`r = w₁/w₂`. For a Lorentzian the slope falls from `1`
+(linear branch) to `1/2` (square-root branch); the criterion is expected to hold there, but that
+is not proved here. The two-step profile of `stepProfile_pairRatio_not_injOn` must violate it
+(its pair ratio is not injective). Whether Voigt profiles with a small Lorentz fraction violate it
+is a pre-registered conjecture from the audit's numerics only, not claimed here.
+
+Hypotheses.
+* `hW`: `W` has derivative `W' τ` at every `τ > 0`. For `W = equivWidth ψ` this is
+  differentiation under the integral, `W' τ = ∫ ψ x · exp (−τ ψ x) dx`; it is a hypothesis
+  here, not derived.
+* `hpos`: `W > 0` on `(0, ∞)`, so `ε` and `log W` are defined and the ratio has a nonzero
+  denominator. For `W = equivWidth ψ` it holds when `ψ ≥ 0` is integrable and positive on a set
+  of positive measure.
+* `hε`: the criterion. Strictness is needed for a strict conclusion: a constant slope
+  (`W τ = τ ^ a`) gives a constant ratio `r ^ a`.
+* `hr : 1 < r`: the two lines are distinct, with the first the stronger. For `0 < r < 1` the
+  ratio is strictly increasing instead; `r = 1` gives the constant `1`.
+What it does not say: the criterion is sufficient, not necessary. For one fixed `r` the ratio
+can be antitone while `ε` is not (`ε` may oscillate with period `log r` in `log τ`).
+
+Scope: PURE-MATH (a statement about real functions; no physics definition is involved). -/
+theorem pairRatio_strictAntiOn_of_logSlope_strictAntiOn {W W' : ℝ → ℝ}
+    (hW : ∀ τ, 0 < τ → HasDerivAt W (W' τ) τ)
+    (hpos : ∀ τ, 0 < τ → 0 < W τ)
+    (hε : StrictAntiOn (fun τ => τ * W' τ / W τ) (Set.Ioi 0))
+    {r : ℝ} (hr : 1 < r) :
+    StrictAntiOn (fun n => W (r * n) / W n) (Set.Ioi 0) := by
+  have hr0 : 0 < r := by linarith
+  set g : ℝ → ℝ := fun n => Real.log (W (r * n)) - Real.log (W n) with hg
+  have hgd : ∀ n, 0 < n →
+      HasDerivAt g (W' (r * n) * r / W (r * n) - W' n / W n) n := by
+    intro n hn
+    have hrn : 0 < r * n := mul_pos hr0 hn
+    have h1 : HasDerivAt (fun m => W (r * m)) (W' (r * n) * r) n := by
+      have := (hW (r * n) hrn).comp n ((hasDerivAt_id' n).const_mul r)
+      exact this.congr_deriv (by ring)
+    exact (h1.log (hpos _ hrn).ne').sub ((hW n hn).log (hpos n hn).ne')
+  have hganti : StrictAntiOn g (Set.Ioi 0) := by
+    apply strictAntiOn_of_deriv_neg (convex_Ioi 0)
+    · intro n hn
+      exact (hgd n hn).continuousAt.continuousWithinAt
+    · intro n hn
+      rw [interior_Ioi] at hn
+      have hn0 : (0:ℝ) < n := hn
+      rw [(hgd n hn0).deriv]
+      have hrn : 0 < r * n := mul_pos hr0 hn0
+      have hlt : (r * n) * W' (r * n) / W (r * n) < n * W' n / W n :=
+        hε (Set.mem_Ioi.mpr hn0) (Set.mem_Ioi.mpr hrn) (by nlinarith)
+      have e : W' (r * n) * r / W (r * n) - W' n / W n
+          = ((r * n) * W' (r * n) / W (r * n) - n * W' n / W n) / n := by
+        field_simp
+      rw [e]
+      exact div_neg_of_neg_of_pos (by linarith) hn0
+  have heq : Set.EqOn (fun n => Real.exp (g n)) (fun n => W (r * n) / W n) (Set.Ioi 0) := by
+    intro n hn
+    have hn0 : (0:ℝ) < n := hn
+    simp only [hg]
+    rw [Real.exp_sub, Real.exp_log (hpos _ (mul_pos hr0 hn0)), Real.exp_log (hpos n hn0)]
+  exact (Real.exp_strictMono.comp_strictAntiOn hganti).congr heq
+
+/-- Non-vacuity of `pairRatio_strictAntiOn_of_logSlope_strictAntiOn`: the saturating curve
+`W τ = τ/(1 + τ)` has log-slope `ε τ = 1/(1 + τ)`, strictly decreasing, so its `r = 2` pair
+ratio is strictly antitone on `(0, ∞)`. -/
+example : StrictAntiOn (fun n : ℝ => (2 * n) / (1 + 2 * n) / (n / (1 + n))) (Set.Ioi 0) := by
+  have hW : ∀ τ : ℝ, 0 < τ → HasDerivAt (fun t : ℝ => t / (1 + t)) (1 / (1 + τ) ^ 2) τ := by
+    intro τ hτ
+    have h1 : (1 : ℝ) + τ ≠ 0 := by linarith
+    exact ((hasDerivAt_id' τ).div ((hasDerivAt_id' τ).const_add 1) h1).congr_deriv
+      (by field_simp; ring)
+  have hε : StrictAntiOn (fun τ : ℝ => τ * (1 / (1 + τ) ^ 2) / (τ / (1 + τ))) (Set.Ioi 0) := by
+    intro a ha b hb hab
+    simp only [Set.mem_Ioi] at ha hb
+    have e : ∀ t : ℝ, 0 < t → t * (1 / (1 + t) ^ 2) / (t / (1 + t)) = 1 / (1 + t) := by
+      intro t ht
+      have : (1 : ℝ) + t ≠ 0 := by linarith
+      field_simp
+    dsimp only
+    rw [e a ha, e b hb]
+    exact one_div_lt_one_div_of_lt (by linarith) (by linarith)
+  exact pairRatio_strictAntiOn_of_logSlope_strictAntiOn hW (fun τ hτ => by positivity) hε
+    (by norm_num : (1 : ℝ) < 2)
 
 end StepProfile
 

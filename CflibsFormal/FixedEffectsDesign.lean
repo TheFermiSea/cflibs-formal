@@ -26,6 +26,9 @@ formalizes the grouped, weighted design the solver actually runs (frontier FT-04
 
 * `fe_identifiable_iff`: with positive weights, the common slope is identifiable from noiseless
   ordinates `a (grp k) + β * x k` exactly when `0 < SS_W`.
+* `fe_joint_identifiable_iff`: with positive weights, two common slopes `β`, `ν` (on abscissae
+  `x`, `s`) are jointly identifiable exactly when the within-group Gram determinant
+  `SS_W(x)·SS_W(s) − S_W(x, s)²` is positive.
 * `feSlope_add_smul`: `feSlope` is linear in the ordinates (no hypotheses).
 * `feSlope_isMin`: `feSlope` with its implied group intercepts minimizes the weighted residual
   sum of squares of the one-intercept-per-group model.
@@ -36,7 +39,7 @@ formalizes the grouped, weighted design the solver actually runs (frontier FT-04
 
 ## Scope
 
-All five results are `PURE-MATH`: weighted regression algebra over a grouped finite design; no
+All six results are `PURE-MATH`: weighted regression algebra over a grouped finite design; no
 physics definition is used. The physics reading (abscissa `E + IP·(z − 1)`, groups = elements,
 LTE with one temperature, IPD off or frozen) is a reduced model and is not part of any statement
 here.
@@ -185,6 +188,133 @@ theorem fe_identifiable_iff (grp : ι → κ) (w x : ι → ℝ) (hw : ∀ k, 0 
     rcases mul_eq_zero.mp key with h | h
     · linarith
     · exact absurd h hS.ne'
+
+/-- **Joint identifiability of two common slopes in a fixed-effects design (FT-04 (iv)).**
+
+Model: each line `k` has a noiseless ordinate `a (grp k) + β * x k + ν * s k`, with one free
+intercept per group (`a : κ → ℝ`) and two common slopes `β`, `ν` on two abscissae `x`, `s`.
+The left-hand side says the slope pair is identifiable: any two parameter sets
+`(a, β, ν)` and `(a', β', ν')` that give the same ordinate on every line have `β = β'` and
+`ν = ν'` (the intercepts are not required to agree). The theorem says this holds exactly when
+the weighted within-group Gram determinant is positive:
+`0 < SS_W(x) · SS_W(s) − S_W(x, s)²`, with `SS_W = withinSS` and `S_W = withinCross`.
+The left side does not mention `w`, so the rank condition is the same for every positive
+weight vector. This is the two-slope version of `fe_identifiable_iff`, and the proof reduces to
+it: `withinSS` of `c·x + d·s` is the quadratic form `c² SS_W(x) + 2cd S_W(x,s) + d² SS_W(s)`.
+
+CF-LIBS reading (REDUCED, not part of the statement): `x k` the (IP-shifted) upper-level
+energy, `s k ∈ {0, 1}` the ion-stage indicator, whose slope carries the `ln n_e` offset,
+groups = elements (if groups split element and stage, `s` is group-constant and the
+determinant is `0`); `β = −1/(k_B T)`. The determinant is the grouped joint design-rank
+certificate (C2g of the 2026-09-24 audit) that the pooled `jointRankCert` does not test. Under
+`hw` the determinant is `0` exactly when some nonzero combination `c·x + d·s` is constant on
+every group; this covers `x` group-constant (`SS_W(x) = 0`, e.g. `x = (3,3,5,5)` in groups
+`(0,0,1,1)`), `s` group-constant (`SS_W(s) = 0`) and `s` within-collinear with `x`
+(`s = c·x + group constant`).
+
+Hypotheses. `hw : ∀ k, 0 < w k` (the pipeline's capped inverse-variance weights). As in
+`fe_identifiable_iff` it is needed for (⇒): with `w ≡ 0` the determinant is `0` although a
+design can be identifiable. Under `hw` the determinant is `≥ 0` (weighted Cauchy–Schwarz; a
+remark, not part of the statement), so `0 <` reads as `≠ 0`.
+No `Nonempty ι` is needed: for empty `ι` both sides are false.
+
+Scope: PURE-MATH (weighted regression algebra over a grouped finite design; the definitions
+used, `gMean`, `withinCross`, `withinSS`, carry no model tag). -/
+theorem fe_joint_identifiable_iff (grp : ι → κ) (w x s : ι → ℝ) (hw : ∀ k, 0 < w k) :
+    (∀ (a a' : κ → ℝ) (β β' ν ν' : ℝ),
+        (∀ k, a (grp k) + β * x k + ν * s k = a' (grp k) + β' * x k + ν' * s k) →
+          β = β' ∧ ν = ν')
+      ↔ 0 < withinSS grp w x * withinSS grp w s - withinCross grp w x s ^ 2 := by
+  have hgm : ∀ (c d : ℝ) (e : κ), gMean grp w (fun k => c * x k + d * s k) e
+      = c * gMean grp w x e + d * gMean grp w s e := by
+    intro c d e
+    unfold gMean
+    have : ∑ k ∈ Finset.univ.filter (fun k => grp k = e), w k * (c * x k + d * s k)
+        = c * ∑ k ∈ Finset.univ.filter (fun k => grp k = e), w k * x k
+          + d * ∑ k ∈ Finset.univ.filter (fun k => grp k = e), w k * s k := by
+      rw [Finset.mul_sum, Finset.mul_sum, ← Finset.sum_add_distrib]
+      exact Finset.sum_congr rfl (fun k _ => by ring)
+    rw [this, add_div, mul_div_assoc, mul_div_assoc]
+  have hQ : ∀ c d : ℝ, withinSS grp w (fun k => c * x k + d * s k)
+      = c ^ 2 * withinSS grp w x + 2 * c * d * withinCross grp w x s
+        + d ^ 2 * withinSS grp w s := by
+    intro c d
+    unfold withinSS withinCross
+    simp only [hgm]
+    rw [Finset.mul_sum, Finset.mul_sum, Finset.mul_sum, ← Finset.sum_add_distrib,
+      ← Finset.sum_add_distrib]
+    exact Finset.sum_congr rfl (fun k _ => by ring)
+  have hnn : ∀ f : ι → ℝ, 0 ≤ withinSS grp w f := fun f =>
+    Finset.sum_nonneg (fun k _ => by
+      rw [mul_assoc]; exact mul_nonneg (hw k).le (mul_self_nonneg _))
+  have hxx := hnn x
+  have hss := hnn s
+  constructor
+  · intro hid
+    by_contra hdet
+    push Not at hdet
+    rcases (lt_or_eq_of_le hxx) with hpos | hzero
+    · set c := withinCross grp w x s with hc
+      set d := -withinSS grp w x with hd
+      have hf : ¬ 0 < withinSS grp w (fun k => c * x k + d * s k) := by
+        rw [hQ, hd]; nlinarith
+      rw [← fe_identifiable_iff grp w _ hw] at hf
+      push Not at hf
+      obtain ⟨a, a', β, β', heq, hne⟩ := hf
+      have := hid a a' (β * c) (β' * c) (β * d) (β' * d) (fun k => by
+        have := heq k; linear_combination this)
+      have hd0 : d ≠ 0 := by rw [hd]; exact neg_ne_zero.mpr hpos.ne'
+      exact hne (mul_right_cancel₀ hd0 this.2)
+    · have hf : ¬ 0 < withinSS grp w x := by rw [← hzero]; exact lt_irrefl 0
+      rw [← fe_identifiable_iff grp w _ hw] at hf
+      push Not at hf
+      obtain ⟨a, a', β, β', heq, hne⟩ := hf
+      exact hne (hid a a' β β' 0 0 (fun k => by have := heq k; linear_combination this)).1
+  · intro hdet a a' β β' ν ν' heq
+    have hconst : ¬ 0 < withinSS grp w (fun k => (β - β') * x k + (ν - ν') * s k) := by
+      rw [← fe_identifiable_iff grp w _ hw]
+      intro hid
+      have := hid (fun _ => 0) (fun e => a' e - a e) 1 0 (fun k => by
+        have := heq k; linear_combination this)
+      exact one_ne_zero this
+    rw [hQ] at hconst
+    have hxpos : 0 < withinSS grp w x := by
+      by_contra h
+      have : withinSS grp w x = 0 := le_antisymm (not_lt.mp h) hxx
+      rw [this] at hdet; nlinarith [sq_nonneg (withinCross grp w x s)]
+    have hd0 : ν - ν' = 0 := by
+      by_contra hd
+      have hd2 : 0 < (ν - ν') ^ 2 := by positivity
+      nlinarith [sq_nonneg ((β - β') * withinSS grp w x + (ν - ν') * withinCross grp w x s),
+        mul_pos hd2 hdet]
+    have hc0 : β - β' = 0 := by
+      rw [hd0] at hconst
+      by_contra hc
+      have : 0 < (β - β') ^ 2 := by positivity
+      nlinarith
+    exact ⟨sub_eq_zero.mp hc0, sub_eq_zero.mp hd0⟩
+
+/-- Non-vacuity of `fe_joint_identifiable_iff`, both directions. Four lines in two groups
+(`grp = ![0, 0, 1, 1]`), unit weights, `x = ![0, 1, 0, 1]`. With the stage indicator
+`s = ![0, 0, 0, 1]` the Gram determinant is `1 · 1/2 − (1/2)² = 1/4 > 0`, so the slope pair is
+identifiable; with `s = ![0, 1, 2, 3] = x + 2·(group index)` it is `1 · 1 − 1² = 0`, so it is
+not. -/
+example :
+    (∀ (a a' : Fin 2 → ℝ) (β β' ν ν' : ℝ),
+        (∀ k, a ((![0, 0, 1, 1] : Fin 4 → Fin 2) k) + β * (![0, 1, 0, 1] : Fin 4 → ℝ) k
+            + ν * (![0, 0, 0, 1] : Fin 4 → ℝ) k
+          = a' ((![0, 0, 1, 1] : Fin 4 → Fin 2) k) + β' * (![0, 1, 0, 1] : Fin 4 → ℝ) k
+            + ν' * (![0, 0, 0, 1] : Fin 4 → ℝ) k) → β = β' ∧ ν = ν') ∧
+    ¬ (∀ (a a' : Fin 2 → ℝ) (β β' ν ν' : ℝ),
+        (∀ k, a ((![0, 0, 1, 1] : Fin 4 → Fin 2) k) + β * (![0, 1, 0, 1] : Fin 4 → ℝ) k
+            + ν * (![0, 1, 2, 3] : Fin 4 → ℝ) k
+          = a' ((![0, 0, 1, 1] : Fin 4 → Fin 2) k) + β' * (![0, 1, 0, 1] : Fin 4 → ℝ) k
+            + ν' * (![0, 1, 2, 3] : Fin 4 → ℝ) k) → β = β' ∧ ν = ν') := by
+  rw [fe_joint_identifiable_iff _ (fun _ => 1) _ _ (fun _ => one_pos),
+    fe_joint_identifiable_iff _ (fun _ => 1) _ _ (fun _ => one_pos)]
+  simp only [withinSS, withinCross, gMean, Finset.sum_filter, Fin.sum_univ_four]
+  simp
+  norm_num
 
 
 /-- The weighted group mean is linear in the response. -/
