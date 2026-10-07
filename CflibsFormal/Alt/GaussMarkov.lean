@@ -51,8 +51,11 @@ under the same linear model `yₖ(ω) = α + β·Eₖ + εₖ(ω)` as `Alt.OLSVa
   constraints `ha0`, `ha1` equivalent to unbiasedness, via `linEstimator_unbiased_iff`.)
 * **Homoscedasticity is load-bearing.** Under per-line variances `σ_k²` OLS is not BLUE. With
   `E = (0, 1, 2)` and `σ = (1, 1, 100)`, OLS has variance `2500.25`, while the unbiased weights
-  `a = (−1, 1, 0)` give variance `2` (hand arithmetic; not formalized). The weighted
-  (Aitken) optimality theorem is not proved in this repository.
+  `a = (−1, 1, 0)` give variance `2`. Both values are proved in
+  `Alt.ols_variance_increases_with_noisy_line` (the second as the OLS slope of the two-line
+  design `E = (0, 1)`, which is the estimator with these weights); the comparison is not stated
+  as a theorem about `linEstimator`. The weighted (Aitken) optimality theorem is not proved in
+  this repository.
 * **Consistency with `Alt.OLSVariance`.** `ols_is_blue` rewrites `Var(β̂)` via
   `olsSlope_variance_noiseGain` to `σ²·∑wₖ²` and `Var(Tₐ)` via `linEstimator_variance` to `σ²·∑aₖ²`,
   then closes with `weight_sq_ge_noiseGain` and `0 ≤ σ²`; the OLS case `a = w` attains equality,

@@ -50,6 +50,10 @@ The chain is:
 * `composition_rel_error_mul`, `massFraction_rel_error` — **PURE-MATH.** The closure lemma behind
   it, for any estimates within a relative error `η < 1` of the truth, and its transfer to a
   weighted (mass) basis. No reader, no atomic data: algebra on `composition`.
+* `composition_additive_error_amplifies_minor` — **PURE-MATH.** One numerical instance of the
+  additive case: two species `N = (99, 1)`, each off by `+1` (`1/100` of the total), give the
+  minor a relative composition error of `49/51`, above the multiplicative bound `2η/(1 − η)` at
+  `η = 1/100`.
 
 ## Literature
 
@@ -786,6 +790,54 @@ example (s : Fin 2) :
   massFraction_rel_error (N := ![1, 3]) (η := 1 / 10)
     (fun t => by fin_cases t <;> norm_num) (fun t => by fin_cases t <;> norm_num)
     (by norm_num) (by norm_num) (fun t => by fin_cases t <;> norm_num [abs_le]) s
+
+/-- **Additive-error witness: one instance where an error of 1 % of the total density moves a
+minor element's fraction by 49/51 of itself.** Take two species with densities `N = (99, 1)`
+(species `1` is a 1 % minor) and add the SAME absolute error `+1` to each, `Nhat s = N s + 1`,
+i.e. each species is off by `1/100` of the total density. Then the relative composition errors
+`|Ĉ_s - C_s| / C_s` are exactly `49/51` for the minor (`s = 1`) and `49/5049` for the major
+(`s = 0`); the minor's is `99 = N 0 / N 1` times the major's; and the minor's relative error
+`49/51` exceeds `2η/(1 − η)` at `η = 1/100`, the bound that a *multiplicative* error of relative
+size `1/100` on every species would allow (`composition_rel_error_mul`, above). The last
+conjunct records that the minor's relative composition error is still below its own relative
+density error `|Nhat 1 - N 1| / N 1 = 1`.
+
+Reading: this is the additive half of FT-07 (iii). The content is in the comparison with the
+multiplicative bound: an additive error that is small relative to the total is not small relative
+to a minor species, and closure passes that on. The factor `99` between the two species is NOT
+specific to additive error: with two species closure forces `Ĉ_1 − C_1 = −(Ĉ_0 − C_0)` for any
+perturbation, so the ratio of relative errors is always `C_0 / C_1` (audit 2026-10-06); it is
+recorded here as arithmetic, not as evidence of amplification.
+
+What is NOT shown: this is one numerical instance (two species, one perturbation), not a general
+law; no bound or asymptotic in the abundance ratio is stated; nothing is claimed about noise
+models, real spectra, or any particular CF-LIBS reader.
+
+Hypotheses: `hN` fixes the true densities; `hNhat` is the equal-absolute (additive) perturbation.
+Both are pinned, so the statement is a closed computation (satisfiable by `N = ![99, 1]`,
+`Nhat = ![100, 2]`).
+
+Scope: PURE-MATH (arithmetic of `composition`; no physics model tag is involved). -/
+theorem composition_additive_error_amplifies_minor (N Nhat : Fin 2 → ℝ) (hN : N = ![99, 1])
+    (hNhat : ∀ s, Nhat s = N s + 1) :
+    |composition Nhat 1 - composition N 1| / composition N 1 = 49 / 51 ∧
+      |composition Nhat 0 - composition N 0| / composition N 0 = 49 / 5049 ∧
+      |composition Nhat 1 - composition N 1| / composition N 1 =
+        99 * (|composition Nhat 0 - composition N 0| / composition N 0) ∧
+      2 * (1 / 100) / (1 - 1 / 100) < |composition Nhat 1 - composition N 1| / composition N 1 ∧
+      |composition Nhat 1 - composition N 1| / composition N 1 < |Nhat 1 - N 1| / N 1 := by
+  have h : Nhat = ![100, 2] := by
+    funext s; fin_cases s <;> simp [hNhat, hN] <;> norm_num
+  subst hN; subst h
+  simp only [composition, totalDensity, Fin.sum_univ_two]
+  norm_num [abs_of_neg, abs_of_pos]
+
+/-- Non-vacuity of `composition_additive_error_amplifies_minor`: its pinned data `N = (99, 1)`,
+`N̂ = (100, 2)` satisfy both hypotheses; the minor's relative error is `49/51`. -/
+example : |composition (![100, 2] : Fin 2 → ℝ) 1 - composition (![99, 1] : Fin 2 → ℝ) 1|
+      / composition (![99, 1] : Fin 2 → ℝ) 1 = 49 / 51 :=
+  (composition_additive_error_amplifies_minor ![99, 1] ![100, 2] rfl
+    (fun s => by fin_cases s <;> norm_num)).1
 
 /-- Closure under two-sided ratio bounds `(1 - δ)·N̂ ≤ N ≤ (1 + δ)·N̂`. -/
 private theorem comp_rel_ratio {N Nhat : κ → ℝ} {δ : ℝ} (hN : ∀ s, 0 < N s) (hδ0 : 0 ≤ δ)

@@ -10,8 +10,8 @@ import Mathlib
 
 Line intensities are extracted from a spectrum by least squares against a kernel of assumed line
 profiles (pixels `P`, lines `L`). When the true profiles differ from the assumed ones, the
-extracted intensities are biased. This module bounds that error entrywise (frontier FT-16 of the
-2026-09-24 audit).
+extracted intensities are biased. This module bounds that error entrywise and gives it in closed
+form (frontier FT-16 of the 2026-09-24 audit).
 
 ## Main results
 
@@ -20,6 +20,9 @@ extracted intensities are biased. This module bounds that error entrywise (front
   `|Î_l − I_l| ≤ max_k |(Kᵀ((K_t − K)·I + η))_k| / δ`. The proof goes through the exact error
   identity `KᵀK·(Î − I) = Kᵀ((K_t − K)·I + η)` and the diagonal-dominance bound
   `δ·‖x‖∞ ≤ ‖M·x‖∞`.
+* `extractor_bias_identity`: when `KᵀK` is invertible, the extractor `Î = (KᵀK)⁻¹Kᵀ d` has the
+  exact error `Î − I = (KᵀK)⁻¹Kᵀ((K_t − K)·I) + (KᵀK)⁻¹Kᵀ η`, a misspecification bias plus a
+  linear noise term.
 
 ## Scope
 
@@ -116,5 +119,53 @@ theorem kernelLS_error_linfty [Nonempty L] (K Kt : Matrix P L ℝ) (I Ihat : L �
   have h := linfty_le_of_rowDiagDominant (Kᵀ * K) hδ hdom (Ihat - I) l
   rw [normal_error_identity K Kt I Ihat η hnormal, Pi.sub_apply] at h
   exact h
+
+/-- **Closed-form error identity of the kernel least-squares extractor (FT-16).** Pixels `P`,
+lines `L`. Let the data be `d = K_t·I + η` (true kernel `Kt`, true intensities `I`, noise `η`)
+and let the extractor use an assumed kernel `K` with invertible Gram matrix `KᵀK` (`hdet`), so
+it returns `Î = (KᵀK)⁻¹Kᵀ d`. Then exactly
+  `Î - I = (KᵀK)⁻¹Kᵀ((K_t - K)·I) + (KᵀK)⁻¹Kᵀ η`,
+the sum of a misspecification bias and a linear noise term.
+
+Reading: the first term is the bias from profile misspecification; it vanishes when `K_t = K`,
+so an extractor built at the true kernel recovers `I` up to the noise term only (an "oracle"
+extractor validates structure, not misspecification). The identity is the explicit-inverse
+counterpart of the normal-equation identity behind `kernelLS_error_linfty`. It is only algebra
+on the inverse: `G = (KᵀK)⁻¹Kᵀ` is a left inverse of `K`, and `mulVec` is linear.
+
+Hypotheses: `hdet : IsUnit (KᵀK).det` is needed: it gives `(KᵀK)⁻¹KᵀK = 1`. Without it
+Mathlib's `⁻¹` is `0` and the identity fails (e.g. `K = 0`, `I ≠ 0`: left side `-I`, right side
+`0`). `hdet` holds iff `K` has full column rank; the row-diagonal-dominance margin of
+`kernelLS_error_linfty` implies it, but that link is not part of this statement.
+`[DecidableEq L]` is required by `Matrix.inv`.
+
+Scope: PURE-MATH (linear algebra over real matrices; no physics definition is used). The physics
+reading (optically thin plasma, additive line profiles, kernel fixed within a solver step) is
+REDUCED and stays in prose. No citation (linear algebra). -/
+theorem extractor_bias_identity (K Kt : Matrix P L ℝ) (I : L → ℝ) (η : P → ℝ)
+    (hdet : IsUnit (Kᵀ * K).det) :
+    ((Kᵀ * K)⁻¹ * Kᵀ).mulVec (Kt.mulVec I + η) - I
+      = ((Kᵀ * K)⁻¹ * Kᵀ).mulVec ((Kt - K).mulVec I) + ((Kᵀ * K)⁻¹ * Kᵀ).mulVec η := by
+  have hG : (Kᵀ * K)⁻¹ * Kᵀ * K = 1 := by
+    rw [Matrix.mul_assoc, Matrix.nonsing_inv_mul _ hdet]
+  have hI : ((Kᵀ * K)⁻¹ * Kᵀ).mulVec (K.mulVec I) = I := by
+    rw [Matrix.mulVec_mulVec, hG, Matrix.one_mulVec]
+  rw [Matrix.mulVec_add, Matrix.sub_mulVec, Matrix.mulVec_sub, hI]
+  abel
+
+/-- Non-vacuity of `extractor_bias_identity` with a nonzero bias: one pixel, one line, assumed
+kernel `K = (1)`, true kernel `K_t = (2)`, `I = 1`, no noise. `KᵀK = (1)` is invertible, and
+the extractor returns `2`, a bias of `1`. -/
+example : ((!![(1 : ℝ)]ᵀ * !![(1 : ℝ)])⁻¹ * !![(1 : ℝ)]ᵀ).mulVec
+      ((!![(2 : ℝ)] - !![(1 : ℝ)]).mulVec ![1]) = ![1] ∧
+    ((!![(1 : ℝ)]ᵀ * !![(1 : ℝ)])⁻¹ * !![(1 : ℝ)]ᵀ).mulVec (!![(2 : ℝ)].mulVec ![1] + 0) - ![1]
+      = ((!![(1 : ℝ)]ᵀ * !![(1 : ℝ)])⁻¹ * !![(1 : ℝ)]ᵀ).mulVec
+          ((!![(2 : ℝ)] - !![(1 : ℝ)]).mulVec ![1])
+        + ((!![(1 : ℝ)]ᵀ * !![(1 : ℝ)])⁻¹ * !![(1 : ℝ)]ᵀ).mulVec 0 := by
+  refine ⟨?_, extractor_bias_identity _ _ _ _ (by simp [Matrix.mul_apply])⟩
+  ext i
+  fin_cases i
+  simp [Matrix.mulVec, dotProduct, Matrix.mul_apply]
+  norm_num
 
 end CflibsFormal
