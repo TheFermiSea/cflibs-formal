@@ -4,9 +4,10 @@ Decision D7 (`docs/spec/README.md`); design in `docs/spec/04-autoformalization-f
 
 - Upstream: `openprover` 1.0.1 (MIT, Kripner & Straka, arXiv 2607.09217). Not vendored as source;
   installed into a scratch venv and patched by `patch_local_alias.py`.
-- The patch adds a second worker alias, `qwen38-local`, for the Qwen3.8-27B control arm on infer-01
-  (`run-qwen38`, port 8081; the served model id is the GGUF path because that launcher has no
-  `--alias`). Invoke with `--worker-model qwen38-local --provider-url http://10.0.0.26:8081`.
+- The patch adds a second worker alias, `qwen38-local`, for the Qwen3.8-27B control arm
+  (port 8081; the served model id is the GGUF path because that launcher has no `--alias`, so the
+  patch reads it from `OPENPROVER_QWEN_MODEL_ID`). Invoke with
+  `--worker-model qwen38-local --provider-url http://<node>:8081`.
 - The patch adds one worker alias, `leanstral-local`, bound to the OpenAI-compatible llama.cpp
   endpoint on the infer-0x fleet (`/usr/local/bin/run-leanstral`, `--alias leanstral`, port 8082).
   The planner stays on the Claude CLI (the owner's subscription).
@@ -25,11 +26,11 @@ directory typechecks against the repo's oleans without rebuilding).
 ```sh
 python3 -m venv /tmp/opvenv && /tmp/opvenv/bin/pip install openprover==1.0.1
 /tmp/opvenv/bin/python tools/openprover/patch_local_alias.py
-R=/home/brian/code/cflibs-formal; P=/tmp/op/leanproj; mkdir -p "$P"
+R=$(git rev-parse --show-toplevel); P=/tmp/op/leanproj; mkdir -p "$P"
 for f in lakefile.toml lean-toolchain lake-manifest.json .lake; do ln -sfn "$R/$f" "$P/$f"; done
 /tmp/opvenv/bin/openprover /tmp/op/runs/<name> --headless --autonomous \
   --planner-model sonnet --worker-model leanstral-local \
-  --provider-url http://10.0.0.27:8082 \
+  --provider-url http://<node>:8082 \
   --lean-project "$P" --lean-theorem <statement-only .lean file> --theorem <dossier .md> \
   --answer-reserve 16384 --max-time 2h
 ```

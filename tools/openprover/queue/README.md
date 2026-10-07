@@ -1,7 +1,11 @@
 # Continuous proof queue
 
-A supervisor on ai-proxy that keeps the three infer-0x Qwen3.8-27B endpoints busy with audited
+A supervisor that keeps three local Qwen3.8-27B llama.cpp endpoints busy with audited
 statements, re-verifies every claimed proof, and never lands anything itself (spec 04 §10.4, D14).
+"Spec 04" is the development specification under `docs/spec/` (pull request #5; not on `main`
+while that is a draft); the numbered decisions are in `docs/decisions.md`. Node names, addresses
+and the service account are kept out of this directory: they live in `fleet.json` and in the
+installed copy of the unit.
 
 ## Pieces
 
@@ -9,13 +13,15 @@ statements, re-verifies every claimed proof, and never lands anything itself (sp
 |---|---|
 | `supervisor.py` | the loop: health-checks nodes, claims targets, runs OpenProver, verifies, requeues or parks |
 | `verify.py` | independent re-verification of one candidate against its audited statement file |
-| `openprover-queue.service` | systemd unit (`User=brian`) for ai-proxy |
+| `openprover-queue.service` | systemd unit template for the supervisor host (fill in `<user>` and `<home>`) |
 
 Installed state (outside the repo, survives branch switches):
 
 ```
 ~/.local/share/openprover/
   venv/        openprover==1.0.1 from requirements.lock + tools/openprover/patch_local_alias.py
+               (first patch of a fresh install needs OPENPROVER_QWEN_MODEL_ID, the model id the
+               worker node's /v1/models reports; re-running on a patched install is a no-op)
   lean-main/   git worktree of origin/main; .lake/packages symlinked to the main checkout's
   leanproj/    symlinks into lean-main (OpenProver writes OpenProver-<id>/ here)
   bin/         deployed copies of supervisor.py and verify.py (the unit runs these)
@@ -41,6 +47,12 @@ target.json      {"theorem": "Fully.Qualified.name", "max_tokens": 150000, "max_
 Defaults: `planner` `opus` (Opus 5.5 via the Claude CLI, effort `high`; owner 2026-09-25,
 revising D8's Sonnet), `worker` `qwen38-local`. The supervisor picks it up
 within 30 s. Optional planner keys:
+- `answer_reserve`: the worker's per-call token cap, default 24576. It has to exceed the server's
+  `--reasoning-budget` (16384 on the fleet): a call that thinks to the budget under an equal cap
+  is cut before it writes an answer. Until 2026-10-03 the supervisor passed 16384, and the run
+  records show 263 of 1,570 worker model calls ending at the cap with no answer text and 82 of
+  523 workers returning nothing (`tools/judgments/proof_runs.py` prints these counts). Every
+  finished run now logs `N of M workers returned nothing`.
 - `effort`: Claude planner effort, default `high`. OpenProver's own default for `opus` was `max`;
   the patch removes that because the owner ruled it out on cost.
 - `advisor`: e.g. `"opus"`. It is attached with `--settings` only on planner steps 1,
@@ -77,7 +89,11 @@ per-run random markers.
 
 The pre-2026-09-24 version parsed axioms and types from the candidate's own stdout and never ran
 the kernel; the deep audit (RF-07) forged three proofs of `(2:ℕ)+2=5` that it accepted. They are
-kept in `falsification/`, and `falsification/run.py <lean-project> [cand:stmt:thm ...]` asserts that
+kept in `falsification/`, together with a fourth forgery found by the 2026-10-07 statement audit
+(the audited definition's text in a decoy namespace, the real name defined as `1`, which the textual
+definition check accepted; check (6), the `pp.all` `#print` comparison of every audited definition
+between the two compiled modules, now rejects it), and
+`falsification/run.py <lean-project> [cand:stmt:thm ...]` asserts that
 each fails through the full verifier AND through the kernel/probe layers alone (text layer
 bypassed), and that every genuine proof passed on the command line still passes. Run it after any
 change to `verify.py`. On 2026-09-24 it passed with the three C3 proofs and F02 as genuine
@@ -98,7 +114,7 @@ cp tools/openprover/queue/*.py ~/.local/share/openprover/bin/   # deploy a chang
 
 **Two runs per node (owner, 2026-09-27).** Each llama-server has 4 slots and 131072 tokens of unified
 KV, but a run keeps at most one Qwen request in flight (every spawn so far had one worker) and the GPU
-idles during planner calls and Lean checks. Measured on infer-01: 41 tok/s aggregate for one stream,
+idles during planner calls and Lean checks. Measured on one node: 41 tok/s aggregate for one stream,
 59 for two (1.45x), 75 for four. A second model instance does not fit (29.9 of 32.8 GB used). So each
 node runs two attempts against its one server: slot 0 with the target's planner (Opus, under the
 daily cap), slot 1 planned by `qwen38-local`, which keeps Claude planner spend at three runs. A failed

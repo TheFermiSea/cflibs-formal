@@ -6,12 +6,12 @@ user's global MCP servers.
 
 OpenProver hard-codes its model aliases (cli.py) and the context-length table (llm/hf.py); the
 `leanstral` alias it ships routes to Mistral's hosted API. This patch adds `leanstral-local`,
-an OpenAI-compatible HFClient target served by llama.cpp on the infer-0x fleet
+an OpenAI-compatible HFClient target served by llama.cpp on a local worker node
 (docs/spec/04 §10.4). Idempotent: re-running on a patched install is a no-op.
 
 Usage:  <venv>/bin/python tools/openprover/patch_local_alias.py
 """
-import importlib, pathlib, sys
+import importlib, os, pathlib, sys
 
 ALIAS, SERVED_NAME, CTX = "leanstral-local", "leanstral", 65536
 
@@ -32,11 +32,20 @@ cl = pathlib.Path(importlib.import_module("openprover.llm.claude").__file__)
 hl = pathlib.Path(importlib.import_module("openprover.tui.headless").__file__)
 pr = pathlib.Path(importlib.import_module("openprover.prover").__file__)
 
+# The Qwen worker's served model id is machine-specific (a GGUF path on the node, because its
+# launcher has no --alias), so it is read from the environment: what the node's `GET /v1/models`
+# reports. It is needed only while the qwen alias is not yet patched in, and it is checked here,
+# before anything is written, so a run without it changes nothing.
+QALIAS, QCTX = "qwen38-local", 65536
+QSERVED = os.environ.get("OPENPROVER_QWEN_MODEL_ID", "")
+if not QSERVED and (QALIAS not in cli.read_text() or f"{QCTX},  # Qwen3.8-27B" not in hf.read_text()):
+    sys.exit("set OPENPROVER_QWEN_MODEL_ID to the model id the worker node serves (GET /v1/models)")
+
 patch(cli, [
     ('    model_choices = ["sonnet", "opus", "minimax-m2.5", "leanstral"]',
      f'    model_choices = ["sonnet", "opus", "minimax-m2.5", "leanstral", "{ALIAS}"]'),
     ('    HF_MODEL_MAP = {\n        "minimax-m2.5": "MiniMaxAI/MiniMax-M2.5",\n    }',
-     f'    HF_MODEL_MAP = {{\n        "minimax-m2.5": "MiniMaxAI/MiniMax-M2.5",\n        "{ALIAS}": "{SERVED_NAME}",  # llama-server --alias {SERVED_NAME} on the infer-0x fleet\n    }}'),
+     f'    HF_MODEL_MAP = {{\n        "minimax-m2.5": "MiniMaxAI/MiniMax-M2.5",\n        "{ALIAS}": "{SERVED_NAME}",  # llama-server --alias {SERVED_NAME} on a local worker node\n    }}'),
     ('    VLLM_MODELS = {"minimax-m2.5"}  # served via vLLM (standard OpenAI API)',
      f'    VLLM_MODELS = {{"minimax-m2.5", "{ALIAS}"}}  # standard OpenAI API with tool calls (vLLM or llama-server --jinja)'),
     ('    non_claude_models = {"minimax-m2.5", "leanstral"}',
@@ -95,17 +104,17 @@ patch(pr, [
      '                    _names = {tc["function"]["name"] for tc in resp["tool_calls"]}  # cflibs patch\n'
      '                    search_only_streak = search_only_streak + 1 if _names == {"lean_search"} else 0\n'),
 ])
-# Second local worker alias for the control arm (D11): Qwen3.8-27B Q6_K on infer-01 (run-qwen38, port
-# 8081, no --alias, so the served model id is the GGUF path). Context entry kept conservative.
-QALIAS, QSERVED, QCTX = "qwen38-local", "/mnt/models/Qwen3.8-27B/Qwen3.8-27B-Q6_K.gguf", 65536
+# Second local worker alias for the control arm (D11): Qwen3.8-27B Q6_K (port 8081, launched with
+# no --alias, so the served model id is the GGUF path on the node; QSERVED above). Context entry
+# kept conservative.
 _c = cli.read_text()
 if QALIAS in _c:
     print(f"already patched (qwen alias): {cli}")
 else:
     reps = [
         (f'"leanstral", "{ALIAS}"]', f'"leanstral", "{ALIAS}", "{QALIAS}"]'),
-        (f'        "{ALIAS}": "{SERVED_NAME}",  # llama-server --alias {SERVED_NAME} on the infer-0x fleet\n',
-         f'        "{ALIAS}": "{SERVED_NAME}",  # llama-server --alias {SERVED_NAME} on the infer-0x fleet\n        "{QALIAS}": "{QSERVED}",  # run-qwen38 on infer-01 (control arm)\n'),
+        (f'        "{ALIAS}": "{SERVED_NAME}",  # llama-server --alias {SERVED_NAME} on a local worker node\n',
+         f'        "{ALIAS}": "{SERVED_NAME}",  # llama-server --alias {SERVED_NAME} on a local worker node\n        "{QALIAS}": "{QSERVED}",  # local Qwen worker (control arm)\n'),
         (f'VLLM_MODELS = {{"minimax-m2.5", "{ALIAS}"}}', f'VLLM_MODELS = {{"minimax-m2.5", "{ALIAS}", "{QALIAS}"}}'),
         (f'non_claude_models = {{"minimax-m2.5", "leanstral", "{ALIAS}"}}', f'non_claude_models = {{"minimax-m2.5", "leanstral", "{ALIAS}", "{QALIAS}"}}'),
         (f'"{ALIAS}": "Leanstral 1.5 (local llama.cpp)"}}', f'"{ALIAS}": "Leanstral 1.5 (local llama.cpp)", "{QALIAS}": "Qwen3.8-27B (local llama.cpp)"}}'),
@@ -115,7 +124,7 @@ else:
         _c = _c.replace(o, n)
     cli.write_text(_c); print(f"patched (qwen alias): {cli}")
 _h = hf.read_text()
-if QSERVED in _h:
+if f"{QCTX},  # Qwen3.8-27B" in _h:
     print(f"already patched (qwen ctx): {hf}")
 else:
     o = f'    "{SERVED_NAME}": {CTX},  # Leanstral 1.5 Q6_K via llama-server -c {CTX} (run-leanstral)\n'
@@ -261,3 +270,115 @@ else:
     _h = _h.replace(o, o + '            if no_thinking:  # cflibs patch: llama-server --jinja passes these to the template\n'
                            '                payload["chat_template_kwargs"] = {"enable_thinking": False}\n')
     hf.write_text(_h); print(f"patched (local planner no_thinking): {hf}")
+
+# Worker forced-output turns (2026-10-03). The run records show 263 of 1,570 worker model calls
+# ending at the per-call token cap with no answer text, and 82 of 523 workers returning an empty
+# result: the model was still thinking when the cap came, and the forced-output turns that follow
+# ("your response was cut off", "you are running out of context") think again under the same cap.
+# Ask the chat template not to think on those two turns, and if a forced turn still comes back
+# with no answer text, hand the planner the thinking instead of nothing. Replayed on four recorded
+# workers that had returned nothing, the forced turn with thinking off returned text in all four:
+# a Lean block in two (not compiled here), a draft cut at the cap in one, a stray tool call in
+# one. It turns nothing into something; whether a run then succeeds was not tested.
+_h = hf.read_text()
+if 'if _kwargs.get("no_thinking"):  # cflibs patch' in _h:
+    print(f"already patched (worker forced-output no_thinking): {hf}")
+else:
+    o = ('            "max_tokens": effective_max_tokens,\n            **_sampling(self.model),\n'
+         '            "stream": bool(stream_callback),\n        }\n        if tools:\n')
+    assert _h.count(o) == 1, "forced-output no_thinking: chat() payload not found or not unique"
+    _h = _h.replace(o, o.replace('        if tools:\n',
+                                 '        if _kwargs.get("no_thinking"):  # cflibs patch: forced-output worker turns\n'
+                                 '            payload["chat_template_kwargs"] = {"enable_thinking": False}\n'
+                                 '        if tools:\n'))
+    hf.write_text(_h); print(f"patched (worker forced-output no_thinking): {hf}")
+_p = pr.read_text()
+if "no_thinking=True,  # cflibs patch: forced output" in _p:
+    print(f"already patched (worker forced-output no_thinking): {pr}")
+else:
+    n = 0
+    for label, cap in (("context_limit", "answer_reserve"), ("phase2", "answer_reserve or 16_000")):
+        o = (f'                        tools=None,\n                        max_tokens={cap},\n'
+             f'                        label=f"{{worker_id}}_{label}",\n')
+        assert _p.count(o) == 1, f"forced-output no_thinking: {label} call not found or not unique"
+        _p = _p.replace(o, o.replace('tools=None,\n', 'tools=None,\n                        no_thinking=True,  # cflibs patch: forced output\n'))
+        n += 1
+    # both forced turns end in the same three lines; fall back to the thinking after each
+    o = ('                    self.tui.stream_end(tab=worker_id)\n'
+         '                    total_cost += resp["cost"]\n')
+    assert _p.count(o) == 2, "forced-output fallback: expected two forced-turn sites in the multi-turn worker"
+    _p = _p.replace(o, '                    self.tui.stream_end(tab=worker_id)\n'
+                       '                    resp = _use_thinking_as_result(resp)  # cflibs patch: never return nothing\n'
+                       '                    total_cost += resp["cost"]\n')
+    pr.write_text(_p); print(f"patched (worker forced-output no_thinking, {n} turns): {pr}")
+
+# Third local worker alias: "strata-local", an OpenAI-compatible Strata server (Qwen3.8-Flash-Next;
+# the server ignores the model name, so the served id is "strata"). Context entry 131072: the queue's
+# nodes serve the IQ3_S pack at that context (2026-10-06; it was 65536 while the Q4 pack was in use).
+SALIAS, SSERVED, SCTX = "strata-local", "strata", 131072
+_c = cli.read_text()
+if SALIAS in _c:
+    print(f"already patched (strata alias): {cli}")
+else:
+    import re as _re
+    m = _re.search(rf'^( +)"{QALIAS}": "[^"]*",[^\n]*\n', _c, _re.M)
+    assert m, "strata alias: the qwen alias line in HF_MODEL_MAP was not found"
+    _c = _c[:m.end()] + f'{m.group(1)}"{SALIAS}": "{SSERVED}",  # Strata (OpenAI-compatible), model name ignored\n' + _c[m.end():]
+    reps = [
+        (f'"{ALIAS}", "{QALIAS}"]', f'"{ALIAS}", "{QALIAS}", "{SALIAS}"]'),
+        (f'VLLM_MODELS = {{"minimax-m2.5", "{ALIAS}", "{QALIAS}"}}', f'VLLM_MODELS = {{"minimax-m2.5", "{ALIAS}", "{QALIAS}", "{SALIAS}"}}'),
+        (f'non_claude_models = {{"minimax-m2.5", "leanstral", "{ALIAS}", "{QALIAS}"}}',
+         f'non_claude_models = {{"minimax-m2.5", "leanstral", "{ALIAS}", "{QALIAS}", "{SALIAS}"}}'),
+        (f'"{QALIAS}": "Qwen3.8-27B (local llama.cpp)"}}', f'"{QALIAS}": "Qwen3.8-27B (local llama.cpp)", "{SALIAS}": "Qwen3.8-Flash-Next (Strata)"}}'),
+    ]
+    for o, n in reps:
+        assert _c.count(o) == 1, f"strata alias: pattern not found or not unique: {o[:60]!r}"
+        _c = _c.replace(o, n)
+    cli.write_text(_c); print(f"patched (strata alias): {cli}")
+_h = hf.read_text()
+_strata_line = f'    "{SSERVED}": {SCTX},  # Strata: the context the queue nodes serve\n'
+import re as _re2
+_m = _re2.search(rf'^    "{SSERVED}": \d+,[^\n]*\n', _h, _re2.M)
+if _m and _m.group(0) == _strata_line:
+    print(f"already patched (strata ctx): {hf}")
+elif _m:  # an earlier context value: replace the line
+    hf.write_text(_h[:_m.start()] + _strata_line + _h[_m.end():]); print(f"patched (strata ctx updated to {SCTX}): {hf}")
+else:
+    o = f'    "{SERVED_NAME}": {CTX},  # Leanstral 1.5 Q6_K via llama-server -c {CTX} (run-leanstral)\n'
+    assert _h.count(o) == 1
+    hf.write_text(_h.replace(o, o + _strata_line))
+    print(f"patched (strata ctx): {hf}")
+
+# Worker API key: HFClient sends no Authorization header. When a key file exists (default
+# ~/.config/openprover/worker_key, mode 0600; OPENPROVER_WORKER_KEY_FILE overrides the path), every
+# request to the worker carries "Authorization: Bearer <key>". Read from a file, never from the
+# environment, so the key is not inherited by every child process. No file: unchanged behaviour.
+_h = hf.read_text()
+if "def _worker_headers(" in _h:
+    print(f"already patched (worker api key): {hf}")
+else:
+    o = '        req = urllib.request.Request(\n'
+    n_sites = _h.count('            headers={"Content-Type": "application/json"},\n')
+    assert n_sites == 4, f"worker api key: expected 4 request header sites, found {n_sites}"
+    _h = _h.replace('            headers={"Content-Type": "application/json"},\n',
+                    '            headers=_worker_headers(),  # cflibs patch: optional Bearer key from a file\n')
+    anchor = "class HFClient:\n"
+    assert _h.count(anchor) == 1
+    _h = _h.replace(anchor, '''def _worker_headers() -> dict:
+    """Content-Type plus, when a key file exists, the worker's Bearer token (cflibs patch)."""
+    headers = {"Content-Type": "application/json"}
+    path = os.environ.get("OPENPROVER_WORKER_KEY_FILE") or os.path.expanduser("~/.config/openprover/worker_key")
+    try:
+        key = open(path).read().strip()
+    except OSError:
+        return headers
+    if key:
+        headers["Authorization"] = f"Bearer {key}"
+    return headers
+
+
+''' + anchor)
+    if "\nimport os\n" not in _h:
+        _h = _h.replace("\nimport json\n", "\nimport json\nimport os\n", 1)
+        assert "\nimport os\n" in _h, "worker api key: could not add 'import os'"
+    hf.write_text(_h); print(f"patched (worker api key): {hf}")
