@@ -3,6 +3,8 @@ Aitchison.lean	closure_sum_one	PURE-MATH	—
 Aitchison.lean	softmax_sum_one	PURE-MATH	—
 Aitchison.lean	softmax_log_eq_closure	PURE-MATH	—
 Aitchison.lean	clr_sum_zero	PURE-MATH	—
+Aitchison.lean	clr_mul	PURE-MATH	—
+Aitchison.lean	clr_const_mul	PURE-MATH	—
 Boltzmann.lean	boltzmannFactor_pos	PURE-MATH	—
 Boltzmann.lean	partitionFunction_pos	PURE-MATH	—
 Boltzmann.lean	population_sum	EXACT	Boltzmann
@@ -11,6 +13,9 @@ Boltzmann.lean	temperature_from_two_levels	EXACT	Boltzmann
 Boltzmann.lean	partitionFunction_eq_cut_add_tail	PURE-MATH	—
 Boltzmann.lean	partitionFunctionCut_pos	PURE-MATH	—
 Boltzmann.lean	cutRatio_strictMonoOn_temp	PURE-MATH	—
+Boltzmann.lean	cutRatio_injOn	PURE-MATH	—
+Boltzmann.lean	cutRatio_not_absorbable_two	PURE-MATH	—
+Boltzmann.lean	partitionFunction_sub_cut_bounds	PURE-MATH	—
 Saha.lean	thermalBracket_pos	PURE-MATH	—
 Saha.lean	sahaFactor_pos	PURE-MATH	—
 Saha.lean	sahaFactor	REDUCED	Saha–Eggert (Griem)
@@ -170,6 +175,8 @@ AtomicDataPerturbation.lean	classicDensity_aliasing_error_energy	REDUCED	Tognoni
 AtomicDataPerturbation.lean	classicDensity_temperature_aliasing_error	REDUCED	Tognoni 2010
 AtomicDataPerturbation.lean	classicComposition_temperature_error	REDUCED	Tognoni 2010
 AtomicDataPerturbation.lean	classicComposition_atomicData_error_rel	REDUCED	Tognoni 2010
+AtomicDataPerturbation.lean	composition_rel_error_mul	PURE-MATH	—
+AtomicDataPerturbation.lean	massFraction_rel_error	PURE-MATH	—
 Identifiability.lean	density_identifiability	EXACT	Ciucci 1999
 Identifiability.lean	electron_density_identifiability	EXACT	Saha–Eggert (Griem)
 Inverse.lean	PlasmaParams	REDUCED	Ciucci 1999
@@ -558,6 +565,12 @@ TwoDCOS.lean	asyncMatrix_singleDriver_zero	PURE-MATH	—
 AitchisonIsometry.lean	clrE_mem	PURE-MATH	—
 AitchisonIsometry.lean	ilr_isometry	PURE-MATH	—
 AitchisonIsometry.lean	ilr_inner	PURE-MATH	—
+AitchisonIsometry.lean	clrE_mul	PURE-MATH	—
+AitchisonIsometry.lean	aitchisonDist_perturb	PURE-MATH	—
+AitchisonIsometry.lean	aitchisonDist_smul	PURE-MATH	—
+AitchisonIsometry.lean	aitchisonDist_comm	PURE-MATH	—
+AitchisonIsometry.lean	aitchisonDist_perturb_smul	PURE-MATH	—
+AitchisonIsometry.lean	aitchisonDist_aliasing	PURE-MATH	—
 AitchisonIsometry.lean	aitchisonDist_le_logErr	PURE-MATH	—
 TwoDCOSOrder.lean	B_eq_sum	PURE-MATH	—
 TwoDCOSOrder.lean	B_antisymm	PURE-MATH	—
@@ -630,6 +643,10 @@ JointConvergence.lean	dampedMap_lipschitz	PURE-MATH	—
 JointConvergence.lean	dampedMap_contracts	PURE-MATH	—
 JointConvergence.lean	tDamped_mobius_converges	PURE-MATH	—
 JointConvergence.lean	exists_weights_iff	PURE-MATH	—
+JointConvergence.lean	residual_stop	PURE-MATH	—
+JointConvergence.lean	dampedAffine_iterate	PURE-MATH	—
+JointConvergence.lean	dampedAffine_tendsto	PURE-MATH	—
+JointConvergence.lean	dampedAffine_tendsto_iff	PURE-MATH	—
 LineSelection.lean	energySpread_nonneg	PURE-MATH	—
 LineSelection.lean	energySpreadCert_iff	PURE-MATH	—
 LineSelection.lean	slopeVariance_le_of_spread_ge	PURE-MATH	—
@@ -731,6 +748,9 @@ InhomogeneityBias.lean	mixed_apparentBeta_le_tiltMean	REDUCED	Ciucci 1999
 InhomogeneityBias.lean	mixed_apparentBeta_antitone	REDUCED	Ciucci 1999
 IonApparentTemperature.lean	ion_zoneWeight_eq	REDUCED	Saha–Eggert (Griem)
 IonApparentTemperature.lean	mixed_ion_apparentBeta_le_neutral	REDUCED	Aguilera & Aragón 2007
+IonApparentTemperature.lean	mixed_ion_apparentBeta_le_neutral_shift	REDUCED	Aguilera & Aragón 2007
+IonApparentTemperature.lean	mixed_ion_apparentBeta_le_neutral_bound	REDUCED	Aguilera & Aragón 2007
+IonApparentTemperature.lean	ion_apparentT_ge_neutral	REDUCED	Aguilera & Aragón 2007
 DifferentialEstimator.lean	differentialRatio_eq_density_ratio	EXACT	Ciucci 1999
 DifferentialEstimator.lean	differentialRatio_immune_to_atomicData	EXACT	Ciucci 1999
 DifferentialEstimator.lean	classic_biased_differential_exact	EXACT	Ciucci 1999
@@ -852,9 +872,16 @@ Alt/NeutralityScale.lean	neutrality_closure_same_ratio	EXACT	Tognoni 2010
 IpdSahaInverse.lean	ipdLogMap_root_subsingleton	PURE-MATH	—
 IpdSahaInverse.lean	ipdLogMap_contracts	PURE-MATH	—
 IpdSahaInverse.lean	ipdInverse_twoPoint_sensitivity	PURE-MATH	—
+IpdGauge.lean	sahaFactor_ipd_gauge	EXACT	Saha–Eggert (Griem)
+IpdGauge.lean	ne_ipd_mismatch	REDUCED	Saha–Eggert (Griem)
+IpdGauge.lean	sahaRatio_ipd_gauge	REDUCED	Saha–Eggert (Griem)
+IpdGauge.lean	twoStageTotal_ipd_gauge	REDUCED	Saha–Eggert (Griem)
+IpdGauge.lean	composition_ipd_gauge	REDUCED	Saha–Eggert (Griem)
 FixedEffectsDesign.lean	fe_identifiable_iff	PURE-MATH	—
 FixedEffectsDesign.lean	feSlope_add_smul	PURE-MATH	—
 FixedEffectsDesign.lean	feSlope_isMin	PURE-MATH	—
+FixedEffectsDesign.lean	feSlope_rss_split	PURE-MATH	—
+FixedEffectsDesign.lean	feSlope_unique_min	PURE-MATH	—
 NoiseGainFloor.lean	gMean_const_eq_wMean	PURE-MATH	—
 NoiseGainFloor.lean	wls_min_noiseGain	PURE-MATH	—
 NoiseGainFloor.lean	interceptDiff_noiseGain	PURE-MATH	—
@@ -863,6 +890,7 @@ RefuseToReport.lean	pasPolicy_guarantees	PURE-MATH	—
 EscapeFactor.lean	inv_sub_inv_exp_sub_one_mem	PURE-MATH	—
 EscapeFactor.lean	hasDerivAt_log_selfAbsorptionFactor	PURE-MATH	—
 EscapeFactor.lean	log_selfAbsorptionFactor_lipschitz	PURE-MATH	—
+EscapeFactor.lean	log_slabCorrected_error_le	PURE-MATH	—
 EscapeFactor.lean	escape_ge_slab	PURE-MATH	—
 RatioModeSensitivity.lean	ratioEstimate_hasDerivAt	PURE-MATH	—
 SharedUpperLevel.lean	ordinate_eq_of_energy_eq	EXACT	Ciucci 1999

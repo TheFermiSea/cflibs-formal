@@ -59,13 +59,18 @@ fails by orders of magnitude (see `OuterLoopModelB`).
 
 ## Damped-loop and weighted-gate building blocks (frontier FT-01, `PURE-MATH`)
 
-The last section adds three `PURE-MATH` results toward the stop certificate for the loop the
-companion pipeline runs (certificate ID C11 under owner decision D16): `dampedMap_contracts`
-(a derivative-window certificate for a damped iteration on an invariant box),
-`tDamped_mobius_converges` (the `T`-damped iteration of a Möbius temperature map converges for
-gains in `(0, 1)`) and `exists_weights_iff` (a unit-invariant test for the weighted row-sum gate
-of `jointOuterContraction_box`). They carry no physical claim; binding them to the pipeline's
-temperature map is a separate REDUCED step.
+The last section adds `PURE-MATH` results toward the stop certificate for the loop the
+companion pipeline runs (certificate ID C11 under owner decision D16): `dampedMap_lipschitz`
+and `dampedMap_contracts` (a derivative-window certificate for a damped iteration on an
+invariant box), `tDamped_mobius_converges` (the `T`-damped iteration of a Möbius temperature
+map converges for gains in `(0, 1)`), `exists_weights_iff` (a unit-invariant test for the
+weighted row-sum gate of `jointOuterContraction_box`) and `residual_stop` (the a-posteriori
+stop rule). They carry no physical claim; binding them to the pipeline's temperature map is a
+separate REDUCED step. Three further results, `dampedAffine_iterate`, `dampedAffine_tendsto`
+and `dampedAffine_tendsto_iff`, settle the iteration that damps the coordinate in which the
+update is affine (`u = 1/T` for the reduced outer map). The pipeline damps `T` instead, so they
+describe an idealization, not the pipeline's loop: `tDamped_mobius_converges` is the result for
+`T`-damping.
 -/
 
 namespace CflibsFormal
@@ -149,7 +154,16 @@ results below are its `PURE-MATH` building blocks, not the certificate itself:
 * `tDamped_mobius_converges`: the `T`-damped iteration of a Möbius temperature map (the reduced
   outer map, affine in `1/T`) converges from every positive start for gains in `(0, 1)`;
 * `exists_weights_iff`: a unit-invariant test for when some rescaling of `T` and `n_e` makes
-  the row-sum gate of `jointOuterContraction_box` hold.
+  the row-sum gate of `jointOuterContraction_box` hold;
+* `residual_stop`: the a-posteriori stop rule `|u − u*| ≤ |Φ u − u|/(1 − q)` for a
+  `q`-Lipschitz map with a fixed point `u*`;
+* `dampedAffine_iterate`, `dampedAffine_tendsto`, `dampedAffine_tendsto_iff`: for an affine
+  update `u ↦ g·u + c` the damped iteration's error is exactly `(1 − λ + λg)ⁿ` times the
+  initial error, so it converges to the fixed point exactly when `|1 − λ + λg| < 1` or it
+  starts there. These cover damping in the coordinate where the update is affine (`u = 1/T`
+  for the reduced outer map). They do NOT cover the pipeline's loop, which damps `T`: there
+  the map is Möbius, the result is `tDamped_mobius_converges`, and the affine window
+  (`−3 < g < 1` at `λ = 1/2`) is false.
 
 Whether the pipeline's temperature map satisfies these hypotheses on a given window is a
 REDUCED binding that is not stated here. -/
@@ -596,6 +610,138 @@ theorem exists_weights_iff {a b c d : ℝ} (hb : 0 ≤ b) (hc : 0 ≤ c) :
     constructor
     · simpa using har
     · simpa using hcr
+
+/-- **A-posteriori residual stop rule (FT-01 (e)).** If `Φ` is `q`-Lipschitz on a set `s` with
+`q < 1` and has a fixed point `u*` in `s`, then every `u ∈ s` satisfies
+`|u − u*| ≤ |Φ u − u|/(1 − q)`: the size of one more step bounds the distance to the limit.
+
+Reading: an iteration may stop when its last update is below `(1 − q)·tol` and report an error
+of at most `tol`, provided `q` is a certified contraction constant on a set that contains the
+iterate and the fixed point.
+
+Hypotheses: `hq : q < 1` makes `1 − q` positive; with `q = 1` the statement is false (`Φ = id`).
+`q < 0` is allowed but degenerate: `hLip` then forces `s` to have at most one point, so
+`u = u*`. `hfix` and `hs` assume a fixed point in `s`; with the fixed point outside `s` the
+statement is false, and its existence is the business of `dampedMap_contracts`, not of this
+statement. Scope: PURE-MATH. The constant `q` is an input here; `dampedMap_lipschitz` asserts
+that one exists without exporting it. This is the set-local, real-`q` form of Mathlib's
+`ContractingWith.dist_le_of_fixedPoint`, which is global with a constant in `ℝ≥0`. -/
+theorem residual_stop {Φ : ℝ → ℝ} {s : Set ℝ} {q u ustar : ℝ} (hq : q < 1)
+    (hLip : ∀ x ∈ s, ∀ y ∈ s, |Φ x - Φ y| ≤ q * |x - y|) (hu : u ∈ s) (hs : ustar ∈ s)
+    (hfix : Φ ustar = ustar) : |u - ustar| ≤ |Φ u - u| / (1 - q) := by
+  have h1 : |u - ustar| ≤ |Φ u - u| + |Φ u - Φ ustar| := by
+    rw [hfix]
+    calc |u - ustar| = |(u - Φ u) + (Φ u - ustar)| := by ring_nf
+      _ ≤ |u - Φ u| + |Φ u - ustar| := abs_add_le _ _
+      _ = |Φ u - u| + |Φ u - ustar| := by rw [abs_sub_comm u]
+  have h2 := hLip u hu ustar hs
+  rw [le_div_iff₀ (by linarith)]
+  nlinarith [abs_nonneg (u - ustar)]
+
+/-- **Exact error recursion of the damped affine iteration (FT-01 (a)).** For the affine update
+`u ↦ g·u + c` with `g ≠ 1`, whose fixed point is `u* = c/(1 − g)`, the `λ`-damped iterate
+satisfies `uₙ − u* = (1 − λ + λg)ⁿ·(u₀ − u*)` for every `n`.
+
+Hypothesis `hg : g ≠ 1` makes `c/(1 − g)` the unique fixed point of the update
+`u ↦ g·u + c`. At `g = 1` the update `u ↦ u + c` has no fixed point unless `c = 0` (when
+every point is one), and `c/(1 − g)` is Lean's `c/0 = 0`. No condition on `λ`, `g` or `c`
+otherwise: the identity holds whether or not the iteration converges. Scope: PURE-MATH.
+
+This is the `u`-damped idealization: it applies when damping acts on the coordinate in which
+the update is affine (for the reduced outer map, `u = 1/T`). The companion pipeline damps `T`,
+where that map is Möbius, not affine; see `tDamped_mobius_converges`, whose docstring records
+that the affine window fails for `T`-damping. -/
+theorem dampedAffine_iterate (lam g c u0 : ℝ) (hg : g ≠ 1) (n : ℕ) :
+    (dampedMap lam (fun u => g * u + c))^[n] u0 - c / (1 - g)
+      = (1 - lam + lam * g) ^ n * (u0 - c / (1 - g)) := by
+  have h1 : (1 : ℝ) - g ≠ 0 := sub_ne_zero.mpr (Ne.symm hg)
+  induction n with
+  | zero => simp
+  | succ n ih =>
+    rw [Function.iterate_succ_apply', pow_succ]
+    set v := (dampedMap lam (fun u => g * u + c))^[n] u0
+    unfold dampedMap
+    have hv : v = c / (1 - g) + (1 - lam + lam * g) ^ n * (u0 - c / (1 - g)) := by
+      linarith [ih]
+    rw [hv]; field_simp; ring
+
+/-- **The damped affine iteration converges when `|1 − λ + λg| < 1`.** Under that condition
+(for `λ = 1/2` it reads `−3 < g < 1`) the iterates converge to the fixed point `c/(1 − g)` from
+every start. Immediate from `dampedAffine_iterate`. The converse is
+`dampedAffine_tendsto_iff`.
+
+No separate `g ≠ 1` is needed: at `g = 1` the factor is `1`, which `hr` excludes.
+Scope: PURE-MATH. Like `dampedAffine_iterate`, this is the `u`-damped idealization and says
+nothing about the pipeline's `T`-damped loop: the window `−3 < g < 1` is not valid there. -/
+theorem dampedAffine_tendsto {lam g c : ℝ} (hr : |1 - lam + lam * g| < 1) (u0 : ℝ) :
+    Tendsto (fun n => (dampedMap lam (fun u => g * u + c))^[n] u0) atTop (𝓝 (c / (1 - g))) := by
+  have hg : g ≠ 1 := by
+    rintro rfl
+    simp at hr
+  have hpow : Tendsto (fun n : ℕ => (1 - lam + lam * g) ^ n * (u0 - c / (1 - g))) atTop
+      (𝓝 (0 * (u0 - c / (1 - g)))) :=
+    (tendsto_pow_atTop_nhds_zero_of_abs_lt_one hr).mul_const _
+  have hsum := hpow.add_const (c / (1 - g))
+  rw [zero_mul, zero_add] at hsum
+  refine hsum.congr fun n => ?_
+  have := dampedAffine_iterate lam g c u0 hg n
+  linarith
+
+/-- Non-vacuity of `dampedAffine_tendsto`: gain `g = −2` (plain substitution diverges, since
+`|g| > 1`) with damping `λ = 1/2` has contraction factor `|1 − 1/2 − 1| = 1/2` and converges. -/
+example (c u0 : ℝ) :
+    Tendsto (fun n => (dampedMap (1 / 2) (fun u => (-2) * u + c))^[n] u0) atTop
+      (𝓝 (c / (1 - (-2)))) :=
+  dampedAffine_tendsto (by norm_num [abs_lt]) u0
+
+/-- **When the damped affine iteration converges to its fixed point (FT-01 (a), both
+directions).** For the affine update `u ↦ g·u + c` with `g ≠ 1`, whose fixed point is
+`u* = c/(1 − g)`, the `λ`-damped iterates started at `u₀` converge to `u*` if and only if
+`|1 − λ + λg| < 1` or `u₀ = u*`.
+
+By `dampedAffine_iterate` the error is `(1 − λ + λg)ⁿ·(u₀ − u*)`, so for a factor of modulus at
+least `1` and `u₀ ≠ u*` the iterates do not tend to `u*`. That is not the same as divergence:
+at `λ = 0` they are constant at `u₀`, and at factor `−1` they oscillate. For `λ = 1/2` the
+condition reads `−3 < g < 1`.
+
+Hypothesis `hg : g ≠ 1` is needed: at `g = 1`, `λ = 1`, `c = 1`, `u₀ = 0` the iterates are `n`,
+while `c/(1 − g)` is Lean's `1/0 = 0 = u₀`, so the right side would hold and the left would
+not. Scope: PURE-MATH, the `u`-damped idealization (see `dampedAffine_iterate`): the pipeline's
+`T`-damped loop is `tDamped_mobius_converges`, where this window is false. -/
+theorem dampedAffine_tendsto_iff {lam g c u0 : ℝ} (hg : g ≠ 1) :
+    Tendsto (fun n => (dampedMap lam (fun u => g * u + c))^[n] u0) atTop (𝓝 (c / (1 - g)))
+      ↔ |1 - lam + lam * g| < 1 ∨ u0 = c / (1 - g) := by
+  have hE : ∀ n, (dampedMap lam (fun u => g * u + c))^[n] u0
+      = c / (1 - g) + (1 - lam + lam * g) ^ n * (u0 - c / (1 - g)) := fun n => by
+    linarith [dampedAffine_iterate lam g c u0 hg n]
+  constructor
+  · intro h
+    by_cases h0 : u0 = c / (1 - g)
+    · exact Or.inr h0
+    · left
+      have he : u0 - c / (1 - g) ≠ 0 := sub_ne_zero.mpr h0
+      have h2 : Tendsto (fun n : ℕ => (1 - lam + lam * g) ^ n * (u0 - c / (1 - g))) atTop
+          (𝓝 0) := by
+        have h3 := h.sub_const (c / (1 - g))
+        rw [sub_self] at h3
+        exact h3.congr fun n => by rw [hE n]; ring
+      have h4 := h2.mul_const (u0 - c / (1 - g))⁻¹
+      rw [zero_mul] at h4
+      exact tendsto_pow_atTop_nhds_zero_iff.mp
+        (h4.congr fun n => mul_inv_cancel_right₀ he _)
+  · rintro (h | h)
+    · exact dampedAffine_tendsto h u0
+    · refine tendsto_const_nhds.congr fun n => ?_
+      rw [hE n, h, sub_self, mul_zero, add_zero]
+
+/-- Non-vacuity of `dampedAffine_tendsto_iff`, the direction `dampedAffine_tendsto` does not
+give: with `g = −5` and `λ = 1/2` the factor is `−2`, and from `u₀ = 1 ≠ u* = 0` the iterates
+do not converge to the fixed point. -/
+example :
+    ¬ Tendsto (fun n => (dampedMap (1 / 2) (fun u => (-5) * u + 0))^[n] 1) atTop
+      (𝓝 (0 / (1 - (-5)))) := by
+  rw [dampedAffine_tendsto_iff (by norm_num)]
+  norm_num [abs_lt]
 
 end DampedLoopCertificate
 

@@ -112,6 +112,35 @@ theorem clr_sum_zero [Nonempty ι] {x : ι → ℝ} :
   field_simp
   ring
 
+/-- **clr turns perturbation into addition (FT-07).** For positive vectors, the centred
+log-ratio of the componentwise product `a ⊙ x` is `clr a + clr x`. Perturbation is the group
+operation of the Aitchison geometry; this is the statement that clr is a homomorphism for it.
+
+Hypotheses: mathematically nonzero entries suffice (`Real.log (a·x) = log a + log x` needs
+only `a, x ≠ 0`); positivity is the compositional meaning. A zero entry breaks the identity in
+Lean's totalized `log`. Scope: PURE-MATH. Aitchison 1986. -/
+theorem clr_mul {x a : ι → ℝ} (hx : ∀ k, 0 < x k) (ha : ∀ k, 0 < a k) :
+    clr (fun k => a k * x k) = fun k => clr a k + clr x k := by
+  funext k
+  unfold clr
+  have hlog : ∀ j, Real.log (a j * x j) = Real.log (a j) + Real.log (x j) := fun j =>
+    Real.log_mul (ha j).ne' (hx j).ne'
+  simp only [hlog, Finset.sum_add_distrib]
+  ring
+
+/-- **clr ignores a common positive factor (FT-07).** `clr (c·x) = clr x` for `c > 0` and
+positive `x`: the centring removes the common `log c`. So clr, and every distance built on it,
+depends on a composition only up to overall scale. Scope: PURE-MATH. Aitchison 1986. -/
+theorem clr_const_mul {x : ι → ℝ} {c : ℝ} (hc : 0 < c) (hx : ∀ k, 0 < x k) :
+    clr (fun k => c * x k) = clr x := by
+  rw [clr_mul (a := fun _ => c) hx (fun _ => hc)]
+  funext k
+  have : Nonempty ι := ⟨k⟩
+  have hcard : (Fintype.card ι : ℝ) ≠ 0 := Nat.cast_ne_zero.mpr Fintype.card_ne_zero
+  simp only [clr, Finset.sum_const, Finset.card_univ, nsmul_eq_mul]
+  field_simp
+  ring
+
 /-! ### Non-vacuity witnesses (concrete data, `D = 3`) -/
 
 /-- `closure_sum_one` fires on concrete positive data `(1, 2, 3)`. -/

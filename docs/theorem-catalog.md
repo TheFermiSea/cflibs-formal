@@ -9,9 +9,9 @@
 
 A result shows `own → published` when the two differ (with the definitions that weakened it), and a single tag when they agree. A definition with its own row shows `model TAG`.
 
-**Own-tag mix** (848 results): **EXACT** 161 · **REDUCED** 238 · **APPROXIMATION** 4 · **PURE-MATH** 445
+**Own-tag mix** (876 results): **EXACT** 162 · **REDUCED** 245 · **APPROXIMATION** 4 · **PURE-MATH** 465
 
-**Published-tag mix** (848 results; 152 weakened by a model tag): **EXACT** 47 · **REDUCED** 288 · **APPROXIMATION** 68 · **PURE-MATH** 445
+**Published-tag mix** (876 results; 153 weakened by a model tag): **EXACT** 47 · **REDUCED** 296 · **APPROXIMATION** 68 · **PURE-MATH** 465
 
 `EXACT` = an exact theorem about the model it is stated over · `REDUCED` = exact only after a stated reduction (a dimensionless/lumped-factor form) · `APPROXIMATION` = the statement itself is approximate (documented idealization / limiting case) · `PURE-MATH` = infrastructure lemma, no physical claim. The tags are the authors' classification, reviewed result by result as each landed. Only the first 186-entry corpus was cross-checked in one pass against the literature (`reviews/literature-validity-audit.md`), and the then 412 results again on 2026-07-09 (`docs/literature-validation.md`); later results have no whole-corpus literature audit.
 
@@ -28,6 +28,8 @@ A result shows `own → published` when the two differ (with the definitions tha
 - `PURE-MATH` · `softmax_sum_one` — Softmax normalization.
 - `PURE-MATH` · `softmax_log_eq_closure` — The C3 identity (audit-critical).
 - `PURE-MATH` · `clr_sum_zero` — clr sums to zero.
+- `PURE-MATH` · `clr_mul` — clr turns perturbation into addition (FT-07).
+- `PURE-MATH` · `clr_const_mul` — clr ignores a common positive factor (FT-07).
 
 ## `AitchisonIsometry.lean`  (CflibsFormal)
 *Aitchison compositional data — a genuine isometric log-ratio (ilr) transform*
@@ -44,6 +46,12 @@ A result shows `own → published` when the two differ (with the definitions tha
 - `PURE-MATH` · `clrE_mem` — `clr x` lands in the clr-hyperplane `∑ = 0` — this is `clr_sum_zero` transported to `EuclideanSpace`.
 - `PURE-MATH` · `ilr_isometry` — The ilr isometry (headline).
 - `PURE-MATH` · `ilr_inner` — ilr preserves inner products (companion corollary).
+- `PURE-MATH` · `clrE_mul` — The Euclidean clr vector of a componentwise product is the sum of the clr vectors (`clr_mul` transported to `EuclideanSpace`).
+- `PURE-MATH` · `aitchisonDist_perturb` — The Aitchison distance is invariant under a common perturbation (FT-07 (i)).
+- `PURE-MATH` · `aitchisonDist_smul` — The Aitchison distance is scale invariant (FT-07 (i)).
+- `PURE-MATH` · `aitchisonDist_comm` — The Aitchison distance is symmetric.
+- `PURE-MATH` · `aitchisonDist_perturb_smul` — Perturbation followed by separate normalizations preserves the Aitchison distance (FT-07 (i), the change-of-basis form).
+- `PURE-MATH` · `aitchisonDist_aliasing` — Aliasing loss in Aitchison distance (FT-07 (ii)).
 - `PURE-MATH` · `aitchisonDist_le_logErr` — Log-error certificate for the Aitchison distance.
 
 ## `Alt/CSigma.lean`  (CflibsFormal.Alt)
@@ -246,6 +254,8 @@ A result shows `own → published` when the two differ (with the definitions tha
 - `REDUCED` · `classicDensity_aliasing_error_energy` — REDUCED energy-channel isolation (gap #2 residual).  _[Tognoni 2010]_
 - `REDUCED` · `classicDensity_temperature_aliasing_error` — REDUCED temperature-error bound.  _[Tognoni 2010]_
 - `REDUCED` · `classicComposition_temperature_error` — REDUCED composition corollary (temperature channel).  _[Tognoni 2010]_
+- `PURE-MATH` · `composition_rel_error_mul` — Relative error through closure (FT-07 (iii), generic form).
+- `PURE-MATH` · `massFraction_rel_error` — The relative closure bound on a weighted basis (FT-07 (iv)).
 - `REDUCED` · `classicComposition_atomicData_error_rel` — Relative closure bound for the classic reader under atomic-data error.  _[Tognoni 2010]_
 
 ## `Boltzmann.lean`  (CflibsFormal)
@@ -266,6 +276,9 @@ A result shows `own → published` when the two differ (with the definitions tha
 - `PURE-MATH` · `partitionFunction_eq_cut_add_tail` — Kept/dropped split of the partition function.
 - `PURE-MATH` · `partitionFunctionCut_pos` — The truncated partition function is positive once one level is kept (`hkeep`) and the weights are positive.
 - `PURE-MATH` · `cutRatio_strictMonoOn_temp` — The truncation ratio is strictly increasing in temperature (FT-05 (ii)).
+- `PURE-MATH` · `cutRatio_injOn` — The truncation ratio is injective in temperature (FT-05 (iii)).
+- `PURE-MATH` · `cutRatio_not_absorbable_two` — No temperature-independent factor absorbs a change of cutoff at two temperatures (FT-05 (iii)).
+- `PURE-MATH` · `partitionFunction_sub_cut_bounds` — Truncation error of the partition function (FT-05 (i)).
 
 ## `Certificates.lean`  (CflibsFormal)
 *runtime certificates (the typed bridge)*
@@ -579,6 +592,7 @@ A result shows `own → published` when the two differ (with the definitions tha
 - `PURE-MATH` · `inv_sub_inv_exp_sub_one_mem` — The log slab self-absorption factor has slope in `(−1/2, 0)`.
 - `PURE-MATH` · `hasDerivAt_log_selfAbsorptionFactor` — Derivative of the log slab self-absorption factor.
 - `PURE-MATH` · `log_selfAbsorptionFactor_lipschitz` — The log slab self-absorption factor is `1/2`-Lipschitz on `τ ≥ 0`.
+- `PURE-MATH` · `log_slabCorrected_error_le` — An error in the optical depth moves the log of the slab-corrected intensity by at most half that error (FT-13).
 - `PURE-MATH` · `escape_ge_slab` — The profile escape factor bounds the flat-slab factor from above.
 
 ## `EvaluatorSoundness.lean`  (CflibsFormal)
@@ -639,6 +653,8 @@ A result shows `own → published` when the two differ (with the definitions tha
 - `PURE-MATH` · `fe_identifiable_iff` — The common slope of a fixed-effects design is identifiable iff `SS_W > 0`.
 - `PURE-MATH` · `feSlope_add_smul` — The fixed-effects slope is linear in the ordinates.
 - `PURE-MATH` · `feSlope_isMin` — The fixed-effects estimator is the weighted least-squares fit.
+- `PURE-MATH` · `feSlope_rss_split` — Pythagorean split of the fixed-effects residual sum of squares.
+- `PURE-MATH` · `feSlope_unique_min` — The fixed-effects minimizer is unique, up to the intercepts of groups with no line.
 
 ## `ForwardMap.lean`  (CflibsFormal)
 *Part 4: the optically-thin forward map*
@@ -792,6 +808,19 @@ A result shows `own → published` when the two differ (with the definitions tha
 **Results**
 - `REDUCED` · `ion_zoneWeight_eq` — Ion zone weight = neutral zone weight × ion reweight (REDUCED).  _[Saha–Eggert (Griem)]_
 - `REDUCED` · `mixed_ion_apparentBeta_le_neutral` — Ion apparent temperature ≥ neutral apparent temperature (REDUCED).  _[Aguilera & Aragón 2007]_
+- `REDUCED` · `mixed_ion_apparentBeta_le_neutral_shift` — Ion apparent temperature ≥ neutral apparent temperature, shifted anchor (FT-19d).  _[Aguilera & Aragón 2007]_
+- `REDUCED` · `mixed_ion_apparentBeta_le_neutral_bound` — Bound neutral levels discharge the anchor (FT-19d).  _[Aguilera & Aragón 2007]_
+- `REDUCED` · `ion_apparentT_ge_neutral` — Temperature form (FT-19).  _[Aguilera & Aragón 2007]_
+
+## `IpdGauge.lean`  (CflibsFormal)
+*the IPD gauge of the ideal Saha factor (frontier FT-02)*
+
+**Results**
+- `EXACT → REDUCED` · `sahaFactor_ipd_gauge` — IPD gauge of the Saha factor.  _[Saha–Eggert (Griem)]_  (via `sahaFactor`)
+- `REDUCED` · `ne_ipd_mismatch` — Depression on in the forward model, off in the inverse.  _[Saha–Eggert (Griem)]_
+- `REDUCED` · `sahaRatio_ipd_gauge` — On the ratio route the depression cancels.  _[Saha–Eggert (Griem)]_
+- `REDUCED` · `twoStageTotal_ipd_gauge` — Two-stage totals are unchanged.  _[Saha–Eggert (Griem)]_
+- `REDUCED` · `composition_ipd_gauge` — The composition is unchanged.  _[Saha–Eggert (Griem)]_
 
 ## `IpdSahaInverse.lean`  (CflibsFormal)
 *the IPD-aware Saha inverse in log coordinates (frontier FT-02)*
@@ -816,6 +845,10 @@ A result shows `own → published` when the two differ (with the definitions tha
 - `PURE-MATH` · `dampedMap_contracts` — Derivative-window certificate for a damped fixed-point iteration on an invariant box.
 - `PURE-MATH` · `tDamped_mobius_converges` — The T-damped Möbius iteration converges from every positive start when `0 < g < 1`.
 - `PURE-MATH` · `exists_weights_iff` — When a weighted row-sum gate exists for a 2×2 Lipschitz coupling (FT-01(d)).
+- `PURE-MATH` · `residual_stop` — A-posteriori residual stop rule (FT-01 (e)).
+- `PURE-MATH` · `dampedAffine_iterate` — Exact error recursion of the damped affine iteration (FT-01 (a)).
+- `PURE-MATH` · `dampedAffine_tendsto` — The damped affine iteration converges when `|1 − λ + λg| < 1`.
+- `PURE-MATH` · `dampedAffine_tendsto_iff` — When the damped affine iteration converges to its fixed point (FT-01 (a), both directions).
 
 ## `JointIdentifiability.lean`  (CflibsFormal)
 *Part 7: joint (temperature, composition) identifiability*

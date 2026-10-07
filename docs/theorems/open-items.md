@@ -11,7 +11,6 @@
 
 - **lean**: the physics binding (the pipeline's reduced Saha-Boltzmann update is affine in 1/T on a median piece, IPD off, unit weights) is not stated or landed; it needs its own REDUCED statement and a Mode B statement audit before any C11 certificate could cite this family (FT-01)
 - **lean**: the 2x2 Gauss-Seidel stability test is not landed: gaussSeidel_det_trace is proved in audit scratch (Slate.lean); jury_two is only stated there (sorry)
-- **lean**: residual_stop and dampedAffine_iterate are proved in audit scratch (Proofs.lean); dampedAffine_tendsto_iff is only stated (sorry, Slate.lean); none is landed (docs/research/audit-2026-09-24/evidence/frontier-proposer/Proofs.lean)
 - **lean**: dampedMap_repelling (a fixed point with g' > 1 repels for every damping), tDamped_local_rate (the local rate at T-star), single_group_gain and jointOuterContraction_weighted are not staged
 - **lean**: dampedMap_lipschitz asserts only that some q < 1 exists (its docstring names q = max(|1-lam+lam*m|, |1-lam+lam*M|) but the statement does not export it); dampedMap_contracts states no rate at all; a stop certificate needs q, or the residual bound, as an explicit theorem output
 - **model-row**: once a physics-binding declaration lands it will need its own REDUCED docs/scope-tags.tsv row citing the Saha-Boltzmann source; none of the five PURE-MATH results here needs one
@@ -19,7 +18,7 @@
 
 ## [`ft02.ipd-saha-inverse-gauge`](ft02.ipd-saha-inverse-gauge.md)
 
-- **lean**: FT-02's gauge, mismatch and ratio-gauge identities (audit item 1) and the composition corollary (item 2) were proved in the audit's scratch evidence (`docs/research/audit-2026-09-24/evidence/plasma-state/IPDGauge.lean`, `docs/research/audit-2026-09-24/evidence/frontier-verifier/Verify.lean`) but not landed in `CflibsFormal/`; the physics-binding step (item 8, `a = S(χ)/R`) is likewise not landed under this or any other card. `registry/frontier.yaml`'s own landing note records that the originally sketched composition-invariance corollary (`ipdOff_composition_invariant`) used the wrong mechanism, and its proposed replacement (`sahaRatio_ipd_gauge`) is not landed as a separate `docs/scope-tags.tsv` row either. This card documents only the `ipdLogMap` fixed-point family (FT-02 items 3-7). (FT-02)
+- **lean**: The physics-binding step (item 8, `a = S(χ)/R`) is not landed under this or any other card. FT-02's gauge, mismatch and ratio-gauge identities (audit item 1) and the corrected composition corollary (item 2) are landed in `CflibsFormal/IpdGauge.lean` (`sahaFactor_ipd_gauge`, `ne_ipd_mismatch`, `sahaRatio_ipd_gauge`, `twoStageTotal_ipd_gauge`, `composition_ipd_gauge`), outside this card, which documents only the `ipdLogMap` fixed-point family (FT-02 items 3-7). The originally sketched composition-invariance corollary (`ipdOff_composition_invariant`) used the wrong mechanism and was not landed. (FT-02)
 - **pipeline**: Whether CF-LIBS-improved's `_ne_for_T` three-step loop actually lies in an `hmaps`-invariant half-line with realized slope `q < 1` on any real spectrum is unverified — the loop carries no runtime check of either condition. See "Role in the composition-extraction pipeline" below for a proposed check and its falsification arm.
 - **model-row**: `ipdLogMap` (the `def` itself) carries no `docs/scope-tags.tsv` row and inherits no relation tag: the lowering coefficient `b` stays abstract by owner decision D18, so no tag applies until the physics-binding step (FT-02 item 8) is written and reviewed. (D18)
 
@@ -33,15 +32,11 @@
 
 - **pipeline**: Define and wire a grouped design-rank certificate (working name C1g; a new id from C15 per D16) testing 0 < withinSS grp w x on the solver's kept lines, alongside or instead of the pooled C1/C3 checks (owner decision); a grouped joint certificate (C2g) additionally needs the unlanded joint result.
  (FT-04)
-- **lean**: Prove uniqueness of the fixed-effects minimizer under 0 < withinSS; feSlope_isMin only proves a minimizer.
- (FT-04)
 - **lean**: Joint identifiability iff the within Gram determinant is positive (FT-04 part (iv)) is not landed; a grouped joint certificate needs it.
  (FT-04)
 
 ## [`ft05.partition-function-cutoff-ratio`](ft05.partition-function-cutoff-ratio.md)
 
-- **lean**: FT-05 (iii) `cutRatio_injOn` and `cutRatio_not_absorbable_two` are not stated in CflibsFormal/ (`cutRatio_injOn` exists only as a sorry sketch in docs/research/audit-2026-09-24/evidence/frontier-verifier/Verify.lean) (FT-05)
-- **lean**: FT-05 (i) tail bound partitionFunction_sub_cut_bounds is proved only in audit evidence (docs/research/audit-2026-09-24/evidence/frontier-proposer/Proofs.lean), not landed (FT-05)
 - **lean**: FT-05 (iv) population_cut_consistent and (v) sharpCutoff_discontinuous are not stated (FT-05)
 - **model-row**: partitionFunctionCut has no row in docs/scope-tags.tsv, and D17's weighted level sum (Hummer–Mihalas occupation probabilities, with the fixed cutoff as the 0/1-weight instance) is not formalized (D17)
 
@@ -53,7 +48,7 @@
 
 ## [`ft07.aitchison-atomic-data-error-transfer`](ft07.aitchison-atomic-data-error-transfer.md)
 
-- **lean**: FT-07 parts (i) clr perturbation and scale invariance, (ii) aliasing loss d_A = ||clr rho||, (iv) mass-fraction transfer, the generic relative-closure lemma of (iii) (|N-hat - N| <= eta*N form; only the private ratio-form helper comp_rel_ratio exists), and the additive-amplification witness are not landed; this card covers only the classic-reader binding of (iii). (FT-07)
+- **lean**: The FT-07 additive-amplification witness is not landed. Parts (i) clr perturbation and scale invariance (clr_mul, clr_const_mul, aitchisonDist_perturb, aitchisonDist_smul, aitchisonDist_comm, aitchisonDist_perturb_smul), (ii) aliasing loss (aitchisonDist_aliasing), the generic relative-closure lemma of (iii) (composition_rel_error_mul) and (iv) its transfer to a weighted basis (massFraction_rel_error) are landed outside this card, which covers only the classic-reader binding of (iii). (FT-07)
 - **owner-decision**: The title in registry/cards.yaml for this card still reads 'Aitchison error transfer under classic-reader atomic-data error'; the lead should update it to match this card's retitled 'Abundance-scaled closure bound under classic-reader atomic-data error' (card authors may not edit registry/cards.yaml). (FT-07)
 
 ## [`ft08.neutrality-scale-same-ratio`](ft08.neutrality-scale-same-ratio.md)
@@ -91,7 +86,7 @@
 
 ## [`ft13.escape-factor-slab-bound`](ft13.escape-factor-slab-bound.md)
 
-- **lean**: The profile-generic escapeFactor Lipschitz and tau-error propagation lemmas proposed for FT-13 are not part of this card.
+- **lean**: The profile-generic escapeFactor Lipschitz lemma proposed for FT-13 is not landed. The flat-slab tau-error propagation lemma (log_slabCorrected_error_le) is landed outside this card.
 - **pipeline**: C12 remains the wired HARD known-tau identity in the certificate gate; this card does not retire or replace it.
 
 ## [`ft14i.kirchhoff-source-planck`](ft14i.kirchhoff-source-planck.md)
@@ -153,14 +148,11 @@
 
 ## [`ft19.ion-apparent-temperature`](ft19.ion-apparent-temperature.md)
 
-- **lean**: FT-19d, the weaker anchor E_j ≤ E'_{i'} + χ (drops hchi): audited correct, re-verified here in scratch (evidence/ft19d.lean, standard axioms), not landed; it would let the pipeline's own +χ ion-abscissa shift discharge the anchor instead of the strict hanchor above. (FT-19d)
-- **lean**: Temperature form (0 < β_II, 0 < β_I, 1/(k_B β_I) ≤ 1/(k_B β_II)) re-verified in scratch (evidence/ft19_temperature.lean); not landed.
 - **lean**: A strict version for genuinely inhomogeneous zones (via pairSlope_lt_tiltMean-style steps) is not stated.
 - **lean**: The n-line OLS analogue is not proved; InhomogeneityBias's own docstring calls it true but needing the endpoint-residual sign of a least-squares fit to convex data. A per-element diagnostic on more than two lines per stage would need it.
 - **model-row**: Zone-dependent n_e is not covered: no antivariance condition on θ(T_z)^{3/2}·e^{-χ/(k_B T_z)}/n_{e,z} is stated or checked. (FT-19)
 - **model-row**: ionReweight carries no ionization-potential depression (D18's Debye–Hückel form is not wired in); the card author's own unformalized algebra suggests monotonicity survives for Δχ below a fraction of χ or k_B T, not checked in Lean or in scratch.
 - **pipeline**: two_zone.py's module docstring attributes its illustrative 9890 K / 11400 K figures to the Spectrochim. Acta B 62:378 paper; the whitelist row for that measurement (§7) locates the figures in the J. Phys.: Conf. Ser. 59:210 paper instead; the SAB 62:378 paper has not been opened, so the attribution is possibly, not certainly, wrong. A correction for that private repo, out of scope here.
-- **docstring**: mixed_ion_apparentBeta_le_neutral's docstring says the J. Phys.: Conf. Ser. 59:210 paper is not whitelisted and was not opened; it is now whitelisted VERIFIED — update the docstring.
 
 ## [`ft20.step-profile-pair-ratio-counterexample`](ft20.step-profile-pair-ratio-counterexample.md)
 

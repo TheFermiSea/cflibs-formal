@@ -47,6 +47,9 @@ The chain is:
 * `classicComposition_atomicData_error_rel` — **REDUCED.** The abundance-scaled twin: a relative
   response error `δ < 1` on every species gives `|Ĉ_s − C_s| ≤ (2δ/(1 − δ))·C_s`, a bound that
   shrinks with the true fraction and so stays informative for minor elements.
+* `composition_rel_error_mul`, `massFraction_rel_error` — **PURE-MATH.** The closure lemma behind
+  it, for any estimates within a relative error `η < 1` of the truth, and its transfer to a
+  weighted (mass) basis. No reader, no atomic data: algebra on `composition`.
 
 ## Literature
 
@@ -61,8 +64,9 @@ The `REDUCED` bounds turn that identity into exact (non-linearized) error envelo
 ## Honest scope
 
 `classicDensity_aliasing` is `EXACT`: a faithful identity, no approximation, `Fcal` and every
-partition-function/Boltzmann factor cancels as it does physically. The error results are
-`REDUCED`: the first three replace the full per-symbol atomic-data error by *lumped* relative
+partition-function/Boltzmann factor cancels as it does physically. The error results on the
+classic reader are `REDUCED` (the two generic closure lemmas are `PURE-MATH`): the first three
+replace the full per-symbol atomic-data error by *lumped* relative
 bounds — a
 single `δ` on the response factor (`classicDensity_aliasing_error`), a `δ_gA`/`δ_U` split with
 `E' = E` (`classicDensity_aliasing_error_channels`), or a *uniform* `δ` and a density cap
@@ -690,6 +694,98 @@ example : (3 : ℝ) * (Real.exp (|nvTaE2' 0 - nvTaE2 0| / (1 * 1)) - 1) = 3 * (R
   norm_num [nvTaE2, nvTaE2']
 
 /-! ## Relative (abundance-scaled) composition bound (frontier FT-07) -/
+
+/-- **Relative error through closure (FT-07 (iii), generic form).** If every density estimate is
+within a relative error `η < 1` of the truth, `|N̂_s − N_s| ≤ η·N_s`, then every composition
+fraction is within the relative error `2η/(1 − η)`:
+`|C(N̂)_s − C(N)_s| ≤ (2η/(1 − η))·C(N)_s`.
+
+Reading: a minor species keeps its relative accuracy through the closure step. The absolute
+bound of `CompositionRobustness` scales with the largest density instead, which says little
+about a trace element. The constant cannot be lowered for trace species and is loose for major
+ones: with species `s` high by `η` and all others low by `η` the deviation is
+`2η(1 − C_s)/(1 − η + 2ηC_s)` times `C_s`, which tends to `2η/(1 − η)` as `C_s → 0` and equals
+`η` at `C_s = 1/2` [numerics, not proved here].
+
+Hypotheses: `hη1 : η < 1` is needed (at `η = 1` an estimate may be `0` and the right side
+becomes Lean's `2/0 = 0`). `hN` (positive true densities) is the physical domain; `hη0` then
+follows from `hN` and `hmul` and is kept for readability. Scope: PURE-MATH (the closure map on
+positive vectors); where the per-species bound `η` comes from is not addressed here. The
+ratio-form twin under `(1 − δ)N̂ ≤ N ≤ (1 + δ)N̂` is the private `comp_rel_ratio` below; neither
+hypothesis implies the other. -/
+theorem composition_rel_error_mul {N Nhat : κ → ℝ} {η : ℝ}
+    (hN : ∀ s, 0 < N s) (hη0 : 0 ≤ η) (hη1 : η < 1) (hmul : ∀ s, |Nhat s - N s| ≤ η * N s)
+    (s : κ) :
+    |composition Nhat s - composition N s| ≤ (2 * η / (1 - η)) * composition N s := by
+  have hS : 0 < ∑ t, N t := Finset.sum_pos (fun t _ => hN t) ⟨s, Finset.mem_univ s⟩
+  have hlo : ∀ t, (1 - η) * N t ≤ Nhat t := fun t => by
+    have := (abs_le.mp (hmul t)).1; linarith
+  have hhi : ∀ t, Nhat t ≤ (1 + η) * N t := fun t => by
+    have := (abs_le.mp (hmul t)).2; linarith
+  have hSh_lo : (1 - η) * ∑ t, N t ≤ ∑ t, Nhat t := by
+    rw [Finset.mul_sum]; exact Finset.sum_le_sum fun t _ => hlo t
+  have hSh_hi : ∑ t, Nhat t ≤ (1 + η) * ∑ t, N t := by
+    rw [Finset.mul_sum]; exact Finset.sum_le_sum fun t _ => hhi t
+  have h1η : 0 < 1 - η := by linarith
+  have hSh : 0 < ∑ t, Nhat t := lt_of_lt_of_le (mul_pos h1η hS) hSh_lo
+  unfold composition totalDensity
+  set S := ∑ t, N t
+  set Sh := ∑ t, Nhat t
+  have key : Nhat s / Sh - N s / S = (Nhat s * S - N s * Sh) / (Sh * S) := by
+    field_simp
+  rw [key, abs_div, abs_of_pos (mul_pos hSh hS)]
+  rw [div_le_iff₀ (mul_pos hSh hS)]
+  have hnum : |Nhat s * S - N s * Sh| ≤ 2 * η * N s * S := by
+    rw [abs_le]; constructor
+    · nlinarith [hlo s, hSh_hi, hN s, hS]
+    · nlinarith [hhi s, hSh_lo, hN s, hS]
+  have hfac : 2 * η * N s * S ≤ 2 * η / (1 - η) * (N s / S) * (Sh * S) := by
+    rw [show 2 * η / (1 - η) * (N s / S) * (Sh * S) = 2 * η * N s * (Sh / (1 - η)) by
+      field_simp]
+    have : S ≤ Sh / (1 - η) := by rw [le_div_iff₀ h1η]; linarith
+    have hc : 0 ≤ 2 * η * N s := by have := hN s; positivity
+    exact mul_le_mul_of_nonneg_left this hc
+  linarith
+
+/-- Non-vacuity of `composition_rel_error_mul`: two species at densities `(1, 3)` estimated as
+`(11/10, 27/10)`, each within `η = 1/10`. -/
+example (s : Fin 2) :
+    |composition (![11 / 10, 27 / 10] : Fin 2 → ℝ) s - composition ![1, 3] s|
+      ≤ (2 * (1 / 10) / (1 - 1 / 10)) * composition ![1, 3] s :=
+  composition_rel_error_mul (N := ![1, 3]) (η := 1 / 10)
+    (fun t => by fin_cases t <;> norm_num) (by norm_num) (by norm_num)
+    (fun t => by fin_cases t <;> norm_num [abs_le]) s
+
+/-- **The relative closure bound on a weighted basis (FT-07 (iv)).** If every density estimate
+is within the relative error `η < 1` of the truth, then for any positive per-species weights
+`M` the fractions of the weighted vectors obey the same bound:
+`|C(M ⊙ N̂)_s − C(M ⊙ N)_s| ≤ (2η/(1 − η))·C(M ⊙ N)_s`.
+
+Reading: with `M` the molar masses, `C(M ⊙ N)` are mass fractions, so the relative bound of
+`composition_rel_error_mul` transfers unchanged from mole fractions to mass fractions. `M` is
+an input vector; this repository holds no atomic-mass data. Hypotheses as in
+`composition_rel_error_mul`, plus positive weights (a zero weight would remove a species from
+the weighted closure). Scope: PURE-MATH. -/
+theorem massFraction_rel_error {N Nhat M : κ → ℝ} {η : ℝ}
+    (hN : ∀ s, 0 < N s) (hM : ∀ s, 0 < M s) (hη0 : 0 ≤ η) (hη1 : η < 1)
+    (hmul : ∀ s, |Nhat s - N s| ≤ η * N s) (s : κ) :
+    |composition (fun t => M t * Nhat t) s - composition (fun t => M t * N t) s|
+      ≤ (2 * η / (1 - η)) * composition (fun t => M t * N t) s := by
+  refine composition_rel_error_mul (fun t => mul_pos (hM t) (hN t)) hη0 hη1 (fun t => ?_) s
+  rw [← mul_sub, abs_mul, abs_of_pos (hM t)]
+  calc M t * |Nhat t - N t| ≤ M t * (η * N t) := mul_le_mul_of_nonneg_left (hmul t) (hM t).le
+    _ = η * (M t * N t) := by ring
+
+/-- Non-vacuity of `massFraction_rel_error`: the densities of the previous example with weights
+`M = (2, 5)`. -/
+example (s : Fin 2) :
+    |composition (fun t => (![2, 5] : Fin 2 → ℝ) t * (![11 / 10, 27 / 10] : Fin 2 → ℝ) t) s
+        - composition (fun t => (![2, 5] : Fin 2 → ℝ) t * (![1, 3] : Fin 2 → ℝ) t) s|
+      ≤ (2 * (1 / 10) / (1 - 1 / 10))
+        * composition (fun t => (![2, 5] : Fin 2 → ℝ) t * (![1, 3] : Fin 2 → ℝ) t) s :=
+  massFraction_rel_error (N := ![1, 3]) (η := 1 / 10)
+    (fun t => by fin_cases t <;> norm_num) (fun t => by fin_cases t <;> norm_num)
+    (by norm_num) (by norm_num) (fun t => by fin_cases t <;> norm_num [abs_le]) s
 
 /-- Closure under two-sided ratio bounds `(1 - δ)·N̂ ≤ N ≤ (1 + δ)·N̂`. -/
 private theorem comp_rel_ratio {N Nhat : κ → ℝ} {δ : ℝ} (hN : ∀ s, 0 < N s) (hδ0 : 0 ≤ δ)

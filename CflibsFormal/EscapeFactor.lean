@@ -30,9 +30,9 @@ value is `τ₀ ∫ ψ`. This module compares the two.
   statement that `log SA` has slope in `(−1/2, 0)`. Both bounds are sharp in the limits.
 * `log_selfAbsorptionFactor_lipschitz`: `|log SA(τ) − log SA(τ')| ≤ |τ − τ'|/2` for
   `τ, τ' ≥ 0`, the endpoint `τ = 0` included. An error `Δ` in the optical depth moves the log
-  of the slab correction by at most `Δ/2`.
+  of the slab correction by at most `Δ/2` (`log_slabCorrected_error_le`).
 
-All four results are pure mathematics about the defined functions. No statement here says which
+All five results are pure mathematics about the defined functions. No statement here says which
 profile a real line has, or how well either factor corrects a measured intensity.
 
 ## Literature
@@ -135,9 +135,11 @@ private theorem hasDerivAt_log_one_sub_exp_neg_sub_log {t : ℝ} (ht : 0 < t) :
 `d/dτ log SA(τ) = 1/(exp τ − 1) − 1/τ`. By `inv_sub_inv_exp_sub_one_mem` this slope lies in
 `(−1/2, 0)`.
 
-`hτ` is needed: `selfAbsorptionFactor` is the totalized `if τ = 0 then 1 else …`, and the
-statement is about the open half-line where it is the smooth branch. Nothing is claimed at
-`τ = 0` (the one-sided slope there is `−1/2`) or for `τ < 0`. Scope: PURE-MATH. -/
+`hτ` excludes the point `τ = 0`, where the formula is Lean's `1/0 − 1/0 = 0` while the function
+(the totalized `if τ = 0 then 1 else …`, which fills the removable singularity) has slope
+`−1/2` [numerics, not proved here]. Positivity is the physical domain; the same formula holds
+for `τ < 0` [derivation, not proved here], which this statement does not claim.
+Scope: PURE-MATH. -/
 theorem hasDerivAt_log_selfAbsorptionFactor {τ : ℝ} (hτ : 0 < τ) :
     HasDerivAt (fun s => Real.log (selfAbsorptionFactor s))
       (1 / (Real.exp τ - 1) - 1 / τ) τ := by
@@ -262,6 +264,42 @@ theorem log_selfAbsorptionFactor_lipschitz {τ τ' : ℝ} (hτ : 0 ≤ τ) (hτ'
 (`SA = 1`) to `τ' = 2` the log changes by at most `1`. -/
 example : |Real.log (selfAbsorptionFactor 0) - Real.log (selfAbsorptionFactor 2)| ≤ |0 - 2| / 2 :=
   log_selfAbsorptionFactor_lipschitz le_rfl (by norm_num)
+
+/-- **An error in the optical depth moves the log of the slab-corrected intensity by at most
+half that error (FT-13).** For a positive intensity `I` and depths `τ, τ̂ ≥ 0` with
+`|τ̂ − τ| ≤ Δ`, `|log (I/SA(τ̂)) − log (I/SA(τ))| ≤ Δ/2`.
+
+Reading: correcting a measured intensity for self-absorption with a wrong depth `τ̂` in place
+of `τ` changes the Boltzmann-plot ordinate by at most `Δ/2`. An immediate consequence of
+`log_selfAbsorptionFactor_lipschitz`.
+
+Hypotheses: `hτ`, `hτhat` are needed (the Lipschitz bound fails for negative depths: at
+`τ = 0`, `τ̂ = −1` the left side exceeds `1/2`). `hI : 0 < I` marks the physical domain and is
+not needed for the inequality, which holds for every real `I` because `Real.log` is
+`log |·|` and `log 0 = 0`. The bound `Δ` on the depth error is an input: nothing here estimates
+it, and no certificate in this repository checks it. Scope: PURE-MATH (an inequality about the
+defined function `selfAbsorptionFactor`, whose model tag is APPROXIMATION: the flat slab); a
+profile-dependent escape factor is not covered. -/
+theorem log_slabCorrected_error_le {I τ τhat Δ : ℝ} (hI : 0 < I) (hτ : 0 ≤ τ) (hτhat : 0 ≤ τhat)
+    (hΔ : |τhat - τ| ≤ Δ) :
+    |Real.log (I / selfAbsorptionFactor τhat) - Real.log (I / selfAbsorptionFactor τ)|
+      ≤ Δ / 2 := by
+  rw [Real.log_div hI.ne' (selfAbsorptionFactor_pos hτhat).ne',
+    Real.log_div hI.ne' (selfAbsorptionFactor_pos hτ).ne']
+  have h := log_selfAbsorptionFactor_lipschitz hτ hτhat
+  have hsym : |τ - τhat| = |τhat - τ| := abs_sub_comm _ _
+  calc |Real.log I - Real.log (selfAbsorptionFactor τhat)
+          - (Real.log I - Real.log (selfAbsorptionFactor τ))|
+      = |Real.log (selfAbsorptionFactor τ) - Real.log (selfAbsorptionFactor τhat)| := by
+        ring_nf
+    _ ≤ |τ - τhat| / 2 := h
+    _ ≤ Δ / 2 := by rw [hsym]; linarith
+
+/-- Non-vacuity of `log_slabCorrected_error_le`: intensity `5`, true depth `0`, assumed depth
+`1`, so `Δ = 1` and the corrected log-intensity moves by at most `1/2`. -/
+example :
+    |Real.log (5 / selfAbsorptionFactor 1) - Real.log (5 / selfAbsorptionFactor 0)| ≤ 1 / 2 :=
+  log_slabCorrected_error_le (by norm_num) le_rfl (by norm_num) (by norm_num)
 
 /-- Chord inequality of the convex `exp`: `(1 − exp(−τ)) · t ≤ 1 − exp(−τ t)` for
 `t ∈ [0, 1]`. -/
